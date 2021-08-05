@@ -1,5 +1,4 @@
 ﻿using SkyChain;
-using Zhnt;
 
 namespace Zhnt.Mart
 {
@@ -50,7 +49,6 @@ namespace Zhnt.Mart
 
         internal decimal price;
 
-        internal Ingr[] ingrs;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -62,10 +60,6 @@ namespace Zhnt.Mart
 
             s.Get(nameof(progg), ref progg);
             s.Get(nameof(price), ref price);
-            if ((proj & LATER) == LATER)
-            {
-                s.Get(nameof(ingrs), ref ingrs);
-            }
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -78,10 +72,6 @@ namespace Zhnt.Mart
 
             s.Put(nameof(progg), progg);
             s.Put(nameof(price), price);
-            if ((proj & LATER) == LATER)
-            {
-                s.Put(nameof(ingrs), ingrs);
-            }
         }
 
         public short Key => id;

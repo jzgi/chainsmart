@@ -9,6 +9,7 @@ namespace Zhnt.Mart
     {
         protected override void OnMake()
         {
+            MakeVarWork<PubBizVarWork>();
         }
 
         public void @default(WebContext wc)

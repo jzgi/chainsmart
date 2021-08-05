@@ -6,18 +6,21 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Mart
 {
-    public class PubOrgVarWork : WebWork
+    public class PubBizVarWork : WebWork
     {
-        /// <summary>
-        /// The home page for the org
-        /// </summary>
+        /// The home page for the market
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[0];
-            var orgs = Fetch<Map<short, Biz>>();
-            var org = orgs[orgid];
+            short bizid = wc[0];
+            var map = Fetch<short, Map<short, Biz>>(bizid);
+            var biz = map[bizid];
 
-            using var dc = NewDbContext();
+            wc.GivePage(200, h =>
+            {
+                h.DIV_();
+                h.T("市场");
+                h._DIV();
+            });
         }
 
         public async Task icon(WebContext wc)

@@ -34,13 +34,7 @@ namespace Zhnt.Mart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-card uk-card-default uk-card-body");
-                for (int i = 0; i < item.ingrs.Length; i++)
-                {
-                    var ing = item.ingrs[i];
-                    h.LI_();
-                    h.T(mats[ing.id].name);
-                    h._LI();
-                }
+
                 h._UL();
             });
         }
@@ -92,54 +86,20 @@ namespace Zhnt.Mart
             {
                 using var dc = NewDbContext();
                 dc.QueryTop("SELECT ingrs FROM items WHERE id = @1", p => p.Set(id));
-                dc.Let(out Ingr[] ingrs);
-                wc.GivePane(200, h =>
-                {
-                    h.TABLE(ingrs, o =>
-                    {
-                        var mat = mats[o.id];
-                        h.TD_("uk-width-1-2").T(mat.name)._TD();
-                        h.TD2(o.qty, mat.unit);
-                        h.TDFORM(() =>
-                        {
-                            h.HIDDEN(nameof(o.id), o.id);
-                            h.TOOL(nameof(cnt), 2, caption: "✕", css: "uk-button-secondary", tool: ToolAttribute.BUTTON_PICK_CONFIRM);
-                        });
-                    });
-
-                    var ing = new Ingr();
-                    h.FORM_().FIELDSUL_();
-                    h.LI_().SELECT("食材", nameof(ing.id), ing.id, mats).NUMBER("克数", nameof(ing.qty), ing.qty)._LI();
-                    h.LI_("uk-flex-center").BUTTON("添加", nameof(cnt), 1)._LI();
-                    h._FIELDSUL();
-                    h._FORM();
-                });
+                wc.GivePane(200, h => { });
             }
             else // POST
             {
                 using var dc = NewDbContext();
                 dc.QueryTop("SELECT ingrs FROM items WHERE id = @1", p => p.Set(id));
-                dc.Let(out Ingr[] arr);
                 if (cmd == 1) // new
                 {
-                    var o = await wc.ReadObjectAsync<Ingr>();
-                    int idx = arr.IndexOf(x => x.id == o.id);
-                    if (idx >= 0) // included already
-                    {
-                        arr[idx].qty = o.qty;
-                    }
-                    else
-                    {
-                        arr = arr.AddOf(o);
-                    }
                 }
                 else if (cmd == 2) // remove
                 {
                     short matid = (await wc.ReadAsync<Form>())[nameof(matid)];
-                    arr = arr.RemovedOf(x => x.id == matid);
                 }
                 dc.Sql("UPDATE items SET ingrs = @1 WHERE id = @2");
-                dc.Execute(p => p.Set(arr).Set(id));
 
                 // redirect to list
                 wc.GiveRedirect(nameof(cnt));

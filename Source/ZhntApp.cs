@@ -39,53 +39,25 @@ namespace Zhnt
 
         public static void CacheUp()
         {
-            MakeCache(dc =>
+            MakeCache<Map<short, Reg>>(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            MakeCache(dc =>
+            MakeACache<short, Map<short, Biz>>((dc, bizid) =>
                 {
                     dc.Sql("SELECT ").collst(Biz.Empty).T(" FROM bizs_vw WHERE status > 0 ORDER BY id");
                     return dc.Query<short, Biz>();
                 }, 900
             );
 
-            MakeCache(dc =>
+            MakeCache<Map<short, Org>>(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
                     return dc.Query<short, Org>();
                 }, 900
-            );
-
-            MakeCache(dc =>
-                {
-                    dc.Sql("SELECT ").collst(Mat.Empty).T(" FROM mats WHERE status > 0 ORDER BY typ");
-                    return dc.Query<short, Mat>();
-                }, 3600
-            );
-
-            MakeCache(dc =>
-                {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE status > 0 ORDER BY typ, id");
-                    return dc.Query<short, Item>();
-                }, 3600
-            );
-
-            MakeCache(dc =>
-                {
-                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY dw");
-                    return dc.Query<short, Plan>();
-                }, 3600
-            );
-
-            MakeCache(dc =>
-                {
-                    dc.Sql("SELECT ").collst(Mart.Biz.Empty).T(" FROM diets ORDER BY typ, span");
-                    return dc.Query<short, Mart.Biz>();
-                }, 3600
             );
         }
 

@@ -310,21 +310,6 @@ namespace Zhnt.Mart
 
                 void Add(Item it, int qty)
                 {
-                    var ings = it.ingrs;
-                    if (ings == null) return;
-                    foreach (var ing in ings)
-                    {
-                        var matid = ing.id;
-                        var prep = map[matid];
-                        if (prep == null)
-                        {
-                            map.Add(new MatAgg(matid, qty * ing.qty));
-                        }
-                        else
-                        {
-                            prep.Add(qty * ing.qty);
-                        }
-                    }
                 }
             }
         }
