@@ -32,28 +32,28 @@ namespace Zhnt
             // cycler.Start();
 
             // prepare web
-            MakeService<ZhntService>("main");
+            MakeWebService<ZhntService>("main");
             await StartWebAsync();
         }
 
 
         public static void CacheUp()
         {
-            MakeCache<Map<short, Reg>>(dc =>
+            MakeObjectCache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            MakeACache<short, Map<short, Biz>>((dc, bizid) =>
+            MakeDictionaryCache<short, Map<short, Biz>>((dc, bizid) =>
                 {
                     dc.Sql("SELECT ").collst(Biz.Empty).T(" FROM bizs_vw WHERE status > 0 ORDER BY id");
                     return dc.Query<short, Biz>();
                 }, 900
             );
 
-            MakeCache<Map<short, Org>>(dc =>
+            MakeObjectCache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
                     return dc.Query<short, Org>();

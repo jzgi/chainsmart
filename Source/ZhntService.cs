@@ -20,7 +20,7 @@ namespace Zhnt
 
             MakeWork<PubItemWork>("item");
 
-            MakeWork<PubBizWork>("biz");
+            MakeWork<PublyBizWork>("biz");
 
             MakeWork<PubUserWork>("user");
 

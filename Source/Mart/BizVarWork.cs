@@ -6,8 +6,12 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Mart
 {
-    public class PubBizVarWork : WebWork
+    public class PublyBizVarWork : WebWork
     {
+        protected override void OnMake()
+        {
+        }
+
         /// The home page for the market
         public async Task @default(WebContext wc, int page)
         {
@@ -18,9 +22,9 @@ namespace Zhnt.Mart
             wc.GivePage(200, h =>
             {
                 h.DIV_();
-                h.T("市场");
+                h.T("市场").T(biz.name);
                 h._DIV();
-            });
+            }, true, 12, biz.name);
         }
 
         public async Task icon(WebContext wc)

@@ -5,11 +5,11 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Mart
 {
-    public class PubBizWork : WebWork
+    public class PublyBizWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<PubBizVarWork>();
+            MakeVarWork<PublyBizVarWork>();
         }
 
         public void @default(WebContext wc)
