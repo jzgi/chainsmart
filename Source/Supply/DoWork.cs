@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
+using Zhnt.Market;
 using static SkyChain.Web.Modal;
 using static Zhnt._Doc;
 using static Zhnt.User;
@@ -25,6 +26,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
+    [Ui("销售单")]
     public class CtrlyDoWork : WebWork
     {
         protected override void OnMake()
@@ -35,19 +37,18 @@ namespace Zhnt.Supply
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
+            int orgid = wc[-1];
+            var orgs = Fetch<Map<int, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Uo>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Do.Empty).T(" FROM dos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Do>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: "当前活跃拼团");
                 if (arr != null)
                 {
-                    h.ViewLotList(arr, orgs, DateTime.Today);
                 }
                 h.PAGINATION(arr?.Length == 10);
             }, false, 3);
@@ -68,7 +69,6 @@ namespace Zhnt.Supply
                 h.TOOLBAR(caption: "已成和已结拼团");
                 if (arr != null)
                 {
-                    h.ViewLotList(arr, orgs, DateTime.Today);
                 }
                 h.PAGINATION(arr?.Length == 10);
             }, false, 3);
@@ -102,9 +102,6 @@ namespace Zhnt.Supply
                 var today = DateTime.Today;
                 var o = await wc.ReadObjectAsync(inst: new Uo
                 {
-                    status = STATUS_DRAFT,
-                    orgid = orgid,
-                    issued = today,
                     author = prin.name,
                     @extern = org.@extern,
                 });
@@ -176,8 +173,8 @@ namespace Zhnt.Supply
     }
 
 
-    [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购")]
+    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZ)]
+    [Ui("进货")]
     public class BizlyDoWork : WebWork
     {
         protected override void OnMake()
@@ -187,15 +184,15 @@ namespace Zhnt.Supply
 
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT m.id, m.name, m.price, m.unit, d.uid, d.uname, d.utel, d.uim, d.qty, d.pay FROM lots m, lotjns d WHERE m.id = d.lotid AND m.status = ").T(STATUS_ISSUED).T(" AND d.ptid = @1 ORDER BY m.id");
+            dc.Sql("SELECT ").collst(Ro.Empty).T(" FROM dos WHERE bizid = @1 AND status = 0 ORDER BY id");
             await dc.QueryAsync(p => p.Set(orgid));
 
             var orgs = Fetch<Map<short, Org>>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "拼团递货管理");
+                h.TOOLBAR(caption: "进货单");
 
                 int last = 0;
                 while (dc.Next())

@@ -9,7 +9,6 @@ using static Zhnt.User;
 
 namespace Zhnt.Supply
 {
-    
     [UserAuthorize(admly: 1)]
     [Ui("采购")]
     public class AdmlyUoWork : WebWork
@@ -26,7 +25,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("拼团")]
+    [Ui("采购单")]
     public class CtrlyUoWork : WebWork
     {
         protected override void OnMake()
@@ -37,11 +36,11 @@ namespace Zhnt.Supply
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
+            int orgid = wc[-1];
+            var orgs = Fetch<Map<int, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Uo>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -49,7 +48,6 @@ namespace Zhnt.Supply
                 h.TOOLBAR(caption: "当前活跃拼团");
                 if (arr != null)
                 {
-                    h.ViewLotList(arr, orgs, DateTime.Today);
                 }
                 h.PAGINATION(arr?.Length == 10);
             }, false, 3);
@@ -70,7 +68,6 @@ namespace Zhnt.Supply
                 h.TOOLBAR(caption: "已成和已结拼团");
                 if (arr != null)
                 {
-                    h.ViewLotList(arr, orgs, DateTime.Today);
                 }
                 h.PAGINATION(arr?.Length == 10);
             }, false, 3);
@@ -87,15 +84,10 @@ namespace Zhnt.Supply
             {
                 if (typ == 0) // display type selection
                 {
-                    wc.GivePane(200, h =>
-                    {
-                        h.FORM_().FIELDSUL_("请选择推广类型");
-                      
-                    });
+                    wc.GivePane(200, h => { h.FORM_().FIELDSUL_("请选择推广类型"); });
                 }
                 else // typ specified
                 {
-                  
                 }
             }
             else // POST
@@ -103,9 +95,6 @@ namespace Zhnt.Supply
                 var today = DateTime.Today;
                 var o = await wc.ReadObjectAsync(inst: new Uo
                 {
-                    status = STATUS_DRAFT,
-                    orgid = orgid,
-                    issued = today,
                     author = prin.name,
                     @extern = org.@extern,
                 });

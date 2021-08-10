@@ -73,4 +73,17 @@ namespace Zhnt.Market
             }
         }
     }
+
+    [Ui("货架")]
+    public class BizlyProdWork : WebWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<BizlyProdVarWork>();
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
 }

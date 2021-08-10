@@ -4,9 +4,9 @@ using Zhnt;
 namespace Zhnt.Market
 {
     /// <summary>
-    /// A retail order item.
+    /// A retail order, for online and offline
     /// </summary>
-    public class Ro : _Doc, IKeyable<int>
+    public class Ro : IData, IKeyable<int>
     {
         public static readonly Ro Empty = new Ro();
 
@@ -14,24 +14,14 @@ namespace Zhnt.Market
 
         public static readonly Map<short, string> Compls = new Map<short, string>
         {
-            {0, "不需要申诉"},
-            {1, "特殊原因无法安排日程，需要撤销整个订单"},
-            {2, "对膳食品质有疑虑，需临时中断调养日程"},
-            {3, "在已经做出配合的情况下，没有达到承诺的功效"},
-            {4, "不满意服务质量或人员态度"},
         };
 
         public static readonly Map<short, string> Levels = new Map<short, string>
         {
-            {1, "１０％"},
-            {2, "２０％"},
-            {3, "３０％"},
-            {4, "４０％"},
-            {10, "１００％"},
         };
 
         internal int id;
-        internal short dietid;
+        internal int bizid;
         internal string trackg;
         internal short level;
         internal short ptid;
@@ -44,15 +34,14 @@ namespace Zhnt.Market
         internal decimal refund;
         internal decimal compl;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public void Read(ISource s, byte proj = 0x0f)
         {
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            base.Read(s, proj);
 
-            s.Get(nameof(dietid), ref dietid);
+            s.Get(nameof(bizid), ref bizid);
             s.Get(nameof(trackg), ref trackg);
             s.Get(nameof(level), ref level);
             s.Get(nameof(ptid), ref ptid);
@@ -69,15 +58,14 @@ namespace Zhnt.Market
             }
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public void Write(ISink s, byte proj = 0x0f)
         {
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            base.Write(s, proj);
 
-            s.Put(nameof(dietid), dietid);
+            s.Put(nameof(bizid), bizid);
             s.Put(nameof(trackg), trackg);
             s.Put(nameof(level), level);
             s.Put(nameof(ptid), ptid);
@@ -95,11 +83,5 @@ namespace Zhnt.Market
         }
 
         public int Key => id;
-
-        public bool IsRefundable => status == STATUS_ISSUED;
-
-        public override bool IsShowable => status >= STATUS_ISSUED;
-
-        public override bool IsWorkable => status >= STATUS_ISSUED && status < STATUS_CLOSED;
     }
 }

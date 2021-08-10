@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Zhnt.Supply
 {
-    public class Uo : _Doc, IKeyable<int>
+    public class Uo : IData, IKeyable<int>
     {
         public static readonly Uo Empty = new Uo();
 
@@ -41,13 +41,12 @@ namespace Zhnt.Supply
         internal short qtys;
         internal decimal pays;
 
-        public override void Read(ISource s, byte proj = 15)
+        public void Read(ISource s, byte proj = 15)
         {
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            base.Read(s, proj);
 
             s.Get(nameof(tip), ref tip);
             s.Get(nameof(unit), ref unit);
@@ -70,13 +69,12 @@ namespace Zhnt.Supply
             }
         }
 
-        public override void Write(ISink s, byte proj = 15)
+        public void Write(ISink s, byte proj = 15)
         {
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            base.Write(s, proj);
 
             s.Put(nameof(tip), tip);
             s.Put(nameof(unit), unit);
@@ -108,17 +106,5 @@ namespace Zhnt.Supply
         public bool HasIcon => icon;
 
         public bool HasImg => img;
-
-        public bool IsLocked() => status >= STATUS_ISSUED || qtys >= min;
-
-        public bool IsOver(DateTime now) => false;
-
-        public bool IsProduct => typ == TYP_PRODUCT;
-
-        public override bool IsShowable => status >= STATUS_ISSUED;
-
-        public override bool IsWorkable => status >= STATUS_ISSUED && status < STATUS_CLOSED;
-
-        public string Name => name;
     }
 }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt;
 using static SkyChain.Web.Modal;
 using static Zhnt._Doc;
 using static Zhnt.User;
@@ -36,7 +34,7 @@ namespace Zhnt.Market
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("零售")]
+    [Ui("售货")]
     public class BizlyRoWork : WebWork
     {
         protected override void OnMake()
@@ -44,12 +42,11 @@ namespace Zhnt.Market
             MakeVarWork<BizlyRoVarWork>();
         }
 
-        [Ui("当前"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            short orgid = wc[-1];
+            int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ro.Empty).T(" FROM orders WHERE orgid = @1 AND status > 0 AND status < ").T(STATUS_CLOSED).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Ro.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ").T(STATUS_CLOSED).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Ro>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
@@ -57,15 +54,12 @@ namespace Zhnt.Market
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    h.TD(o.name, "uk-text-small");
                     h.TD(o.pay, true);
-                    h.TD_("uk-text-center").A_HREF_(o.id, "/dtl")._ONCLICK_("return dialog(this,8,false,1,'')").T(o.ended, 2, 0)._A()._TD();
                     // h.TD(Statuses[o.status]);
                 });
             });
         }
 
-        [Ui("过去"), Tool(Anchor)]
         public async Task closed(WebContext wc)
         {
             short orgid = wc[-1];
@@ -78,9 +72,7 @@ namespace Zhnt.Market
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    h.TD(o.name, "uk-text-small");
                     h.TD(o.pay, true);
-                    h.TD_("uk-text-center").A_HREF_(o.id, "/dtl")._ONCLICK_("return dialog(this,8,false,1,'')").T(o.ended, 2, 0)._A()._TD();
                     // h.TD(Statuses[o.status]);
                 });
             });

@@ -16,7 +16,7 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            MakeWork<AdmlyProdWork>("show"); // showcase
+            MakeWork<BizlyProdWork>("prod"); // showcase
 
             MakeWork<BizlyRoWork>("ro"); // customer buy
 

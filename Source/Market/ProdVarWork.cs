@@ -64,4 +64,12 @@ namespace Zhnt.Market
             }
         }
     }
+
+    public class BizlyProdVarWork : WebWork
+    {
+        [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
+        public async Task upd(WebContext wc)
+        {
+        }
+    }
 }

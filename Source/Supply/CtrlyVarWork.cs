@@ -22,12 +22,12 @@ namespace Zhnt.Supply
         public async Task @default(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
-            short id = wc[0];
-            var orgs = Fetch<Map<short, Org>>();
+            int id = wc[0];
+            var orgs = Fetch<Map<int, Org>>();
             var o = orgs[id];
             if (!inner)
             {
-                wc.GiveFrame(200, false, 60, title: "供应方操作", group: (byte) o.typ);
+                wc.GiveFrame(200, false, 60, title: "分拣中心操作", group: (byte) o.typ);
             }
             else
             {

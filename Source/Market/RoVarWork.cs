@@ -115,7 +115,6 @@ namespace Zhnt.Market
             wc.GivePane(200, h =>
             {
                 var today = DateTime.Today;
-                h.TABLE(arr, o => { h.TD_("uk-width-micro").T("&#10004;&#65039;", o.status > 0)._TD(); });
                 h.BOTTOM_BUTTON("退款", nameof(refund));
             });
         }

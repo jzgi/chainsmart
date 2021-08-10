@@ -26,45 +26,6 @@ namespace Zhnt.Supply
             return lst.ToArray();
         }
 
-        public static void ViewLotList(this HtmlContent h, Uo[] arr, Map<short, Org> orgs = null, DateTime today = default)
-        {
-            var wrk = h.Web.Work;
-            h.MAIN_("uk-board");
-            for (int i = 0; i < arr?.Length; i++)
-            {
-                var m = arr[i];
-                var org = orgs[m.orgid];
-                var descr = "";
-
-                h.FORM_("uk-card uk-card-default");
-                h.HEADER_("uk-card-header").T(m.name);
-                h.SPAN_("uk-badge uk-badge-secondary").T(m.ended, 3, 0);
-                if (wrk is CtrlyUoWork)
-                {
-                    h.SP().PICK(m.id, toolbar: true);
-                }
-                h._SPAN();
-                h._HEADER();
-
-                h.ARTICLE_("uk-card-body uk-flex uk-background-muted");
-                h.PIC_("uk-width-1-5 uk-margin-auto-vertical uk-margin-small-right", circle: true);
-                if (m.HasIcon)
-                {
-                    h.T(m.id).T("/icon");
-                }
-                else // symbolic icon
-                {
-                    h.T("/lot-").T(m.typ).T(".png");
-                }
-                h._PIC();
-                h.SECTION_("uk-width-expand uk-col");
-
-
-                h._FORM();
-            }
-            h._MAIN();
-        }
-
         public static void ViewLotTop(this HtmlContent h, Uo off, string icon, string img)
         {
             h.SECTION_("uk-flex");
@@ -75,7 +36,7 @@ namespace Zhnt.Supply
             }
             else // symbolic icon
             {
-                h.T("/lot-").T(off.typ).T(".png");
+                // h.T("/lot-").T(off.typ).T(".png");
             }
             h._PIC();
             h.PIC_("uk-width-1-2 uk-margin-auto-vertical");
@@ -85,7 +46,7 @@ namespace Zhnt.Supply
             }
             else // symbolic icon
             {
-                h.T("/lot-").T(off.typ).T(".png");
+                // h.T("/lot-").T(off.typ).T(".png");
             }
             h._PIC();
             h._SECTION();

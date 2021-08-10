@@ -108,9 +108,6 @@ namespace Zhnt.Supply
                 short typ = f[nameof(typ)];
                 var m = new Uo
                 {
-                    orgid = orgid,
-                    typ = typ,
-                    status = _Doc.STATUS_DRAFT,
                     author = prin.name
                 };
                 m.Read(f);
