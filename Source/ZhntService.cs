@@ -4,7 +4,7 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt.Mart;
+using Zhnt.Market;
 using Zhnt.Supply;
 using static Zhnt._Doc;
 using static Zhnt.WeChatUtility;
@@ -16,24 +16,30 @@ namespace Zhnt
     {
         protected override void OnMake()
         {
-            // informative 
+            // public 
+
+            MakeWork<PubMartWork>("mrt"); // mart content show
+
+            MakeWork<PubBizWork>("biz"); // biz content show
 
             MakeWork<PubItemWork>("item");
-
-            MakeWork<PublyBizWork>("biz");
 
             MakeWork<PubUserWork>("user");
 
 
             // management
 
-            MakeWork<BizlyWork>("bizly"); // for mart
-
-            MakeWork<OrglyWork>("orgly"); // for supply
-
-            MakeWork<MyWork>("my");
-
             MakeWork<AdmlyWork>("admly"); // platform admin
+
+            MakeWork<CtrlyWork>("ctrly"); // for center
+
+            MakeWork<SprlyWork>("sprly"); // for supplier
+
+            MakeWork<MartlyWork>("mrtly"); // for mart
+
+            MakeWork<BizlyWork>("bizly"); // for biz
+
+            MakeWork<MyWork>("my"); // personal
         }
 
         public void @default(WebContext wc)

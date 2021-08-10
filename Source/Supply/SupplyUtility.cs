@@ -12,9 +12,9 @@ namespace Zhnt.Supply
     {
         public const string LOTS = "健康拼团";
 
-        public static short[] GetRelatedOrgs(this Map<short, Org> orgs, Reg reg)
+        public static int[] GetRelatedOrgs(this Map<short, Org> orgs, Reg reg)
         {
-            var lst = new ValueList<short>(32);
+            var lst = new ValueList<int>(32);
             for (int i = 0; i < orgs.Count; i++)
             {
                 var org = orgs.ValueAt(i);
@@ -26,7 +26,7 @@ namespace Zhnt.Supply
             return lst.ToArray();
         }
 
-        public static void ViewLotList(this HtmlContent h, Purchase[] arr, Map<short, Org> orgs = null, DateTime today = default)
+        public static void ViewLotList(this HtmlContent h, Uo[] arr, Map<short, Org> orgs = null, DateTime today = default)
         {
             var wrk = h.Web.Work;
             h.MAIN_("uk-board");
@@ -34,12 +34,12 @@ namespace Zhnt.Supply
             {
                 var m = arr[i];
                 var org = orgs[m.orgid];
-                var descr = LotDescr.All[m.typ];
+                var descr = "";
 
                 h.FORM_("uk-card uk-card-default");
                 h.HEADER_("uk-card-header").T(m.name);
                 h.SPAN_("uk-badge uk-badge-secondary").T(m.ended, 3, 0);
-                if (wrk is OrglyLotWork)
+                if (wrk is CtrlyUoWork)
                 {
                     h.SP().PICK(m.id, toolbar: true);
                 }
@@ -58,27 +58,14 @@ namespace Zhnt.Supply
                 }
                 h._PIC();
                 h.SECTION_("uk-width-expand uk-col");
-                descr.CardView(h, descr, m, org);
-                h._SECTION();
-                h._ARTICLE();
 
-                h.NAV_("uk-card-footer");
-                var wc = h.Web;
-          
-                h.DIV_("uk-margin-auto-left uk-button-group");
-                h.VARTOOLS(m.id, nav: false);
-                var disp = !(wrk is PubLotWork) || today <= m.ended;
-                var capt = wrk is MyLotWork ? "我的" + descr.act : wrk is OrglyLotWork ? descr.act + "情况" : descr.act;
-                h.VARTOOL(m.id, nameof(LotVarWork.act), subscript: m.IsProduct && org.IsInternal ? 0 : 1, capt, tip: m.name, enabled: disp);
-                h._DIV();
-                h._NAV();
 
                 h._FORM();
             }
             h._MAIN();
         }
 
-        public static void ViewLotTop(this HtmlContent h, Purchase off, string icon, string img)
+        public static void ViewLotTop(this HtmlContent h, Uo off, string icon, string img)
         {
             h.SECTION_("uk-flex");
             h.PIC_("uk-width-1-2 uk-margin-auto-vertical");
@@ -163,16 +150,7 @@ namespace Zhnt.Supply
             dc.Let(out short min);
             dc.Let(out short qtys);
 
-            // notify if meet mininal 
-            if (qty >= min - (qtys % min))
-            {
-                var descr = LotDescr.All[typ];
-                var org = orgs[orgid];
-                if (!string.IsNullOrEmpty(org.Im))
-                {
-                    await WeChatUtility.PostSendAsync(org.Im, "【" + LOTS + "】" + name + "有" + descr.act + "（" + org.name + "）");
-                }
-            }
+
             return true;
         }
 
@@ -218,18 +196,7 @@ namespace Zhnt.Supply
             dc.Let(out string name);
 
             var org = orgs[orgid];
-            var descr = LotDescr.All[typ];
 
-            await WeChatUtility.PostSendAsync(org.Im, "【" + LOTS + "】" + name + descr.act + "截止" + "，请做相关安排（" + org.name + "）");
-
-            // notify all joiners
-            dc.Sql("SELECT uim FROM lotjns WHERE lotid = @1 AND status = ");
-            await dc.QueryAsync(p => p.Set(lotid));
-            while (dc.Next())
-            {
-                dc.Let(out string uim);
-                await WeChatUtility.PostSendAsync(uim, "【" + LOTS + "】" + name + "拼团完成" + "（" + org.name + "）");
-            }
 
             return true;
         }
@@ -270,7 +237,6 @@ namespace Zhnt.Supply
                 // refund
                 if (pay > 0.00M)
                 {
-                  
                 }
 
                 await WeChatUtility.PostSendAsync(uim, sb.ToString());

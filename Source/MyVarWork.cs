@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt.Mart;
+using Zhnt.Market;
 using static System.String;
 using static SkyChain.Web.Modal;
 using static Zhnt.ZhntUtility;
@@ -15,7 +15,7 @@ namespace Zhnt
     {
         protected override void OnMake()
         {
-            MakeWork<MySoWork>("order");
+            MakeWork<MyRoWork>("order");
 
         }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
-using Zhnt.Mart;
+using Zhnt.Market;
 using Zhnt.Supply;
 using static System.Data.IsolationLevel;
 
@@ -39,24 +39,24 @@ namespace Zhnt
 
         public static void CacheUp()
         {
-            MakeObjectCache(dc =>
+            MakeCache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            MakeDictionaryCache<short, Map<short, Biz>>((dc, bizid) =>
+            MakeCache<short, Map<int, Org>>((dc, bizid) =>
                 {
-                    dc.Sql("SELECT ").collst(Biz.Empty).T(" FROM bizs_vw WHERE status > 0 ORDER BY id");
-                    return dc.Query<short, Biz>();
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 AND parent IS NOT NULL ORDER BY id");
+                    return dc.Query<int, Org>();
                 }, 900
             );
 
-            MakeObjectCache(dc =>
+            MakeCache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
-                    return dc.Query<short, Org>();
+                    return dc.Query<int, Org>();
                 }, 900
             );
         }

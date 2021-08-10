@@ -47,7 +47,22 @@ namespace Zhnt
             ORGLY_BIZ = 3,
             ORGLY_MGR = 7;
 
-        public static readonly Map<short, string> Orgly = new Map<short, string>
+        public static readonly Map<short, string> Mrtly = new Map<short, string>
+        {
+            {0, null},
+            {ORGLY_OP, "操作员"}, // 001
+            {ORGLY_BIZ, "业务员"}, // 011
+            {ORGLY_MGR, "管理员"}, // 011
+        };
+
+        public static readonly Map<short, string> Bizly = new Map<short, string>
+        {
+            {0, null},
+            {ORGLY_OP, "操作员"}, // 001
+            {ORGLY_MGR, "管理员"}, // 011
+        };
+
+        public static readonly Map<short, string> Ctrly = new Map<short, string>
         {
             {0, null},
             {ORGLY_OP, "操作员"}, // 001
@@ -69,9 +84,7 @@ namespace Zhnt
         internal DateTime created;
         internal string credential;
         internal short admly;
-        internal short bizid;
-        internal short bizly;
-        internal short orgid;
+        internal int orgid;
         internal short orgly;
         internal string acct; // identity number
 
@@ -91,8 +104,6 @@ namespace Zhnt
             {
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
-                s.Get(nameof(bizid), ref bizid);
-                s.Get(nameof(bizly), ref bizly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
                 s.Get(nameof(acct), ref acct);
@@ -115,8 +126,6 @@ namespace Zhnt
             {
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
-                s.Put(nameof(bizid), bizid);
-                s.Put(nameof(bizly), bizly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
                 s.Put(nameof(acct), acct);

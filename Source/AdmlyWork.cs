@@ -1,34 +1,34 @@
 using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt.Mart;
+using Zhnt.Market;
 using Zhnt.Supply;
 
 namespace Zhnt
 {
     [UserAuthorize(admly: 1)]
-    [Ui("联盟链")]
+    [Ui("联盟")]
     public class AdmlyWork : ChainWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyVarWork>();
-
             MakeWork<AdmlyAccessWork>("acc");
-
-            MakeWork<AdmlyRegWork>("reg");
-
-            MakeWork<AdmlyBizWork>("biz");
 
             MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyUserWork>("user");
-
-            MakeWork<AdmlyClearWork>("cash");
-
-            MakeWork<AdmlyMatWork>("mat");
+            MakeWork<AdmlyProdWork>("prod");
 
             MakeWork<AdmlyItemWork>("item");
+
+            // order processing
+
+            MakeWork<AdmlyUoWork>("uo");
+
+            MakeWork<AdmlyDoWork>("do");
+
+            // accounting
+
+            MakeWork<AdmlyClearWork>("cash");
         }
 
         public override void @default(WebContext wc)
@@ -59,15 +59,6 @@ namespace Zhnt
         public override Task @new(WebContext wc)
         {
             return base.@new(wc);
-        }
-    }
-
-    public class AdmlyVarWork : ChainVarWork
-    {
-        [UserAuthorize(admly: 3)]
-        public override Task upd(WebContext wc)
-        {
-            return base.upd(wc);
         }
     }
 }
