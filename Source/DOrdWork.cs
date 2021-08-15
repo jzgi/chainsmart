@@ -10,7 +10,7 @@ using static Zhnt.User;
 namespace Zhnt
 {
     [UserAuthorize(admly: 1)]
-    [Ui("销售")]
+    [Ui("销售单")]
     public class AdmlyDOrdWork : WebWork
     {
         protected override void OnMake()

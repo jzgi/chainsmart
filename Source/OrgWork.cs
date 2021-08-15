@@ -5,8 +5,6 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    [UserAuthorize(admly: User.ADMLY_OP)]
-    [Ui("机构")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()

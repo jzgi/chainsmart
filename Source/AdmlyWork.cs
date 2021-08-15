@@ -10,23 +10,37 @@ namespace Zhnt
     {
         protected override void OnMake()
         {
-            MakeWork<AdmlyAccessWork>("acc");
+            // management
 
-            MakeWork<AdmlyOrgWork>("org");
+            MakeWork<AdmlyAccessWork>("acc");
 
             MakeWork<AdmlyRegWork>("reg");
 
             MakeWork<AdmlyItemWork>("item");
 
-            MakeWork<AdmlyDItemWork>("ditem");
+            // sales & marketing
 
-            MakeWork<AdmlyUItemWork>("uitem");
+            MakeWork<AdmlyOrgWork>("dorg",
+                state: 1,
+                ui: new UiAttribute("商户"),
+                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
+            );
 
-            // order processing
-
-            MakeWork<AdmlyUOrdWork>("uord");
+            MakeWork<AdmlyDProdWork>("dprod");
 
             MakeWork<AdmlyDOrdWork>("dord");
+
+            // purchase
+
+            MakeWork<AdmlyOrgWork>("uorg",
+                state: 2,
+                ui: new UiAttribute("产源"),
+                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
+            );
+
+            MakeWork<AdmlyUProdWork>("uprod");
+
+            MakeWork<AdmlyUOrdWork>("uord");
 
             // accounting
 

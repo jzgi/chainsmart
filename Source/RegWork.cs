@@ -6,8 +6,8 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    [UserAuthorize(admly: User.ADMLY_OP)]
-    [Ui("区域")]
+    [UserAuthorize(admly: User.ADMLY_PUR)]
+    [Ui("地市")]
     public class AdmlyRegWork : WebWork
     {
         protected override void OnMake()

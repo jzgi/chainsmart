@@ -3,9 +3,6 @@ using SkyChain;
 
 namespace Zhnt
 {
-    /// <summary>
-    /// A user & principal data object.
-    /// </summary>
     public class User : IData, IKeyable<int>
     {
         public static readonly User Empty = new User();
@@ -19,7 +16,6 @@ namespace Zhnt
             TYP_CONSULTANT = 1,
             TYP_COOK = 2;
 
-        // user types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {0, null},
@@ -29,45 +25,35 @@ namespace Zhnt
 
         public const short
             ADMLY = 1,
-            ADMLY_OP = 3,
-            ADMLY_PROD = 5,
-            ADMLY_IT = 7;
+            ADMLY_SAL = 3,
+            ADMLY_PUR = 5,
+            ADMLY_MGT = 15;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
             {ADMLY, "基本"},
-            {ADMLY_OP, "运营部"},
-            {ADMLY_PROD, "生产部"},
-            {ADMLY_IT, "信息部"},
+            {ADMLY_SAL, "销售"},
+            {ADMLY_PUR, "采购"},
+            {ADMLY_MGT, "管理"},
         };
 
-        public const short
-            ORGLY_OP = 1,
-            ORGLY_BIZ = 3,
-            ORGLY_MGR = 7;
-
-        public static readonly Map<short, string> Mrtly = new Map<short, string>
-        {
-            {0, null},
-            {ORGLY_OP, "操作员"}, // 001
-            {ORGLY_BIZ, "业务员"}, // 011
-            {ORGLY_MGR, "管理员"}, // 011
-        };
-
-        public static readonly Map<short, string> Bizly = new Map<short, string>
-        {
-            {0, null},
-            {ORGLY_OP, "操作员"}, // 001
-            {ORGLY_MGR, "管理员"}, // 011
-        };
+        public const short CTRLY_OP = 1, CTRLY_MGR = 7;
 
         public static readonly Map<short, string> Ctrly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_OP, "操作员"}, // 001
-            {ORGLY_BIZ, "业务员"}, // 011
-            {ORGLY_MGR, "管理员"}, // 011
+            {CTRLY_OP, "操作"},
+            {CTRLY_MGR, "管理"},
+        };
+
+        public const short ORGLY_OP = 1, ORGLY_MGR = 7;
+
+        public static readonly Map<short, string> Orgly = new Map<short, string>
+        {
+            {0, null},
+            {ORGLY_OP, "操作"}, // 001
+            {ORGLY_MGR, "管理"}, // 011
         };
 
         public const short

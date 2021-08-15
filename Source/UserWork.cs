@@ -24,7 +24,7 @@ namespace Zhnt
         }
     }
 
-    [UserAuthorize(admly: ADMLY_OP)]
+    [UserAuthorize(admly: ADMLY_PUR)]
     [Ui("用户")]
     public class AdmlyUserWork : WebWork
     {
@@ -134,7 +134,7 @@ namespace Zhnt
             }, false, 3);
         }
 
-        [UserAuthorize(admly: ADMLY_IT)]
+        [UserAuthorize(admly: ADMLY_MGT)]
         [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

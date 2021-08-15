@@ -6,7 +6,7 @@ namespace Zhnt
 {
     public class AdmlyRegVarWork : WebWork
     {
-        [UserAuthorize(admly: User.ADMLY_IT)]
+        [UserAuthorize(admly: User.ADMLY_MGT)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {

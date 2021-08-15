@@ -6,20 +6,20 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    [UserAuthorize(admly: User.ADMLY_PROD)]
-    [Ui("品类")]
-    public class AdmlyDItemWork : WebWork
+    [UserAuthorize(admly: User.ADMLY_SAL)]
+    [Ui("采购品")]
+    public class AdmlyUProdWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyItemVarWork>();
+            MakeVarWork<AdmlyUProdVarWork>();
         }
 
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, status DESC, id LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Item>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(UProd.Empty).T(" FROM items ORDER BY typ, status DESC, id LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<UProd>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -32,14 +32,7 @@ namespace Zhnt
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name);
-                    if (o.progg > 0) h.SP().SUB(Item.Progg[o.progg]);
-                    h._TD();
-                    h.TD_().CNY(o.price)._TD();
-                    h.TD(Item.Statuses[o.status]);
-                    h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                 
                     h._TR();
                     last = o.typ;
                 }

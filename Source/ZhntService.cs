@@ -4,8 +4,6 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt;
-using Zhnt;
 using static Zhnt._Doc;
 using static Zhnt.WeChatUtility;
 
@@ -27,11 +25,11 @@ namespace Zhnt
 
             MakeWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<CtrlyWork>("ctrly"); // for center
-
-            MakeWork<SrclyWork>("sprly"); // for supplier
+            MakeWork<CtrlyWork>("ctrly"); // for distribution center
 
             MakeWork<BizlyWork>("bizly"); // for biz
+
+            MakeWork<SrclyWork>("srcly"); // for source
         }
 
         public void @default(WebContext wc)
