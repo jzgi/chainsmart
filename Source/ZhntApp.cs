@@ -44,13 +44,13 @@ namespace Zhnt
                 }, 3600 * 24
             );
 
-            MakeCache<short, Map<int, Org>>((dc, bizid) =>
-                {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 AND parent IS NOT NULL ORDER BY id");
-                    return dc.Query<int, Org>();
-                }, 900
-            );
-
+            // MakeCache<short, Map<int, Org>>((dc, bizid) =>
+            //     {
+            //         dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 AND parent IS NOT NULL ORDER BY id");
+            //         return dc.Query<int, Org>();
+            //     }, 900
+            // );
+            //
             MakeCache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
@@ -89,7 +89,6 @@ namespace Zhnt
                         using var dc = NewDbContext(ReadCommitted);
                         try
                         {
-                           
                         }
                         catch (Exception e)
                         {
@@ -115,7 +114,6 @@ namespace Zhnt
                         using var dc = NewDbContext(ReadCommitted);
                         try
                         {
-                           
                         }
                         catch (Exception e)
                         {

@@ -79,7 +79,7 @@ namespace Zhnt
         }
     }
 
-    [Ui("商户")]
+    [Ui("群管理")]
     public class GrplyBizWork : WebWork
     {
         protected override void OnMake()

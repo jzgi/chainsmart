@@ -38,7 +38,7 @@ namespace Zhnt
             {ADMLY_MGT, "管理"},
         };
 
-        public const short CTRLY_OP = 1, CTRLY_MGR = 7;
+        public const short CTRLY_OP = 1, CTRLY_MGR = 15;
 
         public static readonly Map<short, string> Ctrly = new Map<short, string>
         {
@@ -47,7 +47,7 @@ namespace Zhnt
             {CTRLY_MGR, "管理"},
         };
 
-        public const short ORGLY_OP = 1, ORGLY_MGR = 7;
+        public const short ORGLY_OP = 1, ORGLY_MGR = 15;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {

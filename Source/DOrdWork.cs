@@ -37,7 +37,7 @@ namespace Zhnt
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DOrd.Empty).T(" FROM dos WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(DOrd.Empty).T(" FROM dords WHERE bizid = @1 AND status = 0 ORDER BY id");
             await dc.QueryAsync(p => p.Set(orgid));
 
             var orgs = Fetch<Map<short, Org>>();

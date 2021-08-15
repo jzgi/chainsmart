@@ -15,7 +15,7 @@ namespace Zhnt
     }
 
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("物品")]
+    [Ui("产品")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()

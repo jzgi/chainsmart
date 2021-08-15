@@ -67,6 +67,7 @@ namespace Zhnt
             else
             {
                 wc.Give(500, e.Message);
+                Console.Write(e.StackTrace);
             }
         }
 

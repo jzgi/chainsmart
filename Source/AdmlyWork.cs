@@ -20,7 +20,7 @@ namespace Zhnt
 
             // sales & marketing
 
-            MakeWork<AdmlyOrgWork>("dorg",
+            MakeWork<AdmlyOrgWork>("biz",
                 state: 1,
                 ui: new UiAttribute("商户"),
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
@@ -32,7 +32,7 @@ namespace Zhnt
 
             // purchase
 
-            MakeWork<AdmlyOrgWork>("uorg",
+            MakeWork<AdmlyOrgWork>("src",
                 state: 2,
                 ui: new UiAttribute("产源"),
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
