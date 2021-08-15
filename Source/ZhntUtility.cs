@@ -1,7 +1,7 @@
 using System;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt.Market;
+using Zhnt;
 using static SkyChain.CryptoUtility;
 
 namespace Zhnt

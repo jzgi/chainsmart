@@ -1,11 +1,11 @@
 using System;
 using SkyChain;
 
-namespace Zhnt.Supply
+namespace Zhnt
 {
-    public class Uo : IData, IKeyable<int>
+    public class UOrd : IData, IKeyable<int>
     {
-        public static readonly Uo Empty = new Uo();
+        public static readonly UOrd Empty = new UOrd();
 
         public const byte ID = 1, LATER = 2;
 

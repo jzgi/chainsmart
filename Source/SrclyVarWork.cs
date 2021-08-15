@@ -3,31 +3,33 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
+using static Zhnt.User;
 
-namespace Zhnt.Supply
+namespace Zhnt
 {
-    [UserAuthorize(orgly: 1)]
+    [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("账号")]
-    public class CtrlyVarWork : WebWork
+    public class SrclyVarWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeWork<OrglyAccessWork>("acc", User.Ctrly);
+            MakeWork<OrglyAccessWork>("acc");
 
-            MakeWork<CtrlyDoWork>("do"); // downstream order
+            MakeWork<SrclyUOrdWork>("uord");
 
-            MakeWork<CtrlyUoWork>("uo"); // upstream order
+            // src group
+            MakeWork<GrplySrcWork>("src");
         }
 
         public async Task @default(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
-            int id = wc[0];
-            var orgs = Fetch<Map<int, Org>>();
+            short id = wc[0];
+            var orgs = Fetch<Map<short, Org>>();
             var o = orgs[id];
             if (!inner)
             {
-                wc.GiveFrame(200, false, 60, title: "分拣中心操作", group: (byte) o.typ);
+                wc.GiveFrame(200, false, 60, title: "供应操作", group: (byte) o.typ);
             }
             else
             {
@@ -46,15 +48,14 @@ namespace Zhnt.Supply
                     h.LI_().FIELD("地址", o.addr)._LI();
                     if (o.IsPt)
                     {
-                        var shop = o.parent > 0 ? orgs[o.parent]?.name : null;
-                        h.LI_().FIELD("关联厨房", shop)._LI();
+                        // var shop = o.grpid > 0 ? orgs[o.grpid]?.name : null;
+                        // h.LI_().FIELD("关联厨房", shop)._LI();
                     }
                     if (o.IsMerchant)
                     {
-                        h.LI_().FIELD("派递模式", o.@extern ? "全网包邮" : "同城服务站")._LI();
+                        // h.LI_().FIELD("派递模式", o.refid ? "全网包邮" : "同城服务站")._LI();
                     }
                     h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                    h.LI_().FIELD2("联络员", o.cttname, o.ctttel)._LI();
                     h._UL();
                     h.FOOTER_("uk-card-footer uk-flex-center").TOOL(nameof(setg), css: "uk-button-secondary")._FOOTER();
                     h._FORM();
@@ -71,7 +72,7 @@ namespace Zhnt.Supply
             }
         }
 
-        [UserAuthorize(orgly: 1)]
+        [UserAuthorize(orgly: ORGLY_MGR)]
         [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
@@ -100,7 +101,7 @@ namespace Zhnt.Supply
             }
         }
 
-        [UserAuthorize(orgly: 1)]
+        [UserAuthorize(orgly: ORGLY_MGR)]
         [Ui("设置", group: 1), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
@@ -109,13 +110,12 @@ namespace Zhnt.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+                dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
                 var map = dc.Query<int, User>(p => p.Set(orgid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
-                    h.LI_().SELECT("联络员", nameof(obj.cttid), obj.cttid, map)._LI();
                     h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -126,7 +126,7 @@ namespace Zhnt.Supply
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.cttid).Set(o.status).Set(orgid));
+                    p => p.Set(o.tip).Set(o.status).Set(orgid));
 
                 wc.GivePane(200);
             }

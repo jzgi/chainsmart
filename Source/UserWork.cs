@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt.Supply;
+using Zhnt;
 using static SkyChain.Web.Modal;
 using static Zhnt.User;
 

@@ -5,12 +5,12 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Zhnt
 {
-    public class CtrlyDoVarWork : WebWork
+    public class AdmlyDOrdVarWork : WebWork
     {
         [Ui(group: 1), Tool(ButtonOpen)]
-        public  async Task act(WebContext wc, int cmd)
+        public async Task act(WebContext wc, int cmd)
         {
             int lotid = wc[0];
             var prin = (User) wc.Principal;
@@ -19,8 +19,8 @@ namespace Zhnt.Supply
             {
                 using var dc = NewDbContext();
 
-                dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Uo>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -29,11 +29,6 @@ namespace Zhnt.Supply
                     using var dc = NewDbContext(ReadCommitted);
                     try
                     {
-                        var err = await dc.RemoveLotJnAsync(lotid, prin.id, "主动撤销");
-                        if (err != null)
-                        {
-                            dc.Rollback();
-                        }
                     }
                     catch
                     {
@@ -46,10 +41,10 @@ namespace Zhnt.Supply
     }
 
 
-    public class BizlyDoVarWork : WebWork
+    public class BizlyDOrdVarWork : WebWork
     {
         [Ui, Tool(ButtonOpen)]
-        public  async Task act(WebContext wc, int cmd)
+        public async Task act(WebContext wc, int cmd)
         {
             int lotid = wc[0];
             short orgid = wc[-2];
@@ -58,8 +53,8 @@ namespace Zhnt.Supply
                 var orgs = Fetch<Map<short, Org>>();
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Uo>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -70,10 +65,6 @@ namespace Zhnt.Supply
                     using var dc = NewDbContext(ReadCommitted);
                     try
                     {
-                        foreach (int uid in key)
-                        {
-                            await dc.RemoveLotJnAsync(lotid, uid, "商家撤销");
-                        }
                     }
                     catch (Exception e)
                     {
@@ -99,14 +90,14 @@ namespace Zhnt.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Uo>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Uo
+                var m = new UOrd
                 {
                     author = prin.name
                 };
@@ -195,5 +186,9 @@ namespace Zhnt.Supply
                 wc.GivePane(200);
             }
         }
+    }
+
+    public class CtrlyDOrdVarWork : WebWork
+    {
     }
 }

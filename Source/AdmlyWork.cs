@@ -1,8 +1,6 @@
 using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt.Market;
-using Zhnt.Supply;
 
 namespace Zhnt
 {
@@ -16,19 +14,23 @@ namespace Zhnt
 
             MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyProdWork>("prod");
+            MakeWork<AdmlyRegWork>("reg");
 
             MakeWork<AdmlyItemWork>("item");
 
+            MakeWork<AdmlyDItemWork>("ditem");
+
+            MakeWork<AdmlyUItemWork>("uitem");
+
             // order processing
 
-            MakeWork<AdmlyUoWork>("uo");
+            MakeWork<AdmlyUOrdWork>("uord");
 
-            MakeWork<AdmlyDoWork>("do");
+            MakeWork<AdmlyDOrdWork>("dord");
 
             // accounting
 
-            MakeWork<AdmlyClearWork>("cash");
+            // MakeWork<AdmlyClearWork>("cash");
         }
 
         public override void @default(WebContext wc)

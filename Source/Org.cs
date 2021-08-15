@@ -11,41 +11,45 @@ namespace Zhnt
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SPR = 1,
-            TYP_CTR = 2,
-            TYP_BIZ = 4,
-            TYP_MART = 8;
+            TYP_CTR = 1,
+            TYP_SRC = 2,
+            TYP_SRCGRP = 4,
+            TYP_BIZ = 8,
+            TYP_BIZGRP = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SPR, "供应基地"},
             {TYP_CTR, "分拣中心"},
+            {TYP_SRC, "产源"},
+            {TYP_SRCGRP, "产源群主"},
+            {TYP_SRC + TYP_SRCGRP, "产源＋群主"},
             {TYP_BIZ, "商户"},
-            {TYP_MART, "市场"},
+            {TYP_BIZGRP, "商户群主"},
+            {TYP_BIZ + TYP_BIZGRP, "商户＋群主"},
         };
 
         internal int id;
+
+        // joined group if any
+        internal int grpid;
+
+        // the associated distribution center, if any
+        internal int refid;
+
         internal short regid;
 
         internal string addr;
         internal double x;
         internal double y;
 
-        // the associated center (for pt)
-        internal short parent;
-
-        internal bool @extern;
-
         internal int mgrid;
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal int cttid;
-        internal string cttname;
-        internal string ctttel;
-        internal string cttim;
 
         internal bool icon;
+        internal bool license;
+        internal bool perm;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -59,19 +63,17 @@ namespace Zhnt
             s.Get(nameof(addr), ref addr);
             s.Get(nameof(x), ref x);
             s.Get(nameof(y), ref y);
-            s.Get(nameof(parent), ref parent);
-            s.Get(nameof(@extern), ref @extern);
+            s.Get(nameof(grpid), ref grpid);
+            s.Get(nameof(refid), ref refid);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
                 s.Get(nameof(mgrname), ref mgrname);
                 s.Get(nameof(mgrtel), ref mgrtel);
                 s.Get(nameof(mgrim), ref mgrim);
-                s.Get(nameof(cttid), ref cttid);
-                s.Get(nameof(cttname), ref cttname);
-                s.Get(nameof(ctttel), ref ctttel);
-                s.Get(nameof(cttim), ref cttim);
                 s.Get(nameof(icon), ref icon);
+                s.Get(nameof(license), ref license);
+                s.Get(nameof(perm), ref perm);
             }
         }
 
@@ -90,10 +92,10 @@ namespace Zhnt
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
 
-            if (parent > 0) s.Put(nameof(parent), parent); // conditional
-            else s.PutNull(nameof(parent));
+            if (grpid > 0) s.Put(nameof(grpid), grpid); // conditional
+            else s.PutNull(nameof(grpid));
 
-            s.Put(nameof(@extern), @extern);
+            s.Put(nameof(refid), refid);
 
             if ((proj & LATER) == LATER)
             {
@@ -101,33 +103,31 @@ namespace Zhnt
                 s.Put(nameof(mgrname), mgrname);
                 s.Put(nameof(mgrtel), mgrtel);
                 s.Put(nameof(mgrim), mgrim);
-                s.Put(nameof(cttid), cttid);
-                s.Put(nameof(cttname), cttname);
-                s.Put(nameof(ctttel), ctttel);
-                s.Put(nameof(cttim), cttim);
                 s.Put(nameof(icon), icon);
+                s.Put(nameof(license), license);
+                s.Put(nameof(perm), perm);
             }
         }
 
         public int Key => id;
 
-        public string Tel => ctttel ?? mgrtel;
+        public string Tel => mgrtel;
 
-        public string Im => cttim ?? mgrim;
+        public string Im => mgrim;
 
-        public bool IsShop => (typ & TYP_SPR) == TYP_SPR;
+        public bool IsShop => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsPt => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsInternal => !@extern;
+        public bool IsInternal => false;
 
         public bool IsMerchant => (typ & TYP_CTR) == TYP_CTR;
 
-        public bool IsSocial => (typ & TYP_MART) == TYP_MART;
+        public bool IsSocial => (typ & TYP_BIZGRP) == TYP_BIZGRP;
 
         public bool IsProvider => IsMerchant || IsSocial;
 
-        public bool IsMerchantTo(Reg reg) => IsMerchant && (regid == reg.id || @extern);
+        public bool IsMerchantTo(Reg reg) => IsMerchant && (regid == reg.id);
 
         public bool IsSocialTo(Reg reg) => IsSocial && (regid == reg.id);
 

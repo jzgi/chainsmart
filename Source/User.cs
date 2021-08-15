@@ -86,7 +86,7 @@ namespace Zhnt
         internal short admly;
         internal int orgid;
         internal short orgly;
-        internal string acct; // identity number
+        internal int refid;
 
         public void Read(ISource s, byte proj = 0x0f)
         {
@@ -106,7 +106,7 @@ namespace Zhnt
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(acct), ref acct);
+                s.Get(nameof(refid), ref refid);
             }
         }
 
@@ -128,44 +128,14 @@ namespace Zhnt
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
-                s.Put(nameof(acct), acct);
+                s.Put(nameof(refid), refid);
             }
         }
 
         public int Key => id;
 
-        public short Sex
-        {
-            get
-            {
-                if (acct == null)
-                {
-                    return 0;
-                }
-                var num = acct[16] - '0';
-                return (short) (num % 2 == 1 ? 1 : 2);
-            }
-        }
-
-        public DateTime Birth
-        {
-            get
-            {
-                if (acct == null)
-                {
-                    return default;
-                }
-                var n = acct;
-                int year = (n[6] - '0') * 1000 + (n[7] - '0') * 100 + (n[8] - '0') * 10 + (n[9] - '0') * 1;
-                int month = (n[10] - '0') * 10 + (n[11] - '0') * 1;
-                int day = (n[12] - '0') * 10 + (n[13] - '0') * 1;
-                return new DateTime(year, month, day);
-            }
-        }
 
         public bool IsPro => typ >= 1;
-
-        public bool IsCertified => !string.IsNullOrEmpty(acct);
 
         public bool IsDisabled => status <= STATUS_DISABLED;
 

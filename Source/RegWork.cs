@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt.Market;
+using Zhnt;
 using static SkyChain.Web.Modal;
 
 namespace Zhnt

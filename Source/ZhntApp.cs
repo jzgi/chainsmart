@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
-using Zhnt.Market;
-using Zhnt.Supply;
 using static System.Data.IsolationLevel;
 
 namespace Zhnt
@@ -91,10 +89,7 @@ namespace Zhnt
                         using var dc = NewDbContext(ReadCommitted);
                         try
                         {
-                            if (!await dc.SucceedLotAsync(lotid, orgs))
-                            {
-                                dc.Rollback();
-                            }
+                           
                         }
                         catch (Exception e)
                         {
@@ -120,10 +115,7 @@ namespace Zhnt
                         using var dc = NewDbContext(ReadCommitted);
                         try
                         {
-                            if (!await dc.AbortLotAsync(lotid, "拼团失败", orgs))
-                            {
-                                dc.Rollback();
-                            }
+                           
                         }
                         catch (Exception e)
                         {

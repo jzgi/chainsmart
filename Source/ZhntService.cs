@@ -4,8 +4,8 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using Zhnt.Market;
-using Zhnt.Supply;
+using Zhnt;
+using Zhnt;
 using static Zhnt._Doc;
 using static Zhnt.WeChatUtility;
 
@@ -18,10 +18,6 @@ namespace Zhnt
         {
             // public 
 
-            MakeWork<PubMartWork>("mrt"); // mart content show
-
-            MakeWork<PubBizWork>("biz"); // biz content show
-
             MakeWork<PubItemWork>("item");
 
             MakeWork<PubUserWork>("user");
@@ -33,13 +29,9 @@ namespace Zhnt
 
             MakeWork<CtrlyWork>("ctrly"); // for center
 
-            MakeWork<SprlyWork>("sprly"); // for supplier
-
-            MakeWork<MartlyWork>("mrtly"); // for mart
+            MakeWork<SrclyWork>("sprly"); // for supplier
 
             MakeWork<BizlyWork>("bizly"); // for biz
-
-            MakeWork<MyWork>("my"); // personal
         }
 
         public void @default(WebContext wc)
@@ -214,41 +206,6 @@ namespace Zhnt
                 {
                     await PostRefundAsync(trade_no, cash, cash, trade_no);
                 }
-            }
-            finally
-            {
-                // return xml to WCPay server
-                var x = new XmlContent(true, 1024);
-                x.ELEM("xml", null, () =>
-                {
-                    x.ELEM("return_code", "SUCCESS");
-                    x.ELEM("return_msg", "OK");
-                });
-                wc.Give(200, x);
-            }
-        }
-
-        /// <summary>
-        /// A notification for a lot deposit.
-        /// </summary>
-        public async Task onlotjn(WebContext wc)
-        {
-            var xe = await wc.ReadAsync<XElem>();
-            if (!OnNotified(xe, out var trade_no, out var cash))
-            {
-                wc.Give(400);
-                return;
-            }
-
-            var orgs = Fetch<Map<short, Org>>();
-            int pos = 0;
-            var lotid = trade_no.ParseInt(ref pos);
-            var uid = trade_no.ParseInt(ref pos);
-            try
-            {
-                // NOTE: // WCPay may send notification more than once
-                using var dc = NewDbContext();
-                await dc.AddLotJnAsync(lotid, uid, cash, orgs);
             }
             finally
             {

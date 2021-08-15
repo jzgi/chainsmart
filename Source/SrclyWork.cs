@@ -2,11 +2,11 @@ using SkyChain.Web;
 
 namespace Zhnt
 {
-    public class MyWork : WebWork
+    public class SrclyWork : WebWork, IOrglyVar
     {
         protected override void OnMake()
         {
-            MakeVarWork<MyVarWork>(x => ((User) x).id);
+            MakeVarWork<SrclyVarWork>(prin => ((User) prin).orgid);
         }
     }
 }

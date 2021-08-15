@@ -1,16 +1,17 @@
-﻿using SkyChain;
+﻿using System;
+using SkyChain;
 
 namespace Zhnt
 {
     /// <summary>
-    /// An article record that is publishable thus has related conditions.
+    /// A publicly used article record that has lifetime statuses
     /// </summary>
     public abstract class _Art : IData
     {
         public const short
-            STATUS_DISABLED = 1,
-            STATUS_SHOWABLE = 2,
-            STATUS_WORKABLE = 3;
+            STATUS_DISABLED = 0,
+            STATUS_SHOWABLE = 1,
+            STATUS_WORKABLE = 2;
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
@@ -21,14 +22,22 @@ namespace Zhnt
 
         public const byte ID = 1, LATER = 2;
 
-
+        // the specialized extensible discriminator
         internal short typ;
 
+        // object status
         internal short status;
 
+        // readable name
         internal string name;
 
+        // desctiprive text
         internal string tip;
+
+        internal DateTime created;
+
+        // persona who created or lastly modified
+        internal string creator;
 
         public virtual void Read(ISource s, byte proj = 0x0f)
         {
@@ -36,6 +45,8 @@ namespace Zhnt
             s.Get(nameof(status), ref status);
             s.Get(nameof(name), ref name);
             s.Get(nameof(tip), ref tip);
+            s.Get(nameof(created), ref created);
+            s.Get(nameof(creator), ref creator);
         }
 
         public virtual void Write(ISink s, byte proj = 0x0f)
@@ -44,6 +55,8 @@ namespace Zhnt
             s.Put(nameof(status), status);
             s.Put(nameof(name), name);
             s.Put(nameof(tip), tip);
+            s.Put(nameof(created), created);
+            s.Put(nameof(creator), creator);
         }
 
         public virtual bool IsShowable => status >= STATUS_SHOWABLE;

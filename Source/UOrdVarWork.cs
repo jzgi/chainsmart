@@ -5,14 +5,18 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Zhnt
 {
 
-    public class CtrlyUoVarWork : WebWork
+    public class AdmlyUOrdVarWork : WebWork
     {
     }
 
-    public class SprlyUoVarWork : WebWork
+    public class CtrlyUOrdVarWork : WebWork
+    {
+    }
+
+    public class SrclyUOrdVarWork : WebWork
     {
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
@@ -24,14 +28,14 @@ namespace Zhnt.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Uo.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Uo>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Uo
+                var m = new UOrd
                 {
                     author = prin.name
                 };

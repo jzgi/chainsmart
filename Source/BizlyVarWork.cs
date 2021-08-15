@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt.Market;
-using Zhnt.Supply;
+using Zhnt;
+using Zhnt;
 using static SkyChain.Web.Modal;
 
 namespace Zhnt
@@ -16,11 +16,10 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            MakeWork<BizlyProdWork>("prod"); // showcase
+            MakeWork<BizlyDOrdWork>("dord"); // showcase
 
-            MakeWork<BizlyRoWork>("ro"); // customer buy
-
-            MakeWork<BizlyDoWork>("do"); // downstream order
+            // biz group
+            MakeWork<GrplyBizWork>("biz"); 
         }
 
         public async Task @default(WebContext wc)
@@ -48,7 +47,6 @@ namespace Zhnt
                     h.LI_().FIELD("标语", o.tip)._LI();
 
                     h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                    h.LI_().FIELD2("联络员", o.cttname, o.ctttel)._LI();
                     h._UL();
                     h.FOOTER_("uk-card-footer uk-flex-center").TOOL(nameof(setg), css: "uk-button-secondary")._FOOTER();
                     h._FORM();
@@ -104,7 +102,6 @@ namespace Zhnt
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
-                    h.LI_().SELECT("联络员", nameof(obj.cttid), obj.cttid, map)._LI();
                     h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -115,7 +112,7 @@ namespace Zhnt
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.cttid).Set(o.status).Set(orgid));
+                    p => p.Set(o.tip).Set(o.status).Set(orgid));
 
                 wc.GivePane(200);
             }

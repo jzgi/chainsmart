@@ -25,10 +25,8 @@ namespace Zhnt
                     h.LI_().SELECT("服务类型", nameof(m.typ), m.typ, Org.Typs)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXT("标语", nameof(m.tip), m.tip, max: 16)._LI();
-                    h.LI_().SELECT("所属区域", nameof(m.regid), m.regid, regs, required: false).CHECKBOX("全网包邮", nameof(m.@extern), true, m.@extern)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("供货厨房", nameof(m.parent), m.parent, orgs, required: false, filter: (k, x) => x.IsShop)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
