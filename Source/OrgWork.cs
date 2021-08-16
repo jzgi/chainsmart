@@ -79,8 +79,9 @@ namespace Zhnt
         }
     }
 
-    [Ui("群管理")]
-    public class GrplyBizWork : WebWork
+    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZGRP)]
+    [Ui("团管理")]
+    public class BizGrplyMbrWork : WebWork
     {
         protected override void OnMake()
         {
@@ -91,7 +92,7 @@ namespace Zhnt
         {
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parent = @1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE grpid = @1 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Org>();
 
             wc.GivePage(200, h =>
@@ -107,8 +108,9 @@ namespace Zhnt
         }
     }
 
-    [Ui("群成员")]
-    public class GrplySrcWork : WebWork
+    [UserAuthorize(orgly: 1, typ: Org.TYP_SRCGRP)]
+    [Ui("团管理")]
+    public class SrcGrplyMbrWork : WebWork
     {
         protected override void OnMake()
         {

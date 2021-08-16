@@ -1,5 +1,4 @@
-﻿using System;
-using SkyChain;
+﻿using SkyChain;
 
 namespace Zhnt
 {
@@ -25,31 +24,27 @@ namespace Zhnt
         };
 
 
+        // extensible discriminator
         internal short typ;
 
+        // current workflow status
         internal short status;
 
-        internal short orgid;
+        // cooperative party
+        internal short partyid;
 
-        internal DateTime issued;
+        // bound distribution center
+        internal short ctrid;
 
-        internal DateTime ended;
-
-        internal short span;
-
-        internal string name;
-
+        // added tag
         internal string tag;
 
         public virtual void Read(ISource s, byte proj = 0x0f)
         {
             s.Get(nameof(typ), ref typ);
             s.Get(nameof(status), ref status);
-            s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(ended), ref ended);
-            s.Get(nameof(issued), ref issued);
-            s.Get(nameof(span), ref span);
-            s.Get(nameof(name), ref name);
+            s.Get(nameof(partyid), ref partyid);
+            s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(tag), ref tag);
         }
 
@@ -57,17 +52,9 @@ namespace Zhnt
         {
             s.Put(nameof(typ), typ);
             s.Put(nameof(status), status);
-            s.Put(nameof(orgid), orgid);
-            s.Put(nameof(ended), ended);
-            s.Put(nameof(issued), issued);
-            s.Put(nameof(span), span);
-            s.Put(nameof(name), name);
+            s.Put(nameof(partyid), partyid);
+            s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(tag), tag);
         }
-
-
-        public abstract bool IsShowable { get; }
-
-        public abstract bool IsWorkable { get; }
     }
 }

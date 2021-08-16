@@ -21,11 +21,11 @@ namespace Zhnt
         {
             {TYP_CTR, "分拣中心"},
             {TYP_SRC, "产源"},
-            {TYP_SRCGRP, "产源群主"},
-            {TYP_SRC + TYP_SRCGRP, "产源＋群主"},
+            {TYP_SRCGRP, "产源团"},
+            {TYP_SRC + TYP_SRCGRP, "产源＋团长"},
             {TYP_BIZ, "商户"},
-            {TYP_BIZGRP, "商户群主"},
-            {TYP_BIZ + TYP_BIZGRP, "商户＋群主"},
+            {TYP_BIZGRP, "商户团"},
+            {TYP_BIZ + TYP_BIZGRP, "商户＋团长"},
         };
 
         internal int id;

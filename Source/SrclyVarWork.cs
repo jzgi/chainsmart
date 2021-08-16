@@ -18,7 +18,10 @@ namespace Zhnt
             MakeWork<SrclyUOrdWork>("uord");
 
             // src group
-            MakeWork<GrplySrcWork>("src");
+
+            MakeWork<SrcGrplyMbrWork>("mbr");
+
+            MakeWork<SrcGrplyKpiWork>("kpi");
         }
 
         public async Task @default(WebContext wc)

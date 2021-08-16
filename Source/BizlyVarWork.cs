@@ -2,8 +2,6 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt;
-using Zhnt;
 using static SkyChain.Web.Modal;
 
 namespace Zhnt
@@ -17,12 +15,14 @@ namespace Zhnt
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
             // biz
-            
+
             MakeWork<BizlyDOrdWork>("dord"); // showcase
 
             // biz group
-            
-            MakeWork<GrplyBizWork>("biz"); 
+
+            MakeWork<BizGrplyMbrWork>("mbr");
+
+            MakeWork<BizGrplyKpiWork>("kpi");
         }
 
         public async Task @default(WebContext wc)

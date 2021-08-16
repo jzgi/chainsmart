@@ -33,17 +33,17 @@ namespace Zhnt
             MakeVarWork<BizlyDOrdVarWork>();
         }
 
+        [Ui("购物车"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DOrd.Empty).T(" FROM dords WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(DOrd.Empty).T(" FROM dords WHERE partyid = @1 AND status = 0 ORDER BY id");
             await dc.QueryAsync(p => p.Set(orgid));
 
-            var orgs = Fetch<Map<short, Org>>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "进货单");
+                h.TOOLBAR(caption: "购物车");
 
                 int last = 0;
                 while (dc.Next())
@@ -81,6 +81,39 @@ namespace Zhnt
                 h._UL();
                 h._ARTICLE();
             });
+        }
+
+        [Ui("订单"), Tool(Anchor)]
+        public async Task lst(WebContext wc, int page)
+        {
+        }
+
+        [Ui("✚"), Tool(ButtonShow)]
+        public async Task @new(WebContext wc)
+        {
+            if (wc.IsGet)
+            {
+                var o = new Item();
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("标品属性");
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
+                    h.LI_().TEXT("标品名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
+                    h.LI_().SELECT("方案关联", nameof(o.progg), o.progg, Item.Progg)._LI();
+                    h.LI_().NUMBER("价格", nameof(o.price), o.price, max: 500.00M, min: 0.00M, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                var o = await wc.ReadObjectAsync<Item>(0);
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO items ").colset(Item.Empty, 0)._VALUES_(Item.Empty, 0);
+                await dc.ExecuteAsync(p => o.Write(p, 0));
+                wc.GivePane(200); // close dialog
+            }
         }
     }
 
