@@ -3,8 +3,8 @@ using SkyChain.Web;
 
 namespace Zhnt
 {
-    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZGRP)]
-    [Ui("团绩效")]
+    [UserAuthorize(orgtyp: Org.TYP_BIZGRP, orgly: 1)]
+    [Ui("image","团绩效")]
     public class BizGrplyKpiWork : WebWork
     {
         protected override void OnMake()
@@ -17,7 +17,7 @@ namespace Zhnt
         }
     }
 
-    [UserAuthorize(orgly: 1, typ: Org.TYP_SRCGRP)]
+    [UserAuthorize(orgtyp: Org.TYP_SRCGRP, orgly: 1)]
     [Ui("团绩效")]
     public class SrcGrplyKpiWork : WebWork
     {

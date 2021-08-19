@@ -6,8 +6,8 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZ)]
-    [Ui("账号")]
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZGRP, 1)]
+    [Ui("商户端")]
     public class BizlyVarWork : WebWork, IOrglyVar
     {
         protected override void OnMake()
@@ -27,37 +27,57 @@ namespace Zhnt
 
         public async Task @default(WebContext wc)
         {
-            bool inner = wc.Query[nameof(inner)];
             int id = wc[0];
             var bizs = Fetch<Map<int, Org>>();
             var o = bizs[id];
-            if (!inner)
+            using var dc = NewDbContext();
+
+            wc.GivePage(200, h =>
             {
-                wc.GiveFrame(200, false, 60, title: "商户操作", group: (byte) o.typ);
+                h.TOOLBAR(caption: "账号信息及操作");
+
+                h.FORM_("uk-card uk-card-primary");
+                h.UL_("uk-card-body");
+                h.LI_().FIELD("主体名称", o.Name)._LI();
+                h.LI_().FIELD("地址", "")._LI();
+                h.LI_().FIELD("所属团", "")._LI();
+                h.LI_().FIELD("对应分拣中心", "")._LI();
+                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
+                h._UL();
+                h._FORM();
+
+                h.OPLIST();
+            }, false, 3);
+        }
+
+        [UserAuthorize(orgly: 1)]
+        [Ui("设置"), Tool(ButtonShow)]
+        public async Task setg(WebContext wc)
+        {
+            short orgid = wc[0];
+            var obj = Fetch<Map<short, Org>>()[orgid];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+                var map = dc.Query<int, User>(p => p.Set(orgid));
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("修改基本设置");
+                    h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
+                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
+                    h._FIELDSUL()._FORM();
+                });
             }
             else
             {
+                var o = await wc.ReadObjectAsync(inst: obj); // use existing object
                 using var dc = NewDbContext();
+                // update the db record
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
+                    p => p.Set(o.tip).Set(o.status).Set(orgid));
 
-                wc.GivePage(200, h =>
-                {
-                    h.TOOLBAR(caption: "本方账号信息");
-
-                    h.FORM_("uk-card uk-card-default");
-                    h.HEADER_("uk-card-header").T("基本信息").SPAN_("uk-badge").T("状态：").T(_Art.Statuses[o.status])._SPAN()._HEADER();
-                    h.UL_("uk-card-body");
-                    h.LI_().FIELD("本方名称", o.Name)._LI();
-                    h.LI_().FIELD("标语", o.tip)._LI();
-
-                    h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                    h._UL();
-                    h.FOOTER_("uk-card-footer uk-flex-center").TOOL(nameof(setg), css: "uk-button-secondary")._FOOTER();
-                    h._FORM();
-
-                    h.FORM_("uk-card uk-card-default");
-
-                    h._FORM();
-                }, false, 3);
+                wc.GivePane(200);
             }
         }
 
@@ -87,37 +107,6 @@ namespace Zhnt
                     wc.Give(200); // ok
                 }
                 else wc.Give(500); // internal server error
-            }
-        }
-
-        [UserAuthorize(orgly: 1)]
-        [Ui("设置", group: 1), Tool(ButtonShow)]
-        public async Task setg(WebContext wc)
-        {
-            short orgid = wc[0];
-            var obj = Fetch<Map<short, Org>>()[orgid];
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-                var map = dc.Query<int, User>(p => p.Set(orgid));
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else
-            {
-                var o = await wc.ReadObjectAsync(inst: obj); // use existing object
-                using var dc = NewDbContext();
-                // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(orgid));
-
-                wc.GivePane(200);
             }
         }
     }

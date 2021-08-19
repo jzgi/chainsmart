@@ -2,36 +2,31 @@
   "button": [
     {
       "type": "view",
-      "name": "膳食调养",
-      "url": "https://skyiah.com/diet/"
+      "name": "商户端»",
+      "url": "https://skyiah.com:444/bizly//"
     },
     {
       "type": "view",
-      "name": "健康拼团",
-      "url": "https://skyiah.com/lot/"
+      "name": "产源端»",
+      "url": "https://skyiah.com:444/srcly//"
     },
     {
-      "name": "我的",
+      "name": "平台",
       "sub_button": [
         {
           "type": "view",
-          "name": "服务方操作 🔒",
-          "url": "https://skyiah.com/orgly//"
+          "name": "关于",
+          "url": "https://skyiah.com:444/about"
         },
         {
           "type": "view",
-          "name": "我的调养",
-          "url": "https://skyiah.com/my//order/"
+          "name": "联系方式",
+          "url": "https://skyiah.com:444/contact"
         },
         {
           "type": "view",
-          "name": "我的拼团",
-          "url": "https://skyiah.com/my//lot/"
-        },
-        {
-          "type": "view",
-          "name": "我的账号管理",
-          "url": "https://skyiah.com/my//"
+          "name": "分拣中心操作»",
+          "url": "https://skyiah.com:444/ctrly//"
         }
       ]
     }

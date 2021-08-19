@@ -11,17 +11,21 @@ namespace Zhnt
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public class UserAuthorizeAttribute : AuthorizeAttribute
     {
-        readonly short admly;
+        // org typ requirement (bitwise) 
+        readonly short orgtyp;
 
+        // org role requirement (bitwise)
         readonly short orgly;
 
-        readonly short typ;
+        // platform admin role requirement (bitwise)
+        readonly short admly;
 
-        public UserAuthorizeAttribute(short admly = 0, short orgly = 0, short typ = 0)
+
+        public UserAuthorizeAttribute(short orgtyp = 0, short orgly = 0, short admly = 0)
         {
-            this.admly = admly;
+            this.orgtyp = orgtyp;
             this.orgly = orgly;
-            this.typ = typ;
+            this.admly = admly;
         }
 
         public override bool Do(WebContext wc)
@@ -33,12 +37,7 @@ namespace Zhnt
                 return false;
             }
 
-            if (admly > 0)
-            {
-                return (prin.admly & admly) == admly;
-            }
-
-            if (typ > 0 && orgly > 0)
+            if (orgtyp > 0 && orgly > 0)
             {
                 if ((prin.orgly & orgly) != orgly) return false; // inclusive check
                 int orgid = wc[typeof(IOrglyVar)];
@@ -48,10 +47,15 @@ namespace Zhnt
                     var org = orgs[prin.orgid];
                     if (org != null)
                     {
-                        return (org.typ & typ) > 0; // inclusive
+                        return (org.typ & orgtyp) > 0; // inclusive
                     }
                 }
                 return false;
+            }
+
+            if (admly > 0)
+            {
+                return (prin.admly & admly) == admly;
             }
 
             return true;

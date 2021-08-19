@@ -26,7 +26,7 @@ namespace Zhnt
 
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("运送")]
+    [Ui("订单")]
     public class SrclyUOrdWork : WebWork
     {
         protected override void OnMake()
@@ -36,52 +36,12 @@ namespace Zhnt
 
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT m.id, m.name, m.price, m.unit, d.uid, d.uname, d.utel, d.uim, d.qty, d.pay FROM lots m, lotjns d WHERE m.id = d.lotid AND m.status = ").T(STATUS_ISSUED).T(" AND d.ptid = @1 ORDER BY m.id");
-            await dc.QueryAsync(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM uords WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<UOrd>(p => p.Set(orgid));
 
-            var orgs = Fetch<Map<short, Org>>();
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "拼团递货管理");
-
-                int last = 0;
-                while (dc.Next())
-                {
-                    dc.Let(out int id);
-                    dc.Let(out string name);
-                    dc.Let(out decimal price);
-                    dc.Let(out string unit);
-                    dc.Let(out int uid);
-                    dc.Let(out string uname);
-                    dc.Let(out string utel);
-                    dc.Let(out string uim);
-                    dc.Let(out short qty);
-                    dc.Let(out decimal pay);
-                    if (id != last)
-                    {
-                        h._LI();
-                        if (last != 0)
-                        {
-                            h._UL();
-                            h._ARTICLE();
-                        }
-                        h.ARTICLE_("uk-card uk-card-default");
-                        h.HEADER_("uk-card-header").T(name).SPAN_("uk-badge").CNY(price).T('／').T(unit)._SPAN()._HEADER();
-                        h.UL_("uk-card-body");
-                    }
-                    h.LI_("uk-flex uk-width-1-1");
-                    h.P(uname, "uk-width-1-3");
-                    h.P(qty, "uk-text-right uk-width-1-6");
-                    h.P(pay, "uk-text-right uk-width-1-6");
-                    h._LI();
-
-                    last = id;
-                }
-                h._UL();
-                h._ARTICLE();
-            });
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
     }
 
@@ -157,7 +117,6 @@ namespace Zhnt
                 var today = DateTime.Today;
                 var o = await wc.ReadObjectAsync(inst: new UOrd
                 {
-                    author = prin.name,
                     // @extern = org.refid,
                 });
                 // database op

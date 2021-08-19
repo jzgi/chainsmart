@@ -12,20 +12,20 @@ namespace Zhnt
 
         public const short
             TYP_CTR = 1,
-            TYP_SRC = 2,
-            TYP_SRCGRP = 4,
-            TYP_BIZ = 8,
-            TYP_BIZGRP = 16;
+            TYP_BIZ = 2,
+            TYP_BIZGRP = 4,
+            TYP_SRC = 8,
+            TYP_SRCGRP = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_CTR, "分拣中心"},
-            {TYP_SRC, "产源"},
-            {TYP_SRCGRP, "产源团"},
-            {TYP_SRC + TYP_SRCGRP, "产源＋团长"},
             {TYP_BIZ, "商户"},
             {TYP_BIZGRP, "商户团"},
-            {TYP_BIZ + TYP_BIZGRP, "商户＋团长"},
+            {TYP_BIZ + TYP_BIZGRP, "商户＋商户团"},
+            {TYP_SRC, "产源"},
+            {TYP_SRCGRP, "产源团"},
+            {TYP_SRC + TYP_SRCGRP, "产源＋产源团"},
         };
 
         internal int id;

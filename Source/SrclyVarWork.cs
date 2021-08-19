@@ -27,12 +27,12 @@ namespace Zhnt
         public async Task @default(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
-            short id = wc[0];
-            var orgs = Fetch<Map<short, Org>>();
-            var o = orgs[id];
+            int id = wc[0];
+            var orgs = Fetch<Map<int, Org>>();
+            var org = orgs[id];
             if (!inner)
             {
-                wc.GiveFrame(200, false, 60, title: "供应操作", group: (byte) o.typ);
+                wc.GiveFrame(200, false, 60, title: "产源操作", group: (byte) org.typ);
             }
             else
             {
@@ -40,35 +40,35 @@ namespace Zhnt
 
                 wc.GivePage(200, h =>
                 {
-                    h.TOOLBAR(caption: "本方账号信息");
+                    h.TOOLBAR(caption: "产源账号信息");
 
                     h.FORM_("uk-card uk-card-default");
-                    h.HEADER_("uk-card-header").T("基本信息").SPAN_("uk-badge").T("状态：").T(_Art.Statuses[o.status])._SPAN()._HEADER();
+                    h.HEADER_("uk-card-header").T("基本信息").SPAN_("uk-badge").T("状态：").T(_Art.Statuses[org.status])._SPAN()._HEADER();
                     h.UL_("uk-card-body");
-                    h.LI_().FIELD("本方名称", o.Name)._LI();
-                    h.LI_().FIELD("标语", o.tip)._LI();
-                    h.LI_().FIELD("类型", Org.Typs[o.typ])._LI();
-                    h.LI_().FIELD("地址", o.addr)._LI();
-                    if (o.IsPt)
+                    h.LI_().FIELD("本方名称", org.Name)._LI();
+                    h.LI_().FIELD("标语", org.tip)._LI();
+                    h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                    h.LI_().FIELD("地址", org.addr)._LI();
+                    if (org.IsPt)
                     {
                         // var shop = o.grpid > 0 ? orgs[o.grpid]?.name : null;
                         // h.LI_().FIELD("关联厨房", shop)._LI();
                     }
-                    if (o.IsMerchant)
+                    if (org.IsMerchant)
                     {
                         // h.LI_().FIELD("派递模式", o.refid ? "全网包邮" : "同城服务站")._LI();
                     }
-                    h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
+                    h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                     h._UL();
                     h.FOOTER_("uk-card-footer uk-flex-center").TOOL(nameof(setg), css: "uk-button-secondary")._FOOTER();
                     h._FORM();
 
-                    if (o.IsProvider)
+                    if (org.IsProvider)
                     {
                         string url = ServerEnviron.extcfg[nameof(url)];
                         h.SECTION_("uk-section uk-flex-middle uk-col");
                         h.P("本方主页");
-                        h.QRCODE(url + "/org/" + o.id + "/", css: "uk-width-medium");
+                        h.QRCODE(url + "/org/" + org.id + "/", css: "uk-width-medium");
                         h._SECTION();
                     }
                 }, false, 3);

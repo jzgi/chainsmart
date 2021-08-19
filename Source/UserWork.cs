@@ -177,7 +177,7 @@ namespace Zhnt
         }
     }
 
-    [Ui("权限")]
+    [Ui("users", "操作权限")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnMake()
@@ -193,7 +193,7 @@ namespace Zhnt
             var arr = dc.Query<User>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "本方的人员权限管理");
+                h.TOOLBAR(caption: "分配操作权限");
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.id);

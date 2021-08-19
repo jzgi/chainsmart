@@ -24,8 +24,8 @@ namespace Zhnt
         }
     }
 
-    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZ)]
-    [Ui("进货")]
+    [UserAuthorize(orgtyp: Org.TYP_BIZ, orgly: 1)]
+    [Ui("cart", "进货管理")]
     public class BizlyDOrdWork : WebWork
     {
         protected override void OnMake()
@@ -194,7 +194,6 @@ namespace Zhnt
                 var today = DateTime.Today;
                 var o = await wc.ReadObjectAsync(inst: new UOrd
                 {
-                    author = prin.name,
                 });
                 // database op
                 using var dc = NewDbContext();

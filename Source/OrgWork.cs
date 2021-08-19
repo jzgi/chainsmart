@@ -79,8 +79,8 @@ namespace Zhnt
         }
     }
 
-    [UserAuthorize(orgly: 1, typ: Org.TYP_BIZGRP)]
-    [Ui("团管理")]
+    [UserAuthorize(orgtyp: Org.TYP_BIZGRP, orgly: 1)]
+    [Ui("users", "团成员管理")]
     public class BizGrplyMbrWork : WebWork
     {
         protected override void OnMake()
@@ -108,7 +108,7 @@ namespace Zhnt
         }
     }
 
-    [UserAuthorize(orgly: 1, typ: Org.TYP_SRCGRP)]
+    [UserAuthorize(orgtyp: Org.TYP_SRCGRP, orgly: 1)]
     [Ui("团管理")]
     public class SrcGrplyMbrWork : WebWork
     {

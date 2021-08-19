@@ -99,7 +99,6 @@ namespace Zhnt
                 short typ = f[nameof(typ)];
                 var m = new UOrd
                 {
-                    author = prin.name
                 };
                 m.Read(f);
                 using var dc = NewDbContext();

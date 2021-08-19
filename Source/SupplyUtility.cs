@@ -30,27 +30,8 @@ namespace Zhnt.Supply
         {
             h.SECTION_("uk-flex");
             h.PIC_("uk-width-1-2 uk-margin-auto-vertical");
-            if (off.HasIcon)
-            {
-                h.T(nameof(icon));
-            }
-            else // symbolic icon
-            {
-                // h.T("/lot-").T(off.typ).T(".png");
-            }
-            h._PIC();
-            h.PIC_("uk-width-1-2 uk-margin-auto-vertical");
-            if (off.HasImg)
-            {
-                h.T(nameof(img));
-            }
-            else // symbolic icon
-            {
-                // h.T("/lot-").T(off.typ).T(".png");
-            }
             h._PIC();
             h._SECTION();
-            h.ALERT_("uk-margin-remove-top").T(off.tip)._ALERT();
         }
 
         public static string FormatLotTime(DateTime t)
