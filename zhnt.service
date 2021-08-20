@@ -5,7 +5,7 @@ Description=Skyiah Health Platform
 EnvironmentFile=/etc/environment
 Type=forking
 WorkingDirectory=/root
-ExecStart=/usr/bin/dotnet /root/publish/Skyiah.dll deploy
+ExecStart=/usr/bin/dotnet /root/publish/Zhnt.dll deploy
 Restart=always
 
 [Install]

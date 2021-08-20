@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 namespace Zhnt
 {
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("销售品")]
+    [Ui("可销售产品")]
     public class AdmlyDProdWork : WebWork
     {
         protected override void OnMake()
@@ -16,11 +16,14 @@ namespace Zhnt
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DProd.Empty).T(" FROM items ORDER BY typ, status DESC, id LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(DProd.Empty).T(" FROM dprods ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<DProd>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+
+                if (arr == null) return;
+
                 h.TABLE_();
                 short last = 0;
                 foreach (var o in arr)
@@ -52,7 +55,7 @@ namespace Zhnt
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
                     h.LI_().TEXT("标品名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
-                    h.LI_().SELECT("方案关联", nameof(o.progg), o.progg, Item.Progg)._LI();
+                    // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
                     h.LI_().NUMBER("价格", nameof(o.price), o.price, max: 500.00M, min: 0.00M, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
                     h._FIELDSUL()._FORM();

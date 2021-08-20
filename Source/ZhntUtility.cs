@@ -40,38 +40,6 @@ namespace Zhnt
         }
 
 
-        public static void OPLIST(this HtmlContent h, byte group = 0)
-        {
-            var wc = h.Web;
-            var wrk = wc.Work;
-            var subwrks = wrk.Works;
-            // render tabs
-            h.UL_("uk-card uk-card-body uk-list uk-list-divider");
-            for (int i = 0; i < subwrks?.Count; i++)
-            {
-                var sub = subwrks.ValueAt(i);
-                if (sub.Group != 0 && (sub.Group & group) != sub.Group)
-                {
-                    continue;
-                }
-
-                if (sub.Ui == null || !sub.DoAuthorize(wc))
-                {
-                    continue;
-                }
-
-                h.LI_();
-                h.T("<a href=\"#\" class=\"uk-flex uk-button-link uk-width-1-1\">");
-                h.T("<span class=\"uk-width-micro\" uk-icon=\"").T(sub.Label).T("\"></span>").SP();
-                h.Add(sub.Tip);
-                h.Add("<span class=\"uk-margin-auto-left\" uk-icon=\"chevron-right\"></span></a>");
-                h._LI();
-            }
-
-            h._UL();
-        }
-
-
         public static HtmlContent A_POI(this HtmlContent h, double x, double y, string title, string addr, string tel = null)
         {
             h.T("<a class=\"uk-icon-link\" uk-icon=\"location\" href=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:").T(y).T(',').T(x).T(";title:").T(title).T(";addr:").T(addr);

@@ -56,7 +56,7 @@ namespace Zhnt
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
                     h.LI_().TEXT("品名", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
-                    h.LI_().SELECT("方案关联", nameof(o.progg), o.progg, Item.Progg)._LI();
+                    // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
                     h.LI_().NUMBER("价格", nameof(o.price), o.price, max: 500.00M, min: 0.00M, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
                     h._FIELDSUL()._FORM();

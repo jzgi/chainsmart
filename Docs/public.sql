@@ -28,7 +28,7 @@ create table users
 	created timestamp(0) default ('now'::text)::timestamp without time zone not null,
 	credential varchar(16),
 	admly smallint default 0 not null,
-	orgid smallint,
+	orgid integer,
 	orgly smallint default 0 not null,
 	im varchar(28) not null,
 	refid integer
@@ -45,23 +45,12 @@ create index users_admly_idx
 create unique index users_im_idx
 	on users (im);
 
-create index users_orgid_idx
-	on users (orgid)
-	where (orgid > 0);
-
 create unique index users_tel_idx
 	on users (tel);
 
-create table itemagts
-(
-	itemid integer,
-	bizid integer
-);
-
-alter table itemagts owner to postgres;
-
 create table cats
 (
+	id smallserial not null
 )
 inherits (_arts);
 
@@ -69,7 +58,8 @@ alter table cats owner to postgres;
 
 create table regs
 (
-	id smallserial not null
+	id smallserial not null,
+	sort smallint
 )
 inherits (_arts);
 
@@ -98,7 +88,7 @@ alter table orgs owner to postgres;
 create table items
 (
 	id serial not null,
-	cat varchar(10),
+	catid smallint,
 	unit varchar(4),
 	unitip varchar(10),
 	upc varchar(15),
@@ -121,7 +111,23 @@ create table _docs
 
 alter table _docs owner to postgres;
 
-create table dsitems
+create table dprods
+(
+	itemid smallint not null,
+	price money,
+	discount money,
+	agts smallint[],
+	min smallint,
+	max smallint,
+	least smallint,
+	step smallint,
+	idx smallint
+)
+inherits (_arts);
+
+alter table dprods owner to postgres;
+
+create table uprods
 (
 	itemid smallint not null,
 	price money,
@@ -129,19 +135,9 @@ create table dsitems
 )
 inherits (_arts);
 
-alter table dsitems owner to postgres;
+alter table uprods owner to postgres;
 
-create table usitems
-(
-	itemid smallint not null,
-	price money,
-	discount money
-)
-inherits (_arts);
-
-alter table usitems owner to postgres;
-
-create table dsords
+create table dords
 (
 	id serial not null,
 	itemid smallint not null,
@@ -151,9 +147,9 @@ create table dsords
 )
 inherits (_docs);
 
-alter table dsords owner to postgres;
+alter table dords owner to postgres;
 
-create table usords
+create table uords
 (
 	id serial not null,
 	itemid smallint not null,
@@ -163,5 +159,33 @@ create table usords
 )
 inherits (_docs);
 
-alter table usords owner to postgres;
+alter table uords owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, id, grpid, refid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.id,
+       o.grpid,
+       o.refid,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.mgrid,
+       m.name                AS mgrname,
+       m.tel                 AS mgrtel,
+       m.im                  AS mgrim,
+       o.icon IS NOT NULL    AS icon,
+       o.license IS NOT NULL AS license,
+       o.perm IS NOT NULL    AS perm
+FROM orgs o
+         LEFT JOIN users m
+                   ON o.mgrid =
+                      m.id;
+
+alter table orgs_vw owner to postgres;
 

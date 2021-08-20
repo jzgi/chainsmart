@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
-using SkyChain;
 using SkyChain.Web;
-using Zhnt;
 using static SkyChain.Web.Modal;
 
 namespace Zhnt
@@ -15,7 +13,7 @@ namespace Zhnt
     }
 
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("产品")]
+    [Ui("产品资料管理")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()
@@ -31,6 +29,9 @@ namespace Zhnt
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+
+                if (arr == null) return;
+
                 h.TABLE_();
                 short last = 0;
                 foreach (var o in arr)
@@ -42,7 +43,6 @@ namespace Zhnt
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name);
-                    if (o.progg > 0) h.SP().SUB(Item.Progg[o.progg]);
                     h._TD();
                     h.TD_().CNY(o.price)._TD();
                     h.TD(Item.Statuses[o.status]);
@@ -68,7 +68,7 @@ namespace Zhnt
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
                     h.LI_().TEXT("标品名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
-                    h.LI_().SELECT("方案关联", nameof(o.progg), o.progg, Item.Progg)._LI();
+                    // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
                     h.LI_().NUMBER("价格", nameof(o.price), o.price, max: 500.00M, min: 0.00M, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
                     h._FIELDSUL()._FORM();

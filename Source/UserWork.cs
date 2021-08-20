@@ -105,7 +105,7 @@ namespace Zhnt
         }
     }
 
-    [Ui("权限")]
+    [Ui("用户操作权限", "users")]
     public class AdmlyAccessWork : WebWork
     {
         protected override void OnMake()

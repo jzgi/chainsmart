@@ -45,10 +45,15 @@ namespace Zhnt
 
         internal short id;
 
-        internal short progg; // programing
+        internal string unit; // programing
+
+        internal string unitip; // programing
+
+        internal short upc;
 
         internal decimal price;
 
+        internal decimal discount;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -58,8 +63,11 @@ namespace Zhnt
             }
             base.Read(s, proj);
 
-            s.Get(nameof(progg), ref progg);
+            s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(upc), ref upc);
             s.Get(nameof(price), ref price);
+            s.Get(nameof(discount), ref discount);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -70,13 +78,16 @@ namespace Zhnt
             }
             base.Write(s, proj);
 
-            s.Put(nameof(progg), progg);
+            s.Put(nameof(unit), unit);
+            s.Put(nameof(unitip), unitip);
+            s.Put(nameof(upc), upc);
             s.Put(nameof(price), price);
+            s.Put(nameof(discount), discount);
         }
 
         public short Key => id;
 
-        public bool IsFor(short prog) => progg == 0 || (progg & prog) == prog;
+        public bool IsFor(short prog) => false;
 
         public override string ToString() => name;
     }
