@@ -25,6 +25,8 @@ namespace Zhnt
             {
                 h.TOOLBAR(caption: "服务方");
 
+                if (arr == null) return;
+
                 h.TABLE_();
                 short last = 0;
                 foreach (var o in arr)

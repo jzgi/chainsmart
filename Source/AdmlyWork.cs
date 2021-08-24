@@ -10,14 +10,6 @@ namespace Zhnt
     {
         protected override void OnMake()
         {
-            // management
-
-            MakeWork<AdmlyAccessWork>("acc");
-
-            MakeWork<AdmlyRegWork>("reg");
-
-            MakeWork<AdmlyItemWork>("item");
-
             // sales & marketing
 
             MakeWork<AdmlyOrgWork>("biz",
@@ -26,9 +18,9 @@ namespace Zhnt
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
             );
 
-            MakeWork<AdmlyDProdWork>("dprod");
+            MakeWork<AdmlyOfferWork>("offer");
 
-            MakeWork<AdmlyDOrdWork>("dord");
+            MakeWork<AdmlySellWork>("sell");
 
             // purchase
 
@@ -38,15 +30,23 @@ namespace Zhnt
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
             );
 
-            MakeWork<AdmlyUProdWork>("uprod");
+            MakeWork<AdmlyNeedWork>("need");
 
-            MakeWork<AdmlyUOrdWork>("uord");
-
-            MakeWork<AdmlyPeerWork>("peer");
+            MakeWork<AdmlyBuyWork>("buy");
 
             // accounting
 
             // MakeWork<AdmlyClearWork>("cash");
+
+            // management
+
+            MakeWork<AdmlyRegWork>("reg");
+
+            MakeWork<AdmlyItemWork>("item");
+
+            MakeWork<AdmlyAccessWork>("acc");
+
+            MakeWork<AdmlyPeerWork>("peer");
         }
 
         public void @default(WebContext wc)

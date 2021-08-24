@@ -4,7 +4,7 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using static Zhnt._Doc;
+using static Zhnt._Ord;
 using static Zhnt.WeChatUtility;
 
 namespace Zhnt
@@ -30,6 +30,8 @@ namespace Zhnt
             MakeWork<BizlyWork>("bizly"); // for biz
 
             MakeWork<SrclyWork>("srcly"); // for source
+            
+            MakeWork<MyWork>("my"); 
         }
 
         public void @default(WebContext wc)

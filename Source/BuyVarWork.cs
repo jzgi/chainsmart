@@ -8,15 +8,15 @@ using static SkyChain.Web.Modal;
 namespace Zhnt
 {
 
-    public class AdmlyUOrdVarWork : WebWork
+    public class AdmlyBuyVarWork : WebWork
     {
     }
 
-    public class CtrlyUOrdVarWork : WebWork
+    public class CtrlyBuyVarWork : WebWork
     {
     }
 
-    public class SrclyUOrdVarWork : WebWork
+    public class SrclyBuyVarWork : WebWork
     {
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
@@ -28,14 +28,14 @@ namespace Zhnt
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new UOrd
+                var m = new Buy
                 {
                 };
                 m.Read(f);

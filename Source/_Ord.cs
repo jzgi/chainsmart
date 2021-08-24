@@ -5,7 +5,7 @@ namespace Zhnt
     /// <summary>
     /// A business document with workflow process capability.
     /// </summary>
-    public abstract class _Doc : IData
+    public abstract class _Ord : IData
     {
         public const short
             STATUS_DRAFT = 0,
@@ -36,8 +36,8 @@ namespace Zhnt
         // bound distribution center
         internal short ctrid;
 
-        // added tag
-        internal string tag;
+        // order number
+        internal int ordno;
 
         public virtual void Read(ISource s, byte proj = 0x0f)
         {
@@ -45,7 +45,7 @@ namespace Zhnt
             s.Get(nameof(status), ref status);
             s.Get(nameof(partyid), ref partyid);
             s.Get(nameof(ctrid), ref ctrid);
-            s.Get(nameof(tag), ref tag);
+            s.Get(nameof(ordno), ref ordno);
         }
 
         public virtual void Write(ISink s, byte proj = 0x0f)
@@ -54,7 +54,7 @@ namespace Zhnt
             s.Put(nameof(status), status);
             s.Put(nameof(partyid), partyid);
             s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(tag), tag);
+            s.Put(nameof(ordno), ordno);
         }
     }
 }

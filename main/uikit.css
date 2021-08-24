@@ -1817,9 +1817,6 @@ button.uk-button-secondary {
     color: #333;
     font-size: 0.875rem;
     font-weight: normal;
-    border-bottom: 1px dashed #777;
-    padding-top: 2px;
-    padding-bottom: 1px;
 }
 
 .uk-button-link:hover,
@@ -2328,7 +2325,6 @@ form > li,
     padding: 0;
     background-color: #fff;
     border-radius: 2px;
-    border: 1px solid #ddd;
 }
 
 .uk-card .uk-card-title {
@@ -2347,8 +2343,6 @@ form > li,
     background-color: #fff;
     margin: 6px 0;
     padding: 0;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
 }
 
 .uk-card-primary .uk-card-header {

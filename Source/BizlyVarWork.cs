@@ -16,7 +16,7 @@ namespace Zhnt
 
             // biz
 
-            MakeWork<BizlyDOrdWork>("dord"); // showcase
+            MakeWork<BizlySellWork>("dord"); // showcase
 
             // biz group
 

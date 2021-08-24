@@ -24,7 +24,7 @@ namespace Zhnt
             CacheUp();
 
             // prepare chain
-            // await StartChainAsync();
+            await StartChainAsync();
 
             // start the concluder thead
             // cycler.Start();
@@ -76,7 +76,7 @@ namespace Zhnt
                 {
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys >= min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Ord.STATUS_DRAFT).T(" AND ended < @1 AND qtys >= min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {
@@ -101,7 +101,7 @@ namespace Zhnt
                     lst.Clear();
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys < min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Ord.STATUS_DRAFT).T(" AND ended < @1 AND qtys < min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {

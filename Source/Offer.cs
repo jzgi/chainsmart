@@ -2,9 +2,9 @@
 
 namespace Zhnt
 {
-    public class DProd : _Art
+    public class Offer : _Art
     {
-        public static readonly DProd Empty = new DProd();
+        public static readonly Offer Empty = new Offer();
 
         short itemid;
 

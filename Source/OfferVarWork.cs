@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    public class AdmlyUProdVarWork : ItemVarWork
+    public class AdmlyOfferVarWork : ItemVarWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)

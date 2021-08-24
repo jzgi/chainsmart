@@ -1,29 +1,28 @@
 using System.Threading.Tasks;
+using SkyChain;
 using SkyChain.Web;
+using Zhnt;
 using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("可销售产品")]
-    public class AdmlyDProdWork : WebWork
+    [Ui("可采购产品")]
+    public class AdmlyNeedWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyDProdVarWork>();
+            MakeVarWork<AdmlyNeedVarWork>();
         }
 
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DProd.Empty).T(" FROM dprods ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<DProd>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Need.Empty).T(" FROM items ORDER BY typ, status DESC, id LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Need>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
-                if (arr == null) return;
-
                 h.TABLE_();
                 short last = 0;
                 foreach (var o in arr)
@@ -33,8 +32,7 @@ namespace Zhnt
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Item.Statuses[o.status]);
-                    h.TD_("uk-visible@l").T(o.tip)._TD();
+
                     h._TR();
                     last = o.typ;
                 }

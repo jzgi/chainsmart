@@ -14,9 +14,9 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            MakeWork<CtrlyDsOrdWork>("do"); // downstream order
+            MakeWork<CtrlySellWork>("do"); // downstream order
 
-            MakeWork<CtrlyUOrdWork>("uo"); // upstream order
+            MakeWork<CtrlyBuyWork>("uo"); // upstream order
         }
 
         public async Task @default(WebContext wc)

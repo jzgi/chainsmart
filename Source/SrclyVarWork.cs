@@ -15,7 +15,7 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc");
 
-            MakeWork<SrclyUOrdWork>("uord");
+            MakeWork<SrclyBuyWork>("uord");
 
             // src group
 

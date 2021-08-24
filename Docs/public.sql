@@ -100,18 +100,18 @@ inherits (_arts);
 
 alter table items owner to postgres;
 
-create table _docs
+create table _ords
 (
 	typ smallint not null,
 	status smallint default 0 not null,
 	partyid smallint not null,
-	tag varchar(8),
+	ordno integer,
 	ctrid integer
 );
 
-alter table _docs owner to postgres;
+alter table _ords owner to postgres;
 
-create table dprods
+create table offers
 (
 	itemid smallint not null,
 	price money,
@@ -125,9 +125,9 @@ create table dprods
 )
 inherits (_arts);
 
-alter table dprods owner to postgres;
+alter table offers owner to postgres;
 
-create table uprods
+create table needs
 (
 	itemid smallint not null,
 	price money,
@@ -135,31 +135,31 @@ create table uprods
 )
 inherits (_arts);
 
-alter table uprods owner to postgres;
+alter table needs owner to postgres;
 
-create table dords
+create table sells
 (
 	id serial not null,
 	itemid smallint not null,
 	price money,
 	discount money,
-	payno integer
+	qty integer
 )
-inherits (_docs);
+inherits (_ords);
 
-alter table dords owner to postgres;
+alter table sells owner to postgres;
 
-create table uords
+create table buys
 (
 	id serial not null,
 	itemid smallint not null,
 	price money,
 	discount money,
-	payno integer
+	qty integer
 )
-inherits (_docs);
+inherits (_ords);
 
-alter table uords owner to postgres;
+alter table buys owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, id, grpid, refid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
 SELECT o.typ,

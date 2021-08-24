@@ -3,12 +3,12 @@
     {
       "type": "view",
       "name": "商户端»",
-      "url": "https://skyiah.com:444/bizly//"
+      "url": "https://jx.e-zhnt.com/bizly//"
     },
     {
       "type": "view",
       "name": "产源端»",
-      "url": "https://skyiah.com:444/srcly//"
+      "url": "https://jx.e-zhnt.com/srcly//"
     },
     {
       "name": "平台",
@@ -16,17 +16,22 @@
         {
           "type": "view",
           "name": "关于",
-          "url": "https://skyiah.com:444/about"
+          "url": "https://jx.e-zhnt.com/about"
         },
         {
           "type": "view",
           "name": "联系方式",
-          "url": "https://skyiah.com:444/contact"
+          "url": "https://jx.e-zhnt.com/contact"
         },
         {
           "type": "view",
-          "name": "分拣中心操作»",
-          "url": "https://skyiah.com:444/ctrly//"
+          "name": "分拣中心端»",
+          "url": "https://jx.e-zhnt.com/ctrly//"
+        },
+        {
+          "type": "view",
+          "name": "我的账号»",
+          "url": "https://jx.e-zhnt.com/my//"
         }
       ]
     }

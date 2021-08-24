@@ -1,10 +1,11 @@
+using System;
 using SkyChain;
 
 namespace Zhnt
 {
-    public class UOrd : IData, IKeyable<int>
+    public class Sell : _Ord, IKeyable<int>
     {
-        public static readonly UOrd Empty = new UOrd();
+        public static readonly Sell Empty = new Sell();
 
         public const byte ID = 1, LATER = 2;
 
@@ -22,36 +23,39 @@ namespace Zhnt
 
 
         internal int id;
+        internal short itemid;
         internal decimal price;
+        internal decimal discount;
+        internal int qty;
 
-        public void Read(ISource s, byte proj = 15)
+        public override void Read(ISource s, byte proj = 15)
         {
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
 
+            s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
-            if ((proj & LATER) == LATER)
-            {
-            }
+            s.Get(nameof(discount), ref discount);
+            s.Get(nameof(qty), ref qty);
         }
 
-        public void Write(ISink s, byte proj = 15)
+        public override void Write(ISink s, byte proj = 15)
         {
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
 
+            s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);
-
-
-            if ((proj & LATER) == LATER)
-            {
-            }
+            s.Put(nameof(discount), discount);
+            s.Put(nameof(qty), qty);
         }
 
         public int Key => id;
+
+        public bool IsOver(DateTime now) => false;
     }
 }

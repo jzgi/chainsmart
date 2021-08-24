@@ -2,9 +2,9 @@
 
 namespace Zhnt
 {
-    public class UProd : _Art
+    public class Need : _Art
     {
-        public static readonly UProd Empty = new UProd();
+        public static readonly Need Empty = new Need();
 
         short itemid;
 

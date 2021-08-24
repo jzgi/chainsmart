@@ -7,7 +7,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt
 {
-    public class AdmlyDOrdVarWork : WebWork
+    public class AdmlySellVarWork : WebWork
     {
         [Ui(group: 1), Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -19,8 +19,8 @@ namespace Zhnt
             {
                 using var dc = NewDbContext();
 
-                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -41,7 +41,7 @@ namespace Zhnt
     }
 
 
-    public class BizlyDOrdVarWork : WebWork
+    public class BizlySellVarWork : WebWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -53,8 +53,8 @@ namespace Zhnt
                 var orgs = Fetch<Map<short, Org>>();
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -90,14 +90,14 @@ namespace Zhnt
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(UOrd.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<UOrd>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new UOrd
+                var m = new Buy
                 {
                 };
                 m.Read(f);
@@ -187,7 +187,7 @@ namespace Zhnt
         }
     }
 
-    public class CtrlyDOrdVarWork : WebWork
+    public class CtrlySellVarWork : WebWork
     {
     }
 }
