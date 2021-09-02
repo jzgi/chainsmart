@@ -9,7 +9,7 @@ using static SkyChain.CryptoUtility;
 using static SkyChain.ServerEnviron;
 using WebUtility = System.Net.WebUtility;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.

@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("平台管理")]
@@ -18,9 +18,9 @@ namespace Zhnt
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
             );
 
-            MakeWork<AdmlyOfferWork>("offer");
+            MakeWork<AdmlyDownWork>("down");
 
-            MakeWork<AdmlySellWork>("sell");
+            MakeWork<AdmlyDownBuyWork>("downbuy");
 
             // purchase
 
@@ -30,13 +30,13 @@ namespace Zhnt
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
             );
 
-            MakeWork<AdmlyNeedWork>("need");
+            MakeWork<AdmlyUpWork>("up");
 
-            MakeWork<AdmlyBuyWork>("buy");
+            MakeWork<AdmlyUpBuyWork>("upbuy");
 
             // accounting
 
-            // MakeWork<AdmlyClearWork>("cash");
+            MakeWork<AdmlyClearWork>("clear");
 
             // management
 
@@ -44,12 +44,12 @@ namespace Zhnt
 
             MakeWork<AdmlyItemWork>("item");
 
-            MakeWork<AdmlyAccessWork>("acc");
+            MakeWork<AdmlyAccessWork>("access");
 
             MakeWork<AdmlyPeerWork>("peer");
         }
 
-        public void @default(WebContext wc)
+        public override void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
             var o = ChainEnviron.Info;

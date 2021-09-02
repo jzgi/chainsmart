@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
     /// A publicly used article record that has lifetime statuses
@@ -20,7 +20,7 @@ namespace Zhnt
             {STATUS_WORKABLE, "启用"}
         };
 
-        public const byte ID = 1, LATER = 2;
+        public const byte ID = 1, LATER = 2, PRIVACY = 4;
 
         // the specialized extensible discriminator
         internal short typ;

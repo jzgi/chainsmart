@@ -2,9 +2,9 @@
 
 namespace Zhnt.Supply
 {
-    public class Reg : _Art, IKeyable<short>
+    public class Cat : _Art, IKeyable<short>
     {
-        public static readonly Reg Empty = new Reg();
+        public static readonly Cat Empty = new Cat();
 
         public const short
             TYP_METROPOLIS = 1,
@@ -13,7 +13,7 @@ namespace Zhnt.Supply
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_METROPOLIS, "省会"},
-            {TYP_CITY, "地市"},
+            {TYP_CITY, "城市"},
         };
 
         internal short id;

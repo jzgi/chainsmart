@@ -5,19 +5,81 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-
-    public class AdmlyBuyVarWork : WebWork
+    public class AdmlyDownBuyVarWork : WebWork
     {
+        [Ui(group: 1), Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
+        {
+            int lotid = wc[0];
+            var prin = (User) wc.Principal;
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+
+                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch
+                    {
+                        dc.Rollback();
+                    }
+                }
+                wc.GivePane(200);
+            }
+        }
     }
 
-    public class CtrlyBuyVarWork : WebWork
-    {
-    }
 
-    public class SrclyBuyVarWork : WebWork
+    public class BizlyDownBuyVarWork : WebWork
     {
+        [Ui, Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
+        {
+            int lotid = wc[0];
+            short orgid = wc[-2];
+            if (wc.IsGet)
+            {
+                var orgs = Fetch<Map<short, Org>>();
+
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                int[] key = f[nameof(key)];
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        ERR(e.Message);
+                        dc.Rollback();
+                    }
+                }
+                else
+                {
+                }
+
+                wc.GiveRedirect(nameof(act));
+            }
+        }
+
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
@@ -28,14 +90,14 @@ namespace Zhnt
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Buy>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Buy
+                var m = new DownBuy
                 {
                 };
                 m.Read(f);
@@ -123,5 +185,9 @@ namespace Zhnt
                 wc.GivePane(200);
             }
         }
+    }
+
+    public class CtrlyDownLnVarWork : WebWork
+    {
     }
 }

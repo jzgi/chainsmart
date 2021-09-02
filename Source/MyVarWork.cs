@@ -4,7 +4,7 @@ using SkyChain.Web;
 using static System.String;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize]
     [Ui("账号信息")]
@@ -71,7 +71,7 @@ namespace Zhnt
                 string credential =
                     IsNullOrEmpty(password) ? null :
                     password == PASSMASK ? prin.credential :
-                    ZhntUtility.ComputeCredential(tel, password);
+                    SupplyUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);

@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Db.DbEnviron;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
     /// To implement principal authorization of access to the target resources.

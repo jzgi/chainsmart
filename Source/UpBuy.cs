@@ -1,11 +1,13 @@
-using System;
 using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-    public class Sell : _Ord, IKeyable<int>
+    /// 
+    /// A upstream line of trade.
+    /// 
+    public class UpBuy : _Doc, IKeyable<int>
     {
-        public static readonly Sell Empty = new Sell();
+        public static readonly UpBuy Empty = new UpBuy();
 
         public const byte ID = 1, LATER = 2;
 
@@ -55,7 +57,5 @@ namespace Zhnt
         }
 
         public int Key => id;
-
-        public bool IsOver(DateTime now) => false;
     }
 }

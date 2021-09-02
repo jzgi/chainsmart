@@ -1,10 +1,13 @@
 ﻿using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-    public class Need : _Art
+    /// 
+    /// An upstream supply of a particular item..
+    /// 
+    public class Up : _Art
     {
-        public static readonly Need Empty = new Need();
+        public static readonly Up Empty = new Up();
 
         short itemid;
 

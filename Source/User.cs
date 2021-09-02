@@ -1,16 +1,11 @@
-﻿using System;
-using SkyChain;
+﻿using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-    public class User : IData, IKeyable<int>
+    public class User : _Art, IKeyable<int>
     {
         public static readonly User Empty = new User();
 
-        public const byte
-            ID = 1,
-            PRIVACY = 2,
-            LATER = 4;
 
         public const byte TYP_CONSULTANT = 1, TYP_COOK = 2;
 
@@ -49,70 +44,55 @@ namespace Zhnt
             {ORGLY_MGR, "管理员"},
         };
 
-        public const short
-            STATUS_DISABLED = 0,
-            STATUS_NORMAL = 1;
-
 
         internal int id;
-        internal short typ;
-        internal short status;
-        internal string name;
         internal string tel;
         internal string im;
-        internal DateTime created;
         internal string credential;
         internal short admly;
         internal int orgid;
         internal short orgly;
-        internal int refid;
 
-        public void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, byte proj = 0x0f)
         {
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
+            base.Read(s, proj);
+
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(im), ref im);
-            s.Get(nameof(created), ref created);
+
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(refid), ref refid);
             }
         }
 
-        public void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, byte proj = 0x0f)
         {
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
+            base.Write(s, proj);
+
             s.Put(nameof(tel), tel);
             s.Put(nameof(im), im);
-            s.Put(nameof(created), created);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
-                s.Put(nameof(refid), refid);
             }
         }
 
         public int Key => id;
-
 
         public bool IsPro => typ >= 1;
 

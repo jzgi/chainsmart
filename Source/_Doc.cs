@@ -1,11 +1,12 @@
-﻿using SkyChain;
+﻿using System;
+using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
-    /// A business document with workflow process capability.
+    /// A business document used in workflow process.
     /// </summary>
-    public abstract class _Ord : IData
+    public abstract class _Doc : IData
     {
         public const short
             STATUS_DRAFT = 0,
@@ -33,19 +34,25 @@ namespace Zhnt
         // cooperative party
         internal short partyid;
 
+        // doc number
+        internal int no;
+
         // bound distribution center
         internal short ctrid;
 
-        // order number
-        internal int ordno;
+        internal DateTime created;
+
+        internal string creator;
 
         public virtual void Read(ISource s, byte proj = 0x0f)
         {
             s.Get(nameof(typ), ref typ);
             s.Get(nameof(status), ref status);
             s.Get(nameof(partyid), ref partyid);
+            s.Get(nameof(no), ref no);
             s.Get(nameof(ctrid), ref ctrid);
-            s.Get(nameof(ordno), ref ordno);
+            s.Get(nameof(created), ref created);
+            s.Get(nameof(creator), ref creator);
         }
 
         public virtual void Write(ISink s, byte proj = 0x0f)
@@ -54,7 +61,9 @@ namespace Zhnt
             s.Put(nameof(status), status);
             s.Put(nameof(partyid), partyid);
             s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(ordno), ordno);
+            s.Put(nameof(no), no);
+            s.Put(nameof(created), created);
+            s.Put(nameof(creator), creator);
         }
     }
 }

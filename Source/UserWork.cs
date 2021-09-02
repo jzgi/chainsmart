@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt;
 using static SkyChain.Web.Modal;
-using static Zhnt.User;
+using static Zhnt.Supply.User;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     public class PubUserWork : WebWork
     {
@@ -38,7 +37,7 @@ namespace Zhnt
         {
             var orgs = Fetch<Map<short, Org>>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
             var arr = dc.Query<User>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -48,7 +47,7 @@ namespace Zhnt
                     h.TDCHECK(o.id);
                     h.TD(o.name);
                     h.TD(o.tel);
-                    h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
+                    h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
                     h.TD_("uk-width-medium uk-visible@s");
                     if (o.orgid > 0)
                     {
@@ -80,7 +79,7 @@ namespace Zhnt
                 var orgs = Fetch<Map<short, Org>>();
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
                 var arr = dc.Query<User>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
@@ -90,7 +89,7 @@ namespace Zhnt
                         h.TDCHECK(o.id);
                         h.TD(o.name);
                         h.TD(o.tel);
-                        h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
+                        h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
                         h.TD_("uk-width-medium uk-visible@s");
                         if (o.orgid > 0)
                         {
@@ -105,7 +104,7 @@ namespace Zhnt
         }
     }
 
-    [Ui("用户操作权限", "users")]
+    [Ui("人员权限管理", "users")]
     public class AdmlyAccessWork : WebWork
     {
         protected override void OnMake()
@@ -117,7 +116,7 @@ namespace Zhnt
         {
             short commid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE admly > 0");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE admly > 0");
             var arr = dc.Query<User>(p => p.Set(commid));
             wc.GivePage(200, h =>
             {
@@ -150,7 +149,7 @@ namespace Zhnt
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
@@ -189,7 +188,7 @@ namespace Zhnt
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
@@ -198,7 +197,7 @@ namespace Zhnt
                     {
                         h.TDCHECK(o.id);
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
-                        h.TD(User.Ctrly[o.orgly]);
+                        h.TD(Ctrly[o.orgly]);
                         h.TDFORM(() => h.VARTOOLS(o.Key));
                     }
                 );
@@ -206,7 +205,7 @@ namespace Zhnt
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", "添加人员权限"), Tool(Modal.ButtonOpen)]
+        [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -221,14 +220,14 @@ namespace Zhnt
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(orgly), orgly, User.Ctrly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("权限", nameof(orgly), orgly, Ctrly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
@@ -262,7 +261,7 @@ namespace Zhnt
         {
             var orgs = Fetch<Map<short, Org>>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
             var arr = dc.Query<User>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -272,7 +271,7 @@ namespace Zhnt
                     h.TDCHECK(o.id);
                     h.TD(o.name);
                     h.TD(o.tel);
-                    h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
+                    h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
                     h.TD_("uk-width-medium uk-visible@s");
                     if (o.orgid > 0)
                     {
@@ -304,7 +303,7 @@ namespace Zhnt
                 var orgs = Fetch<Map<short, Org>>();
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
                 var arr = dc.Query<User>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
@@ -314,7 +313,7 @@ namespace Zhnt
                         h.TDCHECK(o.id);
                         h.TD(o.name);
                         h.TD(o.tel);
-                        h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
+                        h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
                         h.TD_("uk-width-medium uk-visible@s");
                         if (o.orgid > 0)
                         {

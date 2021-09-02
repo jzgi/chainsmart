@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     public class AdmlyOrgWork : WebWork
     {

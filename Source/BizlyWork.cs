@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     public class BizlyWork : WebWork, IOrglyVar
     {

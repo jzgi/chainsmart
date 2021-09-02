@@ -1,8 +1,8 @@
 ﻿using SkyChain;
 
-namespace SkyHeal.Source
+namespace Zhnt.Supply
 {
-    public class Kpi : IData
+    public class Clear : IData
     {
         public void Read(ISource s, byte proj = 15)
         {

@@ -4,7 +4,7 @@ using SkyChain.Web;
 using Zhnt;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     public class AdmlyUserVarWork : WebWork
     {

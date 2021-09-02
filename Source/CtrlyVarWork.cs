@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize(orgly: 1)]
     [Ui("账号")]
@@ -14,7 +14,7 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            MakeWork<CtrlySellWork>("do"); // downstream order
+            MakeWork<CtrlyDownLnWork>("do"); // downstream order
 
             MakeWork<CtrlyBuyWork>("uo"); // upstream order
         }

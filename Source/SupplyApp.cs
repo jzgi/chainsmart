@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-    public class ZhntApp : ServerEnviron
+    public class SupplyApp : ServerEnviron
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -30,7 +30,7 @@ namespace Zhnt
             // cycler.Start();
 
             // prepare web
-            MakeWebService<ZhntService>("main");
+            MakeWebService<SupplyService>("main");
             await StartWebAsync();
         }
 
@@ -76,7 +76,7 @@ namespace Zhnt
                 {
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Ord.STATUS_DRAFT).T(" AND ended < @1 AND qtys >= min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys >= min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {
@@ -101,7 +101,7 @@ namespace Zhnt
                     lst.Clear();
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Ord.STATUS_DRAFT).T(" AND ended < @1 AND qtys < min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys < min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {

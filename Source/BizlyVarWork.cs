@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZGRP, 1)]
     [Ui("商户端")]
@@ -16,7 +16,7 @@ namespace Zhnt
 
             // biz
 
-            MakeWork<BizlySellWork>("dord"); // showcase
+            MakeWork<BizlyDownBuyWork>("dbuy"); // showcase
 
             // biz group
 

@@ -4,7 +4,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class AdmlyRegVarWork : WebWork
+    public class AdmlyCatVarWork : WebWork
     {
         [UserAuthorize(admly: User.ADMLY_MGT)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]

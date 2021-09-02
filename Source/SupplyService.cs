@@ -4,13 +4,13 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using static Zhnt._Ord;
-using static Zhnt.WeChatUtility;
+using static Zhnt.Supply._Doc;
+using static Zhnt.Supply.WeChatUtility;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthenticate]
-    public class ZhntService : ChainService
+    public class SupplyService : ChainService
     {
         protected override void OnMake()
         {
@@ -30,8 +30,8 @@ namespace Zhnt
             MakeWork<BizlyWork>("bizly"); // for biz
 
             MakeWork<SrclyWork>("srcly"); // for source
-            
-            MakeWork<MyWork>("my"); 
+
+            MakeWork<MyWork>("my");
         }
 
         public void @default(WebContext wc)
@@ -102,7 +102,7 @@ namespace Zhnt
                 url = f[nameof(url)];
 
                 using var dc = NewDbContext();
-                var credential = ZhntUtility.ComputeCredential(tel, password);
+                var credential = SupplyUtility.ComputeCredential(tel, password);
                 dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
@@ -159,7 +159,7 @@ namespace Zhnt
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = User.STATUS_NORMAL,
+                    status = _Art.STATUS_WORKABLE,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

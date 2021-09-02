@@ -1,10 +1,13 @@
 ﻿using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
-    public class Offer : _Art
+    /// 
+    /// A downstream supply of a particular item.
+    /// 
+    public class Down : _Art
     {
-        public static readonly Offer Empty = new Offer();
+        public static readonly Down Empty = new Down();
 
         short itemid;
 
@@ -13,6 +16,14 @@ namespace Zhnt
         internal short least;
         internal short step;
 
+        internal short srcid;
+
+        internal bool img;
+
+        internal bool testa;
+
+        internal bool testb;
+        
         decimal price;
 
         decimal discount;

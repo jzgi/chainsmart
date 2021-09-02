@@ -4,55 +4,130 @@ using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt._Ord;
-using static Zhnt.User;
+using static Zhnt.Supply._Doc;
+using static Zhnt.Supply.User;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("采购订单")]
-    public class AdmlyBuyWork : WebWork
+    [Ui("销售订单")]
+    public class AdmlyDownBuyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyBuyVarWork>();
+            MakeVarWork<AdmlyDownBuyVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                
+            });
         }
     }
 
-
-    [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("订单")]
-    public class SrclyBuyWork : WebWork
+    [UserAuthorize(orgtyp: Org.TYP_BIZ, orgly: 1)]
+    [Ui("cart", "进货管理")]
+    public class BizlyDownBuyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyBuyVarWork>();
+            MakeVarWork<BizlyDownBuyVarWork>();
         }
 
+        [Ui("购物车"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM uords WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Buy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM dords WHERE partyid = @1 AND status = 0 ORDER BY id");
+            await dc.QueryAsync(p => p.Set(orgid));
 
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: "购物车");
+
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int id);
+                    dc.Let(out string name);
+                    dc.Let(out decimal price);
+                    dc.Let(out string unit);
+                    dc.Let(out int uid);
+                    dc.Let(out string uname);
+                    dc.Let(out string utel);
+                    dc.Let(out string uim);
+                    dc.Let(out short qty);
+                    dc.Let(out decimal pay);
+                    if (id != last)
+                    {
+                        h._LI();
+                        if (last != 0)
+                        {
+                            h._UL();
+                            h._ARTICLE();
+                        }
+                        h.ARTICLE_("uk-card uk-card-default");
+                        h.HEADER_("uk-card-header").T(name).SPAN_("uk-badge").CNY(price).T('／').T(unit)._SPAN()._HEADER();
+                        h.UL_("uk-card-body");
+                    }
+                    h.LI_("uk-flex uk-width-1-1");
+                    h.P(uname, "uk-width-1-3");
+                    h.P(qty, "uk-text-right uk-width-1-6");
+                    h.P(pay, "uk-text-right uk-width-1-6");
+                    h._LI();
+
+                    last = id;
+                }
+                h._UL();
+                h._ARTICLE();
+            });
+        }
+
+        [Ui("订单"), Tool(Anchor)]
+        public async Task lst(WebContext wc, int page)
+        {
+        }
+
+        [Ui("✚"), Tool(ButtonShow)]
+        public async Task @new(WebContext wc)
+        {
+            if (wc.IsGet)
+            {
+                var o = new Item();
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("标品属性");
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
+                    h.LI_().TEXT("标品名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
+                    // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                var o = await wc.ReadObjectAsync<Item>(0);
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO items ").colset(Item.Empty, 0)._VALUES_(Item.Empty, 0);
+                await dc.ExecuteAsync(p => o.Write(p, 0));
+                wc.GivePane(200); // close dialog
+            }
         }
     }
 
-
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购单")]
-    public class CtrlyBuyWork : WebWork
+    [Ui("销售单")]
+    public class CtrlyDownLnWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyBuyVarWork>();
+            MakeVarWork<CtrlyDownLnVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -62,8 +137,8 @@ namespace Zhnt
             var orgs = Fetch<Map<int, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM dos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<DownBuy>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -82,8 +157,8 @@ namespace Zhnt
             var orgs = Fetch<Map<short, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<UpBuy>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -106,7 +181,13 @@ namespace Zhnt
             {
                 if (typ == 0) // display type selection
                 {
-                    wc.GivePane(200, h => { h.FORM_().FIELDSUL_("请选择推广类型"); });
+                    wc.GivePane(200, h =>
+                    {
+                        h.FORM_().FIELDSUL_("请选择推广类型");
+
+                        h._FIELDSUL();
+                        h._FORM();
+                    });
                 }
                 else // typ specified
                 {
@@ -115,9 +196,8 @@ namespace Zhnt
             else // POST
             {
                 var today = DateTime.Today;
-                var o = await wc.ReadObjectAsync(inst: new Buy
+                var o = await wc.ReadObjectAsync(inst: new UpBuy
                 {
-                    // @extern = org.refid,
                 });
                 // database op
                 using var dc = NewDbContext();

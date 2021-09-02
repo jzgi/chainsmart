@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
     /// An organizational unit, that can be base, center, point, market or booth.

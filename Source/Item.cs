@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     /// <summary>
     /// An item of standard product.
@@ -21,39 +21,29 @@ namespace Zhnt
         // types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PRIME, "主菜"},
-            {TYP_SIDE, "副菜"},
-            {TYP_SOUP, "汤饮"},
-            {TYP_NUT, "坚果"},
-            {TYP_STAPLE, "主食"},
-            {TYP_BREAKFAST, "早餐料"},
-            {TYP_JUICE, "调养汁"},
+            {1, "瓜果"},
+            {2, "蔬菜"},
+            {3, "粮油"},
+            {4, "其他种植"},
+            {5, "禽类"},
+            {6, "畜类"},
+            {7, "水产"},
+            {8, "其他养殖"},
+            {9, "杂类"},
         };
 
         // programs
-        public static readonly Map<short, string> Progg = new Map<short, string>
-        {
-            {0, null},
-            {1, "瘦身"},
-            {2, "降压"},
-            {4, "养生"},
-            {8, "降糖"},
-            {5, "瘦身＋养生"},
-            {7, "瘦身＋降压＋养生"},
-        };
 
 
         internal short id;
 
-        internal string unit; // programing
+        internal string unit; // basic unit
 
-        internal string unitip; // programing
+        internal string unitip;
 
         internal short upc;
 
-        internal decimal price;
-
-        internal decimal discount;
+        // must have an icon
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -66,8 +56,6 @@ namespace Zhnt
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(upc), ref upc);
-            s.Get(nameof(price), ref price);
-            s.Get(nameof(discount), ref discount);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -81,8 +69,6 @@ namespace Zhnt
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(upc), upc);
-            s.Put(nameof(price), price);
-            s.Put(nameof(discount), discount);
         }
 
         public short Key => id;

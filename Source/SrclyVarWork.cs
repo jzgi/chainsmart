@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt.User;
+using static Zhnt.Supply.User;
 
-namespace Zhnt
+namespace Zhnt.Supply
 {
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("账号")]
@@ -15,7 +15,7 @@ namespace Zhnt
         {
             MakeWork<OrglyAccessWork>("acc");
 
-            MakeWork<SrclyBuyWork>("uord");
+            MakeWork<SrclyUpBuyWork>("uord");
 
             // src group
 

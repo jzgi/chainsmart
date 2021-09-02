@@ -1,4 +1,4 @@
-﻿namespace Zhnt
+﻿namespace Zhnt.Supply
 {
     public interface IOrglyVar
     {
