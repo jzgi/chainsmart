@@ -10,7 +10,7 @@ using static Zhnt.Supply.User;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("采购订单")]
+    [Ui("采购订单处理")]
     public class AdmlyUpBuyWork : WebWork
     {
         protected override void OnMake()

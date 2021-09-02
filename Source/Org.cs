@@ -20,21 +20,21 @@ namespace Zhnt.Supply
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_CTR, "分拣中心"},
+            {TYP_BIZGRP, "商户社"},
+            {TYP_BIZGRP + TYP_BIZ, "商户社＋商户"},
             {TYP_BIZ, "商户"},
-            {TYP_BIZGRP, "商户团"},
-            {TYP_BIZ + TYP_BIZGRP, "商户＋商户团"},
+            {TYP_SRCGRP, "产源社"},
+            {TYP_SRCGRP + TYP_SRC, "产源社＋产源"},
             {TYP_SRC, "产源"},
-            {TYP_SRCGRP, "产源团"},
-            {TYP_SRC + TYP_SRCGRP, "产源＋产源团"},
         };
 
         internal int id;
 
         // joined group if any
-        internal int grpid;
+        internal int teamid;
 
         // the associated distribution center, if any
-        internal int refid;
+        internal int ctrid;
 
         internal short regid;
 
@@ -63,8 +63,8 @@ namespace Zhnt.Supply
             s.Get(nameof(addr), ref addr);
             s.Get(nameof(x), ref x);
             s.Get(nameof(y), ref y);
-            s.Get(nameof(grpid), ref grpid);
-            s.Get(nameof(refid), ref refid);
+            s.Get(nameof(teamid), ref teamid);
+            s.Get(nameof(ctrid), ref ctrid);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -92,10 +92,10 @@ namespace Zhnt.Supply
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
 
-            if (grpid > 0) s.Put(nameof(grpid), grpid); // conditional
-            else s.PutNull(nameof(grpid));
+            if (teamid > 0) s.Put(nameof(teamid), teamid); // conditional
+            else s.PutNull(nameof(teamid));
 
-            s.Put(nameof(refid), refid);
+            s.Put(nameof(ctrid), ctrid);
 
             if ((proj & LATER) == LATER)
             {

@@ -10,7 +10,7 @@ using static Zhnt.Supply.User;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("销售订单")]
+    [Ui("销售订单处理")]
     public class AdmlyDownBuyWork : WebWork
     {
         protected override void OnMake()
@@ -21,11 +21,7 @@ namespace Zhnt.Supply
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                
-            });
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 

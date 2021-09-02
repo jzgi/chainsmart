@@ -15,9 +15,9 @@ namespace Zhnt.Supply
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STATUS_DISABLED, "禁用"},
-            {STATUS_SHOWABLE, "展示"},
-            {STATUS_WORKABLE, "启用"}
+            {STATUS_DISABLED, "⦸"},
+            {STATUS_SHOWABLE, "⦾"},
+            {STATUS_WORKABLE, "⦿"}
         };
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;

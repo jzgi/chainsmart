@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class AdmlyOrgVarWork : WebWork
+    public class OrgVarWork : WebWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
@@ -84,6 +84,10 @@ namespace Zhnt.Supply
                 wc.GivePane(200); // ok
             }
         }
+    }
+
+    public class AdmlyOrgVarWork : OrgVarWork
+    {
     }
 
     public class MrtlyBizVarWork : WebWork

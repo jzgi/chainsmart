@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
@@ -5,13 +6,8 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class AdmlyOrgWork : WebWork
+    public abstract class OrgWork : WebWork
     {
-        protected override void OnMake()
-        {
-            MakeVarWork<AdmlyOrgVarWork>();
-        }
-
         public async Task @default(WebContext wc)
         {
             var regs = Fetch<Map<short, Reg>>();
@@ -54,16 +50,32 @@ namespace Zhnt.Supply
         {
             var regs = Fetch<Map<short, Reg>>();
             var orgs = Fetch<Map<short, Org>>();
+            var state = (int) State;
+
+            var prin = (User) wc.Principal;
+
             if (wc.IsGet)
             {
-                var m = new Org();
+                var m = new Org
+                {
+                    created = DateTime.Now,
+                    creator = prin.name,
+                    status = _Art.STATUS_WORKABLE
+                };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("服务方属性");
-                    h.LI_().SELECT("服务类型", nameof(m.typ), m.typ, Org.Typs)._LI();
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
-                    h.LI_().TEXT("标语", nameof(m.tip), m.tip, max: 16)._LI();
+                    h.FORM_().FIELDSUL_("主体资料");
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) =>
+                        state switch
+                        {
+                            0 => (k != Org.TYP_BIZ && k != Org.TYP_SRC),
+                            1 => (k == Org.TYP_BIZ),
+                            _ => (k == Org.TYP_SRC)
+                        }
+                    )._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXT("简介", nameof(m.tip), m.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
@@ -81,9 +93,17 @@ namespace Zhnt.Supply
         }
     }
 
+    public class AdmlyOrgWork : OrgWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<AdmlyOrgVarWork>();
+        }
+    }
+
     [UserAuthorize(orgtyp: Org.TYP_BIZGRP, orgly: 1)]
-    [Ui("users", "团成员管理")]
-    public class BizGrplyMbrWork : WebWork
+    [Ui("团成员管理", "团成员管理")]
+    public class BizGrplyMbrWork : OrgWork
     {
         protected override void OnMake()
         {
@@ -112,7 +132,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgtyp: Org.TYP_SRCGRP, orgly: 1)]
     [Ui("团管理")]
-    public class SrcGrplyMbrWork : WebWork
+    public class SrcGrplyMbrWork : OrgWork
     {
         protected override void OnMake()
         {

@@ -7,7 +7,7 @@ using static SkyChain.Web.Modal;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("可采购产品")]
+    [Ui("可采购商品")]
     public class AdmlyUpWork : WebWork
     {
         protected override void OnMake()

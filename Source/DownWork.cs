@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: User.ADMLY_SAL)]
-    [Ui("销售产品管理")]
+    [Ui("可销售商品")]
     public class AdmlyDownWork : WebWork
     {
         protected override void OnMake()
@@ -16,7 +16,7 @@ namespace Zhnt.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Down.Empty).T(" FROM offers ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Down.Empty).T(" FROM downs ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Down>(p => p.Set(page));
             wc.GivePage(200, h =>
             {

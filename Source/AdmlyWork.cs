@@ -10,11 +10,27 @@ namespace Zhnt.Supply
     {
         protected override void OnMake()
         {
+            // management
+
+            MakeWork<AdmlyRegWork>("reg");
+
+            MakeWork<AdmlyOrgWork>("org",
+                state: 0,
+                ui: new UiAttribute("机构管理"),
+                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT)
+            );
+
+            MakeWork<AdmlyItemWork>("item");
+
+            MakeWork<AdmlyAccessWork>("access");
+
+            MakeWork<AdmlyPeerWork>("peer");
+
             // sales & marketing
 
-            MakeWork<AdmlyOrgWork>("biz",
+            MakeWork<AdmlyOrgWork>("biztm",
                 state: 1,
-                ui: new UiAttribute("商户管理"),
+                ui: new UiAttribute("商户社管理"),
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
             );
 
@@ -24,9 +40,9 @@ namespace Zhnt.Supply
 
             // purchase
 
-            MakeWork<AdmlyOrgWork>("src",
+            MakeWork<AdmlyOrgWork>("srctm",
                 state: 2,
-                ui: new UiAttribute("产源管理"),
+                ui: new UiAttribute("产源社管理"),
                 authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
             );
 
@@ -37,16 +53,6 @@ namespace Zhnt.Supply
             // accounting
 
             MakeWork<AdmlyClearWork>("clear");
-
-            // management
-
-            MakeWork<AdmlyRegWork>("reg");
-
-            MakeWork<AdmlyItemWork>("item");
-
-            MakeWork<AdmlyAccessWork>("access");
-
-            MakeWork<AdmlyPeerWork>("peer");
         }
 
         public override void @default(WebContext wc)

@@ -46,7 +46,7 @@ namespace Zhnt.Supply
                     h.LI_().FIELD("地址", o.addr)._LI();
                     if (o.IsPt)
                     {
-                        var shop = o.grpid > 0 ? orgs[o.grpid]?.name : null;
+                        var shop = o.teamid > 0 ? orgs[o.teamid]?.name : null;
                         h.LI_().FIELD("关联厨房", shop)._LI();
                     }
                     if (o.IsMerchant)
