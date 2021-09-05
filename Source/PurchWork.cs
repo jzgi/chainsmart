@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 using static Zhnt.Supply._Doc;
@@ -10,12 +9,12 @@ using static Zhnt.Supply.User;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("采购订单处理")]
-    public class AdmlyUpBuyWork : WebWork
+    [Ui("采购订单")]
+    public class AdmlyPurchWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyUpBuyVarWork>();
+            MakeVarWork<AdmlyPurchVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -27,19 +26,19 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("订单")]
-    public class SrclyUpBuyWork : WebWork
+    public class SrclyPurchWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyUpBuyVarWork>();
+            MakeVarWork<SrclyPurchVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM uords WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<UpBuy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uords WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purch>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -48,22 +47,21 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("采购单")]
-    public class CtrlyBuyWork : WebWork
+    public class CtrlyPurchWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyUpBuyVarWork>();
+            MakeVarWork<CtrlyPurchVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
-            var orgs = Fetch<Map<int, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<UpBuy>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -79,11 +77,10 @@ namespace Zhnt.Supply
         public async Task closed(WebContext wc, int page)
         {
             short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<UpBuy>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -100,8 +97,6 @@ namespace Zhnt.Supply
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
             if (wc.IsGet)
             {
                 if (typ == 0) // display type selection
@@ -115,7 +110,7 @@ namespace Zhnt.Supply
             else // POST
             {
                 var today = DateTime.Today;
-                var o = await wc.ReadObjectAsync(inst: new UpBuy
+                var o = await wc.ReadObjectAsync(inst: new Purch
                 {
                     // @extern = org.refid,
                 });
@@ -159,30 +154,6 @@ namespace Zhnt.Supply
 
                 wc.GivePane(201);
             }
-        }
-
-        public async Task tbank(WebContext wc, int page)
-        {
-            short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-            var todo = await dc.SeekQueueAsync(org.Acct);
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "核实公益价值（区块链）");
-
-                h.LI_().LABEL("代办事项")._LI();
-                foreach (var o in todo)
-                {
-                    h.LI_("uk-flex");
-                    h.SPAN_("uk-width-1-2").T(o.Name).T(" ➜")._SPAN();
-                    h.SPAN(o.Remark, "uk-width-expand");
-                    // h.SPAN_("uk-width-micro uk-text-right").VARTOOLS(o.Job)._SPAN();
-                    h._LI();
-                }
-            });
         }
     }
 }

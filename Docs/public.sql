@@ -16,46 +16,6 @@ create table _arts
 
 alter table _arts owner to postgres;
 
-create table users
-(
-	id serial not null
-		constraint users_pk
-			primary key,
-	typ smallint default 0 not null,
-	status smallint default 0 not null,
-	name varchar(8) not null,
-	tel varchar(11) not null,
-	created timestamp(0) default ('now'::text)::timestamp without time zone not null,
-	credential varchar(16),
-	admly smallint default 0 not null,
-	orgid integer,
-	orgly smallint default 0 not null,
-	im varchar(28) not null,
-	refid integer
-		constraint users_refid_fk
-			references users
-);
-
-alter table users owner to postgres;
-
-create index users_admly_idx
-	on users (admly)
-	where (admly > 0);
-
-create unique index users_im_idx
-	on users (im);
-
-create unique index users_tel_idx
-	on users (tel);
-
-create table cats
-(
-	id smallserial not null
-)
-inherits (_arts);
-
-alter table cats owner to postgres;
-
 create table regs
 (
 	id smallserial not null,
@@ -71,7 +31,7 @@ create table orgs
 		constraint orgs_pk
 			primary key,
 	grpid integer,
-	refid integer,
+	ctrid integer,
 	regid smallint,
 	addr varchar(20),
 	x double precision,
@@ -88,66 +48,57 @@ alter table orgs owner to postgres;
 create table items
 (
 	id serial not null,
-	catid smallint,
 	unit varchar(4),
 	unitip varchar(10),
 	upc varchar(15),
-	price money,
-	discount money,
-	pic bytea
+	icon bytea
 )
 inherits (_arts);
 
 alter table items owner to postgres;
 
-create table _ords
+create table _docs
 (
 	typ smallint not null,
 	status smallint default 0 not null,
 	partyid smallint not null,
-	ordno integer,
-	ctrid integer
+	no integer,
+	ctrid integer,
+	created timestamp(0),
+	creator varchar(10)
 );
 
-alter table _ords owner to postgres;
+alter table _docs owner to postgres;
 
-create table offers
+create table users
 (
-	itemid smallint not null,
-	price money,
-	discount money,
-	agts smallint[],
-	min smallint,
-	max smallint,
-	least smallint,
-	step smallint,
-	idx smallint
+	id serial not null
+		constraint users_pk
+			primary key,
+	tel varchar(11) not null,
+	im varchar(28) not null,
+	credential varchar(16),
+	admly smallint default 0 not null,
+	orgid smallint,
+	orgly smallint default 0 not null
 )
 inherits (_arts);
 
-alter table offers owner to postgres;
+alter table users owner to postgres;
 
-create table needs
-(
-	itemid smallint not null,
-	price money,
-	discount money
-)
-inherits (_arts);
+create index users_admly_idx
+	on users (admly)
+	where (admly > 0);
 
-alter table needs owner to postgres;
+create unique index users_im_idx
+	on users (im);
 
-create table sells
-(
-	id serial not null,
-	itemid smallint not null,
-	price money,
-	discount money,
-	qty integer
-)
-inherits (_ords);
+create index users_orgid_idx
+	on users (orgid)
+	where (orgid > 0);
 
-alter table sells owner to postgres;
+create unique index users_tel_idx
+	on users (tel);
 
 create table buys
 (
@@ -155,13 +106,54 @@ create table buys
 	itemid smallint not null,
 	price money,
 	discount money,
-	qty integer
+	qty integer,
+	pay money,
+	refound money
 )
-inherits (_ords);
+inherits (_docs);
 
 alter table buys owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, id, grpid, refid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
+create table purchases
+(
+	id serial not null,
+	itemid smallint not null,
+	price money,
+	discount money,
+	qty integer,
+	pay money,
+	refound money
+)
+inherits (_docs);
+
+alter table purchases owner to postgres;
+
+create table supplies
+(
+	id smallserial not null,
+	itemid smallint not null,
+	srcid smallint,
+	idx smallint,
+	dmin smallint,
+	dmax smallint,
+	dstep smallint,
+	dprice money,
+	doff money,
+	agts smallint[],
+	umin smallint,
+	umax smallint,
+	ustep smallint,
+	uprice money,
+	uoff money,
+	img bytea,
+	testa bytea,
+	testb bytea
+)
+inherits (_arts);
+
+alter table supplies owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, id, grpid, ctrid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -169,8 +161,8 @@ SELECT o.typ,
        o.created,
        o.creator,
        o.id,
-       o.grpid,
-       o.refid,
+       o.teamid              AS grpid,
+       o.ctrid,
        o.regid,
        o.addr,
        o.x,

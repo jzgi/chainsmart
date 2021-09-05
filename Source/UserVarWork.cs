@@ -81,7 +81,7 @@ namespace Zhnt.Supply
         {
             short orgid = wc[-2];
             short id = wc[0];
-            var org = Fetch<Map<short, Org>>()[orgid];
+            var org = FetchValue<short, Org>(orgid);
             if (wc.IsGet)
             {
                 wc.GivePane(200, h =>

@@ -37,31 +37,39 @@ namespace Zhnt.Supply
 
         public static void CacheUp()
         {
-            MakeCache(dc =>
+            Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            // MakeCache<short, Map<int, Org>>((dc, bizid) =>
-            //     {
-            //         dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 AND parent IS NOT NULL ORDER BY id");
-            //         return dc.Query<int, Org>();
-            //     }, 900
-            // );
-            //
-            MakeCache(dc =>
+            Cache(dc =>
+                {
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
+                    return dc.Query<short, Item>();
+                }, 60 * 15
+            );
+
+            Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
                     return dc.Query<int, Org>();
-                }, 900
+                }, 60 * 15
+            );
+
+            CacheEx(dc =>
+                {
+                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM downs ORDER BY id");
+                    return dc.Query<short, Prod>();
+                },
+                x => x.typ,
+                60 * 15
             );
         }
 
         static async void Cycle(object state)
         {
-            var orgs = Fetch<Map<short, Org>>();
             var lst = new List<int>(64);
             while (true)
             {

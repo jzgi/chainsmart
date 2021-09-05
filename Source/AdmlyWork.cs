@@ -10,47 +10,27 @@ namespace Zhnt.Supply
     {
         protected override void OnMake()
         {
-            // management
+            // information
+
+            MakeWork<AdmlyAccessWork>("acc");
+
+            MakeWork<AdmlyUserWork>("user");
 
             MakeWork<AdmlyRegWork>("reg");
 
-            MakeWork<AdmlyOrgWork>("org",
-                state: 0,
-                ui: new UiAttribute("机构管理"),
-                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT)
-            );
-
             MakeWork<AdmlyItemWork>("item");
-
-            MakeWork<AdmlyAccessWork>("access");
 
             MakeWork<AdmlyPeerWork>("peer");
 
-            // sales & marketing
+            // operation
 
-            MakeWork<AdmlyOrgWork>("biztm",
-                state: 1,
-                ui: new UiAttribute("商户社管理"),
-                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SAL)
-            );
+            MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyDownWork>("down");
+            MakeWork<AdmlyProdWork>("prod");
 
-            MakeWork<AdmlyDownBuyWork>("downbuy");
+            MakeWork<AdmlyBuyWork>("buy");
 
-            // purchase
-
-            MakeWork<AdmlyOrgWork>("srctm",
-                state: 2,
-                ui: new UiAttribute("产源社管理"),
-                authorize: new UserAuthorizeAttribute(admly: User.ADMLY_PUR)
-            );
-
-            MakeWork<AdmlyUpWork>("up");
-
-            MakeWork<AdmlyUpBuyWork>("upbuy");
-
-            // accounting
+            MakeWork<AdmlyPurchWork>("purch");
 
             MakeWork<AdmlyClearWork>("clear");
         }

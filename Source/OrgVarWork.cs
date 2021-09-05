@@ -11,8 +11,6 @@ namespace Zhnt.Supply
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
-            var regs = Fetch<Map<short, Reg>>();
-            var orgs = Fetch<Map<short, Org>>();
             short id = wc[0];
             if (wc.IsGet)
             {
@@ -90,7 +88,7 @@ namespace Zhnt.Supply
     {
     }
 
-    public class MrtlyBizVarWork : WebWork
+    public class BizColyOrgVarWork : WebWork
     {
     }
 }

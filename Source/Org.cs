@@ -13,25 +13,25 @@ namespace Zhnt.Supply
         public const short
             TYP_CTR = 1,
             TYP_BIZ = 2,
-            TYP_BIZGRP = 4,
+            TYP_BIZ_CO = 4,
             TYP_SRC = 8,
-            TYP_SRCGRP = 16;
+            TYP_SRC_CO = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_CTR, "分拣中心"},
-            {TYP_BIZGRP, "商户社"},
-            {TYP_BIZGRP + TYP_BIZ, "商户社＋商户"},
+            {TYP_BIZ_CO, "商户社"},
+            {TYP_BIZ_CO + TYP_BIZ, "商户社＋商户"},
             {TYP_BIZ, "商户"},
-            {TYP_SRCGRP, "产源社"},
-            {TYP_SRCGRP + TYP_SRC, "产源社＋产源"},
+            {TYP_SRC_CO, "产源社"},
+            {TYP_SRC_CO + TYP_SRC, "产源社＋产源"},
             {TYP_SRC, "产源"},
         };
 
         internal int id;
 
         // joined group if any
-        internal int teamid;
+        internal int coid;
 
         // the associated distribution center, if any
         internal int ctrid;
@@ -63,7 +63,7 @@ namespace Zhnt.Supply
             s.Get(nameof(addr), ref addr);
             s.Get(nameof(x), ref x);
             s.Get(nameof(y), ref y);
-            s.Get(nameof(teamid), ref teamid);
+            s.Get(nameof(coid), ref coid);
             s.Get(nameof(ctrid), ref ctrid);
             if ((proj & LATER) == LATER)
             {
@@ -92,8 +92,8 @@ namespace Zhnt.Supply
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
 
-            if (teamid > 0) s.Put(nameof(teamid), teamid); // conditional
-            else s.PutNull(nameof(teamid));
+            if (coid > 0) s.Put(nameof(coid), coid); // conditional
+            else s.PutNull(nameof(coid));
 
             s.Put(nameof(ctrid), ctrid);
 
@@ -123,7 +123,7 @@ namespace Zhnt.Supply
 
         public bool IsMerchant => (typ & TYP_CTR) == TYP_CTR;
 
-        public bool IsSocial => (typ & TYP_BIZGRP) == TYP_BIZGRP;
+        public bool IsSocial => (typ & TYP_BIZ_CO) == TYP_BIZ_CO;
 
         public bool IsProvider => IsMerchant || IsSocial;
 

@@ -7,97 +7,34 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class AdmlyDownBuyVarWork : WebWork
+    public class AdmlyPurchVarWork : WebWork
     {
-        [Ui(group: 1), Tool(ButtonOpen)]
-        public async Task act(WebContext wc, int cmd)
-        {
-            int lotid = wc[0];
-            var prin = (User) wc.Principal;
-
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-
-                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(lotid));
-            }
-            else // POST
-            {
-                if (cmd == 1)
-                {
-                    using var dc = NewDbContext(ReadCommitted);
-                    try
-                    {
-                    }
-                    catch
-                    {
-                        dc.Rollback();
-                    }
-                }
-                wc.GivePane(200);
-            }
-        }
     }
 
-
-    public class BizlyDownBuyVarWork : WebWork
+    public class CtrlyPurchVarWork : WebWork
     {
-        [Ui, Tool(ButtonOpen)]
-        public async Task act(WebContext wc, int cmd)
-        {
-            int lotid = wc[0];
-            short orgid = wc[-2];
-            if (wc.IsGet)
-            {
-                var orgs = Fetch<Map<short, Org>>();
+    }
 
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(lotid));
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                int[] key = f[nameof(key)];
-                if (cmd == 1)
-                {
-                    using var dc = NewDbContext(ReadCommitted);
-                    try
-                    {
-                    }
-                    catch (Exception e)
-                    {
-                        ERR(e.Message);
-                        dc.Rollback();
-                    }
-                }
-                else
-                {
-                }
-
-                wc.GiveRedirect(nameof(act));
-            }
-        }
-
+    public class SrclyPurchVarWork : WebWork
+    {
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-2];
-            var org = Fetch<Map<short, Org>>()[orgid];
+            var org = FetchValue<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<DownBuy>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Purch>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new DownBuy
+                var m = new Purch
                 {
                 };
                 m.Read(f);
@@ -157,8 +94,7 @@ namespace Zhnt.Supply
         public async Task apprv(WebContext wc)
         {
             short orgid = wc[-2];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
+            var org = FetchValue<short, Org>(orgid);
             long job = wc[0];
             bool ok;
             if (wc.IsGet)
@@ -185,9 +121,5 @@ namespace Zhnt.Supply
                 wc.GivePane(200);
             }
         }
-    }
-
-    public class CtrlyDownLnVarWork : WebWork
-    {
     }
 }

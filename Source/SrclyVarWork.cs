@@ -15,7 +15,7 @@ namespace Zhnt.Supply
         {
             MakeWork<OrglyAccessWork>("acc");
 
-            MakeWork<SrclyUpBuyWork>("uord");
+            MakeWork<SrclyPurchWork>("uord");
 
             // src group
 
@@ -28,7 +28,7 @@ namespace Zhnt.Supply
         {
             bool inner = wc.Query[nameof(inner)];
             int id = wc[0];
-            var orgs = Fetch<Map<int, Org>>();
+            var orgs = Fetch<int, Org>();
             var org = orgs[id];
             if (!inner)
             {
@@ -109,7 +109,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = Fetch<Map<short, Org>>()[orgid];
+            var obj = FetchValue<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

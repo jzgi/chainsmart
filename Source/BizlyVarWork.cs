@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZGRP, 1)]
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZ_CO, 1)]
     [Ui("商户端")]
     public class BizlyVarWork : WebWork, IOrglyVar
     {
@@ -16,11 +16,11 @@ namespace Zhnt.Supply
 
             // biz
 
-            MakeWork<BizlyDownBuyWork>("dbuy"); // showcase
+            MakeWork<BizlyBuyWork>("dbuy"); // showcase
 
             // biz group
 
-            MakeWork<BizGrplyMbrWork>("mbr");
+            MakeWork<BizGrplyOrgWork>("mbr");
 
             MakeWork<BizGrplyKpiWork>("kpi");
         }
@@ -28,8 +28,7 @@ namespace Zhnt.Supply
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
-            var bizs = Fetch<Map<int, Org>>();
-            var o = bizs[id];
+            var o = FetchValue<int, Org>(id);
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
@@ -55,7 +54,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = Fetch<Map<short, Org>>()[orgid];
+            var obj = FetchValue<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

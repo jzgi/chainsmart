@@ -1,21 +1,19 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt.Supply._Doc;
 using static Zhnt.Supply.User;
 
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("销售订单处理")]
-    public class AdmlyDownBuyWork : WebWork
+    [Ui("销售订单")]
+    public class AdmlyBuyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyDownBuyVarWork>();
+            MakeVarWork<AdmlyBuyVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -27,7 +25,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgtyp: Org.TYP_BIZ, orgly: 1)]
     [Ui("cart", "进货管理")]
-    public class BizlyDownBuyWork : WebWork
+    public class BizlyBuyWork : WebWork
     {
         protected override void OnMake()
         {
@@ -39,7 +37,7 @@ namespace Zhnt.Supply
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM dords WHERE partyid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM dords WHERE partyid = @1 AND status = 0 ORDER BY id");
             await dc.QueryAsync(p => p.Set(orgid));
 
             wc.GivePage(200, h =>
@@ -123,47 +121,19 @@ namespace Zhnt.Supply
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyDownLnVarWork>();
+            MakeVarWork<CtrlyBuyVarWork>();
         }
 
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
-            var orgs = Fetch<Map<int, Org>>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(DownBuy.Empty).T(" FROM dos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<DownBuy>(p => p.Set(orgid).Set(page), 0xff);
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "当前活跃拼团");
-                if (arr != null)
-                {
-                }
-                h.PAGINATION(arr?.Length == 10);
-            }, false, 3);
         }
 
         [Ui("停止", group: 2), Tool(Anchor)]
         public async Task closed(WebContext wc, int page)
         {
             short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<UpBuy>(p => p.Set(orgid).Set(page), 0xff);
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "已成和已结拼团");
-                if (arr != null)
-                {
-                }
-                h.PAGINATION(arr?.Length == 10);
-            }, false, 3);
         }
 
         [Ui("发布", group: 1), Tool(ButtonOpen)]
@@ -171,37 +141,6 @@ namespace Zhnt.Supply
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
-            if (wc.IsGet)
-            {
-                if (typ == 0) // display type selection
-                {
-                    wc.GivePane(200, h =>
-                    {
-                        h.FORM_().FIELDSUL_("请选择推广类型");
-
-                        h._FIELDSUL();
-                        h._FORM();
-                    });
-                }
-                else // typ specified
-                {
-                }
-            }
-            else // POST
-            {
-                var today = DateTime.Today;
-                var o = await wc.ReadObjectAsync(inst: new UpBuy
-                {
-                });
-                // database op
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO lots ").colset(o, 0)._VALUES_(o, 0);
-                await dc.QueryTopAsync(p => o.Write(p, 0));
-
-                wc.GivePane(201);
-            }
         }
 
         [Ui("复制", group: 2), Tool(ButtonPickOpen)]
@@ -235,30 +174,6 @@ namespace Zhnt.Supply
 
                 wc.GivePane(201);
             }
-        }
-
-        public async Task tbank(WebContext wc, int page)
-        {
-            short orgid = wc[-1];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-            var todo = await dc.SeekQueueAsync(org.Acct);
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "核实公益价值（区块链）");
-
-                h.LI_().LABEL("代办事项")._LI();
-                foreach (var o in todo)
-                {
-                    h.LI_("uk-flex");
-                    h.SPAN_("uk-width-1-2").T(o.Name).T(" ➜")._SPAN();
-                    h.SPAN(o.Remark, "uk-width-expand");
-                    // h.SPAN_("uk-width-micro uk-text-right").VARTOOLS(o.Job)._SPAN();
-                    h._LI();
-                }
-            });
         }
     }
 }

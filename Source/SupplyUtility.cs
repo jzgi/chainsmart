@@ -234,7 +234,7 @@ namespace Zhnt.Supply
             return lst.ToArray();
         }
 
-        public static void ViewLotTop(this HtmlContent h, UpBuy off, string icon, string img)
+        public static void ViewLotTop(this HtmlContent h, Purch off, string icon, string img)
         {
             h.SECTION_("uk-flex");
             h.PIC_("uk-width-1-2 uk-margin-auto-vertical");

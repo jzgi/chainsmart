@@ -16,15 +16,14 @@ namespace Zhnt.Supply
 
             MakeWork<CtrlyDownLnWork>("do"); // downstream order
 
-            MakeWork<CtrlyBuyWork>("uo"); // upstream order
+            MakeWork<CtrlyPurchWork>("uo"); // upstream order
         }
 
         public async Task @default(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
             int id = wc[0];
-            var orgs = Fetch<Map<int, Org>>();
-            var o = orgs[id];
+            var o = FetchValue<int, Org>(id);
             if (!inner)
             {
                 wc.GiveFrame(200, false, 60, title: "分拣中心操作", group: (byte) o.typ);
@@ -46,8 +45,8 @@ namespace Zhnt.Supply
                     h.LI_().FIELD("地址", o.addr)._LI();
                     if (o.IsPt)
                     {
-                        var shop = o.teamid > 0 ? orgs[o.teamid]?.name : null;
-                        h.LI_().FIELD("关联厨房", shop)._LI();
+                        // var shop = o.grpid > 0 ? orgs[o.grpid]?.name : null;
+                        // h.LI_().FIELD("关联厨房", shop)._LI();
                     }
                     if (o.IsMerchant)
                     {
@@ -104,7 +103,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = Fetch<Map<short, Org>>()[orgid];
+            var obj = FetchValue<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

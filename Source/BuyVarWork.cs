@@ -7,35 +7,94 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-
-    public class AdmlyUpBuyVarWork : WebWork
+    public class AdmlyBuyVarWork : WebWork
     {
+        [Ui(group: 1), Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
+        {
+            int lotid = wc[0];
+            var prin = (User) wc.Principal;
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch
+                    {
+                        dc.Rollback();
+                    }
+                }
+                wc.GivePane(200);
+            }
+        }
     }
 
-    public class CtrlyUpBuyVarWork : WebWork
-    {
-    }
 
-    public class SrclyUpBuyVarWork : WebWork
+    public class BizlyDownBuyVarWork : WebWork
     {
+        [Ui, Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
+        {
+            int lotid = wc[0];
+            short orgid = wc[-2];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                int[] key = f[nameof(key)];
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        ERR(e.Message);
+                        dc.Rollback();
+                    }
+                }
+                else
+                {
+                }
+
+                wc.GiveRedirect(nameof(act));
+            }
+        }
+
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-2];
-            var org = Fetch<Map<short, Org>>()[orgid];
             int id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(UpBuy.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<UpBuy>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Buy>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new UpBuy
+                var m = new Buy
                 {
                 };
                 m.Read(f);
@@ -92,36 +151,9 @@ namespace Zhnt.Supply
         }
 
         // [Ui("核实"), Tool(Modal.ButtonShow)]
-        public async Task apprv(WebContext wc)
-        {
-            short orgid = wc[-2];
-            var orgs = Fetch<Map<short, Org>>();
-            var org = orgs[orgid];
-            long job = wc[0];
-            bool ok;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("核实申请");
-                    h.LI_().CHECKBOX(null, nameof(ok), true, tip: "我确定此项申请情况属实，同意奖励数字珍珠", required: true)._LI();
-                    h._FORM()._FIELDSUL();
-                });
-            }
-            else
-            {
-                ok = (await wc.ReadAsync<Form>())[nameof(ok)];
-                if (ok)
-                {
-                    using var dc = NewDbContext(ReadCommitted);
+    }
 
-                    // var tx = new ChainTransaction(1)
-                    // .Row()
-
-                    // await dc.ExecuteAsync("", org.Acct);
-                }
-                wc.GivePane(200);
-            }
-        }
+    public class CtrlyBuyVarWork : WebWork
+    {
     }
 }

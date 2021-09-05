@@ -34,9 +34,6 @@ namespace Zhnt.Supply
         // cooperative party
         internal short partyid;
 
-        // doc number
-        internal int no;
-
         // bound distribution center
         internal short ctrid;
 
@@ -49,7 +46,6 @@ namespace Zhnt.Supply
             s.Get(nameof(typ), ref typ);
             s.Get(nameof(status), ref status);
             s.Get(nameof(partyid), ref partyid);
-            s.Get(nameof(no), ref no);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(created), ref created);
             s.Get(nameof(creator), ref creator);
@@ -61,7 +57,6 @@ namespace Zhnt.Supply
             s.Put(nameof(status), status);
             s.Put(nameof(partyid), partyid);
             s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(no), no);
             s.Put(nameof(created), created);
             s.Put(nameof(creator), creator);
         }

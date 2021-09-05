@@ -23,8 +23,8 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(admly: ADMLY_PUR)]
-    [Ui("用户")]
+    [UserAuthorize(admly: ADMLY_IT)]
+    [Ui("平台用户")]
     public class AdmlyUserWork : WebWork
     {
         protected override void OnMake()
@@ -35,7 +35,6 @@ namespace Zhnt.Supply
         [Ui("浏览", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            var orgs = Fetch<Map<short, Org>>();
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
             var arr = dc.Query<User>(p => p.Set(page));
@@ -76,7 +75,6 @@ namespace Zhnt.Supply
             }
             else // OUTER
             {
-                var orgs = Fetch<Map<short, Org>>();
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
@@ -104,7 +102,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [Ui("人员权限管理", "users")]
+    [Ui("人员权限", "users")]
     public class AdmlyAccessWork : WebWork
     {
         protected override void OnMake()
@@ -259,7 +257,6 @@ namespace Zhnt.Supply
         [Ui("浏览", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            var orgs = Fetch<Map<short, Org>>();
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
             var arr = dc.Query<User>(p => p.Set(page));
@@ -300,7 +297,6 @@ namespace Zhnt.Supply
             }
             else // OUTER
             {
-                var orgs = Fetch<Map<short, Org>>();
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");

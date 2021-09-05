@@ -4215,9 +4215,9 @@ ul.uk-nav-sub {
 .uk-modal-large .uk-modal-dialog {
     position: relative;
     margin: 4rem auto;
-    height: 85%;
+    height: 95%;
     max-height: 560px;
-    width: 85%;
+    width: 95%;
     max-width: 560px;
     transform: translateY(0);
     display: flex;

@@ -6,11 +6,12 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public abstract class OrgWork : WebWork
+    [Ui("机构主体")]
+    public class AdmlyOrgWork : WebWork
     {
         public async Task @default(WebContext wc)
         {
-            var regs = Fetch<Map<short, Reg>>();
+            var regs = Fetch<short, Reg>();
 
             using var dc = NewDbContext();
 
@@ -19,7 +20,7 @@ namespace Zhnt.Supply
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "服务方");
+                h.TOOLBAR(caption: Label);
 
                 if (arr == null) return;
 
@@ -48,10 +49,6 @@ namespace Zhnt.Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var regs = Fetch<Map<short, Reg>>();
-            var orgs = Fetch<Map<short, Org>>();
-            var state = (int) State;
-
             var prin = (User) wc.Principal;
 
             if (wc.IsGet)
@@ -67,10 +64,10 @@ namespace Zhnt.Supply
                 {
                     h.FORM_().FIELDSUL_("主体资料");
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) =>
-                        state switch
+                        State switch
                         {
                             0 => (k != Org.TYP_BIZ && k != Org.TYP_SRC),
-                            1 => (k == Org.TYP_BIZ),
+                            Org.TYP_BIZ => (k == Org.TYP_BIZ),
                             _ => (k == Org.TYP_SRC)
                         }
                     )._LI();
@@ -93,69 +90,27 @@ namespace Zhnt.Supply
         }
     }
 
-    public class AdmlyOrgWork : OrgWork
+
+
+    [UserAuthorize(Org.TYP_BIZ_CO, 1)]
+    [Ui("社成员管理")]
+    public class BizGrplyOrgWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyOrgVarWork>();
+            State = Org.TYP_BIZ;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_BIZ);
         }
     }
 
-    [UserAuthorize(orgtyp: Org.TYP_BIZGRP, orgly: 1)]
-    [Ui("团成员管理", "团成员管理")]
-    public class BizGrplyMbrWork : OrgWork
+    [UserAuthorize(Org.TYP_SRC_CO, 1)]
+    [Ui("社成员管理")]
+    public class SrcGrplyMbrWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MrtlyBizVarWork>();
-        }
-
-        public async Task @default(WebContext wc)
-        {
-            using var dc = NewDbContext();
-
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE grpid = @1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Org>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD_().T(o.name).SP().SUB(o.addr)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
-                });
-            }, false, 3);
-        }
-    }
-
-    [UserAuthorize(orgtyp: Org.TYP_SRCGRP, orgly: 1)]
-    [Ui("团管理")]
-    public class SrcGrplyMbrWork : OrgWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<MrtlyBizVarWork>();
-        }
-
-        public async Task @default(WebContext wc)
-        {
-            using var dc = NewDbContext();
-
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parent = @1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Org>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD_().T(o.name).SP().SUB(o.addr)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
-                });
-            }, false, 3);
+            State = Org.TYP_SRC;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRC);
         }
     }
 }

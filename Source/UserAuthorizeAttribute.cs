@@ -1,5 +1,4 @@
 ﻿using System;
-using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Db.DbEnviron;
 
@@ -43,8 +42,7 @@ namespace Zhnt.Supply
                 int orgid = wc[typeof(IOrglyVar)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var orgs = Fetch<Map<int, Org>>();
-                    var org = orgs[prin.orgid];
+                    var org = ObtainValue<int, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive
