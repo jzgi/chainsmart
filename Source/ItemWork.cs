@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
@@ -54,30 +55,35 @@ namespace Zhnt.Supply
             });
         }
 
-        [Ui("新建"), Tool(ButtonShow)]
+        [Ui("新建", "新建基础品目"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
+            var prin = (User) wc.Principal;
             if (wc.IsGet)
             {
                 var o = new Item
                 {
-                    status = _Art.STATUS_WORKABLE
+                    status = _Art.STATUS_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("基本品信息");
+                    h.FORM_().FIELDSUL_();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, tip: "基本单位", min: 1, max: 4, required: true)._LI();
-                    h.LI_().TEXT("单位注释", nameof(o.unitip), o.unitip, max: 4)._LI();
+                    h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Item>(0);
+                var o = await wc.ReadObjectAsync(0, inst: new Item
+                {
+                    created = DateTime.Now,
+                    creator = prin.name
+                });
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO items ").colset(Item.Empty, 0)._VALUES_(Item.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));

@@ -90,7 +90,6 @@ namespace Zhnt.Supply
             }
         }
 
-
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {

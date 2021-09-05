@@ -159,7 +159,7 @@ namespace Zhnt.Supply
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Art.STATUS_WORKABLE,
+                    status = _Art.STATUS_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

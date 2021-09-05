@@ -18,8 +18,10 @@ alter table _arts owner to postgres;
 
 create table regs
 (
-	id smallserial not null,
-	sort smallint
+	id smallserial not null
+		constraint regs_pk
+			primary key,
+	idx smallint
 )
 inherits (_arts);
 
@@ -30,7 +32,7 @@ create table orgs
 	id serial not null
 		constraint orgs_pk
 			primary key,
-	grpid integer,
+	coid integer,
 	ctrid integer,
 	regid smallint,
 	addr varchar(20),
@@ -50,8 +52,8 @@ create table items
 	id serial not null,
 	unit varchar(4),
 	unitip varchar(10),
-	upc varchar(15),
-	icon bytea
+	icon bytea,
+	img bytea
 )
 inherits (_arts);
 
@@ -62,7 +64,6 @@ create table _docs
 	typ smallint not null,
 	status smallint default 0 not null,
 	partyid smallint not null,
-	no integer,
 	ctrid integer,
 	created timestamp(0),
 	creator varchar(10)
@@ -100,12 +101,47 @@ create index users_orgid_idx
 create unique index users_tel_idx
 	on users (tel);
 
+create table prods
+(
+	id smallserial not null,
+	itemid smallint not null,
+	srcid smallint,
+	bmin smallint,
+	bmax smallint,
+	bstep smallint,
+	bprice money,
+	boff money,
+	agts smallint[],
+	pmin smallint,
+	pmax smallint,
+	pstep smallint,
+	pprice money,
+	poff money,
+	img bytea,
+	testa bytea,
+	testb bytea,
+	dtermid smallint,
+	utermid smallint
+)
+inherits (_arts);
+
+alter table prods owner to postgres;
+
+create table terms
+(
+	id smallserial not null
+);
+
+alter table terms owner to postgres;
+
 create table buys
 (
 	id serial not null,
+	no bigint,
+	productid smallint,
 	itemid smallint not null,
 	price money,
-	discount money,
+	"off" money,
 	qty integer,
 	pay money,
 	refound money
@@ -114,44 +150,21 @@ inherits (_docs);
 
 alter table buys owner to postgres;
 
-create table purchases
+create table purchs
 (
 	id serial not null,
+	no bigint,
+	productid smallint,
 	itemid smallint not null,
 	price money,
-	discount money,
+	"off" money,
 	qty integer,
 	pay money,
-	refound money
+	refund money
 )
 inherits (_docs);
 
-alter table purchases owner to postgres;
-
-create table supplies
-(
-	id smallserial not null,
-	itemid smallint not null,
-	srcid smallint,
-	idx smallint,
-	dmin smallint,
-	dmax smallint,
-	dstep smallint,
-	dprice money,
-	doff money,
-	agts smallint[],
-	umin smallint,
-	umax smallint,
-	ustep smallint,
-	uprice money,
-	uoff money,
-	img bytea,
-	testa bytea,
-	testb bytea
-)
-inherits (_arts);
-
-alter table supplies owner to postgres;
+alter table purchs owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, id, grpid, ctrid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
 SELECT o.typ,

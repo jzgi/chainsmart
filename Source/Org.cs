@@ -26,6 +26,7 @@ namespace Zhnt.Supply
             {TYP_SRC_CO, "产源社"},
             {TYP_SRC_CO + TYP_SRC, "产源社＋产源"},
             {TYP_SRC, "产源"},
+            {TYP_BIZ_CO + TYP_SRC_CO, "商户社＋产源社"},
         };
 
         internal int id;

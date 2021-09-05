@@ -57,7 +57,7 @@ namespace Zhnt.Supply
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STATUS_WORKABLE
+                    status = _Art.STATUS_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>

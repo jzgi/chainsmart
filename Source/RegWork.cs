@@ -45,7 +45,7 @@ namespace Zhnt.Supply
             {
                 var o = new Reg
                 {
-                    status = _Art.STATUS_WORKABLE
+                    status = _Art.STATUS_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {

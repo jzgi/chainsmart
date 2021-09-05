@@ -53,19 +53,21 @@ namespace Zhnt.Supply
                 var o = dc.QueryTop<Item>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("基本品信息");
+                    h.FORM_().FIELDSUL_();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, tip: "基本单位", min: 1, max: 4, required: true)._LI();
-                    h.LI_().TEXT("单位注释", nameof(o.unitip), o.unitip, max: 4)._LI();
+                    h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Item>(0);
+                var o = await wc.ReadObjectAsync(0, new Item
+                {
+                });
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE items")._SET_(Item.Empty, 0).T(" WHERE id = @1");
                 dc.Execute(p =>
@@ -77,14 +79,26 @@ namespace Zhnt.Supply
             }
         }
 
-        [Ui("✿"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("◐"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon));
+        }
+
+        [Ui("◪"), Tool(ButtonCrop, Appear.Large)]
+        public async Task img(WebContext wc)
+        {
+            await doimg(wc, nameof(img));
+        }
+
+        public async Task doimg(WebContext wc, string col)
         {
             short id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                if (dc.QueryTop("SELECT icon FROM items WHERE id = @1", p => p.Set(id)))
+                dc.Sql("SELECT ").T(col).T(" FROM items WHERE id = @1");
+                if (dc.QueryTop(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
@@ -98,14 +112,15 @@ namespace Zhnt.Supply
                 var f = await wc.ReadAsync<Form>();
                 ArraySegment<byte> img = f[nameof(img)];
                 using var dc = NewDbContext();
-                if (await dc.ExecuteAsync("UPDATE items SET icon = @1 WHERE id = @2", p => p.Set(img).Set(id)) > 0)
+                dc.Sql("UPDATE items SET ").T(col).T(" = @1 WHERE id = @2");
+                if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
                 {
                     wc.Give(200); // ok
                 }
-                else
-                    wc.Give(500); // internal server error
+                else wc.Give(500); // internal server error
             }
         }
+
 
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)

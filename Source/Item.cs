@@ -41,8 +41,6 @@ namespace Zhnt.Supply
 
         internal string unitip;
 
-        internal short upc;
-
         // must have an icon
 
         public override void Read(ISource s, byte proj = 0x0f)
@@ -55,7 +53,6 @@ namespace Zhnt.Supply
 
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
-            s.Get(nameof(upc), ref upc);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -68,7 +65,6 @@ namespace Zhnt.Supply
 
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
-            s.Put(nameof(upc), upc);
         }
 
         public short Key => id;

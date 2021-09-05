@@ -10,14 +10,16 @@ namespace Zhnt.Supply
     {
         public const short
             STATUS_DISABLED = 0,
-            STATUS_SHOWABLE = 1,
-            STATUS_WORKABLE = 2;
+            STATUS_SHOWED = 1,
+            STATUS_ENABLED = 2,
+            STATUS_PREFERED = 3;
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STATUS_DISABLED, "⦸"},
-            {STATUS_SHOWABLE, "⦾"},
-            {STATUS_WORKABLE, "⦿"}
+            {STATUS_DISABLED, "禁用"},
+            {STATUS_SHOWED, "展示"},
+            {STATUS_ENABLED, "可用"},
+            {STATUS_PREFERED, "优先"},
         };
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
@@ -59,8 +61,8 @@ namespace Zhnt.Supply
             s.Put(nameof(creator), creator);
         }
 
-        public virtual bool IsShowable => status >= STATUS_SHOWABLE;
+        public virtual bool IsShowable => status >= STATUS_SHOWED;
 
-        public virtual bool IsWorkable => status >= STATUS_WORKABLE;
+        public virtual bool IsWorkable => status >= STATUS_ENABLED;
     }
 }

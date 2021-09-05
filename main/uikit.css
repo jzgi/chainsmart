@@ -1737,9 +1737,9 @@ button.uk-button-secondary {
 }
 
 .uk-button-default:disabled, .uk-button-default.disabled {
-    background-color: #efc1c9;
+    background-color: #f2dec0;
     color: #fff;
-    border-color: #efc1c9;
+    border-color: #f2dec0;
 }
 
 .uk-button-primary:disabled, .uk-button-primary.disabled {
