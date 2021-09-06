@@ -16,9 +16,9 @@ namespace Zhnt.Supply
         {
             // public 
 
-            MakeWork<PubItemWork>("item");
+            MakeWork<PublyItemWork>("item");
 
-            MakeWork<PubUserWork>("user");
+            MakeWork<PublyCodeWork>("purch");
 
 
             // management

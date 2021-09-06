@@ -6,23 +6,6 @@ using static Zhnt.Supply.User;
 
 namespace Zhnt.Supply
 {
-    public class PubUserWork : WebWork
-    {
-        const int PIC_AGE = 60 * 60;
-
-        public void icon(WebContext wc, int id)
-        {
-            using var dc = NewDbContext();
-            if (dc.QueryTop("SELECT icon FROM users WHERE id = @1", p => p.Set(id)))
-            {
-                dc.Let(out byte[] bytes);
-                if (bytes == null) wc.Give(204); // no content 
-                else wc.Give(200, new StaticContent(bytes), shared: true, maxage: PIC_AGE);
-            }
-            else wc.Give(404, shared: true, maxage: PIC_AGE); // not found
-        }
-    }
-
     [UserAuthorize(admly: ADMLY_IT)]
     [Ui("平台用户")]
     public class AdmlyUserWork : WebWork

@@ -28,7 +28,7 @@ namespace Zhnt.Supply
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
-            var o = FetchValue<int, Org>(id);
+            var o = ObtainValue<int, Org>(id);
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
@@ -54,7 +54,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = FetchValue<short, Org>(orgid);
+            var obj = ObtainValue<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

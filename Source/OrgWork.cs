@@ -11,7 +11,7 @@ namespace Zhnt.Supply
     {
         public async Task @default(WebContext wc)
         {
-            var regs = Fetch<short, Reg>();
+            var regs = Obtain<short, Reg>();
 
             using var dc = NewDbContext();
 

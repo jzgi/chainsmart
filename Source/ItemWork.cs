@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class PubItemWork : WebWork
+    public class PublyItemWork : WebWork
     {
         protected override void OnMake()
         {
@@ -14,7 +14,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("基础品目")]
+    [Ui("基准产品")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()
@@ -89,6 +89,28 @@ namespace Zhnt.Supply
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("✕", "删除"), Tool(ButtonPickShow, Appear.Small)]
+        public async Task rm(WebContext wc)
+        {
+            short id = wc[0];
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.ALERT("删除标品？");
+                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
+                });
+            }
+            else
+            {
+                using var dc = NewDbContext();
+                dc.Sql("DELETE FROM items WHERE id = @1");
+                await dc.ExecuteAsync(p => p.Set(id));
+
+                wc.GivePane(200);
             }
         }
     }

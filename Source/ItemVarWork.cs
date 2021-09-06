@@ -30,7 +30,7 @@ namespace Zhnt.Supply
         public void @default(WebContext wc)
         {
             short itemid = wc[0];
-            var item = FetchValue<short, Item>(itemid);
+            var item = ObtainValue<short, Item>(itemid);
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-card uk-card-default uk-card-body");
@@ -122,26 +122,5 @@ namespace Zhnt.Supply
         }
 
 
-        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
-        public async Task rm(WebContext wc)
-        {
-            short id = wc[0];
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.ALERT("删除标品？");
-                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("DELETE FROM items WHERE id = @1");
-                await dc.ExecuteAsync(p => p.Set(id));
-
-                wc.GivePane(200);
-            }
-        }
     }
 }

@@ -12,6 +12,9 @@ namespace Zhnt.Supply
         internal short id;
         internal short itemid;
         internal short srcid;
+        internal string unit;
+        internal string unitip;
+        internal short unitx;
 
         internal short bmin;
         internal short bmax;
@@ -41,6 +44,10 @@ namespace Zhnt.Supply
 
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(srcid), ref srcid);
+            s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(unitx), ref unitx);
+
             s.Get(nameof(bmin), ref bmin);
             s.Get(nameof(bmax), ref bmax);
             s.Get(nameof(bstep), ref bstep);
@@ -70,6 +77,10 @@ namespace Zhnt.Supply
 
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(srcid), srcid);
+            s.Put(nameof(unit), unit);
+            s.Put(nameof(unitip), unitip);
+            s.Put(nameof(unitx), unitx);
+
             s.Put(nameof(bmin), bmin);
             s.Put(nameof(bmax), bmax);
             s.Put(nameof(bstep), bstep);

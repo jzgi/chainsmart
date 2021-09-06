@@ -736,7 +736,7 @@ a.uk-link-reset:hover,
 
 .uk-table > tr.uk-active,
 .uk-table tbody tr.uk-active {
-    background: rgb(129 196 129 / 15%);
+    background: rgb(143 195 33 / 10%);
 }
 
 /*
@@ -1744,8 +1744,8 @@ button.uk-button-secondary {
 
 .uk-button-primary:disabled, .uk-button-primary.disabled {
     background-color: transparent;
-    color: #efc1c9;
-    border-color: #efc1c9;
+    color: #f2dec0;
+    border-color: #f2dec0;
 }
 
 .uk-button-secondary:disabled, .uk-button-secondary.disabled {
@@ -2154,7 +2154,7 @@ button.uk-button-secondary {
 }
 
 .uk-tile.uk-active {
-    background-color: rgb(129 196 129 / 15%);
+    background-color: rgb(143 195 33 / 10%);
 }
 
 
@@ -2251,7 +2251,7 @@ button.uk-button-secondary {
 }
 
 .uk-card.uk-active {
-    background-color: rgb(129 196 129 / 15%);
+    background-color: rgb(143 195 33 / 10%);
 }
 
 .uk-card-body {

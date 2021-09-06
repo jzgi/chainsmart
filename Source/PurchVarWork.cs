@@ -9,6 +9,10 @@ namespace Zhnt.Supply
 {
     public class AdmlyPurchVarWork : WebWork
     {
+        public async Task @default(WebContext wc, int page)
+        {
+          
+        }
     }
 
     public class CtrlyPurchVarWork : WebWork
@@ -22,7 +26,7 @@ namespace Zhnt.Supply
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-2];
-            var org = FetchValue<short, Org>(orgid);
+            var org = ObtainValue<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
@@ -94,7 +98,7 @@ namespace Zhnt.Supply
         public async Task apprv(WebContext wc)
         {
             short orgid = wc[-2];
-            var org = FetchValue<short, Org>(orgid);
+            var org = ObtainValue<short, Org>(orgid);
             long job = wc[0];
             bool ok;
             if (wc.IsGet)

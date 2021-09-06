@@ -28,13 +28,15 @@ namespace Zhnt.Supply
 
         // doc number
         internal int no;
-        internal short productid;
+        internal short prodid;
         internal short itemid;
         internal decimal price;
         internal decimal off;
         internal int qty;
         internal decimal pay;
         internal decimal refund;
+        internal int codestart;
+        internal short codes;
 
         public override void Read(ISource s, byte proj = 15)
         {
@@ -46,13 +48,15 @@ namespace Zhnt.Supply
             base.Read(s, proj);
 
             s.Get(nameof(no), ref no);
-            s.Get(nameof(productid), ref productid);
+            s.Get(nameof(prodid), ref prodid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(qty), ref qty);
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(refund), ref refund);
+            s.Get(nameof(codestart), ref codestart);
+            s.Get(nameof(codes), ref codes);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -65,13 +69,15 @@ namespace Zhnt.Supply
             base.Write(s, proj);
 
             s.Put(nameof(no), no);
-            s.Put(nameof(productid), productid);
+            s.Put(nameof(prodid), prodid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(qty), qty);
             s.Put(nameof(pay), pay);
             s.Put(nameof(refund), refund);
+            s.Put(nameof(codestart), codestart);
+            s.Put(nameof(codes), codes);
         }
 
         public int Key => id;
