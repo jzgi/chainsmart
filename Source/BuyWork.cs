@@ -23,62 +23,33 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(orgtyp: Org.TYP_BIZ, orgly: 1)]
-    [Ui("cart", "进货管理")]
+    [UserAuthorize(Org.TYP_BIZ, 1)]
+    [Ui("订货", "进货管理")]
     public class BizlyBuyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyDownBuyVarWork>();
+            MakeVarWork<BizlyBuyVarWork>();
         }
 
         [Ui("购物车"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM dords WHERE partyid = @1 AND status = 0 ORDER BY id");
-            await dc.QueryAsync(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
 
+            var items = Obtain<short, Item>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: "购物车");
-
-                int last = 0;
-                while (dc.Next())
+                h.TABLE(arr, o =>
                 {
-                    dc.Let(out int id);
-                    dc.Let(out string name);
-                    dc.Let(out decimal price);
-                    dc.Let(out string unit);
-                    dc.Let(out int uid);
-                    dc.Let(out string uname);
-                    dc.Let(out string utel);
-                    dc.Let(out string uim);
-                    dc.Let(out short qty);
-                    dc.Let(out decimal pay);
-                    if (id != last)
-                    {
-                        h._LI();
-                        if (last != 0)
-                        {
-                            h._UL();
-                            h._ARTICLE();
-                        }
-                        h.ARTICLE_("uk-card uk-card-default");
-                        h.HEADER_("uk-card-header").T(name).SPAN_("uk-badge").CNY(price).T('／').T(unit)._SPAN()._HEADER();
-                        h.UL_("uk-card-body");
-                    }
-                    h.LI_("uk-flex uk-width-1-1");
-                    h.P(uname, "uk-width-1-3");
-                    h.P(qty, "uk-text-right uk-width-1-6");
-                    h.P(pay, "uk-text-right uk-width-1-6");
-                    h._LI();
-
-                    last = id;
-                }
-                h._UL();
-                h._ARTICLE();
+                    h.TD(items[o.itemid].name);
+                    h.TD(o.qty);
+                    h.TDFORM(() => { });
+                });
             });
         }
 

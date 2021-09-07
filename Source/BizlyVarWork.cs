@@ -16,24 +16,26 @@ namespace Zhnt.Supply
 
             // biz
 
-            MakeWork<BizlyBuyWork>("dbuy"); // showcase
+            MakeWork<BizlyBuyWork>("buy"); // showcase
 
-            // biz group
+            // biz co-op
 
-            MakeWork<BizGrplyOrgWork>("mbr");
+            MakeWork<BizColyOrgWork>("mbr");
 
-            MakeWork<BizGrplyKpiWork>("kpi");
+            MakeWork<BizColyKpiWork>("kpi");
         }
 
         public async Task @default(WebContext wc)
         {
-            int id = wc[0];
-            var o = ObtainValue<int, Org>(id);
+            short orgid = wc[0];
+            var o = ObtainValue<short, Org>(orgid);
+
+            var prin = (User) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "账号信息及操作");
+                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");

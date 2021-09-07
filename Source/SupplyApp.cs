@@ -51,10 +51,10 @@ namespace Zhnt.Supply
                 }, 60 * 15
             );
 
-            Cache(dc =>
+            CacheValue<short, Org>((dc,id) =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE status > 0 ORDER BY id");
-                    return dc.Query<int, Org>();
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0 ORDER BY id");
+                    return dc.QueryTop<Org>(p=>p.Set(id));
                 }, 60 * 15
             );
 

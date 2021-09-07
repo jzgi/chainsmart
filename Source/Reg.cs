@@ -17,7 +17,7 @@ namespace Zhnt.Supply
         };
 
         internal short id;
-        internal short sort;
+        internal short idx;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -26,7 +26,7 @@ namespace Zhnt.Supply
                 s.Get(nameof(id), ref id);
             }
             base.Read(s, proj);
-            s.Get(nameof(sort), ref sort);
+            s.Get(nameof(idx), ref idx);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -36,7 +36,7 @@ namespace Zhnt.Supply
                 s.Put(nameof(id), id);
             }
             base.Write(s, proj);
-            s.Put(nameof(sort), sort);
+            s.Put(nameof(idx), idx);
         }
 
         public short Key => id;

@@ -91,10 +91,9 @@ namespace Zhnt.Supply
     }
 
 
-
     [UserAuthorize(Org.TYP_BIZ_CO, 1)]
-    [Ui("社成员管理")]
-    public class BizGrplyOrgWork : WebWork
+    [Ui("商户社成员")]
+    public class BizColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
@@ -104,7 +103,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_SRC_CO, 1)]
-    [Ui("社成员管理")]
+    [Ui("产源社成员")]
     public class SrcGrplyMbrWork : WebWork
     {
         protected override void OnMake()

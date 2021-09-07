@@ -18,7 +18,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgtyp: Org.TYP_BIZ_CO, orgly: 1)]
     [Ui("image", "团绩效")]
-    public class BizGrplyKpiWork : WebWork
+    public class BizColyKpiWork : WebWork
     {
         protected override void OnMake()
         {

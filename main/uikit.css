@@ -23,6 +23,10 @@ body::-webkit-scrollbar {
     display: none; 
 }
 
+body.uk-pane {
+    background-color: #ededed;
+}
+
 form {
     display: block;
 }
@@ -1163,10 +1167,6 @@ form legend {
     min-height: 2rem;
 }
 
-.uk-fieldset > ul > li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
-}
-
 .uk-radio,
 .uk-checkbox {
     box-sizing: border-box;
@@ -1236,7 +1236,7 @@ form legend {
     max-width: 100%;
     width: 100%;
     padding: 4px;
-    background: #fff;
+    background: #fafafa;
     color: #000;
     border: 0;
     font-size: inherit;
@@ -2267,13 +2267,6 @@ form > li,
     min-height: 2.5rem;
 }
 
-.uk-card-body li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
-}
-
-.uk-card-primary > .uk-list > li:nth-child(n+2) {
-    border-top: 2px solid #ededed;
-}
 
 
 .uk-card-header {
@@ -2343,6 +2336,8 @@ form > li,
     background-color: #fff;
     margin: 6px 0;
     padding: 0;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
 }
 
 .uk-card-primary .uk-card-header {
@@ -2694,19 +2689,19 @@ form > li,
     text-transform: uppercase;
     white-space: nowrap;
     color: #8fc321;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 label.uk-label {
     margin-right: 0.75rem;
-    width: 72px;
-    min-width: 72px;
+    width: 5rem;
+    min-width: 5rem;
     justify-content: flex-end;
 }
 
 label.uk-label.uk-width-large {
-    width: 160px;
-    min-width: 160px;
+    width: 12rem;
+    min-width: 12rem;
 }
 
 label > input[type="checkbox"] {
@@ -4216,15 +4211,12 @@ ul.uk-nav-sub {
     position: relative;
     margin: 4rem auto;
     height: 95%;
-    max-height: 560px;
+    max-height: 640px;
     width: 95%;
-    max-width: 560px;
+    max-width: 640px;
     transform: translateY(0);
     display: flex;
     flex-direction: column;
-    border-left: 2px solid #ededed;
-    border-right: 2px solid #ededed;
-    border-bottom: 2px solid #ededed;
 }
 
 .uk-modal-large .uk-modal-body {
@@ -4277,7 +4269,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 .uk-modal-footer {
@@ -4287,7 +4279,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     margin: 0;
     border: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 /*

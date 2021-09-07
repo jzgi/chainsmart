@@ -41,7 +41,7 @@ namespace Zhnt.Supply
     }
 
 
-    public class BizlyDownBuyVarWork : WebWork
+    public class BizlyBuyVarWork : WebWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)

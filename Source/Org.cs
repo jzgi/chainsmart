@@ -29,13 +29,13 @@ namespace Zhnt.Supply
             {TYP_BIZ_CO + TYP_SRC_CO, "商户社＋产源社"},
         };
 
-        internal int id;
+        internal short id;
 
         // joined group if any
-        internal int coid;
+        internal short coid;
 
         // the associated distribution center, if any
-        internal int ctrid;
+        internal short ctrid;
 
         internal short regid;
 

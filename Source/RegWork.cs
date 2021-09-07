@@ -53,7 +53,7 @@ namespace Zhnt.Supply
                     h.LI_().NUMBER("编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Reg.Typs)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
-                    h.LI_().NUMBER("排序", nameof(o.sort), o.sort, min: 1, max: 99)._LI();
+                    h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });

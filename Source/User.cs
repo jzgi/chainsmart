@@ -49,7 +49,7 @@ namespace Zhnt.Supply
         internal string im;
         internal string credential;
         internal short admly;
-        internal int orgid;
+        internal short orgid;
         internal short orgly;
 
         public override void Read(ISource s, byte proj = 0x0f)

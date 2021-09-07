@@ -46,23 +46,31 @@ namespace Zhnt.Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
+            var items = Obtain<short, Item>();
             if (wc.IsGet)
             {
                 var o = new Prod();
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
-                    h.LI_().TEXT("品目", nameof(o.name), o.name, max: 10, required: true)._LI();
-                    h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
 
-                    h.LI_().NUMBER("起订量", nameof(o.bmin), o.bmin, max: 10).NUMBER("起订量", nameof(o.pmin), o.pmin, max: 10)._LI();
+                    h.LI_().SELECT_ITEM("类别", nameof(o.typ), o.typ, items, Item.Typs)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true).TEXT("单位", nameof(o.unit), o.unit, max: 4)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unit, max: 8).NUMBER("单位倍比", nameof(o.unitx), o.unitx, max: 1000)._LI();
+
+                    h._FIELDSUL().FIELDSUL_();
+
+                    h.LI_().NUMBER("下游起订量", nameof(o.bmin), o.bmin, max: 10).NUMBER("上游起订量", nameof(o.pmin), o.pmin, max: 10)._LI();
                     h.LI_().NUMBER("限订量", nameof(o.bmax), o.bmax, max: 10).NUMBER("限订量", nameof(o.pmax), o.pmax, max: 10)._LI();
-                    h.LI_().NUMBER("递增", nameof(o.bstep), o.bstep, max: 10).NUMBER("递增", nameof(o.pstep), o.pstep, max: 10)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.bstep), o.bstep, max: 10).NUMBER("递增量", nameof(o.pstep), o.pstep, max: 10)._LI();
                     h.LI_().NUMBER("价格", nameof(o.bprice), o.bprice, max: 10).NUMBER("价格", nameof(o.pprice), o.pprice, max: 10)._LI();
                     h.LI_().NUMBER("优惠", nameof(o.boff), o.boff, max: 10).NUMBER("优惠", nameof(o.poff), o.poff, max: 10)._LI();
 
+                    h._FIELDSUL().FIELDSUL_();
+
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses)._LI();
+
                     h._FIELDSUL()._FORM();
                 });
             }
