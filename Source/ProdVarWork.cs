@@ -112,4 +112,12 @@ namespace Zhnt.Supply
             }
         }
     }
+
+    public class SrclyProdVarWork : WebWork
+    {
+    }
+
+    public class CoSrclyProdVarWork : WebWork
+    {
+    }
 }

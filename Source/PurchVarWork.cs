@@ -11,7 +11,6 @@ namespace Zhnt.Supply
     {
         public async Task @default(WebContext wc, int page)
         {
-          
         }
     }
 
@@ -125,5 +124,9 @@ namespace Zhnt.Supply
                 wc.GivePane(200);
             }
         }
+    }
+
+    public class SrcColyPurchVarWork : WebWork
+    {
     }
 }

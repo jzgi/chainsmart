@@ -24,8 +24,8 @@ namespace Zhnt.Supply
     }
 
 
-    [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("平台订货")]
+    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
+    [Ui("销售动态")]
     public class SrclyPurchWork : WebWork
     {
         protected override void OnMake()
@@ -41,10 +41,7 @@ namespace Zhnt.Supply
             dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
 
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "来自平台的订单");
-            });
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
 
         [Ui("历史"), Tool(Anchor)]
@@ -55,10 +52,39 @@ namespace Zhnt.Supply
             dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
 
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "来自平台的订单");
-            });
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+        }
+    }
+
+    [UserAuthorize(Org.TYP_CO_SRC, ORGLY_OP)]
+    [Ui("社团销售动态")]
+    public class CoSrclyPurchWork : WebWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<SrcColyPurchVarWork>();
+        }
+
+        [Ui("来单"), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            int orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+        }
+
+        [Ui("历史"), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            int orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
     }
 

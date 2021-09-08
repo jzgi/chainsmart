@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZ_CO, 1)]
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_CO_BIZ, 1)]
     [Ui("商户端")]
     public class BizlyVarWork : WebWork, IOrglyVar
     {
@@ -16,9 +16,9 @@ namespace Zhnt.Supply
 
             MakeWork<BizlyBuyWork>("buy"); // showcase
 
-            MakeWork<BizColyOrgWork>("org");
+            MakeWork<CoBizlyOrgWork>("org");
 
-            MakeWork<BizColyClearWork>("clear");
+            MakeWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)

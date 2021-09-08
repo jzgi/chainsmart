@@ -13,20 +13,20 @@ namespace Zhnt.Supply
         public const short
             TYP_CTR = 1,
             TYP_BIZ = 2,
-            TYP_BIZ_CO = 4,
+            TYP_CO_BIZ = 4,
             TYP_SRC = 8,
-            TYP_SRC_CO = 16;
+            TYP_CO_SRC = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_CTR, "分拣中心"},
-            {TYP_BIZ_CO, "商户社"},
-            {TYP_BIZ_CO + TYP_BIZ, "商户社＋商户"},
+            {TYP_CO_BIZ, "商户社"},
+            {TYP_CO_BIZ + TYP_BIZ, "商户社＋商户"},
             {TYP_BIZ, "商户"},
-            {TYP_SRC_CO, "产源社"},
-            {TYP_SRC_CO + TYP_SRC, "产源社＋产源"},
+            {TYP_CO_SRC, "产源社"},
+            {TYP_CO_SRC + TYP_SRC, "产源社＋产源"},
             {TYP_SRC, "产源"},
-            {TYP_BIZ_CO + TYP_SRC_CO, "商户社＋产源社"},
+            {TYP_CO_BIZ + TYP_CO_SRC, "商户社＋产源社"},
         };
 
         internal short id;
@@ -121,13 +121,13 @@ namespace Zhnt.Supply
 
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsBizCo => (typ & TYP_BIZ_CO) == TYP_BIZ_CO;
+        public bool IsBizCo => (typ & TYP_CO_BIZ) == TYP_CO_BIZ;
 
         public bool IsInternal => false;
 
         public bool IsMerchant => (typ & TYP_CTR) == TYP_CTR;
 
-        public bool IsSocial => (typ & TYP_BIZ_CO) == TYP_BIZ_CO;
+        public bool IsSocial => (typ & TYP_CO_BIZ) == TYP_CO_BIZ;
 
         public bool IsProvider => IsMerchant || IsSocial;
 

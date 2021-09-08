@@ -16,26 +16,11 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(orgtyp: Org.TYP_BIZ_CO, orgly: 1)]
-    [Ui("image", "团绩效")]
-    public class BizColyClearWork : WebWork
+    [Ui("清算报表")]
+    public class OrglyClearWork : WebWork
     {
         protected override void OnMake()
         {
-        }
-
-        public async Task @default(WebContext wc)
-        {
-        }
-    }
-
-    [UserAuthorize(orgtyp: Org.TYP_SRC_CO, orgly: 1)]
-    [Ui("团绩效")]
-    public class SrcColyClearWork : WebWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<BizColyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc)

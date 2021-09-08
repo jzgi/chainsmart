@@ -94,25 +94,33 @@ namespace Zhnt.Supply
     }
 
 
-    [UserAuthorize(Org.TYP_BIZ_CO, 1)]
-    [Ui("商户社成员")]
-    public class BizColyOrgWork : WebWork
+    [UserAuthorize(Org.TYP_CO_BIZ, 1)]
+    [Ui("社团成员管理", icon: "users")]
+    public class CoBizlyOrgWork : WebWork
     {
         protected override void OnMake()
         {
             State = Org.TYP_BIZ;
             MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_BIZ);
         }
+
+        public async Task @default(WebContext wc)
+        {
+        }
     }
 
-    [UserAuthorize(Org.TYP_SRC_CO, 1)]
-    [Ui("产源社成员")]
-    public class SrcColyOrgWork : WebWork
+    [UserAuthorize(Org.TYP_CO_SRC, 1)]
+    [Ui("社团成员管理", icon: "users")]
+    public class CoSrclyOrgWork : WebWork
     {
         protected override void OnMake()
         {
             State = Org.TYP_SRC;
             MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRC);
+        }
+
+        public async Task @default(WebContext wc)
+        {
         }
     }
 }

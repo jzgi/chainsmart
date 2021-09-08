@@ -89,4 +89,7 @@ namespace Zhnt.Supply
     public class BizColyOrgVarWork : WebWork
     {
     }
+    public class SrcColyOrgVarWork : WebWork
+    {
+    }
 }

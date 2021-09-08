@@ -157,7 +157,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [Ui("users", "操作权限")]
+    [Ui("人员权限")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnMake()
@@ -167,7 +167,7 @@ namespace Zhnt.Supply
 
         public void @default(WebContext wc)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(orgid));

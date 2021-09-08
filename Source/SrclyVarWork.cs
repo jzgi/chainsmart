@@ -7,22 +7,27 @@ using static Zhnt.Supply.User;
 
 namespace Zhnt.Supply
 {
-    [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("账号")]
-    public class SrclyVarWork : WebWork
+    [UserAuthorize(Org.TYP_SRC | Org.TYP_CO_SRC, 1)]
+    public class SrclyVarWork : WebWork, IOrglyVar
     {
         protected override void OnMake()
         {
             MakeWork<OrglyAccessWork>("access");
 
+            MakeWork<SrclyProdWork>("prod");
+
             MakeWork<SrclyPurchWork>("purch");
 
-            MakeWork<SrcColyOrgWork>("org");
+            MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<SrcColyClearWork>("clear");
+            MakeWork<CoSrclyOrgWork>("mbr");
+
+            MakeWork<CoSrclyProdWork>("coprod");
+
+            MakeWork<CoSrclyPurchWork>("copurch");
         }
 
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             short orgid = wc[0];
             var org = Obtain<short, Org>(orgid);
@@ -33,7 +38,7 @@ namespace Zhnt.Supply
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + Orgly[prin.orgly] + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");

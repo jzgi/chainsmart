@@ -84,4 +84,32 @@ namespace Zhnt.Supply
             }
         }
     }
+
+    [UserAuthorize(Org.TYP_SRC, 1)]
+    [Ui("产品供应")]
+    public class SrclyProdWork : WebWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<SrclyProdVarWork>();
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
+
+    [UserAuthorize(Org.TYP_CO_SRC, 1)]
+    [Ui("社团产品供应")]
+    public class CoSrclyProdWork : WebWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<CoSrclyProdVarWork>();
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
 }
