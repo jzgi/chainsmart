@@ -18,7 +18,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgtyp: Org.TYP_BIZ_CO, orgly: 1)]
     [Ui("image", "团绩效")]
-    public class BizColyKpiWork : WebWork
+    public class BizColyClearWork : WebWork
     {
         protected override void OnMake()
         {
@@ -31,7 +31,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(orgtyp: Org.TYP_SRC_CO, orgly: 1)]
     [Ui("团绩效")]
-    public class SrcGrplyKpiWork : WebWork
+    public class SrcColyClearWork : WebWork
     {
         protected override void OnMake()
         {

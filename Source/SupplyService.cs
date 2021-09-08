@@ -196,11 +196,11 @@ namespace Zhnt.Supply
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STATUS_DRAFT);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STATUS_CREATED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
-                    dc.Sql("UPDATE orders SET status = ").T(STATUS_ISSUED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(STATUS_DRAFT);
+                    dc.Sql("UPDATE orders SET status = ").T(STATUS_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(STATUS_CREATED);
                     await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
                 }
                 else // try to refund this payment

@@ -37,28 +37,28 @@ namespace Zhnt.Supply
 
         public static void CacheUp()
         {
-            Cache(dc =>
+            CacheMap(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            Cache(dc =>
+            CacheMap(dc =>
                 {
                     dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
                     return dc.Query<short, Item>();
                 }, 60 * 15
             );
 
-            CacheValue<short, Org>((dc,id) =>
+            Cache<short, Org>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0 ORDER BY id");
-                    return dc.QueryTop<Org>(p=>p.Set(id));
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
+                    return dc.QueryTop<Org>(p => p.Set(id));
                 }, 60 * 15
             );
 
-            CacheEx(dc =>
+            CacheMap(dc =>
                 {
                     dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM downs ORDER BY id");
                     return dc.Query<short, Prod>();
@@ -84,7 +84,7 @@ namespace Zhnt.Supply
                 {
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys >= min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {
@@ -109,7 +109,7 @@ namespace Zhnt.Supply
                     lst.Clear();
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_DRAFT).T(" AND ended < @1 AND qtys < min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {

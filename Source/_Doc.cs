@@ -9,19 +9,21 @@ namespace Zhnt.Supply
     public abstract class _Doc : IData
     {
         public const short
-            STATUS_DRAFT = 0,
-            STATUS_ISSUED = 1,
-            STATUS_ARGUED = 2, // user interected
-            STATUS_CLOSED = 3, // after clearing
-            STATUS_ABORTED = 4;
+            STATUS_CREATED = 0,
+            STATUS_ABORTED = 1,
+            STATUS_SUBMITTED = 2, // before processing
+            STATUS_FIRMED = 3, // ready for distr center op 
+            STATUS_SHIPPED = 4, //  
+            STATUS_CLOSED = 5; // after clearing
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STATUS_DRAFT, "草稿"},
-            {STATUS_ISSUED, "启动"},
-            {STATUS_ARGUED, "质疑"},
-            {STATUS_CLOSED, "关闭"},
-            {STATUS_ABORTED, "撤销"},
+            {STATUS_CREATED, "草稿中"},
+            {STATUS_ABORTED, "已撤销"},
+            {STATUS_SUBMITTED, "提交中"},
+            {STATUS_FIRMED, "已确认"},
+            {STATUS_SHIPPED, "已发货"},
+            {STATUS_CLOSED, "已关闭"},
         };
 
 

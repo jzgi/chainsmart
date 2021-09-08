@@ -96,7 +96,8 @@ namespace Zhnt.Supply
             if (coid > 0) s.Put(nameof(coid), coid); // conditional
             else s.PutNull(nameof(coid));
 
-            s.Put(nameof(ctrid), ctrid);
+            if (ctrid > 0) s.Put(nameof(ctrid), ctrid); // conditional
+            else s.PutNull(nameof(ctrid));
 
             if ((proj & LATER) == LATER)
             {
@@ -116,9 +117,11 @@ namespace Zhnt.Supply
 
         public string Im => mgrim;
 
-        public bool IsShop => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsPt => (typ & TYP_BIZ) == TYP_BIZ;
+        public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
+
+        public bool IsBizCo => (typ & TYP_BIZ_CO) == TYP_BIZ_CO;
 
         public bool IsInternal => false;
 

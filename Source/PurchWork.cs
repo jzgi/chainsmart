@@ -25,7 +25,7 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("订单")]
+    [Ui("平台订货")]
     public class SrclyPurchWork : WebWork
     {
         protected override void OnMake()
@@ -33,20 +33,38 @@ namespace Zhnt.Supply
             MakeVarWork<SrclyPurchVarWork>();
         }
 
+        [Ui("来单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uords WHERE partyid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
 
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: "来自平台的订单");
+            });
+        }
+
+        [Ui("历史"), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            int orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: "来自平台的订单");
+            });
         }
     }
 
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购单")]
+    [Ui("采购收货")]
     public class CtrlyPurchWork : WebWork
     {
         protected override void OnMake()
@@ -60,7 +78,7 @@ namespace Zhnt.Supply
             int orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_ISSUED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -79,7 +97,7 @@ namespace Zhnt.Supply
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_ISSUED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>

@@ -14,21 +14,19 @@ namespace Zhnt.Supply
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            // biz
-
             MakeWork<BizlyBuyWork>("buy"); // showcase
 
-            // biz co-op
+            MakeWork<BizColyOrgWork>("org");
 
-            MakeWork<BizColyOrgWork>("mbr");
-
-            MakeWork<BizColyKpiWork>("kpi");
+            MakeWork<BizColyClearWork>("clear");
         }
 
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             short orgid = wc[0];
-            var o = ObtainValue<short, Org>(orgid);
+            var org = Obtain<short, Org>(orgid);
+            var co = Obtain<short, Org>(org.coid);
+            var ctr = Obtain<short, Org>(org.ctrid);
 
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
@@ -39,11 +37,15 @@ namespace Zhnt.Supply
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
-                h.LI_().FIELD("主体名称", o.Name)._LI();
-                h.LI_().FIELD("地址", "")._LI();
-                h.LI_().FIELD("所属团", "")._LI();
-                h.LI_().FIELD("对应分拣中心", "")._LI();
-                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
+                h.LI_().FIELD("主体", org.Name)._LI();
+                h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("地址", org.addr)._LI();
+                if (!org.IsBizCo)
+                {
+                    h.LI_().FIELD("商户社", co.name)._LI();
+                }
+                h.LI_().FIELD("分拣中心", ctr.name)._LI();
+                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h._UL();
                 h._FORM();
 
@@ -56,7 +58,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = ObtainValue<short, Org>(orgid);
+            var obj = Obtain<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

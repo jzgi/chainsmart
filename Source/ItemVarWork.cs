@@ -30,7 +30,7 @@ namespace Zhnt.Supply
         public void @default(WebContext wc)
         {
             short itemid = wc[0];
-            var item = ObtainValue<short, Item>(itemid);
+            var item = Obtain<short, Item>(itemid);
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-card uk-card-default uk-card-body");

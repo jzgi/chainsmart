@@ -42,7 +42,7 @@ namespace Zhnt.Supply
                 short orgid = wc[typeof(IOrglyVar)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = ObtainValue<short, Org>(prin.orgid);
+                    var org = Obtain<short, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

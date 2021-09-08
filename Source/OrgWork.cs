@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -9,9 +8,14 @@ namespace Zhnt.Supply
     [Ui("机构主体")]
     public class AdmlyOrgWork : WebWork
     {
+        protected override void OnMake()
+        {
+            MakeVarWork<AdmlyOrgVarWork>();
+        }
+
         public async Task @default(WebContext wc)
         {
-            var regs = Obtain<short, Reg>();
+            var regs = ObtainMap<short, Reg>();
 
             using var dc = NewDbContext();
 
@@ -50,6 +54,7 @@ namespace Zhnt.Supply
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
+            var regs = ObtainMap<short, Reg>();
 
             if (wc.IsGet)
             {
@@ -62,17 +67,11 @@ namespace Zhnt.Supply
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("主体资料");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) =>
-                        State switch
-                        {
-                            0 => (k != Org.TYP_BIZ && k != Org.TYP_SRC),
-                            Org.TYP_BIZ => (k == Org.TYP_BIZ),
-                            _ => (k == Org.TYP_SRC)
-                        }
-                    )._LI();
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 8, required: true)._LI();
-                    h.LI_().TEXT("简介", nameof(m.tip), m.tip, max: 16)._LI();
+                    h.FORM_().FIELDSUL_("主体信息");
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
@@ -81,7 +80,11 @@ namespace Zhnt.Supply
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Org>(0);
+                var o = await wc.ReadObjectAsync<Org>(0, new Org
+                {
+                    created = DateTime.Now,
+                    creator = prin.name,
+                });
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p));
@@ -104,7 +107,7 @@ namespace Zhnt.Supply
 
     [UserAuthorize(Org.TYP_SRC_CO, 1)]
     [Ui("产源社成员")]
-    public class SrcGrplyMbrWork : WebWork
+    public class SrcColyOrgWork : WebWork
     {
         protected override void OnMake()
         {

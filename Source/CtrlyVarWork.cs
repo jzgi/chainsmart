@@ -14,59 +14,33 @@ namespace Zhnt.Supply
         {
             MakeWork<OrglyAccessWork>("acc", User.Ctrly);
 
-            MakeWork<CtrlyDownLnWork>("do"); // downstream order
+            MakeWork<CtrlyBuyWork>("buy"); // downstream order
 
-            MakeWork<CtrlyPurchWork>("uo"); // upstream order
+            MakeWork<CtrlyPurchWork>("purch"); // upstream order
         }
 
         public async Task @default(WebContext wc)
         {
-            bool inner = wc.Query[nameof(inner)];
-            int id = wc[0];
-            var o = ObtainValue<int, Org>(id);
-            if (!inner)
+            short orgid = wc[0];
+            var o = Obtain<short, Org>(orgid);
+
+            var prin = (User) wc.Principal;
+            using var dc = NewDbContext();
+
+            wc.GivePage(200, h =>
             {
-                wc.GiveFrame(200, false, 60, title: "分拣中心操作", group: (byte) o.typ);
-            }
-            else
-            {
-                using var dc = NewDbContext();
+                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
 
-                wc.GivePage(200, h =>
-                {
-                    h.TOOLBAR(caption: "本方账号信息");
+                h.FORM_("uk-card uk-card-primary");
+                h.UL_("uk-card-body");
+                h.LI_().FIELD("主体名称", o.Name)._LI();
+                h.LI_().FIELD("地址", "")._LI();
+                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
+                h._UL();
+                h._FORM();
 
-                    h.FORM_("uk-card uk-card-default");
-                    h.HEADER_("uk-card-header").T("基本信息").SPAN_("uk-badge").T("状态：").T(_Art.Statuses[o.status])._SPAN()._HEADER();
-                    h.UL_("uk-card-body");
-                    h.LI_().FIELD("本方名称", o.Name)._LI();
-                    h.LI_().FIELD("标语", o.tip)._LI();
-                    h.LI_().FIELD("类型", Org.Typs[o.typ])._LI();
-                    h.LI_().FIELD("地址", o.addr)._LI();
-                    if (o.IsPt)
-                    {
-                        // var shop = o.grpid > 0 ? orgs[o.grpid]?.name : null;
-                        // h.LI_().FIELD("关联厨房", shop)._LI();
-                    }
-                    if (o.IsMerchant)
-                    {
-                        // h.LI_().FIELD("派递模式", o.refid ? "全网包邮" : "同城服务站")._LI();
-                    }
-                    h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                    h._UL();
-                    h.FOOTER_("uk-card-footer uk-flex-center").TOOL(nameof(setg), css: "uk-button-secondary")._FOOTER();
-                    h._FORM();
-
-                    if (o.IsProvider)
-                    {
-                        string url = ServerEnviron.extcfg[nameof(url)];
-                        h.SECTION_("uk-section uk-flex-middle uk-col");
-                        h.P("本方主页");
-                        h.QRCODE(url + "/org/" + o.id + "/", css: "uk-width-medium");
-                        h._SECTION();
-                    }
-                }, false, 3);
-            }
+                h.OPLIST();
+            }, false, 3);
         }
 
         [UserAuthorize(orgly: 1)]
@@ -103,7 +77,7 @@ namespace Zhnt.Supply
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
-            var obj = ObtainValue<short, Org>(orgid);
+            var obj = Obtain<short, Org>(orgid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

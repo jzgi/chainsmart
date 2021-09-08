@@ -26,7 +26,7 @@ namespace Zhnt.Supply
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-2];
-            var org = ObtainValue<short, Org>(orgid);
+            var org = Obtain<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
@@ -98,7 +98,7 @@ namespace Zhnt.Supply
         public async Task apprv(WebContext wc)
         {
             short orgid = wc[-2];
-            var org = ObtainValue<short, Org>(orgid);
+            var org = Obtain<short, Org>(orgid);
             long job = wc[0];
             bool ok;
             if (wc.IsGet)

@@ -46,7 +46,7 @@ namespace Zhnt.Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var items = Obtain<short, Item>();
+            var items = ObtainMap<short, Item>();
             if (wc.IsGet)
             {
                 var o = new Prod();

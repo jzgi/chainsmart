@@ -6,11 +6,12 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class OrgVarWork : WebWork
+    public class AdmlyOrgVarWork : WebWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
+            var regs = ObtainMap<short, Reg>();
             short id = wc[0];
             if (wc.IsGet)
             {
@@ -19,10 +20,11 @@ namespace Zhnt.Supply
                 var m = dc.QueryTop<Org>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("服务方属性");
-                    h.LI_().SELECT("服务类型", nameof(m.typ), m.typ, Org.Typs)._LI();
+                    h.FORM_().FIELDSUL_("主体信息");
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
-                    h.LI_().TEXT("标语", nameof(m.tip), m.tip, max: 16)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
@@ -31,7 +33,6 @@ namespace Zhnt.Supply
             }
             else // POST
             {
-                var f = await wc.ReadAsync<Form>();
                 var m = await wc.ReadObjectAsync<Org>(0);
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
@@ -44,7 +45,7 @@ namespace Zhnt.Supply
             }
         }
 
-        [Ui("☹", "☹ 负责人"), Tool(ButtonOpen)]
+        [Ui("☹", "☹ 负责人"), Tool(ButtonOpen, Appear.Small)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -84,9 +85,6 @@ namespace Zhnt.Supply
         }
     }
 
-    public class AdmlyOrgVarWork : OrgVarWork
-    {
-    }
 
     public class BizColyOrgVarWork : WebWork
     {
