@@ -198,15 +198,14 @@ const
     HALF = 1,
     SMALL = 2,
     LARGE = 3,
-    FULL = 4,
-    REFRESH = 5;
+    FULL = 4;
 
 function dialog(trig, mode, pick, appear, title) {
     var stylec =
         appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
             appear == SMALL ? ' uk-modal-small' :
                 appear == LARGE ? ' uk-modal-large' :
-                    ' uk-modal-full';
+                    ' uk-modal-full uk-animation-slide-right';
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
     var tag = trig.tagName;
@@ -228,7 +227,7 @@ function dialog(trig, mode, pick, appear, title) {
         } else {
             src = action;
         }
-        trigc = (mode == OPEN && appear == REFRESH) ? ' button-refresh-trig' : ' button-trig';
+        trigc = ' button-trig';
     } else if (tag == 'A') {
         action = trig.href;
         method = 'get';
@@ -240,7 +239,7 @@ function dialog(trig, mode, pick, appear, title) {
 
     var html = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
-    if (appear != HALF) {
+    if (appear == LARGE || appear == SMALL) {
         html += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
     }
     html += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
@@ -250,12 +249,13 @@ function dialog(trig, mode, pick, appear, title) {
     html += '</section></div>';
 
     var e = appendTo(document.body, html);
+
     // destroy in DOM on close
     e.addEventListener('hidden', function (e) {
 
         var dlg = $('#dialog');
         if (dlg) {
-            if (dlg.classList.contains('button-refresh-trig')) {
+            if (dlg.classList.contains('button-trig')) {
                 location.reload(false);
             } else {
                 document.body.removeChild(dlg);
@@ -263,6 +263,7 @@ function dialog(trig, mode, pick, appear, title) {
         }
     }, false);
 
+    // display the modal
     UIkit.modal(e).show();
     return false;
 }
@@ -325,38 +326,30 @@ function crop(trig, appear, title) {
     var trigc = trig.tagName == 'BUTTON' ? ' button-trig' : ' anchor-trig';
     title = title || trig.innerHTML;
     var action = trig.href || trig.formAction;
+    var stylec;
     switch (appear) {
-        case HALF:
+        case SMALL:
             wid = 120;
             hei = 120;
-            break;
-        case SMALL:
-            wid = 240;
-            hei = 240;
+            stylec = ' uk-modal-large';
             break;
         case LARGE:
             wid = 360;
             hei = 360;
-            break;
-        case FULL:
-            wid = 480;
-            hei = 480;
-            break;
-        case REFRESH:
-            wid = 480;
-            hei = 480;
-            trigc = ' button-refresh-trig';
+            stylec = ' uk-modal-large';
             break;
         default:
             wid = 360;
             hei = 360;
+            stylec = ' uk-modal-large';
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-full' + trigc + '" uk-modal>';
+    var html = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     html += '<header class="uk-modal-header">';
 
     html += '<nav class="uk-button-group">';
+    html += '<span class="uk-modal-title">' + title + '</span>';
     html += '<button class="uk-button uk-button-primary" onclick="$(\'#imginp\').click()">加载</button>';
     html += '<button class="uk-button uk-button-primary" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
     html += '</nav>'; // control group
@@ -436,7 +429,7 @@ function closeUp(reload) {
     if (reload) {
         parent.location.reload(false);
     } else {
-        parent.document.removeChild(div);
+        UIkit.modal(div).hide();
     }
 }
 

@@ -20,7 +20,7 @@ namespace Zhnt.Supply
 
             MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<CoSrclyOrgWork>("mbr");
+            MakeWork<CoSrclyOrgWork>("coorg");
 
             MakeWork<CoSrclyProdWork>("coprod");
 
@@ -58,7 +58,7 @@ namespace Zhnt.Supply
         }
 
         [UserAuthorize(orgly: ORGLY_MGR)]
-        [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("实体图片"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             short id = wc[0];
@@ -71,7 +71,8 @@ namespace Zhnt.Supply
                     if (bytes == null) wc.Give(204); // no content 
                     else wc.Give(200, new StaticContent(bytes), shared: false, 60);
                 }
-                else wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+                else
+                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
             }
             else // POST
             {
@@ -82,12 +83,13 @@ namespace Zhnt.Supply
                 {
                     wc.Give(200); // ok
                 }
-                else wc.Give(500); // internal server error
+                else
+                    wc.Give(500); // internal server error
             }
         }
 
         [UserAuthorize(orgly: ORGLY_MGR)]
-        [Ui("设置", group: 1), Tool(ButtonShow)]
+        [Ui("运营设置"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
@@ -99,7 +101,7 @@ namespace Zhnt.Supply
                 var map = dc.Query<int, User>(p => p.Set(orgid));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("修改基本设置");
+                    h.FORM_().FIELDSUL_("修改基本信息");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
                     h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();

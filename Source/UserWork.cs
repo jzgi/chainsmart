@@ -173,7 +173,7 @@ namespace Zhnt.Supply
             var arr = dc.Query<User>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "分配操作权限");
+                h.TOOLBAR(caption: Label);
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.id);
@@ -186,7 +186,7 @@ namespace Zhnt.Supply
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
+        [Ui("添加", "添加人员权限"), Tool(ButtonOpen, Appear.Small)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;

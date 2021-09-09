@@ -24,7 +24,7 @@ body::-webkit-scrollbar {
 }
 
 body.uk-pane {
-    background-color: #ededed;
+    background-color: #f8f8f8;
 }
 
 form {
@@ -604,15 +604,15 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider::before {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #ededed;
 }
 
 .uk-list-divider::after {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ededed;
 }
 
 .uk-list-divider > li:nth-child(n+2) {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #ededed;
 }
 
 /*
@@ -726,7 +726,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-table td {
-    height: 2rem;
+    height: 2.5rem;
 }
 
 .uk-table tfoot {
@@ -1123,7 +1123,7 @@ button.uk-icon:not(:disabled) {
     bottom: 0;
     left: 0;
     font-size: 0.875rem;
-    color: #777;
+    color: #666;
     display: flex;
     box-sizing: border-box;
     justify-content: center;
@@ -1164,7 +1164,7 @@ form legend {
     padding: 4px;
     display: flex;
     width: 100%;
-    min-height: 2rem;
+    min-height: 2.5rem;
 }
 
 .uk-radio,
@@ -1817,6 +1817,8 @@ button.uk-button-secondary {
     color: #333;
     font-size: 0.875rem;
     font-weight: normal;
+    align-items: center;
+    min-height: 2rem;
 }
 
 .uk-button-link:hover,
@@ -1835,8 +1837,8 @@ button.uk-button-secondary {
 }
 
 .uk-button-group {
-    vertical-align: middle;
-    display: inline-block;
+    align-items: center;
+    display: flex;
     white-space: nowrap;
 }
 
@@ -2255,7 +2257,7 @@ button.uk-button-secondary {
 }
 
 .uk-card-body {
-    padding: 0 4px;
+    padding: 4px;
 }
 
 form > li,
@@ -2267,7 +2269,9 @@ form > li,
     min-height: 2.5rem;
 }
 
-
+.uk-card-body li:nth-child(n+2) {
+    border-top: 1px solid #ededed;
+}
 
 .uk-card-header {
     padding: 4px;
@@ -4186,12 +4190,10 @@ ul.uk-nav-sub {
     height: 80%;
     max-height: 320px;
     width: 80%;
-    max-width: 320px;
+    max-width: 480px;
     transform: translateY(0);
     display: flex;
     flex-direction: column;
-    border-left: 2px solid #ededed;
-    border-right: 2px solid #ededed;
 }
 
 .uk-modal-small .uk-modal-body {
@@ -4269,7 +4271,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #ededed;
+    background-color: #f8f8f8;
 }
 
 .uk-modal-footer {
@@ -4279,7 +4281,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     margin: 0;
     border: 0;
-    background-color: #ededed;
+    background-color: #f8f8f8;
 }
 
 /*
@@ -4311,9 +4313,9 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #000;
+    color: #333;
     font-size: 1rem;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 [class*='uk-modal-close-'] {
