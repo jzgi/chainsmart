@@ -16,7 +16,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [Ui("清算报表")]
+    [Ui("业务结算")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()

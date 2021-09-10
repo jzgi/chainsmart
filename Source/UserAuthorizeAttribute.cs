@@ -39,7 +39,7 @@ namespace Zhnt.Supply
             if (orgtyp > 0 && orgly > 0)
             {
                 if ((prin.orgly & orgly) != orgly) return false; // inclusive check
-                short orgid = wc[typeof(IOrglyVar)];
+                short orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
                     var org = Obtain<short, Org>(prin.orgid);

@@ -90,7 +90,7 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购收货")]
+    [Ui("采购收货", "sign-in")]
     public class CtrlyPurchWork : WebWork
     {
         protected override void OnMake()
@@ -98,18 +98,17 @@ namespace Zhnt.Supply
             MakeVarWork<CtrlyPurchVarWork>();
         }
 
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("已确认", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            int orgid = wc[-1];
-
+            short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM uos WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "当前活跃拼团");
+                h.TOOLBAR();
                 if (arr != null)
                 {
                 }
@@ -117,18 +116,18 @@ namespace Zhnt.Supply
             }, false, 3);
         }
 
-        [Ui("停止", group: 2), Tool(Anchor)]
+        [Ui("已收货", group: 2), Tool(Anchor)]
         public async Task closed(WebContext wc, int page)
         {
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "已成和已结拼团");
+                h.TOOLBAR();
                 if (arr != null)
                 {
                 }

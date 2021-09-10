@@ -350,7 +350,7 @@ function crop(trig, appear, title) {
 
     html += '<nav class="uk-button-group">';
     html += '<span class="uk-modal-title">' + title + '</span>';
-    html += '<button class="uk-button uk-button-primary" onclick="$(\'#imginp\').click()">加载</button>';
+    html += '<button class="uk-button uk-button-primary" onclick="$(\'#imginp\').click()">选择</button>';
     html += '<button class="uk-button uk-button-primary" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
     html += '</nav>'; // control group
 

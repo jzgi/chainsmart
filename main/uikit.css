@@ -1149,7 +1149,6 @@ form legend {
     color: #333;
     padding: 0.5rem;
     font-size: 0.875rem;
-    font-weight: bold;
 }
 
 .uk-fieldset > ul {
@@ -1677,7 +1676,7 @@ button.uk-button-primary.uk-active {
 }
 
 a.uk-button-primary {
-    color: #f59604;
+    color: #333;
     background-color: #ededed;
     padding: 10px;
     border: 1px solid #ccc;
@@ -1689,7 +1688,7 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    border: 1px solid #f59604;
+    border: 1px solid #333;
     background-color: #fff;
 }
 
@@ -2698,7 +2697,7 @@ form > li,
 
 label.uk-label {
     margin-right: 0.75rem;
-    width: 5rem;
+    width: 5.5rem;
     min-width: 5rem;
     justify-content: flex-end;
 }

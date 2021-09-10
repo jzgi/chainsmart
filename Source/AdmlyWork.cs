@@ -12,6 +12,8 @@ namespace Zhnt.Supply
         {
             // information
 
+            MakeWork<AdmlyPeerWork>("peer");
+
             MakeWork<AdmlyAccessWork>("acc");
 
             MakeWork<AdmlyUserWork>("user");
@@ -19,8 +21,6 @@ namespace Zhnt.Supply
             MakeWork<AdmlyRegWork>("reg");
 
             MakeWork<AdmlyItemWork>("item");
-
-            MakeWork<AdmlyPeerWork>("peer");
 
             // operation
 
@@ -55,7 +55,7 @@ namespace Zhnt.Supply
                 h._UL();
                 h._FORM();
 
-                h.OPLIST();
+                h.TASKUL();
             });
         }
 

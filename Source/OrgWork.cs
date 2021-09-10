@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    [Ui("机构主体")]
+    [Ui("机构主体","℠")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -95,7 +95,7 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(Org.TYP_CO_BIZ, 1)]
-    [Ui("社团成员管理", icon: "users")]
+    [Ui("社团成员管理", "users")]
     public class CoBizlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -110,7 +110,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_CO_SRC, 1)]
-    [Ui("社团成员管理", icon: "users")]
+    [Ui("社团成员管理", "users")]
     public class CoSrclyOrgWork : WebWork
     {
         protected override void OnMake()

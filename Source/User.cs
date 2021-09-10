@@ -16,12 +16,12 @@ namespace Zhnt.Supply
             {TYP_COOK, "调养厨师"},
         };
 
-        public const short ADMLY_OP = 1, ADMLY_IT = 4, ADMLY_MGT = 15;
+        public const short ADMLY_OP = 3, ADMLY_IT = 5, ADMLY_MGT = 15;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
-            {ADMLY_OP, "运营员"},
-            {ADMLY_IT, "信息员"},
+            {ADMLY_OP, "运营部"},
+            {ADMLY_IT, "信息部"},
             {ADMLY_MGT, "管理员"},
         };
 

@@ -157,7 +157,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [Ui("人员权限")]
+    [Ui("人员权限", "users")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnMake()
@@ -173,7 +173,7 @@ namespace Zhnt.Supply
             var arr = dc.Query<User>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label);
+                h.TOOLBAR();
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.id);

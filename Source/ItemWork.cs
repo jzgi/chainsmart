@@ -14,7 +14,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("品目资料")]
+    [Ui("品类管理")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()
@@ -67,11 +67,11 @@ namespace Zhnt.Supply
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("品目信息");
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.FORM_().FIELDSUL_("品类信息");
+                    h.LI_().SELECT("大类", nameof(o.typ), o.typ, Item.Typs)._LI();
+                    h.LI_().TEXT("品类名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, tip: "基本单位", min: 1, max: 4, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();

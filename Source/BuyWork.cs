@@ -124,7 +124,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("销售分拣")]
+    [Ui("销售分拣", "sign-out")]
     public class CtrlyBuyWork : WebWork
     {
         protected override void OnMake()
