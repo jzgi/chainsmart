@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    [Ui("机构主体","℠")]
+    [Ui("机构主体", "℠")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -95,7 +95,7 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(Org.TYP_CO_BIZ, 1)]
-    [Ui("社团成员管理", "users")]
+    [Ui("社团管理", "album")]
     public class CoBizlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -106,6 +106,64 @@ namespace Zhnt.Supply
 
         public async Task @default(WebContext wc)
         {
+            short orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE coid = @1 ORDER BY id");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
+            var regs = ObtainMap<short, Reg>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD_().A_HREF_("/bizly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
+                    h.TD(regs[o.regid].name);
+                    h.TDFORM(() => { });
+                });
+            });
+        }
+
+        [Ui("添加"), Tool(ButtonShow)]
+        public async Task @new(WebContext wc)
+        {
+            var prin = (User) wc.Principal;
+            var regs = ObtainMap<short, Reg>();
+
+            if (wc.IsGet)
+            {
+                var m = new Org
+                {
+                    created = DateTime.Now,
+                    creator = prin.name,
+                    status = _Art.STATUS_ENABLED
+                };
+                m.Read(wc.Query, 0);
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("主体信息");
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                var o = await wc.ReadObjectAsync<Org>(0, new Org
+                {
+                    created = DateTime.Now,
+                    creator = prin.name,
+                });
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
+                await dc.ExecuteAsync(p => o.Write(p));
+                wc.GivePane(201); // created
+            }
         }
     }
 

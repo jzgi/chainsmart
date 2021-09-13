@@ -256,6 +256,7 @@ function dialog(trig, mode, pick, appear, title) {
         var dlg = $('#dialog');
         if (dlg) {
             if (dlg.classList.contains('button-trig')) {
+                document.body.removeChild(dlg);
                 location.reload(false);
             } else {
                 document.body.removeChild(dlg);
@@ -265,6 +266,7 @@ function dialog(trig, mode, pick, appear, title) {
 
     // display the modal
     UIkit.modal(e).show();
+
     return false;
 }
 

@@ -10,18 +10,18 @@ namespace Zhnt.Supply
     {
         public const short
             STATUS_CREATED = 0,
-            STATUS_ABORTED = 1,
-            STATUS_SUBMITTED = 2, // before processing
-            STATUS_FIRMED = 3, // ready for distr center op 
+            STATUS_SUBMITTED = 1, // before processing
+            STATUS_ABORTED = 2,
+            STATUS_CONFIRMED = 3, // ready for distr center op 
             STATUS_SHIPPED = 4, //  
             STATUS_CLOSED = 5; // after clearing
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STATUS_CREATED, "草稿中"},
+            {STATUS_SUBMITTED, "已提交"},
             {STATUS_ABORTED, "已撤销"},
-            {STATUS_SUBMITTED, "提交中"},
-            {STATUS_FIRMED, "已确认"},
+            {STATUS_CONFIRMED, "已确认"},
             {STATUS_SHIPPED, "已发货"},
             {STATUS_CLOSED, "已关闭"},
         };

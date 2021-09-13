@@ -60,11 +60,9 @@ namespace Zhnt.Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM downs ORDER BY id");
+                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods ORDER BY typ, status DESC");
                     return dc.Query<short, Prod>();
-                },
-                x => x.typ,
-                60 * 15
+                }, 60 * 15
             );
         }
 

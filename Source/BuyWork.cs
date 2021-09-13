@@ -24,7 +24,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("向平台订货")]
+    [Ui("商户订货", "cart")]
     public class BizlyBuyWork : WebWork
     {
         protected override void OnMake()
@@ -43,7 +43,7 @@ namespace Zhnt.Supply
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label);
+                h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
                     h.TD(items[o.itemid].name);
@@ -53,18 +53,18 @@ namespace Zhnt.Supply
             });
         }
 
-        [Ui("新单"), Tool(Anchor)]
-        public async Task cur(WebContext wc, int page)
+        [Ui("订货单"), Tool(Anchor)]
+        public async Task buys(WebContext wc, int page)
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status > 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(_Doc.STATUS_SUBMITTED).T(" ORDER BY id");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: "购物车");
+                h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
                     h.TD(items[o.itemid].name);
@@ -74,50 +74,48 @@ namespace Zhnt.Supply
             });
         }
 
-        [Ui("历史"), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            short orgid = wc[-1];
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status > 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
 
-            var items = ObtainMap<short, Item>();
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: "购物车");
-                h.TABLE(arr, o =>
-                {
-                    h.TD(items[o.itemid].name);
-                    h.TD(o.qty);
-                    h.TDFORM(() => { });
-                });
-            });
-        }
-
-        [Ui("✚"), Tool(ButtonShow)]
+        [Ui("✚", "添加"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             if (wc.IsGet)
             {
-                var o = new Item();
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("标品属性");
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs)._LI();
-                    h.LI_().TEXT("标品名称", nameof(o.name), o.name, max: 10, required: true)._LI();
-                    h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
-                    // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses)._LI();
-                    h._FIELDSUL()._FORM();
+                    short typ = wc.Query[nameof(typ)];
+
+                    h.FORM_().FIELDSUL_();
+                    h.LI_().SELECT(null, nameof(typ), typ, Item.Typs, refresh: true)._LI();
+
+                    if (typ > 0)
+                    {
+                        var prods = ObtainMap<short, Prod>();
+                        for (int i = 0; i < prods?.Count; i++)
+                        {
+                            var o = prods.ValueAt(i);
+                            if (o.typ != typ)
+                            {
+                                continue;
+                            }
+
+                            h.LI_().T(o.name)._LI();
+                        }
+                    }
+
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_();
+
+                    h._BOTTOMBAR();
+                    h._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Item>(0);
+                var o = await wc.ReadObjectAsync<Buy>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO items ").colset(Item.Empty, 0)._VALUES_(Item.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, 0)._VALUES_(Buy.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
+
                 wc.GivePane(200); // close dialog
             }
         }

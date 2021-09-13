@@ -69,7 +69,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(orgly: 1)]
+    [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("分拣中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
@@ -111,11 +111,11 @@ namespace Zhnt.Supply
 
     [UserAuthorize(Org.TYP_BIZ | Org.TYP_CO_BIZ, 1)]
     [Ui("商户端")]
-    public class BizlyVarWork : WebWork
+    public class BizlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
-            MakeWork<OrglyAccessWork>("acc", User.Ctrly);
+            MakeWork<OrglyAccessWork>("access", User.Orgly);
 
             MakeWork<BizlyBuyWork>("buy"); // showcase
 
@@ -138,8 +138,7 @@ namespace Zhnt.Supply
             {
                 h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
 
-                h.FORM_("uk-card uk-card-primary");
-                h.UL_("uk-card-body");
+                h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("经营主体", org.Name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
@@ -150,7 +149,6 @@ namespace Zhnt.Supply
                 h.LI_().FIELD("分拣中心", ctr.name)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h._UL();
-                h._FORM();
 
                 h.TASKUL();
             }, false, 3);

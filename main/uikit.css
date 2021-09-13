@@ -164,7 +164,7 @@ svg:not(:root) {
 p {
     margin: 0px;
     padding: 4px 0;
-    color: #333;
+    color: #666;
 }
 
 label,
@@ -712,8 +712,11 @@ a.uk-link-reset:hover,
     width: -webkit-fill-available;
     background-color: #fff;
     overflow-x: auto;
+    margin: 6px 0;
+    padding: 0;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
 }
-
 
 .uk-table th {
     padding: 8px 4px;
@@ -907,11 +910,10 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     width: 36px;
     height: 36px;
-    border-radius: 50%;
     border: none;
     background: inherit;
     vertical-align: middle;
-    color: #777;
+    color: #666;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -1678,8 +1680,8 @@ button.uk-button-primary.uk-active {
 a.uk-button-primary {
     color: #333;
     background-color: #ededed;
-    padding: 10px;
-    border: 1px solid #ccc;
+    padding: 12px;
+    border: 1px solid #ddd;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
 }
@@ -1688,8 +1690,8 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    border: 1px solid #333;
-    background-color: #fff;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
 }
 
 .uk-button-secondary {
@@ -2268,18 +2270,14 @@ form > li,
     min-height: 2.5rem;
 }
 
-.uk-card-body li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
-}
-
 .uk-card-header {
     padding: 4px;
     min-height: 2rem;
     display: flex;
     align-items: center;
-    color: #000;
+    color: #333;
     width: -webkit-fill-available;
-    font-size: 1.125rem;
+    font-size: 0.875rem;
     font-weight: bold;
 }
 
@@ -2320,6 +2318,7 @@ form > li,
     margin: 4px;
     padding: 0;
     background-color: #fff;
+    border: 1px solid #ededed;
     border-radius: 2px;
 }
 
@@ -4128,7 +4127,7 @@ ul.uk-nav-sub {
     display: flex;
 }
 
-\.uk-modal-page {
+.uk-modal-page {
     overflow: hidden;
 }
 
@@ -4161,7 +4160,6 @@ ul.uk-nav-sub {
 
 .uk-modal-full .uk-modal-dialog {
     margin: 0;
-    border: 1px solid #ccc;
     width: 100%;
     max-width: 100%;
     max-height: 100%;
@@ -4210,14 +4208,15 @@ ul.uk-nav-sub {
 
 .uk-modal-large .uk-modal-dialog {
     position: relative;
-    margin: 4rem auto;
-    height: 95%;
-    max-height: 640px;
-    width: 95%;
+    border: 4px solid rgba(0,0,0,.25);
+    height: 100%;
+    max-height: 800px;
+    width: 100%;
     max-width: 640px;
-    transform: translateY(0);
+    transform: translateY(0px);
     display: flex;
     flex-direction: column;
+    margin: auto;
 }
 
 .uk-modal-large .uk-modal-body {
