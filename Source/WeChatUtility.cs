@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static SkyChain.ServerEnviron;
+using static SkyChain.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace Zhnt.Supply

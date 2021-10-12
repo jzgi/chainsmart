@@ -5,7 +5,7 @@ namespace Zhnt.Supply
     /// 
     /// A upstream line of purchase.
     /// 
-    public class Purch : _Doc, IKeyable<int>
+    public class Purch : Flow_, IKeyable<int>
     {
         public static readonly Purch Empty = new Purch();
 
@@ -18,9 +18,8 @@ namespace Zhnt.Supply
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PRODUCT, "产品拼团"},
-            {TYP_SERVICE, "服务拼团"},
-            {TYP_EVENT, "社工活动"},
+            {1, "现货"},
+            {2, "预订"},
         };
 
 

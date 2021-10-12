@@ -2,7 +2,7 @@
 
 namespace Zhnt.Supply
 {
-    public class Reg : _Art, IKeyable<short>
+    public class Reg : Art_, IKeyable<short>
     {
         public static readonly Reg Empty = new Reg();
 

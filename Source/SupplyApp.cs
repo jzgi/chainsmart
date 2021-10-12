@@ -7,7 +7,7 @@ using static System.Data.IsolationLevel;
 
 namespace Zhnt.Supply
 {
-    public class SupplyApp : ServerEnviron
+    public class SupplyApp : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -19,19 +19,14 @@ namespace Zhnt.Supply
         {
 // var s = SkyiahComUtility.ComputeCredential("13870639072", "123");
 
-            LoadConfig();
-
             CacheUp();
-
-            // prepare chain
-            await StartChainAsync();
 
             // start the concluder thead
             // cycler.Start();
 
             // prepare web
-            MakeWebService<SupplyService>("main");
-            await StartWebAsync();
+            MakeService<SupplyService>("main");
+            await StartAsync();
         }
 
 
@@ -60,8 +55,8 @@ namespace Zhnt.Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods ORDER BY typ, status DESC");
-                    return dc.Query<short, Prod>();
+                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM prods ORDER BY typ, status DESC");
+                    return dc.Query<short, Plan>();
                 }, 60 * 15
             );
         }
@@ -82,7 +77,7 @@ namespace Zhnt.Supply
                 {
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {
@@ -107,7 +102,7 @@ namespace Zhnt.Supply
                     lst.Clear();
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(_Doc.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
+                        dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {

@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    public class AdmlyProdVarWork : WebWork
+    public class AdmlyPlanVarWork : WebWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
@@ -24,7 +24,7 @@ namespace Zhnt.Supply
                     h.LI_().TEXT("品名", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
                     // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -113,11 +113,11 @@ namespace Zhnt.Supply
         }
     }
 
-    public class SrclyProdVarWork : WebWork
+    public class SrclyPlanVarWork : WebWork
     {
     }
 
-    public class CoSrclyProdVarWork : WebWork
+    public class CoSrclyPlanVarWork : WebWork
     {
     }
 }

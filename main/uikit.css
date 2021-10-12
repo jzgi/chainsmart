@@ -1237,12 +1237,16 @@ form legend {
     max-width: 100%;
     width: 100%;
     padding: 4px;
-    background: #fafafa;
+    background: rgb(250 250 250 / 65%);
     color: #000;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;
     transition-property: color, background-color, border;
+}
+
+.uk-static {
+    background-color: #fff;
 }
 
 .uk-input,
@@ -3639,7 +3643,7 @@ ul.uk-nav-sub {
 }
 
 .uk-pagination > .uk-disabled {
-    color: #efc1c9;
+    color: #fbd9a6;
 }
 
 .uk-pagination > .uk-active > * {

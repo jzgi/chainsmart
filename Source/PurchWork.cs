@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt.Supply._Doc;
+using static Zhnt.Supply.Flow_;
 using static Zhnt.Supply.User;
 
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("采购订单")]
+    [Ui("采购管理")]
     public class AdmlyPurchWork : WebWork
     {
         protected override void OnMake()

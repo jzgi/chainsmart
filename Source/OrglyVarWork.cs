@@ -52,7 +52,7 @@ namespace Zhnt.Supply
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, Art_.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -101,7 +101,7 @@ namespace Zhnt.Supply
                 h.LI_().FIELD("经营主体", o.Name)._LI();
                 h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
                 h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Art.Statuses[o.status])._LI();
+                h.LI_().FIELD("状态", Art_.Statuses[o.status])._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -162,7 +162,7 @@ namespace Zhnt.Supply
         {
             MakeWork<OrglyAccessWork>("access");
 
-            MakeWork<SrclyProdWork>("prod");
+            MakeWork<SrclyPlanWork>("prod");
 
             MakeWork<SrclyPurchWork>("purch");
 
@@ -170,7 +170,7 @@ namespace Zhnt.Supply
 
             MakeWork<CoSrclyOrgWork>("coorg");
 
-            MakeWork<CoSrclyProdWork>("coprod");
+            MakeWork<CoSrclyPlanWork>("coprod");
 
             MakeWork<CoSrclyPurchWork>("copurch");
         }

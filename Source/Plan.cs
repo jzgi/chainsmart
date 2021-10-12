@@ -3,35 +3,33 @@
 namespace Zhnt.Supply
 {
     /// 
-    /// A partucular product supply.
+    /// A partucular supply.plan
     /// 
-    public class Prod : _Art
+    public class Plan : Art_
     {
-        public static readonly Prod Empty = new Prod();
+        public static readonly Plan Empty = new Plan();
+
+        public static readonly Map<short, string> Typs = new Map<short, string>
+        {
+            {1, "现货"},
+            {2, "预售"},
+        };
 
         internal short id;
         internal short itemid;
-        internal short srcid;
-        internal string unit;
-        internal string unitip;
-        internal short unitx;
-
+        internal string bunit;
+        internal short bunitx;
         internal short bmin;
         internal short bmax;
         internal short bstep;
         internal decimal bprice;
         internal decimal boff;
-        internal int[] agts;
 
         internal short pmin;
         internal short pmax;
         internal short pstep;
         internal decimal pprice;
         internal decimal poff;
-
-        internal bool img;
-        internal bool testa;
-        internal bool testb;
 
 
         public override void Read(ISource s, byte proj = 15)
@@ -43,28 +41,19 @@ namespace Zhnt.Supply
             base.Read(s, proj);
 
             s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(srcid), ref srcid);
-            s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitip), ref unitip);
-            s.Get(nameof(unitx), ref unitx);
+            s.Get(nameof(bunit), ref bunit);
+            s.Get(nameof(bunitx), ref bunitx);
 
             s.Get(nameof(bmin), ref bmin);
             s.Get(nameof(bmax), ref bmax);
             s.Get(nameof(bstep), ref bstep);
             s.Get(nameof(bprice), ref bprice);
             s.Get(nameof(boff), ref boff);
-            s.Get(nameof(agts), ref agts);
             s.Get(nameof(pmin), ref pmin);
             s.Get(nameof(pmax), ref pmax);
             s.Get(nameof(pstep), ref pstep);
             s.Get(nameof(pprice), ref pprice);
             s.Get(nameof(poff), ref poff);
-            if ((proj & LATER) == LATER)
-            {
-                s.Get(nameof(img), ref img);
-                s.Get(nameof(testa), ref testa);
-                s.Get(nameof(testb), ref testb);
-            }
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -76,28 +65,19 @@ namespace Zhnt.Supply
             base.Write(s, proj);
 
             s.Put(nameof(itemid), itemid);
-            s.Put(nameof(srcid), srcid);
-            s.Put(nameof(unit), unit);
-            s.Put(nameof(unitip), unitip);
-            s.Put(nameof(unitx), unitx);
+            s.Put(nameof(bunit), bunit);
+            s.Put(nameof(bunitx), bunitx);
 
             s.Put(nameof(bmin), bmin);
             s.Put(nameof(bmax), bmax);
             s.Put(nameof(bstep), bstep);
             s.Put(nameof(bprice), bprice);
             s.Put(nameof(boff), boff);
-            s.Put(nameof(agts), agts);
             s.Put(nameof(pmin), pmin);
             s.Put(nameof(pmax), pmax);
             s.Put(nameof(pstep), pstep);
             s.Put(nameof(pprice), pprice);
             s.Put(nameof(poff), poff);
-            if ((proj & LATER) == LATER)
-            {
-                s.Put(nameof(img), img);
-                s.Put(nameof(testa), testa);
-                s.Put(nameof(testb), testb);
-            }
         }
     }
 }

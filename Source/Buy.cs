@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Zhnt.Supply
 {
-    public class Buy : _Doc, IKeyable<int>
+    public class Buy : Flow_, IKeyable<int>
     {
         public static readonly Buy Empty = new Buy();
 
@@ -16,9 +16,8 @@ namespace Zhnt.Supply
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PRODUCT, "产品拼团"},
-            {TYP_SERVICE, "服务拼团"},
-            {TYP_EVENT, "社工活动"},
+            {1, "现货"},
+            {2, "预订"},
         };
 
 

@@ -14,7 +14,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("品类管理")]
+    [Ui("商品品类库", "menu")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()
@@ -44,7 +44,7 @@ namespace Zhnt.Supply
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(Art_.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -63,7 +63,7 @@ namespace Zhnt.Supply
             {
                 var o = new Item
                 {
-                    status = _Art.STATUS_ENABLED
+                    status = Art_.STATUS_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -73,7 +73,7 @@ namespace Zhnt.Supply
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

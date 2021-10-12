@@ -6,7 +6,7 @@ namespace Zhnt.Supply
     /// <summary>
     /// An organizational unit, that can be base, center, point, market or booth.
     /// </summary>
-    public class Org : _Art, IKeyable<int>
+    public class Org : Art_, IKeyable<int>
     {
         public static readonly Org Empty = new Org();
 

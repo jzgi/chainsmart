@@ -6,7 +6,7 @@ namespace Zhnt.Supply
     /// <summary>
     /// A business document used in workflow process.
     /// </summary>
-    public abstract class _Doc : IData
+    public abstract class Flow_ : IData
     {
         public const short
             STATUS_CREATED = 0,
@@ -42,6 +42,14 @@ namespace Zhnt.Supply
         internal DateTime created;
 
         internal string creator;
+
+        internal DateTime traded;
+
+        internal string trader;
+
+        internal DateTime settled;
+
+        internal string settler;
 
         public virtual void Read(ISource s, byte proj = 0x0f)
         {

@@ -1,6 +1,6 @@
 ﻿using System;
+using SkyChain.Db;
 using SkyChain.Web;
-using static SkyChain.Db.DbEnviron;
 
 namespace Zhnt.Supply
 {
@@ -42,7 +42,7 @@ namespace Zhnt.Supply
                 short orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = Obtain<short, Org>(prin.orgid);
+                    var org = Db.Obtain<short, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

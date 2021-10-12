@@ -2,7 +2,7 @@
 
 namespace Zhnt.Supply
 {
-    public class User : _Art, IKeyable<int>
+    public class User : Art_, IKeyable<int>
     {
         public static readonly User Empty = new User();
 

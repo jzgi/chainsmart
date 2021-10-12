@@ -5,7 +5,7 @@ namespace Zhnt.Supply
     /// <summary>
     /// An item of standard product.
     /// </summary>
-    public class Item : _Art, IKeyable<short>
+    public class Item : Art_, IKeyable<short>
     {
         public static readonly Item Empty = new Item();
 

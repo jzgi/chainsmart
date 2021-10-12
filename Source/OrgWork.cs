@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Zhnt.Supply
 {
-    [Ui("机构主体", "℠")]
+    [Ui("协作主体管理", "℠")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -41,7 +41,7 @@ namespace Zhnt.Supply
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(Art_.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
                     last = o.regid;
@@ -62,7 +62,7 @@ namespace Zhnt.Supply
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STATUS_ENABLED
+                    status = Art_.STATUS_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -74,7 +74,7 @@ namespace Zhnt.Supply
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Art_.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -136,7 +136,7 @@ namespace Zhnt.Supply
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STATUS_ENABLED
+                    status = Art_.STATUS_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -148,7 +148,7 @@ namespace Zhnt.Supply
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Art_.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

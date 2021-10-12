@@ -14,7 +14,7 @@ namespace Zhnt.Supply
             var o = dc.QueryTop<Purch>(p => p.Set(code));
 
 
-            var prod = Obtain<short, Prod>(o.prodid);
+            var prod = Obtain<short, Plan>(o.prodid);
             var src = Obtain<short, Org>(o.partyid);
             var ctr = Obtain<short, Org>(o.ctrid);
         }

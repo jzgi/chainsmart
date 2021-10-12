@@ -6,39 +6,37 @@ namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("平台管理")]
-    public class AdmlyWork : ChainWork
+    public class AdmlyWork : ChainMgtWork
     {
         protected override void OnMake()
         {
-            // information
+            // op
 
-            MakeWork<AdmlyPeerWork>("peer");
-
-            MakeWork<AdmlyAccessWork>("acc");
-
-            MakeWork<AdmlyUserWork>("user");
-
-            MakeWork<AdmlyRegWork>("reg");
-
-            MakeWork<AdmlyItemWork>("item");
-
-            // operation
+            MakeWork<AdmlyPlanWork>("plan");
 
             MakeWork<AdmlyOrgWork>("org");
-
-            MakeWork<AdmlyProdWork>("prod");
 
             MakeWork<AdmlyBuyWork>("buy");
 
             MakeWork<AdmlyPurchWork>("purch");
 
             MakeWork<AdmlyClearWork>("clear");
+
+            // basic
+
+            MakeWork<AdmlyAccessWork>("access");
+
+            MakeWork<AdmlyRegWork>("reg");
+
+            MakeWork<AdmlyUserWork>("user");
+
+            MakeWork<AdmlyItemWork>("item");
         }
 
         public override void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var o = ChainEnviron.Info;
+            var o = Chain.Info;
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");

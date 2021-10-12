@@ -61,7 +61,7 @@ namespace Zhnt.Supply
                     }
 
                     // create principal
-                    using var dc = DbEnviron.NewDbContext();
+                    using var dc = Db.NewDbContext();
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {

@@ -8,7 +8,7 @@ using static Zhnt.Supply.User;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("销售订单")]
+    [Ui("销售管理")]
     public class AdmlyBuyWork : WebWork
     {
         protected override void OnMake()
@@ -58,7 +58,7 @@ namespace Zhnt.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(_Doc.STATUS_SUBMITTED).T(" ORDER BY id");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(Flow_.STATUS_SUBMITTED).T(" ORDER BY id");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
@@ -89,7 +89,7 @@ namespace Zhnt.Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Prod>();
+                        var prods = ObtainMap<short, Plan>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);

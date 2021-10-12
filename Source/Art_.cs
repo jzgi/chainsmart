@@ -6,7 +6,7 @@ namespace Zhnt.Supply
     /// <summary>
     /// A publicly used article record that has lifetime statuses
     /// </summary>
-    public abstract class _Art : IData
+    public abstract class Art_ : IData
     {
         public const short
             STATUS_DISABLED = 0,

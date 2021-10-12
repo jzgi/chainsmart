@@ -4,7 +4,7 @@ using SkyChain.Web;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: 1)]
-    [Ui("交易清算")]
+    [Ui("结算管理")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()

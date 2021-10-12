@@ -5,19 +5,20 @@ using static SkyChain.Web.Modal;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: User.ADMLY_OP)]
-    [Ui("产品管理","menu")]
-    public class AdmlyProdWork : WebWork
+    [Ui("产品供应计划", "future")]
+    public class AdmlyPlanWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyProdVarWork>();
+            MakeVarWork<AdmlyPlanVarWork>();
         }
 
+        [Ui("现货", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Prod>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Plan>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -33,7 +34,38 @@ namespace Zhnt.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(Art_.Statuses[o.status]);
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h._TR();
+                    last = o.typ;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            });
+        }
+
+        [Ui("预售", group: 1), Tool(Anchor)]
+        public void pre(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Plan>(p => p.Set(page));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null) return;
+
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.typ != last)
+                    {
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(Art_.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -49,15 +81,14 @@ namespace Zhnt.Supply
             var items = ObtainMap<short, Item>();
             if (wc.IsGet)
             {
-                var o = new Prod();
+                var o = new Plan();
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
 
                     h.LI_().SELECT_ITEM("类别", nameof(o.typ), o.typ, items, Item.Typs)._LI();
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true).TEXT("单位", nameof(o.unit), o.unit, max: 4)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true).TEXT("单位", nameof(o.bunit), o.bunit, max: 4)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unit, max: 8).NUMBER("单位倍比", nameof(o.unitx), o.unitx, max: 1000)._LI();
 
                     h._FIELDSUL().FIELDSUL_();
 
@@ -69,7 +100,7 @@ namespace Zhnt.Supply
 
                     h._FIELDSUL().FIELDSUL_();
 
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses)._LI();
 
                     h._FIELDSUL()._FORM();
                 });
@@ -86,12 +117,12 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品供应")]
-    public class SrclyProdWork : WebWork
+    [Ui("供应计划")]
+    public class SrclyPlanWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyProdVarWork>();
+            MakeVarWork<SrclyPlanVarWork>();
         }
 
         public void @default(WebContext wc, int page)
@@ -100,12 +131,12 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_CO_SRC, 1)]
-    [Ui("社团产品供应")]
-    public class CoSrclyProdWork : WebWork
+    [Ui("社供应计划")]
+    public class CoSrclyPlanWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CoSrclyProdVarWork>();
+            MakeVarWork<CoSrclyPlanVarWork>();
         }
 
         public void @default(WebContext wc, int page)

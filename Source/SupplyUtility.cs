@@ -5,7 +5,7 @@ using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Zhnt.Supply._Doc;
+using static Zhnt.Supply.Flow_;
 
 namespace Zhnt.Supply
 {
@@ -34,7 +34,7 @@ namespace Zhnt.Supply
         public static string GetUrlLink(string uri)
         {
             string url;
-            url = ServerEnviron.extcfg[nameof(url)];
+            url = Application.extcfg[nameof(url)];
             if (uri == null)
             {
                 return url;

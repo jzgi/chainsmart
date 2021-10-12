@@ -4,7 +4,7 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using static Zhnt.Supply._Doc;
+using static Zhnt.Supply.Flow_;
 using static Zhnt.Supply.WeChatUtility;
 
 namespace Zhnt.Supply
@@ -159,7 +159,7 @@ namespace Zhnt.Supply
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Art.STATUS_ENABLED,
+                    status = Art_.STATUS_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
