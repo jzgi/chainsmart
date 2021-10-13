@@ -20,12 +20,18 @@ namespace Zhnt.Supply
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui("以往", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
         }
     }
 
 
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
-    [Ui("销售动态")]
+    [Ui("产源销货", "sign-out")]
     public class SrclyPurchWork : WebWork
     {
         protected override void OnMake()
@@ -33,10 +39,10 @@ namespace Zhnt.Supply
             MakeVarWork<SrclyPurchVarWork>();
         }
 
-        [Ui("来单"), Tool(Anchor)]
+        [Ui("当前"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
@@ -56,9 +62,9 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_CO_SRC, ORGLY_OP)]
-    [Ui("社团销售动态")]
-    public class CoSrclyPurchWork : WebWork
+    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
+    [Ui("产源团销货动态")]
+    public class SrcColyPurchWork : WebWork
     {
         protected override void OnMake()
         {

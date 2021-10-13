@@ -115,13 +115,13 @@ namespace Zhnt.Supply
     {
         protected override void OnMake()
         {
-            MakeWork<OrglyAccessWork>("access", User.Orgly);
-
-            MakeWork<BizlyBuyWork>("buy"); // showcase
-
-            MakeWork<CoBizlyOrgWork>("org");
+            MakeWork<BizlyBuyWork>("buy");
 
             MakeWork<OrglyClearWork>("clear");
+
+            MakeWork<BizColyOrgWork>("org");
+
+            MakeWork<OrglyAccessWork>("access", User.Orgly);
         }
 
         public void @default(WebContext wc)
@@ -139,8 +139,8 @@ namespace Zhnt.Supply
                 h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
 
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("经营主体", org.Name)._LI();
-                h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("主体名称", org.Name)._LI();
+                h.LI_().FIELD("协作类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
                 if (!org.IsBizCo)
                 {
@@ -148,6 +148,7 @@ namespace Zhnt.Supply
                 }
                 h.LI_().FIELD("分拣中心", ctr.name)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
+                h.LI_().FIELD("授权代办", org.grant)._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -155,24 +156,22 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC | Org.TYP_CO_SRC, 1)]
+    [UserAuthorize(Org.TYP_SRC | Org.TYP_SRCCO, 1)]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
-            MakeWork<OrglyAccessWork>("access");
-
-            MakeWork<SrclyPlanWork>("prod");
-
             MakeWork<SrclyPurchWork>("purch");
+
+            MakeWork<SrcColyOrgWork>("org");
+
+            MakeWork<SrcColyProdWork>("prod");
+
+            MakeWork<SrcColyPurchWork>("copurch");
 
             MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<CoSrclyOrgWork>("coorg");
-
-            MakeWork<CoSrclyPlanWork>("coprod");
-
-            MakeWork<CoSrclyPurchWork>("copurch");
+            MakeWork<OrglyAccessWork>("access");
         }
 
         public void @default(WebContext wc)

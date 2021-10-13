@@ -15,18 +15,18 @@ namespace Zhnt.Supply
             TYP_BIZ = 2,
             TYP_CO_BIZ = 4,
             TYP_SRC = 8,
-            TYP_CO_SRC = 16;
+            TYP_SRCCO = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_CTR, "分拣中心"},
-            {TYP_CO_BIZ, "商户社"},
-            {TYP_CO_BIZ + TYP_BIZ, "商户社＋商户"},
+            {TYP_CO_BIZ, "商户团"},
+            {TYP_CO_BIZ + TYP_BIZ, "商户团＋商户"},
             {TYP_BIZ, "商户"},
-            {TYP_CO_SRC, "产源社"},
-            {TYP_CO_SRC + TYP_SRC, "产源社＋产源"},
+            {TYP_SRCCO, "产源团"},
+            {TYP_SRCCO + TYP_SRC, "产源团＋产源"},
             {TYP_SRC, "产源"},
-            {TYP_CO_BIZ + TYP_CO_SRC, "商户社＋产源社"},
+            {TYP_CO_BIZ + TYP_SRCCO, "商户团＋产源团"},
         };
 
         internal short id;
@@ -48,6 +48,8 @@ namespace Zhnt.Supply
         internal string mgrtel;
         internal string mgrim;
 
+        internal bool grant;
+
         internal bool icon;
         internal bool license;
         internal bool perm;
@@ -66,6 +68,8 @@ namespace Zhnt.Supply
             s.Get(nameof(y), ref y);
             s.Get(nameof(coid), ref coid);
             s.Get(nameof(ctrid), ref ctrid);
+            s.Get(nameof(grant), ref grant);
+
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -98,6 +102,8 @@ namespace Zhnt.Supply
 
             if (ctrid > 0) s.Put(nameof(ctrid), ctrid); // conditional
             else s.PutNull(nameof(ctrid));
+
+            s.Put(nameof(grant), grant);
 
             if ((proj & LATER) == LATER)
             {

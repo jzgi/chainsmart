@@ -113,11 +113,4 @@ namespace Zhnt.Supply
         }
     }
 
-    public class SrclyPlanVarWork : WebWork
-    {
-    }
-
-    public class CoSrclyPlanVarWork : WebWork
-    {
-    }
 }

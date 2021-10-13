@@ -25,7 +25,7 @@ namespace Zhnt.Supply
 
         // doc number
         internal int no;
-        internal short prodid;
+        internal short planid;
         internal short itemid;
         internal decimal price;
         internal decimal off;
@@ -43,7 +43,7 @@ namespace Zhnt.Supply
             base.Read(s, proj);
 
             s.Get(nameof(no), ref no);
-            s.Get(nameof(prodid), ref prodid);
+            s.Get(nameof(planid), ref planid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
@@ -62,7 +62,7 @@ namespace Zhnt.Supply
             base.Write(s, proj);
 
             s.Put(nameof(no), no);
-            s.Put(nameof(prodid), prodid);
+            s.Put(nameof(planid), planid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);

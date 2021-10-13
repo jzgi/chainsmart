@@ -57,10 +57,16 @@ namespace Zhnt.Supply
             });
         }
 
-        [UserAuthorize(admly: 1)]
-        public override Task setg(WebContext wc)
+        [UserAuthorize(admly: 15)]
+        public override async Task setg(WebContext wc)
         {
-            return base.setg(wc);
+            await base.setg(wc);
+        }
+
+        [UserAuthorize(admly: 15)]
+        public override async Task fed(WebContext wc)
+        {
+            await base.fed(wc);
         }
     }
 }

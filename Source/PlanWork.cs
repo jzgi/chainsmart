@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 namespace Zhnt.Supply
 {
     [UserAuthorize(admly: User.ADMLY_OP)]
-    [Ui("产品供应计划", "future")]
+    [Ui("供应计划", "future")]
     public class AdmlyPlanWork : WebWork
     {
         protected override void OnMake()
@@ -13,7 +13,6 @@ namespace Zhnt.Supply
             MakeVarWork<AdmlyPlanVarWork>();
         }
 
-        [Ui("现货", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -44,38 +43,7 @@ namespace Zhnt.Supply
             });
         }
 
-        [Ui("预售", group: 1), Tool(Anchor)]
-        public void pre(WebContext wc, int page)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Plan>(p => p.Set(page));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                if (arr == null) return;
-
-                h.TABLE_();
-                short last = 0;
-                foreach (var o in arr)
-                {
-                    if (o.typ != last)
-                    {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(Art_.Statuses[o.status]);
-                    h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h._TR();
-                    last = o.typ;
-                }
-                h._TABLE();
-                h.PAGINATION(arr.Length == 40);
-            });
-        }
-
-        [Ui("新建"), Tool(ButtonShow)]
+        [Ui("✚", "新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var items = ObtainMap<short, Item>();
@@ -113,34 +81,6 @@ namespace Zhnt.Supply
                 await dc.ExecuteAsync(p => o.Write(p, 0));
                 wc.GivePane(200); // close dialog
             }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应计划")]
-    public class SrclyPlanWork : WebWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<SrclyPlanVarWork>();
-        }
-
-        public void @default(WebContext wc, int page)
-        {
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CO_SRC, 1)]
-    [Ui("社供应计划")]
-    public class CoSrclyPlanWork : WebWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<CoSrclyPlanVarWork>();
-        }
-
-        public void @default(WebContext wc, int page)
-        {
         }
     }
 }

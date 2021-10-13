@@ -24,7 +24,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户订货", "cart")]
+    [Ui("商户进货", "cart")]
     public class BizlyBuyWork : WebWork
     {
         protected override void OnMake()
@@ -32,7 +32,7 @@ namespace Zhnt.Supply
             MakeVarWork<BizlyBuyVarWork>();
         }
 
-        [Ui("购物车"), Tool(Anchor)]
+        [Ui("购物车", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -53,7 +53,7 @@ namespace Zhnt.Supply
             });
         }
 
-        [Ui("订货单"), Tool(Anchor)]
+        [Ui("当前", group: 2), Tool(Anchor)]
         public async Task buys(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -74,8 +74,29 @@ namespace Zhnt.Supply
             });
         }
 
+        [Ui("历史", group: 4), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            short orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(Flow_.STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
 
-        [Ui("✚", "添加"), Tool(ButtonOpen)]
+            var items = ObtainMap<short, Item>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                {
+                    h.TD(items[o.itemid].name);
+                    h.TD(o.qty);
+                    h.TDFORM(() => { });
+                });
+            });
+        }
+
+
+        [Ui("✚", "添加", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             if (wc.IsGet)

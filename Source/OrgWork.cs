@@ -95,8 +95,8 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(Org.TYP_CO_BIZ, 1)]
-    [Ui("社团管理", "album")]
-    public class CoBizlyOrgWork : WebWork
+    [Ui("商户团管理", "album")]
+    public class BizColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
@@ -167,9 +167,9 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_CO_SRC, 1)]
-    [Ui("社团成员管理", "users")]
-    public class CoSrclyOrgWork : WebWork
+    [UserAuthorize(Org.TYP_SRCCO, 1)]
+    [Ui("产源团管理", "thumbnails")]
+    public class SrcColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
