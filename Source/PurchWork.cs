@@ -74,18 +74,18 @@ namespace Zhnt.Supply
         [Ui("来单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
 
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
         [Ui("历史"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(orgid));
@@ -96,7 +96,7 @@ namespace Zhnt.Supply
 
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购收货", "sign-in")]
+    [Ui("采购收货管理", "sign-in")]
     public class CtrlyPurchWork : WebWork
     {
         protected override void OnMake()

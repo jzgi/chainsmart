@@ -68,26 +68,14 @@ namespace Zhnt.Supply
             MakeVarWork<SrcColyProdVarWork>();
         }
 
-        [Ui("来单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            int orgid = wc[-1];
+            short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM prods WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Prod>(p => p.Set(orgid));
 
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
-        }
-
-        [Ui("历史"), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            int orgid = wc[-1];
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
-
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 }

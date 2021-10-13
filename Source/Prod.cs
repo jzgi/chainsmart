@@ -12,7 +12,6 @@ namespace Zhnt.Supply
 
         internal short id;
         internal short itemid;
-        internal short seasong;
 
 
         public override void Read(ISource s, byte proj = 15)
@@ -24,7 +23,6 @@ namespace Zhnt.Supply
             base.Read(s, proj);
 
             s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(seasong), ref seasong);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -36,7 +34,6 @@ namespace Zhnt.Supply
             base.Write(s, proj);
 
             s.Put(nameof(itemid), itemid);
-            s.Put(nameof(seasong), seasong);
         }
     }
 }

@@ -90,7 +90,8 @@ create table orgs
 			references users,
 	icon bytea,
 	license bytea,
-	perm bytea
+	perm bytea,
+	"grant" boolean
 )
 inherits (arts_);
 
@@ -201,14 +202,6 @@ inherits (arts_);
 
 alter table chans owner to postgres;
 
-create table msgs
-(
-	id serial not null
-)
-inherits (arts_);
-
-alter table msgs owner to postgres;
-
 create table prods
 (
 	id serial not null,
@@ -220,7 +213,7 @@ inherits (arts_);
 
 alter table prods owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, id, coid, ctrid, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
+create view orgs_vw(typ, status, name, tip, created, creator, id, coid, ctrid, regid, addr, x, y, "grant", mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -234,6 +227,7 @@ SELECT o.typ,
        o.addr,
        o.x,
        o.y,
+       o."grant",
        o.mgrid,
        m.name                AS mgrname,
        m.tel                 AS mgrtel,

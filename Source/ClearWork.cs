@@ -13,6 +13,8 @@ namespace Zhnt.Supply
 
         public async Task @default(WebContext wc)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+
         }
     }
 
@@ -25,6 +27,8 @@ namespace Zhnt.Supply
 
         public async Task @default(WebContext wc)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+
         }
     }
 }

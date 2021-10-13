@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using SkyChain;
+﻿using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -9,49 +7,18 @@ namespace Zhnt.Supply
     public abstract class OrglyVarWork : WebWork
     {
         [UserAuthorize(orgly: 1)]
-        [Ui("形象图标"), Tool(ButtonCrop, Appear.Small)]
-        public async Task icon(WebContext wc)
-        {
-            short id = wc[0];
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                if (dc.QueryTop("SELECT icon FROM orgs WHERE id = @1", p => p.Set(id)))
-                {
-                    dc.Let(out byte[] bytes);
-                    if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
-                }
-                else wc.Give(404, shared: true, maxage: 3600 * 24); // not found
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                ArraySegment<byte> img = f[nameof(img)];
-                using var dc = NewDbContext();
-                if (await dc.ExecuteAsync("UPDATE orgs SET icon = @1 WHERE id = @2", p => p.Set(img).Set(id)) > 0)
-                {
-                    wc.Give(200); // ok
-                }
-                else wc.Give(500); // internal server error
-            }
-        }
-
-        [UserAuthorize(orgly: 1)]
-        [Ui("运行设置"), Tool(ButtonShow)]
+        [Ui("设置"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             short orgid = wc[0];
             var obj = Obtain<short, Org>(orgid);
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-                var map = dc.Query<int, User>(p => p.Set(orgid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
+                    h.LI_().TEXT("地址", nameof(obj.addr), obj.addr, max: 16)._LI();
                     h.LI_().SELECT("状态", nameof(obj.status), obj.status, Art_.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -75,13 +42,13 @@ namespace Zhnt.Supply
     {
         protected override void OnMake()
         {
+            MakeWork<CtrlyBuyWork>("buy");
+
+            MakeWork<CtrlyPurchWork>("purch");
+
+            MakeWork<OrglyClearWork>("clear");
+
             MakeWork<OrglyAccessWork>("access", User.Ctrly);
-
-            MakeWork<CtrlyBuyWork>("buy"); // downstream order
-
-            MakeWork<CtrlyPurchWork>("purch"); // upstream order
-
-            MakeWork<OrglyClearWork>("clear"); // upstream order
         }
 
         public void @default(WebContext wc)
