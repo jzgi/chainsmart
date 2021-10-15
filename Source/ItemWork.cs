@@ -14,7 +14,7 @@ namespace Zhnt.Supply
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("品类库")]
+    [Ui("标准品类库")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()

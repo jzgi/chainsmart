@@ -12,9 +12,9 @@ namespace Zhnt.Supply
         {
             // op
 
-            MakeWork<AdmlyPlanWork>("plan");
-
             MakeWork<AdmlyOrgWork>("org");
+
+            MakeWork<AdmlyPlanWork>("plan");
 
             MakeWork<AdmlyBuyWork>("buy");
 

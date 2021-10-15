@@ -1,4 +1,5 @@
-﻿using SkyChain;
+﻿using System;
+using SkyChain;
 
 namespace Zhnt.Supply
 {
@@ -9,7 +10,7 @@ namespace Zhnt.Supply
     {
         public static readonly Plan Empty = new Plan();
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Schemes = new Map<short, string>
         {
             {1, "现货"},
             {2, "预售"},
@@ -25,9 +26,11 @@ namespace Zhnt.Supply
         internal decimal bprice;
         internal decimal boff;
 
-        internal short pmin;
-        internal short pmax;
-        internal short pstep;
+        internal DateTime started;
+        internal DateTime ended;
+        internal DateTime delivered;
+        internal string punit;
+        internal short punitx;
         internal decimal pprice;
         internal decimal poff;
 
@@ -49,9 +52,9 @@ namespace Zhnt.Supply
             s.Get(nameof(bstep), ref bstep);
             s.Get(nameof(bprice), ref bprice);
             s.Get(nameof(boff), ref boff);
-            s.Get(nameof(pmin), ref pmin);
-            s.Get(nameof(pmax), ref pmax);
-            s.Get(nameof(pstep), ref pstep);
+            s.Get(nameof(started), ref started);
+            s.Get(nameof(ended), ref ended);
+            s.Get(nameof(delivered), ref delivered);
             s.Get(nameof(pprice), ref pprice);
             s.Get(nameof(poff), ref poff);
         }
@@ -73,9 +76,9 @@ namespace Zhnt.Supply
             s.Put(nameof(bstep), bstep);
             s.Put(nameof(bprice), bprice);
             s.Put(nameof(boff), boff);
-            s.Put(nameof(pmin), pmin);
-            s.Put(nameof(pmax), pmax);
-            s.Put(nameof(pstep), pstep);
+            s.Put(nameof(started), started);
+            s.Put(nameof(ended), ended);
+            s.Put(nameof(delivered), delivered);
             s.Put(nameof(pprice), pprice);
             s.Put(nameof(poff), poff);
         }

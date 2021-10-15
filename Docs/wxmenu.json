@@ -2,13 +2,13 @@
   "button": [
     {
       "type": "view",
-      "name": "商户端»",
-      "url": "https://jx.e-zhnt.com/bizly//"
+      "name": "商户端",
+      "url": "http://zhnt-x.com/bizly//"
     },
     {
       "type": "view",
-      "name": "产源端»",
-      "url": "https://jx.e-zhnt.com/srcly//"
+      "name": "产源端",
+      "url": "http://zhnt-x.com/srcly//"
     },
     {
       "name": "平台",
@@ -16,22 +16,22 @@
         {
           "type": "view",
           "name": "关于",
-          "url": "https://jx.e-zhnt.com/about"
+          "url": "http://zhnt-x.com/about"
         },
         {
           "type": "view",
-          "name": "联系方式",
-          "url": "https://jx.e-zhnt.com/contact"
+          "name": "平台管理",
+          "url": "http://zhnt-x.com/admly/"
         },
         {
           "type": "view",
-          "name": "分拣中心端»",
-          "url": "https://jx.e-zhnt.com/ctrly//"
+          "name": "分拣中心端",
+          "url": "http://zhnt-x.com/ctrly//"
         },
         {
           "type": "view",
-          "name": "我的账号»",
-          "url": "https://jx.e-zhnt.com/my//"
+          "name": "我的账号",
+          "url": "http://zhnt-x.com/my//"
         }
       ]
     }
