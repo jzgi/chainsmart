@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class PublyItemWork : WebWork
     {
@@ -13,7 +13,7 @@ namespace Supply
         }
     }
 
-    [UserAuthorize(admly: User.ADMLY_MGT)]
+    [UserAuthorize(admly: User_.ADMLY_SUPLLY_MGT)]
     [Ui("标准品类库")]
     public class AdmlyItemWork : WebWork
     {
@@ -58,7 +58,7 @@ namespace Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             if (wc.IsGet)
             {
                 var o = new Item

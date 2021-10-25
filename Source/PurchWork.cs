@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Supply.Flow_;
-using static Supply.User;
+using static Rev.Supply.Purchase;
+using static Rev.Supply.User_;
 
-namespace Supply
+namespace Rev.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("采购管理")]
@@ -44,8 +44,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purchase>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -55,8 +55,8 @@ namespace Supply
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purchase>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -76,8 +76,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purchase>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
@@ -87,8 +87,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Purchase>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -109,8 +109,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Purchase>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -128,8 +128,8 @@ namespace Supply
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Purchase>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -144,7 +144,7 @@ namespace Supply
         [Ui("发布", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             short orgid = wc[-1];
             if (wc.IsGet)
             {
@@ -159,7 +159,7 @@ namespace Supply
             else // POST
             {
                 var today = DateTime.Today;
-                var o = await wc.ReadObjectAsync(inst: new Purch
+                var o = await wc.ReadObjectAsync(inst: new Purchase
                 {
                     // @extern = org.refid,
                 });
@@ -176,7 +176,7 @@ namespace Supply
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             var ended = DateTime.Today.AddDays(3);
             int[] key;
             if (wc.IsGet)

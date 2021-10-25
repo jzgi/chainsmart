@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public abstract class ItemVarWork : WebWork
     {

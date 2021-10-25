@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class SupplyApp : Application
     {
@@ -55,8 +55,8 @@ namespace Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM prods ORDER BY typ, status DESC");
-                    return dc.Query<short, Plan>();
+                    dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM prods ORDER BY typ, status DESC");
+                    return dc.Query<short, Supply>();
                 }, 60 * 15
             );
         }
@@ -77,7 +77,7 @@ namespace Supply
                 {
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
+                        // dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {
@@ -102,7 +102,7 @@ namespace Supply
                     lst.Clear();
                     using (var dc = NewDbContext())
                     {
-                        dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
+                        // dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
                         await dc.QueryAsync(p => p.Set(today));
                         while (dc.Next())
                         {

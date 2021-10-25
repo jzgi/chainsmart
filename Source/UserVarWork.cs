@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Supply;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class AdmlyUserVarWork : WebWork
     {
@@ -21,7 +20,7 @@ namespace Supply
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
+                    h.LI_().SELECT("专业类型", nameof(typ), typ, User_.Typs)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -39,7 +38,7 @@ namespace Supply
 
     public class AdmlyAccessVarWork : WebWork
     {
-        [UserAuthorize(admly: User.ADMLY_MGT)]
+        [UserAuthorize(admly: User_.ADMLY_SUPLLY_MGT)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {
@@ -109,7 +108,7 @@ namespace Supply
             }
         }
     }
-    
+
     public class MrtlyUserVarWork : WebWork
     {
         [Ui("✎", "修改"), Tool(ButtonShow)]
@@ -125,7 +124,7 @@ namespace Supply
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
+                    h.LI_().SELECT("专业类型", nameof(typ), typ, User_.Typs)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -140,6 +139,4 @@ namespace Supply
             }
         }
     }
-
-
 }

@@ -5,7 +5,7 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class AdmlyPurchVarWork : WebWork
     {
@@ -23,21 +23,21 @@ namespace Supply
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             short orgid = wc[-2];
             var org = Obtain<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Purch>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Purchase.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Purchase>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Purch
+                var m = new Purchase
                 {
                 };
                 m.Read(f);

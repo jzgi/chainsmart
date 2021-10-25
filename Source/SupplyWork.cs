@@ -1,25 +1,26 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
+using static Rev.Supply.User_;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
-    [UserAuthorize(admly: User.ADMLY_OP)]
+    [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("产品供应计划", "calendar")]
-    public class AdmlyPlanWork : WebWork
+    public class AdmlySupplyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyPlanVarWork>();
+            MakeVarWork<AdmlySupplyVarWork>();
         }
 
         [Ui("未生效", group: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Plan>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -51,8 +52,8 @@ namespace Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Plan>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -82,8 +83,8 @@ namespace Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Plan>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -112,7 +113,7 @@ namespace Supply
         [Ui("✚", "新建供应计划", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int sch)
         {
-            var items = ObtainMap<short, Item>();
+            var items = ObtainMap<int, Item>();
             if (wc.IsGet)
             {
                 if (sch == 0) // display type selection
@@ -120,10 +121,10 @@ namespace Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Plan.Schemes.Count; i++)
+                        for (int i = 0; i < Supply.Schemes.Count; i++)
                         {
-                            var key = Plan.Schemes.KeyAt(i);
-                            var scheme = Plan.Schemes.ValueAt(i);
+                            var key = Supply.Schemes.KeyAt(i);
+                            var scheme = Supply.Schemes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();
@@ -133,7 +134,7 @@ namespace Supply
                 else
                 {
                     var dt = DateTime.Today;
-                    var o = new Plan
+                    var o = new Supply
                     {
                         started = dt,
                         ended = dt,
@@ -177,9 +178,9 @@ namespace Supply
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Plan>(0);
+                var o = await wc.ReadObjectAsync<Supply>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Plan.Empty, 0)._VALUES_(Plan.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Supply.Empty, 0)._VALUES_(Supply.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

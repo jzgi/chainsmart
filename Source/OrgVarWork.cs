@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class AdmlyOrgVarWork : WebWork
     {
@@ -59,8 +59,8 @@ namespace Supply
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User>(p => p.Set(tel));
+                        dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE tel = @1");
+                        var o = dc.QueryTop<User_>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();

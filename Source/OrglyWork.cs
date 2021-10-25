@@ -1,12 +1,12 @@
 using SkyChain.Web;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class CtrlyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<CtrlyVarWork>(prin => ((User_) prin).orgid);
         }
     }
 
@@ -14,7 +14,7 @@ namespace Supply
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<BizlyVarWork>(prin => ((User_) prin).orgid);
         }
     }
 
@@ -22,7 +22,7 @@ namespace Supply
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<SrclyVarWork>(prin => ((User_) prin).orgid);
         }
     }
 }

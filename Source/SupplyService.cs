@@ -4,10 +4,10 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using static Supply.Flow_;
-using static Supply.WeChatUtility;
+using static Rev.Supply.Book;
+using static Rev.Supply.WeChatUtility;
 
-namespace Supply
+namespace Rev.Supply
 {
     [UserAuthenticate]
     public class SupplyService : ChainService
@@ -18,7 +18,7 @@ namespace Supply
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublyCodeWork>("purch");
+            MakeWork<PublyCodeWork>("code");
 
 
             // management
@@ -103,8 +103,8 @@ namespace Supply
 
                 using var dc = NewDbContext();
                 var credential = SupplyUtility.ComputeCredential(tel, password);
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
-                var prin = dc.QueryTop<User>(p => p.Set(tel));
+                dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE tel = @1");
+                var prin = dc.QueryTop<User_>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
                 {
                     wc.GiveRedirect(nameof(signin));
@@ -157,7 +157,7 @@ namespace Supply
             {
                 var f = await wc.ReadAsync<Form>();
                 url = f[nameof(url)];
-                var o = new User
+                var o = new User_
                 {
                     status = Art_.STA_ENABLED,
                     name = f[nameof(name)],
@@ -166,8 +166,8 @@ namespace Supply
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
-                o = await dc.QueryTopAsync<User>(p => o.Write(p));
+                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User_.Empty);
+                o = await dc.QueryTopAsync<User_>(p => o.Write(p));
 
                 // refresh cookie
                 wc.Principal = o;

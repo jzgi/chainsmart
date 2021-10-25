@@ -2,11 +2,11 @@
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Supply.User;
+using static Rev.Supply.User_;
 
-namespace Supply
+namespace Rev.Supply
 {
-    [UserAuthorize(admly: ADMLY_IT)]
+    [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("平台用户")]
     public class AdmlyUserWork : WebWork
     {
@@ -20,7 +20,7 @@ namespace Supply
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User>(p => p.Set(page));
+            var arr = dc.Query<User_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -61,7 +61,7 @@ namespace Supply
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User>(p => p.Set(tel));
+                var arr = dc.Query<User_>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
@@ -98,7 +98,7 @@ namespace Supply
             short commid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE admly > 0");
-            var arr = dc.Query<User>(p => p.Set(commid));
+            var arr = dc.Query<User_>(p => p.Set(commid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -114,7 +114,7 @@ namespace Supply
             }, false, 3);
         }
 
-        [UserAuthorize(admly: ADMLY_MGT)]
+        [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
         [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -131,7 +131,7 @@ namespace Supply
                     {
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User>(p => p.Set(tel));
+                        var o = dc.QueryTop<User_>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
@@ -170,7 +170,7 @@ namespace Supply
             short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-            var arr = dc.Query<User>(p => p.Set(orgid));
+            var arr = dc.Query<User_>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -178,7 +178,7 @@ namespace Supply
                     {
                         h.TDCHECK(o.id);
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
-                        h.TD(Ctrly[o.orgly]);
+                        h.TD(Orgly[o.orgly]);
                         h.TDFORM(() => h.VARTOOLS(o.Key));
                     }
                 );
@@ -202,13 +202,13 @@ namespace Supply
                     {
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User>(p => p.Set(tel));
+                        var o = dc.QueryTop<User_>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(orgly), orgly, Ctrly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("权限", nameof(orgly), orgly, Orgly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
@@ -242,7 +242,7 @@ namespace Supply
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User>(p => p.Set(page));
+            var arr = dc.Query<User_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -283,7 +283,7 @@ namespace Supply
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User>(p => p.Set(tel));
+                var arr = dc.Query<User_>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();

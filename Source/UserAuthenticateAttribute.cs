@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Supply
+namespace Rev.Supply
 {
     /// <summary>
     /// To establish principal identity. 
@@ -25,7 +25,7 @@ namespace Supply
             string token;
             if (wc.Cookies.TryGetValue(nameof(token), out token))
             {
-                var o = DecryptPrincipal<User>(token);
+                var o = DecryptPrincipal<User_>(token);
                 if (o != null)
                 {
                     wc.Principal = o;
@@ -42,7 +42,7 @@ namespace Supply
             }
 
             // wechat authenticate
-            User prin;
+            User_ prin;
             if (wc.IsWeChat) // weixin
             {
                 string state = wc.Query[nameof(state)];
@@ -62,10 +62,10 @@ namespace Supply
 
                     // create principal
                     using var dc = Db.NewDbContext();
-                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
+                    dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
-                        prin = dc.ToObject<User>();
+                        prin = dc.ToObject<User_>();
                         wc.Principal = prin; // set principal for afterwrads
                         wc.SetTokenCookie(prin);
                     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Supply
+namespace Rev.Supply
 {
     /// <summary>
     /// A publicly used article record that has lifetime statuses
@@ -24,21 +24,11 @@ namespace Supply
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
 
-        // the specialized extensible discriminator
         internal short typ;
-
-        // object status
         internal short status;
-
-        // readable name
         internal string name;
-
-        // desctiprive text
         internal string tip;
-
         internal DateTime created;
-
-        // persona who created or lastly modified
         internal string creator;
 
         public virtual void Read(ISource s, byte proj = 0x0f)

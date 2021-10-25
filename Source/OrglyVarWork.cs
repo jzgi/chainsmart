@@ -2,7 +2,7 @@
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -48,7 +48,7 @@ namespace Supply
 
             MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<OrglyAccessWork>("access", User.Ctrly);
+            MakeWork<OrglyAccessWork>("access", User_.Orgly);
         }
 
         public void @default(WebContext wc)
@@ -57,12 +57,12 @@ namespace Supply
             var o = Obtain<short, Org>(orgid);
             var regs = ObtainMap<short, Reg>();
 
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + User_.Orgly[prin.orgly] + "）");
 
                 h.UL_("uk-card uk-card-primary uk-card-body ul-list uk-list-divider");
                 h.LI_().FIELD("经营主体", o.Name)._LI();
@@ -82,13 +82,13 @@ namespace Supply
     {
         protected override void OnMake()
         {
-            MakeWork<BizlyBuyWork>("buy");
+            MakeWork<BizlyBookWork>("buy");
 
             MakeWork<OrglyClearWork>("clear");
 
             MakeWork<BizColyOrgWork>("org");
 
-            MakeWork<OrglyAccessWork>("access", User.Orgly);
+            MakeWork<OrglyAccessWork>("access", User_.Orgly);
         }
 
         public void @default(WebContext wc)
@@ -98,12 +98,12 @@ namespace Supply
             var co = Obtain<short, Org>(org.coid);
             var ctr = Obtain<short, Org>(org.ctrid);
 
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + User_.Orgly[prin.orgly] + "）");
 
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.Name)._LI();
@@ -115,7 +115,7 @@ namespace Supply
                 }
                 h.LI_().FIELD("分拣中心", ctr.name)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("授权代办", org.grant)._LI();
+                h.LI_().FIELD("授权代办", org.delegated)._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -132,7 +132,7 @@ namespace Supply
 
             MakeWork<SrcColyOrgWork>("org");
 
-            MakeWork<SrcColyProdWork>("prod");
+            MakeWork<SrcColyYieldWork>("prod");
 
             MakeWork<SrcColyPurchWork>("copurch");
 
@@ -147,12 +147,12 @@ namespace Supply
             var org = Obtain<short, Org>(orgid);
             var co = Obtain<short, Org>(org.coid);
 
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + User_.Orgly[prin.orgly] + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");

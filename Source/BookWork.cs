@@ -2,14 +2,15 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
+using static Rev.Supply.Book;
 using static SkyChain.Web.Modal;
-using static Supply.User;
+using static Rev.Supply.User_;
 
-namespace Supply
+namespace Rev.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("销售管理")]
-    public class AdmlyBuyWork : WebWork
+    public class AdmlyBookWork : WebWork
     {
         protected override void OnMake()
         {
@@ -25,7 +26,7 @@ namespace Supply
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("商户进货", "cart")]
-    public class BizlyBuyWork : WebWork
+    public class BizlyBookWork : WebWork
     {
         protected override void OnMake()
         {
@@ -37,8 +38,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -58,8 +59,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(Flow_.STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -79,8 +80,8 @@ namespace Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(Flow_.STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -110,7 +111,7 @@ namespace Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Plan>();
+                        var prods = ObtainMap<short, Supply>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);
@@ -132,9 +133,9 @@ namespace Supply
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Buy>(0);
+                var o = await wc.ReadObjectAsync<Book>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, 0)._VALUES_(Buy.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -168,7 +169,7 @@ namespace Supply
         [Ui("发货", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             short orgid = wc[-1];
         }
 
@@ -176,7 +177,7 @@ namespace Supply
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             var ended = DateTime.Today.AddDays(3);
             int[] key;
             if (wc.IsGet)

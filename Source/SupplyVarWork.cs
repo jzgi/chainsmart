@@ -4,9 +4,9 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
-    public class AdmlyPlanVarWork : WebWork
+    public class AdmlySupplyVarWork : WebWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)

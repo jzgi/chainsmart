@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class Clear : IData
     {

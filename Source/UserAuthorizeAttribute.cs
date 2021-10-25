@@ -2,7 +2,7 @@
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Supply
+namespace Rev.Supply
 {
     /// <summary>
     /// To implement principal authorization of access to the target resources.
@@ -29,7 +29,7 @@ namespace Supply
 
         public override bool Do(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
 
             if (prin == null)
             {
@@ -42,7 +42,7 @@ namespace Supply
                 short orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = Db.Obtain<short, Org>(prin.orgid);
+                    var org = Db.Obtain<int, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

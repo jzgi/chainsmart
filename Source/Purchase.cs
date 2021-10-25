@@ -1,13 +1,14 @@
+using System;
 using SkyChain;
 
-namespace Supply
+namespace Rev.Supply
 {
     /// 
     /// A upstream line of purchase.
     /// 
-    public class Purch : Flow_, IKeyable<int>
+    public class Purchase : IData, IKeyable<int>
     {
-        public static readonly Purch Empty = new Purch();
+        public static readonly Purchase Empty = new Purchase();
 
         public const byte ID = 1, LATER = 2;
 
@@ -21,6 +22,36 @@ namespace Supply
             {1, "现货"},
             {2, "预订"},
         };
+
+        public const short
+            STATUS_CREATED = 0,
+            STATUS_SUBMITTED = 1, // before processing
+            STATUS_ABORTED = 2,
+            STATUS_CONFIRMED = 3, // ready for distr center op 
+            STATUS_SHIPPED = 4, //  
+            STATUS_CLOSED = 5; // after clearing
+
+        public static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STATUS_CREATED, "草稿中"},
+            {STATUS_SUBMITTED, "已提交"},
+            {STATUS_ABORTED, "已撤销"},
+            {STATUS_CONFIRMED, "已确认"},
+            {STATUS_SHIPPED, "已发货"},
+            {STATUS_CLOSED, "已关闭"},
+        };
+
+
+        internal short typ;
+        internal short status;
+        internal short partyid;
+        internal short ctrid;
+        internal DateTime created;
+        internal string creator;
+        internal DateTime traded;
+        internal string trader;
+        internal DateTime settled;
+        internal string settler;
 
 
         internal int id;
@@ -37,15 +68,19 @@ namespace Supply
         internal int codestart;
         internal short codes;
 
-        public override void Read(ISource s, byte proj = 15)
+        public void Read(ISource s, byte proj = 15)
         {
+            s.Get(nameof(typ), ref typ);
+            s.Get(nameof(status), ref status);
+            s.Get(nameof(partyid), ref partyid);
+            s.Get(nameof(ctrid), ref ctrid);
+            s.Get(nameof(created), ref created);
+            s.Get(nameof(creator), ref creator);
+
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-
-            base.Read(s, proj);
-
             s.Get(nameof(no), ref no);
             s.Get(nameof(prodid), ref prodid);
             s.Get(nameof(itemid), ref itemid);
@@ -58,15 +93,19 @@ namespace Supply
             s.Get(nameof(codes), ref codes);
         }
 
-        public override void Write(ISink s, byte proj = 15)
+        public void Write(ISink s, byte proj = 15)
         {
+            s.Put(nameof(typ), typ);
+            s.Put(nameof(status), status);
+            s.Put(nameof(partyid), partyid);
+            s.Put(nameof(ctrid), ctrid);
+            s.Put(nameof(created), created);
+            s.Put(nameof(creator), creator);
+
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-
-            base.Write(s, proj);
-
             s.Put(nameof(no), no);
             s.Put(nameof(prodid), prodid);
             s.Put(nameof(itemid), itemid);

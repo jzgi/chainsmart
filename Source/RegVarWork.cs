@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using SkyChain.Web;
+using static Rev.Supply.User_;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class AdmlyRegVarWork : WebWork
     {
-        [UserAuthorize(admly: User.ADMLY_MGT)]
+        [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {

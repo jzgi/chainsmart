@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
     [Ui("协作主体管理", "℠")]
     public class AdmlyOrgWork : WebWork
@@ -53,7 +53,7 @@ namespace Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             var regs = ObtainMap<short, Reg>();
 
             if (wc.IsGet)
@@ -127,7 +127,7 @@ namespace Supply
         [Ui("添加"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             var regs = ObtainMap<short, Reg>();
 
             if (wc.IsGet)

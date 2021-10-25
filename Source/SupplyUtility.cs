@@ -5,9 +5,9 @@ using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Supply.Flow_;
+using static Rev.Supply.Book;
 
-namespace Supply
+namespace Rev.Supply
 {
     public static class SupplyUtility
     {
@@ -89,7 +89,7 @@ namespace Supply
             return h;
         }
 
-        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Item> opt, Map<short, string> typs, bool required = true)
+        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, int v, Map<int, Item> opt, Map<short, string> typs, bool required = true)
         {
             h.SELECT_(label, name, false, required);
             if (opt != null)
@@ -190,9 +190,9 @@ namespace Supply
             return ToHex(hash);
         }
 
-        public static void SetTokenCookie(this WebContext wc, User o)
+        public static void SetTokenCookie(this WebContext wc, User_ o)
         {
-            const byte proj_all_but_privacy = 0x0f ^ User.PRIVACY;
+            const byte proj_all_but_privacy = 0x0f ^ User_.PRIVACY;
             string token = AuthenticateAttribute.EncryptPrincipal(o, proj_all_but_privacy);
             wc.SetCookie(nameof(token), token);
         }
@@ -234,7 +234,7 @@ namespace Supply
             return lst.ToArray();
         }
 
-        public static void ViewLotTop(this HtmlContent h, Purch off, string icon, string img)
+        public static void ViewLotTop(this HtmlContent h, Purchase off, string icon, string img)
         {
             h.SECTION_("uk-flex");
             h.PIC_("uk-width-1-2 uk-margin-auto-vertical");

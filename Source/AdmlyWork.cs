@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Supply
+namespace Rev.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("平台管理")]
@@ -14,9 +14,9 @@ namespace Supply
 
             MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyPlanWork>("plan");
+            MakeWork<AdmlySupplyWork>("plan");
 
-            MakeWork<AdmlyBuyWork>("buy");
+            MakeWork<AdmlyBookWork>("buy");
 
             MakeWork<AdmlyPurchWork>("purch");
 
@@ -35,11 +35,11 @@ namespace Supply
 
         public override void @default(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             var o = Chain.Info;
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + User_.Admly[prin.admly] + "）");
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
                 if (o != null)

@@ -3,9 +3,12 @@ using SkyChain;
 
 namespace Rev.Supply
 {
-    public class Reg : IData, IKeyable<short>
+    /// <summary>
+    /// The data modal for a yield of item.
+    /// </summary>
+    public class Yield : IData, IKeyable<int>
     {
-        public static readonly Reg Empty = new Reg();
+        public static readonly Yield Empty = new Yield();
 
         public const short
             STA_DISABLED = 0,
@@ -23,26 +26,18 @@ namespace Rev.Supply
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
 
-        public const short
-            TYP_METROPOLIS = 1,
-            TYP_CITY = 2;
-
-        public static readonly Map<short, string> Typs = new Map<short, string>
-        {
-            {TYP_METROPOLIS, "省会"},
-            {TYP_CITY, "地市"},
-        };
-
         internal short typ;
         internal short status;
         internal string name;
         internal string tip;
         internal DateTime created;
         internal string creator;
-        internal short id;
-        internal short idx;
 
-        public void Read(ISource s, byte proj = 0x0f)
+        internal short id;
+        internal short itemid;
+
+
+        public void Read(ISource s, byte proj = 15)
         {
             s.Get(nameof(typ), ref typ);
             s.Get(nameof(status), ref status);
@@ -54,10 +49,11 @@ namespace Rev.Supply
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(idx), ref idx);
+
+            s.Get(nameof(itemid), ref itemid);
         }
 
-        public void Write(ISink s, byte proj = 0x0f)
+        public void Write(ISink s, byte proj = 15)
         {
             s.Put(nameof(typ), typ);
             s.Put(nameof(status), status);
@@ -69,15 +65,10 @@ namespace Rev.Supply
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(idx), idx);
+
+            s.Put(nameof(itemid), itemid);
         }
 
-        public short Key => id;
-
-        public bool IsMetropolis => typ == 1;
-
-        public bool IsCity => typ == 2;
-
-        public override string ToString() => name;
+        public int Key => id;
     }
 }

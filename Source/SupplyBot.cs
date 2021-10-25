@@ -1,6 +1,6 @@
 ﻿using SkyChain.Db;
 
-namespace Supply
+namespace Rev.Supply
 {
     public class SupplyBot : ChainBot
     {

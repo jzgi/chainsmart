@@ -5,39 +5,96 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Supply
+namespace Rev.Supply
 {
-    public class AdmlyProdVarWork : WebWork
+    public class AdmlyBuyVarWork : WebWork
     {
-        public async Task @default(WebContext wc, int page)
+        [Ui(group: 1), Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
         {
+            int lotid = wc[0];
+            var prin = (User_) wc.Principal;
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch
+                    {
+                        dc.Rollback();
+                    }
+                }
+                wc.GivePane(200);
+            }
         }
     }
 
-    public class CtrlyProdVarWork : WebWork
-    {
-    }
 
-    public class SrclyProdVarWork : WebWork
+    public class BizlyBuyVarWork : WebWork
     {
+        [Ui, Tool(ButtonOpen)]
+        public async Task act(WebContext wc, int cmd)
+        {
+            int lotid = wc[0];
+            short orgid = wc[-2];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(lotid));
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                int[] key = f[nameof(key)];
+                if (cmd == 1)
+                {
+                    using var dc = NewDbContext(ReadCommitted);
+                    try
+                    {
+                    }
+                    catch (Exception e)
+                    {
+                        ERR(e.Message);
+                        dc.Rollback();
+                    }
+                }
+                else
+                {
+                }
+
+                wc.GiveRedirect(nameof(act));
+            }
+        }
+
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User_) wc.Principal;
             short orgid = wc[-2];
-            var org = Obtain<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Purch>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Purch
+                var m = new Book
                 {
                 };
                 m.Read(f);
@@ -94,39 +151,9 @@ namespace Supply
         }
 
         // [Ui("核实"), Tool(Modal.ButtonShow)]
-        public async Task apprv(WebContext wc)
-        {
-            short orgid = wc[-2];
-            var org = Obtain<short, Org>(orgid);
-            long job = wc[0];
-            bool ok;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("核实申请");
-                    h.LI_().CHECKBOX(null, nameof(ok), true, tip: "我确定此项申请情况属实，同意奖励数字珍珠", required: true)._LI();
-                    h._FORM()._FIELDSUL();
-                });
-            }
-            else
-            {
-                ok = (await wc.ReadAsync<Form>())[nameof(ok)];
-                if (ok)
-                {
-                    using var dc = NewDbContext(ReadCommitted);
-
-                    // var tx = new ChainTransaction(1)
-                    // .Row()
-
-                    // await dc.ExecuteAsync("", org.Acct);
-                }
-                wc.GivePane(200);
-            }
-        }
     }
 
-    public class SrcColyProdVarWork : WebWork
+    public class CtrlyBuyVarWork : WebWork
     {
     }
 }
