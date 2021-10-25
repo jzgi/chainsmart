@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class AdmlyOrgVarWork : WebWork
     {
@@ -21,7 +21,7 @@ namespace Zhnt.Supply
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using Zhnt.Supply;
+using Supply;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class AdmlyUserVarWork : WebWork
     {

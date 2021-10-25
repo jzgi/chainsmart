@@ -4,7 +4,7 @@ using SkyChain.Web;
 using static System.String;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize]
     [Ui("账号信息")]

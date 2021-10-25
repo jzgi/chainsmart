@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [Ui("协作主体管理", "℠")]
     public class AdmlyOrgWork : WebWork
@@ -62,13 +62,13 @@ namespace Zhnt.Supply
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Art_.STATUS_ENABLED
+                    status = Art_.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
@@ -94,7 +94,7 @@ namespace Zhnt.Supply
     }
 
 
-    [UserAuthorize(Org.TYP_CO_BIZ, 1)]
+    [UserAuthorize(Org.TYP_BIZCO, 1)]
     [Ui("商户团管理", "album")]
     public class BizColyOrgWork : WebWork
     {
@@ -136,13 +136,13 @@ namespace Zhnt.Supply
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Art_.STATUS_ENABLED
+                    status = Art_.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
@@ -167,14 +167,14 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRCCO, 1)]
+    [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("产源团管理", "thumbnails")]
     public class SrcColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
-            State = Org.TYP_SRC;
-            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRC);
+            State = Org.TYP_SRCCO;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRCCO);
         }
 
         public async Task @default(WebContext wc)

@@ -1,7 +1,7 @@
 using System;
 using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class Buy : Flow_, IKeyable<int>
     {

@@ -5,9 +5,9 @@ using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Zhnt.Supply.Flow_;
+using static Supply.Flow_;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public static class SupplyUtility
     {

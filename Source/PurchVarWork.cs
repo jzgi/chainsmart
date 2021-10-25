@@ -5,7 +5,7 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class AdmlyPurchVarWork : WebWork
     {

@@ -4,56 +4,50 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create table arts_
+create table regs_
 (
 	typ smallint not null,
 	status smallint default 0 not null,
 	name varchar(10) not null,
 	tip varchar(20),
 	created timestamp(0),
-	creator varchar(10)
-);
-
-alter table arts_ owner to postgres;
-
-create table regs
-(
+	creator varchar(10),
 	id smallserial not null
 		constraint regs_pk
 			primary key,
 	idx smallint
-)
-inherits (arts_);
+);
 
-alter table regs owner to postgres;
+alter table regs_ owner to postgres;
 
 create table items
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
 	id smallserial not null,
 	unit varchar(4),
 	unitip varchar(10),
 	icon bytea,
 	img bytea,
-	extra bytea
-)
-inherits (arts_);
+	extra bytea,
+	price money,
+	"off" money
+);
 
 alter table items owner to postgres;
 
-create table flows_
+create table users
 (
 	typ smallint not null,
 	status smallint default 0 not null,
-	partyid smallint not null,
-	ctrid integer,
+	name varchar(10) not null,
+	tip varchar(20),
 	created timestamp(0),
-	creator varchar(10)
-);
-
-alter table flows_ owner to postgres;
-
-create table users
-(
+	creator varchar(10),
 	id serial not null
 		constraint users_pk
 			primary key,
@@ -64,24 +58,30 @@ create table users
 	orgid smallint,
 	orgly smallint default 0 not null
 )
-inherits (arts_);
+inherits ();
 
 alter table users owner to postgres;
 
-create table orgs
+create table orgs_
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
 	id smallserial not null
 		constraint orgs_pk
 			primary key,
 	coid integer
 		constraint orgs_coid_fk
-			references orgs,
+			references orgs_,
 	ctrid integer
 		constraint orgs_ctrid_fk
-			references orgs,
+			references orgs_,
 	regid smallint
 		constraint orgs_regid_fk
-			references regs,
+			references regs_,
 	addr varchar(20),
 	x double precision,
 	y double precision,
@@ -92,10 +92,9 @@ create table orgs
 	license bytea,
 	perm bytea,
 	"grant" boolean
-)
-inherits (arts_);
+);
 
-alter table orgs owner to postgres;
+alter table orgs_ owner to postgres;
 
 create index users_admly_idx
 	on users (admly)
@@ -118,8 +117,14 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table buys
+create table books
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	partyid smallint not null,
+	ctrid integer,
+	created timestamp(0),
+	creator varchar(10),
 	id serial not null,
 	no bigint,
 	planid smallint,
@@ -129,13 +134,18 @@ create table buys
 	qty integer,
 	pay money,
 	refund money
-)
-inherits (flows_);
+);
 
-alter table buys owner to postgres;
+alter table books owner to postgres;
 
 create table purchs
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	partyid smallint not null,
+	ctrid integer,
+	created timestamp(0),
+	creator varchar(10),
 	id serial not null,
 	no bigint,
 	planid smallint,
@@ -149,11 +159,11 @@ create table purchs
 	codes smallint,
 	prodid integer
 )
-inherits (flows_);
+inherits ();
 
 alter table purchs owner to postgres;
 
-create table agrmts
+create table agrmts_
 (
 	id serial not null,
 	orgid smallint,
@@ -167,10 +177,16 @@ create table agrmts
 	status smallint
 );
 
-alter table agrmts owner to postgres;
+alter table agrmts_ owner to postgres;
 
-create table plans
+create table supplys
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
 	id serial not null,
 	itemid smallint not null,
 	bunit varchar(4),
@@ -186,32 +202,59 @@ create table plans
 	pmax smallint,
 	pstep smallint,
 	pprice money,
-	poff money
-)
-inherits (arts_);
+	poff money,
+	started date,
+	ended date,
+	delivered date
+);
 
-alter table plans owner to postgres;
+alter table supplys owner to postgres;
 
-create table chans
+create table yields
 (
+	typ smallint not null,
 	status smallint default 0 not null,
-	prodid smallint,
-	orgid smallint
-)
-inherits (arts_);
-
-alter table chans owner to postgres;
-
-create table prods
-(
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
 	id serial not null,
 	srcid integer,
 	itemid smallint,
 	test bytea
-)
-inherits (arts_);
+);
 
-alter table prods owner to postgres;
+alter table yields owner to postgres;
+
+create table cats_
+(
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
+	id smallserial not null,
+	idx smallint,
+	stamp_ timestamp
+);
+
+alter table cats_ owner to postgres;
+
+create table shards_
+(
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(20),
+	created timestamp(0),
+	creator varchar(10),
+	id varchar(4),
+	idx smallint,
+	stamp_ timestamp
+);
+
+alter table shards_ owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, id, coid, ctrid, regid, addr, x, y, "grant", mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
 SELECT o.typ,

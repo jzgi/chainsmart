@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class SupplyApp : Application
     {

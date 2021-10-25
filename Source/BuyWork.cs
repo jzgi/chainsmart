@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt.Supply.User;
+using static Supply.User;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("销售管理")]

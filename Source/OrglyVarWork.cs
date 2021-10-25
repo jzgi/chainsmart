@@ -2,7 +2,7 @@
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -36,7 +36,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, 1)]
+    [UserAuthorize(Org.TYP_SUP, 1)]
     [Ui("分拣中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
@@ -76,7 +76,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_CO_BIZ, 1)]
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZCO, 1)]
     [Ui("商户端")]
     public class BizlyVarWork : OrglyVarWork
     {
@@ -123,7 +123,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC | Org.TYP_SRCCO, 1)]
+    [UserAuthorize(Org.TYP_SRCCO | Org.TYP_SRC, 1)]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnMake()

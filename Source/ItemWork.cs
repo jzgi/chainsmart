@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class PublyItemWork : WebWork
     {
@@ -63,7 +63,7 @@ namespace Zhnt.Supply
             {
                 var o = new Item
                 {
-                    status = Art_.STATUS_ENABLED
+                    status = Art_.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SkyChain.Web;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("结算管理")]

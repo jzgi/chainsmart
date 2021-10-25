@@ -2,7 +2,7 @@
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class AdmlyRegVarWork : WebWork
     {

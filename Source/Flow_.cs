@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     /// <summary>
     /// A business document used in workflow process.

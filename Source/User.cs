@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class User : Art_, IKeyable<int>
     {
@@ -95,7 +95,7 @@ namespace Zhnt.Supply
 
         public bool IsPro => typ >= 1;
 
-        public bool IsDisabled => status <= STATUS_DISABLED;
+        public bool IsDisabled => status <= STA_DISABLED;
 
         public override string ToString() => name;
     }

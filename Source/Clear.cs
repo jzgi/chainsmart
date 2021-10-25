@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class Clear : IData
     {

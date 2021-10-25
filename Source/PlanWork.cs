@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: User.ADMLY_OP)]
     [Ui("产品供应计划", "calendar")]

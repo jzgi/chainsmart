@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     /// <summary>
     /// A publicly used article record that has lifetime statuses
@@ -9,17 +9,17 @@ namespace Zhnt.Supply
     public abstract class Art_ : IData
     {
         public const short
-            STATUS_DISABLED = 0,
-            STATUS_SHOWED = 1,
-            STATUS_ENABLED = 2,
-            STATUS_PREFERED = 3;
+            STA_DISABLED = 0,
+            STA_SHOWED = 1,
+            STA_ENABLED = 2,
+            STA_PREFERED = 3;
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STATUS_DISABLED, "禁用"},
-            {STATUS_SHOWED, "展示"},
-            {STATUS_ENABLED, "可用"},
-            {STATUS_PREFERED, "优先"},
+            {STA_DISABLED, "禁用"},
+            {STA_SHOWED, "展示"},
+            {STA_ENABLED, "可用"},
+            {STA_PREFERED, "优先"},
         };
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
@@ -61,8 +61,8 @@ namespace Zhnt.Supply
             s.Put(nameof(creator), creator);
         }
 
-        public virtual bool IsShowable => status >= STATUS_SHOWED;
+        public virtual bool IsShowable => status >= STA_SHOWED;
 
-        public virtual bool IsWorkable => status >= STATUS_ENABLED;
+        public virtual bool IsWorkable => status >= STA_ENABLED;
     }
 }

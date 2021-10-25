@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     public class MyWork : WebWork
     {

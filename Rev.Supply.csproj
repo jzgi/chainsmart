@@ -6,8 +6,7 @@
         <LangVersion>8</LangVersion>
         <PackageVersion>2.0.1</PackageVersion>
         <AssemblyVersion>2.0.1</AssemblyVersion>
-        <Copyright>ZhenQi Ltd</Copyright>
-        <RootNamespace>Zhnt.Supply</RootNamespace>
+        <Copyright>Jzg Research</Copyright>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

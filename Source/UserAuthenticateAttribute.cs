@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     /// <summary>
     /// To establish principal identity. 

@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Zhnt.Supply.Flow_;
-using static Zhnt.Supply.User;
+using static Supply.Flow_;
+using static Supply.User;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("采购管理")]
@@ -30,7 +30,7 @@ namespace Zhnt.Supply
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
     [Ui("产源销货", "sign-out")]
     public class SrclyPurchWork : WebWork
     {
@@ -62,7 +62,7 @@ namespace Zhnt.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源团销货动态")]
     public class SrcColyPurchWork : WebWork
     {

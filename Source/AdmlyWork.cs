@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("平台管理")]
@@ -46,7 +46,7 @@ namespace Zhnt.Supply
                 {
                     h.LI_().FIELD("节点编号", o.Id)._LI();
                     h.LI_().FIELD("名称", o.Name)._LI();
-                    h.LI_().FIELD("连接地址", o.Domain)._LI();
+                    h.LI_().FIELD("连接地址", o.Uri)._LI();
                     h.LI_().FIELD("状态", Peer.Statuses[o.Status])._LI();
                     h.LI_().FIELD("当前区块", o.CurrentBlockId)._LI();
                 }

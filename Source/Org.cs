@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using SkyChain;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     /// <summary>
     /// An organizational unit, that can be base, center, point, market or booth.
@@ -11,22 +11,19 @@ namespace Zhnt.Supply
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_CTR = 1,
+            TYP_SUP = 1,
             TYP_BIZ = 2,
-            TYP_CO_BIZ = 4,
+            TYP_BIZCO = 4,
             TYP_SRC = 8,
             TYP_SRCCO = 16;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_CTR, "分拣中心"},
-            {TYP_CO_BIZ, "商户团"},
-            {TYP_CO_BIZ + TYP_BIZ, "商户团＋商户"},
-            {TYP_BIZ, "商户"},
-            {TYP_SRCCO, "产源团"},
-            {TYP_SRCCO + TYP_SRC, "产源团＋产源"},
-            {TYP_SRC, "产源"},
-            {TYP_CO_BIZ + TYP_SRCCO, "商户团＋产源团"},
+            {TYP_SUP + TYP_BIZ, "供应中心"},
+            {TYP_BIZ, "商户／服务"},
+            {TYP_BIZ + TYP_BIZCO, "市场／驿站"},
+            {TYP_SRC, "产源／地块"},
+            {TYP_SRC + TYP_SRCCO, "产源社／产地"},
         };
 
         internal short id;
@@ -123,17 +120,17 @@ namespace Zhnt.Supply
 
         public string Im => mgrim;
 
-        public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsSrc => (typ & TYP_SRCCO) == TYP_SRCCO;
 
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsBizCo => (typ & TYP_CO_BIZ) == TYP_CO_BIZ;
+        public bool IsBizCo => (typ & TYP_BIZCO) == TYP_BIZCO;
 
         public bool IsInternal => false;
 
-        public bool IsMerchant => (typ & TYP_CTR) == TYP_CTR;
+        public bool IsMerchant => (typ & TYP_SUP) == TYP_SUP;
 
-        public bool IsSocial => (typ & TYP_CO_BIZ) == TYP_CO_BIZ;
+        public bool IsSocial => (typ & TYP_BIZCO) == TYP_BIZCO;
 
         public bool IsProvider => IsMerchant || IsSocial;
 

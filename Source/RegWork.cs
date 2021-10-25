@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Zhnt.Supply
+namespace Supply
 {
     [UserAuthorize(admly: User.ADMLY_MGT)]
     [Ui("地理区域")]
@@ -45,7 +45,7 @@ namespace Zhnt.Supply
             {
                 var o = new Reg
                 {
-                    status = Art_.STATUS_ENABLED
+                    status = Art_.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
