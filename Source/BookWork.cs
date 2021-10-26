@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using static Rev.Supply.Book;
+using static Revital.Supply.Book;
 using static SkyChain.Web.Modal;
-using static Rev.Supply.User_;
+using static Revital.Supply.User_;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("销售管理")]
@@ -111,7 +111,7 @@ namespace Rev.Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Supply>();
+                        var prods = ObtainMap<short, Offer>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);

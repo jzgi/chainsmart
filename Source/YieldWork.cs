@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Rev.Supply.User_;
+using static Revital.Supply.User_;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("产品管理")]

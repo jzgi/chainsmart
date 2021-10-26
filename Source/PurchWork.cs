@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Rev.Supply.Purchase;
-using static Rev.Supply.User_;
+using static Revital.Supply.Purchase;
+using static Revital.Supply.User_;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("采购管理")]

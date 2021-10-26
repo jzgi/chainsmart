@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Text;
 using SkyChain;
+using SkyChain.Db;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : IData, IKeyable<int>
+    public class Org : Scopal, IKeyable<int>
     {
         public static readonly Org Empty = new Org();
 
@@ -40,9 +41,6 @@ namespace Rev.Supply
             {STA_ENABLED, "可用"},
             {STA_PREFERED, "优先"},
         };
-
-        public const byte ID = 1, LATER = 2, PRIVACY = 4;
-
 
         internal short typ;
         internal short status;

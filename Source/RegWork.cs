@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using SkyChain.Web;
-using static Rev.Supply.User_;
+using static Revital.Supply.User_;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("地理区域")]
@@ -32,7 +32,7 @@ namespace Rev.Supply
                             h.T('（').T(Reg.Typs[o.typ]).T('）');
                         }
                         h._TD();
-                        h.TD(Art_.Statuses[o.status]);
+                        h.TD(Reg.Statuses[o.status]);
                         h.TDFORM(() => h.VARTOOLS(o.Key));
                     }
                 );
@@ -46,7 +46,7 @@ namespace Rev.Supply
             {
                 var o = new Reg
                 {
-                    status = Art_.STA_ENABLED
+                    status = Reg.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -55,7 +55,7 @@ namespace Rev.Supply
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Reg.Typs)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Reg.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

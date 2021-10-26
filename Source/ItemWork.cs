@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class PublyItemWork : WebWork
     {
@@ -44,7 +44,7 @@ namespace Rev.Supply
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(Art_.Statuses[o.status]);
+                    h.TD(Item.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -63,7 +63,7 @@ namespace Rev.Supply
             {
                 var o = new Item
                 {
-                    status = Art_.STA_ENABLED
+                    status = Item.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -73,7 +73,7 @@ namespace Rev.Supply
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

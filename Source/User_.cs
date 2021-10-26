@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class User_ : IData, IKeyable<int>
     {
@@ -40,12 +40,14 @@ namespace Rev.Supply
         };
 
         public const short
-            ORGLY_OP = 1,
+            ORGLY_GUEST = 1,
+            ORGLY_OP = 3,
             ORGLY_MGR = 7;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
+            {ORGLY_GUEST, "访客"},
             {ORGLY_OP, "操作员"},
             {ORGLY_MGR, "管理员"},
         };

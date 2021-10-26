@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class SupplyApp : Application
     {
@@ -55,8 +55,8 @@ namespace Rev.Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM prods ORDER BY typ, status DESC");
-                    return dc.Query<short, Supply>();
+                    dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM prods ORDER BY typ, status DESC");
+                    return dc.Query<short, Offer>();
                 }, 60 * 15
             );
         }

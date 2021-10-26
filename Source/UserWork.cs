@@ -2,9 +2,9 @@
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Rev.Supply.User_;
+using static Revital.Supply.User_;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("平台用户")]

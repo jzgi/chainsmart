@@ -1,26 +1,26 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
-using static Rev.Supply.User_;
+using static Revital.Supply.User_;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("产品供应计划", "calendar")]
-    public class AdmlySupplyWork : WebWork
+    public class AdmlyOfferWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlySupplyVarWork>();
+            MakeVarWork<AdmlyOfferVarWork>();
         }
 
         [Ui("未生效", group: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Offer>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -39,7 +39,7 @@ namespace Rev.Supply
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD(o.bprice, true);
-                    h.TD(Art_.Statuses[o.status]);
+                    h.TD(Offer.Statuses[o.status]);
                     h._TR();
                     last = o.typ;
                 }
@@ -52,8 +52,8 @@ namespace Rev.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Offer>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -69,7 +69,7 @@ namespace Rev.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Art_.Statuses[o.status]);
+                    h.TD(Offer.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -83,8 +83,8 @@ namespace Rev.Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Offer>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -100,7 +100,7 @@ namespace Rev.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Art_.Statuses[o.status]);
+                    h.TD(Offer.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -121,10 +121,10 @@ namespace Rev.Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Supply.Schemes.Count; i++)
+                        for (int i = 0; i < Offer.Schemes.Count; i++)
                         {
-                            var key = Supply.Schemes.KeyAt(i);
-                            var scheme = Supply.Schemes.ValueAt(i);
+                            var key = Offer.Schemes.KeyAt(i);
+                            var scheme = Offer.Schemes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();
@@ -134,7 +134,7 @@ namespace Rev.Supply
                 else
                 {
                     var dt = DateTime.Today;
-                    var o = new Supply
+                    var o = new Offer
                     {
                         started = dt,
                         ended = dt,
@@ -153,7 +153,7 @@ namespace Rev.Supply
                         {
                             h.LI_().DATE("交付日", nameof(o.delivered), o.delivered)._LI();
                         }
-                        h.LI_().SELECT("状态", nameof(o.status), o.status, Art_.Statuses)._LI();
+                        h.LI_().SELECT("状态", nameof(o.status), o.status, Offer.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 
@@ -178,9 +178,9 @@ namespace Rev.Supply
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Supply>(0);
+                var o = await wc.ReadObjectAsync<Offer>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Supply.Empty, 0)._VALUES_(Supply.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Offer.Empty, 0)._VALUES_(Offer.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

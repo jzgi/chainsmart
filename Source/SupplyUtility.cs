@@ -5,9 +5,9 @@ using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Rev.Supply.Book;
+using static Revital.Supply.Book;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public static class SupplyUtility
     {

@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class CtrlyWork : WebWork
     {

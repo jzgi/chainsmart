@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SkyChain.Web;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class PublyCodeVarWork : WebWork
     {
@@ -14,7 +14,7 @@ namespace Rev.Supply
             var o = dc.QueryTop<Purchase>(p => p.Set(code));
 
 
-            var prod = Obtain<short, Supply>(o.prodid);
+            var prod = Obtain<short, Offer>(o.prodid);
             var src = Obtain<short, Org>(o.partyid);
             var ctr = Obtain<short, Org>(o.ctrid);
         }

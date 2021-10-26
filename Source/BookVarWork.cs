@@ -5,7 +5,7 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class AdmlyBuyVarWork : WebWork
     {

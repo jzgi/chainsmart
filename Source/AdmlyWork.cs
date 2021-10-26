@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Db;
 using SkyChain.Web;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthorize(admly: 1)]
     [Ui("平台管理")]
@@ -14,7 +14,7 @@ namespace Rev.Supply
 
             MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlySupplyWork>("plan");
+            MakeWork<AdmlyOfferWork>("plan");
 
             MakeWork<AdmlyBookWork>("buy");
 

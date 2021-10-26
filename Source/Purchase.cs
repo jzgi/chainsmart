@@ -1,7 +1,7 @@
 using System;
 using SkyChain;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     /// 
     /// A upstream line of purchase.

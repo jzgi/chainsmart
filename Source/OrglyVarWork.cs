@@ -2,7 +2,7 @@
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -19,7 +19,7 @@ namespace Rev.Supply
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(obj.addr), obj.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, Art_.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, Item.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -68,7 +68,7 @@ namespace Rev.Supply
                 h.LI_().FIELD("经营主体", o.Name)._LI();
                 h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
                 h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", Art_.Statuses[o.status])._LI();
+                h.LI_().FIELD("状态", Item.Statuses[o.status])._LI();
                 h._UL();
 
                 h.TASKUL();

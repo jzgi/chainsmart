@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     public class AdmlyUserVarWork : WebWork
     {

@@ -4,10 +4,10 @@ using System.Web;
 using SkyChain;
 using SkyChain.Db;
 using SkyChain.Web;
-using static Rev.Supply.Book;
-using static Rev.Supply.WeChatUtility;
+using static Revital.Supply.Book;
+using static Revital.Supply.WeChatUtility;
 
-namespace Rev.Supply
+namespace Revital.Supply
 {
     [UserAuthenticate]
     public class SupplyService : ChainService
@@ -159,7 +159,7 @@ namespace Rev.Supply
                 url = f[nameof(url)];
                 var o = new User_
                 {
-                    status = Art_.STA_ENABLED,
+                    status = Offer.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
