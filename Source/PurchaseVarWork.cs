@@ -14,7 +14,7 @@ namespace Revital.Supply
         }
     }
 
-    public class CtrlyPurchVarWork : WebWork
+    public class CtrlyPurchaseVarWork : WebWork
     {
     }
 

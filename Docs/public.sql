@@ -4,112 +4,6 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create table regs_
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id smallserial not null
-		constraint regs_pk
-			primary key,
-	idx smallint
-);
-
-alter table regs_ owner to postgres;
-
-create table items
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id smallserial not null,
-	unit varchar(4),
-	unitip varchar(10),
-	icon bytea,
-	img bytea,
-	extra bytea,
-	price money,
-	"off" money
-);
-
-alter table items owner to postgres;
-
-create table users
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id serial not null
-		constraint users_pk
-			primary key,
-	tel varchar(11) not null,
-	im varchar(28) not null,
-	credential varchar(16),
-	admly smallint default 0 not null,
-	orgid smallint,
-	orgly smallint default 0 not null
-)
-inherits ();
-
-alter table users owner to postgres;
-
-create table orgs_
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id smallserial not null
-		constraint orgs_pk
-			primary key,
-	coid integer
-		constraint orgs_coid_fk
-			references orgs_,
-	ctrid integer
-		constraint orgs_ctrid_fk
-			references orgs_,
-	regid smallint
-		constraint orgs_regid_fk
-			references regs_,
-	addr varchar(20),
-	x double precision,
-	y double precision,
-	mgrid integer
-		constraint orgs_mgrid_fk
-			references users,
-	icon bytea,
-	license bytea,
-	perm bytea,
-	"grant" boolean
-);
-
-alter table orgs_ owner to postgres;
-
-create index users_admly_idx
-	on users (admly)
-	where (admly > 0);
-
-create unique index users_im_idx
-	on users (im);
-
-create index users_orgid_idx
-	on users (orgid)
-	where (orgid > 0);
-
-create unique index users_tel_idx
-	on users (tel);
-
 create table clears
 (
 	id smallserial not null
@@ -117,28 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table books
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	partyid smallint not null,
-	ctrid integer,
-	created timestamp(0),
-	creator varchar(10),
-	id serial not null,
-	no bigint,
-	planid smallint,
-	itemid smallint not null,
-	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money
-);
-
-alter table books owner to postgres;
-
-create table purchs
+create table deals
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -158,130 +31,186 @@ create table purchs
 	codestart integer,
 	codes smallint,
 	prodid integer
-)
-inherits ();
+);
 
-alter table purchs owner to postgres;
+alter table deals owner to postgres;
+
+create table _beans
+(
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(30),
+	created timestamp(0),
+	creator varchar(10),
+	modified timestamp(0),
+	modifier varchar(10)
+);
+
+alter table _beans owner to postgres;
+
+create table supplys_
+(
+	id serial not null
+		constraint supplys_pk
+			primary key,
+	ctrid integer not null,
+	itemid integer not null,
+	started date,
+	ended date,
+	delivered date,
+	smode smallint,
+	sunit varchar(4),
+	sunitx smallint,
+	smin smallint,
+	smax smallint,
+	sstep smallint,
+	sprice money,
+	soff money,
+	mmode smallint,
+	munit varchar(4),
+	munitx smallint,
+	mmin smallint,
+	mmax smallint,
+	mstep smallint,
+	mprice money,
+	moff money
+)
+inherits (_beans);
+
+alter table supplys_ owner to postgres;
+
+create table items_
+(
+	id serial not null
+		constraint items_pk
+			primary key,
+	unit varchar(4),
+	unitip varchar(10),
+	icon bytea
+)
+inherits (_beans);
+
+alter table items_ owner to postgres;
+
+create table orgs_
+(
+	id serial not null
+		constraint orgs_pk
+			primary key,
+	sprid integer,
+	ctrid integer,
+	mgrid integer,
+	cttid integer,
+	entrust boolean,
+	license varchar(20),
+	regid varchar(4),
+	addr varchar(30),
+	x double precision,
+	y double precision,
+	icon bytea,
+	shard_ varchar(4),
+	seq_ bigint
+)
+inherits (_beans);
+
+alter table orgs_ owner to postgres;
+
+create table users_
+(
+	id serial not null
+		constraint users_pk
+			primary key,
+	tel varchar(11) not null,
+	im varchar(28),
+	credential varchar(32),
+	admly smallint default 0 not null,
+	orgid smallint,
+	orgly smallint default 0 not null
+)
+inherits (_beans);
+
+alter table users_ owner to postgres;
+
+create index users_admly_idx
+	on users_ (admly)
+	where (admly > 0);
+
+create unique index users_im_idx
+	on users_ (im);
+
+create index users_orgid_idx
+	on users_ (orgid)
+	where (orgid > 0);
+
+create unique index users_tel_idx
+	on users_ (tel);
+
+create table cats_
+(
+	id integer not null
+		constraint cats_pk
+			primary key,
+	idx smallint,
+	shard_ varchar(4),
+	stamp_ timestamp
+)
+inherits (_beans);
+
+alter table cats_ owner to postgres;
+
+create table regs_
+(
+	id varchar(4) not null
+		constraint regs_pk
+			primary key,
+	idx smallint
+)
+inherits (_beans);
+
+alter table regs_ owner to postgres;
 
 create table agrmts_
 (
 	id serial not null,
 	orgid smallint,
-	typ smallint not null,
-	start date,
-	"end" date,
-	signed timestamp(0),
-	created timestamp(0),
-	signer varchar(10),
-	creator varchar(10),
-	status smallint
-);
+	started date,
+	ended date,
+	content jsonb
+)
+inherits (_beans);
 
 alter table agrmts_ owner to postgres;
 
-create table supplys
+create table books
 (
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id serial not null,
+	id serial not null
+		constraint books_pk
+			primary key,
+	bizid smallint not null,
+	ctrid integer,
+	supplyid smallint,
 	itemid smallint not null,
-	bunit varchar(4),
-	bunitx smallint,
-	bmin smallint,
-	bmax smallint,
-	bstep smallint,
-	bprice money,
-	boff money,
-	punit varchar(4),
-	punitx smallint,
-	pmin smallint,
-	pmax smallint,
-	pstep smallint,
-	pprice money,
-	poff money,
-	started date,
-	ended date,
-	delivered date
-);
+	price money,
+	"off" money,
+	qty integer,
+	pay money,
+	refund money
+)
+inherits (_beans);
 
-alter table supplys owner to postgres;
+alter table books owner to postgres;
 
 create table yields
 (
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id serial not null,
+	id serial not null
+		constraint yields_pk
+			primary key,
 	srcid integer,
 	itemid smallint,
 	test bytea
-);
+)
+inherits (_beans);
 
 alter table yields owner to postgres;
-
-create table cats_
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id smallserial not null,
-	idx smallint,
-	stamp_ timestamp
-);
-
-alter table cats_ owner to postgres;
-
-create table shards_
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(10) not null,
-	tip varchar(20),
-	created timestamp(0),
-	creator varchar(10),
-	id varchar(4),
-	idx smallint,
-	stamp_ timestamp
-);
-
-alter table shards_ owner to postgres;
-
-create view orgs_vw(typ, status, name, tip, created, creator, id, coid, ctrid, regid, addr, x, y, "grant", mgrid, mgrname, mgrtel, mgrim, icon, license, perm) as
-SELECT o.typ,
-       o.status,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.id,
-       o.coid,
-       o.ctrid,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o."grant",
-       o.mgrid,
-       m.name                AS mgrname,
-       m.tel                 AS mgrtel,
-       m.im                  AS mgrim,
-       o.icon IS NOT NULL    AS icon,
-       o.license IS NOT NULL AS license,
-       o.perm IS NOT NULL    AS perm
-FROM orgs o
-         LEFT JOIN users m
-                   ON o.mgrid =
-                      m.id;
-
-alter table orgs_vw owner to postgres;
 

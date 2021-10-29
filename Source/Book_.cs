@@ -3,9 +3,9 @@ using SkyChain;
 
 namespace Revital.Supply
 {
-    public class Book : IData, IKeyable<int>
+    public class Book_ : IData, IKeyable<int>
     {
-        public static readonly Book Empty = new Book();
+        public static readonly Book_ Empty = new Book_();
 
         public const byte ID = 1, LATER = 2;
 
@@ -49,8 +49,6 @@ namespace Revital.Supply
         internal string trader;
         internal DateTime settled;
         internal string settler;
-
-
 
 
         internal int id;

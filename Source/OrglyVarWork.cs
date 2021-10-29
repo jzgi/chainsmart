@@ -42,13 +42,15 @@ namespace Revital.Supply
     {
         protected override void OnMake()
         {
-            MakeWork<CtrlyBuyWork>("buy");
+            MakeWork<CtrlySupplyWork>("supply");
 
-            MakeWork<CtrlyPurchWork>("purch");
+            MakeWork<CtrlyBookWork>("book");
+
+            MakeWork<CtrlyPurchaseWork>("purchase");
 
             MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<OrglyAccessWork>("access", User_.Orgly);
+            MakeWork<OrglyAccessWork>("access");
         }
 
         public void @default(WebContext wc)

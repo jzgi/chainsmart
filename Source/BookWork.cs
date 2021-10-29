@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using static Revital.Supply.Book;
+using static Revital.Supply.Book_;
 using static SkyChain.Web.Modal;
 using static Revital.Supply.User_;
 
@@ -38,8 +38,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM buys WHERE partyid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -59,8 +59,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -80,8 +80,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM buys WHERE partyid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -111,7 +111,7 @@ namespace Revital.Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Offer>();
+                        var prods = ObtainMap<short, Supply_>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);
@@ -133,9 +133,9 @@ namespace Revital.Supply
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Book>(0);
+                var o = await wc.ReadObjectAsync<Book_>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Book_.Empty, 0)._VALUES_(Book_.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -145,11 +145,11 @@ namespace Revital.Supply
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("销售分拣管理", "sign-out")]
-    public class CtrlyBuyWork : WebWork
+    public class CtrlyBookWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyBuyVarWork>();
+            MakeVarWork<CtrlyBookVarWork>();
         }
 
         [Ui("已确认", group: 1), Tool(Anchor)]

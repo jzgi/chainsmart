@@ -1,16 +1,10 @@
-﻿using System;
-using SkyChain;
+﻿using SkyChain;
 
 namespace Revital.Supply
 {
-    public class User_ : IData, IKeyable<int>
+    public class User_ : _Bean, IKeyable<int>
     {
         public static readonly User_ Empty = new User_();
-
-        public const byte
-            ID = 1,
-            PRIVACY = 2,
-            LATER = 4;
 
         public const byte
             TYP_CONSULTANT = 1,
@@ -25,18 +19,24 @@ namespace Revital.Supply
         };
 
         public const short
-            ADMLY_MART_OP = 1,
-            ADMLY_MART_MGT = 3,
-            ADMLY_SUPLLY_OP = 4,
-            ADMLY_SUPLLY_MGT = 12;
+            ADMLY_MART_ = 0x01,
+            ADMLY_MART_OP = 0x03,
+            ADMLY_MART_SPR = 0x05,
+            ADMLY_MART_MGT = 0x0f,
+            ADMLY_SUPLLY_ = 0x10,
+            ADMLY_SUPLLY_OP = 0x30,
+            ADMLY_SUPLLY_SPR = 0x50,
+            ADMLY_SUPLLY_MGT = 0xf0;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
-            {ADMLY_MART_OP, "市场业务管理"},
-            {ADMLY_MART_MGT, "市场服务器管理"},
-            {ADMLY_SUPLLY_OP, "供应业务管理"},
-            {ADMLY_SUPLLY_MGT, "供应服务器管理"},
+            {ADMLY_MART_OP, "市场业务"},
+            {ADMLY_MART_SPR, "市场监察"},
+            {ADMLY_MART_MGT, "系统管理"},
+            {ADMLY_SUPLLY_OP, "供应链业务"},
+            {ADMLY_SUPLLY_SPR, "供应链监察"},
+            {ADMLY_SUPLLY_MGT, "系统管理"},
         };
 
         public const short
@@ -52,18 +52,6 @@ namespace Revital.Supply
             {ORGLY_MGR, "管理员"},
         };
 
-        public const short
-            STA_DISABLED = 0,
-            STA_NORMAL = 1;
-
-
-        internal short typ;
-        internal short status;
-        internal string name;
-        internal string tip;
-        internal DateTime created;
-        internal string creator;
-
         internal int id;
         internal string tel;
         internal string im;
@@ -72,14 +60,9 @@ namespace Revital.Supply
         internal int orgid;
         internal short orgly;
 
-        public void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, byte proj = 0x0f)
         {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
-            s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
+            base.Read(s, proj);
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
@@ -95,14 +78,9 @@ namespace Revital.Supply
             }
         }
 
-        public void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, byte proj = 0x0f)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
-            s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
+            base.Write(s, proj);
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
@@ -120,9 +98,7 @@ namespace Revital.Supply
 
         public int Key => id;
 
-        public bool IsPro => typ >= 1;
-
-        public bool IsCertified => false;
+        public bool IsProfessional => typ >= 1;
 
         public bool IsDisabled => status <= STA_DISABLED;
 

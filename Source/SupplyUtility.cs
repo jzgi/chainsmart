@@ -2,10 +2,10 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Revital.Supply.Book;
+using static Revital.Supply.Book_;
 
 namespace Revital.Supply
 {
@@ -185,9 +185,7 @@ namespace Revital.Supply
         public static string ComputeCredential(string tel, string password)
         {
             string v = tel + ":" + password;
-            long hash = 0;
-            Digest(v, ref hash);
-            return ToHex(hash);
+            return MD5(v);
         }
 
         public static void SetTokenCookie(this WebContext wc, User_ o)

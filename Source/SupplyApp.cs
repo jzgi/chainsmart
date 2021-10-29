@@ -55,8 +55,8 @@ namespace Revital.Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM prods ORDER BY typ, status DESC");
-                    return dc.Query<short, Offer>();
+                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM prods ORDER BY typ, status DESC");
+                    return dc.Query<short, Supply_>();
                 }, 60 * 15
             );
         }

@@ -1,5 +1,5 @@
 ﻿using System;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital.Supply
@@ -42,7 +42,7 @@ namespace Revital.Supply
                 short orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = Db.Obtain<int, Org>(prin.orgid);
+                    var org = Chain.Obtain<int, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

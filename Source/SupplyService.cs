@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
-using static Revital.Supply.Book;
+using static Revital.Supply.Book_;
 using static Revital.Supply.WeChatUtility;
 
 namespace Revital.Supply
@@ -103,7 +103,7 @@ namespace Revital.Supply
 
                 using var dc = NewDbContext();
                 var credential = SupplyUtility.ComputeCredential(tel, password);
-                dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE tel = @1");
+                dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users_ WHERE tel = @1");
                 var prin = dc.QueryTop<User_>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
                 {
@@ -159,14 +159,14 @@ namespace Revital.Supply
                 url = f[nameof(url)];
                 var o = new User_
                 {
-                    status = Offer.STA_ENABLED,
+                    status = Supply_.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User_.Empty);
+                dc.Sql("INSERT INTO users_ ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User_.Empty);
                 o = await dc.QueryTopAsync<User_>(p => o.Write(p));
 
                 // refresh cookie

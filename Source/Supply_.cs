@@ -6,9 +6,9 @@ namespace Revital.Supply
     /// <summary>
     /// The data model for a particular supply of standard item.
     /// </summary>
-    public class Offer : IData, IKeyable<int>
+    public class Supply_ : IData, IKeyable<int>
     {
-        public static readonly Offer Empty = new Offer();
+        public static readonly Supply_ Empty = new Supply_();
 
         public static readonly Map<short, string> Schemes = new Map<short, string>
         {
@@ -41,13 +41,22 @@ namespace Revital.Supply
 
         internal int id;
         internal int itemid;
-        internal string bunit;
-        internal short bunitx;
-        internal short bmin;
-        internal short bmax;
-        internal short bstep;
-        internal decimal bprice;
-        internal decimal boff;
+        
+        internal string runit;
+        internal short runitx;
+        internal short rmin;
+        internal short rmax;
+        internal short rstep;
+        internal decimal rprice;
+        internal decimal roff;
+
+        internal string wunit;
+        internal short wunitx;
+        internal short wmin;
+        internal short wmax;
+        internal short wstep;
+        internal decimal wprice;
+        internal decimal woff;
 
         internal DateTime started;
         internal DateTime ended;
@@ -71,13 +80,13 @@ namespace Revital.Supply
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(bunit), ref bunit);
-            s.Get(nameof(bunitx), ref bunitx);
-            s.Get(nameof(bmin), ref bmin);
-            s.Get(nameof(bmax), ref bmax);
-            s.Get(nameof(bstep), ref bstep);
-            s.Get(nameof(bprice), ref bprice);
-            s.Get(nameof(boff), ref boff);
+            s.Get(nameof(runit), ref runit);
+            s.Get(nameof(runitx), ref runitx);
+            s.Get(nameof(rmin), ref rmin);
+            s.Get(nameof(rmax), ref rmax);
+            s.Get(nameof(rstep), ref rstep);
+            s.Get(nameof(rprice), ref rprice);
+            s.Get(nameof(roff), ref roff);
             s.Get(nameof(started), ref started);
             s.Get(nameof(ended), ref ended);
             s.Get(nameof(delivered), ref delivered);
@@ -98,14 +107,14 @@ namespace Revital.Supply
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(itemid), itemid);
-            s.Put(nameof(bunit), bunit);
-            s.Put(nameof(bunitx), bunitx);
+            s.Put(nameof(runit), runit);
+            s.Put(nameof(runitx), runitx);
 
-            s.Put(nameof(bmin), bmin);
-            s.Put(nameof(bmax), bmax);
-            s.Put(nameof(bstep), bstep);
-            s.Put(nameof(bprice), bprice);
-            s.Put(nameof(boff), boff);
+            s.Put(nameof(rmin), rmin);
+            s.Put(nameof(rmax), rmax);
+            s.Put(nameof(rstep), rstep);
+            s.Put(nameof(rprice), rprice);
+            s.Put(nameof(roff), roff);
             s.Put(nameof(started), started);
             s.Put(nameof(ended), ended);
             s.Put(nameof(delivered), delivered);

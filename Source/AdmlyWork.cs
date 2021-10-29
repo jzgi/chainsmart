@@ -1,39 +1,30 @@
-using System.Threading.Tasks;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital.Supply
 {
-    [UserAuthorize(admly: 1)]
-    [Ui("平台管理")]
-    public class AdmlyWork : ChainMgtWork
+    [UserAuthorize(admly: User_.ADMLY_SUPLLY_)]
+    [Ui("供应平台管理")]
+    public class AdmlyWork : WebWork
     {
         protected override void OnMake()
         {
-            // op
+            MakeWork<AdmlyRegWork>("reg");
 
             MakeWork<AdmlyOrgWork>("org");
-
-            MakeWork<AdmlyOfferWork>("plan");
-
-            MakeWork<AdmlyBookWork>("buy");
-
-            MakeWork<AdmlyPurchWork>("purch");
-
-            MakeWork<AdmlyClearWork>("clear");
-
-            // basic
-
-            MakeWork<AdmlyAccessWork>("access");
-
-            MakeWork<AdmlyRegWork>("reg");
 
             MakeWork<AdmlyUserWork>("user");
 
             MakeWork<AdmlyItemWork>("item");
+
+            MakeWork<AdmlyClearWork>("clear");
+
+            MakeWork<AdmlyAccessWork>("access");
+
+            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User_.ADMLY_SUPLLY_MGT));
         }
 
-        public override void @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             var prin = (User_) wc.Principal;
             var o = Chain.Info;
@@ -44,29 +35,15 @@ namespace Revital.Supply
                 h.UL_("uk-card-body");
                 if (o != null)
                 {
-                    h.LI_().FIELD("节点编号", o.Id)._LI();
-                    h.LI_().FIELD("名称", o.Name)._LI();
+                    h.LI_().FIELD("系统名称", o.Name)._LI();
+                    h.LI_().FIELD("描述", o.Tip)._LI();
                     h.LI_().FIELD("连接地址", o.Uri)._LI();
-                    h.LI_().FIELD("状态", Peer.Statuses[o.Status])._LI();
-                    h.LI_().FIELD("当前区块", o.CurrentBlockId)._LI();
                 }
                 h._UL();
                 h._FORM();
 
                 h.TASKUL();
             });
-        }
-
-        [UserAuthorize(admly: 15)]
-        public override async Task setg(WebContext wc)
-        {
-            await base.setg(wc);
-        }
-
-        [UserAuthorize(admly: 15)]
-        public override async Task fed(WebContext wc)
-        {
-            await base.fed(wc);
         }
     }
 }

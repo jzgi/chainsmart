@@ -7,8 +7,8 @@ using static SkyChain.Web.Modal;
 namespace Revital.Supply
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
-    [Ui("产品供应计划", "calendar")]
-    public class AdmlyOfferWork : WebWork
+    [Ui("产品供应管理", "calendar")]
+    public class CtrlySupplyWork : WebWork
     {
         protected override void OnMake()
         {
@@ -19,8 +19,8 @@ namespace Revital.Supply
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Offer>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -38,8 +38,8 @@ namespace Revital.Supply
                     h.TR_();
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TD(o.bprice, true);
-                    h.TD(Offer.Statuses[o.status]);
+                    h.TD(o.rprice, true);
+                    h.TD(Supply_.Statuses[o.status]);
                     h._TR();
                     last = o.typ;
                 }
@@ -52,8 +52,8 @@ namespace Revital.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Offer>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -69,7 +69,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Offer.Statuses[o.status]);
+                    h.TD(Supply_.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -83,8 +83,8 @@ namespace Revital.Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Offer.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Offer>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -100,7 +100,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Offer.Statuses[o.status]);
+                    h.TD(Supply_.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -121,10 +121,10 @@ namespace Revital.Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Offer.Schemes.Count; i++)
+                        for (int i = 0; i < Supply_.Schemes.Count; i++)
                         {
-                            var key = Offer.Schemes.KeyAt(i);
-                            var scheme = Offer.Schemes.ValueAt(i);
+                            var key = Supply_.Schemes.KeyAt(i);
+                            var scheme = Supply_.Schemes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();
@@ -134,7 +134,7 @@ namespace Revital.Supply
                 else
                 {
                     var dt = DateTime.Today;
-                    var o = new Offer
+                    var o = new Supply_
                     {
                         started = dt,
                         ended = dt,
@@ -153,14 +153,14 @@ namespace Revital.Supply
                         {
                             h.LI_().DATE("交付日", nameof(o.delivered), o.delivered)._LI();
                         }
-                        h.LI_().SELECT("状态", nameof(o.status), o.status, Offer.Statuses)._LI();
+                        h.LI_().SELECT("状态", nameof(o.status), o.status, Supply_.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 
-                        h.LI_().TEXT("单位", nameof(o.bunit), o.name, max: 10, required: true).NUMBER("标准倍比", nameof(o.bunitx), o.bunitx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.bmin), o.bmin, max: 10).NUMBER("限订量", nameof(o.bmax), o.bmax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.bstep), o.bstep, max: 10)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.bprice), o.bprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.boff), o.boff, max: 10)._LI();
+                        h.LI_().TEXT("单位", nameof(o.runit), o.name, max: 10, required: true).NUMBER("标准倍比", nameof(o.runitx), o.runitx, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("起订量", nameof(o.rmin), o.rmin, max: 10).NUMBER("限订量", nameof(o.rmax), o.rmax, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("递增量", nameof(o.rstep), o.rstep, max: 10)._LI();
+                        h.LI_().NUMBER("价格", nameof(o.rprice), o.rprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.roff), o.roff, max: 10)._LI();
 
                         h._FIELDSUL().FIELDSUL_("采购参数");
 
@@ -178,9 +178,9 @@ namespace Revital.Supply
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Offer>(0);
+                var o = await wc.ReadObjectAsync<Supply_>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Offer.Empty, 0)._VALUES_(Offer.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Supply_.Empty, 0)._VALUES_(Supply_.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

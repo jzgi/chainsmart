@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital.Supply
@@ -61,8 +61,8 @@ namespace Revital.Supply
                     }
 
                     // create principal
-                    using var dc = Db.NewDbContext();
-                    dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE im = @1");
+                    using var dc = Chain.NewDbContext();
+                    dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users_ WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
                         prin = dc.ToObject<User_>();

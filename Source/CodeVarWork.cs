@@ -14,7 +14,7 @@ namespace Revital.Supply
             var o = dc.QueryTop<Purchase>(p => p.Set(code));
 
 
-            var prod = Obtain<short, Offer>(o.prodid);
+            var prod = Obtain<short, Supply_>(o.prodid);
             var src = Obtain<short, Org>(o.partyid);
             var ctr = Obtain<short, Org>(o.ctrid);
         }
