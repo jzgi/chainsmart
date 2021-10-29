@@ -6,42 +6,19 @@ namespace Revital.Supply
     /// <summary>
     /// The data model for a particular supply of standard item.
     /// </summary>
-    public class Supply_ : IData, IKeyable<int>
+    public class Supply_ : _Bean, IKeyable<int>
     {
         public static readonly Supply_ Empty = new Supply_();
 
-        public static readonly Map<short, string> Schemes = new Map<short, string>
+        public static readonly Map<short, string> Modes = new Map<short, string>
         {
             {1, "现货"},
             {2, "预售"},
         };
 
-        public const short
-            STA_DISABLED = 0,
-            STA_SHOWED = 1,
-            STA_ENABLED = 2,
-            STA_PREFERED = 3;
-
-        public static readonly Map<short, string> Statuses = new Map<short, string>
-        {
-            {STA_DISABLED, "禁用"},
-            {STA_SHOWED, "展示"},
-            {STA_ENABLED, "可用"},
-            {STA_PREFERED, "优先"},
-        };
-
-        public const byte ID = 1, LATER = 2, PRIVACY = 4;
-
-        internal short typ;
-        internal short status;
-        internal string name;
-        internal string tip;
-        internal DateTime created;
-        internal string creator;
-
         internal int id;
         internal int itemid;
-        
+
         internal string runit;
         internal short runitx;
         internal short rmin;
@@ -67,14 +44,8 @@ namespace Revital.Supply
         internal decimal poff;
 
 
-        public void Read(ISource s, byte proj = 15)
+        public override void Read(ISource s, byte proj = 15)
         {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
-            s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
@@ -94,14 +65,8 @@ namespace Revital.Supply
             s.Get(nameof(poff), ref poff);
         }
 
-        public void Write(ISink s, byte proj = 15)
+        public override void Write(ISink s, byte proj = 15)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
-            s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);

@@ -70,7 +70,7 @@ namespace Revital.Supply
 
         static readonly string[] Subnavs = {"产品", "服务", "社工"};
 
-        public static HtmlContent TOPBAR_LOT(this HtmlContent h, Reg reg, int subscript, Map<short, Reg> regs)
+        public static HtmlContent TOPBAR_LOT(this HtmlContent h, Reg_ reg, int subscript, Map<string, Reg_> regs)
         {
             h.NAV_("uk-top-bar");
 
@@ -218,7 +218,7 @@ namespace Revital.Supply
 
         public const string LOTS = "健康拼团";
 
-        public static int[] GetRelatedOrgs(this Map<short, Org> orgs, Reg reg)
+        public static int[] GetRelatedOrgs(this Map<short, Org_> orgs, Reg_ reg)
         {
             var lst = new ValueList<int>(32);
             for (int i = 0; i < orgs.Count; i++)
@@ -277,7 +277,7 @@ namespace Revital.Supply
             return sb.ToString();
         }
 
-        public static async Task<bool> AddLotJnAsync(this DbContext dc, int lotid, int uid, decimal cash, Map<short, Org> orgs)
+        public static async Task<bool> AddLotJnAsync(this DbContext dc, int lotid, int uid, decimal cash, Map<short, Org_> orgs)
         {
             dc.Sql("UPDATE lotjns SET status =  pay = @1 WHERE lotid = @2 AND uid = @3 AND status = RETURNING qty, pay");
             if (!await dc.QueryTopAsync(p => p.Set(cash).Set(lotid).Set(uid)))
@@ -331,7 +331,7 @@ namespace Revital.Supply
             return null;
         }
 
-        public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org> orgs)
+        public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org_> orgs)
         {
             // update status of the master record
             dc.Sql("UPDATE lots SET status = ").T(STATUS_SUBMITTED).T(" WHERE id = @1 AND status = ").T(STATUS_CREATED).T(" RETURNING typ, orgid, name");
@@ -349,7 +349,7 @@ namespace Revital.Supply
             return true;
         }
 
-        public static async Task<bool> AbortLotAsync(this DbContext dc, int lotid, string reason, Map<short, Org> orgs)
+        public static async Task<bool> AbortLotAsync(this DbContext dc, int lotid, string reason, Map<short, Org_> orgs)
         {
             // update master status
             //

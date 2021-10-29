@@ -93,29 +93,6 @@ inherits (_beans);
 
 alter table items_ owner to postgres;
 
-create table orgs_
-(
-	id serial not null
-		constraint orgs_pk
-			primary key,
-	sprid integer,
-	ctrid integer,
-	mgrid integer,
-	cttid integer,
-	entrust boolean,
-	license varchar(20),
-	regid varchar(4),
-	addr varchar(30),
-	x double precision,
-	y double precision,
-	icon bytea,
-	shard_ varchar(4),
-	seq_ bigint
-)
-inherits (_beans);
-
-alter table orgs_ owner to postgres;
-
 create table users_
 (
 	id serial not null
@@ -213,4 +190,56 @@ create table yields
 inherits (_beans);
 
 alter table yields owner to postgres;
+
+create table orgs_
+(
+	id serial not null
+		constraint orgs_pk
+			primary key,
+	sprid integer,
+	ctrid integer,
+	license varchar(20),
+	trust boolean,
+	regid varchar(4),
+	addr varchar(30),
+	x double precision,
+	y double precision,
+	mgrid integer,
+	icon bytea,
+	shard_ varchar(4),
+	seq_ bigint
+)
+inherits (_beans);
+
+alter table orgs_ owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.modified,
+       o.modifier,
+       o.id,
+       o.sprid,
+       o.ctrid,
+       o.license,
+       o.entrust          AS trust,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.mgrid,
+       m.name             AS mgrname,
+       m.tel              AS mgrtel,
+       m.im               AS mgrim,
+       o.icon IS NOT NULL AS icon
+FROM orgs_ o
+         LEFT JOIN users_ m
+                   ON o.mgrid =
+                      m.id;
+
+alter table orgs_vw owner to postgres;
 

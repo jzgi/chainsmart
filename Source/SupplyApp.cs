@@ -34,29 +34,29 @@ namespace Revital.Supply
         {
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
-                    return dc.Query<short, Reg>();
+                    dc.Sql("SELECT ").collst(Reg_.Empty).T(" FROM regs_ ORDER BY id");
+                    return dc.Query<string, Reg_>();
                 }, 3600 * 24
             );
 
             CacheMap(dc =>
                 {
                     dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
-                    return dc.Query<short, Item>();
+                    return dc.Query<int, Item>();
                 }, 60 * 15
             );
 
-            Cache<short, Org>((dc, id) =>
+            Cache<int, Org_>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
-                    return dc.QueryTop<Org>(p => p.Set(id));
+                    dc.Sql("SELECT ").collst(Org_.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
+                    return dc.QueryTop<Org_>(p => p.Set(id));
                 }, 60 * 15
             );
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM prods ORDER BY typ, status DESC");
-                    return dc.Query<short, Supply_>();
+                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys ORDER BY typ, status DESC");
+                    return dc.Query<int, Supply_>();
                 }, 60 * 15
             );
         }

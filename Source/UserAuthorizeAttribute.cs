@@ -39,10 +39,10 @@ namespace Revital.Supply
             if (orgtyp > 0 && orgly > 0)
             {
                 if ((prin.orgly & orgly) != orgly) return false; // inclusive check
-                short orgid = wc[typeof(OrglyVarWork)];
+                int orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = Chain.Obtain<int, Org>(prin.orgid);
+                    var org = Chain.Obtain<int, Org_>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

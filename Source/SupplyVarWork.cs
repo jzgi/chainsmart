@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    public class AdmlyOfferVarWork : WebWork
+    public class CtrlySupplyVarWork : WebWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)

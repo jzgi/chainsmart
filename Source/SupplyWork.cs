@@ -7,19 +7,19 @@ using static SkyChain.Web.Modal;
 namespace Revital.Supply
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
-    [Ui("产品供应管理", "calendar")]
+    [Ui("商品供应管理", "calendar")]
     public class CtrlySupplyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AdmlyOfferVarWork>();
+            MakeVarWork<CtrlySupplyVarWork>();
         }
 
         [Ui("未生效", group: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -52,7 +52,7 @@ namespace Revital.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -83,7 +83,7 @@ namespace Revital.Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM plans ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Supply_>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -121,10 +121,10 @@ namespace Revital.Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Supply_.Schemes.Count; i++)
+                        for (int i = 0; i < Supply_.Modes.Count; i++)
                         {
-                            var key = Supply_.Schemes.KeyAt(i);
-                            var scheme = Supply_.Schemes.ValueAt(i);
+                            var key = Supply_.Modes.KeyAt(i);
+                            var scheme = Supply_.Modes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();

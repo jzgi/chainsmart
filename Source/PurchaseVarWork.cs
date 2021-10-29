@@ -25,7 +25,7 @@ namespace Revital.Supply
         {
             var prin = (User_) wc.Principal;
             short orgid = wc[-2];
-            var org = Obtain<short, Org>(orgid);
+            var org = Obtain<short, Org_>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
@@ -97,7 +97,7 @@ namespace Revital.Supply
         public async Task apprv(WebContext wc)
         {
             short orgid = wc[-2];
-            var org = Obtain<short, Org>(orgid);
+            var org = Obtain<short, Org_>(orgid);
             long job = wc[0];
             bool ok;
             if (wc.IsGet)

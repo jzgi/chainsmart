@@ -20,7 +20,6 @@ namespace Revital.Supply
 
             MakeWork<PublyCodeWork>("code");
 
-
             // management
 
             MakeWork<AdmlyWork>("admly"); // platform admin
@@ -159,7 +158,7 @@ namespace Revital.Supply
                 url = f[nameof(url)];
                 var o = new User_
                 {
-                    status = Supply_.STA_ENABLED,
+                    status = _Bean.STA_WORKABLE,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

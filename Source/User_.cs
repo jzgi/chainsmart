@@ -40,16 +40,18 @@ namespace Revital.Supply
         };
 
         public const short
-            ORGLY_GUEST = 1,
-            ORGLY_OP = 3,
-            ORGLY_MGR = 7;
+            ORGLY_ = 0b0001,
+            ORGLY_OP = 0b0011,
+            ORGLY_SPR = 0b0101,
+            ORGLY_MGR = 0b1111;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_GUEST, "访客"},
-            {ORGLY_OP, "操作员"},
-            {ORGLY_MGR, "管理员"},
+            {ORGLY_, "来宾"},
+            {ORGLY_OP, "业务"},
+            {ORGLY_SPR, "监察"},
+            {ORGLY_MGR, "管理"},
         };
 
         internal int id;

@@ -17,9 +17,9 @@ namespace Revital.Supply
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STA_DISABLED, "禁用"},
-            {STA_SHOWABLE, "展示"},
-            {STA_WORKABLE, "可用"},
-            {STA_PREFERABLE, "优先"},
+            {STA_SHOWABLE, "可展示"},
+            {STA_WORKABLE, "可使用"},
+            {STA_PREFERABLE, "可优先"},
         };
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
@@ -58,8 +58,16 @@ namespace Revital.Supply
             s.Put(nameof(modifier), modifier);
         }
 
-        public virtual bool IsShowable => status >= STA_SHOWABLE;
+        public virtual bool IsDisabled => status <= STA_DISABLED;
 
-        public virtual bool IsWorkable => status >= STA_WORKABLE;
+        public virtual bool IsShowable => status == STA_SHOWABLE;
+
+        public virtual bool CanShow => status >= STA_SHOWABLE;
+
+        public virtual bool IsWorkable => status == STA_WORKABLE;
+
+        public virtual bool CanWork => status >= STA_WORKABLE;
+
+        public virtual bool IsPreferable => status == STA_PREFERABLE;
     }
 }

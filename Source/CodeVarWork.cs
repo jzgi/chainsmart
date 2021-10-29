@@ -15,8 +15,8 @@ namespace Revital.Supply
 
 
             var prod = Obtain<short, Supply_>(o.prodid);
-            var src = Obtain<short, Org>(o.partyid);
-            var ctr = Obtain<short, Org>(o.ctrid);
+            var src = Obtain<short, Org_>(o.partyid);
+            var ctr = Obtain<short, Org_>(o.ctrid);
         }
     }
 }

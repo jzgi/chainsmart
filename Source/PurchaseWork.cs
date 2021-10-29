@@ -30,7 +30,7 @@ namespace Revital.Supply
     }
 
 
-    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
+    [UserAuthorize(Org_.TYP_SRCCO, ORGLY_OP)]
     [Ui("产源销货", "sign-out")]
     public class SrclyPurchWork : WebWork
     {
@@ -62,7 +62,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
+    [UserAuthorize(Org_.TYP_SRC, ORGLY_OP)]
     [Ui("产源团销货动态")]
     public class SrcColyPurchWork : WebWork
     {

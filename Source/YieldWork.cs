@@ -27,7 +27,7 @@ namespace Revital.Supply
     }
 
 
-    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
+    [UserAuthorize(Org_.TYP_SRCCO, ORGLY_OP)]
     [Ui("产源产品")]
     public class SrclyYieldWork : WebWork
     {
@@ -59,7 +59,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
+    [UserAuthorize(Org_.TYP_SRC, ORGLY_OP)]
     [Ui("产源团产品动态")]
     public class SrcColyYieldWork : WebWork
     {

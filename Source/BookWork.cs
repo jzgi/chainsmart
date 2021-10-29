@@ -24,7 +24,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org.TYP_BIZ, 1)]
+    [UserAuthorize(Org_.TYP_BIZ, 1)]
     [Ui("商户进货", "cart")]
     public class BizlyBookWork : WebWork
     {
