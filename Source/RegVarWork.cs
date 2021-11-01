@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using SkyChain.Web;
-using static Revital.Supply.User_;
+using static Revital.User;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class AdmlyRegVarWork : WebWork
     {

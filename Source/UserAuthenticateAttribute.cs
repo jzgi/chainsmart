@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Chain;
 using SkyChain.Web;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// To establish principal identity. 
@@ -25,7 +25,7 @@ namespace Revital.Supply
             string token;
             if (wc.Cookies.TryGetValue(nameof(token), out token))
             {
-                var o = DecryptPrincipal<User_>(token);
+                var o = DecryptPrincipal<User>(token);
                 if (o != null)
                 {
                     wc.Principal = o;
@@ -42,7 +42,7 @@ namespace Revital.Supply
             }
 
             // wechat authenticate
-            User_ prin;
+            User prin;
             if (wc.IsWeChat) // weixin
             {
                 string state = wc.Query[nameof(state)];
@@ -62,10 +62,10 @@ namespace Revital.Supply
 
                     // create principal
                     using var dc = Chain.NewDbContext();
-                    dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users_ WHERE im = @1");
+                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_ WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
-                        prin = dc.ToObject<User_>();
+                        prin = dc.ToObject<User>();
                         wc.Principal = prin; // set principal for afterwrads
                         wc.SetTokenCookie(prin);
                     }

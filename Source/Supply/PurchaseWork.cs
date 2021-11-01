@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 using static Revital.Supply.Purchase;
-using static Revital.Supply.User_;
+using static Revital.User;
 
 namespace Revital.Supply
 {
@@ -30,7 +30,7 @@ namespace Revital.Supply
     }
 
 
-    [UserAuthorize(Org_.TYP_SRCCO, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
     [Ui("产源销货", "sign-out")]
     public class SrclyPurchWork : WebWork
     {
@@ -62,7 +62,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org_.TYP_SRC, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源团销货动态")]
     public class SrcColyPurchWork : WebWork
     {
@@ -144,7 +144,7 @@ namespace Revital.Supply
         [Ui("发布", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             short orgid = wc[-1];
             if (wc.IsGet)
             {
@@ -176,7 +176,7 @@ namespace Revital.Supply
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             var ended = DateTime.Today.AddDays(3);
             int[] key;
             if (wc.IsGet)

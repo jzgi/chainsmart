@@ -9,7 +9,7 @@ using static SkyChain.CryptoUtility;
 using static SkyChain.Application;
 using WebUtility = System.Net.WebUtility;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.
@@ -111,11 +111,11 @@ namespace Revital.Supply
             return (access_token, openid);
         }
 
-        public static async Task<User_> GetUserInfoAsync(string access_token, string openid)
+        public static async Task<User> GetUserInfoAsync(string access_token, string openid)
         {
             var (_, jo) = await Api.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
             string nickname = jo[nameof(nickname)];
-            return new User_ {im = openid, name = nickname};
+            return new User {im = openid, name = nickname};
         }
 
 

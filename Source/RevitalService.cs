@@ -1,16 +1,17 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using Revital.Supply;
 using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
-using static Revital.Supply.Book_;
-using static Revital.Supply.WeChatUtility;
+using static Revital.Book_;
+using static Revital.WeChatUtility;
 
-namespace Revital.Supply
+namespace Revital
 {
     [UserAuthenticate]
-    public class SupplyService : ChainService
+    public class RevitalService : ChainService
     {
         protected override void OnMake()
         {
@@ -25,8 +26,6 @@ namespace Revital.Supply
             MakeWork<AdmlyWork>("admly"); // platform admin
 
             MakeWork<CtrlyWork>("ctrly"); // for distribution center
-
-            MakeWork<BizlyWork>("bizly"); // for biz
 
             MakeWork<SrclyWork>("srcly"); // for source
 
@@ -101,9 +100,9 @@ namespace Revital.Supply
                 url = f[nameof(url)];
 
                 using var dc = NewDbContext();
-                var credential = SupplyUtility.ComputeCredential(tel, password);
-                dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users_ WHERE tel = @1");
-                var prin = dc.QueryTop<User_>(p => p.Set(tel));
+                var credential = RevitalUtility.ComputeCredential(tel, password);
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_ WHERE tel = @1");
+                var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
                 {
                     wc.GiveRedirect(nameof(signin));
@@ -156,7 +155,7 @@ namespace Revital.Supply
             {
                 var f = await wc.ReadAsync<Form>();
                 url = f[nameof(url)];
-                var o = new User_
+                var o = new User
                 {
                     status = _Bean.STA_WORKABLE,
                     name = f[nameof(name)],
@@ -165,8 +164,8 @@ namespace Revital.Supply
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users_ ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User_.Empty);
-                o = await dc.QueryTopAsync<User_>(p => o.Write(p));
+                dc.Sql("INSERT INTO users_ ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
+                o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
                 // refresh cookie
                 wc.Principal = o;

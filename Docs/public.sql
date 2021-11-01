@@ -11,7 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table deals
+create table gains
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -33,7 +33,7 @@ create table deals
 	prodid integer
 );
 
-alter table deals owner to postgres;
+alter table gains owner to postgres;
 
 create table _beans
 (
@@ -49,38 +49,7 @@ create table _beans
 
 alter table _beans owner to postgres;
 
-create table supplys_
-(
-	id serial not null
-		constraint supplys_pk
-			primary key,
-	ctrid integer not null,
-	itemid integer not null,
-	started date,
-	ended date,
-	delivered date,
-	smode smallint,
-	sunit varchar(4),
-	sunitx smallint,
-	smin smallint,
-	smax smallint,
-	sstep smallint,
-	sprice money,
-	soff money,
-	mmode smallint,
-	munit varchar(4),
-	munitx smallint,
-	mmin smallint,
-	mmax smallint,
-	mstep smallint,
-	mprice money,
-	moff money
-)
-inherits (_beans);
-
-alter table supplys_ owner to postgres;
-
-create table items_
+create table items
 (
 	id serial not null
 		constraint items_pk
@@ -91,9 +60,9 @@ create table items_
 )
 inherits (_beans);
 
-alter table items_ owner to postgres;
+alter table items owner to postgres;
 
-create table users_
+create table users
 (
 	id serial not null
 		constraint users_pk
@@ -103,27 +72,30 @@ create table users_
 	credential varchar(32),
 	admly smallint default 0 not null,
 	orgid smallint,
-	orgly smallint default 0 not null
+	orgly smallint default 0 not null,
+	license varchar(20),
+	idcard varchar(18),
+	icon bytea
 )
 inherits (_beans);
 
-alter table users_ owner to postgres;
+alter table users owner to postgres;
 
 create index users_admly_idx
-	on users_ (admly)
+	on users (admly)
 	where (admly > 0);
 
 create unique index users_im_idx
-	on users_ (im);
+	on users (im);
 
 create index users_orgid_idx
-	on users_ (orgid)
+	on users (orgid)
 	where (orgid > 0);
 
 create unique index users_tel_idx
-	on users_ (tel);
+	on users (tel);
 
-create table cats_
+create table cats
 (
 	id integer not null
 		constraint cats_pk
@@ -134,9 +106,9 @@ create table cats_
 )
 inherits (_beans);
 
-alter table cats_ owner to postgres;
+alter table cats owner to postgres;
 
-create table regs_
+create table regs
 (
 	id varchar(4) not null
 		constraint regs_pk
@@ -145,7 +117,7 @@ create table regs_
 )
 inherits (_beans);
 
-alter table regs_ owner to postgres;
+alter table regs owner to postgres;
 
 create table agrmts_
 (
@@ -159,7 +131,7 @@ inherits (_beans);
 
 alter table agrmts_ owner to postgres;
 
-create table books
+create table distris
 (
 	id serial not null
 		constraint books_pk
@@ -176,7 +148,7 @@ create table books
 )
 inherits (_beans);
 
-alter table books owner to postgres;
+alter table distris owner to postgres;
 
 create table yields
 (
@@ -191,7 +163,7 @@ inherits (_beans);
 
 alter table yields owner to postgres;
 
-create table orgs_
+create table orgs
 (
 	id serial not null
 		constraint orgs_pk
@@ -211,7 +183,74 @@ create table orgs_
 )
 inherits (_beans);
 
-alter table orgs_ owner to postgres;
+alter table orgs owner to postgres;
+
+create table supplys_
+(
+	id serial not null
+		constraint supplys_pk
+			primary key,
+	ctrid integer not null,
+	itemid integer not null,
+	started date,
+	ended date,
+	filled date,
+	rmode smallint,
+	runit varchar(4),
+	rx smallint,
+	rmin smallint,
+	rmax smallint,
+	rstep smallint,
+	rprice money,
+	roff money,
+	tmode smallint,
+	tunit varchar(4),
+	tx smallint,
+	tmin smallint,
+	tmax smallint,
+	tstep smallint,
+	tprice money,
+	toff money,
+	gmode smallint,
+	gunit varchar(4),
+	gx smallint,
+	gmin smallint,
+	gmax smallint,
+	gstep smallint,
+	gprice money,
+	goff money
+)
+inherits (_beans);
+
+alter table supplys_ owner to postgres;
+
+create table links
+(
+	id integer,
+	supplyid integer,
+	itemid integer,
+	price money,
+	discount money,
+	status smallint
+);
+
+alter table links owner to postgres;
+
+create table retails
+(
+	status smallint default 0 not null,
+	id serial not null,
+	typ smallint,
+	martid smallint not null,
+	bizid integer not null,
+	uid integer not null,
+	price money,
+	pay money,
+	refund money,
+	itemid smallint
+);
+
+alter table retails owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
@@ -226,7 +265,7 @@ SELECT o.typ,
        o.sprid,
        o.ctrid,
        o.license,
-       o.entrust          AS trust,
+       o.trust,
        o.regid,
        o.addr,
        o.x,

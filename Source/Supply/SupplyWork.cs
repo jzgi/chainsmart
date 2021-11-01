@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
-using static Revital.Supply.User_;
+using static Revital.User;
 using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
@@ -39,7 +39,7 @@ namespace Revital.Supply
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD(o.rprice, true);
-                    h.TD(Supply_.Statuses[o.status]);
+                    h.TD(_Bean.Statuses[o.status]);
                     h._TR();
                     last = o.typ;
                 }
@@ -69,7 +69,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Supply_.Statuses[o.status]);
+                    h.TD(_Bean.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -138,7 +138,7 @@ namespace Revital.Supply
                     {
                         started = dt,
                         ended = dt,
-                        delivered = dt
+                        filled = dt
                     };
                     wc.GivePane(200, h =>
                     {
@@ -151,21 +151,21 @@ namespace Revital.Supply
                         h.LI_().DATE("止售日", nameof(o.ended), o.ended)._LI();
                         if (sch > 1)
                         {
-                            h.LI_().DATE("交付日", nameof(o.delivered), o.delivered)._LI();
+                            h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
                         }
                         h.LI_().SELECT("状态", nameof(o.status), o.status, Supply_.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 
-                        h.LI_().TEXT("单位", nameof(o.runit), o.name, max: 10, required: true).NUMBER("标准倍比", nameof(o.runitx), o.runitx, min: 1, max: 1000)._LI();
+                        h.LI_().TEXT("单位", nameof(o.runit), o.name, max: 10, required: true).NUMBER("标准倍比", nameof(o.rx), o.rx, min: 1, max: 1000)._LI();
                         h.LI_().NUMBER("起订量", nameof(o.rmin), o.rmin, max: 10).NUMBER("限订量", nameof(o.rmax), o.rmax, min: 1, max: 1000)._LI();
                         h.LI_().NUMBER("递增量", nameof(o.rstep), o.rstep, max: 10)._LI();
                         h.LI_().NUMBER("价格", nameof(o.rprice), o.rprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.roff), o.roff, max: 10)._LI();
 
                         h._FIELDSUL().FIELDSUL_("采购参数");
 
-                        h.LI_().TEXT("单位", nameof(o.punit), o.punit, max: 10, required: true).NUMBER("标准倍比", nameof(o.punitx), o.punitx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.pprice), o.pprice, min: 0.01M, max: 10000.00M)._LI();
+                        // h.LI_().TEXT("单位", nameof(o.uunit), o.uunit, max: 10, required: true).NUMBER("标准倍比", nameof(o.ux), o.ux, min: 1, max: 1000)._LI();
+                        // h.LI_().NUMBER("价格", nameof(o.uprice), o.uprice, min: 0.01M, max: 10000.00M)._LI();
 
                         h._FIELDSUL();
 

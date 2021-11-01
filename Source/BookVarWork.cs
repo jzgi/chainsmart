@@ -5,7 +5,7 @@ using SkyChain.Web;
 using static System.Data.IsolationLevel;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class AdmlyBuyVarWork : WebWork
     {
@@ -13,7 +13,7 @@ namespace Revital.Supply
         public async Task act(WebContext wc, int cmd)
         {
             int lotid = wc[0];
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
 
             if (wc.IsGet)
             {
@@ -81,7 +81,7 @@ namespace Revital.Supply
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             short orgid = wc[-2];
             int id = wc[0];
             if (wc.IsGet)

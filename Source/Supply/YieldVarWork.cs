@@ -7,25 +7,25 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    public class AdmlyPurchVarWork : WebWork
+    public class AdmlyProdVarWork : WebWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
     }
 
-    public class CtrlyPurchaseVarWork : WebWork
+    public class CtrlyProdVarWork : WebWork
     {
     }
 
-    public class SrclyPurchVarWork : WebWork
+    public class SrclyProdVarWork : WebWork
     {
         [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             short orgid = wc[-2];
-            var org = Obtain<short, Org_>(orgid);
+            var org = Obtain<short, Org>(orgid);
             int id = wc[0];
             if (wc.IsGet)
             {
@@ -97,7 +97,7 @@ namespace Revital.Supply
         public async Task apprv(WebContext wc)
         {
             short orgid = wc[-2];
-            var org = Obtain<short, Org_>(orgid);
+            var org = Obtain<short, Org>(orgid);
             long job = wc[0];
             bool ok;
             if (wc.IsGet)
@@ -126,7 +126,7 @@ namespace Revital.Supply
         }
     }
 
-    public class SrcColyPurchVarWork : WebWork
+    public class SrcColyProdVarWork : WebWork
     {
     }
 }

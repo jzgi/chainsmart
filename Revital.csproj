@@ -7,7 +7,6 @@
         <PackageVersion>2.0.1</PackageVersion>
         <AssemblyVersion>2.0.1</AssemblyVersion>
         <Copyright>Jzg Research</Copyright>
-        <RootNamespace>Rev.Supply</RootNamespace>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">

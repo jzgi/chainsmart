@@ -1,12 +1,12 @@
 using SkyChain.Web;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class MyWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MyVarWork>(x => ((User_) x).id);
+            MakeVarWork<MyVarWork>(x => ((User) x).id);
         }
     }
 }

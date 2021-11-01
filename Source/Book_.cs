@@ -1,7 +1,7 @@
 using System;
 using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class Book_ : IData, IKeyable<int>
     {

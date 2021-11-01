@@ -2,7 +2,7 @@
 using SkyChain.Chain;
 using SkyChain.Web;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// To implement principal authorization of access to the target resources.
@@ -29,7 +29,7 @@ namespace Revital.Supply
 
         public override bool Do(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
 
             if (prin == null)
             {
@@ -42,7 +42,7 @@ namespace Revital.Supply
                 int orgid = wc[typeof(OrglyVarWork)];
                 if (orgid != 0 && prin.orgid == orgid)
                 {
-                    var org = Chain.Obtain<int, Org_>(prin.orgid);
+                    var org = Chain.Obtain<int, Org>(prin.orgid);
                     if (org != null)
                     {
                         return (org.typ & orgtyp) > 0; // inclusive

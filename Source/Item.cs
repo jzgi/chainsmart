@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// The data modal for an standard item of product or service.

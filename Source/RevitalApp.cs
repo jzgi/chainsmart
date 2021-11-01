@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Revital.Supply;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public class SupplyApp : Application
+    public class RevitalApp : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -17,15 +18,13 @@ namespace Revital.Supply
         /// </summary>
         public static async Task Main(string[] args)
         {
-// var s = SkyiahComUtility.ComputeCredential("13870639072", "123");
-
             CacheUp();
 
             // start the concluder thead
             // cycler.Start();
 
-            // prepare web
-            MakeService<SupplyService>("main");
+            // web
+            MakeService<RevitalService>("main");
             await StartAsync();
         }
 
@@ -41,21 +40,21 @@ namespace Revital.Supply
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_ ORDER BY id");
                     return dc.Query<int, Item>();
                 }, 60 * 15
             );
 
-            Cache<int, Org_>((dc, id) =>
+            Cache<int, Org>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Org_.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
-                    return dc.QueryTop<Org_>(p => p.Set(id));
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
+                    return dc.QueryTop<Org>(p => p.Set(id));
                 }, 60 * 15
             );
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys ORDER BY typ, status DESC");
+                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status DESC");
                     return dc.Query<int, Supply_>();
                 }, 60 * 15
             );

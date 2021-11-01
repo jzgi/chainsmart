@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class AdmlyUserVarWork : WebWork
     {
@@ -20,7 +20,7 @@ namespace Revital.Supply
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User_.Typs)._LI();
+                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -38,7 +38,7 @@ namespace Revital.Supply
 
     public class AdmlyAccessVarWork : WebWork
     {
-        [UserAuthorize(admly: User_.ADMLY_SUPLLY_MGT)]
+        [UserAuthorize(admly: User.ADMLY_SUPLLY_MGT)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {
@@ -80,7 +80,7 @@ namespace Revital.Supply
         {
             short orgid = wc[-2];
             short id = wc[0];
-            var org = Obtain<short, Org_>(orgid);
+            var org = Obtain<short, Org>(orgid);
             if (wc.IsGet)
             {
                 wc.GivePane(200, h =>
@@ -124,7 +124,7 @@ namespace Revital.Supply
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User_.Typs)._LI();
+                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

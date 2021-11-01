@@ -4,7 +4,7 @@ using SkyChain.Web;
 using static System.String;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     [UserAuthorize]
     [Ui("账号信息")]
@@ -13,10 +13,10 @@ namespace Revital.Supply
         [UserAuthorize]
         public async Task @default(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE id = @1");
-            var o = dc.QueryTop<User_>(p => p.Set(prin.id));
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+            var o = dc.QueryTop<User>(p => p.Set(prin.id));
 
             // refresh cookie
             wc.SetTokenCookie(o);
@@ -29,7 +29,7 @@ namespace Revital.Supply
                 h.UL_("uk-card-body");
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("手机号码", o.tel)._LI();
-                h.LI_().FIELD("专业验证", User_.Typs[o.typ])._LI();
+                h.LI_().FIELD("专业验证", User.Typs[o.typ])._LI();
                 h._UL();
                 h._FORM();
 
@@ -46,7 +46,7 @@ namespace Revital.Supply
             string name;
             string tel;
             string password;
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             if (wc.IsGet)
             {
                 name = prin.name;
@@ -71,11 +71,11 @@ namespace Revital.Supply
                 string credential =
                     IsNullOrEmpty(password) ? null :
                     password == PASSMASK ? prin.credential :
-                    SupplyUtility.ComputeCredential(tel, password);
+                    RevitalUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User_.Empty);
-                prin = await dc.QueryTopAsync<User_>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
+                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);
+                prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
                 // refresh cookie
                 wc.SetTokenCookie(prin);
                 wc.GivePane(200); // close

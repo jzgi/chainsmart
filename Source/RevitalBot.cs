@@ -2,9 +2,9 @@
 
 namespace Revital.Supply
 {
-    public class SupplyBot : ChainBot
+    public class RevitalBot : ChainBot
     {
-        public SupplyBot() 
+        public RevitalBot() 
         {
         }
     }

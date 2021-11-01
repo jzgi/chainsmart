@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
 using SkyChain.Web;
-using static Revital.Supply.User_;
+using static Revital.User;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("地理区域")]

@@ -2,9 +2,9 @@
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Revital.Supply.User_;
+using static Revital.User;
 
-namespace Revital.Supply
+namespace Revital
 {
     [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
     [Ui("平台用户")]
@@ -20,7 +20,7 @@ namespace Revital.Supply
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User_>(p => p.Set(page));
+            var arr = dc.Query<User>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -61,7 +61,7 @@ namespace Revital.Supply
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User_>(p => p.Set(tel));
+                var arr = dc.Query<User>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
@@ -98,7 +98,7 @@ namespace Revital.Supply
             short commid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE admly > 0");
-            var arr = dc.Query<User_>(p => p.Set(commid));
+            var arr = dc.Query<User>(p => p.Set(commid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -131,7 +131,7 @@ namespace Revital.Supply
                     {
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User_>(p => p.Set(tel));
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
@@ -170,7 +170,7 @@ namespace Revital.Supply
             short orgid = wc[-1];
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-            var arr = dc.Query<User_>(p => p.Set(orgid));
+            var arr = dc.Query<User>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -202,7 +202,7 @@ namespace Revital.Supply
                     {
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User_>(p => p.Set(tel));
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
@@ -242,7 +242,7 @@ namespace Revital.Supply
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User_>(p => p.Set(page));
+            var arr = dc.Query<User>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -283,7 +283,7 @@ namespace Revital.Supply
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User_>(p => p.Set(tel));
+                var arr = dc.Query<User>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();

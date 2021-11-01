@@ -1,17 +1,16 @@
-﻿using System.Text;
-using SkyChain;
+﻿using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org_ : _Bean, IKeyable<int>
+    public class Org : _Bean, IKeyable<int>
     {
-        public static readonly Org_ Empty = new Org_();
+        public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SUP = 1,
+            TYP_CTR = 1,
             TYP_BIZ = 2,
             TYP_BIZCO = 4,
             TYP_SRC = 8,
@@ -19,12 +18,20 @@ namespace Revital.Supply
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SUP + TYP_BIZ, "供应中心"},
+            {TYP_CTR + TYP_BIZ, "供应中心"},
             {TYP_BIZ, "商户／服务"},
             {TYP_BIZ + TYP_BIZCO, "市场／驿站"},
             {TYP_SRC, "产源／地块"},
             {TYP_SRC + TYP_SRCCO, "产源社／产地"},
         };
+
+        public const short
+            KIND_AGRICTR = 1,
+            KIND_DIETARYCTR = 2,
+            KIND_POSTCTR = 3,
+            KIND_HOMECTR = 4,
+            KIND_SRCCO = 16;
+
 
         internal int id;
         internal int sprid;
@@ -105,53 +112,16 @@ namespace Revital.Supply
 
         public bool IsSrc => (typ & TYP_SRCCO) == TYP_SRCCO;
 
+        public bool IsSrcCo => (typ & TYP_SRCCO) == TYP_SRCCO;
+
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
         public bool IsBizCo => (typ & TYP_BIZCO) == TYP_BIZCO;
 
-        public bool IsInternal => false;
+        public bool IsCenter => (typ & TYP_CTR) == TYP_CTR;
 
-        public bool IsMerchant => (typ & TYP_SUP) == TYP_SUP;
-
-        public bool IsSocial => (typ & TYP_BIZCO) == TYP_BIZCO;
-
-        public bool IsProvider => IsMerchant || IsSocial;
-
-        public bool IsMerchantTo(Reg_ reg) => true;
-
-        public bool IsSocialTo(Reg_ reg) => true;
+        public bool IsTruster => IsBiz || IsSrc || IsCenter;
 
         public override string ToString() => name;
-
-        // credit account number
-        string acct;
-
-        public string Acct => acct ??= GetAcct(id);
-
-        public string Name => name;
-
-        public static string GetAcct(int orgid)
-        {
-            var sb = new StringBuilder();
-            if (orgid < 10000)
-            {
-                sb.Append('0');
-            }
-            if (orgid < 1000)
-            {
-                sb.Append('0');
-            }
-            if (orgid < 100)
-            {
-                sb.Append('0');
-            }
-            if (orgid < 10)
-            {
-                sb.Append('0');
-            }
-            sb.Append(orgid);
-
-            return sb.ToString();
-        }
     }
 }

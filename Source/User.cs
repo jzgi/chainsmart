@@ -1,21 +1,26 @@
-﻿using SkyChain;
+﻿using System;
+using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public class User_ : _Bean, IKeyable<int>
+    public class User : _Bean, IKeyable<int>
     {
-        public static readonly User_ Empty = new User_();
+        public static readonly User Empty = new User();
 
         public const byte
-            TYP_CONSULTANT = 1,
+            TYP_HEALTH_MGR = 1,
             TYP_COOK = 2;
 
         // user types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {0, null},
-            {TYP_CONSULTANT, "调养顾问"},
-            {TYP_COOK, "调养厨师"},
+            {1, "初级护理员"},
+            {2, "中级护理员"},
+            {3, "高级护理员"},
+            {7, "三级健康管理师"},
+            {8, "二级健康管理师"},
+            {9, "一级健康管理师"},
         };
 
         public const short
@@ -31,12 +36,12 @@ namespace Revital.Supply
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
-            {ADMLY_MART_OP, "市场业务"},
-            {ADMLY_MART_SPR, "市场监察"},
-            {ADMLY_MART_MGT, "系统管理"},
+            {ADMLY_MART_OP, "集贸业务"},
+            {ADMLY_MART_SPR, "集贸监察"},
+            {ADMLY_MART_MGT, "集贸系统管理"},
             {ADMLY_SUPLLY_OP, "供应链业务"},
             {ADMLY_SUPLLY_SPR, "供应链监察"},
-            {ADMLY_SUPLLY_MGT, "系统管理"},
+            {ADMLY_SUPLLY_MGT, "供应链系统管理"},
         };
 
         public const short
@@ -61,10 +66,14 @@ namespace Revital.Supply
         internal short admly;
         internal int orgid;
         internal short orgly;
+        internal string license;
+        internal string idcard;
+        internal bool icon;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
             base.Read(s, proj);
+
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
@@ -77,12 +86,16 @@ namespace Revital.Supply
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
+                s.Get(nameof(license), ref license);
+                s.Get(nameof(idcard), ref idcard);
+                s.Get(nameof(icon), ref icon);
             }
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
         {
             base.Write(s, proj);
+
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
@@ -95,6 +108,9 @@ namespace Revital.Supply
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
+                s.Put(nameof(license), license);
+                s.Put(nameof(idcard), idcard);
+                s.Put(nameof(icon), icon);
             }
         }
 
@@ -102,7 +118,36 @@ namespace Revital.Supply
 
         public bool IsProfessional => typ >= 1;
 
-        public bool IsDisabled => status <= STA_DISABLED;
+        public short Sex
+        {
+            get
+            {
+                if (idcard == null)
+                {
+                    return 0;
+                }
+                var num = idcard[16] - '0';
+                return (short) (num % 2 == 1 ? 1 : 2);
+            }
+        }
+
+        public DateTime Birth
+        {
+            get
+            {
+                if (idcard == null)
+                {
+                    return default;
+                }
+                var n = idcard;
+                int year = (n[6] - '0') * 1000 + (n[7] - '0') * 100 + (n[8] - '0') * 10 + (n[9] - '0') * 1;
+                int month = (n[10] - '0') * 10 + (n[11] - '0') * 1;
+                int day = (n[12] - '0') * 10 + (n[13] - '0') * 1;
+                return new DateTime(year, month, day);
+            }
+        }
+
+        public bool IsCertified => !string.IsNullOrEmpty(idcard);
 
         public override string ToString() => name;
     }

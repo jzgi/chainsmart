@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     [Ui("协作主体管理", "℠")]
     public class AdmlyOrgWork : WebWork
@@ -19,8 +19,8 @@ namespace Revital.Supply
 
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Org_.Empty).T(" FROM orgs_vw ORDER BY regid, id, status DESC");
-            var arr = await dc.QueryAsync<Org_>();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw ORDER BY regid, id, status DESC");
+            var arr = await dc.QueryAsync<Org>();
 
             wc.GivePage(200, h =>
             {
@@ -38,10 +38,10 @@ namespace Revital.Supply
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org_.Typs[o.typ])._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(Org_.Statuses[o.status]);
+                    h.TD(Org.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
                     last = o.regid;
@@ -53,40 +53,40 @@ namespace Revital.Supply
         [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             var regs = ObtainMap<string, Reg_>();
 
             if (wc.IsGet)
             {
-                var m = new Org_
+                var m = new Org
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Org_.STA_WORKABLE
+                    status = Org.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org_.Typs, filter: (k, v) => k != Org_.TYP_BIZ && k != Org_.TYP_SRCCO, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Org_.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Org.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Org_>(0, new Org_
+                var o = await wc.ReadObjectAsync<Org>(0, new Org
                 {
                     created = DateTime.Now,
                     creator = prin.name,
                 });
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org_.Empty, 0)._VALUES_(Org_.Empty, 0);
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p));
                 wc.GivePane(201); // created
             }
@@ -94,22 +94,22 @@ namespace Revital.Supply
     }
 
 
-    [UserAuthorize(Org_.TYP_BIZCO, 1)]
+    [UserAuthorize(Org.TYP_BIZCO, 1)]
     [Ui("商户团管理", "album")]
     public class BizColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
-            State = Org_.TYP_BIZ;
-            MakeVarWork<BizColyOrgVarWork>(state: Org_.TYP_BIZ);
+            State = Org.TYP_BIZ;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_BIZ);
         }
 
         public async Task @default(WebContext wc)
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org_.Empty).T(" FROM orgs_vw WHERE coid = @1 ORDER BY id");
-            var arr = await dc.QueryAsync<Org_>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE coid = @1 ORDER BY id");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
             var regs = ObtainMap<string, Reg_>();
             wc.GivePage(200, h =>
             {
@@ -127,54 +127,54 @@ namespace Revital.Supply
         [Ui("添加"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             var regs = ObtainMap<string, Reg_>();
 
             if (wc.IsGet)
             {
-                var m = new Org_
+                var m = new Org
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Org_.STA_WORKABLE
+                    status = Org.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org_.Typs, filter: (k, v) => k != Org_.TYP_BIZ && k != Org_.TYP_SRCCO, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Org_.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Org.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Org_>(0, new Org_
+                var o = await wc.ReadObjectAsync<Org>(0, new Org
                 {
                     created = DateTime.Now,
                     creator = prin.name,
                 });
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org_.Empty, 0)._VALUES_(Org_.Empty, 0);
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p));
                 wc.GivePane(201); // created
             }
         }
     }
 
-    [UserAuthorize(Org_.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("产源团管理", "thumbnails")]
     public class SrcColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
-            State = Org_.TYP_SRCCO;
-            MakeVarWork<BizColyOrgVarWork>(state: Org_.TYP_SRCCO);
+            State = Org.TYP_SRCCO;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRCCO);
         }
 
         public async Task @default(WebContext wc)

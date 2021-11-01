@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Revital.Supply.User_;
+using static Revital.User;
 
 namespace Revital.Supply
 {
@@ -27,7 +27,7 @@ namespace Revital.Supply
     }
 
 
-    [UserAuthorize(Org_.TYP_SRCCO, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRCCO, ORGLY_OP)]
     [Ui("产源产品")]
     public class SrclyYieldWork : WebWork
     {
@@ -59,7 +59,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org_.TYP_SRC, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源团产品动态")]
     public class SrcColyYieldWork : WebWork
     {

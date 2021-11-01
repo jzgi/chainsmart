@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class Reg_ : _Bean, IKeyable<string>
     {

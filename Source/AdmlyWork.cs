@@ -1,9 +1,9 @@
 using SkyChain.Chain;
 using SkyChain.Web;
 
-namespace Revital.Supply
+namespace Revital
 {
-    [UserAuthorize(admly: User_.ADMLY_SUPLLY_)]
+    [UserAuthorize(admly: User.ADMLY_SUPLLY_)]
     [Ui("供应平台管理")]
     public class AdmlyWork : WebWork
     {
@@ -21,16 +21,16 @@ namespace Revital.Supply
 
             MakeWork<AdmlyAccessWork>("access");
 
-            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User_.ADMLY_SUPLLY_MGT));
+            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SUPLLY_MGT));
         }
 
         public void @default(WebContext wc)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             var o = Chain.Info;
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User_.Admly[prin.admly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
                 if (o != null)

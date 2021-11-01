@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class AdmlyOrgVarWork : WebWork
     {
@@ -16,12 +16,12 @@ namespace Revital.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org_.Empty).T(" FROM orgs_vw WHERE id = @1");
-                var m = dc.QueryTop<Org_>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                var m = dc.QueryTop<Org>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org_.Typs, filter: (k, v) => k != Org_.TYP_BIZ && k != Org_.TYP_SRCCO, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
@@ -33,9 +33,9 @@ namespace Revital.Supply
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync<Org_>(0);
+                var m = await wc.ReadObjectAsync<Org>(0);
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org_.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
                     m.Write(p, 0);
@@ -59,8 +59,8 @@ namespace Revital.Supply
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(User_.Empty).T(" FROM users WHERE tel = @1");
-                        var o = dc.QueryTop<User_>(p => p.Set(tel));
+                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();

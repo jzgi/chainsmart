@@ -5,11 +5,11 @@ using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Revital.Supply.Book_;
+using static Revital.Book_;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public static class SupplyUtility
+    public static class RevitalUtility
     {
         public static double ComputeDistance(double lat1, double lng1, double lat2, double lng2)
         {
@@ -188,9 +188,9 @@ namespace Revital.Supply
             return MD5(v);
         }
 
-        public static void SetTokenCookie(this WebContext wc, User_ o)
+        public static void SetTokenCookie(this WebContext wc, User o)
         {
-            const byte proj_all_but_privacy = 0x0f ^ User_.PRIVACY;
+            const byte proj_all_but_privacy = 0x0f ^ User.PRIVACY;
             string token = AuthenticateAttribute.EncryptPrincipal(o, proj_all_but_privacy);
             wc.SetCookie(nameof(token), token);
         }
@@ -217,28 +217,6 @@ namespace Revital.Supply
 
 
         public const string LOTS = "健康拼团";
-
-        public static int[] GetRelatedOrgs(this Map<short, Org_> orgs, Reg_ reg)
-        {
-            var lst = new ValueList<int>(32);
-            for (int i = 0; i < orgs.Count; i++)
-            {
-                var org = orgs.ValueAt(i);
-                if (org.IsMerchantTo(reg) || org.IsSocialTo(reg))
-                {
-                    lst.Add(org.id);
-                }
-            }
-            return lst.ToArray();
-        }
-
-        public static void ViewLotTop(this HtmlContent h, Purchase off, string icon, string img)
-        {
-            h.SECTION_("uk-flex");
-            h.PIC_("uk-width-1-2 uk-margin-auto-vertical");
-            h._PIC();
-            h._SECTION();
-        }
 
         public static string FormatLotTime(DateTime t)
         {
@@ -277,7 +255,7 @@ namespace Revital.Supply
             return sb.ToString();
         }
 
-        public static async Task<bool> AddLotJnAsync(this DbContext dc, int lotid, int uid, decimal cash, Map<short, Org_> orgs)
+        public static async Task<bool> AddLotJnAsync(this DbContext dc, int lotid, int uid, decimal cash, Map<short, Org> orgs)
         {
             dc.Sql("UPDATE lotjns SET status =  pay = @1 WHERE lotid = @2 AND uid = @3 AND status = RETURNING qty, pay");
             if (!await dc.QueryTopAsync(p => p.Set(cash).Set(lotid).Set(uid)))
@@ -331,7 +309,7 @@ namespace Revital.Supply
             return null;
         }
 
-        public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org_> orgs)
+        public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org> orgs)
         {
             // update status of the master record
             dc.Sql("UPDATE lots SET status = ").T(STATUS_SUBMITTED).T(" WHERE id = @1 AND status = ").T(STATUS_CREATED).T(" RETURNING typ, orgid, name");
@@ -349,7 +327,7 @@ namespace Revital.Supply
             return true;
         }
 
-        public static async Task<bool> AbortLotAsync(this DbContext dc, int lotid, string reason, Map<short, Org_> orgs)
+        public static async Task<bool> AbortLotAsync(this DbContext dc, int lotid, string reason, Map<short, Org> orgs)
         {
             // update master status
             //

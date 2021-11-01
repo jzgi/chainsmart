@@ -2,9 +2,9 @@ using System;
 using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using static Revital.Supply.Book_;
+using static Revital.Book_;
 using static SkyChain.Web.Modal;
-using static Revital.Supply.User_;
+using static Revital.User;
 
 namespace Revital.Supply
 {
@@ -24,7 +24,7 @@ namespace Revital.Supply
         }
     }
 
-    [UserAuthorize(Org_.TYP_BIZ, 1)]
+    [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("商户进货", "cart")]
     public class BizlyBookWork : WebWork
     {
@@ -169,7 +169,7 @@ namespace Revital.Supply
         [Ui("发货", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             short orgid = wc[-1];
         }
 
@@ -177,7 +177,7 @@ namespace Revital.Supply
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];
-            var prin = (User_) wc.Principal;
+            var prin = (User) wc.Principal;
             var ended = DateTime.Today.AddDays(3);
             int[] key;
             if (wc.IsGet)

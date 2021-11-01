@@ -1,28 +1,12 @@
 using SkyChain.Web;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public class CtrlyWork : WebWork
+    public class OrglyWork<V> : WebWork where V : OrglyVarWork, new()
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyVarWork>(prin => ((User_) prin).orgid);
-        }
-    }
-
-    public class BizlyWork : WebWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<BizlyVarWork>(prin => ((User_) prin).orgid);
-        }
-    }
-
-    public class SrclyWork : WebWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<SrclyVarWork>(prin => ((User_) prin).orgid);
+            MakeVarWork<V>(prin => ((User) prin).orgid);
         }
     }
 }
