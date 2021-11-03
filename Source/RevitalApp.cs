@@ -20,6 +20,8 @@ namespace Revital
         {
             CacheUp();
 
+            Drive = new RevitalDrive();
+
             // start the concluder thead
             // cycler.Start();
 
@@ -33,14 +35,14 @@ namespace Revital
         {
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg_.Empty).T(" FROM regs_ ORDER BY id");
-                    return dc.Query<string, Reg_>();
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
+                    return dc.Query<string, Reg>();
                 }, 3600 * 24
             );
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_ ORDER BY id");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
                     return dc.Query<int, Item>();
                 }, 60 * 15
             );
@@ -54,7 +56,7 @@ namespace Revital
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status DESC");
+                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys ORDER BY typ, status DESC");
                     return dc.Query<int, Supply_>();
                 }, 60 * 15
             );

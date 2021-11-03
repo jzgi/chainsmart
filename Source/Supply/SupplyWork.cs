@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
+    [UserAuthorize(admly: ADMLY_SYS)]
     [Ui("商品供应管理", "calendar")]
     public class CtrlySupplyWork : WebWork
     {

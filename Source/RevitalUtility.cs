@@ -5,7 +5,7 @@ using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Revital.Book_;
+using static Revital.Supply.Up;
 
 namespace Revital
 {
@@ -70,7 +70,7 @@ namespace Revital
 
         static readonly string[] Subnavs = {"产品", "服务", "社工"};
 
-        public static HtmlContent TOPBAR_LOT(this HtmlContent h, Reg_ reg, int subscript, Map<string, Reg_> regs)
+        public static HtmlContent TOPBAR_LOT(this HtmlContent h, Reg reg, int subscript, Map<string, Reg> regs)
         {
             h.NAV_("uk-top-bar");
 

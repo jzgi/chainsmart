@@ -11,7 +11,7 @@ namespace Revital
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
-            var regs = ObtainMap<string, Reg_>();
+            var regs = ObtainMap<string, Reg>();
             short id = wc[0];
             if (wc.IsGet)
             {

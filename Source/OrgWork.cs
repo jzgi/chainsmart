@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    [Ui("协作主体管理", "℠")]
+    [Ui("协作主体", "℠")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -15,7 +15,7 @@ namespace Revital
 
         public async Task @default(WebContext wc)
         {
-            var regs = ObtainMap<string, Reg_>();
+            var regs = ObtainMap<string, Reg>();
 
             using var dc = NewDbContext();
 
@@ -54,7 +54,7 @@ namespace Revital
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<string, Reg_>();
+            var regs = ObtainMap<string, Reg>();
 
             if (wc.IsGet)
             {
@@ -110,7 +110,7 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE coid = @1 ORDER BY id");
             var arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
-            var regs = ObtainMap<string, Reg_>();
+            var regs = ObtainMap<string, Reg>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -128,7 +128,7 @@ namespace Revital
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<string, Reg_>();
+            var regs = ObtainMap<string, Reg>();
 
             if (wc.IsGet)
             {

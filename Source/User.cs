@@ -24,39 +24,33 @@ namespace Revital
         };
 
         public const short
-            ADMLY_MART_ = 0x01,
-            ADMLY_MART_OP = 0x03,
-            ADMLY_MART_SPR = 0x05,
-            ADMLY_MART_MGT = 0x0f,
-            ADMLY_SUPLLY_ = 0x10,
-            ADMLY_SUPLLY_OP = 0x30,
-            ADMLY_SUPLLY_SPR = 0x50,
-            ADMLY_SUPLLY_MGT = 0xf0;
+            ADMLY_ = 0b0001,
+            ADMLY_SPR = 0b0011,
+            ADMLY_OP = 0b0101,
+            ADMLY_SYS = 0b1111;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
-            {ADMLY_MART_OP, "集贸业务"},
-            {ADMLY_MART_SPR, "集贸监察"},
-            {ADMLY_MART_MGT, "集贸系统管理"},
-            {ADMLY_SUPLLY_OP, "供应链业务"},
-            {ADMLY_SUPLLY_SPR, "供应链监察"},
-            {ADMLY_SUPLLY_MGT, "供应链系统管理"},
+            {ADMLY_, "来宾"},
+            {ADMLY_SPR, "审计"},
+            {ADMLY_OP, "业务操作"},
+            {ADMLY_SYS, "系统管理"},
         };
 
         public const short
             ORGLY_ = 0b0001,
-            ORGLY_OP = 0b0011,
-            ORGLY_SPR = 0b0101,
+            ORGLY_SPR = 0b0011,
+            ORGLY_OP = 0b0101,
             ORGLY_MGR = 0b1111;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
             {ORGLY_, "来宾"},
-            {ORGLY_OP, "业务"},
-            {ORGLY_SPR, "监察"},
-            {ORGLY_MGR, "管理"},
+            {ORGLY_SPR, "审计"},
+            {ORGLY_OP, "业务操作"},
+            {ORGLY_MGR, "系统管理"},
         };
 
         internal int id;

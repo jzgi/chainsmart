@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using Revital.Mart;
 using Revital.Supply;
 using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
-using static Revital.Book_;
 using static Revital.WeChatUtility;
 
 namespace Revital
@@ -24,6 +24,8 @@ namespace Revital
             // management
 
             MakeWork<AdmlyWork>("admly"); // platform admin
+
+            MakeWork<BizlyWork>("bizly"); // platform admin
 
             MakeWork<CtrlyWork>("ctrly"); // for distribution center
 
@@ -101,7 +103,7 @@ namespace Revital
 
                 using var dc = NewDbContext();
                 var credential = RevitalUtility.ComputeCredential(tel, password);
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_ WHERE tel = @1");
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
                 {
@@ -164,7 +166,7 @@ namespace Revital
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users_ ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
+                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
                 o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
                 // refresh cookie
@@ -194,11 +196,11 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STATUS_CREATED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Up.STATUS_CREATED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
-                    dc.Sql("UPDATE orders SET status = ").T(STATUS_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(STATUS_CREATED);
+                    dc.Sql("UPDATE orders SET status = ").T(Up.STATUS_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(Up.STATUS_CREATED);
                     await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
                 }
                 else // try to refund this payment

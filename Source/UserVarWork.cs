@@ -38,7 +38,7 @@ namespace Revital
 
     public class AdmlyAccessVarWork : WebWork
     {
-        [UserAuthorize(admly: User.ADMLY_SUPLLY_MGT)]
+        [UserAuthorize(admly: User.ADMLY_SYS)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {

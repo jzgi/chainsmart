@@ -62,7 +62,7 @@ namespace Revital
 
                     // create principal
                     using var dc = Chain.NewDbContext();
-                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_ WHERE im = @1");
+                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
                         prin = dc.ToObject<User>();

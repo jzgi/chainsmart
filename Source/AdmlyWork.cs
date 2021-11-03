@@ -3,7 +3,7 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    [UserAuthorize(admly: User.ADMLY_SUPLLY_)]
+    [UserAuthorize(admly: User.ADMLY_)]
     [Ui("供应平台管理")]
     public class AdmlyWork : WebWork
     {
@@ -15,13 +15,15 @@ namespace Revital
 
             MakeWork<AdmlyUserWork>("user");
 
+            MakeWork<AdmlyCatWork>("cat");
+
             MakeWork<AdmlyItemWork>("item");
 
             MakeWork<AdmlyClearWork>("clear");
 
             MakeWork<AdmlyAccessWork>("access");
 
-            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SUPLLY_MGT));
+            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SYS));
         }
 
         public void @default(WebContext wc)

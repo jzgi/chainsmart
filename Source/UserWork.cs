@@ -6,7 +6,7 @@ using static Revital.User;
 
 namespace Revital
 {
-    [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
+    [UserAuthorize(admly: ADMLY_SYS)]
     [Ui("平台用户")]
     public class AdmlyUserWork : WebWork
     {
@@ -114,7 +114,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [UserAuthorize(admly: ADMLY_SUPLLY_MGT)]
+        [UserAuthorize(admly: ADMLY_SYS)]
         [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

@@ -13,8 +13,8 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(admly: User.ADMLY_SUPLLY_MGT)]
-    [Ui("标准品类库")]
+    [UserAuthorize(admly: User.ADMLY_SYS)]
+    [Ui("商品管理")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()

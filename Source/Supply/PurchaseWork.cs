@@ -97,7 +97,7 @@ namespace Revital.Supply
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("采购收货管理", "sign-in")]
-    public class CtrlyPurchaseWork : WebWork
+    public class CtrlyGainWork : WebWork
     {
         protected override void OnMake()
         {
