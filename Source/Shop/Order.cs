@@ -1,14 +1,14 @@
 ﻿using SkyChain;
-using Revital.Mart;
+using Revital.Shop;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Retail : IData, IKeyable<int>
+    public class Order : IData, IKeyable<int>
     {
-        public static readonly Retail Empty = new Retail();
+        public static readonly Order Empty = new Order();
 
         public const byte ID = 1, LATER = 4;
 

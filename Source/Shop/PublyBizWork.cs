@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class PublyBizWork : WebWork, IOrglyVar
     {

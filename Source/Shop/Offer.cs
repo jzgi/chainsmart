@@ -1,6 +1,6 @@
 ﻿using SkyChain;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class Offer : IData, IKeyable<short>
     {

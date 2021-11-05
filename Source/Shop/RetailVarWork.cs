@@ -7,7 +7,7 @@ using static SkyChain.Web.Appear;
 using static SkyChain.Web.Modal;
 using static Revital.WeChatUtility;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class MySellVarWork : WebWork
     {
@@ -99,8 +99,8 @@ namespace Revital.Mart
             short orgid = wc[-2];
             int orderid = wc[0];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Retail.Empty).T(" FROM orderlgs WHERE orderid = @1 ORDER BY dt");
-            var arr = await dc.QueryAsync<Retail>(p => p.Set(orderid));
+            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orderlgs WHERE orderid = @1 ORDER BY dt");
+            var arr = await dc.QueryAsync<Order>(p => p.Set(orderid));
             wc.GivePane(200, h =>
             {
                 var today = DateTime.Today;
@@ -132,7 +132,7 @@ namespace Revital.Mart
                 try
                 {
                     var percent = level * 0.10M;
-                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN ").T(Retail.STATUS_CLOSED).T(" ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
+                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN ").T(Order.STATUS_CLOSED).T(" ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
                     var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
                     if (refund <= 0)
                     {

@@ -15,8 +15,6 @@ namespace Revital
 
             MakeWork<AdmlyUserWork>("user");
 
-            MakeWork<AdmlyCatWork>("cat");
-
             MakeWork<AdmlyItemWork>("item");
 
             MakeWork<AdmlyClearWork>("clear");

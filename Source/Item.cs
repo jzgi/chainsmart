@@ -22,15 +22,27 @@ namespace Revital
         // types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
+            // agri
             {1, "瓜果"},
             {2, "蔬菜"},
             {3, "粮油"},
-            {4, "另种植"},
+            {4, "泛种植"},
             {5, "禽类"},
             {6, "畜类"},
             {7, "水产"},
-            {8, "另养殖"},
-            {9, "杂项"},
+            {8, "泛养殖"},
+            // dietary
+            {11, "健康管理"},
+            {12, "餐料"},
+            // home
+            {21, "家政"},
+            {22, "陪护"},
+            {23, "婚介"},
+            // post
+            {31, "包裹快递"},
+            // ad
+            {41, "广告"},
+            {42, "宣传"},
         };
 
         public const short

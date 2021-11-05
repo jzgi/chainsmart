@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static Revital.User;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class MySellWork : WebWork
     {
@@ -19,14 +19,14 @@ namespace Revital.Mart
             var orgs = ObtainMap<short, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Retail.Empty).T(" FROM orders WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
-            var arr = await dc.QueryAsync<Retail>(p => p.Set(prin.id).Set(page));
-            Map<int, Retail> map = null;
+            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orders WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
+            var arr = await dc.QueryAsync<Order>(p => p.Set(prin.id).Set(page));
+            Map<int, Order> map = null;
             var ids = arr?.Exract(x => x.id);
             if (ids != null)
             {
-                dc.Sql("SELECT ").collst(Retail.Empty).T(" FROM orderlgs WHERE orderid")._IN_(ids).T(" ORDER BY dt");
-                map = dc.Query<int, Retail>(p => p.SetForIn(ids));
+                dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orderlgs WHERE orderid")._IN_(ids).T(" ORDER BY dt");
+                map = dc.Query<int, Order>(p => p.SetForIn(ids));
             }
         }
     }
@@ -44,8 +44,8 @@ namespace Revital.Mart
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Retail.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Retail>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Order>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -62,8 +62,8 @@ namespace Revital.Mart
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Retail.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Retail>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Order>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();

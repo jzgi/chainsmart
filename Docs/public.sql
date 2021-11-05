@@ -95,19 +95,6 @@ create index users_orgid_idx
 create unique index users_tel_idx
 	on users (tel);
 
-create table cats
-(
-	id integer not null
-		constraint cats_pk
-			primary key,
-	idx smallint,
-	shard_ varchar(4),
-	stamp_ timestamp
-)
-inherits (_beans);
-
-alter table cats owner to postgres;
-
 create table regs
 (
 	id varchar(4) not null
@@ -131,7 +118,7 @@ inherits (_beans);
 
 alter table agrmts_ owner to postgres;
 
-create table distris
+create table godowns
 (
 	id serial not null
 		constraint books_pk
@@ -148,7 +135,7 @@ create table distris
 )
 inherits (_beans);
 
-alter table distris owner to postgres;
+alter table godowns owner to postgres;
 
 create table yields
 (
@@ -178,14 +165,13 @@ create table orgs
 	y double precision,
 	mgrid integer,
 	icon bytea,
-	shard_ varchar(4),
-	seq_ bigint
+	kind smallint
 )
 inherits (_beans);
 
 alter table orgs owner to postgres;
 
-create table supplys_
+create table supplys
 (
 	id serial not null
 		constraint supplys_pk
@@ -222,9 +208,9 @@ create table supplys_
 )
 inherits (_beans);
 
-alter table supplys_ owner to postgres;
+alter table supplys owner to postgres;
 
-create table links
+create table sales
 (
 	id integer,
 	supplyid integer,
@@ -234,9 +220,9 @@ create table links
 	status smallint
 );
 
-alter table links owner to postgres;
+alter table sales owner to postgres;
 
-create table retails
+create table orders
 (
 	status smallint default 0 not null,
 	id serial not null,
@@ -250,7 +236,13 @@ create table retails
 	itemid smallint
 );
 
-alter table retails owner to postgres;
+alter table orders owner to postgres;
+
+create table goups
+(
+);
+
+alter table goups owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

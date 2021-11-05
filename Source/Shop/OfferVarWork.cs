@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class BizlyOfferVarWork : WebWork
     {

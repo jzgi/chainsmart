@@ -38,7 +38,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_BIZCO, 1)]
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
     [Ui("商户端")]
     public class BizlyVarWork : OrglyVarWork
     {
@@ -128,7 +128,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_SRCCO | Org.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_SRC | Org.TYP_FRM, 1)]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnMake()

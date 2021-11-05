@@ -10,30 +10,34 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_CTR = 1,
-            TYP_BIZ = 2,
-            TYP_BIZCO = 4,
-            TYP_SRC = 8,
-            TYP_SRCCO = 16;
+            TYP_SPR = 0b1000, // supervisor
+            TYP_BIZ = 0b0001,
+            TYP_FRM = 0b0010, // farm
+            TYP_SUP = 0b0100, // supplier
+            TYP_MRT = TYP_SPR | TYP_BIZ, // mart
+            TYP_CTR = TYP_SUP | TYP_BIZ,
+            TYP_SRC = TYP_SPR | TYP_FRM;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_CTR + TYP_BIZ, "供应中心"},
+            {TYP_CTR, "供应中心"},
             {TYP_BIZ, "商户／服务"},
-            {TYP_BIZ + TYP_BIZCO, "市场／驿站"},
-            {TYP_SRC, "产源／地块"},
-            {TYP_SRC + TYP_SRCCO, "产源社／产地"},
+            {TYP_MRT, "市集／驿站"},
+            {TYP_FRM, "农场／地块"},
+            {TYP_SRC, "产源／基地"},
         };
 
         public const short
             KIND_AGRICTR = 1,
             KIND_DIETARYCTR = 2,
-            KIND_POSTCTR = 3,
-            KIND_HOMECTR = 4,
-            KIND_SRCCO = 16;
+            KIND_HOMECTR = 3,
+            KIND_POSTCTR = 4,
+            KIND_ADCTR = 5,
+            KIND_CHARITYCTR = 6;
 
 
         internal int id;
+        internal short kind;
         internal int sprid;
         internal int ctrid;
         internal string license;
@@ -110,13 +114,13 @@ namespace Revital
 
         public string Im => mgrim;
 
-        public bool IsSrc => (typ & TYP_SRCCO) == TYP_SRCCO;
+        public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsSrcCo => (typ & TYP_SRCCO) == TYP_SRCCO;
+        public bool IsSrcCo => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsBizCo => (typ & TYP_BIZCO) == TYP_BIZCO;
+        public bool IsBizCo => (typ & TYP_MRT) == TYP_MRT;
 
         public bool IsCenter => (typ & TYP_CTR) == TYP_CTR;
 

@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     [Ui("货架")]
     public class BizlyArticleWork : WebWork

@@ -19,7 +19,7 @@ namespace Revital
 
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw ORDER BY regid, id, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY regid, id, status DESC");
             var arr = await dc.QueryAsync<Org>();
 
             wc.GivePage(200, h =>
@@ -41,7 +41,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(Org.Statuses[o.status]);
+                    h.TD(_Bean.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
                     last = o.regid;
@@ -62,13 +62,13 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Org.STA_WORKABLE
+                    status = _Bean.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 5, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
@@ -94,7 +94,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_BIZCO, 1)]
+    [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("商户团管理", "album")]
     public class BizColyOrgWork : WebWork
     {
@@ -142,7 +142,7 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRCCO, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
@@ -167,14 +167,14 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_FRM, 1)]
     [Ui("产源团管理", "thumbnails")]
     public class SrcColyOrgWork : WebWork
     {
         protected override void OnMake()
         {
-            State = Org.TYP_SRCCO;
-            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRCCO);
+            State = Org.TYP_SRC;
+            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRC);
         }
 
         public async Task @default(WebContext wc)

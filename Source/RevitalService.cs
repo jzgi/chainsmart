@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using Revital.Mart;
+using Revital.Shop;
 using Revital.Supply;
 using SkyChain;
 using SkyChain.Chain;
@@ -15,6 +15,8 @@ namespace Revital
     {
         protected override void OnMake()
         {
+            MakeVarWork<PublyVarWork>();
+
             // public 
 
             MakeWork<PublyItemWork>("item");
@@ -36,11 +38,22 @@ namespace Revital
 
         public void @default(WebContext wc)
         {
+            var orgs = ObtainMap<int, Org>();
             wc.GivePage(200, h =>
             {
                 h.HEADER_("uk-top-bar uk-flex-center uk-height-tiny");
                 h.PIC("/logo-2.png");
                 h._HEADER();
+                int ptid = 1;
+                
+                if (ptid > 0)
+                {
+                    var o = orgs[ptid];
+                    h.FIELDSUL_("您默认的自提服务站").LI_();
+                    h.SPAN_("uk-width-expand").RADIO(nameof(ptid), o.id, o.name, true, tip: o.addr, required: true)._SPAN();
+                    h.SPAN_("uk-badge").A_POI(o.x, o.y, o.name, o.addr)._SPAN();
+                    h._LI()._FIELDSUL();
+                }
             }, manifest: false);
         }
         // cacheable home page of the node

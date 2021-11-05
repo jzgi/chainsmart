@@ -2,7 +2,7 @@
 using SkyChain;
 using SkyChain.Web;
 
-namespace Revital.Mart
+namespace Revital.Shop
 {
     public class PublyBizVarWork : WebWork
     {
