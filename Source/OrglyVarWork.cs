@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Revital.Shop;
 using Revital.Supply;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
@@ -39,16 +40,18 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
-    [Ui("商户端")]
-    public class BizlyVarWork : OrglyVarWork
+    [Ui("市集驿站端")]
+    public class MrtlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
-            // MakeWork<BizlyBookWork>("buy");
+            MakeWork<BizlyBidWork>("take");
+
+            MakeWork<BizlyDistribWork>("distrib");
 
             MakeWork<OrglyClearWork>("clear");
 
-            MakeWork<BizColyOrgWork>("org");
+            MakeWork<MrtlyOrgWork>("org");
 
             MakeWork<OrglyAccessWork>("access", User.Orgly);
         }
@@ -85,7 +88,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, 1)]
+    [UserAuthorize(Org.TYP_CTR_HLF, 1)]
     [Ui("供应中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
@@ -93,9 +96,9 @@ namespace Revital
         {
             MakeWork<CtrlySupplyWork>("supply");
 
-            MakeWork<CtrlyUpWork>("up");
+            MakeWork<CtrlyDistribWork>("distrib");
 
-            MakeWork<CtrlyGainWork>("gain");
+            MakeWork<CtrlySubscribeWork>("import");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -106,7 +109,7 @@ namespace Revital
         {
             int orgid = wc[0];
             var o = Obtain<int, Org>(orgid);
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
 
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
@@ -119,7 +122,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", o.name)._LI();
                 h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
                 h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", Item.Statuses[o.status])._LI();
+                h.LI_().FIELD("状态", _Bean.Statuses[o.status])._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -135,11 +138,15 @@ namespace Revital
         {
             // MakeWork<SrclyGainWork>("purch");
 
-            MakeWork<SrcColyOrgWork>("org");
+            MakeWork<FrmlyYieldWork>("fyield");
 
-            MakeWork<SrcColyYieldWork>("prod");
+            MakeWork<FrmlySubscribeWork>("fsub");
 
-            MakeWork<SrcColyPurchWork>("copurch");
+            MakeWork<SrclyOrgWork>("org");
+
+            MakeWork<SrclyYieldWork>("prod");
+
+            MakeWork<SrclySubscribeWork>("gain");
 
             MakeWork<OrglyClearWork>("clear");
 

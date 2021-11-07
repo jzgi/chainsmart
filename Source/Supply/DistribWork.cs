@@ -9,11 +9,11 @@ namespace Revital.Supply
 {
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("商户进货", "cart")]
-    public class BizlyDownWork : WebWork
+    public class BizlyDistribWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyDownVarWork>();
+            MakeVarWork<BizlyDistribVarWork>();
         }
 
         [Ui("购物车", group: 1), Tool(Anchor)]
@@ -21,8 +21,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Down.Empty).T(" FROM ups WHERE partyid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Down>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM ups WHERE partyid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -42,8 +42,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Down.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Up.STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Down>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -63,8 +63,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Down.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Up.STATUS_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Down>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STATUS_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -94,7 +94,7 @@ namespace Revital.Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Supply_>();
+                        var prods = ObtainMap<short, Supply>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);
@@ -116,9 +116,9 @@ namespace Revital.Supply
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Down>(0);
+                var o = await wc.ReadObjectAsync<Distrib>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Down.Empty, 0)._VALUES_(Down.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Distrib.Empty, 0)._VALUES_(Distrib.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -128,11 +128,11 @@ namespace Revital.Supply
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("销售分拣管理", "sign-out")]
-    public class CtrlyDownWork : WebWork
+    public class CtrlyDistribWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyDownVarWork>();
+            MakeVarWork<CtrlyDistribVarWork>();
         }
 
         [Ui("已确认", group: 1), Tool(Anchor)]

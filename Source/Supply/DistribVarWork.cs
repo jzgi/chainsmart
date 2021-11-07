@@ -7,41 +7,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    public class AdmlyDownVarWork : WebWork
-    {
-        [Ui(group: 1), Tool(ButtonOpen)]
-        public async Task act(WebContext wc, int cmd)
-        {
-            int lotid = wc[0];
-            var prin = (User) wc.Principal;
-
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-
-                dc.Sql("SELECT ").collst(Up.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Up>(p => p.Set(lotid));
-            }
-            else // POST
-            {
-                if (cmd == 1)
-                {
-                    using var dc = NewDbContext(ReadCommitted);
-                    try
-                    {
-                    }
-                    catch
-                    {
-                        dc.Rollback();
-                    }
-                }
-                wc.GivePane(200);
-            }
-        }
-    }
-
-
-    public class BizlyDownVarWork : WebWork
+    public class BizlyDistribVarWork : WebWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -51,8 +17,8 @@ namespace Revital.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Up.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Up>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Distrib>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -87,14 +53,14 @@ namespace Revital.Supply
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Up.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Up>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Distrib>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Up
+                var m = new Distrib
                 {
                 };
                 m.Read(f);
@@ -153,7 +119,7 @@ namespace Revital.Supply
         // [Ui("核实"), Tool(Modal.ButtonShow)]
     }
 
-    public class CtrlyDownVarWork : WebWork
+    public class CtrlyDistribVarWork : WebWork
     {
     }
 }

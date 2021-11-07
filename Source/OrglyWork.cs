@@ -2,15 +2,15 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    public class OrglyWork : WebWork
+    public abstract class OrglyWork : WebWork
     {
     }
 
-    public class BizlyWork : OrglyWork
+    public class MrtlyWork : OrglyWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<MrtlyVarWork>(prin => ((User) prin).orgid);
         }
     }
 

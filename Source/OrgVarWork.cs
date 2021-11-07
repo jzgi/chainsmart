@@ -11,7 +11,7 @@ namespace Revital
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
             short id = wc[0];
             if (wc.IsGet)
             {
@@ -27,7 +27,7 @@ namespace Revital
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Item.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Bean.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -86,7 +86,7 @@ namespace Revital
     }
 
 
-    public class BizColyOrgVarWork : WebWork
+    public class MrtlyOrgVarWork : WebWork
     {
     }
 

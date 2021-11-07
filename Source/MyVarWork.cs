@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Revital.Shop;
 using SkyChain;
 using SkyChain.Web;
 using static System.String;
@@ -10,6 +11,11 @@ namespace Revital
     [Ui("账号信息")]
     public class MyVarWork : WebWork
     {
+        protected override void OnMake()
+        {
+            MakeWork<MyBidWork>("order");
+        }
+
         [UserAuthorize]
         public async Task @default(WebContext wc)
         {

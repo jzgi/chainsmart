@@ -10,30 +10,43 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SPR = 0b1000, // supervisor
-            TYP_BIZ = 0b0001,
-            TYP_FRM = 0b0010, // farm
-            TYP_SUP = 0b0100, // supplier
+            TYP_SPR = 0b00100, // supervisor
+            TYP_BIZ = 0b00001,
+            TYP_FRM = 0b00010, // farm
+            TYP_TRD = 0b00100, // trader
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
-            TYP_CTR = TYP_SUP | TYP_BIZ,
-            TYP_SRC = TYP_SPR | TYP_FRM;
+            TYP_SRC = TYP_SPR | TYP_FRM, // source
+            TYP_CHL = TYP_SPR | TYP_BIZ | TYP_FRM, // channel
+            TYP_CTR = 0b01000, // center
+            TYP_CTR_HLF = TYP_CTR | TYP_BIZ,
+            TYP_CTR_FUL = TYP_CTR | TYP_TRD;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_CTR, "供应中心"},
             {TYP_BIZ, "商户／服务"},
-            {TYP_MRT, "市集／驿站"},
             {TYP_FRM, "农场／地块"},
+            {TYP_MRT, "市集／驿站"},
             {TYP_SRC, "产源／基地"},
+            {TYP_CHL, "供销渠道"},
+            {TYP_CTR, "供应中心（封闭）"},
+            {TYP_CTR_HLF, "供应中心（半链）"},
+            {TYP_CTR_FUL, "供应中心（全链）"},
         };
 
         public const short
             KIND_AGRICTR = 1,
             KIND_DIETARYCTR = 2,
-            KIND_HOMECTR = 3,
-            KIND_POSTCTR = 4,
-            KIND_ADCTR = 5,
-            KIND_CHARITYCTR = 6;
+            KIND_FACTORYCTR = 3,
+            KIND_CARECTR = 4,
+            KIND_POSTCTR = 5,
+            KIND_ADCTR = 6,
+            KIND_CHARITYCTR = 7;
+
+        public static readonly Map<short, string> Tags = new Map<short, string>
+        {
+            {1, "特优区"},
+            {2, "惠实区"},
+        };
 
 
         internal int id;
@@ -42,8 +55,9 @@ namespace Revital
         internal int ctrid;
         internal string license;
         internal bool trust;
-        internal string regid;
+        internal short regid;
         internal string addr;
+        internal short tag;
         internal double x;
         internal double y;
 
@@ -87,13 +101,16 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if (sprid > 0) s.Put(nameof(sprid), sprid); // conditional
-            else s.PutNull(nameof(sprid));
-            if (ctrid > 0) s.Put(nameof(ctrid), ctrid); // conditional
-            else s.PutNull(nameof(ctrid));
+            
+            if (sprid > 0) s.Put(nameof(sprid), sprid); else s.PutNull(nameof(sprid));
+            
+            if (ctrid > 0) s.Put(nameof(ctrid), ctrid); else s.PutNull(nameof(ctrid));
+            
             s.Put(nameof(license), license);
             s.Put(nameof(trust), trust);
-            s.PutNull(nameof(regid));
+            
+            if (regid > 0) s.Put(nameof(regid), regid); else s.PutNull(nameof(regid));
+            
             s.Put(nameof(addr), addr);
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
@@ -122,7 +139,7 @@ namespace Revital
 
         public bool IsBizCo => (typ & TYP_MRT) == TYP_MRT;
 
-        public bool IsCenter => (typ & TYP_CTR) == TYP_CTR;
+        public bool IsCenter => (typ & TYP_CTR_HLF) == TYP_CTR_HLF;
 
         public bool IsTruster => IsBiz || IsSrc || IsCenter;
 

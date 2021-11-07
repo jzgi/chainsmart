@@ -1,0 +1,39 @@
+{
+  "button": [
+    {
+      "type": "view",
+      "name": "逛市场",
+      "url": "http://zhnt-x.com/"
+    },
+    {
+      "name": "我的",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "产源操作 🔒",
+          "url": "http://zhnt-x.com/srcly//"
+        },
+        {
+          "type": "view",
+          "name": "供应中心操作 🔒",
+          "url": "http://zhnt-x.com/ctrly//"
+        },
+        {
+          "type": "view",
+          "name": "市集操作 🔒",
+          "url": "http://zhnt-x.com/mrtly//"
+        },
+        {
+          "type": "view",
+          "name": "我的订单",
+          "url": "http://zhnt-x.com/my//order/"
+        },
+        {
+          "type": "view",
+          "name": "我的账号",
+          "url": "http://zhnt-x.com/my//"
+        }
+      ]
+    }
+  ]
+}

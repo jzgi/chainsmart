@@ -5,11 +5,11 @@ using static Revital.User;
 
 namespace Revital.Shop
 {
-    public class MySellWork : WebWork
+    public class MyBidWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MySellVarWork>();
+            MakeVarWork<MyBidVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -19,33 +19,33 @@ namespace Revital.Shop
             var orgs = ObtainMap<short, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orders WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
-            var arr = await dc.QueryAsync<Order>(p => p.Set(prin.id).Set(page));
-            Map<int, Order> map = null;
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orders WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
+            var arr = await dc.QueryAsync<Bid>(p => p.Set(prin.id).Set(page));
+            Map<int, Bid> map = null;
             var ids = arr?.Exract(x => x.id);
             if (ids != null)
             {
-                dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orderlgs WHERE orderid")._IN_(ids).T(" ORDER BY dt");
-                map = dc.Query<int, Order>(p => p.SetForIn(ids));
+                dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orderlgs WHERE orderid")._IN_(ids).T(" ORDER BY dt");
+                map = dc.Query<int, Bid>(p => p.SetForIn(ids));
             }
         }
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("售货")]
-    public class BizlySellWork : WebWork
+    [Ui("订单或参与")]
+    public class BizlyBidWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlySellVarWork>();
+            MakeVarWork<BizlyBidVarWork>();
         }
 
         public async Task @default(WebContext wc)
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Order>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -62,8 +62,8 @@ namespace Revital.Shop
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Order.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Order>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();

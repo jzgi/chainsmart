@@ -3,11 +3,11 @@ using SkyChain.Web;
 namespace Revital.Shop
 {
     [Ui("货架")]
-    public class BizlyArticleWork : WebWork
+    public class BizlyPostWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyOfferVarWork>();
+            MakeVarWork<BizlyPostVarWork>();
         }
 
         public void @default(WebContext wc, int page)

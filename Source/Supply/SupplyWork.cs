@@ -19,8 +19,8 @@ namespace Revital.Supply
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply_>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -52,8 +52,8 @@ namespace Revital.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply_>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -83,8 +83,8 @@ namespace Revital.Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys_ ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply_>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -100,7 +100,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Supply_.Statuses[o.status]);
+                    h.TD(Supply.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -121,10 +121,10 @@ namespace Revital.Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Supply_.Modes.Count; i++)
+                        for (int i = 0; i < Supply.Modes.Count; i++)
                         {
-                            var key = Supply_.Modes.KeyAt(i);
-                            var scheme = Supply_.Modes.ValueAt(i);
+                            var key = Supply.Modes.KeyAt(i);
+                            var scheme = Supply.Modes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();
@@ -134,7 +134,7 @@ namespace Revital.Supply
                 else
                 {
                     var dt = DateTime.Today;
-                    var o = new Supply_
+                    var o = new Supply
                     {
                         started = dt,
                         ended = dt,
@@ -153,7 +153,7 @@ namespace Revital.Supply
                         {
                             h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
                         }
-                        h.LI_().SELECT("状态", nameof(o.status), o.status, Supply_.Statuses)._LI();
+                        h.LI_().SELECT("状态", nameof(o.status), o.status, Supply.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 
@@ -178,9 +178,9 @@ namespace Revital.Supply
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Supply_>(0);
+                var o = await wc.ReadObjectAsync<Supply>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Supply_.Empty, 0)._VALUES_(Supply_.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Supply.Empty, 0)._VALUES_(Supply.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

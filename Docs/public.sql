@@ -11,7 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table gains
+create table subscribs
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -33,7 +33,7 @@ create table gains
 	prodid integer
 );
 
-alter table gains owner to postgres;
+alter table subscribs owner to postgres;
 
 create table _beans
 (
@@ -97,7 +97,7 @@ create unique index users_tel_idx
 
 create table regs
 (
-	id varchar(4) not null
+	id smallint not null
 		constraint regs_pk
 			primary key,
 	idx smallint
@@ -106,7 +106,7 @@ inherits (_beans);
 
 alter table regs owner to postgres;
 
-create table agrmts_
+create table agrees
 (
 	id serial not null,
 	orgid smallint,
@@ -116,9 +116,9 @@ create table agrmts_
 )
 inherits (_beans);
 
-alter table agrmts_ owner to postgres;
+alter table agrees owner to postgres;
 
-create table godowns
+create table distribs
 (
 	id serial not null
 		constraint books_pk
@@ -135,7 +135,7 @@ create table godowns
 )
 inherits (_beans);
 
-alter table godowns owner to postgres;
+alter table distribs owner to postgres;
 
 create table yields
 (
@@ -159,13 +159,14 @@ create table orgs
 	ctrid integer,
 	license varchar(20),
 	trust boolean,
-	regid varchar(4),
+	regid smallint not null,
 	addr varchar(30),
 	x double precision,
 	y double precision,
 	mgrid integer,
 	icon bytea,
-	kind smallint
+	kind smallint,
+	tag smallint
 )
 inherits (_beans);
 
@@ -210,7 +211,7 @@ inherits (_beans);
 
 alter table supplys owner to postgres;
 
-create table sales
+create table posts
 (
 	id integer,
 	supplyid integer,
@@ -220,9 +221,9 @@ create table sales
 	status smallint
 );
 
-alter table sales owner to postgres;
+alter table posts owner to postgres;
 
-create table orders
+create table bids
 (
 	status smallint default 0 not null,
 	id serial not null,
@@ -236,15 +237,9 @@ create table orders
 	itemid smallint
 );
 
-alter table orders owner to postgres;
+alter table bids owner to postgres;
 
-create table goups
-(
-);
-
-alter table goups owner to postgres;
-
-create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, kind, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -254,6 +249,7 @@ SELECT o.typ,
        o.modified,
        o.modifier,
        o.id,
+       o.kind,
        o.sprid,
        o.ctrid,
        o.license,
@@ -267,8 +263,8 @@ SELECT o.typ,
        m.tel              AS mgrtel,
        m.im               AS mgrim,
        o.icon IS NOT NULL AS icon
-FROM orgs_ o
-         LEFT JOIN users_ m
+FROM orgs o
+         LEFT JOIN users m
                    ON o.mgrid =
                       m.id;
 

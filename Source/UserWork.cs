@@ -7,7 +7,7 @@ using static Revital.User;
 namespace Revital
 {
     [UserAuthorize(admly: ADMLY_SYS)]
-    [Ui("平台用户")]
+    [Ui("用户管理")]
     public class AdmlyUserWork : WebWork
     {
         protected override void OnMake()
@@ -85,7 +85,7 @@ namespace Revital
         }
     }
 
-    [Ui("人员权限", "users")]
+    [Ui("人员权限管理", "users")]
     public class AdmlyAccessWork : WebWork
     {
         protected override void OnMake()

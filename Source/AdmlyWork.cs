@@ -1,3 +1,4 @@
+using Revital.Supply;
 using SkyChain.Chain;
 using SkyChain.Web;
 
@@ -16,6 +17,8 @@ namespace Revital
             MakeWork<AdmlyUserWork>("user");
 
             MakeWork<AdmlyItemWork>("item");
+
+            MakeWork<AdmlyYieldWork>("yield");
 
             MakeWork<AdmlyClearWork>("clear");
 

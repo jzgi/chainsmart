@@ -3,9 +3,9 @@ using SkyChain;
 
 namespace Revital.Supply
 {
-    public class Up : IData, IKeyable<int>
+    public class Distrib : IData, IKeyable<int>
     {
-        public static readonly Up Empty = new Up();
+        public static readonly Distrib Empty = new Distrib();
 
         public const byte ID = 1, LATER = 2;
 

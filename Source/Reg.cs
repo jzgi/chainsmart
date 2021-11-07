@@ -2,21 +2,21 @@
 
 namespace Revital
 {
-    public class Reg : _Bean, IKeyable<string>
+    public class Reg : _Bean, IKeyable<short>
     {
         public static readonly Reg Empty = new Reg();
 
         public const short
-            TYP_PROVINCE = 1,
-            TYP_CITY = 2;
+            TYP_METROPOLIS = 1,
+            TYP_DISTRICT = 2;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PROVINCE, "省份／直辖市"},
-            {TYP_CITY, "地市"},
+            {TYP_METROPOLIS, "都市"},
+            {TYP_DISTRICT, "地市"},
         };
 
-        internal string id;
+        internal short id;
         internal short idx;
 
         public override void Read(ISource s, byte proj = 0x0f)
@@ -39,11 +39,11 @@ namespace Revital
             s.Put(nameof(idx), idx);
         }
 
-        public string Key => id;
+        public short Key => id;
 
         public bool IsMetropolis => typ == 1;
 
-        public bool IsCity => typ == 2;
+        public bool IsDistrict => typ == 2;
 
         public override string ToString() => name;
     }

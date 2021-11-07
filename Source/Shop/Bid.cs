@@ -6,9 +6,9 @@ namespace Revital.Shop
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Order : IData, IKeyable<int>
+    public class Bid : IData, IKeyable<int>
     {
-        public static readonly Order Empty = new Order();
+        public static readonly Bid Empty = new Bid();
 
         public const byte ID = 1, LATER = 4;
 

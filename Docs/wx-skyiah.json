@@ -1,0 +1,39 @@
+{
+  "button": [
+    {
+      "type": "view",
+      "name": "逛市场",
+      "url": "http://skyiah.com/"
+    },
+    {
+      "name": "我的",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "产源操作 🔒",
+          "url": "http://skyiah.com/srcly//"
+        },
+        {
+          "type": "view",
+          "name": "供应中心操作 🔒",
+          "url": "http://skyiah.com/ctrly//"
+        },
+        {
+          "type": "view",
+          "name": "邻里驿站操作 🔒",
+          "url": "http://skyiah.com/mrtly//"
+        },
+        {
+          "type": "view",
+          "name": "我的订单",
+          "url": "http://skyiah.com/my//order/"
+        },
+        {
+          "type": "view",
+          "name": "我的账号",
+          "url": "http://skyiah.com/my//"
+        }
+      ]
+    }
+  ]
+}

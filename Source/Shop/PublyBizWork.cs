@@ -6,7 +6,7 @@ namespace Revital.Shop
     {
         protected override void OnMake()
         {
-            MakeVarWork<PublyBizVarWork>();
+            MakeVarWork<PublyMartBizVarWork>();
         }
     }
 }

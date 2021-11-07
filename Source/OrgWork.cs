@@ -5,7 +5,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    [Ui("协作主体", "℠")]
+    [Ui("入驻机构管理")]
     public class AdmlyOrgWork : WebWork
     {
         protected override void OnMake()
@@ -15,13 +15,11 @@ namespace Revital
 
         public async Task @default(WebContext wc)
         {
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
 
             using var dc = NewDbContext();
-
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY regid, id, status DESC");
             var arr = await dc.QueryAsync<Org>();
-
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: Label);
@@ -29,12 +27,12 @@ namespace Revital
                 if (arr == null) return;
 
                 h.TABLE_();
-                string last = null;
+                short last = 0;
                 foreach (var o in arr)
                 {
                     if (o.regid != last)
                     {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 4).T(o.regid != null ? regs[o.regid].name : "其它")._TD()._TR();
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 4).T(o.regid > 0 ? regs[o.regid].name : "其它")._TD()._TR();
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
@@ -54,7 +52,7 @@ namespace Revital
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
 
             if (wc.IsGet)
             {
@@ -95,13 +93,17 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("商户团管理", "album")]
-    public class BizColyOrgWork : WebWork
+#if ZHNT
+    [Ui("市集商户管理", "album")]
+#else
+    [Ui("驿站服务管理", "album")]
+#endif
+    public class MrtlyOrgWork : WebWork
     {
         protected override void OnMake()
         {
             State = Org.TYP_BIZ;
-            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_BIZ);
+            MakeVarWork<MrtlyOrgVarWork>(state: Org.TYP_BIZ);
         }
 
         public async Task @default(WebContext wc)
@@ -110,7 +112,7 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE coid = @1 ORDER BY id");
             var arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -128,7 +130,7 @@ namespace Revital
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<string, Reg>();
+            var regs = ObtainMap<short, Reg>();
 
             if (wc.IsGet)
             {
@@ -136,7 +138,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Org.STA_WORKABLE
+                    status = _Bean.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -169,12 +171,12 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_FRM, 1)]
     [Ui("产源团管理", "thumbnails")]
-    public class SrcColyOrgWork : WebWork
+    public class SrclyOrgWork : WebWork
     {
         protected override void OnMake()
         {
             State = Org.TYP_SRC;
-            MakeVarWork<BizColyOrgVarWork>(state: Org.TYP_SRC);
+            MakeVarWork<MrtlyOrgVarWork>(state: Org.TYP_SRC);
         }
 
         public async Task @default(WebContext wc)

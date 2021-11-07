@@ -6,9 +6,9 @@ namespace Revital.Supply
     /// <summary>
     /// The data model for a particular supply of standard item.
     /// </summary>
-    public class Supply_ : _Bean, IKeyable<int>
+    public class Supply : _Bean, IKeyable<int>
     {
-        public static readonly Supply_ Empty = new Supply_();
+        public static readonly Supply Empty = new Supply();
 
         public static readonly Map<short, string> Modes = new Map<short, string>
         {

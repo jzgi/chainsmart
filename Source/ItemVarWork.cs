@@ -79,25 +79,14 @@ namespace Revital
             }
         }
 
-        [Ui("◐"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("◪", "图片"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
-        {
-            await doimg(wc, nameof(icon));
-        }
-
-        [Ui("◪"), Tool(ButtonCrop, Appear.Large)]
-        public async Task img(WebContext wc)
-        {
-            await doimg(wc, nameof(img));
-        }
-
-        public async Task doimg(WebContext wc, string col)
         {
             short id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").T(col).T(" FROM items WHERE id = @1");
+                dc.Sql("SELECT icon FROM items WHERE id = @1");
                 if (dc.QueryTop(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
@@ -112,7 +101,7 @@ namespace Revital
                 var f = await wc.ReadAsync<Form>();
                 ArraySegment<byte> img = f[nameof(img)];
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE items SET ").T(col).T(" = @1 WHERE id = @2");
+                dc.Sql("UPDATE items SET icon = @1 WHERE id = @2");
                 if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
                 {
                     wc.Give(200); // ok
@@ -120,7 +109,5 @@ namespace Revital
                 else wc.Give(500); // internal server error
             }
         }
-
-
     }
 }

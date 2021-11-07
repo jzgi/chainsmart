@@ -2,9 +2,9 @@
 
 namespace Revital.Shop
 {
-    public class Offer : IData, IKeyable<short>
+    public class Post : IData, IKeyable<short>
     {
-        public static readonly Offer Empty = new Offer();
+        public static readonly Post Empty = new Post();
 
         // status
         public static readonly Map<short, string> Typs = new Map<short, string>

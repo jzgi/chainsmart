@@ -35,8 +35,8 @@ namespace Revital
         {
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY id");
-                    return dc.Query<string, Reg>();
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY idx, status DESC");
+                    return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
@@ -56,8 +56,8 @@ namespace Revital
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply_.Empty).T(" FROM supplys ORDER BY typ, status DESC");
-                    return dc.Query<int, Supply_>();
+                    dc.Sql("SELECT ").collst(Supply.Supply.Empty).T(" FROM supplys ORDER BY typ, status DESC");
+                    return dc.Query<int, Supply.Supply>();
                 }, 60 * 15
             );
         }

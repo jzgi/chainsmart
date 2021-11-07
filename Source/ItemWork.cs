@@ -14,7 +14,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_SYS)]
-    [Ui("商品管理")]
+    [Ui("全局品目管理")]
     public class AdmlyItemWork : WebWork
     {
         protected override void OnMake()
@@ -25,7 +25,7 @@ namespace Revital
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, status DESC, id LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -44,7 +44,7 @@ namespace Revital
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(Item.Statuses[o.status]);
+                    h.TD(_Bean.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -63,23 +63,23 @@ namespace Revital
             {
                 var o = new Item
                 {
-                    status = Item.STA_ENABLED
+                    status = _Bean.STA_WORKABLE
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("品目信息");
+                    h.FORM_().FIELDSUL_("填写品目信息");
                     h.LI_().SELECT("分类", nameof(o.typ), o.typ, Item.Typs)._LI();
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
+                    h.LI_().TEXT("品目名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("计量单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("计量脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Bean.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, inst: new Item
+                var o = await wc.ReadObjectAsync(0, new Item
                 {
                     created = DateTime.Now,
                     creator = prin.name
