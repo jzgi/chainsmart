@@ -17,7 +17,7 @@ namespace Revital.Supply
             MakeVarWork<CtrlySubscribeVarWork>();
         }
 
-        [Ui("已确认", group: 1), Tool(Anchor)]
+        [Ui("已确认", kind: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -35,7 +35,7 @@ namespace Revital.Supply
             }, false, 3);
         }
 
-        [Ui("已收货", group: 2), Tool(Anchor)]
+        [Ui("已收货", kind: 2), Tool(Anchor)]
         public async Task closed(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -54,7 +54,7 @@ namespace Revital.Supply
             }, false, 3);
         }
 
-        [Ui("发布", group: 1), Tool(ButtonOpen)]
+        [Ui("发布", kind: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
@@ -85,7 +85,7 @@ namespace Revital.Supply
             }
         }
 
-        [Ui("复制", group: 2), Tool(ButtonPickOpen)]
+        [Ui("复制", kind: 2), Tool(ButtonPickOpen)]
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];

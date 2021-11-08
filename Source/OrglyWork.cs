@@ -6,27 +6,43 @@ namespace Revital
     {
     }
 
-    public class MrtlyWork : OrglyWork
+    public class SrclyWork : OrglyWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MrtlyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<SrclyVarWork>(prin =>
+                {
+                    var orgid = ((User) prin).orgid;
+                    return Obtain<int, Org>(orgid);
+                }
+            );
         }
     }
+
 
     public class CtrlyWork : OrglyWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<CtrlyVarWork>(prin =>
+                {
+                    var orgid = ((User) prin).orgid;
+                    return Obtain<int, Org>(orgid);
+                }
+            );
         }
     }
 
-    public class SrclyWork : OrglyWork
+    public class MrtlyWork : OrglyWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyVarWork>(prin => ((User) prin).orgid);
+            MakeVarWork<MrtlyVarWork>(prin =>
+                {
+                    var orgid = ((User) prin).orgid;
+                    return Obtain<int, Org>(orgid);
+                }
+            );
         }
     }
 }

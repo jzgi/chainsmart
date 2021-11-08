@@ -44,7 +44,7 @@ namespace Revital.Supply
             }
         }
 
-        [Ui("修改", group: 1), Tool(ButtonOpen)]
+        [Ui("修改", kind: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -76,7 +76,7 @@ namespace Revital.Supply
             }
         }
 
-        [Ui("图标", group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", kind: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             int id = wc[0];
@@ -96,7 +96,7 @@ namespace Revital.Supply
             }
         }
 
-        [Ui("图片", group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图片", kind: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task img(WebContext wc)
         {
             int id = wc[0];

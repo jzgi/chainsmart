@@ -1,5 +1,4 @@
 ﻿using System;
-using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital
@@ -39,14 +38,10 @@ namespace Revital
             if (orgtyp > 0 && orgly > 0)
             {
                 if ((prin.orgly & orgly) != orgly) return false; // inclusive check
-                int orgid = wc[typeof(OrglyVarWork)];
-                if (orgid != 0 && prin.orgid == orgid)
+                var org = wc[typeof(OrglyVarWork)].As<Org>();
+                if (org != null)
                 {
-                    var org = Chain.Obtain<int, Org>(prin.orgid);
-                    if (org != null)
-                    {
-                        return (org.typ & orgtyp) > 0; // inclusive
-                    }
+                    return (org.typ & orgtyp) > 0; // inclusive
                 }
                 return false;
             }

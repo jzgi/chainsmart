@@ -24,7 +24,7 @@ namespace Revital.Shop
             }
         }
 
-        [Ui("标签", group: 1), Tool(ButtonShow)]
+        [Ui("标签", kind: 1), Tool(ButtonShow)]
         public async Task tag(WebContext wc)
         {
             int orderid = wc[0];
@@ -55,7 +55,7 @@ namespace Revital.Shop
             }
         }
 
-        [Ui("协议", group: 2), Tool(ButtonOpen)]
+        [Ui("协议", kind: 2), Tool(ButtonOpen)]
         public void agrmt(WebContext wc, int dietid)
         {
             var diets = ObtainMap<short, Org>();
@@ -67,7 +67,7 @@ namespace Revital.Shop
             });
         }
 
-        [Ui("申诉", group: 2), Tool(ButtonShow)]
+        [Ui("申诉", kind: 2), Tool(ButtonShow)]
         public async Task compl(WebContext wc)
         {
             int orderid = wc[0];

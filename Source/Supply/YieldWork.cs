@@ -14,13 +14,13 @@ namespace Revital.Supply
             MakeVarWork<AdmlyYieldVarWork>();
         }
 
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("当前", kind: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("以往", group: 2), Tool(Anchor)]
+        [Ui("以往", kind: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
         }

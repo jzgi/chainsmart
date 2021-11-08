@@ -7,13 +7,13 @@ namespace Revital
         public static readonly Reg Empty = new Reg();
 
         public const short
-            TYP_METROPOLIS = 1,
-            TYP_DISTRICT = 2;
+            TYP_GEOGRAPHIC = 1,
+            TYP_INDOOR = 2;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_METROPOLIS, "都市"},
-            {TYP_DISTRICT, "地市"},
+            {TYP_GEOGRAPHIC, "地理区域"},
+            {TYP_INDOOR, "内部区域"},
         };
 
         internal short id;

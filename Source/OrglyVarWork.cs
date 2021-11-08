@@ -21,7 +21,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(obj.addr), obj.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, Item.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Bean.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -35,98 +35,6 @@ namespace Revital
 
                 wc.GivePane(200);
             }
-        }
-    }
-
-
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
-    [Ui("市集驿站端")]
-    public class MrtlyVarWork : OrglyVarWork
-    {
-        protected override void OnMake()
-        {
-            MakeWork<BizlyBidWork>("take");
-
-            MakeWork<BizlyDistribWork>("distrib");
-
-            MakeWork<OrglyClearWork>("clear");
-
-            MakeWork<MrtlyOrgWork>("org");
-
-            MakeWork<OrglyAccessWork>("access", User.Orgly);
-        }
-
-        public void @default(WebContext wc)
-        {
-            short orgid = wc[0];
-            var org = Obtain<short, Org>(orgid);
-            var co = Obtain<int, Org>(org.sprid);
-            var ctr = Obtain<int, Org>(org.ctrid);
-
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
-
-                h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("主体名称", org.name)._LI();
-                h.LI_().FIELD("协作类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsBizCo)
-                {
-                    h.LI_().FIELD("商户社", co.name)._LI();
-                }
-                h.LI_().FIELD("分拣中心", ctr.name)._LI();
-                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("授权代办", org.trust)._LI();
-                h._UL();
-
-                h.TASKUL();
-            }, false, 3);
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CTR_HLF, 1)]
-    [Ui("供应中心操作")]
-    public class CtrlyVarWork : OrglyVarWork
-    {
-        protected override void OnMake()
-        {
-            MakeWork<CtrlySupplyWork>("supply");
-
-            MakeWork<CtrlyDistribWork>("distrib");
-
-            MakeWork<CtrlySubscribeWork>("import");
-
-            MakeWork<OrglyClearWork>("clear");
-
-            MakeWork<OrglyAccessWork>("access");
-        }
-
-        public void @default(WebContext wc)
-        {
-            int orgid = wc[0];
-            var o = Obtain<int, Org>(orgid);
-            var regs = ObtainMap<short, Reg>();
-
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
-
-                h.UL_("uk-card uk-card-primary uk-card-body ul-list uk-list-divider");
-                h.LI_().FIELD("主体名称", o.name)._LI();
-                h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
-                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Bean.Statuses[o.status])._LI();
-                h._UL();
-
-                h.TASKUL();
-            }, false, 3);
         }
     }
 
@@ -178,6 +86,97 @@ namespace Revital
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h._UL();
                 h._FORM();
+
+                h.TASKUL();
+            }, false, 3);
+        }
+    }
+
+    [UserAuthorize(Org.TYP_CTR_HLF, 1)]
+    [Ui("供应中心操作")]
+    public class CtrlyVarWork : OrglyVarWork
+    {
+        protected override void OnMake()
+        {
+            MakeWork<CtrlyAgriSupplyWork, CtrlyDietarySupplyWork, CtrlyHomeSupplyWork, CtrlyCareSupplyWork, CtrlyAdSupplyWork, CtrlyCharitySupplyWork>("supply");
+
+            MakeWork<CtrlyAgriDistribWork, CtrlyDietaryDistribWork, CtrlyHomeDistribWork, CtrlyCareDistribWork, CtrlyAdDistribWork, CtrlyCharityDistribWork>("distrib");
+
+            MakeWork<CtrlySubscribeWork>("subscrib");
+
+            MakeWork<OrglyClearWork>("clear");
+
+            MakeWork<OrglyAccessWork>("access");
+        }
+
+        public void @default(WebContext wc)
+        {
+            var o = wc[0].As<Org>();
+            var regs = ObtainMap<short, Reg>();
+
+            var prin = (User) wc.Principal;
+            using var dc = NewDbContext();
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+
+                h.UL_("uk-card uk-card-primary uk-card-body ul-list uk-list-divider");
+                h.LI_().FIELD("主体名称", o.name)._LI();
+                h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
+                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
+                h.LI_().FIELD("状态", _Bean.Statuses[o.status])._LI();
+                h._UL();
+
+                h.TASKUL();
+            }, false, 3);
+        }
+    }
+
+
+    [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
+    [Ui("市集驿站端")]
+    public class MrtlyVarWork : OrglyVarWork
+    {
+        protected override void OnMake()
+        {
+            MakeWork<BizlyBidWork>("take");
+
+            MakeWork<BizlyDistribWork>("distrib");
+
+            MakeWork<OrglyClearWork>("clear");
+
+            MakeWork<MrtlyOrgWork>("org");
+
+            MakeWork<OrglyAccessWork>("access", User.Orgly);
+        }
+
+        public void @default(WebContext wc)
+        {
+            short orgid = wc[0];
+            var org = Obtain<short, Org>(orgid);
+            var co = Obtain<int, Org>(org.sprid);
+            var ctr = Obtain<int, Org>(org.ctrid);
+
+            var prin = (User) wc.Principal;
+            using var dc = NewDbContext();
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+
+                h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
+                h.LI_().FIELD("主体名称", org.name)._LI();
+                h.LI_().FIELD("协作类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("地址", org.addr)._LI();
+                if (!org.IsBizCo)
+                {
+                    h.LI_().FIELD("商户社", co.name)._LI();
+                }
+                h.LI_().FIELD("分拣中心", ctr.name)._LI();
+                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
+                h.LI_().FIELD("授权代办", org.trust)._LI();
+                h._UL();
 
                 h.TASKUL();
             }, false, 3);

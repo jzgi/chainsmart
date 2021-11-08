@@ -8,7 +8,7 @@ namespace Revital
 {
     public class AdmlyOrgVarWork : WebWork
     {
-        [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
+        [Ui("✎", "✎ 修改", kind: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
             var regs = ObtainMap<short, Reg>();

@@ -6,20 +6,19 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    [UserAuthorize(admly: ADMLY_SYS)]
-    [Ui("商品供应管理", "calendar")]
-    public class CtrlySupplyWork : WebWork
+    [UserAuthorize(Org.TYP_CTR, ORGLY_OP)]
+    public abstract class CtrlySupplyWork : WebWork
     {
         protected override void OnMake()
         {
             MakeVarWork<CtrlySupplyVarWork>();
         }
 
-        [Ui("未生效", group: 1), Tool(Anchor)]
+        [Ui("未生效", kind: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Supply>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -48,7 +47,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("进行中", group: 2), Tool(Anchor)]
+        [Ui("进行中", kind: 2), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -79,7 +78,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("已结束", group: 4), Tool(Anchor)]
+        [Ui("已结束", kind: 4), Tool(Anchor)]
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -110,7 +109,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("✚", "新建供应计划", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新建供应计划", kind: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int sch)
         {
             var items = ObtainMap<int, Item>();
@@ -186,5 +185,31 @@ namespace Revital.Supply
                 wc.GivePane(200); // close dialog
             }
         }
+    }
+
+    [Ui("供应管理", "calendar")]
+    public class CtrlyAgriSupplyWork : CtrlySupplyWork
+    {
+    }
+
+    [Ui("供应管理", "calendar")]
+    public class CtrlyDietarySupplyWork : CtrlySupplyWork
+    {
+    }
+
+    public class CtrlyHomeSupplyWork : CtrlySupplyWork
+    {
+    }
+
+    public class CtrlyCareSupplyWork : CtrlySupplyWork
+    {
+    }
+
+    public class CtrlyAdSupplyWork : CtrlySupplyWork
+    {
+    }
+
+    public class CtrlyCharitySupplyWork : CtrlySupplyWork
+    {
     }
 }

@@ -19,18 +19,13 @@ namespace Revital
             },
             new FactoryOrgDescr
             {
-                typ = KIND_FACTORYCTR,
+                typ = KIND_HOMECTR,
                 name = "工业产品"
             },
             new CareOrgDescr
             {
                 typ = KIND_CARECTR,
                 name = "家政陪护"
-            },
-            new PostOrgDescr
-            {
-                typ = KIND_POSTCTR,
-                name = "包裹快递"
             },
             new AdOrgDescr
             {

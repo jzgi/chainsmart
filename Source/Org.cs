@@ -1,11 +1,12 @@
 ﻿using SkyChain;
+using SkyChain.Source.Web;
 
 namespace Revital
 {
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : _Bean, IKeyable<int>
+    public class Org : _Bean, IKeyable<int>, IKindable
     {
         public static readonly Org Empty = new Org();
 
@@ -36,17 +37,10 @@ namespace Revital
         public const short
             KIND_AGRICTR = 1,
             KIND_DIETARYCTR = 2,
-            KIND_FACTORYCTR = 3,
+            KIND_HOMECTR = 3,
             KIND_CARECTR = 4,
-            KIND_POSTCTR = 5,
             KIND_ADCTR = 6,
             KIND_CHARITYCTR = 7;
-
-        public static readonly Map<short, string> Tags = new Map<short, string>
-        {
-            {1, "特优区"},
-            {2, "惠实区"},
-        };
 
 
         internal int id;
@@ -57,7 +51,6 @@ namespace Revital
         internal bool trust;
         internal short regid;
         internal string addr;
-        internal short tag;
         internal double x;
         internal double y;
 
@@ -75,6 +68,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
+            s.Get(nameof(kind), ref kind);
             s.Get(nameof(sprid), ref sprid);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(license), ref license);
@@ -101,16 +95,20 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            
-            if (sprid > 0) s.Put(nameof(sprid), sprid); else s.PutNull(nameof(sprid));
-            
-            if (ctrid > 0) s.Put(nameof(ctrid), ctrid); else s.PutNull(nameof(ctrid));
-            
+            s.Put(nameof(kind), kind);
+
+            if (sprid > 0) s.Put(nameof(sprid), sprid);
+            else s.PutNull(nameof(sprid));
+
+            if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
+            else s.PutNull(nameof(ctrid));
+
             s.Put(nameof(license), license);
             s.Put(nameof(trust), trust);
-            
-            if (regid > 0) s.Put(nameof(regid), regid); else s.PutNull(nameof(regid));
-            
+
+            if (regid > 0) s.Put(nameof(regid), regid);
+            else s.PutNull(nameof(regid));
+
             s.Put(nameof(addr), addr);
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
@@ -126,6 +124,8 @@ namespace Revital
         }
 
         public int Key => id;
+
+        public short Kind => kind;
 
         public string Tel => mgrtel;
 

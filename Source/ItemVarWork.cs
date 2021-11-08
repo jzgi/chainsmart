@@ -42,7 +42,7 @@ namespace Revital
 
     public class AdmlyItemVarWork : ItemVarWork
     {
-        [Ui("修改", group: 2), Tool(AnchorShow)]
+        [Ui("修改", kind: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];
