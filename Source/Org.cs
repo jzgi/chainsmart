@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : _Bean, IKeyable<int>, IKindable
+    public class Org : _Bean, IKeyable<int>, IForkable
     {
         public static readonly Org Empty = new Org();
 
@@ -35,16 +35,16 @@ namespace Revital
         };
 
         public const short
-            KIND_AGRICTR = 1,
-            KIND_DIETARYCTR = 2,
-            KIND_HOMECTR = 3,
-            KIND_CARECTR = 4,
-            KIND_ADCTR = 6,
-            KIND_CHARITYCTR = 7;
+            FRK_AGRI = 1,
+            FRK_DIETARY = 2,
+            FRK_HOME = 3,
+            FRK_CARE = 4,
+            FRK_AD = 6,
+            FRK_CHARITY = 7;
 
 
         internal int id;
-        internal short kind;
+        internal short fork;
         internal int sprid;
         internal int ctrid;
         internal string license;
@@ -68,7 +68,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(kind), ref kind);
+            s.Get(nameof(fork), ref fork);
             s.Get(nameof(sprid), ref sprid);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(license), ref license);
@@ -95,7 +95,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(kind), kind);
+            s.Put(nameof(fork), fork);
 
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));
@@ -125,7 +125,7 @@ namespace Revital
 
         public int Key => id;
 
-        public short Kind => kind;
+        public short Fork => fork;
 
         public string Tel => mgrtel;
 

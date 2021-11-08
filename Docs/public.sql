@@ -165,8 +165,7 @@ create table orgs
 	y double precision,
 	mgrid integer,
 	icon bytea,
-	kind smallint,
-	tag smallint
+	fork smallint
 )
 inherits (_beans);
 
@@ -182,30 +181,30 @@ create table supplys
 	started date,
 	ended date,
 	filled date,
-	rmode smallint,
-	runit varchar(4),
-	rx smallint,
-	rmin smallint,
-	rmax smallint,
-	rstep smallint,
-	rprice money,
-	roff money,
-	tmode smallint,
-	tunit varchar(4),
-	tx smallint,
-	tmin smallint,
-	tmax smallint,
-	tstep smallint,
-	tprice money,
-	toff money,
-	gmode smallint,
-	gunit varchar(4),
-	gx smallint,
-	gmin smallint,
-	gmax smallint,
-	gstep smallint,
-	gprice money,
-	goff money
+	bmode smallint,
+	bunit varchar(4),
+	bx smallint,
+	bmin smallint,
+	bmax smallint,
+	bstep smallint,
+	bprice money,
+	boff money,
+	dmode smallint,
+	dunit varchar(4),
+	dx smallint,
+	dmin smallint,
+	dmax smallint,
+	dstep smallint,
+	dprice money,
+	doff money,
+	smode smallint,
+	sunit varchar(4),
+	sx smallint,
+	smin smallint,
+	smax smallint,
+	sstep smallint,
+	sprice money,
+	soff money
 )
 inherits (_beans);
 
@@ -239,7 +238,7 @@ create table bids
 
 alter table bids owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, kind, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -249,7 +248,7 @@ SELECT o.typ,
        o.modified,
        o.modifier,
        o.id,
-       o.kind,
+       o.fork,
        o.sprid,
        o.ctrid,
        o.license,

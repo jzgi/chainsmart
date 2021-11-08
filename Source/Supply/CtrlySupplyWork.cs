@@ -14,7 +14,7 @@ namespace Revital.Supply
             MakeVarWork<CtrlySupplyVarWork>();
         }
 
-        [Ui("未生效", kind: 1), Tool(Anchor)]
+        [Ui("未生效", @group: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -47,7 +47,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("进行中", kind: 2), Tool(Anchor)]
+        [Ui("进行中", @group: 2), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -78,7 +78,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("已结束", kind: 4), Tool(Anchor)]
+        [Ui("已结束", @group: 4), Tool(Anchor)]
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -109,7 +109,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("✚", "新建供应计划", kind: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新建供应计划", @group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int sch)
         {
             var items = ObtainMap<int, Item>();
@@ -187,12 +187,12 @@ namespace Revital.Supply
         }
     }
 
-    [Ui("供应管理", "calendar")]
+    [Ui("供应管理", "calendar", fork: Org.FRK_AGRI)]
     public class CtrlyAgriSupplyWork : CtrlySupplyWork
     {
     }
 
-    [Ui("供应管理", "calendar")]
+    [Ui("供应管理", "calendar", fork: Org.FRK_DIETARY)]
     public class CtrlyDietarySupplyWork : CtrlySupplyWork
     {
     }

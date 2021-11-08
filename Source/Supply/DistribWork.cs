@@ -13,7 +13,7 @@ namespace Revital.Supply
             MakeVarWork<BizlyDistribVarWork>();
         }
 
-        [Ui("购物车", kind: 1), Tool(Anchor)]
+        [Ui("购物车", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -34,7 +34,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("当前", kind: 2), Tool(Anchor)]
+        [Ui("当前", group: 2), Tool(Anchor)]
         public async Task buys(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -55,7 +55,7 @@ namespace Revital.Supply
             });
         }
 
-        [Ui("历史", kind: 4), Tool(Anchor)]
+        [Ui("历史", group: 4), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             short orgid = wc[-1];
@@ -77,7 +77,7 @@ namespace Revital.Supply
         }
 
 
-        [Ui("✚", "添加", kind: 1), Tool(ButtonOpen)]
+        [Ui("✚", "添加", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             if (wc.IsGet)

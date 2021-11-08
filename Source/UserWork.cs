@@ -15,7 +15,7 @@ namespace Revital
             MakeVarWork<AdmlyUserVarWork>();
         }
 
-        [Ui("浏览", kind: 1), Tool(Anchor)]
+        [Ui("浏览", @group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -237,7 +237,7 @@ namespace Revital
             MakeVarWork<MrtlyUserVarWork>();
         }
 
-        [Ui("浏览", kind: 1), Tool(Anchor)]
+        [Ui("浏览", @group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();

@@ -9,32 +9,32 @@ namespace Revital
         {
             new AgriOrgDescr
             {
-                typ = KIND_AGRICTR,
+                typ = FRK_AGRI,
                 name = "生态农产"
             },
             new DietaryOrgDescr
             {
-                typ = KIND_DIETARYCTR,
+                typ = FRK_DIETARY,
                 name = "调养膳食"
             },
             new FactoryOrgDescr
             {
-                typ = KIND_HOMECTR,
+                typ = FRK_HOME,
                 name = "工业产品"
             },
             new CareOrgDescr
             {
-                typ = KIND_CARECTR,
+                typ = FRK_CARE,
                 name = "家政陪护"
             },
             new AdOrgDescr
             {
-                typ = KIND_ADCTR,
+                typ = FRK_AD,
                 name = "广告宣传"
             },
             new CharityOrgDescr
             {
-                typ = KIND_CHARITYCTR,
+                typ = FRK_CHARITY,
                 name = "志愿公益"
             }
         };
