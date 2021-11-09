@@ -6,7 +6,11 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class AdmlyOrgVarWork : WebWork
+    public abstract class OrgVarWork : WebWork
+    {
+    }
+
+    public class AdmlyOrgVarWork : OrgVarWork
     {
         [Ui("✎", "✎ 修改", @group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
@@ -86,11 +90,11 @@ namespace Revital
     }
 
 
-    public class MrtlyOrgVarWork : WebWork
+    public class MrtlyOrgVarWork : OrgVarWork
     {
     }
 
-    public class SrcColyOrgVarWork : WebWork
+    public class SrclyOrgVarWork : OrgVarWork
     {
     }
 }

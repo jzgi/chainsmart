@@ -5,7 +5,11 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class AdmlyRegVarWork : WebWork
+    public abstract class RegVarWork : WebWork
+    {
+    }
+
+    public class AdmlyRegVarWork : RegVarWork
     {
         [UserAuthorize(admly: ADMLY_SYS)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]

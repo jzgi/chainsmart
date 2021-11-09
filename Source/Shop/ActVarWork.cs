@@ -9,7 +9,11 @@ using static Revital.WeChatUtility;
 
 namespace Revital.Shop
 {
-    public class MyActVarWork : WebWork
+    public class ActVarWork : WebWork
+    {
+    }
+
+    public class MyActVarWork : ActVarWork
     {
         [Ui("✎", "✎ 填写日志"), Tool(ButtonShow)]
         public async Task log(WebContext wc, int dt)
@@ -91,7 +95,7 @@ namespace Revital.Shop
         }
     }
 
-    public class BizlyActVarWork : WebWork
+    public class BizlyActVarWork : ActVarWork
     {
         [Ui("☰", "☰ 明细"), Tool(ButtonOpen, Half)]
         public async Task dtl(WebContext wc)

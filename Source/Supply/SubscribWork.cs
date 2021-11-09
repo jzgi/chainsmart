@@ -8,9 +8,13 @@ using static Revital.User;
 
 namespace Revital.Supply
 {
+    public abstract class SubscribWork : WebWork
+    {
+    }
+
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("采购收货管理", "sign-in")]
-    public class CtrlySubscribWork : WebWork
+    public class CtrlySubscribWork : SubscribWork
     {
         protected override void OnMake()
         {
@@ -121,7 +125,7 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源订货动态", "sign-out")]
-    public class SrclySubscribWork : WebWork
+    public class SrclySubscribWork : SubscribWork
     {
         protected override void OnMake()
         {
@@ -153,7 +157,7 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
     [Ui("产源订货")]
-    public class FrmlySubscribWork : WebWork
+    public class FrmlySubscribWork : SubscribWork
     {
         protected override void OnMake()
         {

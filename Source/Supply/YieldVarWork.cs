@@ -7,14 +7,18 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    public class AdmlyYieldVarWork : WebWork
+    public abstract class YieldVarWork : WebWork
+    {
+    }
+
+    public class AdmlyYieldVarWork : YieldVarWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
     }
 
-    public class SrclyProduceVarWork : WebWork
+    public class SrclyYieldVarWork : YieldVarWork
     {
         [Ui("修改", @group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
@@ -122,7 +126,7 @@ namespace Revital.Supply
         }
     }
 
-    public class FrmlyYieldVarWork : WebWork
+    public class FrmlyYieldVarWork : YieldVarWork
     {
     }
 }

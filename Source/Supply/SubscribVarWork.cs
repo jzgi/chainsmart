@@ -7,14 +7,18 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
-    public class CtrlySubscribVarWork : WebWork
+    public class SubscribVarWork : WebWork
+    {
+    }
+
+    public class CtrlySubscribVarWork : SubscribVarWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
     }
 
-    public class SrclySubscribVarWork : WebWork
+    public class SrclySubscribVarWork : SubscribVarWork
     {
         [Ui("修改", @group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
@@ -122,7 +126,7 @@ namespace Revital.Supply
         }
     }
 
-    public class FrmlySubscribeVarWork : WebWork
+    public class FrmlySubscribeVarWork : SubscribVarWork
     {
     }
 }

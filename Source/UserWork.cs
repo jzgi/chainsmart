@@ -6,9 +6,13 @@ using static Revital.User;
 
 namespace Revital
 {
+    public abstract class UserWork : WebWork
+    {
+    }
+
     [UserAuthorize(admly: ADMLY_SYS)]
     [Ui("用户管理")]
-    public class AdmlyUserWork : WebWork
+    public class AdmlyUserWork : UserWork
     {
         protected override void OnMake()
         {
@@ -86,7 +90,7 @@ namespace Revital
     }
 
     [Ui("人员权限管理", "users")]
-    public class AdmlyAccessWork : WebWork
+    public class AdmlyAccessWork : UserWork
     {
         protected override void OnMake()
         {
@@ -158,7 +162,7 @@ namespace Revital
     }
 
     [Ui("人员权限", "users")]
-    public class OrglyAccessWork : WebWork
+    public class OrglyAccessWork : UserWork
     {
         protected override void OnMake()
         {
@@ -230,7 +234,7 @@ namespace Revital
     }
 
     [Ui("消费者")]
-    public class MrtlyUserWork : WebWork
+    public class MrtlyUserWork : UserWork
     {
         protected override void OnMake()
         {

@@ -6,9 +6,14 @@ using static SkyChain.Web.Modal;
 
 namespace Revital.Supply
 {
+    public class DistribWork : WebWork
+    {
+    }
+    
+
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("商户进货", "cart")]
-    public class BizlyDistribWork : WebWork
+    public class BizlyDistribWork : DistribWork
     {
         protected override void OnMake()
         {
@@ -126,7 +131,7 @@ namespace Revital.Supply
     }
 
     [UserAuthorize(orgly: User.ORGLY_OP)]
-    public class CtrlyDistribWork : WebWork
+    public abstract class CtrlyDistribWork : DistribWork
     {
         protected override void OnMake()
         {
@@ -188,29 +193,29 @@ namespace Revital.Supply
         }
     }
 
-    [Ui("销售分拣管理", "sign-out", fork: Org.FRK_AGRI)]
-    public class CtrlyAgriDistribWork : CtrlyDistribWork
+    [Ui("销售分拣管理", "sign-out", forkie: Org.FRK_AGRI)]
+    public class AgriCtrlyDistribWork : CtrlyDistribWork
     {
     }
 
     [Ui("销售分拣管理", "sign-out")]
-    public class CtrlyDietaryDistribWork : CtrlyDistribWork
+    public class DietaryCtrlyDistribWork : CtrlyDistribWork
     {
     }
 
-    public class CtrlyHomeDistribWork : CtrlyDistribWork
+    public class HomeCtrlyDistribWork : CtrlyDistribWork
     {
     }
 
-    public class CtrlyCareDistribWork : CtrlyDistribWork
+    public class CareCtrlyDistribWork : CtrlyDistribWork
     {
     }
 
-    public class CtrlyAdDistribWork : CtrlyDistribWork
+    public class AdCtrlyDistribWork : CtrlyDistribWork
     {
     }
 
-    public class CtrlyCharityDistribWork : CtrlyDistribWork
+    public class CharityCtrlyDistribWork : CtrlyDistribWork
     {
     }
 }

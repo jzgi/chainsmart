@@ -5,7 +5,11 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class AdmlyUserVarWork : WebWork
+    public abstract class UserVarWork : WebWork
+    {
+    }
+
+    public class AdmlyUserVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonShow)]
         public async Task upd(WebContext wc)
@@ -36,7 +40,7 @@ namespace Revital
         }
     }
 
-    public class AdmlyAccessVarWork : WebWork
+    public class AdmlyAccessVarWork : UserVarWork
     {
         [UserAuthorize(admly: User.ADMLY_SYS)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
@@ -72,7 +76,7 @@ namespace Revital
         }
     }
 
-    public class OrglyAccessVarWork : WebWork
+    public class OrglyAccessVarWork : UserVarWork
     {
         [UserAuthorize(orgly: 3)]
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
@@ -109,7 +113,7 @@ namespace Revital
         }
     }
 
-    public class MrtlyUserVarWork : WebWork
+    public class MrtlyUserVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonShow)]
         public async Task upd(WebContext wc)

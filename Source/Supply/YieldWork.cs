@@ -5,9 +5,14 @@ using static Revital.User;
 
 namespace Revital.Supply
 {
+    public abstract class YieldWork : WebWork
+    {
+    }
+
+
     [UserAuthorize(admly: 1)]
     [Ui("产源产品总汇")]
-    public class AdmlyYieldWork : WebWork
+    public class AdmlyYieldWork : YieldWork
     {
         protected override void OnMake()
         {
@@ -28,11 +33,11 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源产品动态")]
-    public class SrclyYieldWork : WebWork
+    public class SrclyYieldWork : YieldWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyProduceVarWork>();
+            MakeVarWork<SrclyYieldVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -60,7 +65,7 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
     [Ui("产品管理")]
-    public class FrmlyYieldWork : WebWork
+    public class FrmlyYieldWork : YieldWork
     {
         protected override void OnMake()
         {

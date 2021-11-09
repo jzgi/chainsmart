@@ -98,9 +98,9 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<CtrlyAgriSupplyWork, CtrlyDietarySupplyWork, CtrlyHomeSupplyWork, CtrlyCareSupplyWork, CtrlyAdSupplyWork, CtrlyCharitySupplyWork>("supply");
+            MakeWork<AgriCtrlySupplyWork, DietaryCtrlySupplyWork, HomeCtrlySupplyWork, CareCtrlySupplyWork, AdCtrlySupplyWork, CharityCtrlySupplyWork>("supply");
 
-            MakeWork<CtrlyAgriDistribWork, CtrlyDietaryDistribWork, CtrlyHomeDistribWork, CtrlyCareDistribWork, CtrlyAdDistribWork, CtrlyCharityDistribWork>("distrib");
+            MakeWork<AgriCtrlyDistribWork, DietaryCtrlyDistribWork, HomeCtrlyDistribWork, CareCtrlyDistribWork, AdCtrlyDistribWork, CharityCtrlyDistribWork>("distrib");
 
             MakeWork<CtrlySubscribWork>("subscrib");
 

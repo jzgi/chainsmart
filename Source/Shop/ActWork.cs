@@ -5,7 +5,11 @@ using static Revital.User;
 
 namespace Revital.Shop
 {
-    public class MyActWork : WebWork
+    public abstract class ActWork : WebWork
+    {
+    }
+
+    public class MyActWork : ActWork
     {
         protected override void OnMake()
         {
@@ -26,7 +30,7 @@ namespace Revital.Shop
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    public abstract class BizlyActWork : WebWork
+    public abstract class BizlyActWork : ActWork
     {
         protected override void OnMake()
         {
@@ -70,12 +74,12 @@ namespace Revital.Shop
         }
     }
 
-    [Ui("客户订单管理", fork: Org.FRK_AGRI)]
+    [Ui("客户订单管理", forkie: Org.FRK_AGRI)]
     public class AgriBizlyActWork : BizlyActWork
     {
     }
 
-    [Ui("客户预订管理", fork: Org.FRK_DIETARY)]
+    [Ui("客户预订管理", forkie: Org.FRK_DIETARY)]
     public class DietaryBizlyActWork : BizlyActWork
     {
     }

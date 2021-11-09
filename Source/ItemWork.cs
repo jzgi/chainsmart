@@ -5,7 +5,11 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class PublyItemWork : WebWork
+    public abstract class ItemWork : WebWork
+    {
+    }
+
+    public class PublyItemWork : ItemWork
     {
         protected override void OnMake()
         {
@@ -15,7 +19,7 @@ namespace Revital
 
     [UserAuthorize(admly: User.ADMLY_SYS)]
     [Ui("全局品目管理")]
-    public class AdmlyItemWork : WebWork
+    public class AdmlyItemWork : ItemWork
     {
         protected override void OnMake()
         {

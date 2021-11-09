@@ -5,9 +5,13 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
+    public abstract class RegWork : WebWork
+    {
+    }
+
     [UserAuthorize(admly: ADMLY_SYS)]
     [Ui("区域管理")]
-    public class AdmlyRegWork : WebWork
+    public class AdmlyRegWork : RegWork
     {
         protected override void OnMake()
         {
