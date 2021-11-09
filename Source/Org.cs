@@ -42,6 +42,16 @@ namespace Revital
             FRK_AD = 6,
             FRK_CHARITY = 7;
 
+        public static readonly Map<short, string> Forks = new Map<short, string>
+        {
+            {FRK_AGRI, "生态农产"},
+            {FRK_DIETARY, "调养膳食"},
+            {FRK_HOME, "日用家居"},
+            {FRK_CARE, "家政陪护"},
+            {FRK_AD, "广告宣传"},
+            {FRK_CHARITY, "公益志愿"},
+        };
+
 
         internal int id;
         internal short fork;

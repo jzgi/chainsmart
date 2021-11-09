@@ -3,18 +3,18 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Revital.Supply.Subscribe;
+using static Revital.Supply.Subscrib;
 using static Revital.User;
 
 namespace Revital.Supply
 {
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("采购收货管理", "sign-in")]
-    public class CtrlySubscribeWork : WebWork
+    public class CtrlySubscribWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlySubscribeVarWork>();
+            MakeVarWork<CtrlySubscribVarWork>();
         }
 
         [Ui("已确认", group: 1), Tool(Anchor)]
@@ -22,8 +22,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Subscribe>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Subscrib>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -41,8 +41,8 @@ namespace Revital.Supply
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Subscribe>(p => p.Set(orgid).Set(page), 0xff);
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            var arr = await dc.QueryAsync<Subscrib>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
             {
@@ -72,7 +72,7 @@ namespace Revital.Supply
             else // POST
             {
                 var today = DateTime.Today;
-                var o = await wc.ReadObjectAsync(inst: new Subscribe
+                var o = await wc.ReadObjectAsync(inst: new Subscrib
                 {
                     // @extern = org.refid,
                 });
@@ -121,11 +121,11 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源订货动态", "sign-out")]
-    public class SrclySubscribeWork : WebWork
+    public class SrclySubscribWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclySubscribeVarWork>();
+            MakeVarWork<SrclySubscribVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -133,8 +133,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -144,8 +144,8 @@ namespace Revital.Supply
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -153,7 +153,7 @@ namespace Revital.Supply
 
     [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
     [Ui("产源订货")]
-    public class FrmlySubscribeWork : WebWork
+    public class FrmlySubscribWork : WebWork
     {
         protected override void OnMake()
         {
@@ -165,8 +165,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
@@ -176,8 +176,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }

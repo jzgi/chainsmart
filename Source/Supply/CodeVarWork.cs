@@ -10,8 +10,8 @@ namespace Revital.Supply
             int code = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE @1 BETWEEN start AND end");
-            var o = dc.QueryTop<Subscribe>(p => p.Set(code));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE @1 BETWEEN start AND end");
+            var o = dc.QueryTop<Subscrib>(p => p.Set(code));
 
 
             var prod = Obtain<short, Supply>(o.prodid);

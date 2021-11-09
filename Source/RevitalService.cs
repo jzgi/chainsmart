@@ -15,7 +15,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<PublyMartVarWork>();
+            MakeVarWork<PublyVarWork>();
 
             // public 
 
@@ -27,11 +27,11 @@ namespace Revital
 
             MakeWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<MrtlyWork>("bizly"); // platform admin
+            MakeWork<SrclyWork>("srcly"); // for source
 
             MakeWork<CtrlyWork>("ctrly"); // for distribution center
 
-            MakeWork<SrclyWork>("srcly"); // for source
+            MakeWork<MrtlyWork>("mrtly"); // platform admin
 
             MakeWork<MyWork>("my");
         }
@@ -45,7 +45,7 @@ namespace Revital
                 h.PIC("/logo-2.png");
                 h._HEADER();
                 int ptid = 1;
-                
+
                 if (ptid > 0)
                 {
                     var o = orgs[ptid];

@@ -13,28 +13,28 @@ namespace Revital.Supply
             MakeVarWork<CtrlyDistribVarWork>();
         }
 
-        [Ui("已确认", @group: 1), Tool(Modal.Anchor)]
+        [Ui("已确认", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             short orgid = wc[-1];
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("已发货", @group: 2), Tool(Modal.Anchor)]
+        [Ui("已发货", group: 2), Tool(Modal.Anchor)]
         public async Task shipped(WebContext wc, int page)
         {
             short orgid = wc[-1];
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("发货", @group: 1), Tool(Modal.ButtonOpen)]
+        [Ui("发货", group: 1), Tool(Modal.ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
         }
 
-        [Ui("复制", @group: 2), Tool(Modal.ButtonPickOpen)]
+        [Ui("复制", group: 2), Tool(Modal.ButtonPickOpen)]
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];

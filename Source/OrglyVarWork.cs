@@ -48,13 +48,13 @@ namespace Revital
 
             MakeWork<FrmlyYieldWork>("fyield");
 
-            MakeWork<FrmlySubscribeWork>("fsub");
+            MakeWork<FrmlySubscribWork>("fsub");
 
             MakeWork<SrclyOrgWork>("org");
 
             MakeWork<SrclyYieldWork>("prod");
 
-            MakeWork<SrclySubscribeWork>("gain");
+            MakeWork<SrclySubscribWork>("gain");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -102,7 +102,7 @@ namespace Revital
 
             MakeWork<CtrlyAgriDistribWork, CtrlyDietaryDistribWork, CtrlyHomeDistribWork, CtrlyCareDistribWork, CtrlyAdDistribWork, CtrlyCharityDistribWork>("distrib");
 
-            MakeWork<CtrlySubscribeWork>("subscrib");
+            MakeWork<CtrlySubscribWork>("subscrib");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -140,23 +140,22 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<BizlyBidWork>("take");
+            MakeWork<BizlyBidWork>("bid");
 
             MakeWork<BizlyDistribWork>("distrib");
 
-            MakeWork<OrglyClearWork>("clear");
-
             MakeWork<MrtlyOrgWork>("org");
+
+            MakeWork<OrglyClearWork>("clear");
 
             MakeWork<OrglyAccessWork>("access", User.Orgly);
         }
 
         public void @default(WebContext wc)
         {
-            short orgid = wc[0];
-            var org = Obtain<short, Org>(orgid);
-            var co = Obtain<int, Org>(org.sprid);
-            var ctr = Obtain<int, Org>(org.ctrid);
+            var org = wc[0].As<Org>();
+            // var co = Obtain<int, Org>(org.sprid);
+            // var ctr = Obtain<int, Org>(org.ctrid);
 
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
@@ -171,9 +170,9 @@ namespace Revital
                 h.LI_().FIELD("地址", org.addr)._LI();
                 if (!org.IsBizCo)
                 {
-                    h.LI_().FIELD("商户社", co.name)._LI();
+                    // h.LI_().FIELD("商户社", co.name)._LI();
                 }
-                h.LI_().FIELD("分拣中心", ctr.name)._LI();
+                // h.LI_().FIELD("分拣中心", ctr.name)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("授权代办", org.trust)._LI();
                 h._UL();

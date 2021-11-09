@@ -6,6 +6,9 @@ namespace Revital
     {
     }
 
+    /// <summary>
+    /// source and farm
+    /// </summary>
     public class SrclyWork : OrglyWork
     {
         protected override void OnMake()
@@ -20,6 +23,9 @@ namespace Revital
     }
 
 
+    /// <summary>
+    /// center
+    /// </summary>
     public class CtrlyWork : OrglyWork
     {
         protected override void OnMake()
@@ -33,6 +39,10 @@ namespace Revital
         }
     }
 
+    
+    /// <summary>
+    /// mart and biz
+    /// </summary>
     public class MrtlyWork : OrglyWork
     {
         protected override void OnMake()

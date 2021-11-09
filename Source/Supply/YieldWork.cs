@@ -40,8 +40,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -51,8 +51,8 @@ namespace Revital.Supply
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -72,8 +72,8 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -83,8 +83,8 @@ namespace Revital.Supply
         {
             int orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscribe.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Subscribe>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }

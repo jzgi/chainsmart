@@ -3,16 +3,22 @@ using SkyChain.Web;
 
 namespace Revital.Shop
 {
-    public class PublyMartBizVarWork : WebWork
+    /// <summary>
+    /// The home directory for a biz.
+    /// </summary>
+    public class PublyVarVarWork : WebWork
     {
-        /// <summary>
-        /// The home page for the biz.
-        /// </summary>
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[0];
-            var biz = Obtain<short, Org>(orgid);
+            short bizid = wc[0];
+            var regs = ObtainMap<short, Reg>();
+
             using var dc = NewDbContext();
+            wc.GivePage(200, h =>
+            {
+                h.SUBNAV(regs, "", page, filter: (k, v) => v.typ == Reg.TYP_INDOOR);
+                h.DIV_()._DIV();
+            });
         }
 
         // public async Task icon(WebContext wc)

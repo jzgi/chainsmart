@@ -99,7 +99,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(Supply.Statuses[o.status]);
+                    h.TD(_Bean.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -152,7 +152,7 @@ namespace Revital.Supply
                         {
                             h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
                         }
-                        h.LI_().SELECT("状态", nameof(o.status), o.status, Supply.Statuses)._LI();
+                        h.LI_().SELECT("状态", nameof(o.status), o.status, _Bean.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 

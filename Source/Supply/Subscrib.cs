@@ -6,9 +6,9 @@ namespace Revital.Supply
     /// 
     /// A upstream line of purchase.
     /// 
-    public class Subscribe : IData, IKeyable<int>
+    public class Subscrib : IData, IKeyable<int>
     {
-        public static readonly Subscribe Empty = new Subscribe();
+        public static readonly Subscrib Empty = new Subscrib();
 
         public const byte ID = 1, LATER = 2;
 
