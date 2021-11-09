@@ -55,13 +55,13 @@ namespace Revital
         }
 
 
-        public static HtmlContent TOPBAR_DIET(this HtmlContent h, ref int curtyp)
+        public static HtmlContent TOPBAR_BIZ(this HtmlContent h, Org biz)
         {
             h.NAV_("uk-top-bar");
 
-            h.DIV_("uk-button-group uk-flex"); // tabbed subnav of item groups
-
-            // h.T("<span class=\"uk-margin-left-auto\">功效见证&nbsp;<button class=\"uk-icon-button uk-danger\" formaction=\"cases\" onclick=\"return dialog(this,8,false,4,'功效见证')\"><span uk-icon=\"users\"></span></button></span>");
+            h.SECTION_();
+            h.T(biz.name);
+            h._SECTION();
 
             h._NAV();
             h.DIV_("uk-top-placeholder")._DIV();

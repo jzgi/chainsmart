@@ -10,15 +10,25 @@ namespace Revital.Shop
     {
         public async Task @default(WebContext wc, int page)
         {
-            short bizid = wc[0];
+            int bizid = wc[0];
+            var biz = Obtain<int, Org>(bizid);
+            var mrt = Obtain<int, Org>(biz.sprid);
             var regs = ObtainMap<short, Reg>();
 
+            // get current posts of this biz 
             using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE bizid = @1 AND status > 0 ORDER BY created DESC");
+            var map = await dc.QueryAsync<int, Post>(p => p.Set(bizid));
             wc.GivePage(200, h =>
             {
-                h.SUBNAV(regs, "", page, filter: (k, v) => v.typ == Reg.TYP_INDOOR);
-                h.DIV_()._DIV();
-            });
+                h.TOPBAR_BIZ(biz);
+
+                h.GRID(map, ety =>
+                {
+                    var v = ety.Value;
+                    h.HEADER_().T(v.name)._HEADER();
+                });
+            }, title: mrt.name);
         }
 
         // public async Task icon(WebContext wc)

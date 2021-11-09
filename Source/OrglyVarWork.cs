@@ -79,7 +79,7 @@ namespace Revital
                 h.LI_().FIELD("主体", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsBizCo)
+                if (!org.IsMart)
                 {
                     // h.LI_().FIELD("产源社", co.name)._LI();
                 }
@@ -140,7 +140,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<BizlyBidWork>("bid");
+            MakeWork<AgriBizlyActWork, DietaryBizlyActWork>("act");
 
             MakeWork<BizlyDistribWork>("distrib");
 
@@ -154,8 +154,6 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            // var co = Obtain<int, Org>(org.sprid);
-            // var ctr = Obtain<int, Org>(org.ctrid);
 
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
@@ -166,13 +164,18 @@ namespace Revital
 
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
-                h.LI_().FIELD("协作类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsBizCo)
+                h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("地址／编址", org.addr)._LI();
+                if (!org.IsMart && org.sprid > 0)
                 {
-                    // h.LI_().FIELD("商户社", co.name)._LI();
+                    var spr = Obtain<int, Org>(org.sprid);
+                    h.LI_().FIELD("市场／驿站", spr.name)._LI();
                 }
-                // h.LI_().FIELD("分拣中心", ctr.name)._LI();
+                if (org.ctrid > 0)
+                {
+                    var ctr = Obtain<int, Org>(org.ctrid);
+                    h.LI_().FIELD("供应中心", ctr.name)._LI();
+                }
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("授权代办", org.trust)._LI();
                 h._UL();

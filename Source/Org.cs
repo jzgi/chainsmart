@@ -14,20 +14,20 @@ namespace Revital
             TYP_SPR = 0b00100, // supervisor
             TYP_BIZ = 0b00001,
             TYP_FRM = 0b00010, // farm
-            TYP_TRD = 0b00100, // trader
+            TYP_SUB = 0b00100, // subscriber
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
             TYP_SRC = TYP_SPR | TYP_FRM, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_FRM, // channel
             TYP_CTR = 0b01000, // center
             TYP_CTR_HLF = TYP_CTR | TYP_BIZ,
-            TYP_CTR_FUL = TYP_CTR | TYP_TRD;
+            TYP_CTR_FUL = TYP_CTR | TYP_SUB;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_BIZ, "商户／服务"},
-            {TYP_FRM, "农场／地块"},
-            {TYP_MRT, "市集／驿站"},
-            {TYP_SRC, "产源／基地"},
+            {TYP_BIZ, "商户／服务点"},
+            {TYP_FRM, "生产户／地块"},
+            {TYP_MRT, "市场／驿站"},
+            {TYP_SRC, "产源／产地"},
             {TYP_CHL, "供销渠道"},
             {TYP_CTR, "供应中心（封闭）"},
             {TYP_CTR_HLF, "供应中心（半链）"},
@@ -143,13 +143,13 @@ namespace Revital
 
         public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsSrcCo => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsFarm => (typ & TYP_FRM) == TYP_FRM;
 
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsBizCo => (typ & TYP_MRT) == TYP_MRT;
+        public bool IsMart => (typ & TYP_MRT) == TYP_MRT;
 
-        public bool IsCenter => (typ & TYP_CTR_HLF) == TYP_CTR_HLF;
+        public bool IsCenter => (typ & TYP_CTR) == TYP_CTR;
 
         public bool IsTruster => IsBiz || IsSrc || IsCenter;
 

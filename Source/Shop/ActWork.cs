@@ -5,11 +5,11 @@ using static Revital.User;
 
 namespace Revital.Shop
 {
-    public class MyBidWork : WebWork
+    public class MyActWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MyBidVarWork>();
+            MakeVarWork<MyActVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -19,33 +19,26 @@ namespace Revital.Shop
             var orgs = ObtainMap<short, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orders WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
-            var arr = await dc.QueryAsync<Bid>(p => p.Set(prin.id).Set(page));
-            Map<int, Bid> map = null;
-            var ids = arr?.Exract(x => x.id);
-            if (ids != null)
-            {
-                dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orderlgs WHERE orderid")._IN_(ids).T(" ORDER BY dt");
-                map = dc.Query<int, Bid>(p => p.SetForIn(ids));
-            }
+            dc.Sql("SELECT ").collst(Act.Empty).T(" FROM acts WHERE uid = @1 AND status >=  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
+            var arr = await dc.QueryAsync<Act>(p => p.Set(prin.id).Set(page));
+            Map<int, Act> map = null;
         }
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("订单或参与")]
-    public class BizlyBidWork : WebWork
+    public abstract class BizlyActWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyBidVarWork>();
+            MakeVarWork<BizlyActVarWork>();
         }
 
         public async Task @default(WebContext wc)
         {
-            int orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM ros WHERE bizid = @1 AND status > 0 AND status < ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Act.Empty).T(" FROM bids WHERE bizid = @1 AND status > 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Act>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -62,8 +55,8 @@ namespace Revital.Shop
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Act.Empty).T(" FROM orders WHERE orgid = @1 AND status >= ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Act>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -75,5 +68,15 @@ namespace Revital.Shop
                 });
             });
         }
+    }
+
+    [Ui("客户订单管理", fork: Org.FRK_AGRI)]
+    public class AgriBizlyActWork : BizlyActWork
+    {
+    }
+
+    [Ui("客户预订管理", fork: Org.FRK_DIETARY)]
+    public class DietaryBizlyActWork : BizlyActWork
+    {
     }
 }

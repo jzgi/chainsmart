@@ -19,7 +19,9 @@ create table subscribs
 	ctrid integer,
 	created timestamp(0),
 	creator varchar(10),
-	id serial not null,
+	id serial not null
+		constraint subscribs_pk
+			primary key,
 	no bigint,
 	planid smallint,
 	itemid smallint not null,
@@ -121,7 +123,7 @@ alter table agrees owner to postgres;
 create table distribs
 (
 	id serial not null
-		constraint books_pk
+		constraint distribs_pk
 			primary key,
 	bizid smallint not null,
 	ctrid integer,
@@ -212,31 +214,44 @@ alter table supplys owner to postgres;
 
 create table posts
 (
-	id integer,
-	supplyid integer,
+	id integer not null
+		constraint posts_pk
+			primary key,
+	bizid integer,
 	itemid integer,
+	supplyid integer,
+	unit varchar(4),
+	unitx smallint,
+	min smallint,
+	max smallint,
+	step smallint,
 	price money,
-	discount money,
-	status smallint
-);
+	"off" money
+)
+inherits (_beans);
 
 alter table posts owner to postgres;
 
-create table bids
+create table acts
 (
-	status smallint default 0 not null,
-	id serial not null,
-	typ smallint,
-	martid smallint not null,
+	id serial not null
+		constraint acts_pk
+			primary key,
+	mrtid smallint not null,
 	bizid integer not null,
+	postid smallint not null,
+	itemid smallint,
 	uid integer not null,
+	uname varchar(10),
+	utel varchar(11),
+	uim varchar(28),
 	price money,
 	pay money,
-	refund money,
-	itemid smallint
-);
+	refund money
+)
+inherits (_beans);
 
-alter table bids owner to postgres;
+alter table acts owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
