@@ -1,4 +1,4 @@
-using Revital.Supply;
+using Revital;
 using SkyChain.Chain;
 using SkyChain.Web;
 

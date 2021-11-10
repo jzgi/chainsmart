@@ -1,6 +1,6 @@
 ﻿using SkyChain.Chain;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class RevitalDrive : ChainDrive
     {

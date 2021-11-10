@@ -3,7 +3,7 @@ using SkyChain.Web;
 using static SkyChain.Web.Modal;
 using static Revital.User;
 
-namespace Revital.Supply
+namespace Revital
 {
     public abstract class YieldWork : WebWork
     {

@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Revital.Shop;
+using Revital;
 using SkyChain;
 using SkyChain.Web;
 using static System.String;

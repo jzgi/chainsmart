@@ -1,11 +1,11 @@
 ﻿using SkyChain;
 
-namespace Revital.Shop
+namespace Revital
 {
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Act : _Bean, IKeyable<int>
+    public class Act : _Doc, IKeyable<int>
     {
         public static readonly Act Empty = new Act();
 

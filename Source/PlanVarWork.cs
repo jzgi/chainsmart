@@ -4,14 +4,14 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public abstract class SupplyVarWork : WebWork
+    public abstract class PlanVarWork : WebWork
     {
     }
-    
 
-    public class CtrlySupplyVarWork : SupplyVarWork
+
+    public class CtrlyPlanVarWork : PlanVarWork
     {
         [Ui("✎", "✎ 修改", @group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
@@ -29,7 +29,7 @@ namespace Revital.Supply
                     h.LI_().TEXT("品名", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXT("亮点", nameof(o.tip), o.tip, max: 10)._LI();
                     // h.LI_().SELECT("方案关联", nameof(o.unit), o.unit, Item.Progg)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Supply.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Plan.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -117,5 +117,4 @@ namespace Revital.Supply
             }
         }
     }
-
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Revital.Supply;
+using Revital;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
@@ -56,8 +56,8 @@ namespace Revital
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Supply.Supply.Empty).T(" FROM supplys ORDER BY typ, status DESC");
-                    return dc.Query<int, Supply.Supply>();
+                    dc.Sql("SELECT ").collst(Revital.Plan.Empty).T(" FROM supplys ORDER BY typ, status DESC");
+                    return dc.Query<int, Revital.Plan>();
                 }, 60 * 15
             );
         }

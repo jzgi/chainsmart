@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static Revital.User;
 
-namespace Revital.Shop
+namespace Revital
 {
     public abstract class ActWork : WebWork
     {

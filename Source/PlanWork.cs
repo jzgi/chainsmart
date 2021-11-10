@@ -3,26 +3,26 @@ using System.Threading.Tasks;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
-    public abstract class SupplyWork : WebWork
+    public abstract class PlanWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    public abstract class CtrlySupplyWork : SupplyWork
+    public abstract class CtrlyPlanWork : PlanWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlySupplyVarWork>();
+            MakeVarWork<CtrlyPlanVarWork>();
         }
 
         [Ui("未生效", @group: 1), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM supplys ORDER BY typ, status < 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Plan>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -41,7 +41,7 @@ namespace Revital.Supply
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD(o.rprice, true);
-                    h.TD(_Bean.Statuses[o.status]);
+                    h.TD(_Doc.Statuses[o.status]);
                     h._TR();
                     last = o.typ;
                 }
@@ -54,8 +54,8 @@ namespace Revital.Supply
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM supplys_ ORDER BY typ, status >= 2 LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Plan>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -71,7 +71,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(_Bean.Statuses[o.status]);
+                    h.TD(_Doc.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -85,8 +85,8 @@ namespace Revital.Supply
         public void post(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys_ ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Supply>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM supplys_ ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Plan>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -102,7 +102,7 @@ namespace Revital.Supply
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(_Bean.Statuses[o.status]);
+                    h.TD(_Doc.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -123,10 +123,10 @@ namespace Revital.Supply
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("请选择供应类型");
-                        for (int i = 0; i < Supply.Modes.Count; i++)
+                        for (int i = 0; i < Plan.Modes.Count; i++)
                         {
-                            var key = Supply.Modes.KeyAt(i);
-                            var scheme = Supply.Modes.ValueAt(i);
+                            var key = Plan.Modes.KeyAt(i);
+                            var scheme = Plan.Modes.ValueAt(i);
                             h.LI_("uk-flex").A_HREF_(nameof(@new) + "-" + key, end: true, css: "uk-button uk-button-secondary uk-width-1-1").T(scheme)._A()._LI();
                         }
                         h._FIELDSUL();
@@ -136,7 +136,7 @@ namespace Revital.Supply
                 else
                 {
                     var dt = DateTime.Today;
-                    var o = new Supply
+                    var o = new Plan
                     {
                         started = dt,
                         ended = dt,
@@ -155,7 +155,7 @@ namespace Revital.Supply
                         {
                             h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
                         }
-                        h.LI_().SELECT("状态", nameof(o.status), o.status, _Bean.Statuses)._LI();
+                        h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses)._LI();
 
                         h._FIELDSUL().FIELDSUL_("销售参数");
 
@@ -180,9 +180,9 @@ namespace Revital.Supply
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Supply>(0);
+                var o = await wc.ReadObjectAsync<Plan>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Supply.Empty, 0)._VALUES_(Supply.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Plan.Empty, 0)._VALUES_(Plan.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -191,28 +191,28 @@ namespace Revital.Supply
     }
 
     [Ui("供应管理", "calendar", forkie: Org.FRK_AGRI)]
-    public class AgriCtrlySupplyWork : CtrlySupplyWork
+    public class AgriCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("供应管理", "calendar", forkie: Org.FRK_DIETARY)]
-    public class DietaryCtrlySupplyWork : CtrlySupplyWork
+    public class DietaryCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class HomeCtrlySupplyWork : CtrlySupplyWork
+    public class HomeCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class CareCtrlySupplyWork : CtrlySupplyWork
+    public class CareCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class AdCtrlySupplyWork : CtrlySupplyWork
+    public class AdCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class CharityCtrlySupplyWork : CtrlySupplyWork
+    public class CharityCtrlyPlanWork : CtrlyPlanWork
     {
     }
 }

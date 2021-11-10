@@ -1,6 +1,6 @@
 using SkyChain.Web;
 
-namespace Revital.Shop
+namespace Revital
 {
     public abstract class PostWork : WebWork
     {

@@ -3,14 +3,45 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Revital.Supply.Subscrib;
+using static Revital.Subscrib;
 using static Revital.User;
 
-namespace Revital.Supply
+namespace Revital
 {
     public abstract class SubscribWork : WebWork
     {
     }
+
+    public class PublySubscribWork : SubscribWork
+    {
+        public async Task @default(WebContext wc, int code)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM subscribs WHERE codend >= @1 ORDER BY codend LIMIT 1");
+            var o = await dc.QueryTopAsync<Subscrib>(p => p.Set(code));
+            wc.GivePage(200, h =>
+            {
+                if (o == null || o.codend - o.codes >= code)
+                {
+                    h.ALERT("编码没有找到");
+                }
+                else
+                {
+                    var plan = Obtain<short, Plan>(o.planid);
+                    var frm = Obtain<short, Org>(o.frmid);
+                    var ctr = Obtain<short, Org>(o.ctrid);
+
+                    h.FORM_();
+                    h.FIELDSUL_("溯源信息");
+                    h.LI_().FIELD("生产户／地块", frm.name);
+                    h.LI_().FIELD("分拣中心", ctr.name);
+                    h._FIELDSUL();
+                    h._FORM();
+                }
+            }, title: "中惠农通溯源系统");
+        }
+    }
+
 
     [UserAuthorize(orgly: ORGLY_OP)]
     [Ui("采购收货管理", "sign-in")]
@@ -26,7 +57,7 @@ namespace Revital.Supply
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STATUS_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STA_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Subscrib>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -45,7 +76,7 @@ namespace Revital.Supply
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STATUS_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STA_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Subscrib>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>

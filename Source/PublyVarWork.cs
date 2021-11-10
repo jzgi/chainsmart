@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using SkyChain.Web;
 
-namespace Revital.Shop
+namespace Revital
 {
     public class PublyVarWork : WebWork
     {

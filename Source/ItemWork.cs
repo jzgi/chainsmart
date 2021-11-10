@@ -48,7 +48,7 @@ namespace Revital
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Bean.Statuses[o.status]);
+                    h.TD(_Doc.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -67,7 +67,7 @@ namespace Revital
             {
                 var o = new Item
                 {
-                    status = _Bean.STA_WORKABLE
+                    status = _Doc.STA_WORKABLE
                 };
                 wc.GivePane(200, h =>
                 {
@@ -77,7 +77,7 @@ namespace Revital
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("计量单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("计量脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Bean.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

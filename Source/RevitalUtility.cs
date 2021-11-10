@@ -5,7 +5,7 @@ using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Revital.Supply.Distrib;
+using static Revital.Distrib;
 
 namespace Revital
 {

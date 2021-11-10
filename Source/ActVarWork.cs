@@ -7,7 +7,7 @@ using static SkyChain.Web.Appear;
 using static SkyChain.Web.Modal;
 using static Revital.WeChatUtility;
 
-namespace Revital.Shop
+namespace Revital
 {
     public class ActVarWork : WebWork
     {

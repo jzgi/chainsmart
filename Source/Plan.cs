@@ -1,14 +1,14 @@
 ﻿using System;
 using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// The data model for a particular supply of standard item.
     /// </summary>
-    public class Supply : _Bean, IKeyable<int>
+    public class Plan : _Doc, IKeyable<int>
     {
-        public static readonly Supply Empty = new Supply();
+        public static readonly Plan Empty = new Plan();
 
         public static readonly Map<short, string> Modes = new Map<short, string>
         {

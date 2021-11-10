@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Revital.Shop;
-using Revital.Supply;
+using Revital;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -21,7 +20,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(obj.addr), obj.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Bean.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Doc.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -98,7 +97,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<AgriCtrlySupplyWork, DietaryCtrlySupplyWork, HomeCtrlySupplyWork, CareCtrlySupplyWork, AdCtrlySupplyWork, CharityCtrlySupplyWork>("supply");
+            MakeWork<AgriCtrlyPlanWork, DietaryCtrlyPlanWork, HomeCtrlyPlanWork, CareCtrlyPlanWork, AdCtrlyPlanWork, CharityCtrlyPlanWork>("supply");
 
             MakeWork<AgriCtrlyDistribWork, DietaryCtrlyDistribWork, HomeCtrlyDistribWork, CareCtrlyDistribWork, AdCtrlyDistribWork, CharityCtrlyDistribWork>("distrib");
 
@@ -125,7 +124,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", o.name)._LI();
                 h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
                 h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Bean.Statuses[o.status])._LI();
+                h.LI_().FIELD("状态", _Doc.Statuses[o.status])._LI();
                 h._UL();
 
                 h.TASKUL();

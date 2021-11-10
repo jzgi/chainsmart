@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 
-namespace Revital.Supply
+namespace Revital
 {
     /// <summary>
     /// The data modal for a yield of item.

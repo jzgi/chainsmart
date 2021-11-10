@@ -4,9 +4,9 @@ using SkyChain;
 namespace Revital
 {
     /// <summary>
-    /// A publicly used model object.
+    /// An abstract document data object.
     /// </summary>
-    public abstract class _Bean : IData
+    public abstract class _Doc : IData
     {
         public const short
             STA_DISABLED = 0,

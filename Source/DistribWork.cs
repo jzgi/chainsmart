@@ -4,7 +4,7 @@ using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
-namespace Revital.Supply
+namespace Revital
 {
     public class DistribWork : WebWork
     {
@@ -98,7 +98,7 @@ namespace Revital.Supply
 
                     if (typ > 0)
                     {
-                        var prods = ObtainMap<short, Supply>();
+                        var prods = ObtainMap<short, Plan>();
                         for (int i = 0; i < prods?.Count; i++)
                         {
                             var o = prods.ValueAt(i);

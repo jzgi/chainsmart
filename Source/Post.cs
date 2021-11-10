@@ -1,8 +1,8 @@
 ﻿using SkyChain;
 
-namespace Revital.Shop
+namespace Revital
 {
-    public class Post : _Bean, IKeyable<int>
+    public class Post : _Doc, IKeyable<int>
     {
         public static readonly Post Empty = new Post();
 

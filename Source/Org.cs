@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : _Bean, IKeyable<int>, IForkable
+    public class Org : _Doc, IKeyable<int>, IForkable
     {
         public static readonly Org Empty = new Org();
 

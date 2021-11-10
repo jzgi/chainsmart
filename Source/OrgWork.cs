@@ -43,7 +43,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Bean.Statuses[o.status]);
+                    h.TD(_Doc.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
                     last = o.regid;
@@ -64,7 +64,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Bean.STA_WORKABLE
+                    status = _Doc.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -143,7 +143,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Bean.STA_WORKABLE
+                    status = _Doc.STA_WORKABLE
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -155,7 +155,7 @@ namespace Revital
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_INDOOR)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.forkie), m.forkie, Org.Forks, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Bean.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Doc.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

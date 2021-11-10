@@ -3,7 +3,7 @@ using SkyChain;
 using SkyChain.Web;
 using static Revital.Org;
 
-namespace Revital.Shop
+namespace Revital
 {
     /// <summary>
     /// The formatives of posts and acts.

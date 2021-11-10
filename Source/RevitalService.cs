@@ -1,8 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using Revital.Shop;
-using Revital.Supply;
+using Revital;
 using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
@@ -21,7 +20,7 @@ namespace Revital
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublyCodeWork>("code");
+            MakeWork<PublySubscribWork>("code");
 
             // management
 
@@ -172,7 +171,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Bean.STA_WORKABLE,
+                    status = _Doc.STA_WORKABLE,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

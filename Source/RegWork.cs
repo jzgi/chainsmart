@@ -37,7 +37,7 @@ namespace Revital
                             h.T('（').T(Reg.Typs[o.typ]).T('）');
                         }
                         h._TD();
-                        h.TD(_Bean.Statuses[o.status]);
+                        h.TD(_Doc.Statuses[o.status]);
                         h.TDFORM(() => h.VARTOOLS(o.Key));
                     }
                 );
@@ -51,7 +51,7 @@ namespace Revital
             {
                 var o = new Reg
                 {
-                    status = _Bean.STA_WORKABLE
+                    status = _Doc.STA_WORKABLE
                 };
                 wc.GivePane(200, h =>
                 {
@@ -60,7 +60,7 @@ namespace Revital
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Reg.Typs)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Bean.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
