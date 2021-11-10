@@ -5,9 +5,9 @@ namespace Revital
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Act : _Doc, IKeyable<int>
+    public class Need : _Doc, IKeyable<int>
     {
-        public static readonly Act Empty = new Act();
+        public static readonly Need Empty = new Need();
 
         public const short
             STA_CREATED = 0,

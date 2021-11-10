@@ -39,8 +39,8 @@ namespace Revital
             FRK_DIETARY = 2,
             FRK_HOME = 3,
             FRK_CARE = 4,
-            FRK_AD = 6,
-            FRK_CHARITY = 7;
+            FRK_AD = 5,
+            FRK_CHARITY = 6;
 
         public static readonly Map<short, string> Forks = new Map<short, string>
         {

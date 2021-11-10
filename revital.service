@@ -1,11 +1,11 @@
 [Unit]
-Description=Skyiah Health Platform
+Description=Revital Platform
 
 [Service]
 EnvironmentFile=/etc/environment
 Type=forking
 WorkingDirectory=/root
-ExecStart=/usr/bin/dotnet /root/publish/Zhnt.dll deploy
+ExecStart=/usr/bin/dotnet /root/publish/Revital.dll deploy
 Restart=always
 
 [Install]

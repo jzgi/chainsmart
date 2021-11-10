@@ -11,33 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table subscribs
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	partyid smallint not null,
-	ctrid integer,
-	created timestamp(0),
-	creator varchar(10),
-	id serial not null
-		constraint subscribs_pk
-			primary key,
-	no bigint,
-	planid smallint,
-	itemid smallint not null,
-	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money,
-	codestart integer,
-	codes smallint,
-	prodid integer
-);
-
-alter table subscribs owner to postgres;
-
-create table _beans
+create table _docs
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -49,7 +23,7 @@ create table _beans
 	modifier varchar(10)
 );
 
-alter table _beans owner to postgres;
+alter table _docs owner to postgres;
 
 create table items
 (
@@ -60,7 +34,7 @@ create table items
 	unitip varchar(10),
 	icon bytea
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table items owner to postgres;
 
@@ -79,7 +53,7 @@ create table users
 	idcard varchar(18),
 	icon bytea
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table users owner to postgres;
 
@@ -104,7 +78,7 @@ create table regs
 			primary key,
 	idx smallint
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table regs owner to postgres;
 
@@ -116,7 +90,7 @@ create table agrees
 	ended date,
 	content jsonb
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table agrees owner to postgres;
 
@@ -127,7 +101,7 @@ create table distribs
 			primary key,
 	bizid smallint not null,
 	ctrid integer,
-	supplyid smallint,
+	planid smallint,
 	itemid smallint not null,
 	price money,
 	"off" money,
@@ -135,7 +109,7 @@ create table distribs
 	pay money,
 	refund money
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table distribs owner to postgres;
 
@@ -148,7 +122,7 @@ create table yields
 	itemid smallint,
 	test bytea
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table yields owner to postgres;
 
@@ -167,13 +141,13 @@ create table orgs
 	y double precision,
 	mgrid integer,
 	icon bytea,
-	fork smallint
+	forkie smallint
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table orgs owner to postgres;
 
-create table supplys
+create table plans
 (
 	id serial not null
 		constraint supplys_pk
@@ -208,9 +182,9 @@ create table supplys
 	sprice money,
 	soff money
 )
-inherits (_beans);
+inherits (_docs);
 
-alter table supplys owner to postgres;
+alter table plans owner to postgres;
 
 create table posts
 (
@@ -219,7 +193,7 @@ create table posts
 			primary key,
 	bizid integer,
 	itemid integer,
-	supplyid integer,
+	planid integer,
 	unit varchar(4),
 	unitx smallint,
 	min smallint,
@@ -228,14 +202,14 @@ create table posts
 	price money,
 	"off" money
 )
-inherits (_beans);
+inherits (_docs);
 
 alter table posts owner to postgres;
 
-create table acts
+create table needs
 (
 	id serial not null
-		constraint acts_pk
+		constraint needs_pk
 			primary key,
 	mrtid smallint not null,
 	bizid integer not null,
@@ -249,9 +223,32 @@ create table acts
 	pay money,
 	refund money
 )
-inherits (_beans);
+inherits (_docs);
 
-alter table acts owner to postgres;
+alter table needs owner to postgres;
+
+create table subscribs
+(
+	id serial not null
+		constraint subscribs_pk
+			primary key,
+	ctrid integer,
+	srcid integer not null,
+	frmid integer not null,
+	itemid integer not null,
+	planid integer,
+	yieldid integer,
+	price money,
+	"off" money,
+	qty integer,
+	pay money,
+	refund money,
+	codend integer,
+	codes smallint
+)
+inherits (_docs);
+
+alter table subscribs owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

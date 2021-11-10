@@ -190,12 +190,12 @@ namespace Revital
         }
     }
 
-    [Ui("供应管理", "calendar", forkie: Org.FRK_AGRI)]
+    [Ui("供应项管理", "calendar", forkie: Org.FRK_AGRI)]
     public class AgriCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应管理", "calendar", forkie: Org.FRK_DIETARY)]
+    [Ui("供应项管理", "calendar", forkie: Org.FRK_DIETARY)]
     public class DietaryCtrlyPlanWork : CtrlyPlanWork
     {
     }

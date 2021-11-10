@@ -139,7 +139,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<AgriBizlyActWork, DietaryBizlyActWork>("act");
+            MakeWork<AgriBizlyNeedWork, DietaryBizlyNeedWork>("act");
 
             MakeWork<BizlyDistribWork>("distrib");
 
