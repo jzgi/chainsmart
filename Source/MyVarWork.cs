@@ -16,37 +16,18 @@ namespace Revital
         }
 
         [UserAuthorize]
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-
-            // get the target user
-            var seg = wc[0];
-            User o;
-            if (seg.IsImplicit)
-            {
-                o = prin;
-            }
-            else
-            {
-                int id = seg;
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
-                o = await dc.QueryTopAsync<User>(p => p.Set(id));
-            }
-
-            // // refresh cookie
-            // wc.SetTokenCookie(o);
-
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name);
+                h.TOOLBAR();
 
                 h.FORM_("uk-card uk-card-default");
                 h.UL_("uk-card-body");
-                h.LI_().FIELD("姓名", o.name)._LI();
-                h.LI_().FIELD("手机号码", o.tel)._LI();
-                h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
+                h.LI_().FIELD("姓名", prin.name)._LI();
+                h.LI_().FIELD("手机号码", prin.tel)._LI();
+                h.LI_().FIELD("专业", User.Typs[prin.typ])._LI();
                 h._UL();
                 h._FORM();
 

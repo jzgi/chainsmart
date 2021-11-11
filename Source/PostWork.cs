@@ -6,6 +6,18 @@ namespace Revital
     {
     }
 
+    public class PublyPostWork : PostWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<PublyPostVarWork>();
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
+
     [Ui("货架")]
     public class BizlyPostWork : PostWork
     {

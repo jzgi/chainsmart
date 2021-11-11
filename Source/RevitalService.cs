@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using Revital;
 using SkyChain;
 using SkyChain.Chain;
 using SkyChain.Web;
@@ -15,6 +14,8 @@ namespace Revital
         protected override void OnMake()
         {
             MakeVarWork<PublyVarWork>();
+
+            MakeWork<PublyPostWork>("post");
 
             // public 
 

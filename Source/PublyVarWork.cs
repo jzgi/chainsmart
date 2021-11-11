@@ -3,11 +3,14 @@ using SkyChain.Web;
 
 namespace Revital
 {
+    /// 
+    /// mart
+    /// 
     public class PublyVarWork : WebWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<PublyVarVarWork>();
+            MakeVarWork<PublyBizVarWork>();
         }
 
         public async Task @default(WebContext wc, int cur)

@@ -30,30 +30,28 @@ namespace Revital
         {
             var prin = (User) wc.Principal;
 
-            if (prin == null)
+            if (prin == null) // auth required
             {
                 return false;
             }
+
 
             if (admly > 0)
             {
                 return (prin.admly & admly) == admly;
             }
 
-            // check access to org
-            var org = wc[typeof(OrglyVarWork)].As<Org>();
-
-            if (orgtyp > 0 && orgly > 0)
-            {
-                if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly) return false;
-            }
-
-            if (org.trust && org.sprid == prin.orgid) // is supervision org
+            if (orgtyp == 0 || orgly == 0) // require signin only
             {
                 return true;
             }
 
-            return true;
+            // check access to org
+            var org = wc[typeof(OrglyVarWork)].As<Org>();
+
+            if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly) return true;
+
+            return org.trust && org.sprid == prin.orgid;
         }
     }
 }
