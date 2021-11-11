@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Revital;
 using SkyChain;
 using SkyChain.Web;
 using static System.String;
@@ -20,12 +19,24 @@ namespace Revital
         public async Task @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
-            var o = dc.QueryTop<User>(p => p.Set(prin.id));
 
-            // refresh cookie
-            wc.SetTokenCookie(o);
+            // get the target user
+            var seg = wc[0];
+            User o;
+            if (seg.IsImplicit)
+            {
+                o = prin;
+            }
+            else
+            {
+                int id = seg;
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+                o = await dc.QueryTopAsync<User>(p => p.Set(id));
+            }
+
+            // // refresh cookie
+            // wc.SetTokenCookie(o);
 
             wc.GivePage(200, h =>
             {
@@ -35,7 +46,7 @@ namespace Revital
                 h.UL_("uk-card-body");
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("手机号码", o.tel)._LI();
-                h.LI_().FIELD("专业验证", User.Typs[o.typ])._LI();
+                h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h._UL();
                 h._FORM();
 

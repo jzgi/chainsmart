@@ -35,20 +35,22 @@ namespace Revital
                 return false;
             }
 
-            if (orgtyp > 0 && orgly > 0)
-            {
-                if ((prin.orgly & orgly) != orgly) return false; // inclusive check
-                var org = wc[typeof(OrglyVarWork)].As<Org>();
-                if (org != null)
-                {
-                    return (org.typ & orgtyp) > 0; // inclusive
-                }
-                return false;
-            }
-
             if (admly > 0)
             {
                 return (prin.admly & admly) == admly;
+            }
+
+            // check access to org
+            var org = wc[typeof(OrglyVarWork)].As<Org>();
+
+            if (orgtyp > 0 && orgly > 0)
+            {
+                if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly) return false;
+            }
+
+            if (org.trust && org.sprid == prin.orgid) // is supervision org
+            {
+                return true;
             }
 
             return true;

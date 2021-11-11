@@ -1,3 +1,4 @@
+using SkyChain;
 using SkyChain.Web;
 
 namespace Revital
@@ -13,9 +14,10 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyVarWork>(prin =>
+            // id of either current user or the specified
+            MakeVarWork<SrclyVarWork>((prin, key) =>
                 {
-                    var orgid = ((User) prin).orgid;
+                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return Obtain<int, Org>(orgid);
                 }
             );
@@ -30,16 +32,17 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyVarWork>(prin =>
+            // id of either current user or the specified
+            MakeVarWork<CtrlyVarWork>((prin, key) =>
                 {
-                    var orgid = ((User) prin).orgid;
+                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return Obtain<int, Org>(orgid);
                 }
             );
         }
     }
 
-    
+
     /// <summary>
     /// mart and biz
     /// </summary>
@@ -47,9 +50,10 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<MrtlyVarWork>(prin =>
+            // id of either current user or the specified
+            MakeVarWork<MrtlyVarWork>((prin, key) =>
                 {
-                    var orgid = ((User) prin).orgid;
+                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return Obtain<int, Org>(orgid);
                 }
             );

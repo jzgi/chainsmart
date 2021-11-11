@@ -14,11 +14,11 @@ namespace Revital
             TYP_SPR = 0b00100, // supervisor
             TYP_BIZ = 0b00001,
             TYP_FRM = 0b00010, // farm
-            TYP_SUB = 0b00100, // subscriber
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
             TYP_SRC = TYP_SPR | TYP_FRM, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_FRM, // channel
-            TYP_CTR = 0b01000, // center
+            TYP_SUB = 0b01000, // subscriber
+            TYP_CTR = 0b10000, // center
             TYP_CTR_HLF = TYP_CTR | TYP_BIZ,
             TYP_CTR_FUL = TYP_CTR | TYP_SUB;
 

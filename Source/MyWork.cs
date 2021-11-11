@@ -1,3 +1,4 @@
+using SkyChain;
 using SkyChain.Web;
 
 namespace Revital
@@ -6,7 +7,8 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<MyVarWork>(x => ((User) x).id);
+            // id of either current user or the specified
+            MakeVarWork<MyVarWork>((prin, key) => key?.ToInt() ?? ((User) prin).id);
         }
     }
 }

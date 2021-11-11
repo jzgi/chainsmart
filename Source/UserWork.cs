@@ -171,10 +171,12 @@ namespace Revital
 
         public void @default(WebContext wc)
         {
-            short orgid = wc[-1];
+            var prinorg = wc[-1].As<Org>();
+            
+            
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-            var arr = dc.Query<User>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+            var arr = dc.Query<User>(p => p.Set(prinorg.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -233,15 +235,15 @@ namespace Revital
         }
     }
 
-    [Ui("消费者")]
-    public class MrtlyUserWork : UserWork
+    [Ui("客户管理")]
+    public class MrtlyCustWork : UserWork
     {
         protected override void OnMake()
         {
             MakeVarWork<MrtlyUserVarWork>();
         }
 
-        [Ui("浏览", @group: 1), Tool(Anchor)]
+        [Ui("浏览", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();

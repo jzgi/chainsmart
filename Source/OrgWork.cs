@@ -98,9 +98,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市集商户管理", "album")]
+    [Ui("市场商户管理", "album")]
 #else
-    [Ui("驿站服务管理", "album")]
+    [Ui("入驻业态管理", "album")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {

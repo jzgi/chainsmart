@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Revital;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -11,26 +10,25 @@ namespace Revital
         [Ui("设置"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
-            short orgid = wc[0];
-            var obj = Obtain<short, Org>(orgid);
+            var org = wc[0].As<Org>();
             if (wc.IsGet)
             {
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXT("标语", nameof(obj.tip), obj.tip, max: 16)._LI();
-                    h.LI_().TEXT("地址", nameof(obj.addr), obj.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(obj.status), obj.status, _Doc.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
+                    h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Doc.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else
             {
-                var o = await wc.ReadObjectAsync(inst: obj); // use existing object
+                var o = await wc.ReadObjectAsync(inst: org); // use existing object
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(orgid));
+                    p => p.Set(o.tip).Set(o.status).Set(org.id));
 
                 wc.GivePane(200);
             }
@@ -62,8 +60,7 @@ namespace Revital
 
         public void @default(WebContext wc)
         {
-            short orgid = wc[0];
-            var org = Obtain<int, Org>(orgid);
+            var org = wc[0].As<Org>();
             var co = Obtain<int, Org>(org.sprid);
 
             var prin = (User) wc.Principal;
@@ -71,7 +68,8 @@ namespace Revital
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
+                h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
@@ -110,21 +108,20 @@ namespace Revital
 
         public void @default(WebContext wc)
         {
-            var o = wc[0].As<Org>();
+            var org = wc[0].As<Org>();
             var regs = ObtainMap<short, Reg>();
-
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
+                h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
                 h.UL_("uk-card uk-card-primary uk-card-body ul-list uk-list-divider");
-                h.LI_().FIELD("主体名称", o.name)._LI();
-                h.LI_().FIELD2("地址", regs[o.regid]?.name, o.addr)._LI();
-                h.LI_().FIELD2("负责人", o.mgrname, o.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Doc.Statuses[o.status])._LI();
+                h.LI_().FIELD("主体名称", org.name)._LI();
+                h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
+                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
+                h.LI_().FIELD("状态", _Doc.Statuses[org.status])._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -134,16 +131,18 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
-    [Ui("市集驿站端")]
+    [Ui("市场驿站端")]
     public class MrtlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
+            MakeWork<MrtlyOrgWork>("org");
+
+            MakeWork<MrtlyCustWork>("cust");
+
             MakeWork<AgriBizlyNeedWork, DietaryBizlyNeedWork>("act");
 
             MakeWork<BizlyDistribWork>("distrib");
-
-            MakeWork<MrtlyOrgWork>("org");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -153,19 +152,18 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Orgly[prin.orgly] + "）");
+                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
+                h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址／编址", org.addr)._LI();
-                if (!org.IsMart && org.sprid > 0)
+                if (org.sprid > 0)
                 {
                     var spr = Obtain<int, Org>(org.sprid);
                     h.LI_().FIELD("市场／驿站", spr.name)._LI();
@@ -176,7 +174,7 @@ namespace Revital
                     h.LI_().FIELD("供应中心", ctr.name)._LI();
                 }
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("授权代办", org.trust)._LI();
+                h.LI_().FIELD("委托代办", org.trust)._LI();
                 h._UL();
 
                 h.TASKUL();
