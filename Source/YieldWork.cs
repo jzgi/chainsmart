@@ -10,27 +10,6 @@ namespace Revital
     }
 
 
-    [UserAuthorize(admly: 1)]
-    [Ui("产源产品总汇")]
-    public class AdmlyYieldWork : YieldWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<AdmlyYieldVarWork>();
-        }
-
-        [Ui("当前", @group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
-        }
-
-        [Ui("以往", @group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-        }
-    }
-
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源产品动态")]
     public class SrclyYieldWork : YieldWork

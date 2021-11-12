@@ -265,7 +265,7 @@ namespace Revital
             dc.Let(out short qty);
             dc.Let(out decimal pay);
 
-            dc.Sql("UPDATE lots SET qtys = qtys + @1, pays = pays + @2 WHERE id = @3 AND status = ").T(STATUS_CREATED).T(" RETURNING typ, orgid, name, min, qtys");
+            dc.Sql("UPDATE lots SET qtys = qtys + @1, pays = pays + @2 WHERE id = @3 AND status = ").T(STA_CREATED).T(" RETURNING typ, orgid, name, min, qtys");
             if (!await dc.QueryTopAsync(p => p.Set(qty).Set(pay).Set(lotid)))
             {
                 return false;
@@ -296,7 +296,7 @@ namespace Revital
             dc.Let(out DateTime inited);
             dc.Let(out decimal pay);
 
-            dc.Sql("UPDATE lots SET qtys = qtys - @1, pays = pays - @2 WHERE id = @3 AND status < ").T(STATUS_SUBMITTED);
+            dc.Sql("UPDATE lots SET qtys = qtys - @1, pays = pays - @2 WHERE id = @3 AND status < ").T(STA_SUBMITTED);
             if (await dc.ExecuteAsync(p => p.Set(qty).Set(pay).Set(lotid)) < 1)
             {
                 return LOT_NOT_FOUND;
@@ -312,7 +312,7 @@ namespace Revital
         public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org> orgs)
         {
             // update status of the master record
-            dc.Sql("UPDATE lots SET status = ").T(STATUS_SUBMITTED).T(" WHERE id = @1 AND status = ").T(STATUS_CREATED).T(" RETURNING typ, orgid, name");
+            dc.Sql("UPDATE lots SET status = ").T(STA_SUBMITTED).T(" WHERE id = @1 AND status = ").T(STA_CREATED).T(" RETURNING typ, orgid, name");
             if (!await dc.QueryTopAsync(p => p.Set(lotid)))
             {
                 return false;
@@ -331,7 +331,7 @@ namespace Revital
         {
             // update master status
             //
-            dc.Sql("UPDATE lots SET status = ").T(STATUS_ABORTED).T(", qtys = 0, pays = 0 WHERE id = @1 AND status < ").T(STATUS_CLOSED).T(" RETURNING typ, orgid, name");
+            dc.Sql("UPDATE lots SET status = ").T(STA_ABORTED).T(", qtys = 0, pays = 0 WHERE id = @1 AND status < ").T(STA_CLOSED).T(" RETURNING typ, orgid, name");
             if (!await dc.QueryTopAsync(p => p.Set(lotid)))
             {
                 return false;

@@ -4,6 +4,10 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
+create sequence txn_seq;
+
+alter sequence txn_seq owner to postgres;
+
 create table clears
 (
 	id smallserial not null
@@ -250,7 +254,7 @@ inherits (_docs);
 
 alter table subscribs owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -260,7 +264,7 @@ SELECT o.typ,
        o.modified,
        o.modifier,
        o.id,
-       o.forkie           AS fork,
+       o.forkie,
        o.sprid,
        o.ctrid,
        o.license,

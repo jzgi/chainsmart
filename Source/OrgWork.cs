@@ -9,7 +9,7 @@ namespace Revital
     {
     }
 
-    [Ui("入驻机构管理")]
+    [Ui("机构入驻")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -98,9 +98,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场商户管理", "album")]
+    [Ui("市场内商户", "album")]
 #else
-    [Ui("入驻业态管理", "album")]
+    [Ui("驿站内服务点", "album")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {

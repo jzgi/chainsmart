@@ -36,7 +36,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_SRC | Org.TYP_FRM, 1)]
+    [UserAuthorize(Org.TYP_FRM, 1)]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnMake()
@@ -89,7 +89,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR_HLF, 1)]
+    [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("供应中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
@@ -130,7 +130,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_BIZ | Org.TYP_MRT, 1)]
+    [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("市场驿站端")]
     public class MrtlyVarWork : OrglyVarWork
     {
@@ -140,9 +140,9 @@ namespace Revital
 
             MakeWork<MrtlyCustWork>("cust");
 
-            MakeWork<AgriBizlyNeedWork, DietaryBizlyNeedWork>("act");
+            MakeWork<AgriBizlyNeedWork, DietaryBizlyNeedWork>("need");
 
-            MakeWork<BizlyDistribWork>("distrib");
+            MakeWork<AgriBizlyDistribWork, DietaryBizlyDistribWork>("distrib");
 
             MakeWork<OrglyClearWork>("clear");
 

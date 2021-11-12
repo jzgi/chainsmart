@@ -12,8 +12,8 @@ namespace Revital
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_GEOGRAPHIC, "地理区域"},
-            {TYP_INDOOR, "内部区域"},
+            {TYP_GEOGRAPHIC, "地理"},
+            {TYP_INDOOR, "场内"},
         };
 
         internal short id;

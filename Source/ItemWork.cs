@@ -17,8 +17,8 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(admly: User.ADMLY_SYS)]
-    [Ui("全局品目管理")]
+    [UserAuthorize(admly: User.ADMLY_MGT)]
+    [Ui("标准品目")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnMake()
@@ -72,11 +72,11 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("填写品目信息");
-                    h.LI_().SELECT("分类", nameof(o.typ), o.typ, Item.Typs)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("品目名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
-                    h.LI_().TEXT("计量单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
-                    h.LI_().TEXT("计量脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
+                    h.LI_().TEXT("标准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
+                    h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });

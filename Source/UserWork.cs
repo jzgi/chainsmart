@@ -10,7 +10,7 @@ namespace Revital
     {
     }
 
-    [UserAuthorize(admly: ADMLY_SYS)]
+    [UserAuthorize(admly: ADMLY_MGT)]
     [Ui("用户管理")]
     public class AdmlyUserWork : UserWork
     {
@@ -118,7 +118,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [UserAuthorize(admly: ADMLY_SYS)]
+        [UserAuthorize(admly: ADMLY_MGT)]
         [Ui("添加", "添加人员权限"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

@@ -14,17 +14,15 @@ namespace Revital
 
             MakeWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyUserWork>("user");
-
             MakeWork<AdmlyItemWork>("item");
-
-            MakeWork<AdmlyYieldWork>("yield");
 
             MakeWork<AdmlyClearWork>("clear");
 
+            MakeWork<AdmlyUserWork>("user");
+
             MakeWork<AdmlyAccessWork>("access");
 
-            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_SYS));
+            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
         }
 
         public void @default(WebContext wc)
@@ -34,6 +32,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");
+                
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
                 if (o != null)

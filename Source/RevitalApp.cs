@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Revital;
 using SkyChain;
 using static System.Data.IsolationLevel;
 
@@ -35,7 +34,7 @@ namespace Revital
         {
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY idx, status DESC");
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, idx");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
@@ -49,15 +48,15 @@ namespace Revital
 
             Cache<int, Org>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
                     return dc.QueryTop<Org>(p => p.Set(id));
                 }, 60 * 15
             );
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Revital.Plan.Empty).T(" FROM supplys ORDER BY typ, status DESC");
-                    return dc.Query<int, Revital.Plan>();
+                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC");
+                    return dc.Query<int, Plan>();
                 }, 60 * 15
             );
         }

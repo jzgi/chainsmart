@@ -9,15 +9,18 @@ namespace Revital
     public class DistribWork : WebWork
     {
     }
-    
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户进货", "cart")]
-    public class BizlyDistribWork : DistribWork
+    public abstract class BizlyDistribWork : DistribWork
+    {
+    }
+
+    [Ui("商户进货", "cart", forkie: Org.FRK_AGRI)]
+    public class AgriBizlyDistribWork : BizlyDistribWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyDistribVarWork>();
+            MakeVarWork<AgriBizlyDistribVarWork>();
         }
 
         [Ui("购物车", group: 1), Tool(Anchor)]
@@ -46,7 +49,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STATUS_SUBMITTED).T(" ORDER BY id");
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STA_SUBMITTED).T(" ORDER BY id");
             var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
@@ -67,7 +70,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STATUS_SUBMITTED).T(" ORDER BY id");
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STA_SUBMITTED).T(" ORDER BY id");
             var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
@@ -127,6 +130,36 @@ namespace Revital
 
                 wc.GivePane(200); // close dialog
             }
+        }
+    }
+
+    [Ui("进货管理", forkie: Org.FRK_DIETARY)]
+    public class DietaryBizlyDistribWork : BizlyDistribWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<DietaryBizlyDistribVarWork>();
+        }
+
+        [Ui("购物车", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(org.id));
+
+            var items = ObtainMap<int, Item>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                {
+                    h.TD(items[o.itemid].name);
+                    h.TD(o.qty);
+                    h.TDFORM(() => { });
+                });
+            });
         }
     }
 

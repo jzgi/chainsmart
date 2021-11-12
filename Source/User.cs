@@ -7,11 +7,7 @@ namespace Revital
     {
         public static readonly User Empty = new User();
 
-        public const byte
-            TYP_HEALTH_MGR = 1,
-            TYP_COOK = 2;
-
-        // user types
+        // pro types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {0, null},
@@ -25,17 +21,17 @@ namespace Revital
 
         public const short
             ADMLY_ = 0b0001,
-            ADMLY_SPR = 0b0011,
+            ADMLY_ADT = 0b0011,
             ADMLY_OP = 0b0101,
-            ADMLY_SYS = 0b1111;
+            ADMLY_MGT = 0b1111;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
-            {ADMLY_, "来宾"},
-            {ADMLY_SPR, "审计"},
-            {ADMLY_OP, "业务操作"},
-            {ADMLY_SYS, "系统管理"},
+            {ADMLY_, "访客"},
+            {ADMLY_ADT, "审查"},
+            {ADMLY_OP, "操作"},
+            {ADMLY_MGT, "管理"},
         };
 
         public const short
@@ -47,10 +43,10 @@ namespace Revital
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_, "来宾"},
-            {ORGLY_SPR, "审计"},
-            {ORGLY_OP, "业务操作"},
-            {ORGLY_MGR, "系统管理"},
+            {ORGLY_, "访客"},
+            {ORGLY_SPR, "审查"},
+            {ORGLY_OP, "操作"},
+            {ORGLY_MGR, "管理"},
         };
 
         internal int id;

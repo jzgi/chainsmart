@@ -4,7 +4,7 @@ using SkyChain.Web;
 namespace Revital
 {
     [UserAuthorize(admly: 1)]
-    [Ui("结算管理")]
+    [Ui("业务结算管理")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()
@@ -14,11 +14,10 @@ namespace Revital
         public async Task @default(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
-
         }
     }
 
-    [Ui("业务结算")]
+    [Ui("业务结算情况")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()
@@ -28,7 +27,6 @@ namespace Revital
         public async Task @default(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
-
         }
     }
 }

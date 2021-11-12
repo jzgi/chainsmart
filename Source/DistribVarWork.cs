@@ -11,7 +11,11 @@ namespace Revital
     {
     }
 
-    public class BizlyDistribVarWork : DistribVarWork
+    public abstract class BizlyDistribVarWork : DistribVarWork
+    {
+    }
+
+    public class AgriBizlyDistribVarWork : BizlyDistribVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -121,6 +125,10 @@ namespace Revital
         }
 
         // [Ui("核实"), Tool(Modal.ButtonShow)]
+    }
+
+    public class DietaryBizlyDistribVarWork : BizlyDistribVarWork
+    {
     }
 
     public class CtrlyDistribVarWork : DistribVarWork

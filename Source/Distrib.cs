@@ -3,11 +3,9 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Distrib : IData, IKeyable<int>
+    public class Distrib : _Doc, IKeyable<int>
     {
         public static readonly Distrib Empty = new Distrib();
-
-        public const byte ID = 1, LATER = 2;
 
         public const short
             TYP_PRODUCT = 1,
@@ -21,40 +19,27 @@ namespace Revital
         };
 
         public const short
-            STATUS_CREATED = 0,
-            STATUS_SUBMITTED = 1, // before processing
-            STATUS_ABORTED = 2,
-            STATUS_CONFIRMED = 3, // ready for distr center op 
-            STATUS_SHIPPED = 4, //  
-            STATUS_CLOSED = 5; // after clearing
+            STA_CREATED = 0,
+            STA_SUBMITTED = 1, // before processing
+            STA_ABORTED = 2,
+            STA_CONFIRMED = 3, // ready for distr center op 
+            STA_SHIPPED = 4, //  
+            STA_CLOSED = 5; // after clearing
 
-        public static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STATUS_CREATED, "草稿中"},
-            {STATUS_SUBMITTED, "已提交"},
-            {STATUS_ABORTED, "已撤销"},
-            {STATUS_CONFIRMED, "已确认"},
-            {STATUS_SHIPPED, "已发货"},
-            {STATUS_CLOSED, "已关闭"},
+            {STA_CREATED, "草稿中"},
+            {STA_SUBMITTED, "已提交"},
+            {STA_ABORTED, "已撤销"},
+            {STA_CONFIRMED, "已确认"},
+            {STA_SHIPPED, "已发货"},
+            {STA_CLOSED, "已关闭"},
         };
 
 
-        internal short typ;
-        internal short status;
-        internal short partyid;
-        internal short ctrid;
-        internal DateTime created;
-        internal string creator;
-        internal DateTime traded;
-        internal string trader;
-        internal DateTime settled;
-        internal string settler;
-
-
         internal int id;
-
-        // doc number
-        internal int no;
+        internal int bizid;
+        internal int ctrid;
         internal short planid;
         internal short itemid;
         internal decimal price;
@@ -63,20 +48,16 @@ namespace Revital
         internal decimal pay;
         internal decimal refund;
 
-        public  void Read(ISource s, byte proj = 15)
+        public override void Read(ISource s, byte proj = 15)
         {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(partyid), ref partyid);
-            s.Get(nameof(ctrid), ref ctrid);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
-            
+            base.Read(s, proj);
+
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(no), ref no);
+            s.Get(nameof(bizid), ref bizid);
+            s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(planid), ref planid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
@@ -86,20 +67,16 @@ namespace Revital
             s.Get(nameof(refund), ref refund);
         }
 
-        public  void Write(ISink s, byte proj = 15)
+        public override void Write(ISink s, byte proj = 15)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(partyid), partyid);
-            s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
+            base.Write(s, proj);
 
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(no), no);
+            s.Put(nameof(bizid), bizid);
+            s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(planid), planid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);
