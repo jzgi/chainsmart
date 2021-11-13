@@ -29,7 +29,7 @@ namespace Revital
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -41,9 +41,9 @@ namespace Revital
                 short last = 0;
                 foreach (var o in arr)
                 {
-                    if (o.typ != last)
+                    if (o.cat != last)
                     {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Typs[o.typ])._TD()._TR();
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
@@ -52,7 +52,8 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
-                    last = o.typ;
+                    
+                    last = o.cat;
                 }
                 h._TABLE();
                 h.PAGINATION(arr.Length == 40);
@@ -72,7 +73,8 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("填写品目信息");
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("分类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
                     h.LI_().TEXT("品目名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("标准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();

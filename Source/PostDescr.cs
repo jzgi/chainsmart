@@ -1,7 +1,7 @@
 ﻿using System;
 using SkyChain;
 using SkyChain.Web;
-using static Revital.Org;
+using static Revital.Item;
 
 namespace Revital
 {
@@ -14,7 +14,7 @@ namespace Revital
         {
             new PostDescr
             {
-                typ = FRK_AGRI,
+                typ = TYP_AGRI,
                 name = "生态农产",
                 CardView = (h, descr, m, org) =>
                 {
@@ -41,27 +41,27 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = FRK_DIETARY,
+                typ = TYP_DIETARY,
                 name = "调养膳食"
             },
             new PostDescr
             {
-                typ = FRK_HOME,
+                typ = TYP_HOME,
                 name = "工业产品"
             },
             new PostDescr
             {
-                typ = FRK_CARE,
+                typ = TYP_CARE,
                 name = "家政陪护"
             },
             new PostDescr
             {
-                typ = FRK_AD,
+                typ = TYP_AD,
                 name = "广告宣传"
             },
             new PostDescr
             {
-                typ = FRK_CHARITY,
+                typ = TYP_CHARITY,
                 name = "志愿公益"
             }
         };

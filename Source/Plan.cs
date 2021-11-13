@@ -12,44 +12,41 @@ namespace Revital
 
         public static readonly Map<short, string> Modes = new Map<short, string>
         {
-            {1, "现货"},
+            {1, "常规"},
             {2, "预售"},
         };
 
         internal int id;
         internal int ctrid;
-        internal int itemid;
+        internal short itemid;
 
         internal DateTime started;
         internal DateTime ended;
         internal DateTime filled;
 
-        internal short rmode; // retail mode
-        internal string runit;
-        internal short rx;
-        internal short rmin;
-        internal short rmax;
-        internal short rstep;
-        internal decimal rprice;
-        internal decimal roff;
+        internal string nunit; // need
+        internal short nx;
+        internal short nmin;
+        internal short nmax;
+        internal short nstep;
+        internal decimal nprice;
+        internal decimal noff;
 
-        internal short tmode; // transfer mode
-        internal string tunit;
-        internal short tx;
-        internal short tmin;
-        internal short tmax;
-        internal short tstep;
-        internal decimal tprice;
-        internal decimal toff;
+        internal string dunit; // distrib
+        internal short dx;
+        internal short dmin;
+        internal short dmax;
+        internal short dstep;
+        internal decimal dprice;
+        internal decimal doff;
 
-        internal short gmode; // gain mode
-        internal string gunit;
-        internal short gx;
-        internal short gmin;
-        internal short gmax;
-        internal short gstep;
-        internal decimal gprice;
-        internal decimal goff;
+        internal string sunit; // subscrib
+        internal short sx;
+        internal short smin;
+        internal short smax;
+        internal short sstep;
+        internal decimal sprice;
+        internal decimal soff;
 
         public override void Read(ISource s, byte proj = 15)
         {
@@ -63,32 +60,29 @@ namespace Revital
             s.Get(nameof(ended), ref ended);
             s.Get(nameof(filled), ref filled);
 
-            s.Get(nameof(rmode), ref rmode);
-            s.Get(nameof(runit), ref runit);
-            s.Get(nameof(rx), ref rx);
-            s.Get(nameof(rmin), ref rmin);
-            s.Get(nameof(rmax), ref rmax);
-            s.Get(nameof(rstep), ref rstep);
-            s.Get(nameof(rprice), ref rprice);
-            s.Get(nameof(roff), ref roff);
+            s.Get(nameof(nunit), ref nunit);
+            s.Get(nameof(nx), ref nx);
+            s.Get(nameof(nmin), ref nmin);
+            s.Get(nameof(nmax), ref nmax);
+            s.Get(nameof(nstep), ref nstep);
+            s.Get(nameof(nprice), ref nprice);
+            s.Get(nameof(noff), ref noff);
 
-            s.Get(nameof(tmode), ref tmode);
-            s.Get(nameof(tunit), ref tunit);
-            s.Get(nameof(tx), ref tx);
-            s.Get(nameof(tmin), ref tmin);
-            s.Get(nameof(tmax), ref tmax);
-            s.Get(nameof(tstep), ref tstep);
-            s.Get(nameof(tprice), ref tprice);
-            s.Get(nameof(toff), ref toff);
+            s.Get(nameof(dunit), ref dunit);
+            s.Get(nameof(dx), ref dx);
+            s.Get(nameof(dmin), ref dmin);
+            s.Get(nameof(dmax), ref dmax);
+            s.Get(nameof(dstep), ref dstep);
+            s.Get(nameof(dprice), ref dprice);
+            s.Get(nameof(doff), ref doff);
 
-            s.Get(nameof(gmode), ref gmode);
-            s.Get(nameof(gunit), ref gunit);
-            s.Get(nameof(gx), ref gx);
-            s.Get(nameof(gmin), ref gmin);
-            s.Get(nameof(gmax), ref gmax);
-            s.Get(nameof(gstep), ref gstep);
-            s.Get(nameof(gprice), ref gprice);
-            s.Get(nameof(goff), ref goff);
+            s.Get(nameof(sunit), ref sunit);
+            s.Get(nameof(sx), ref sx);
+            s.Get(nameof(smin), ref smin);
+            s.Get(nameof(smax), ref smax);
+            s.Get(nameof(sstep), ref sstep);
+            s.Get(nameof(sprice), ref sprice);
+            s.Get(nameof(soff), ref soff);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -103,32 +97,29 @@ namespace Revital
             s.Put(nameof(ended), ended);
             s.Put(nameof(filled), filled);
 
-            s.Put(nameof(rmode), rmode);
-            s.Put(nameof(runit), runit);
-            s.Put(nameof(rx), rx);
-            s.Put(nameof(rmin), rmin);
-            s.Put(nameof(rmax), rmax);
-            s.Put(nameof(rstep), rstep);
-            s.Put(nameof(rprice), rprice);
-            s.Put(nameof(roff), roff);
+            s.Put(nameof(nunit), nunit);
+            s.Put(nameof(nx), nx);
+            s.Put(nameof(nmin), nmin);
+            s.Put(nameof(nmax), nmax);
+            s.Put(nameof(nstep), nstep);
+            s.Put(nameof(nprice), nprice);
+            s.Put(nameof(noff), noff);
 
-            s.Put(nameof(tmode), tmode);
-            s.Put(nameof(tunit), tunit);
-            s.Put(nameof(tx), tx);
-            s.Put(nameof(tmin), tmin);
-            s.Put(nameof(tmax), tmax);
-            s.Put(nameof(tstep), tstep);
-            s.Put(nameof(tprice), tprice);
-            s.Put(nameof(toff), toff);
+            s.Put(nameof(dunit), dunit);
+            s.Put(nameof(dx), dx);
+            s.Put(nameof(dmin), dmin);
+            s.Put(nameof(dmax), dmax);
+            s.Put(nameof(dstep), dstep);
+            s.Put(nameof(dprice), dprice);
+            s.Put(nameof(doff), doff);
 
-            s.Put(nameof(gmode), gmode);
-            s.Put(nameof(gunit), gunit);
-            s.Put(nameof(gx), gx);
-            s.Put(nameof(gmin), gmin);
-            s.Put(nameof(gmax), gmax);
-            s.Put(nameof(gstep), gstep);
-            s.Put(nameof(gprice), gprice);
-            s.Put(nameof(goff), goff);
+            s.Put(nameof(sunit), sunit);
+            s.Put(nameof(sx), sx);
+            s.Put(nameof(smin), smin);
+            s.Put(nameof(smax), smax);
+            s.Put(nameof(sstep), sstep);
+            s.Put(nameof(sprice), sprice);
+            s.Put(nameof(soff), soff);
         }
 
         public int Key => id;

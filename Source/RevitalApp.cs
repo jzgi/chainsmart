@@ -41,8 +41,8 @@ namespace Revital
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY id");
-                    return dc.Query<int, Item>();
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, id");
+                    return dc.Query<short, Item>();
                 }, 60 * 15
             );
 

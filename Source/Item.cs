@@ -9,22 +9,42 @@ namespace Revital
     {
         public static readonly Item Empty = new Item();
 
-        // types
+        public const short
+            TYP_AGRI = 1,
+            TYP_DIETARY = 2,
+            TYP_HOME = 3,
+            TYP_CARE = 4,
+            TYP_AD = 5,
+            TYP_CHARITY = 6;
+
+
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
+            {TYP_AGRI, "生态农产"},
+            {TYP_DIETARY, "调养膳食"},
+            {TYP_HOME, "日用家居"},
+            {TYP_CARE, "家政陪护"},
+            {TYP_AD, "广告宣传"},
+            {TYP_CHARITY, "公益志愿"},
+        };
+
+
+        // types
+        public static readonly Map<short, string> Cats = new Map<short, string>
+        {
             // agri
-            {1, "蔬菜"},
-            {2, "瓜果"},
-            {3, "粮油"},
-            {5, "禽产"},
-            {6, "畜产"},
-            {7, "水产"},
+            {11, "蔬菜"},
+            {12, "瓜果"},
+            {13, "粮油"},
+            {15, "禽产"},
+            {16, "畜产"},
+            {17, "水产"},
             // dietary
-            {11, "健康管理"},
-            {12, "餐品餐料"},
-            {13, "餐饮外卖"},
+            {21, "健康管理"},
+            {22, "餐品餐料"},
+            {23, "餐饮外卖"},
             // factory
-            {21, "家居厨具"},
+            {31, "家居厨具"},
             {32, "农资绿植"},
             // care
             {41, "家政陪护"},
@@ -36,6 +56,7 @@ namespace Revital
 
 
         internal short id;
+        internal short cat;
         internal string unit; // basic unit
         internal string unitip;
 
@@ -49,6 +70,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
+            s.Get(nameof(cat), ref cat);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
         }
@@ -61,6 +83,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
+            s.Put(nameof(cat), cat);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
         }

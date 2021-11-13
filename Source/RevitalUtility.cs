@@ -89,26 +89,30 @@ namespace Revital
             return h;
         }
 
-        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, int v, Map<int, Item> opt, Map<short, string> typs, bool required = true)
+        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Item> opts, Map<short, string> cats, Func<Item, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
-            if (opt != null)
+            if (opts != null)
             {
                 short last = 0; // last typ
-                for (int i = 0; i < opt.Count; i++)
+                for (int i = 0; i < opts.Count; i++)
                 {
-                    var it = opt.ValueAt(i);
-                    if (it.typ != last)
+                    var item = opts.ValueAt(i);
+                    if (!filter(item))
+                    {
+                        continue;
+                    }
+                    if (item.cat != last)
                     {
                         if (last > 0)
                         {
                             h.T("</optgroup>");
                         }
-                        h.T("<optgroup label=\"").T(typs[it.typ]).T("\">");
+                        h.T("<optgroup label=\"").T(cats[item.cat]).T("\">");
                     }
-                    h.OPTION(it.id, it.name);
+                    h.OPTION(item.id, item.name);
 
-                    last = it.typ;
+                    last = item.cat;
                 }
                 h.T("</optgroup>");
             }

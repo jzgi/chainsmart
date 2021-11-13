@@ -15,7 +15,7 @@ namespace Revital
     {
     }
 
-    [Ui("商户进货", "cart", forkie: Org.FRK_AGRI)]
+    [Ui("商户进货", "cart", forkie: Item.TYP_AGRI)]
     public class AgriBizlyDistribWork : BizlyDistribWork
     {
         protected override void OnMake()
@@ -97,7 +97,7 @@ namespace Revital
                     short typ = wc.Query[nameof(typ)];
 
                     h.FORM_().FIELDSUL_();
-                    h.LI_().SELECT(null, nameof(typ), typ, Item.Typs, refresh: true)._LI();
+                    h.LI_().SELECT(null, nameof(typ), typ, Item.Cats, refresh: true)._LI();
 
                     if (typ > 0)
                     {
@@ -133,7 +133,7 @@ namespace Revital
         }
     }
 
-    [Ui("进货管理", forkie: Org.FRK_DIETARY)]
+    [Ui("进货管理", forkie: Item.TYP_DIETARY)]
     public class DietaryBizlyDistribWork : BizlyDistribWork
     {
         protected override void OnMake()
@@ -226,7 +226,7 @@ namespace Revital
         }
     }
 
-    [Ui("销售分拣管理", "sign-out", forkie: Org.FRK_AGRI)]
+    [Ui("销售分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
     public class AgriCtrlyDistribWork : CtrlyDistribWork
     {
     }

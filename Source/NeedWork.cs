@@ -79,12 +79,12 @@ namespace Revital
         }
     }
 
-    [Ui("客户订单管理", forkie: Org.FRK_AGRI)]
+    [Ui("客户订单管理", forkie: Item.TYP_AGRI)]
     public class AgriBizlyNeedWork : BizlyNeedWork
     {
     }
 
-    [Ui("客户预订管理", forkie: Org.FRK_DIETARY)]
+    [Ui("客户预订管理", forkie: Item.TYP_DIETARY)]
     public class DietaryBizlyNeedWork : BizlyNeedWork
     {
     }
