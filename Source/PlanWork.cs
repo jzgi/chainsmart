@@ -21,9 +21,10 @@ namespace Revital
         [Ui("常规供应", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE ctrid = @1 AND typ = 1 ORDER BY status DESC LIMIT 40 OFFSET 40 * @1");
-            var arr = dc.Query<Plan>(p => p.Set(page));
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE ctrid = @1 AND typ = 1 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @2");
+            var arr = dc.Query<Plan>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -34,9 +35,9 @@ namespace Revital
                 short last = 0;
                 foreach (var o in arr)
                 {
-                    if (o.typ != last)
+                    if (o.cat != last)
                     {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.typ])._TD()._TR();
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
                     h.TD(o.name);
@@ -44,7 +45,8 @@ namespace Revital
                     h.TD(o.nprice, true);
                     h.TD(_Doc.Statuses[o.status]);
                     h._TR();
-                    last = o.typ;
+
+                    last = o.cat;
                 }
                 h._TABLE();
                 h.PAGINATION(arr.Length == 40);
@@ -56,7 +58,7 @@ namespace Revital
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE typ = 2 ORDER BY status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE typ = 1 AND ORDER BY status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Plan>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -110,28 +112,28 @@ namespace Revital
 
                     h._FIELDSUL().FIELDSUL_("下行参数");
                     h.LI_().TEXT("单位", nameof(o.dunit), o.name, max: 10, required: true).NUMBER("标准比", nameof(o.dx), o.dx, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin, max: 10).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep, max: 10)._LI();
-                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff, max: 10)._LI();
+                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
+                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
                     h._FIELDSUL();
 
-                    if (org.HasSubsrib)
+                    if (org.WithSubsrib)
                     {
                         h.FIELDSUL_("上行参数");
                         h.LI_().TEXT("单位", nameof(o.sunit), o.sunit, max: 10, required: true).NUMBER("标准比", nameof(o.sx), o.sx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.smin), o.smin, max: 10).NUMBER("限订量", nameof(o.smax), o.smax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.sstep), o.sstep, max: 10)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.sprice), o.sprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.soff), o.soff, max: 10)._LI();
+                        h.LI_().NUMBER("起订量", nameof(o.smin), o.smin).NUMBER("限订量", nameof(o.smax), o.smax, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("递增量", nameof(o.sstep), o.sstep)._LI();
+                        h.LI_().NUMBER("价格", nameof(o.sprice), o.sprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.soff), o.soff)._LI();
                         h._FIELDSUL();
                     }
 
-                    if (org.HasNeed)
+                    if (org.WithNeed)
                     {
                         h.FIELDSUL_("终端参数");
                         h.LI_().TEXT("单位", nameof(o.nunit), o.nunit, max: 10, required: true).NUMBER("标准比", nameof(o.nx), o.nx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.nmin), o.nmin, max: 10).NUMBER("限订量", nameof(o.nmax), o.nmax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.nstep), o.nstep, max: 10)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.nprice), o.nprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.noff), o.noff, max: 10)._LI();
+                        h.LI_().NUMBER("起订量", nameof(o.nmin), o.nmin).NUMBER("限订量", nameof(o.nmax), o.nmax, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("递增量", nameof(o.nstep), o.nstep)._LI();
+                        h.LI_().NUMBER("价格", nameof(o.nprice), o.nprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.noff), o.noff)._LI();
                         h._FIELDSUL();
                     }
 
@@ -143,7 +145,15 @@ namespace Revital
 
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Plan>(0);
+                // populate 
+                var o = await wc.ReadObjectAsync(0, new Plan
+                {
+                    typ = Plan.TYP_ROUTINE,
+                    ctrid = org.id,
+                });
+                o.cat = items[o.itemid].cat;
+
+                // insert
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO plans ").colset(Plan.Empty, 0)._VALUES_(Plan.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));

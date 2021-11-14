@@ -138,9 +138,9 @@ namespace Revital
 
         public bool IsTruster => IsBiz || IsSrc || IsCenter;
 
-        public bool HasNeed => (typ & TYP_NED) == TYP_NED;
+        public bool WithNeed => (typ & TYP_NED) == TYP_NED;
 
-        public bool HasSubsrib => (typ & TYP_SUB) == TYP_SUB;
+        public bool WithSubsrib => (typ & TYP_SUB) == TYP_SUB;
 
         public override string ToString() => name;
     }

@@ -4,10 +4,6 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create sequence txn_seq;
-
-alter sequence txn_seq owner to postgres;
-
 create table clears
 (
 	id smallserial not null
@@ -28,19 +24,6 @@ create table _docs
 );
 
 alter table _docs owner to postgres;
-
-create table items
-(
-	id serial not null
-		constraint items_pk
-			primary key,
-	unit varchar(4),
-	unitip varchar(10),
-	icon bytea
-)
-inherits (_docs);
-
-alter table items owner to postgres;
 
 create table users
 (
@@ -130,66 +113,6 @@ inherits (_docs);
 
 alter table yields owner to postgres;
 
-create table orgs
-(
-	id serial not null
-		constraint orgs_pk
-			primary key,
-	sprid integer,
-	ctrid integer,
-	license varchar(20),
-	trust boolean,
-	regid smallint not null,
-	addr varchar(30),
-	x double precision,
-	y double precision,
-	mgrid integer,
-	icon bytea,
-	forkie smallint
-)
-inherits (_docs);
-
-alter table orgs owner to postgres;
-
-create table plans
-(
-	id serial not null
-		constraint supplys_pk
-			primary key,
-	ctrid integer not null,
-	itemid integer not null,
-	started date,
-	ended date,
-	filled date,
-	bmode smallint,
-	bunit varchar(4),
-	bx smallint,
-	bmin smallint,
-	bmax smallint,
-	bstep smallint,
-	bprice money,
-	boff money,
-	dmode smallint,
-	dunit varchar(4),
-	dx smallint,
-	dmin smallint,
-	dmax smallint,
-	dstep smallint,
-	dprice money,
-	doff money,
-	smode smallint,
-	sunit varchar(4),
-	sx smallint,
-	smin smallint,
-	smax smallint,
-	sstep smallint,
-	sprice money,
-	soff money
-)
-inherits (_docs);
-
-alter table plans owner to postgres;
-
 create table posts
 (
 	id integer not null
@@ -253,6 +176,78 @@ create table subscribs
 inherits (_docs);
 
 alter table subscribs owner to postgres;
+
+create table plans
+(
+	id serial not null
+		constraint plans_pk
+			primary key,
+	ctrid integer not null,
+	itemid smallint not null,
+	started date,
+	ended date,
+	filled date,
+	nunit varchar(4),
+	nx smallint,
+	nmin smallint,
+	nmax smallint,
+	nstep smallint,
+	nprice money,
+	noff money,
+	dunit varchar(4),
+	dx smallint,
+	dmin smallint,
+	dmax smallint,
+	dstep smallint,
+	dprice money,
+	doff money,
+	sunit varchar(4),
+	sx smallint,
+	smin smallint,
+	smax smallint,
+	sstep smallint,
+	sprice money,
+	soff money,
+	cat smallint
+)
+inherits (_docs);
+
+alter table plans owner to postgres;
+
+create table items
+(
+	id serial not null
+		constraint items_pk
+			primary key,
+	cat smallint,
+	unit varchar(4),
+	unitip varchar(10),
+	icon bytea
+)
+inherits (_docs);
+
+alter table items owner to postgres;
+
+create table orgs
+(
+	id serial not null
+		constraint orgs_pk
+			primary key,
+	sprid integer,
+	ctrid integer,
+	license varchar(20),
+	trust boolean,
+	regid smallint not null,
+	addr varchar(30),
+	x double precision,
+	y double precision,
+	mgrid integer,
+	icon bytea,
+	forkie smallint
+)
+inherits (_docs);
+
+alter table orgs owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

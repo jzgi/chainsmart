@@ -10,15 +10,21 @@ namespace Revital
     {
         public static readonly Plan Empty = new Plan();
 
-        public static readonly Map<short, string> Modes = new Map<short, string>
+        public const short
+            TYP_ROUTINE = 1,
+            TYP_FUTURE = 2;
+
+
+        public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {1, "常规"},
-            {2, "预售"},
+            {TYP_ROUTINE, "常规"},
+            {TYP_FUTURE, "预先"},
         };
 
         internal int id;
         internal int ctrid;
         internal short itemid;
+        internal short cat;
 
         internal DateTime started;
         internal DateTime ended;
@@ -50,12 +56,14 @@ namespace Revital
 
         public override void Read(ISource s, byte proj = 15)
         {
+            base.Read(s, proj);
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(itemid), ref itemid);
+            s.Get(nameof(cat), ref cat);
             s.Get(nameof(started), ref started);
             s.Get(nameof(ended), ref ended);
             s.Get(nameof(filled), ref filled);
@@ -87,12 +95,14 @@ namespace Revital
 
         public override void Write(ISink s, byte proj = 15)
         {
+            base.Write(s, proj);
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(itemid), itemid);
+            s.Put(nameof(cat), cat);
             s.Put(nameof(started), started);
             s.Put(nameof(ended), ended);
             s.Put(nameof(filled), filled);
