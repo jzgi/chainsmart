@@ -208,7 +208,8 @@ create table plans
 	sstep smallint,
 	sprice money,
 	soff money,
-	cat smallint
+	cat smallint,
+	ext varchar(10)
 )
 inherits (_docs);
 

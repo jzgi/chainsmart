@@ -123,7 +123,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
-                    h.TD_().A_HREF_("/bizly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
+                    h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
                     h.TD(regs[o.regid].name);
                     h.TDFORM(() => { });
                 });

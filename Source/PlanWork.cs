@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -18,7 +19,7 @@ namespace Revital
             MakeVarWork<CtrlyPlanVarWork>();
         }
 
-        [Ui("常规供应", group: 1), Tool(Anchor)]
+        [Ui("常规", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -54,7 +55,7 @@ namespace Revital
         }
 
 
-        [Ui("预期供应", group: 2), Tool(Anchor)]
+        [Ui("远期", group: 2), Tool(Anchor)]
         public void pre(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -104,7 +105,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("基本信息");
 
                     h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.forkie, required: true)._LI();
-                    h.LI_().TEXT("附加名", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("生效日", nameof(o.started), o.started)._LI();
                     h.LI_().DATE("截止日", nameof(o.ended), o.ended)._LI();
@@ -151,7 +152,9 @@ namespace Revital
                     typ = Plan.TYP_ROUTINE,
                     ctrid = org.id,
                 });
-                o.cat = items[o.itemid].cat;
+                var item = items[o.itemid];
+                o.cat = item.cat;
+                o.name = item.name + '（' + o.ext + '）';
 
                 // insert
                 using var dc = NewDbContext();
@@ -181,7 +184,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("基本信息");
 
                     h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.forkie, required: true)._LI();
-                    h.LI_().TEXT("附加名", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXT("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("起售日", nameof(o.started), o.started)._LI();
                     h.LI_().DATE("止售日", nameof(o.ended), o.ended)._LI();

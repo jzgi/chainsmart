@@ -26,10 +26,10 @@ namespace Revital
         [Ui("购物车", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM ups WHERE partyid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>

@@ -25,6 +25,7 @@ namespace Revital
         internal int ctrid;
         internal short itemid;
         internal short cat;
+        internal string ext; // name extension
 
         internal DateTime started;
         internal DateTime ended;
@@ -64,6 +65,7 @@ namespace Revital
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(cat), ref cat);
+            s.Get(nameof(ext), ref ext);
             s.Get(nameof(started), ref started);
             s.Get(nameof(ended), ref ended);
             s.Get(nameof(filled), ref filled);
@@ -103,6 +105,7 @@ namespace Revital
             s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(cat), cat);
+            s.Put(nameof(ext), ext);
             s.Put(nameof(started), started);
             s.Put(nameof(ended), ended);
             s.Put(nameof(filled), filled);
