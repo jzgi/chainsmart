@@ -5,9 +5,9 @@ namespace Revital
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Need : _Doc, IKeyable<int>
+    public class Attrib : _DocX, IKeyable<int>
     {
-        public static readonly Need Empty = new Need();
+        public static readonly Attrib Empty = new Attrib();
 
         public const short
             STA_CREATED = 0,
@@ -28,8 +28,6 @@ namespace Revital
         };
 
         internal int id;
-        internal int mrtid;
-        internal int bizid;
         internal int postid;
         internal int itemid;
         internal int uid;
@@ -47,8 +45,6 @@ namespace Revital
                 s.Get(nameof(id), ref id);
             }
 
-            s.Get(nameof(mrtid), ref mrtid);
-            s.Get(nameof(bizid), ref bizid);
             s.Get(nameof(postid), ref postid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(uid), ref uid);
@@ -70,8 +66,6 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
 
-            s.Put(nameof(mrtid), mrtid);
-            s.Put(nameof(bizid), bizid);
             s.Put(nameof(postid), postid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(uid), uid);

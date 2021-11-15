@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Distrib : _Doc, IKeyable<int>
+    public class Distrib : _DocX, IKeyable<int>
     {
         public static readonly Distrib Empty = new Distrib();
 
@@ -38,8 +38,6 @@ namespace Revital
 
 
         internal int id;
-        internal int bizid;
-        internal int ctrid;
         internal short planid;
         internal short itemid;
         internal decimal price;
@@ -56,8 +54,6 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(bizid), ref bizid);
-            s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(planid), ref planid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
@@ -75,8 +71,6 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(bizid), bizid);
-            s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(planid), planid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);

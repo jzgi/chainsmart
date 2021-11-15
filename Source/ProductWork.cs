@@ -5,18 +5,18 @@ using static Revital.User;
 
 namespace Revital
 {
-    public abstract class YieldWork : WebWork
+    public abstract class ProductWork : WebWork
     {
     }
 
 
     [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
     [Ui("产源产品动态")]
-    public class SrclyYieldWork : YieldWork
+    public class SrclyProductWork : ProductWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<SrclyYieldVarWork>();
+            MakeVarWork<SrclyProductVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -24,7 +24,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM products WHERE partyid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Subscrib>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
@@ -44,11 +44,11 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
     [Ui("产品管理")]
-    public class FrmlyYieldWork : YieldWork
+    public class FrmlyProductWork : ProductWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<FrmlyYieldVarWork>();
+            MakeVarWork<FrmlyProductVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]

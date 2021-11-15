@@ -43,13 +43,13 @@ namespace Revital
         {
             // MakeWork<SrclyGainWork>("purch");
 
-            MakeWork<FrmlyYieldWork>("fyield");
+            MakeWork<FrmlyProductWork>("fyield");
 
             MakeWork<FrmlySubscribWork>("fsub");
 
             MakeWork<SrclyOrgWork>("org");
 
-            MakeWork<SrclyYieldWork>("prod");
+            MakeWork<SrclyProductWork>("prod");
 
             MakeWork<SrclySubscribWork>("gain");
 
@@ -95,9 +95,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            // MakeWork<AgriCtrlyPlanWork, DietaryCtrlyPlanWork, HomeCtrlyPlanWork, CareCtrlyPlanWork, AdCtrlyPlanWork, CharityCtrlyPlanWork>("supply");
-
-            MakeWork<CtrlyPlanWork>("plan");
+            MakeWork<AgriCtrlyPlanWork, DietaryCtrlyPlanWork, HomeCtrlyPlanWork, CareCtrlyPlanWork, AdCtrlyPlanWork, CharityCtrlyPlanWork>("plan");
 
             MakeWork<CtrlySubscribWork>("subscrib");
 
@@ -142,7 +140,7 @@ namespace Revital
 
             MakeWork<MrtlyCustWork>("cust");
 
-            MakeWork<AgriBizlyNeedWork, DietaryBizlyNeedWork>("need");
+            MakeWork<AgriBizlyAttribWork, DietaryBizlyAttribWork>("need");
 
             MakeWork<AgriBizlyDistribWork, DietaryBizlyDistribWork>("distrib");
 

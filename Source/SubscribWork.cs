@@ -28,8 +28,8 @@ namespace Revital
                 else
                 {
                     var plan = Obtain<short, Plan>(o.planid);
-                    var frm = Obtain<short, Org>(o.frmid);
-                    var ctr = Obtain<short, Org>(o.ctrid);
+                    var frm = Obtain<int, Org>(o.toid);
+                    var ctr = Obtain<int, Org>(o.fromid);
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");

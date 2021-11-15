@@ -11,8 +11,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    [Ui("供应项目管理", "calendar")]
-    public class CtrlyPlanWork : PlanWork
+    public abstract class CtrlyPlanWork : PlanWork
     {
         protected override void OnMake()
         {
@@ -226,7 +225,7 @@ namespace Revital
         }
     }
 
-    [Ui("供应项管理", "calendar", forkie: Item.TYP_AGRI)]
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_AGRI)]
     public class AgriCtrlyPlanWork : CtrlyPlanWork
     {
     }

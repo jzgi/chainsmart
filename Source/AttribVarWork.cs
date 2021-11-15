@@ -9,11 +9,11 @@ using static Revital.WeChatUtility;
 
 namespace Revital
 {
-    public class NeedVarWork : WebWork
+    public class AttribVarWork : WebWork
     {
     }
 
-    public class MyNeedVarWork : NeedVarWork
+    public class MyAttribVarWork : AttribVarWork
     {
         [Ui("✎", "✎ 填写日志"), Tool(ButtonShow)]
         public async Task log(WebContext wc, int dt)
@@ -95,7 +95,7 @@ namespace Revital
         }
     }
 
-    public class BizlyNeedVarWork : NeedVarWork
+    public class BizlyAttribVarWork : AttribVarWork
     {
         [Ui("☰", "☰ 明细"), Tool(ButtonOpen, Half)]
         public async Task dtl(WebContext wc)
@@ -103,8 +103,8 @@ namespace Revital
             short orgid = wc[-2];
             int orderid = wc[0];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Need.Empty).T(" FROM orderlgs WHERE orderid = @1 ORDER BY dt");
-            var arr = await dc.QueryAsync<Need>(p => p.Set(orderid));
+            dc.Sql("SELECT ").collst(Attrib.Empty).T(" FROM orderlgs WHERE orderid = @1 ORDER BY dt");
+            var arr = await dc.QueryAsync<Attrib>(p => p.Set(orderid));
             wc.GivePane(200, h =>
             {
                 var today = DateTime.Today;
@@ -136,7 +136,7 @@ namespace Revital
                 try
                 {
                     var percent = level * 0.10M;
-                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN ").T(Need.STA_CLOSED).T(" ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
+                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN ").T(Attrib.STA_CLOSED).T(" ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
                     var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
                     if (refund <= 0)
                     {

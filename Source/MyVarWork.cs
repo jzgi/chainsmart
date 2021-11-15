@@ -12,7 +12,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<MyNeedWork>("order");
+            MakeWork<MyAttribWork>("order");
         }
 
         [UserAuthorize]

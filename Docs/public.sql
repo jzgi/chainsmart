@@ -19,8 +19,8 @@ create table _docs
 	tip varchar(30),
 	created timestamp(0),
 	creator varchar(10),
-	modified timestamp(0),
-	modifier varchar(10)
+	adapted timestamp(0),
+	adapter varchar(10)
 );
 
 alter table _docs owner to postgres;
@@ -81,29 +81,10 @@ inherits (_docs);
 
 alter table agrees owner to postgres;
 
-create table distribs
+create table products
 (
 	id serial not null
-		constraint distribs_pk
-			primary key,
-	bizid smallint not null,
-	ctrid integer,
-	planid smallint,
-	itemid smallint not null,
-	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money
-)
-inherits (_docs);
-
-alter table distribs owner to postgres;
-
-create table yields
-(
-	id serial not null
-		constraint yields_pk
+		constraint products_pk
 			primary key,
 	srcid integer,
 	itemid smallint,
@@ -111,7 +92,7 @@ create table yields
 )
 inherits (_docs);
 
-alter table yields owner to postgres;
+alter table products owner to postgres;
 
 create table posts
 (
@@ -132,50 +113,6 @@ create table posts
 inherits (_docs);
 
 alter table posts owner to postgres;
-
-create table needs
-(
-	id serial not null
-		constraint needs_pk
-			primary key,
-	mrtid smallint not null,
-	bizid integer not null,
-	postid smallint not null,
-	itemid smallint,
-	uid integer not null,
-	uname varchar(10),
-	utel varchar(11),
-	uim varchar(28),
-	price money,
-	pay money,
-	refund money
-)
-inherits (_docs);
-
-alter table needs owner to postgres;
-
-create table subscribs
-(
-	id serial not null
-		constraint subscribs_pk
-			primary key,
-	ctrid integer,
-	srcid integer not null,
-	frmid integer not null,
-	itemid integer not null,
-	planid integer,
-	yieldid integer,
-	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money,
-	codend integer,
-	codes smallint
-)
-inherits (_docs);
-
-alter table subscribs owner to postgres;
 
 create table plans
 (
@@ -249,6 +186,83 @@ create table orgs
 inherits (_docs);
 
 alter table orgs owner to postgres;
+
+create table _docxes
+(
+	sprid integer,
+	fromid integer,
+	toid integer,
+	ccid integer,
+	closed timestamp(0),
+	closer varchar(10)
+)
+inherits (_docs);
+
+alter table _docxes owner to postgres;
+
+create table distribs
+(
+	id serial not null
+		constraint distribs_pk
+			primary key,
+	itemid smallint not null,
+	planid smallint,
+	price money,
+	"off" money,
+	qty integer,
+	pay money,
+	refund money
+)
+inherits (_docxes);
+
+alter table distribs owner to postgres;
+
+create table attribs
+(
+	id serial not null
+		constraint needs_pk
+			primary key,
+	postid smallint not null,
+	itemid smallint,
+	uid integer not null,
+	uname varchar(10),
+	utel varchar(11),
+	uim varchar(28),
+	price money,
+	pay money,
+	refund money
+)
+inherits (_docxes);
+
+alter table attribs owner to postgres;
+
+create table subscribs
+(
+	id serial not null
+		constraint subscribs_pk
+			primary key,
+	itemid integer not null,
+	planid integer,
+	yieldid integer,
+	price money,
+	"off" money,
+	qty integer,
+	pay money,
+	refund money,
+	codend integer,
+	codes smallint
+)
+inherits (_docxes);
+
+alter table subscribs owner to postgres;
+
+create table userlgs
+(
+	userid integer not null,
+	cont jsonb
+);
+
+alter table userlgs owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

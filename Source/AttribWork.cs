@@ -4,23 +4,23 @@ using static Revital.User;
 
 namespace Revital
 {
-    public abstract class NeedWork : WebWork
+    public abstract class AttribWork : WebWork
     {
     }
 
-    public class MyNeedWork : NeedWork
+    public class MyAttribWork : AttribWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<MyNeedVarWork>();
+            MakeVarWork<MyAttribVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Need.Empty).T(" FROM needs WHERE uid = @1 AND status > 0  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
-            var arr = await dc.QueryAsync<Need>(p => p.Set(prin.id).Set(page));
+            dc.Sql("SELECT ").collst(Attrib.Empty).T(" FROM needs WHERE uid = @1 AND status > 0  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
+            var arr = await dc.QueryAsync<Attrib>(p => p.Set(prin.id).Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -35,19 +35,19 @@ namespace Revital
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    public abstract class BizlyNeedWork : NeedWork
+    public abstract class BizlyAttribWork : AttribWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyNeedVarWork>();
+            MakeVarWork<BizlyAttribVarWork>();
         }
 
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Need.Empty).T(" FROM needs WHERE bizid = @1 AND status > 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Need>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Attrib.Empty).T(" FROM needs WHERE bizid = @1 AND status > 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Attrib>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -64,8 +64,8 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Need.Empty).T(" FROM needs WHERE orgid = @1 AND status >= ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Need>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Attrib.Empty).T(" FROM needs WHERE orgid = @1 AND status >= ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Attrib>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -80,12 +80,12 @@ namespace Revital
     }
 
     [Ui("客户订单管理", forkie: Item.TYP_AGRI)]
-    public class AgriBizlyNeedWork : BizlyNeedWork
+    public class AgriBizlyAttribWork : BizlyAttribWork
     {
     }
 
     [Ui("客户预订管理", forkie: Item.TYP_DIETARY)]
-    public class DietaryBizlyNeedWork : BizlyNeedWork
+    public class DietaryBizlyAttribWork : BizlyAttribWork
     {
     }
 }

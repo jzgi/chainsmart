@@ -46,7 +46,7 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = TYP_HOME,
+                typ = TYP_FACTORY,
                 name = "工业产品"
             },
             new PostDescr

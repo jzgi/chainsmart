@@ -5,7 +5,7 @@ namespace Revital
     /// 
     /// A subscription to source content.
     /// 
-    public class Subscrib : _Doc, IKeyable<int>
+    public class Subscrib : _DocX, IKeyable<int>
     {
         public static readonly Subscrib Empty = new Subscrib();
 
@@ -40,9 +40,6 @@ namespace Revital
 
 
         internal int id;
-        internal short ctrid;
-        internal int srcid;
-        internal short frmid;
         internal short itemid;
         internal short planid;
         internal short yieldid;
@@ -61,9 +58,6 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(ctrid), ref ctrid);
-            s.Get(nameof(srcid), ref srcid);
-            s.Get(nameof(frmid), ref frmid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(planid), ref planid);
             s.Get(nameof(yieldid), ref yieldid);
@@ -84,9 +78,6 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(srcid), srcid);
-            s.Put(nameof(frmid), frmid);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(planid), planid);
             s.Put(nameof(yieldid), yieldid);
