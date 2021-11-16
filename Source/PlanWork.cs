@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 
@@ -42,8 +41,8 @@ namespace Revital
                     h.TR_();
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TD(o.nprice, true);
-                    h.TD(_Doc.Statuses[o.status]);
+                    h.TD(o.dprice, true);
+                    h.TD(_Article.Statuses[o.status]);
                     h._TR();
 
                     last = o.cat;
@@ -75,7 +74,7 @@ namespace Revital
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.typ])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(_Doc.Statuses[o.status]);
+                    h.TD(_Article.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -108,32 +107,22 @@ namespace Revital
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("生效日", nameof(o.started), o.started)._LI();
                     h.LI_().DATE("截止日", nameof(o.ended), o.ended)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
 
                     h._FIELDSUL().FIELDSUL_("下行参数");
-                    h.LI_().TEXT("单位", nameof(o.dunit), o.name, max: 10, required: true).NUMBER("标准比", nameof(o.dx), o.dx, min: 1, max: 1000)._LI();
+                    h.LI_().TEXT("单位", nameof(o.dunit), o.name, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
                     h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
                     h._FIELDSUL();
 
-                    if (org.WithSubsrib)
-                    {
-                        h.FIELDSUL_("上行参数");
-                        h.LI_().TEXT("单位", nameof(o.sunit), o.sunit, max: 10, required: true).NUMBER("标准比", nameof(o.sx), o.sx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.smin), o.smin).NUMBER("限订量", nameof(o.smax), o.smax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.sstep), o.sstep)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.sprice), o.sprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.soff), o.soff)._LI();
-                        h._FIELDSUL();
-                    }
-
                     if (org.WithNeed)
                     {
                         h.FIELDSUL_("终端参数");
-                        h.LI_().TEXT("单位", nameof(o.nunit), o.nunit, max: 10, required: true).NUMBER("标准比", nameof(o.nx), o.nx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.nmin), o.nmin).NUMBER("限订量", nameof(o.nmax), o.nmax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.nstep), o.nstep)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.nprice), o.nprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.noff), o.noff)._LI();
+                        h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
+                        h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
                         h._FIELDSUL();
                     }
 
@@ -149,7 +138,7 @@ namespace Revital
                 var o = await wc.ReadObjectAsync(0, new Plan
                 {
                     typ = Plan.TYP_ROUTINE,
-                    ctrid = org.id,
+                    orgid = org.id,
                 });
                 var item = items[o.itemid];
                 o.cat = item.cat;
@@ -191,14 +180,14 @@ namespace Revital
                     {
                         h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
                     }
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Doc.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
 
                     h._FIELDSUL().FIELDSUL_("销售参数");
 
-                    h.LI_().TEXT("单位", nameof(o.nunit), o.name, max: 10, required: true).NUMBER("标准倍比", nameof(o.nx), o.nx, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.nmin), o.nmin, max: 10).NUMBER("限订量", nameof(o.nmax), o.nmax, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.nstep), o.nstep, max: 10)._LI();
-                    h.LI_().NUMBER("价格", nameof(o.nprice), o.nprice, min: 0.01M, max: 10000.00M).NUMBER("优惠", nameof(o.noff), o.noff, max: 10)._LI();
+                    h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
+                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
 
                     h._FIELDSUL().FIELDSUL_("采购参数");
 

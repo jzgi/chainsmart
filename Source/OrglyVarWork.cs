@@ -18,7 +18,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Doc.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Article.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -41,17 +41,11 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            // MakeWork<SrclyGainWork>("purch");
+            MakeWork<FrmlyProductWork>("product");
 
-            MakeWork<FrmlyProductWork>("fyield");
-
-            MakeWork<FrmlySubscribWork>("fsub");
+            MakeWork<FrmlyBidWork>("subscrib");
 
             MakeWork<SrclyOrgWork>("org");
-
-            MakeWork<SrclyProductWork>("prod");
-
-            MakeWork<SrclySubscribWork>("gain");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -97,9 +91,9 @@ namespace Revital
         {
             MakeWork<AgriCtrlyPlanWork, DietaryCtrlyPlanWork, HomeCtrlyPlanWork, CareCtrlyPlanWork, AdCtrlyPlanWork, CharityCtrlyPlanWork>("plan");
 
-            MakeWork<CtrlySubscribWork>("subscrib");
+            MakeWork<CtrlyBidWork>("subscrib");
 
-            MakeWork<AgriCtrlyDistribWork, DietaryCtrlyDistribWork, HomeCtrlyDistribWork, CareCtrlyDistribWork, AdCtrlyDistribWork, CharityCtrlyDistribWork>("distrib");
+            MakeWork<AgriCtrlyBookWork, DietaryCtrlyBookWork, HomeCtrlyBookWork, CareCtrlyBookWork, AdCtrlyBookWork, CharityCtrlyBookWork>("distrib");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -121,7 +115,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Doc.Statuses[org.status])._LI();
+                h.LI_().FIELD("状态", _Article.Statuses[org.status])._LI();
                 h._UL();
 
                 h.TASKUL();
@@ -140,9 +134,9 @@ namespace Revital
 
             MakeWork<MrtlyCustWork>("cust");
 
-            MakeWork<AgriBizlyAttribWork, DietaryBizlyAttribWork>("need");
+            MakeWork<AgriBizlyBuyWork, DietaryBizlyBuyWork>("need");
 
-            MakeWork<AgriBizlyDistribWork, DietaryBizlyDistribWork>("distrib");
+            MakeWork<AgriBizlyBookWork, DietaryBizlyBookWork>("distrib");
 
             MakeWork<OrglyClearWork>("clear");
 

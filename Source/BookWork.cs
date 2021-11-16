@@ -6,21 +6,21 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class DistribWork : WebWork
+    public class BookWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    public abstract class BizlyDistribWork : DistribWork
+    public abstract class BizlyBookWork : BookWork
     {
     }
 
     [Ui("商户进货", "cart", forkie: Item.TYP_AGRI)]
-    public class AgriBizlyDistribWork : BizlyDistribWork
+    public class AgriBizlyBookWork : BizlyBookWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<AgriBizlyDistribVarWork>();
+            MakeVarWork<AgriBizlyBookVarWork>();
         }
 
         [Ui("购物车", group: 1), Tool(Anchor)]
@@ -28,8 +28,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -49,8 +49,8 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STA_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -70,8 +70,8 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Distrib.STA_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -123,9 +123,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Distrib>(0);
+                var o = await wc.ReadObjectAsync<Book>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Distrib.Empty, 0)._VALUES_(Distrib.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -134,11 +134,11 @@ namespace Revital
     }
 
     [Ui("进货管理", forkie: Item.TYP_DIETARY)]
-    public class DietaryBizlyDistribWork : BizlyDistribWork
+    public class DietaryBizlyBookWork : BizlyBookWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<DietaryBizlyDistribVarWork>();
+            MakeVarWork<DietaryBizlyBookVarWork>();
         }
 
         [Ui("购物车", group: 1), Tool(Anchor)]
@@ -146,8 +146,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<int, Item>();
             wc.GivePage(200, h =>
@@ -164,11 +164,11 @@ namespace Revital
     }
 
     [UserAuthorize(orgly: User.ORGLY_OP)]
-    public abstract class CtrlyDistribWork : DistribWork
+    public abstract class CtrlyBookWork : BookWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyDistribVarWork>();
+            MakeVarWork<CtrlyBookVarWork>();
         }
 
         [Ui("已确认", group: 1), Tool(Anchor)]
@@ -227,28 +227,28 @@ namespace Revital
     }
 
     [Ui("销售分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
-    public class AgriCtrlyDistribWork : CtrlyDistribWork
+    public class AgriCtrlyBookWork : CtrlyBookWork
     {
     }
 
     [Ui("销售分拣管理", "sign-out")]
-    public class DietaryCtrlyDistribWork : CtrlyDistribWork
+    public class DietaryCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class HomeCtrlyDistribWork : CtrlyDistribWork
+    public class HomeCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class CareCtrlyDistribWork : CtrlyDistribWork
+    public class CareCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class AdCtrlyDistribWork : CtrlyDistribWork
+    public class AdCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class CharityCtrlyDistribWork : CtrlyDistribWork
+    public class CharityCtrlyBookWork : CtrlyBookWork
     {
     }
 }

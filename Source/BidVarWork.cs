@@ -7,19 +7,19 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class SubscribVarWork : WebWork
+    public class BidVarWork : WebWork
     {
     }
 
 
-    public class CtrlySubscribVarWork : SubscribVarWork
+    public class CtrlyBidVarWork : BidVarWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
     }
 
-    public class SrclySubscribVarWork : SubscribVarWork
+    public class SrclyBidVarWork : BidVarWork
     {
         [Ui("修改", @group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
@@ -31,14 +31,14 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Subscrib.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Subscrib>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Bid>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Subscrib
+                var m = new Bid
                 {
                 };
                 m.Read(f);
@@ -127,7 +127,7 @@ namespace Revital
         }
     }
 
-    public class FrmlySubscribeVarWork : SubscribVarWork
+    public class FrmlySubscribeVarWork : BidVarWork
     {
     }
 }

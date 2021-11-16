@@ -11,7 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table _docs
+create table _articles
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -23,7 +23,7 @@ create table _docs
 	adapter varchar(10)
 );
 
-alter table _docs owner to postgres;
+alter table _articles owner to postgres;
 
 create table users
 (
@@ -40,7 +40,7 @@ create table users
 	idcard varchar(18),
 	icon bytea
 )
-inherits (_docs);
+inherits (_articles);
 
 alter table users owner to postgres;
 
@@ -65,7 +65,7 @@ create table regs
 			primary key,
 	idx smallint
 )
-inherits (_docs);
+inherits (_articles);
 
 alter table regs owner to postgres;
 
@@ -77,80 +77,9 @@ create table agrees
 	ended date,
 	content jsonb
 )
-inherits (_docs);
+inherits (_articles);
 
 alter table agrees owner to postgres;
-
-create table products
-(
-	id serial not null
-		constraint products_pk
-			primary key,
-	srcid integer,
-	itemid smallint,
-	test bytea
-)
-inherits (_docs);
-
-alter table products owner to postgres;
-
-create table posts
-(
-	id integer not null
-		constraint posts_pk
-			primary key,
-	bizid integer,
-	itemid integer,
-	planid integer,
-	unit varchar(4),
-	unitx smallint,
-	min smallint,
-	max smallint,
-	step smallint,
-	price money,
-	"off" money
-)
-inherits (_docs);
-
-alter table posts owner to postgres;
-
-create table plans
-(
-	id serial not null
-		constraint plans_pk
-			primary key,
-	ctrid integer not null,
-	itemid smallint not null,
-	started date,
-	ended date,
-	filled date,
-	nunit varchar(4),
-	nx smallint,
-	nmin smallint,
-	nmax smallint,
-	nstep smallint,
-	nprice money,
-	noff money,
-	dunit varchar(4),
-	dx smallint,
-	dmin smallint,
-	dmax smallint,
-	dstep smallint,
-	dprice money,
-	doff money,
-	sunit varchar(4),
-	sx smallint,
-	smin smallint,
-	smax smallint,
-	sstep smallint,
-	sprice money,
-	soff money,
-	cat smallint,
-	ext varchar(10)
-)
-inherits (_docs);
-
-alter table plans owner to postgres;
 
 create table items
 (
@@ -162,7 +91,7 @@ create table items
 	unitip varchar(10),
 	icon bytea
 )
-inherits (_docs);
+inherits (_articles);
 
 alter table items owner to postgres;
 
@@ -183,11 +112,11 @@ create table orgs
 	icon bytea,
 	forkie smallint
 )
-inherits (_docs);
+inherits (_articles);
 
 alter table orgs owner to postgres;
 
-create table _docxes
+create table _docs
 (
 	sprid integer,
 	fromid integer,
@@ -196,11 +125,11 @@ create table _docxes
 	closed timestamp(0),
 	closer varchar(10)
 )
-inherits (_docs);
+inherits (_articles);
 
-alter table _docxes owner to postgres;
+alter table _docs owner to postgres;
 
-create table distribs
+create table books
 (
 	id serial not null
 		constraint distribs_pk
@@ -213,11 +142,11 @@ create table distribs
 	pay money,
 	refund money
 )
-inherits (_docxes);
+inherits (_docs);
 
-alter table distribs owner to postgres;
+alter table books owner to postgres;
 
-create table attribs
+create table buys
 (
 	id serial not null
 		constraint needs_pk
@@ -232,11 +161,11 @@ create table attribs
 	pay money,
 	refund money
 )
-inherits (_docxes);
+inherits (_docs);
 
-alter table attribs owner to postgres;
+alter table buys owner to postgres;
 
-create table subscribs
+create table bids
 (
 	id serial not null
 		constraint subscribs_pk
@@ -252,9 +181,9 @@ create table subscribs
 	codend integer,
 	codes smallint
 )
-inherits (_docxes);
+inherits (_docs);
 
-alter table subscribs owner to postgres;
+alter table bids owner to postgres;
 
 create table userlgs
 (
@@ -264,15 +193,77 @@ create table userlgs
 
 alter table userlgs owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, modified, modifier, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create table _wares
+(
+	orgid integer,
+	itemid integer,
+	cat smallint,
+	ext varchar(10),
+	unit varchar(4),
+	unitx smallint,
+	min smallint,
+	max smallint,
+	step smallint,
+	price money,
+	"off" money,
+	icon bytea,
+	img bytea
+)
+inherits (_articles);
+
+alter table _wares owner to postgres;
+
+create table products
+(
+	id integer not null
+		constraint products_pk
+			primary key
+)
+inherits (_wares);
+
+alter table products owner to postgres;
+
+create table posts
+(
+	id integer not null
+		constraint posts_pk
+			primary key,
+	planid integer
+)
+inherits (_wares);
+
+alter table posts owner to postgres;
+
+create table plans
+(
+	id serial not null
+		constraint plans_pk
+			primary key,
+	productid integer,
+	dunit varchar(4),
+	dunitx smallint,
+	dmin smallint,
+	dmax smallint,
+	dstep smallint,
+	dprice money,
+	doff money,
+	starton date,
+	endon date,
+	fillon date
+)
+inherits (_wares);
+
+alter table plans owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
        o.tip,
        o.created,
        o.creator,
-       o.modified,
-       o.modifier,
+       o.adapted,
+       o.adapter,
        o.id,
        o.forkie,
        o.sprid,

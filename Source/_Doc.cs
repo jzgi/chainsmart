@@ -4,17 +4,17 @@ using SkyChain;
 namespace Revital
 {
     /// <summary>
-    /// An abstract document data object.
+    /// A data model for workflow document.
     /// </summary>
-    public abstract class _Doc : IData
+    public abstract class _Doc : _Article
     {
-        public const short
-            STA_DISABLED = 0,
-            STA_SHOWABLE = 1,
-            STA_WORKABLE = 2,
-            STA_PREFERABLE = 3;
+        // public const short
+        //     STA_DISABLED = 0,
+        //     STA_SHOWABLE = 1,
+        //     STA_WORKABLE = 2,
+        //     STA_PREFERABLE = 3;
 
-        public static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STA_DISABLED, "禁用"},
             {STA_SHOWABLE, "可展示"},
@@ -22,52 +22,36 @@ namespace Revital
             {STA_PREFERABLE, "可优先"},
         };
 
-        public const byte ID = 1, LATER = 2, PRIVACY = 4;
+        internal int sprid;
+        internal int fromid;
+        internal int toid;
+        internal int ccid;
+        internal DateTime closed;
+        internal string closer;
 
-        // the specialized extensible discriminator
-        internal short typ;
-        internal short status;
-        internal string name;
-        internal string tip;
-        internal DateTime created;
-        internal string creator;
-        internal DateTime modified;
-        internal string modifier;
 
-        public virtual void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, byte proj = 0x0f)
         {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
-            s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
-            s.Get(nameof(modified), ref modified);
-            s.Get(nameof(modifier), ref modifier);
+            base.Read(s, proj);
+
+            s.Get(nameof(sprid), ref sprid);
+            s.Get(nameof(fromid), ref fromid);
+            s.Get(nameof(toid), ref toid);
+            s.Get(nameof(ccid), ref ccid);
+            s.Get(nameof(closed), ref closed);
+            s.Get(nameof(closer), ref closer);
         }
 
-        public virtual void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, byte proj = 0x0f)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
-            s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
-            s.Put(nameof(modified), modified);
-            s.Put(nameof(modifier), modifier);
+            base.Write(s, proj);
+
+            s.Put(nameof(sprid), sprid);
+            s.Put(nameof(fromid), fromid);
+            s.Put(nameof(toid), toid);
+            s.Put(nameof(ccid), ccid);
+            s.Put(nameof(closed), closed);
+            s.Put(nameof(closer), closer);
         }
-
-        public virtual bool IsDisabled => status <= STA_DISABLED;
-
-        public virtual bool IsShowable => status == STA_SHOWABLE;
-
-        public virtual bool CanShow => status >= STA_SHOWABLE;
-
-        public virtual bool IsWorkable => status == STA_WORKABLE;
-
-        public virtual bool CanWork => status >= STA_WORKABLE;
-
-        public virtual bool IsPreferable => status == STA_PREFERABLE;
     }
 }

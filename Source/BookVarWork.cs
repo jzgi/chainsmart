@@ -7,15 +7,15 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class DistribVarWork : WebWork
+    public class BookVarWork : WebWork
     {
     }
 
-    public abstract class BizlyDistribVarWork : DistribVarWork
+    public abstract class BizlyBookVarWork : BookVarWork
     {
     }
 
-    public class AgriBizlyDistribVarWork : BizlyDistribVarWork
+    public class AgriBizlyBookVarWork : BizlyBookVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -25,8 +25,8 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Distrib>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -61,14 +61,14 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Distrib>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Distrib
+                var m = new Book
                 {
                 };
                 m.Read(f);
@@ -127,11 +127,11 @@ namespace Revital
         // [Ui("核实"), Tool(Modal.ButtonShow)]
     }
 
-    public class DietaryBizlyDistribVarWork : BizlyDistribVarWork
+    public class DietaryBizlyBookVarWork : BizlyBookVarWork
     {
     }
 
-    public class CtrlyDistribVarWork : DistribVarWork
+    public class CtrlyBookVarWork : BookVarWork
     {
     }
 }

@@ -21,7 +21,7 @@ namespace Revital
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublySubscribWork>("code");
+            MakeWork<PublyBidWork>("code");
 
             // management
 
@@ -172,7 +172,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Doc.STA_WORKABLE,
+                    status = _Article.STA_WORKABLE,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
@@ -209,11 +209,11 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Distrib.STA_CREATED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Book.STA_CREATED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
-                    dc.Sql("UPDATE orders SET status = ").T(Distrib.STA_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(Distrib.STA_CREATED);
+                    dc.Sql("UPDATE orders SET status = ").T(Book.STA_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(Book.STA_CREATED);
                     await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
                 }
                 else // try to refund this payment

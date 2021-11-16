@@ -5,9 +5,9 @@ namespace Revital
     /// <summary>
     /// A retail order, for online and offline
     /// </summary>
-    public class Attrib : _DocX, IKeyable<int>
+    public class Buy : _Doc, IKeyable<int>
     {
-        public static readonly Attrib Empty = new Attrib();
+        public static readonly Buy Empty = new Buy();
 
         public const short
             STA_CREATED = 0,

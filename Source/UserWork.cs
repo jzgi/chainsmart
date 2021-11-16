@@ -161,7 +161,7 @@ namespace Revital
         }
     }
 
-    [Ui("人员权限", "users")]
+    [Ui("操作权限", "users")]
     public class OrglyAccessWork : UserWork
     {
         protected override void OnMake()
@@ -172,8 +172,8 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var prinorg = wc[-1].As<Org>();
-            
-            
+
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(prinorg.id));
