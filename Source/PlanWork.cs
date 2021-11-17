@@ -219,24 +219,28 @@ namespace Revital
     {
     }
 
-    [Ui("供应项管理", "calendar", forkie: Item.TYP_DIETARY)]
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIETARY)]
     public class DietaryCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class HomeCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACTORY)]
+    public class FactoryCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_CARE)]
     public class CareCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class AdCtrlyPlanWork : CtrlyPlanWork
+    [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHARITY)]
+    public class CharityCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    public class CharityCtrlyPlanWork : CtrlyPlanWork
+    [Ui("传媒项目管理", "calendar", forkie: Item.TYP_AD)]
+    public class AdCtrlyPlanWork : CtrlyPlanWork
     {
     }
 }

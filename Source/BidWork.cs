@@ -17,7 +17,7 @@ namespace Revital
         public async Task @default(WebContext wc, int code)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM subscribs WHERE codend >= @1 ORDER BY codend LIMIT 1");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE codend >= @1 ORDER BY codend LIMIT 1");
             var o = await dc.QueryTopAsync<Bid>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
@@ -57,7 +57,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM purchs WHERE ctrid = @1 AND status < ").T(STA_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status < ").T(STA_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -76,7 +76,7 @@ namespace Revital
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM purchs WHERE ctrid = @1 AND status >= ").T(STA_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status >= ").T(STA_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -146,7 +146,7 @@ namespace Revital
                 ended = f[nameof(ended)];
                 key = f[nameof(key)];
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO lots (typ, status, orgid, issued, ended, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, author, icon, img) SELECT typ, 0, orgid, issued, @1, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, @2, icon, img FROM lots WHERE orgid = @3 AND id")._IN_(key);
+                dc.Sql("INSERT INTO bids (typ, status, orgid, issued, ended, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, author, icon, img) SELECT typ, 0, orgid, issued, @1, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, @2, icon, img FROM lots WHERE orgid = @3 AND id")._IN_(key);
                 await dc.ExecuteAsync(p => p.Set(ended).Set(prin.name).Set(orgid).SetForIn(key));
 
                 wc.GivePane(201);

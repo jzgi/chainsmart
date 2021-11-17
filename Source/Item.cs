@@ -14,18 +14,18 @@ namespace Revital
             TYP_DIETARY = 2,
             TYP_FACTORY = 3,
             TYP_CARE = 4,
-            TYP_AD = 5,
-            TYP_CHARITY = 6;
+            TYP_CHARITY = 5,
+            TYP_AD = 6;
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_AGRI, "生态农产"},
-            {TYP_DIETARY, "调养膳食"},
+            {TYP_DIETARY, "调养饮食"},
             {TYP_FACTORY, "工业制品"},
-            {TYP_CARE, "家政陪护"},
-            {TYP_AD, "广告宣传"},
+            {TYP_CARE, "家政医养"},
             {TYP_CHARITY, "公益志愿"},
+            {TYP_AD, "广告宣传"},
         };
 
 
@@ -44,8 +44,8 @@ namespace Revital
             {19, "农资"},
             // dietary
             {21, "调养"},
-            {22, "餐料"},
-            {23, "小吃"},
+            {22, "餐品"},
+            {23, "快餐"},
             // factory
             {31, "日用"},
             {31, "家居"},
@@ -54,12 +54,13 @@ namespace Revital
             // care
             {41, "家政"},
             {42, "陪护"},
-            // ad
-            {51, "广告"},
-            {52, "宣传"},
+            {43, "养老"},
             // charity
-            {61, "公益"},
-            {62, "志愿"},
+            {51, "公益"},
+            {52, "志愿"},
+            // ad
+            {61, "广告"},
+            {62, "宣传"},
         };
 
 

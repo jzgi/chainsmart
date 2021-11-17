@@ -15,7 +15,7 @@ namespace Revital
     {
     }
 
-    [Ui("商户进货", "cart", forkie: Item.TYP_AGRI)]
+    [Ui("进货管理", "cart", forkie: Item.TYP_AGRI)]
     public class AgriBizlyBookWork : BizlyBookWork
     {
         protected override void OnMake()
@@ -23,12 +23,12 @@ namespace Revital
             MakeVarWork<AgriBizlyBookVarWork>();
         }
 
-        [Ui("购物车", group: 1), Tool(Anchor)]
+        [Ui("常规", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();
@@ -44,34 +44,13 @@ namespace Revital
             });
         }
 
-        [Ui("当前", group: 2), Tool(Anchor)]
-        public async Task buys(WebContext wc, int page)
+        [Ui("远期", group: 2), Tool(Anchor)]
+        public async Task pre(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
-
-            var items = ObtainMap<short, Item>();
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    h.TD(items[o.itemid].name);
-                    h.TD(o.qty);
-                    h.TDFORM(() => { });
-                });
-            });
-        }
-
-        [Ui("历史", group: 4), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            short orgid = wc[-1];
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM downs WHERE partyid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();
             wc.GivePage(200, h =>
@@ -87,8 +66,57 @@ namespace Revital
         }
 
 
-        [Ui("✚", "添加", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "常规进货", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM plans WHERE orgid = @1 AND status > = ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+                var arr = await dc.QueryAsync<Book>(p => p.Set(org.ctrid));
+                wc.GivePane(200, h =>
+                {
+                    short typ = wc.Query[nameof(typ)];
+
+                    h.FORM_().FIELDSUL_();
+                    h.LI_().SELECT(null, nameof(typ), typ, Item.Cats, refresh: true)._LI();
+
+                    if (typ > 0)
+                    {
+                        var prods = ObtainMap<short, Plan>();
+                        for (int i = 0; i < prods?.Count; i++)
+                        {
+                            var o = prods.ValueAt(i);
+                            if (o.typ != typ)
+                            {
+                                continue;
+                            }
+
+                            h.LI_().T(o.name)._LI();
+                        }
+                    }
+
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_();
+
+                    h._BOTTOMBAR();
+                    h._FORM();
+                });
+            }
+            else // POST
+            {
+                var o = await wc.ReadObjectAsync<Book>(0);
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
+                await dc.ExecuteAsync(p => o.Write(p, 0));
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("✚", "远期进货", group: 2), Tool(ButtonOpen)]
+        public async Task newpre(WebContext wc)
         {
             if (wc.IsGet)
             {
@@ -146,7 +174,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM distribs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE bizid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<int, Item>();
@@ -163,7 +191,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(orgly: User.ORGLY_OP)]
+    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
     public abstract class CtrlyBookWork : BookWork
     {
         protected override void OnMake()
@@ -171,28 +199,35 @@ namespace Revital
             MakeVarWork<CtrlyBookVarWork>();
         }
 
-        [Ui("已确认", group: 1), Tool(Anchor)]
+        [Ui("常规", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             short orgid = wc[-1];
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("已发货", group: 2), Tool(Anchor)]
-        public async Task shipped(WebContext wc, int page)
+        [Ui("以往", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
         {
             short orgid = wc[-1];
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("发货", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int typ)
+        [Ui("远期", group: 4), Tool(Anchor)]
+        public async Task pre(WebContext wc, int page)
+        {
+            short orgid = wc[-1];
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui("以往", group: 8), Tool(Anchor)]
+        public async Task prepast(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
         }
 
-        [Ui("复制", group: 2), Tool(ButtonPickOpen)]
+        [Ui("新建常规", group: 1), Tool(ButtonOpen)]
         public async Task copy(WebContext wc)
         {
             short orgid = wc[-1];
@@ -226,29 +261,33 @@ namespace Revital
         }
     }
 
-    [Ui("销售分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
+    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
     public class AgriCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("销售分拣管理", "sign-out")]
+    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_DIETARY)]
     public class DietaryCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class HomeCtrlyBookWork : CtrlyBookWork
+    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_FACTORY)]
+    public class FactoryCtrlyBookWork : CtrlyBookWork
     {
     }
 
+    [Ui("供应分派管理", "sign-out", forkie: Item.TYP_CARE)]
     public class CareCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class AdCtrlyBookWork : CtrlyBookWork
+    [Ui("公益分派管理", "sign-out", forkie: Item.TYP_CHARITY)]
+    public class CharityCtrlyBookWork : CtrlyBookWork
     {
     }
 
-    public class CharityCtrlyBookWork : CtrlyBookWork
+    [Ui("传媒派发管理", "sign-out", forkie: Item.TYP_AD)]
+    public class AdCtrlyBookWork : CtrlyBookWork
     {
     }
 }

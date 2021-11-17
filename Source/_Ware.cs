@@ -3,7 +3,7 @@
 namespace Revital
 {
     /// <summary>
-    /// An item for sale
+    /// A data model for merchdise item.
     /// </summary>
     public abstract class _Ware : _Article
     {

@@ -4,7 +4,7 @@ using SkyChain;
 namespace Revital
 {
     /// <summary>
-    /// An abstract document data object.
+    /// A data model for managed object.
     /// </summary>
     public abstract class _Article : IData
     {
@@ -24,7 +24,6 @@ namespace Revital
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
 
-        // the specialized extensible discriminator
         internal short typ;
         internal short status;
         internal string name;

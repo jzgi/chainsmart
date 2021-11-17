@@ -8,18 +8,18 @@ namespace Revital
     /// </summary>
     public abstract class _Doc : _Article
     {
-        // public const short
-        //     STA_DISABLED = 0,
-        //     STA_SHOWABLE = 1,
-        //     STA_WORKABLE = 2,
-        //     STA_PREFERABLE = 3;
+        public const short
+            STA_ = 0,
+            STA_CREATED = 1,
+            STA_ADAPTED = 2,
+            STA_CLOSED = 3;
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STA_DISABLED, "禁用"},
-            {STA_SHOWABLE, "可展示"},
-            {STA_WORKABLE, "可使用"},
-            {STA_PREFERABLE, "可优先"},
+            {STA_, "禁用"},
+            {STA_CREATED, "可展示"},
+            {STA_ADAPTED, "可使用"},
+            {STA_CLOSED, "可优先"},
         };
 
         internal int sprid;
