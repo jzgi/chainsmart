@@ -13,7 +13,7 @@ namespace Revital
 
     public class CtrlyPlanVarWork : PlanVarWork
     {
-        [Ui("✎", "✎ 修改", @group: 2), Tool(AnchorShow)]
+        [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];

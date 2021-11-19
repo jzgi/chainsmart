@@ -46,7 +46,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE bizid = @1 AND status > 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE toid = @1 AND status > 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -64,7 +64,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status >= ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE toid = @1 AND status > 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
             wc.GivePage(200, h =>
             {
@@ -79,13 +79,13 @@ namespace Revital
         }
     }
 
-    [Ui("客户订单管理", forkie: Item.TYP_AGRI)]
+    [Ui("网上销售管理", forkie: Item.TYP_AGRI)]
     public class AgriBizlyBuyWork : BizlyBuyWork
     {
     }
 
-    [Ui("客户预订管理", forkie: Item.TYP_DIETARY)]
-    public class DietaryBizlyBuyWork : BizlyBuyWork
+    [Ui("网上销售管理", forkie: Item.TYP_DIET)]
+    public class DietBizlyBuyWork : BizlyBuyWork
     {
     }
 }

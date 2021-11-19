@@ -41,12 +41,12 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = TYP_DIETARY,
+                typ = TYP_DIET,
                 name = "调养膳食"
             },
             new PostDescr
             {
-                typ = TYP_FACTORY,
+                typ = TYP_FACT,
                 name = "工业产品"
             },
             new PostDescr
@@ -56,12 +56,12 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = TYP_AD,
+                typ = TYP_ADVT,
                 name = "广告宣传"
             },
             new PostDescr
             {
-                typ = TYP_CHARITY,
+                typ = TYP_CHAR,
                 name = "志愿公益"
             }
         };

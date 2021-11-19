@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
-using static Revital.Bid;
 using static Revital.User;
 
 namespace Revital
@@ -57,7 +56,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status < ").T(STA_SUBMITTED).T(" ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status < 2 ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -76,7 +75,7 @@ namespace Revital
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status >= ").T(STA_SUBMITTED).T(" ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status >= 2 ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
 
             wc.GivePage(200, h =>
@@ -155,7 +154,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
     [Ui("订货管理")]
     public class FrmlyBidWork : BidWork
     {

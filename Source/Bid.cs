@@ -20,25 +20,6 @@ namespace Revital
             {2, "预订"},
         };
 
-        public const short
-            STA_CREATED = 0,
-            STA_SUBMITTED = 1, // before processing
-            STA_ABORTED = 2,
-            STA_CONFIRMED = 3, // ready for distr center op 
-            STA_SHIPPED = 4, //  
-            STA_CLOSED = 5; // after clearing
-
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
-        {
-            {STA_CREATED, "草稿中"},
-            {STA_SUBMITTED, "已提交"},
-            {STA_ABORTED, "已撤销"},
-            {STA_CONFIRMED, "已确认"},
-            {STA_SHIPPED, "已发货"},
-            {STA_CLOSED, "已关闭"},
-        };
-
-
         internal int id;
         internal short itemid;
         internal short planid;

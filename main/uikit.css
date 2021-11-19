@@ -2700,8 +2700,8 @@ form > li,
 
 label.uk-label {
     margin-right: 0.5rem;
-    width: 4.5rem;
-    min-width: 4.5rem;
+    width: 5rem;
+    min-width: 5rem;
     justify-content: flex-end;
 }
 

@@ -95,35 +95,14 @@ inherits (_articles);
 
 alter table items owner to postgres;
 
-create table orgs
-(
-	id serial not null
-		constraint orgs_pk
-			primary key,
-	sprid integer,
-	ctrid integer,
-	license varchar(20),
-	trust boolean,
-	regid smallint not null,
-	addr varchar(30),
-	x double precision,
-	y double precision,
-	mgrid integer,
-	icon bytea,
-	forkie smallint
-)
-inherits (_articles);
-
-alter table orgs owner to postgres;
-
 create table _docs
 (
 	sprid integer,
 	fromid integer,
 	toid integer,
 	ccid integer,
-	closed timestamp(0),
-	closer varchar(10)
+	handled timestamp(0),
+	handler varchar(10)
 )
 inherits (_articles);
 
@@ -168,7 +147,7 @@ alter table buys owner to postgres;
 create table bids
 (
 	id serial not null
-		constraint subscribs_pk
+		constraint bids_pk
 			primary key,
 	itemid integer not null,
 	planid integer,
@@ -213,16 +192,6 @@ inherits (_articles);
 
 alter table _wares owner to postgres;
 
-create table products
-(
-	id integer not null
-		constraint products_pk
-			primary key
-)
-inherits (_wares);
-
-alter table products owner to postgres;
-
 create table posts
 (
 	id integer not null
@@ -254,6 +223,53 @@ create table plans
 inherits (_wares);
 
 alter table plans owner to postgres;
+
+create table orgs
+(
+	id serial not null
+		constraint orgs_pk
+			primary key,
+	forkie smallint,
+	sprid integer
+		constraint orgs_sprid_fk
+			references orgs,
+	ctrid integer
+		constraint orgs_ctrid_fk
+			references orgs,
+	license varchar(20),
+	trust boolean,
+	regid smallint not null
+		constraint orgs_regid_fk
+			references regs,
+	addr varchar(30),
+	x double precision,
+	y double precision,
+	mgrid integer
+		constraint orgs_mgrid_fk
+			references users,
+	icon bytea
+)
+inherits (_articles);
+
+alter table orgs owner to postgres;
+
+alter table users
+	add constraint users_orgid_fk
+		foreign key (orgid) references orgs;
+
+create table products
+(
+	id integer not null
+		constraint products_pk
+			primary key,
+	constraint products_orgid_fk
+		foreign key (orgid) references orgs,
+	constraint products_itemid_fk
+		foreign key (itemid) references items
+)
+inherits (_wares);
+
+alter table products owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

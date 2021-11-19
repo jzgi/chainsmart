@@ -136,7 +136,7 @@ namespace Revital
                 try
                 {
                     var percent = level * 0.10M;
-                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN ").T(Buy.STA_CLOSED).T(" ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
+                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN 2 ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
                     var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
                     if (refund <= 0)
                     {

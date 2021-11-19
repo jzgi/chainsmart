@@ -9,25 +9,26 @@ namespace Revital
     public abstract class _Doc : _Article
     {
         public const short
-            STA_ = 0,
             STA_CREATED = 1,
-            STA_ADAPTED = 2,
-            STA_CLOSED = 3;
+            STA_ABORTED = 2,
+            STA_ADAPTED = 3,
+            STA_HANDLED = 4;
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STA_, "禁用"},
-            {STA_CREATED, "可展示"},
-            {STA_ADAPTED, "可使用"},
-            {STA_CLOSED, "可优先"},
+            {0, null},
+            {STA_CREATED, "已提交"},
+            {STA_ABORTED, "已撤销"},
+            {STA_ADAPTED, "已接受"},
+            {STA_HANDLED, "已处理"},
         };
 
         internal int sprid;
         internal int fromid;
         internal int toid;
         internal int ccid;
-        internal DateTime closed;
-        internal string closer;
+        internal DateTime handled;
+        internal string handler;
 
 
         public override void Read(ISource s, byte proj = 0x0f)
@@ -38,8 +39,8 @@ namespace Revital
             s.Get(nameof(fromid), ref fromid);
             s.Get(nameof(toid), ref toid);
             s.Get(nameof(ccid), ref ccid);
-            s.Get(nameof(closed), ref closed);
-            s.Get(nameof(closer), ref closer);
+            s.Get(nameof(handled), ref handled);
+            s.Get(nameof(handler), ref handler);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -50,8 +51,8 @@ namespace Revital
             s.Put(nameof(fromid), fromid);
             s.Put(nameof(toid), toid);
             s.Put(nameof(ccid), ccid);
-            s.Put(nameof(closed), closed);
-            s.Put(nameof(closer), closer);
+            s.Put(nameof(handled), handled);
+            s.Put(nameof(handler), handler);
         }
     }
 }

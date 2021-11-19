@@ -1,4 +1,3 @@
-using Revital;
 using SkyChain.Chain;
 using SkyChain.Web;
 
@@ -32,7 +31,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");
-                
+
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body");
                 if (o != null)

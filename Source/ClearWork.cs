@@ -17,7 +17,7 @@ namespace Revital
         }
     }
 
-    [Ui("业务结算情况")]
+    [Ui("收款结算情况")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()

@@ -36,14 +36,15 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_FRM, 1)]
+    [UserAuthorize(Org.TYP_PRD, 1)]
+    [Ui("产源操作")]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
             MakeWork<FrmlyProductWork>("product");
 
-            MakeWork<FrmlyBidWork>("subscrib");
+            MakeWork<FrmlyBidWork>("bid");
 
             MakeWork<SrclyOrgWork>("org");
 
@@ -70,7 +71,7 @@ namespace Revital
                 h.LI_().FIELD("主体", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsMart)
+                if (!org.IsMrt)
                 {
                     // h.LI_().FIELD("产源社", co.name)._LI();
                 }
@@ -89,11 +90,11 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<AgriCtrlyPlanWork, DietaryCtrlyPlanWork, FactoryCtrlyPlanWork, CareCtrlyPlanWork, AdCtrlyPlanWork, CharityCtrlyPlanWork>("plan");
+            MakeWork<AgriCtrlyPlanWork, DietCtrlyPlanWork, FactCtrlyPlanWork, CareCtrlyPlanWork, AdvtCtrlyPlanWork, CharCtrlyPlanWork>("plan");
 
-            MakeWork<CtrlyBidWork>("subscrib");
+            MakeWork<CtrlyBidWork>("bid");
 
-            MakeWork<AgriCtrlyBookWork, DietaryCtrlyBookWork, FactoryCtrlyBookWork, CareCtrlyBookWork, AdCtrlyBookWork, CharityCtrlyBookWork>("distrib");
+            MakeWork<AgriCtrlyBookWork, DietCtrlyBookWork, FactCtrlyBookWork, CareCtrlyBookWork, AdvtCtrlyBookWork, CharCtrlyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -125,7 +126,11 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("市场驿站端")]
+#if ZHNT
+    [Ui("市场操作")]
+#else
+    [Ui("驿站操作")]
+#endif
     public class MrtlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
@@ -134,9 +139,13 @@ namespace Revital
 
             MakeWork<MrtlyCustWork>("cust");
 
-            MakeWork<AgriBizlyBuyWork, DietaryBizlyBuyWork>("need");
+            MakeWork<AgriBizlyPostWork, DietBizlyPostWork>("post");
 
-            MakeWork<AgriBizlyBookWork, DietaryBizlyBookWork>("distrib");
+            MakeWork<AgriBizlyBuyWork, DietBizlyBuyWork>("buy");
+
+            MakeWork<AgriBizlyBookWork, DietBizlyBookWork>("book");
+
+            MakeWork<AgriBizlyPosWork>("pos");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -156,16 +165,20 @@ namespace Revital
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD("地址／编址", org.addr)._LI();
+                h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
                 if (org.sprid > 0)
                 {
                     var spr = Obtain<int, Org>(org.sprid);
-                    h.LI_().FIELD("市场／驿站", spr.name)._LI();
+#if ZHNT
+                    h.LI_().FIELD("所在市场", spr.name)._LI();
+#else
+                    h.LI_().FIELD("所在驿站", spr.name)._LI();
+#endif
                 }
                 if (org.ctrid > 0)
                 {
                     var ctr = Obtain<int, Org>(org.ctrid);
-                    h.LI_().FIELD("供应中心", ctr.name)._LI();
+                    h.LI_().FIELD("主供应中心", ctr.name)._LI();
                 }
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("委托代办", org.trust)._LI();

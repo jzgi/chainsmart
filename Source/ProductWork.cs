@@ -10,7 +10,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_FRM, ORGLY_OP)]
+    [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
     [Ui("产品管理")]
     public class FrmlyProductWork : ProductWork
     {

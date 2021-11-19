@@ -175,7 +175,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_FRM, 1)]
+    [UserAuthorize(Org.TYP_PRD, 1)]
     [Ui("生产户管理", "thumbnails")]
     public class SrclyOrgWork : OrgWork
     {

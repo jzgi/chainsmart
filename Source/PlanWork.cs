@@ -116,15 +116,12 @@ namespace Revital
                     h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
                     h._FIELDSUL();
 
-                    if (org.WithNeed)
-                    {
-                        h.FIELDSUL_("终端参数");
-                        h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
-                        h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
-                        h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
-                        h._FIELDSUL();
-                    }
+                    h.FIELDSUL_("终端参数");
+                    h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
+                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
+                    h._FIELDSUL();
 
                     h.BOTTOM_BUTTON("确定");
 
@@ -219,13 +216,13 @@ namespace Revital
     {
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIETARY)]
-    public class DietaryCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIET)]
+    public class DietCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACTORY)]
-    public class FactoryCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACT)]
+    public class FactCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
@@ -234,13 +231,13 @@ namespace Revital
     {
     }
 
-    [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHARITY)]
-    public class CharityCtrlyPlanWork : CtrlyPlanWork
+    [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHAR)]
+    public class CharCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("传媒项目管理", "calendar", forkie: Item.TYP_AD)]
-    public class AdCtrlyPlanWork : CtrlyPlanWork
+    [Ui("传媒项目管理", "calendar", forkie: Item.TYP_ADVT)]
+    public class AdvtCtrlyPlanWork : CtrlyPlanWork
     {
     }
 }

@@ -3,9 +3,9 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    /// 
-    /// mart
-    /// 
+    /// <summary>
+    /// The home page for mart.
+    /// </summary>
     public class PublyVarWork : WebWork
     {
         protected override void OnMake()

@@ -10,9 +10,9 @@ namespace Revital
     {
     }
 
-    /// 
-    /// biz
-    /// 
+    /// <summary>
+    /// The home page for biz.
+    /// </summary>
     public class PublyBizVarWork : WebWork
     {
         public async Task @default(WebContext wc, int page)

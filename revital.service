@@ -1,5 +1,5 @@
 [Unit]
-Description=Revital Platform
+Description=A Deployment of The Revital Platform
 
 [Service]
 EnvironmentFile=/etc/environment

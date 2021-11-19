@@ -12,26 +12,27 @@ namespace Revital
 
         public const short
             TYP_BIZ = 0b000001,
-            TYP_FRM = 0b000010, // farm
+            TYP_PRD = 0b000010, // produce
             TYP_SPR = 0b000100, // supervisor
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
-            TYP_SRC = TYP_SPR | TYP_FRM, // source
-            TYP_CHL = TYP_SPR | TYP_BIZ | TYP_FRM, // channel
-            TYP_SUB = 0b001000, // subscrib
-            TYP_NED = 0b010000, // need
-            TYP_CTR = 0b100000 | TYP_BIZ, // center with distrib
-            TYP_CTR_PLUS = TYP_CTR | TYP_NED, // center with distrib + need 
-            TYP_CTR_FUL = TYP_CTR | TYP_NED | TYP_SUB; // center with distrib + need + subscrib
+            TYP_SRC = TYP_SPR | TYP_PRD, // source
+            TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
+            TYP_BID = 0b001000, // bid
+            TYP_CTR = 0b010000 | TYP_BIZ, // center
+            TYP_CTR_FUL = TYP_CTR | TYP_BID; // center with bid
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_BIZ, "商户／服务点"},
-            {TYP_FRM, "生产户／地块"},
-            {TYP_MRT, "市场／驿站"},
-            {TYP_SRC, "产源／产地"},
+            {TYP_BIZ, "经营户"},
+            {TYP_PRD, "生产户"},
+#if ZHNT
+            {TYP_MRT, "市场"},
+#else
+            {TYP_MRT, "驿站"},
+#endif
+            {TYP_SRC, "产源"},
             {TYP_CHL, "供销渠道"},
-            {TYP_CTR, "供应中心（单步）"},
-            {TYP_CTR_PLUS, "供应中心（半链）"},
+            {TYP_CTR, "供应中心"},
             {TYP_CTR_FUL, "供应中心（全链）"},
         };
 
@@ -126,11 +127,11 @@ namespace Revital
 
         public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsFarm => (typ & TYP_FRM) == TYP_FRM;
+        public bool IsFarm => (typ & TYP_PRD) == TYP_PRD;
 
         public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsMart => (typ & TYP_MRT) == TYP_MRT;
+        public bool IsMrt => (typ & TYP_MRT) == TYP_MRT;
 
         public bool IsOfCenter => (typ & TYP_CTR) == TYP_CTR;
 
@@ -138,9 +139,7 @@ namespace Revital
 
         public bool IsTruster => IsBiz || IsSrc || IsCenter;
 
-        public bool WithNeed => (typ & TYP_NED) == TYP_NED;
-
-        public bool WithSubsrib => (typ & TYP_SUB) == TYP_SUB;
+        public bool WithSubsrib => (typ & TYP_BID) == TYP_BID;
 
         public override string ToString() => name;
     }

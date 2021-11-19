@@ -10,22 +10,22 @@ namespace Revital
         public static readonly Item Empty = new Item();
 
         public const short
-            TYP_AGRI = 1,
-            TYP_DIETARY = 2,
-            TYP_FACTORY = 3,
-            TYP_CARE = 4,
-            TYP_CHARITY = 5,
-            TYP_AD = 6;
+            TYP_AGRI = 1, // agriculture
+            TYP_DIET = 2, // dietary
+            TYP_FACT = 3, // factory
+            TYP_CARE = 4, // care
+            TYP_CHAR = 5, // charity
+            TYP_ADVT = 6; // advertising
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_AGRI, "生态农产"},
-            {TYP_DIETARY, "调养饮食"},
-            {TYP_FACTORY, "工业制品"},
+            {TYP_DIET, "调养饮食"},
+            {TYP_FACT, "工业制品"},
             {TYP_CARE, "家政医养"},
-            {TYP_CHARITY, "公益志愿"},
-            {TYP_AD, "广告宣传"},
+            {TYP_CHAR, "公益志愿"},
+            {TYP_ADVT, "广告宣传"},
         };
 
 

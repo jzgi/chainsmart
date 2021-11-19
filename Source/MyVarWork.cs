@@ -12,7 +12,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<MyBuyWork>("order");
+            MakeWork<MyBuyWork>("buy");
         }
 
         [UserAuthorize]
