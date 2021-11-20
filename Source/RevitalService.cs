@@ -17,8 +17,6 @@ namespace Revital
 
             MakeWork<PublyPostWork>("post");
 
-            // public 
-
             MakeWork<PublyItemWork>("item");
 
             MakeWork<PublyBidWork>("code");
@@ -36,27 +34,67 @@ namespace Revital
             MakeWork<MyWork>("my");
         }
 
-        public void @default(WebContext wc)
+        public void @default(WebContext wc, int cmd)
         {
             var orgs = ObtainMap<int, Org>();
-            wc.GivePage(200, h =>
+            var regs = ObtainMap<short, Reg>();
+            int mrtid = wc.Query[nameof(mrtid)];
+            if (cmd == 0)
             {
-                h.HEADER_("uk-top-bar uk-flex-center uk-height-tiny");
-                h.PIC("/logo-2.png");
-                h._HEADER();
-                int ptid = 1;
-
-                if (ptid > 0)
+                mrtid = wc.Cookies[nameof(mrtid)].ToInt();
+                if (mrtid == 0)
                 {
-                    var o = orgs[ptid];
-                    h.FIELDSUL_("您默认的自提服务站").LI_();
-                    h.SPAN_("uk-width-expand").RADIO(nameof(ptid), o.id, o.name, true, tip: o.addr, required: true)._SPAN();
-                    h.SPAN_("uk-badge").A_POI(o.x, o.y, o.name, o.addr)._SPAN();
-                    h._LI()._FIELDSUL();
+                    mrtid = wc.Cookies[nameof(mrtid)].ToShort();
                 }
-            }, manifest: false);
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_();
+                    if (mrtid > 0)
+                    {
+                        var o = orgs[mrtid];
+                        h.FIELDSUL_("我默认的市场").LI_();
+                        h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, true, tip: o.addr, required: true)._SPAN();
+                        h.SPAN_("uk-badge").A_POI(o.x, o.y, o.name, o.addr)._SPAN();
+                        h._LI()._FIELDSUL();
+                    }
+                    h.FIELDSUL_("选择就近的市场");
+                    bool exist = false;
+                    for (int i = 0; i < orgs.Count; i++)
+                    {
+                        var o = orgs.ValueAt(i);
+                        exist = true;
+                        h.LI_("uk-flex");
+                        h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, false, tip: o.addr, required: true).SP().SP().A_TEL("☏", o.Tel, css: "uk-small")._SPAN();
+                        // h.A_TEL_ICON(o.name, o.Tel);
+                        h.SPAN_("uk-margin-auto-left");
+                        if (o.x > 0 && o.y > 0)
+                        {
+                            h.A_POI(o.x, o.y, o.name, o.addr, o.Tel);
+                        }
+                        else
+                        {
+                            h.T("<span class=\"uk-icon-link uk-inactive\" uk-icon=\"location\"></span>");
+                        }
+                        h._SPAN();
+                        h._LI();
+                    }
+                    if (!exist)
+                    {
+                        h.LI_().T("（暂无市场）")._LI();
+                    }
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
+                    h._FORM();
+                }, false, 15);
+            }
+            else if (cmd == 1) // agreement
+            {
+                const bool agree = true;
+                var u = mrtid.ToString();
+                wc.SetCookie(nameof(mrtid), mrtid.ToString(), maxage: 3600 * 300);
+                wc.GiveRedirect("/" + u + "/");
+            }
         }
-        // cacheable home page of the node
 
         public void @catch(WebContext wc)
         {
@@ -209,11 +247,11 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Book.STA_CREATED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Doc.STA_CREATED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
-                    dc.Sql("UPDATE orders SET status = ").T(Book.STA_SUBMITTED).T(", pay = @1, issued = @2 WHERE id = @3 AND status = ").T(Book.STA_CREATED);
+                    dc.Sql("UPDATE orders SET status = 1, pay = @1, issued = @2 WHERE id = @3 AND status = 0");
                     await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
                 }
                 else // try to refund this payment

@@ -47,7 +47,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();
@@ -71,7 +71,7 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM plans WHERE orgid = @1 AND status > = ").T(Book.STA_SUBMITTED).T(" ORDER BY id");
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM plans WHERE orgid = @1 AND status > = 1 ORDER BY id");
                 var arr = await dc.QueryAsync<Book>(p => p.Set(org.ctrid));
                 wc.GivePane(200, h =>
                 {

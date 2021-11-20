@@ -913,7 +913,7 @@ button.uk-icon:not(:disabled) {
     border: none;
     background: inherit;
     vertical-align: middle;
-    color: #666;
+    color: #f59604;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -3505,7 +3505,7 @@ ul.uk-nav-sub {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: bold;
     list-style: none;
     margin-left: 1rem;

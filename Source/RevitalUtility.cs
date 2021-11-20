@@ -1,11 +1,8 @@
 using System;
 using System.Text;
-using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Chain;
 using SkyChain.Web;
 using static SkyChain.CryptoUtility;
-using static Revital.Book;
 
 namespace Revital
 {
@@ -257,122 +254,6 @@ namespace Revital
             sb.Append(min);
 
             return sb.ToString();
-        }
-
-        public static async Task<bool> AddLotJnAsync(this DbContext dc, int lotid, int uid, decimal cash, Map<short, Org> orgs)
-        {
-            dc.Sql("UPDATE lotjns SET status =  pay = @1 WHERE lotid = @2 AND uid = @3 AND status = RETURNING qty, pay");
-            if (!await dc.QueryTopAsync(p => p.Set(cash).Set(lotid).Set(uid)))
-            {
-                return false;
-            }
-            dc.Let(out short qty);
-            dc.Let(out decimal pay);
-
-            dc.Sql("UPDATE lots SET qtys = qtys + @1, pays = pays + @2 WHERE id = @3 AND status = ").T(STA_CREATED).T(" RETURNING typ, orgid, name, min, qtys");
-            if (!await dc.QueryTopAsync(p => p.Set(qty).Set(pay).Set(lotid)))
-            {
-                return false;
-            }
-            dc.Let(out short typ);
-            dc.Let(out short orgid);
-            dc.Let(out string name);
-            dc.Let(out short min);
-            dc.Let(out short qtys);
-
-
-            return true;
-        }
-
-
-        private const string
-            LOTJN_NOT_FOUND = "LOTJN_NOT_FOUND",
-            LOT_NOT_FOUND = "LOT_NOT_FOUND";
-
-        public static async Task<string> RemoveLotJnAsync(this DbContext dc, int lotid, int uid, string reason = null)
-        {
-            dc.Sql("DELETE FROM lotjns WHERE lotid = @1 AND uid = @2 AND status = RETURNING qty, inited, pay");
-            if (!await dc.QueryTopAsync(p => p.Set(lotid).Set(uid)))
-            {
-                return LOTJN_NOT_FOUND;
-            }
-            dc.Let(out short qty);
-            dc.Let(out DateTime inited);
-            dc.Let(out decimal pay);
-
-            dc.Sql("UPDATE lots SET qtys = qtys - @1, pays = pays - @2 WHERE id = @3 AND status < ").T(STA_SUBMITTED);
-            if (await dc.ExecuteAsync(p => p.Set(qty).Set(pay).Set(lotid)) < 1)
-            {
-                return LOT_NOT_FOUND;
-            }
-
-            // refund
-            if (pay > 0.00M)
-            {
-            }
-            return null;
-        }
-
-        public static async Task<bool> SucceedLotAsync(this DbContext dc, int lotid, Map<short, Org> orgs)
-        {
-            // update status of the master record
-            dc.Sql("UPDATE lots SET status = ").T(STA_SUBMITTED).T(" WHERE id = @1 AND status = ").T(STA_CREATED).T(" RETURNING typ, orgid, name");
-            if (!await dc.QueryTopAsync(p => p.Set(lotid)))
-            {
-                return false;
-            }
-            dc.Let(out short typ);
-            dc.Let(out short orgid);
-            dc.Let(out string name);
-
-            var org = orgs[orgid];
-
-
-            return true;
-        }
-
-        public static async Task<bool> AbortLotAsync(this DbContext dc, int lotid, string reason, Map<short, Org> orgs)
-        {
-            // update master status
-            //
-            dc.Sql("UPDATE lots SET status = ").T(STA_ABORTED).T(", qtys = 0, pays = 0 WHERE id = @1 AND status < ").T(STA_CLOSED).T(" RETURNING typ, orgid, name");
-            if (!await dc.QueryTopAsync(p => p.Set(lotid)))
-            {
-                return false;
-            }
-            dc.Let(out short typ);
-            dc.Let(out short orgid);
-            dc.Let(out string name);
-
-            var org = orgs[orgid];
-
-            await WeChatUtility.PostSendAsync(org.Im, "【" + LOTS + "】" + name + reason + "（" + org.name + "）");
-
-            // delete all joiners
-            //
-            dc.Sql("DELETE FROM lotjns WHERE lotid = @1 AND status = RETURNING uid, uim, inited, pay");
-            await dc.QueryAsync(p => p.Set(lotid));
-            while (dc.Next())
-            {
-                dc.Let(out int uid);
-                dc.Let(out string uim);
-                dc.Let(out DateTime inited);
-                dc.Let(out decimal pay);
-
-                var sb = new StringBuilder();
-                sb.Append("【").Append(LOTS).Append("】");
-                sb.Append(name).Append(reason);
-                sb.Append("（").Append(org.name).Append("）");
-
-                // refund
-                if (pay > 0.00M)
-                {
-                }
-
-                await WeChatUtility.PostSendAsync(uim, sb.ToString());
-            }
-
-            return true;
         }
     }
 }

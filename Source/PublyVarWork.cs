@@ -20,19 +20,22 @@ namespace Revital
             var mrt = Obtain<int, Org>(mrtid);
             var regs = ObtainMap<short, Reg>();
 
-
             // get biz list under the mart
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ANd status > 0 ORDER BY addr");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrtid));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND regid = @2 AND status > 0 ORDER BY addr");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(cur));
 
             wc.GivePage(200, h =>
-                {
-                    h.SUBNAV(regs, string.Empty, cur, filter: (k, v) => v.typ == Reg.TYP_INDOOR);
-                    h.DIV_()._DIV();
-                },
-                title: mrt.name
-            );
+            {
+                h.TOPBAR_().SUBNAV(regs, string.Empty, cur, filter: (k, v) => v.typ == Reg.TYP_INDOOR);
+                h.T("<button class=\"uk-icon-button uk-circled uk-margin-left-auto\" formaction=\"search\" onclick=\"return dialog(this,8,false,4,'&#x1f6d2; 按厨坊下单')\"><span uk-icon=\"search\"></span></button>");
+                h._TOPBAR();
+                h.GRID(arr, o => { h.HEADER_("uk-card-header").T(o.name)._HEADER(); });
+            }, title: mrt.name);
+        }
+
+        public async Task search(WebContext wc, int cur)
+        {
         }
     }
 }
