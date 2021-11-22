@@ -127,7 +127,7 @@ namespace Revital
         // [Ui("核实"), Tool(Modal.ButtonShow)]
     }
 
-    public class DietaryBizlyBookVarWork : BizlyBookVarWork
+    public class DietBizlyBookVarWork : BizlyBookVarWork
     {
     }
 

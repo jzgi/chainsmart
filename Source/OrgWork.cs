@@ -64,7 +64,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Article.STA_WORKABLE
+                    status = _Article.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -143,7 +143,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Article.STA_WORKABLE
+                    status = _Article.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>

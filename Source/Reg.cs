@@ -12,7 +12,7 @@ namespace Revital
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_GEOGRAPHIC, "地理"},
+            {TYP_GEOGRAPHIC, "地区"},
             {TYP_INDOOR, "场内"},
         };
 
@@ -41,9 +41,9 @@ namespace Revital
 
         public short Key => id;
 
-        public bool IsMetropolis => typ == 1;
+        public bool IsGeographic => typ == TYP_GEOGRAPHIC;
 
-        public bool IsDistrict => typ == 2;
+        public bool IsIndoor => typ == TYP_INDOOR;
 
         public override string ToString() => name;
     }

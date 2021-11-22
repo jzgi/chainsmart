@@ -18,7 +18,8 @@ namespace Revital
             TYP_SRC = TYP_SPR | TYP_PRD, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
             TYP_BID = 0b001000, // bid
-            TYP_CTR = 0b010000 | TYP_BIZ, // center
+            TYP_CTR = 0b010000, // center
+            TYP_CTR_BIZ = TYP_CTR | TYP_BIZ, // center with biz
             TYP_CTR_FUL = TYP_CTR | TYP_BID; // center with bid
 
         public static readonly Map<short, string> Typs = new Map<short, string>
@@ -31,8 +32,9 @@ namespace Revital
             {TYP_MRT, "驿站"},
 #endif
             {TYP_SRC, "产源"},
-            {TYP_CHL, "供销渠道"},
+            {TYP_CHL, "购销渠道"},
             {TYP_CTR, "供应中心"},
+            {TYP_CTR_BIZ, "供应中心（经营）"},
             {TYP_CTR_FUL, "供应中心（全链）"},
         };
 

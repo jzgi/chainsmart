@@ -11,21 +11,26 @@ namespace Revital
         public static readonly Plan Empty = new Plan();
 
         public const short
-            TYP_ROUTINE = 1,
-            TYP_FUTURE = 2;
+            FIL_ONE = 1,
+            FIL_TWO = 2,
+            FIL_THREE = 2,
+            FIL_FAR = 7;
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Fillgs = new Map<short, string>
         {
-            {TYP_ROUTINE, "常规"},
-            {TYP_FUTURE, "预先"},
+            {FIL_ONE, "当日交付"},
+            {FIL_TWO, "两日内交付"},
+            {FIL_THREE, "三日内交付"},
+            {FIL_FAR, "远期交付"},
         };
 
         internal int id;
 
         internal int productid;
-        internal DateTime started;
-        internal DateTime ended;
-        internal DateTime filled;
+        internal DateTime starton;
+        internal DateTime endon;
+        internal short fillg;
+        internal DateTime fillon;
 
         internal string dunit; // downstream
         internal short dunitx;
@@ -45,9 +50,10 @@ namespace Revital
             }
 
             s.Get(nameof(productid), ref productid);
-            s.Get(nameof(started), ref started);
-            s.Get(nameof(ended), ref ended);
-            s.Get(nameof(filled), ref filled);
+            s.Get(nameof(starton), ref starton);
+            s.Get(nameof(endon), ref endon);
+            s.Get(nameof(fillg), ref fillg);
+            s.Get(nameof(fillon), ref fillon);
 
             s.Get(nameof(dunit), ref dunit);
             s.Get(nameof(dunitx), ref dunitx);
@@ -67,9 +73,10 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(productid), productid);
-            s.Put(nameof(started), started);
-            s.Put(nameof(ended), ended);
-            s.Put(nameof(filled), filled);
+            s.Put(nameof(starton), starton);
+            s.Put(nameof(endon), endon);
+            s.Put(nameof(fillg), fillg);
+            s.Put(nameof(fillon), fillon);
 
             s.Put(nameof(dunit), dunit);
             s.Put(nameof(dunitx), dunitx);

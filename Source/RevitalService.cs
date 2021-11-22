@@ -25,11 +25,11 @@ namespace Revital
 
             MakeWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<SrclyWork>("srcly"); // for source
+            MakeWork<SrclyWork>("srcly"); // for source and oroducer
 
-            MakeWork<CtrlyWork>("ctrly"); // for distribution center
+            MakeWork<CtrlyWork>("ctrly"); // for center
 
-            MakeWork<MrtlyWork>("mrtly"); // platform admin
+            MakeWork<MrtlyWork>("mrtly"); // for market and biz
 
             MakeWork<MyWork>("my");
         }
@@ -210,7 +210,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Article.STA_WORKABLE,
+                    status = _Article.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

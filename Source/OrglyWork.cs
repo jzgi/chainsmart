@@ -8,7 +8,7 @@ namespace Revital
     }
 
     /// <summary>
-    /// source and farm
+    /// source and producer
     /// </summary>
     public class SrclyWork : OrglyWork
     {
@@ -26,7 +26,7 @@ namespace Revital
 
 
     /// <summary>
-    /// center
+    /// supply
     /// </summary>
     public class CtrlyWork : OrglyWork
     {

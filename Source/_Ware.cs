@@ -7,22 +7,6 @@ namespace Revital
     /// </summary>
     public abstract class _Ware : _Article
     {
-        // public const short
-        //     STA_DISABLED = 0,
-        //     STA_SHOWABLE = 1,
-        //     STA_WORKABLE = 2,
-        //     STA_PREFERABLE = 3;
-        //
-        // public static readonly Map<short, string> Statuses = new Map<short, string>
-        // {
-        //     {STA_DISABLED, "禁用"},
-        //     {STA_SHOWABLE, "可展示"},
-        //     {STA_WORKABLE, "可使用"},
-        //     {STA_PREFERABLE, "可优先"},
-        // };
-        //
-        // public const byte ID = 1, LATER = 2, PRIVACY = 4;
-
         // the specialized extensible discriminator
         internal int orgid;
         internal short itemid;

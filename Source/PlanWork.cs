@@ -10,19 +10,19 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    public abstract class CtrlyPlanWork : PlanWork
+    public abstract class SuplyPlanWork : PlanWork
     {
         protected override void OnMake()
         {
             MakeVarWork<CtrlyPlanVarWork>();
         }
 
-        [Ui("常规", group: 1), Tool(Anchor)]
+        [Ui("当前", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE ctrid = @1 AND typ = 1 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @2");
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @2");
             var arr = dc.Query<Plan>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
@@ -41,7 +41,8 @@ namespace Revital
                     h.TR_();
                     h.TD(o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TD(o.dprice, true);
+                    h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
+                    h.TD(Plan.Fillgs[o.fillg]);
                     h.TD(_Article.Statuses[o.status]);
                     h._TR();
 
@@ -53,8 +54,8 @@ namespace Revital
         }
 
 
-        [Ui("远期", group: 2), Tool(Anchor)]
-        public void pre(WebContext wc, int page)
+        [Ui("过往", group: 2), Tool(Anchor)]
+        public void past(WebContext wc, int page)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE typ = 1 AND ORDER BY status DESC LIMIT 40 OFFSET 40 * @1");
@@ -75,6 +76,7 @@ namespace Revital
                     }
                     h.TR_();
                     h.TD(_Article.Statuses[o.status]);
+                    h.TD(Plan.Fillgs[o.fillg]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h._TR();
                     last = o.typ;
@@ -84,7 +86,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建常规供应项目", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新建供应项目", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int sch)
         {
             var org = wc[-1].As<Org>();
@@ -94,9 +96,10 @@ namespace Revital
                 var dt = DateTime.Today;
                 var o = new Plan
                 {
-                    started = dt,
-                    ended = dt,
-                    filled = dt
+                    fillg = Plan.FIL_ONE,
+                    starton = dt,
+                    endon = dt,
+                    fillon = dt
                 };
                 wc.GivePane(200, h =>
                 {
@@ -105,18 +108,13 @@ namespace Revital
                     h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.forkie, required: true)._LI();
                     h.LI_().TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().DATE("生效日", nameof(o.started), o.started)._LI();
-                    h.LI_().DATE("截止日", nameof(o.ended), o.ended)._LI();
+                    h.LI_().DATE("生效日", nameof(o.starton), o.starton)._LI();
+                    h.LI_().DATE("截止日", nameof(o.endon), o.endon)._LI();
+                    h.LI_().SELECT("交付模式", nameof(o.fillg), o.fillg, Plan.Fillgs)._LI();
+                    h.LI_().DATE("远期交付", nameof(o.fillon), o.fillon)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
 
-                    h._FIELDSUL().FIELDSUL_("下行参数");
-                    h.LI_().TEXT("单位", nameof(o.dunit), o.name, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
-                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
-                    h._FIELDSUL();
-
-                    h.FIELDSUL_("终端参数");
+                    h._FIELDSUL().FIELDSUL_("终端参数");
                     h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
@@ -134,7 +132,7 @@ namespace Revital
                 // populate 
                 var o = await wc.ReadObjectAsync(0, new Plan
                 {
-                    typ = Plan.TYP_ROUTINE,
+                    fillg = Plan.FIL_ONE,
                     orgid = org.id,
                 });
                 var item = items[o.itemid];
@@ -149,95 +147,35 @@ namespace Revital
                 wc.GivePane(200); // close dialog
             }
         }
-
-        [Ui("✚", "新建预期供应项目", group: 2), Tool(ButtonOpen)]
-        public async Task newpre(WebContext wc, int sch)
-        {
-            var org = wc[-1].As<Org>();
-            var items = ObtainMap<short, Item>();
-            if (wc.IsGet)
-            {
-                var dt = DateTime.Today;
-                var o = new Plan
-                {
-                    started = dt,
-                    ended = dt,
-                    filled = dt
-                };
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("基本信息");
-
-                    h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.forkie, required: true)._LI();
-                    h.LI_().TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
-                    h.LI_().TEXT("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().DATE("起售日", nameof(o.started), o.started)._LI();
-                    h.LI_().DATE("止售日", nameof(o.ended), o.ended)._LI();
-                    if (sch > 1)
-                    {
-                        h.LI_().DATE("交付日", nameof(o.filled), o.filled)._LI();
-                    }
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
-
-                    h._FIELDSUL().FIELDSUL_("销售参数");
-
-                    h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
-                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
-
-                    h._FIELDSUL().FIELDSUL_("采购参数");
-
-                    // h.LI_().TEXT("单位", nameof(o.uunit), o.uunit, max: 10, required: true).NUMBER("标准倍比", nameof(o.ux), o.ux, min: 1, max: 1000)._LI();
-                    // h.LI_().NUMBER("价格", nameof(o.uprice), o.uprice, min: 0.01M, max: 10000.00M)._LI();
-
-                    h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确定");
-
-                    h._FORM();
-                });
-            }
-
-            else // POST
-            {
-                var o = await wc.ReadObjectAsync<Plan>(0);
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Plan.Empty, 0)._VALUES_(Plan.Empty, 0);
-                await dc.ExecuteAsync(p => o.Write(p, 0));
-
-                wc.GivePane(200); // close dialog
-            }
-        }
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_AGRI)]
-    public class AgriCtrlyPlanWork : CtrlyPlanWork
+    public class AgriSuplyPlanWork : SuplyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIET)]
-    public class DietCtrlyPlanWork : CtrlyPlanWork
+    public class DietSuplyPlanWork : SuplyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACT)]
-    public class FactCtrlyPlanWork : CtrlyPlanWork
+    public class FactSuplyPlanWork : SuplyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_CARE)]
-    public class CareCtrlyPlanWork : CtrlyPlanWork
+    public class CareSuplyPlanWork : SuplyPlanWork
     {
     }
 
     [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHAR)]
-    public class CharCtrlyPlanWork : CtrlyPlanWork
+    public class CharSuplyPlanWork : SuplyPlanWork
     {
     }
 
     [Ui("传媒项目管理", "calendar", forkie: Item.TYP_ADVT)]
-    public class AdvtCtrlyPlanWork : CtrlyPlanWork
+    public class AdvtSuplyPlanWork : SuplyPlanWork
     {
     }
 }

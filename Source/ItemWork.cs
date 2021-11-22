@@ -68,7 +68,7 @@ namespace Revital
             {
                 var o = new Item
                 {
-                    status = _Article.STA_WORKABLE
+                    status = _Article.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {

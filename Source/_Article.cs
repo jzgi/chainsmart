@@ -9,17 +9,17 @@ namespace Revital
     public abstract class _Article : IData
     {
         public const short
-            STA_DISABLED = 0,
-            STA_SHOWABLE = 1,
-            STA_WORKABLE = 2,
-            STA_PREFERABLE = 3;
+            STA_PRE = 0,
+            STA_DISABLED = 1,
+            STA_ENABLED = 2,
+            STA_PREFERRED = 3;
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
+            {STA_PRE, null},
             {STA_DISABLED, "禁用"},
-            {STA_SHOWABLE, "可展示"},
-            {STA_WORKABLE, "可使用"},
-            {STA_PREFERABLE, "可优先"},
+            {STA_ENABLED, "可用"},
+            {STA_PREFERRED, "优先"},
         };
 
         public const byte ID = 1, LATER = 2, PRIVACY = 4;
@@ -57,16 +57,16 @@ namespace Revital
             s.Put(nameof(adapter), adapter);
         }
 
-        public virtual bool IsDisabled => status <= STA_DISABLED;
+        public virtual bool IsDisabled => status <= STA_PRE;
 
-        public virtual bool IsShowable => status == STA_SHOWABLE;
+        public virtual bool IsShowable => status == STA_DISABLED;
 
-        public virtual bool CanShow => status >= STA_SHOWABLE;
+        public virtual bool CanShow => status >= STA_DISABLED;
 
-        public virtual bool IsWorkable => status == STA_WORKABLE;
+        public virtual bool IsWorkable => status == STA_ENABLED;
 
-        public virtual bool CanWork => status >= STA_WORKABLE;
+        public virtual bool CanWork => status >= STA_ENABLED;
 
-        public virtual bool IsPreferable => status == STA_PREFERABLE;
+        public virtual bool IsPreferable => status == STA_PREFERRED;
     }
 }
