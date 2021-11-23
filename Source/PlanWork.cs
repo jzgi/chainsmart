@@ -10,7 +10,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    public abstract class SuplyPlanWork : PlanWork
+    public abstract class CtrlyPlanWork : PlanWork
     {
         protected override void OnMake()
         {
@@ -39,7 +39,7 @@ namespace Revital
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(o.name);
+                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Fillgs[o.fillg]);
@@ -87,20 +87,33 @@ namespace Revital
         }
 
         [Ui("✚", "新建供应项目", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int sch)
+        public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
             var items = ObtainMap<short, Item>();
+            short finalg = wc.Query[nameof(finalg)];
             if (wc.IsGet)
             {
-                var dt = DateTime.Today;
-                var o = new Plan
+                Plan o;
+                if (finalg == 0)
                 {
-                    fillg = Plan.FIL_ONE,
-                    starton = dt,
-                    endon = dt,
-                    fillon = dt
-                };
+                    var dt = DateTime.Today;
+                    o = new Plan
+                    {
+                        starton = dt,
+                        endon = dt,
+                        fillg = Plan.FIL_ONE,
+                        fillon = dt
+                    };
+                }
+                else
+                {
+                    o = new Plan
+                    {
+                    };
+                    o.Read(wc.Query);
+                }
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
@@ -114,11 +127,22 @@ namespace Revital
                     h.LI_().DATE("远期交付", nameof(o.fillon), o.fillon)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
 
-                    h._FIELDSUL().FIELDSUL_("终端参数");
-                    h.LI_().TEXT("单位", nameof(o.dunit), o.dunit, max: 10, required: true).NUMBER("标准比", nameof(o.dunitx), o.dunitx, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.dmin), o.dmin).NUMBER("限订量", nameof(o.dmax), o.dmax, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.dstep), o.dstep)._LI();
-                    h.LI_().NUMBER("价格", nameof(o.dprice), o.dprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.doff), o.doff)._LI();
+                    h._FIELDSUL().FIELDSUL_("规格参数");
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, max: 10, required: true).NUMBER("标准比", nameof(o.unitx), o.unitx, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
+                    h.LI_().NUMBER("价格", nameof(o.price), o.price, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.off), o.off)._LI();
+                    h._FIELDSUL();
+
+                    h._FIELDSUL().FIELDSUL_("末端规格");
+                    h.LI_().SELECT("设置", nameof(o.finalg), o.finalg, Plan.Finalgs, refresh: true)._LI();
+                    if (finalg > 0)
+                    {
+                        h.LI_().TEXT("单位", nameof(o.funit), o.funit, max: 10, required: true).NUMBER("标准比", nameof(o.funitx), o.funitx, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("起订量", nameof(o.fmin), o.fmin).NUMBER("限订量", nameof(o.fmax), o.fmax, min: 1, max: 1000)._LI();
+                        h.LI_().NUMBER("递增量", nameof(o.fstep), o.fstep)._LI();
+                        h.LI_().NUMBER("价格", nameof(o.fprice), o.fprice, min: 0.00M, max: 10000.00M).NUMBER("优惠", nameof(o.foff), o.foff)._LI();
+                    }
                     h._FIELDSUL();
 
                     h.BOTTOM_BUTTON("确定");
@@ -126,13 +150,13 @@ namespace Revital
                     h._FORM();
                 });
             }
-
             else // POST
             {
                 // populate 
                 var o = await wc.ReadObjectAsync(0, new Plan
                 {
-                    fillg = Plan.FIL_ONE,
+                    created = DateTime.Now,
+                    creator = prin.name,
                     orgid = org.id,
                 });
                 var item = items[o.itemid];
@@ -150,32 +174,32 @@ namespace Revital
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_AGRI)]
-    public class AgriSuplyPlanWork : SuplyPlanWork
+    public class AgriCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIET)]
-    public class DietSuplyPlanWork : SuplyPlanWork
+    public class DietCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACT)]
-    public class FactSuplyPlanWork : SuplyPlanWork
+    public class FactCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("供应项目管理", "calendar", forkie: Item.TYP_CARE)]
-    public class CareSuplyPlanWork : SuplyPlanWork
+    public class CareCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHAR)]
-    public class CharSuplyPlanWork : SuplyPlanWork
+    public class CharCtrlyPlanWork : CtrlyPlanWork
     {
     }
 
     [Ui("传媒项目管理", "calendar", forkie: Item.TYP_ADVT)]
-    public class AdvtSuplyPlanWork : SuplyPlanWork
+    public class AdvtCtrlyPlanWork : CtrlyPlanWork
     {
     }
 }

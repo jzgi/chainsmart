@@ -90,7 +90,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<AgriSuplyPlanWork, DietSuplyPlanWork, FactSuplyPlanWork, CareSuplyPlanWork, AdvtSuplyPlanWork, CharSuplyPlanWork>("plan");
+            MakeWork<AgriCtrlyPlanWork, DietCtrlyPlanWork, FactCtrlyPlanWork, CareCtrlyPlanWork, AdvtCtrlyPlanWork, CharCtrlyPlanWork>("plan");
 
             MakeWork<CtrlyBidWork>("bid");
 

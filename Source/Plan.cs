@@ -24,6 +24,13 @@ namespace Revital
             {FIL_FAR, "远期交付"},
         };
 
+        public static readonly Map<short, string> Finalgs = new Map<short, string>
+        {
+            {0, "不作规定"},
+            {1, "提供建议"},
+            {2, "强制参数"},
+        };
+
         internal int id;
 
         internal int productid;
@@ -32,13 +39,14 @@ namespace Revital
         internal short fillg;
         internal DateTime fillon;
 
-        internal string dunit; // downstream
-        internal short dunitx;
-        internal short dmin;
-        internal short dmax;
-        internal short dstep;
-        internal decimal dprice;
-        internal decimal doff;
+        internal short finalg;
+        internal string funit; // downstream
+        internal short funitx;
+        internal short fmin;
+        internal short fmax;
+        internal short fstep;
+        internal decimal fprice;
+        internal decimal foff;
 
         public override void Read(ISource s, byte proj = 15)
         {
@@ -55,13 +63,14 @@ namespace Revital
             s.Get(nameof(fillg), ref fillg);
             s.Get(nameof(fillon), ref fillon);
 
-            s.Get(nameof(dunit), ref dunit);
-            s.Get(nameof(dunitx), ref dunitx);
-            s.Get(nameof(dmin), ref dmin);
-            s.Get(nameof(dmax), ref dmax);
-            s.Get(nameof(dstep), ref dstep);
-            s.Get(nameof(dprice), ref dprice);
-            s.Get(nameof(doff), ref doff);
+            s.Get(nameof(finalg), ref finalg);
+            s.Get(nameof(funit), ref funit);
+            s.Get(nameof(funitx), ref funitx);
+            s.Get(nameof(fmin), ref fmin);
+            s.Get(nameof(fmax), ref fmax);
+            s.Get(nameof(fstep), ref fstep);
+            s.Get(nameof(fprice), ref fprice);
+            s.Get(nameof(foff), ref foff);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -78,13 +87,14 @@ namespace Revital
             s.Put(nameof(fillg), fillg);
             s.Put(nameof(fillon), fillon);
 
-            s.Put(nameof(dunit), dunit);
-            s.Put(nameof(dunitx), dunitx);
-            s.Put(nameof(dmin), dmin);
-            s.Put(nameof(dmax), dmax);
-            s.Put(nameof(dstep), dstep);
-            s.Put(nameof(dprice), dprice);
-            s.Put(nameof(doff), doff);
+            s.Put(nameof(finalg), finalg);
+            s.Put(nameof(funit), funit);
+            s.Put(nameof(funitx), funitx);
+            s.Put(nameof(fmin), fmin);
+            s.Put(nameof(fmax), fmax);
+            s.Put(nameof(fstep), fstep);
+            s.Put(nameof(fprice), fprice);
+            s.Put(nameof(foff), foff);
         }
 
         public int Key => id;
