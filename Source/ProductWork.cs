@@ -12,7 +12,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
     [Ui("产品管理")]
-    public class FrmlyProductWork : ProductWork
+    public class PrdlyProductWork : ProductWork
     {
         protected override void OnMake()
         {

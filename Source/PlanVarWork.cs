@@ -106,15 +106,9 @@ namespace Revital
         }
 
         [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
-        public async Task testa(WebContext wc)
+        public async Task cert(WebContext wc)
         {
-            await doimg(wc, nameof(testa));
-        }
-
-        [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
-        public async Task testb(WebContext wc)
-        {
-            await doimg(wc, nameof(testb));
+            await doimg(wc, nameof(cert));
         }
 
         public async Task doimg(WebContext wc, string col)

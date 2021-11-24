@@ -185,44 +185,12 @@ create table _wares
 	step smallint,
 	price money,
 	"off" money,
-	icon bytea,
-	img bytea
+	img bytea,
+	cert bytea
 )
 inherits (_articles);
 
 alter table _wares owner to postgres;
-
-create table posts
-(
-	id integer not null
-		constraint posts_pk
-			primary key,
-	planid integer
-)
-inherits (_wares);
-
-alter table posts owner to postgres;
-
-create table plans
-(
-	id serial not null
-		constraint plans_pk
-			primary key,
-	productid integer,
-	dunit varchar(4),
-	dunitx smallint,
-	dmin smallint,
-	dmax smallint,
-	dstep smallint,
-	dprice money,
-	doff money,
-	starton date,
-	endon date,
-	fillon date
-)
-inherits (_wares);
-
-alter table plans owner to postgres;
 
 create table orgs
 (
@@ -233,7 +201,7 @@ create table orgs
 	sprid integer
 		constraint orgs_sprid_fk
 			references orgs,
-	ctrid integer
+	supid integer
 		constraint orgs_ctrid_fk
 			references orgs,
 	license varchar(20),
@@ -257,6 +225,17 @@ alter table users
 	add constraint users_orgid_fk
 		foreign key (orgid) references orgs;
 
+create table posts
+(
+	id integer not null
+		constraint posts_pk
+			primary key,
+	planid integer
+)
+inherits (_wares);
+
+alter table posts owner to postgres;
+
 create table products
 (
 	id integer not null
@@ -270,6 +249,29 @@ create table products
 inherits (_wares);
 
 alter table products owner to postgres;
+
+create table plans
+(
+	id serial not null
+		constraint plans_pk
+			primary key,
+	productid integer,
+	starton date,
+	endon date,
+	fillon date,
+	fillg smallint,
+	finalg smallint,
+	funit varchar(4),
+	funitx smallint,
+	fmin smallint,
+	fmax smallint,
+	fstep smallint,
+	fprice money,
+	foff money
+)
+inherits (_wares);
+
+alter table plans owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

@@ -42,42 +42,34 @@ namespace Revital
     }
 
 
-    [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("采购收货管理", "sign-in")]
-    public class CtrlyBidWork : BidWork
+    [UserAuthorize(Org.TYP_CTR, ORGLY_OP)]
+    public abstract class CtrlyBidWork : BidWork
     {
-        protected override void OnMake()
-        {
-            MakeVarWork<CtrlyBidVarWork>();
-        }
-
-        [Ui("已确认", group: 1), Tool(Anchor)]
+        [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status < 2 ORDER BY id DESC LIMIT 10 OFFSET @2 * 10");
-            var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
-
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE fromid = @1 AND status < 2 ORDER BY id DESC LIMIT 30 OFFSET @2 * 30");
+            var arr = await dc.QueryAsync<Bid>(p => p.Set(org.id).Set(page), 0xff);
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr != null)
                 {
+                    h.TABLE(arr, x => { h.TD(x.name); });
                 }
-                h.PAGINATION(arr?.Length == 10);
+                h.PAGINATION(arr?.Length == 30);
             }, false, 3);
         }
 
-        [Ui("已收货", group: 2), Tool(Anchor)]
-        public async Task closed(WebContext wc, int page)
+        [Ui("以往", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
         {
             short orgid = wc[-1];
-
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status >= 2 ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
-
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -88,20 +80,39 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("发布", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int typ)
+        [Ui("✚", "新建", group: 1), Tool(ButtonOpen)]
+        public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             if (wc.IsGet)
             {
-                if (typ == 0) // display type selection
+                wc.GivePane(200, h =>
                 {
-                    wc.GivePane(200, h => { h.FORM_().FIELDSUL_("请选择推广类型"); });
-                }
-                else // typ specified
-                {
-                }
+                    h.FORM_();
+                    if (cmd == 0)
+                    {
+                        h.FIELDSUL_("选择供应项目");
+
+                        h._FIELDSUL();
+                        h.BOTTOM_BUTTON("下一步", nameof(@new), 1, post: false);
+                    }
+                    else if (cmd == 1)
+                    {
+                        h.FIELDSUL_("选择产源产品");
+
+                        h._FIELDSUL();
+                        h.BOTTOM_BUTTON("下一步", nameof(@new), 2, post: false);
+                    }
+                    else
+                    {
+                        h.FIELDSUL_("采购信息");
+
+                        h._FIELDSUL();
+                        h.BOTTOM_BUTTON("确定", nameof(@new), 3);
+                    }
+                    h._FORM();
+                });
             }
             else // POST
             {
@@ -112,55 +123,30 @@ namespace Revital
                 });
                 // database op
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO lots ").colset(o, 0)._VALUES_(o, 0);
+                dc.Sql("INSERT INTO bids ").colset(o, 0)._VALUES_(o, 0);
                 await dc.QueryTopAsync(p => o.Write(p, 0));
-
-                wc.GivePane(201);
-            }
-        }
-
-        [Ui("复制", group: 2), Tool(ButtonPickOpen)]
-        public async Task copy(WebContext wc)
-        {
-            short orgid = wc[-1];
-            var prin = (User) wc.Principal;
-            var ended = DateTime.Today.AddDays(3);
-            int[] key;
-            if (wc.IsGet)
-            {
-                key = wc.Query[nameof(key)];
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("目标截止日期");
-                    h.LI_().DATE("截止", nameof(ended), ended)._LI();
-                    h._FIELDSUL();
-                    h.HIDDENS(nameof(key), key);
-                    h.BOTTOM_BUTTON("确认", nameof(copy));
-                    h._FORM();
-                });
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                ended = f[nameof(ended)];
-                key = f[nameof(key)];
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO bids (typ, status, orgid, issued, ended, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, author, icon, img) SELECT typ, 0, orgid, issued, @1, span, name, tag, tip, unit, unitip, price, min, max, least, step, extern, addr, start, @2, icon, img FROM lots WHERE orgid = @3 AND id")._IN_(key);
-                await dc.ExecuteAsync(p => p.Set(ended).Set(prin.name).Set(orgid).SetForIn(key));
 
                 wc.GivePane(201);
             }
         }
     }
 
-
-    [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
-    [Ui("订货管理")]
-    public class FrmlyBidWork : BidWork
+    [Ui("采购及收货管理")]
+    public class AgriCtrlyBidWork : CtrlyBidWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<FrmlySubscribeVarWork>();
+            MakeVarWork<AgriCtrlyBidVarWork>();
+        }
+    }
+
+    [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
+    [Ui("订货管理")]
+    public class PrdlyBidWork : BidWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<PrdlyBidVarWork>();
         }
 
         [Ui("来单"), Tool(Anchor)]

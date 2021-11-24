@@ -7,16 +7,20 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class BidVarWork : WebWork
+    public abstract class BidVarWork : WebWork
     {
     }
 
 
-    public class CtrlyBidVarWork : BidVarWork
+    public abstract class CtrlyBidVarWork : BidVarWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
+    }
+
+    public class AgriCtrlyBidVarWork : CtrlyBidVarWork
+    {
     }
 
     public class SrclyBidVarWork : BidVarWork
@@ -127,7 +131,7 @@ namespace Revital
         }
     }
 
-    public class FrmlySubscribeVarWork : BidVarWork
+    public class PrdlyBidVarWork : BidVarWork
     {
     }
 }

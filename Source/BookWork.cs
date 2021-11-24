@@ -123,11 +123,6 @@ namespace Revital
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
     public abstract class CtrlyBookWork : BookWork
     {
-        protected override void OnMake()
-        {
-            MakeVarWork<CtrlyBookVarWork>();
-        }
-
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
@@ -135,7 +130,6 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
             await dc.QueryAsync(p => p.Set(org.id));
-
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -168,19 +162,56 @@ namespace Revital
         [Ui("以往", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
-            short orgid = wc[-1];
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
+            await dc.QueryAsync(p => p.Set(org.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int sprid);
+                    dc.Let(out int fromid);
+                    dc.Let(out decimal sum);
+
+                    if (sprid != last)
+                    {
+                        var spr = Obtain<int, Org>(sprid);
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    var from = Obtain<int, Org>(fromid);
+                    h.TD(from.name);
+                    h.TD_("uk-visible@l").T(sum)._TD();
+                    h._TR();
+
+                    last = sprid;
+                }
+                h._MAIN();
+            });
         }
     }
 
-    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
+    [Ui("销售及分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
     public class AgriCtrlyBookWork : CtrlyBookWork
     {
+        protected override void OnMake()
+        {
+            MakeVarWork<AgriCtrlyBookVarWork>();
+        }
     }
 
-    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_DIET)]
+    [Ui("销售及分拣管理", "sign-out", forkie: Item.TYP_DIET)]
     public class DietCtrlyBookWork : CtrlyBookWork
     {
+        protected override void OnMake()
+        {
+            MakeVarWork<DietCtrlyBookVarWork>();
+        }
     }
 
     [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_FACT)]

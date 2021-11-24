@@ -131,7 +131,15 @@ namespace Revital
     {
     }
 
-    public class CtrlyBookVarWork : BookVarWork
+    public abstract class CtrlyBookVarWork : BookVarWork
+    {
+    }
+
+    public class AgriCtrlyBookVarWork : CtrlyBookVarWork
+    {
+    }
+
+    public class DietCtrlyBookVarWork : CtrlyBookVarWork
     {
     }
 }

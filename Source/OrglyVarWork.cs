@@ -42,9 +42,9 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<FrmlyProductWork>("product");
+            MakeWork<PrdlyProductWork>("product");
 
-            MakeWork<FrmlyBidWork>("bid");
+            MakeWork<PrdlyBidWork>("bid");
 
             MakeWork<SrclyOrgWork>("org");
 
@@ -71,7 +71,7 @@ namespace Revital
                 h.LI_().FIELD("主体", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsMrt)
+                if (!org.IsOfMrt)
                 {
                     // h.LI_().FIELD("产源社", co.name)._LI();
                 }
@@ -92,9 +92,9 @@ namespace Revital
         {
             MakeWork<AgriCtrlyPlanWork, DietCtrlyPlanWork, FactCtrlyPlanWork, CareCtrlyPlanWork, AdvtCtrlyPlanWork, CharCtrlyPlanWork>("plan");
 
-            MakeWork<CtrlyBidWork>("bid");
-
             MakeWork<AgriCtrlyBookWork, DietCtrlyBookWork, FactCtrlyBookWork, CareCtrlyBookWork, AdvtCtrlyBookWork, CharCtrlyBookWork>("book");
+
+            MakeWork<AgriCtrlyBidWork>("bid");
 
             MakeWork<OrglyClearWork>("clear");
 
@@ -165,7 +165,7 @@ namespace Revital
                 h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
+                h.LI_().FIELD(org.IsOfMrt ? "地址" : "编址", org.addr)._LI();
                 if (org.sprid > 0)
                 {
                     var spr = Obtain<int, Org>(org.sprid);

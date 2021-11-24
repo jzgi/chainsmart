@@ -11,16 +11,14 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_BIZ = 0b000001,
-            TYP_PRD = 0b000010, // produce
-            TYP_SPR = 0b000100, // supervisor
+            TYP_BIZ = 0b00001,
+            TYP_PRD = 0b00010, // produce
+            TYP_SPR = 0b00100, // supervisor
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
             TYP_SRC = TYP_SPR | TYP_PRD, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
-            TYP_BID = 0b001000, // bid
-            TYP_CTR = 0b010000, // center
-            TYP_CTR_BIZ = TYP_CTR | TYP_BIZ, // center with biz
-            TYP_CTR_FUL = TYP_CTR | TYP_BID; // center with bid
+            TYP_CTR = 0b01000, // center
+            TYP_CTR_BIZ = TYP_CTR | TYP_BIZ; // center with biz
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -35,7 +33,6 @@ namespace Revital
             {TYP_CHL, "购销渠道"},
             {TYP_CTR, "供应中心"},
             {TYP_CTR_BIZ, "供应中心（经营）"},
-            {TYP_CTR_FUL, "供应中心（全链）"},
         };
 
 
@@ -127,21 +124,21 @@ namespace Revital
 
         public string Im => mgrim;
 
-        public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsOfSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsFarm => (typ & TYP_PRD) == TYP_PRD;
+        public bool IsSrc => typ == TYP_SRC;
 
-        public bool IsBiz => (typ & TYP_BIZ) == TYP_BIZ;
+        public bool IsPrd => typ == TYP_PRD;
 
-        public bool IsMrt => (typ & TYP_MRT) == TYP_MRT;
+        public bool IsBiz => typ == TYP_BIZ;
 
-        public bool IsOfCenter => (typ & TYP_CTR) == TYP_CTR;
+        public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsCenter => typ == TYP_CTR;
+        public bool IsOfMrt => (typ & TYP_MRT) == TYP_MRT;
 
-        public bool IsTruster => IsBiz || IsSrc || IsCenter;
+        public bool IsCtr => typ == TYP_CTR;
 
-        public bool WithSubsrib => (typ & TYP_BID) == TYP_BID;
+        public bool IsOfCtr => (typ & TYP_CTR) == TYP_CTR;
 
         public override string ToString() => name;
     }
