@@ -37,7 +37,7 @@ namespace Revital
 
 
         internal int id;
-        internal short forkie;
+        internal short fork;
         internal int sprid;
         internal int ctrid;
         internal string license;
@@ -61,7 +61,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(forkie), ref forkie);
+            s.Get(nameof(fork), ref fork);
             s.Get(nameof(sprid), ref sprid);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(license), ref license);
@@ -88,7 +88,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(forkie), forkie);
+            s.Put(nameof(fork), fork);
 
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));
@@ -118,7 +118,7 @@ namespace Revital
 
         public int Key => id;
 
-        public short Forkie => forkie;
+        public short Fork => fork;
 
         public string Tel => mgrtel;
 

@@ -33,7 +33,7 @@ namespace Revital
         }
 
         [Ui("过往", group: 2), Tool(Anchor)]
-        public async Task pre(WebContext wc, int page)
+        public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
@@ -54,7 +54,7 @@ namespace Revital
         }
 
 
-        [Ui("✚", "进货", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新建", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -102,8 +102,8 @@ namespace Revital
         }
     }
 
-    [Ui("网上进货管理", "cart", forkie: Item.TYP_AGRI)]
-    public class AgriBizlyBookWork : BizlyBookWork
+    [Ui("网上进货管理", "cart", fork: Item.TYP_AGRI)]
+    public class BizlyAgriBookWork : BizlyBookWork
     {
         protected override void OnMake()
         {
@@ -111,8 +111,8 @@ namespace Revital
         }
     }
 
-    [Ui("网上进货管理", forkie: Item.TYP_DIET)]
-    public class DietBizlyBookWork : BizlyBookWork
+    [Ui("网上进货管理", fork: Item.TYP_DIET)]
+    public class BizlyDietBookWork : BizlyBookWork
     {
         protected override void OnMake()
         {
@@ -196,8 +196,8 @@ namespace Revital
         }
     }
 
-    [Ui("销售及分拣管理", "sign-out", forkie: Item.TYP_AGRI)]
-    public class AgriCtrlyBookWork : CtrlyBookWork
+    [Ui("销售及分拣管理", "sign-out", fork: Item.TYP_AGRI)]
+    public class CtrlyAgriBookWork : CtrlyBookWork
     {
         protected override void OnMake()
         {
@@ -205,8 +205,8 @@ namespace Revital
         }
     }
 
-    [Ui("销售及分拣管理", "sign-out", forkie: Item.TYP_DIET)]
-    public class DietCtrlyBookWork : CtrlyBookWork
+    [Ui("销售及分拣管理", "sign-out", fork: Item.TYP_DIET)]
+    public class CtrlyDietBookWork : CtrlyBookWork
     {
         protected override void OnMake()
         {
@@ -214,23 +214,23 @@ namespace Revital
         }
     }
 
-    [Ui("供应分拣管理", "sign-out", forkie: Item.TYP_FACT)]
-    public class FactCtrlyBookWork : CtrlyBookWork
+    [Ui("供应分拣管理", "sign-out", fork: Item.TYP_FACT)]
+    public class CtrlyFactBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("供应分派管理", "sign-out", forkie: Item.TYP_CARE)]
-    public class CareCtrlyBookWork : CtrlyBookWork
+    [Ui("供应分派管理", "sign-out", fork: Item.TYP_CARE)]
+    public class CtrlyCareBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("公益分派管理", "sign-out", forkie: Item.TYP_CHAR)]
-    public class CharCtrlyBookWork : CtrlyBookWork
+    [Ui("公益分派管理", "sign-out", fork: Item.TYP_CHAR)]
+    public class CtrlyCharBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("传媒派发管理", "sign-out", forkie: Item.TYP_ADVT)]
-    public class AdvtCtrlyBookWork : CtrlyBookWork
+    [Ui("传媒派发管理", "sign-out", fork: Item.TYP_ADVT)]
+    public class CtrlyAdvtBookWork : CtrlyBookWork
     {
     }
 }

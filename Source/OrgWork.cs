@@ -9,7 +9,7 @@ namespace Revital
     {
     }
 
-    [Ui("机构入驻")]
+    [Ui("一级入驻机构")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -22,7 +22,7 @@ namespace Revital
             var regs = ObtainMap<short, Reg>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY regid, id, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY typ, regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -34,9 +34,9 @@ namespace Revital
                 short last = 0;
                 foreach (var o in arr)
                 {
-                    if (o.regid != last)
+                    if (o.typ != last)
                     {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 4).T(o.regid > 0 ? regs[o.regid].name : "其它")._TD()._TR();
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 4).T(Org.Typs[o.typ])._TD()._TR();
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
@@ -46,7 +46,7 @@ namespace Revital
                     h.TD(_Article.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
-                    last = o.regid;
+                    last = o.typ;
                 }
                 h._TABLE();
             });
@@ -98,9 +98,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场内商户", "album")]
+    [Ui("市场入驻机构")]
 #else
-    [Ui("驿站内服务点", "album")]
+    [Ui("驿站入驻机构")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -153,7 +153,7 @@ namespace Revital
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_INDOOR)._LI();
-                    h.LI_().SELECT("业务分支", nameof(m.forkie), m.forkie, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
                     h._FIELDSUL()._FORM();

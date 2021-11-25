@@ -132,7 +132,7 @@ namespace Revital
     }
 
     [Ui("采购及收货管理")]
-    public class AgriCtrlyBidWork : CtrlyBidWork
+    public class CtrlyAgriBidWork : CtrlyBidWork
     {
         protected override void OnMake()
         {

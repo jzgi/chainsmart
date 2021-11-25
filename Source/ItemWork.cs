@@ -18,7 +18,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("标准品目")]
+    [Ui("标准品目管理")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnMake()
@@ -52,7 +52,7 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
-                    
+
                     last = o.cat;
                 }
                 h._TABLE();

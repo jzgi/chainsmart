@@ -16,7 +16,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<FrmlyProductVarWork>();
+            MakeVarWork<PrdlyProductVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]

@@ -118,7 +118,7 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.forkie, required: true)._LI();
+                    h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true)._LI();
                     h.LI_().TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("生效日", nameof(o.starton), o.starton)._LI();
@@ -173,33 +173,33 @@ namespace Revital
         }
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_AGRI)]
-    public class AgriCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", fork: Item.TYP_AGRI)]
+    public class CtrlyAgriPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_DIET)]
-    public class DietCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", fork: Item.TYP_DIET)]
+    public class CtrlyDietPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_FACT)]
-    public class FactCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", fork: Item.TYP_FACT)]
+    public class CtrlyFactPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", forkie: Item.TYP_CARE)]
-    public class CareCtrlyPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", fork: Item.TYP_CARE)]
+    public class CtrlyCarePlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("公益项目管理", "calendar", forkie: Item.TYP_CHAR)]
-    public class CharCtrlyPlanWork : CtrlyPlanWork
+    [Ui("公益项目管理", "calendar", fork: Item.TYP_CHAR)]
+    public class CtrlyCharPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("传媒项目管理", "calendar", forkie: Item.TYP_ADVT)]
-    public class AdvtCtrlyPlanWork : CtrlyPlanWork
+    [Ui("传媒项目管理", "calendar", fork: Item.TYP_ADVT)]
+    public class CtrlyAdvtPlanWork : CtrlyPlanWork
     {
     }
 }

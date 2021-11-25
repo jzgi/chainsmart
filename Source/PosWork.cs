@@ -15,8 +15,13 @@ namespace Revital
         }
     }
 
-    [Ui("销售计价终端", "desktop", forkie: Item.TYP_AGRI)]
-    public class AgriBizlyPosWork : BizlyPosWork
+    [Ui("零售计价终端", "desktop", fork: Item.TYP_AGRI)]
+    public class BizlyAgriPosWork : BizlyPosWork
+    {
+    }
+
+    [Ui("零售计价终端", "desktop", fork: Item.TYP_DIET)]
+    public class BizlyDietPosWork : BizlyPosWork
     {
     }
 }

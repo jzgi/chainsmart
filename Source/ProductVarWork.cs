@@ -126,7 +126,7 @@ namespace Revital
         }
     }
 
-    public class FrmlyProductVarWork : ProductVarWork
+    public class PrdlyProductVarWork : ProductVarWork
     {
     }
 }

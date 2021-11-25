@@ -197,11 +197,11 @@ create table orgs
 	id serial not null
 		constraint orgs_pk
 			primary key,
-	forkie smallint,
+	fork smallint,
 	sprid integer
 		constraint orgs_sprid_fk
 			references orgs,
-	supid integer
+	ctrid integer
 		constraint orgs_ctrid_fk
 			references orgs,
 	license varchar(20),
@@ -273,7 +273,7 @@ inherits (_wares);
 
 alter table plans owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, forkie, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -283,7 +283,7 @@ SELECT o.typ,
        o.adapted,
        o.adapter,
        o.id,
-       o.forkie,
+       o.forkie           AS fork,
        o.sprid,
        o.ctrid,
        o.license,
