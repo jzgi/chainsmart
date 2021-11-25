@@ -7,33 +7,6 @@ namespace Revital
 {
     public abstract class OrglyVarWork : WebWork
     {
-        [Ui("运行设置"), Tool(ButtonShow)]
-        public async Task setg(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
-                    h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Article.Statuses, filter: (k, v) => k > 0)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else
-            {
-                var o = await wc.ReadObjectAsync(inst: org); // use existing object
-                using var dc = NewDbContext();
-                // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(org.id));
-
-                wc.GivePane(200);
-            }
-        }
-
         [UserAuthorize(orgly: 15)]
         [Ui("操作权限"), Tool(ButtonOpen)]
         public async Task access(WebContext wc, int cmd)
@@ -85,6 +58,33 @@ namespace Revital
                 wc.GivePane(200); // ok
             }
         }
+
+        [Ui("运行设置"), Tool(ButtonShow)]
+        public async Task setg(WebContext wc)
+        {
+            var org = wc[0].As<Org>();
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("修改基本设置");
+                    h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
+                    h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Article.Statuses, filter: (k, v) => k > 0)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else
+            {
+                var o = await wc.ReadObjectAsync(inst: org); // use existing object
+                using var dc = NewDbContext();
+                // update the db record
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
+                    p => p.Set(o.tip).Set(o.status).Set(org.id));
+
+                wc.GivePane(200);
+            }
+        }
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
@@ -105,11 +105,11 @@ namespace Revital
 
             MakeWork<BizlyAgriPosWork, BizlyDietPosWork>("pos");
 
-            MakeWork<OrglyClearWork>("clear");
-
             MakeWork<MrtlyOrgWork>("org");
 
             MakeWork<MrtlyUserWork>("cust");
+
+            MakeWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)
@@ -122,7 +122,7 @@ namespace Revital
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
-                h.UL_("uk-card uk-card-primary uk-card-body uk-list uk-list-divider");
+                h.UL_("uk-card uk-card-primary uk-card-body");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD(org.IsOfMrt ? "地址" : "编址", org.addr)._LI();
@@ -155,11 +155,13 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrdlyProductWork>("product");
+            MakeWork<PrdlyAgriProductWork, PrdlyDietProductWork>("product");
 
-            MakeWork<PrdlyBidWork>("bid");
+            MakeWork<PrdlyAgriBidWork, PrdlyDietBidWork>("bid");
 
             MakeWork<SrclyOrgWork>("org");
+
+            MakeWork<SrclyBidWork>("rpt");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -178,8 +180,8 @@ namespace Revital
                 h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
-                h.UL_("uk-card-body");
-                h.LI_().FIELD("主体", org.name)._LI();
+                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
                 if (!org.IsOfMrt)

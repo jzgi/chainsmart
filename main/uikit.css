@@ -2699,6 +2699,7 @@ form > li,
 }
 
 label.uk-label {
+    display: flex;
     margin-right: 0.5rem;
     width: 5rem;
     min-width: 5rem;

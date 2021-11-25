@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain;
 using SkyChain.Web;
 using static SkyChain.Web.Modal;
 using static Revital.User;
@@ -142,7 +141,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
     [Ui("订货管理")]
-    public class PrdlyBidWork : BidWork
+    public abstract class PrdlyBidWork : BidWork
     {
         protected override void OnMake()
         {
@@ -170,5 +169,22 @@ namespace Revital
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
+    }
+
+    [Ui("订货管理")]
+    public class PrdlyAgriBidWork : PrdlyBidWork
+    {
+    }
+
+    [Ui("订货管理")]
+    public class PrdlyDietBidWork : PrdlyBidWork
+    {
+    }
+
+
+    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
+    [Ui("产源销售报表")]
+    public class SrclyBidWork : BidWork
+    {
     }
 }

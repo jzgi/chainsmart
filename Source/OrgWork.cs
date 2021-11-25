@@ -9,7 +9,7 @@ namespace Revital
     {
     }
 
-    [Ui("一级入驻机构")]
+    [Ui("平台入驻机构")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -19,8 +19,6 @@ namespace Revital
 
         public async Task @default(WebContext wc)
         {
-            var regs = ObtainMap<short, Reg>();
-
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY typ, regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
@@ -176,7 +174,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_PRD, 1)]
-    [Ui("生产户管理", "thumbnails")]
+    [Ui("产源入驻机构", "thumbnails")]
     public class SrclyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -187,6 +185,66 @@ namespace Revital
 
         public async Task @default(WebContext wc)
         {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
+            var regs = ObtainMap<short, Reg>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
+                    h.TD(regs[o.regid].name);
+                    h.TDFORM(() => { });
+                });
+            });
+        }
+
+        [Ui("添加"), Tool(ButtonShow)]
+        public async Task @new(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
+            var regs = ObtainMap<short, Reg>();
+
+            if (wc.IsGet)
+            {
+                var m = new Org
+                {
+                    created = DateTime.Now,
+                    creator = prin.name,
+                    status = _Article.STA_ENABLED
+                };
+                m.Read(wc.Query, 0);
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("主体信息");
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k == Org.TYP_BIZ, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_INDOOR)._LI();
+                    h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
+                    h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                var o = await wc.ReadObjectAsync(0, new Org
+                {
+                    sprid = org.id,
+                    created = DateTime.Now,
+                    creator = prin.name,
+                });
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
+                await dc.ExecuteAsync(p => o.Write(p));
+                wc.GivePane(201); // created
+            }
         }
     }
 }
