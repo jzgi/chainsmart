@@ -11,42 +11,36 @@ namespace Revital
         public static readonly Plan Empty = new Plan();
 
         public const short
-            FIL_ONE = 1,
-            FIL_TWO = 2,
-            FIL_THREE = 2,
-            FIL_FAR = 7;
+            TYP_ONE = 1,
+            TYP_TWO = 2,
+            TYP_THREE = 3,
+            TYP_FAR = 7;
 
-        public static readonly Map<short, string> Fillgs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {FIL_ONE, "当日交付"},
-            {FIL_TWO, "两日内交付"},
-            {FIL_THREE, "三日内交付"},
-            {FIL_FAR, "远期交付"},
+            {TYP_ONE, "（常规）当日交付"},
+            {TYP_TWO, "（常规）两日内交付"},
+            {TYP_THREE, "（常规）三日内交付"},
+            {TYP_FAR, "（远期）指定交付日"},
         };
 
-        public static readonly Map<short, string> Finalgs = new Map<short, string>
+        public static readonly Map<short, string> Postgs = new Map<short, string>
         {
-            {0, "不作规定"},
-            {1, "提供建议"},
-            {2, "强制参数"},
+            {0, "不限市场价"},
+            {1, "建议市场价"},
+            {2, "市场价上限"},
+            {3, "市场价下限"},
+            {4, "统一市场价"},
         };
 
         internal int id;
 
-        internal int productid;
+        internal int pieceid;
         internal DateTime starton;
         internal DateTime endon;
-        internal short fillg;
         internal DateTime fillon;
-
-        internal short finalg;
-        internal string funit; // downstream
-        internal short funitx;
-        internal short fmin;
-        internal short fmax;
-        internal short fstep;
-        internal decimal fprice;
-        internal decimal foff;
+        internal short postg;
+        internal decimal postprice;
 
         public override void Read(ISource s, byte proj = 15)
         {
@@ -57,20 +51,12 @@ namespace Revital
                 s.Get(nameof(id), ref id);
             }
 
-            s.Get(nameof(productid), ref productid);
+            s.Get(nameof(pieceid), ref pieceid);
             s.Get(nameof(starton), ref starton);
             s.Get(nameof(endon), ref endon);
-            s.Get(nameof(fillg), ref fillg);
             s.Get(nameof(fillon), ref fillon);
-
-            s.Get(nameof(finalg), ref finalg);
-            s.Get(nameof(funit), ref funit);
-            s.Get(nameof(funitx), ref funitx);
-            s.Get(nameof(fmin), ref fmin);
-            s.Get(nameof(fmax), ref fmax);
-            s.Get(nameof(fstep), ref fstep);
-            s.Get(nameof(fprice), ref fprice);
-            s.Get(nameof(foff), ref foff);
+            s.Get(nameof(postg), ref postg);
+            s.Get(nameof(postprice), ref postprice);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -81,20 +67,12 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(productid), productid);
+            s.Put(nameof(pieceid), pieceid);
             s.Put(nameof(starton), starton);
             s.Put(nameof(endon), endon);
-            s.Put(nameof(fillg), fillg);
             s.Put(nameof(fillon), fillon);
-
-            s.Put(nameof(finalg), finalg);
-            s.Put(nameof(funit), funit);
-            s.Put(nameof(funitx), funitx);
-            s.Put(nameof(fmin), fmin);
-            s.Put(nameof(fmax), fmax);
-            s.Put(nameof(fstep), fstep);
-            s.Put(nameof(fprice), fprice);
-            s.Put(nameof(foff), foff);
+            s.Put(nameof(postg), postg);
+            s.Put(nameof(postprice), postprice);
         }
 
         public int Key => id;

@@ -135,7 +135,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<AgriCtrlyBidVarWork>();
+            MakeVarWork<CtrlyAgriBidVarWork>();
         }
     }
 

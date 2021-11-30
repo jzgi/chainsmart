@@ -3,11 +3,11 @@
 namespace Revital
 {
     /// <summary>
-    /// A product data model.
+    /// A data model for produced piece.
     /// </summary>
-    public class Product : _Article, IKeyable<int>
+    public class Piece : _Article, IKeyable<int>
     {
-        public static readonly Product Empty = new Product();
+        public static readonly Piece Empty = new Piece();
 
 
         internal short id;

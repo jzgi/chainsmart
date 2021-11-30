@@ -103,7 +103,7 @@ namespace Revital
 
             MakeWork<BizlyAgriBookWork, BizlyDietBookWork>("book");
 
-            MakeWork<BizlyAgriPosWork, BizlyDietPosWork>("pos");
+            MakeWork<BizlyAgriTermWork, BizlyDietTermWork>("pos");
 
             MakeWork<MrtlyOrgWork>("org");
 
@@ -125,7 +125,7 @@ namespace Revital
                 h.UL_("uk-card uk-card-primary uk-card-body");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD(org.IsOfMrt ? "地址" : "编址", org.addr)._LI();
+                h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
                 if (org.sprid > 0)
                 {
                     var spr = Obtain<int, Org>(org.sprid);
@@ -155,7 +155,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrdlyAgriProductWork, PrdlyDietProductWork>("product");
+            MakeWork<PrdlyAgriPieceWork, PrdlyDietPieceWork>("product");
 
             MakeWork<PrdlyAgriBidWork, PrdlyDietBidWork>("bid");
 
@@ -184,7 +184,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsOfMrt)
+                if (!org.IsMrt)
                 {
                     // h.LI_().FIELD("产源社", co.name)._LI();
                 }
@@ -223,12 +223,14 @@ namespace Revital
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
-                h.UL_("uk-card uk-card-primary uk-card-body ul-list uk-list-divider");
+                h.FORM_("uk-card uk-card-primary");
+                h.UL_("uk-card-body ul-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("状态", _Article.Statuses[org.status])._LI();
                 h._UL();
+                h._FORM();
 
                 h.TASKUL();
             }, false, 3);

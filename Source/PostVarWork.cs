@@ -4,10 +4,14 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
+    public class PostVarWork : WebWork
+    {
+    }
+
     /// 
     /// post
     /// 
-    public class PublyPostVarWork : WebWork
+    public class PublyPostVarWork : PostVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -24,9 +28,13 @@ namespace Revital
                 // buy
             });
         }
+
+        public async Task buy(WebContext wc)
+        {
+        }
     }
 
-    public class BizlyPostVarWork : WebWork
+    public class BizlyPostVarWork : PostVarWork
     {
         [Ui("✎", "✎ 修改", group: 2), Tool(AnchorShow)]
         public async Task upd(WebContext wc)

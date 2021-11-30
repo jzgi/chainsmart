@@ -336,8 +336,8 @@ function crop(trig, appear, title) {
             stylec = ' uk-modal-large';
             break;
         case LARGE:
-            wid = 360;
-            hei = 360;
+            wid = 480;
+            hei = 320;
             stylec = ' uk-modal-large';
             break;
         default:
@@ -405,7 +405,7 @@ function upload(el, url) {
             type: 'blob',
             size: 'viewport',
             format: 'jpeg',
-            quality: 1
+            quality: 0.875
         }
     ).then(function (blob) {
 

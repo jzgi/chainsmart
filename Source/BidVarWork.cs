@@ -19,13 +19,13 @@ namespace Revital
         }
     }
 
-    public class AgriCtrlyBidVarWork : CtrlyBidVarWork
+    public class CtrlyAgriBidVarWork : CtrlyBidVarWork
     {
     }
 
     public class SrclyBidVarWork : BidVarWork
     {
-        [Ui("修改", @group: 1), Tool(ButtonOpen)]
+        [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -58,7 +58,7 @@ namespace Revital
             }
         }
 
-        [Ui("图标", @group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", group: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             int id = wc[0];
@@ -78,7 +78,7 @@ namespace Revital
             }
         }
 
-        [Ui("图片", @group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图片", group: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task img(WebContext wc)
         {
             int id = wc[0];

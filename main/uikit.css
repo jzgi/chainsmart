@@ -707,13 +707,12 @@ a.uk-link-reset:hover,
 
 .uk-table {
     /* 1 */
-    border-collapse: collapse;
     border-spacing: 0;
     width: -webkit-fill-available;
     background-color: #fff;
     overflow-x: auto;
-    margin: 6px 0;
-    padding: 0;
+    margin: 4px 0;
+    padding: 4px;
     border-top: 1px solid #ededed;
     border-bottom: 1px solid #ededed;
 }

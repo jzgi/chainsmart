@@ -13,7 +13,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<PubItemVarWork>();
+            MakeVarWork<PublyItemVarWork>();
         }
     }
 

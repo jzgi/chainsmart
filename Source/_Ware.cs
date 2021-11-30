@@ -18,7 +18,7 @@ namespace Revital
         internal short max;
         internal short step;
         internal decimal price;
-        internal decimal off;
+        internal int cap;
 
         public override void Read(ISource s, byte proj = 0x0f)
         {
@@ -34,7 +34,7 @@ namespace Revital
             s.Get(nameof(max), ref max);
             s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
-            s.Get(nameof(off), ref off);
+            s.Get(nameof(cap), ref cap);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -51,7 +51,7 @@ namespace Revital
             s.Put(nameof(max), max);
             s.Put(nameof(step), step);
             s.Put(nameof(price), price);
-            s.Put(nameof(off), off);
+            s.Put(nameof(cap), cap);
         }
     }
 }

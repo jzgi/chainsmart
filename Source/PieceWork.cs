@@ -5,17 +5,17 @@ using static Revital.User;
 
 namespace Revital
 {
-    public abstract class ProductWork : WebWork
+    public abstract class PieceWork : WebWork
     {
     }
 
 
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
-    public abstract class PrdlyProductWork : ProductWork
+    public abstract class PrdlyPieceWork : PieceWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<PrdlyProductVarWork>();
+            MakeVarWork<PrdlyPieceVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -23,8 +23,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE frmid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Product>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE frmid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Piece>(p => p.Set(org.id));
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
 
@@ -33,8 +33,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE frmid = @1 AND status = 0 ORDER BY id");
-            await dc.QueryAsync<Product>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE frmid = @1 AND status = 0 ORDER BY id");
+            await dc.QueryAsync<Piece>(p => p.Set(org.id));
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
 
@@ -43,7 +43,7 @@ namespace Revital
         {
             if (wc.IsGet)
             {
-                var o = new Product
+                var o = new Piece
                 {
                     status = _Article.STA_ENABLED
                 };
@@ -59,9 +59,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Product>();
+                var o = await wc.ReadObjectAsync<Piece>();
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO product ").colset(Product.Empty)._VALUES_(Product.Empty);
+                dc.Sql("INSERT INTO product ").colset(Piece.Empty)._VALUES_(Piece.Empty);
                 await dc.ExecuteAsync(p => o.Write(p));
 
                 wc.GivePane(200); // close dialog
@@ -70,12 +70,12 @@ namespace Revital
     }
 
     [Ui("产品管理")]
-    public class PrdlyAgriProductWork : PrdlyProductWork
+    public class PrdlyAgriPieceWork : PrdlyPieceWork
     {
     }
 
     [Ui("产品管理")]
-    public class PrdlyDietProductWork : PrdlyProductWork
+    public class PrdlyDietPieceWork : PrdlyPieceWork
     {
     }
 }

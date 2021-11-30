@@ -13,7 +13,7 @@ namespace Revital
         public const short
             TYP_BIZ = 0b00001,
             TYP_PRD = 0b00010, // produce
-            TYP_SPR = 0b00100, // supervisor
+            TYP_SPR = 0b00100, // super
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
             TYP_SRC = TYP_SPR | TYP_PRD, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
@@ -124,7 +124,7 @@ namespace Revital
 
         public string Im => mgrim;
 
-        public bool IsOfSpr => (typ & TYP_SPR) == TYP_SPR;
+        public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
         public bool IsSrc => typ == TYP_SRC;
 
@@ -134,7 +134,7 @@ namespace Revital
 
         public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsOfMrt => (typ & TYP_MRT) == TYP_MRT;
+        public bool IsMrt => typ == TYP_MRT;
 
         public bool IsCtr => typ == TYP_CTR;
 

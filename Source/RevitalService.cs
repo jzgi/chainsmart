@@ -13,7 +13,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<PublyVarWork>();
+            MakeVarWork<RevitalVarWork>(); // org's home page
 
             MakeWork<PublyPostWork>("post");
 

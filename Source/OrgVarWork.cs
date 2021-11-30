@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Threading.Tasks;
 using SkyChain;
@@ -8,54 +9,42 @@ namespace Revital
 {
     public abstract class OrgVarWork : WebWork
     {
-    }
-
-    /// <summary>
-    /// The home page for biz.
-    /// </summary>
-    public class PublyBizVarWork : WebWork
-    {
-        public async Task @default(WebContext wc, int page)
+        protected async Task doimg(WebContext wc, string col)
         {
-            int bizid = wc[0];
-            var biz = Obtain<int, Org>(bizid);
-            var mrt = Obtain<int, Org>(biz.sprid);
-            var regs = ObtainMap<short, Reg>();
-
-            // get current posts of this biz 
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE bizid = @1 AND status > 0 ORDER BY created DESC");
-            var map = await dc.QueryAsync<int, Post>(p => p.Set(bizid));
-            wc.GivePage(200, h =>
+            int id = wc[0];
+            if (wc.IsGet)
             {
-                h.TOPBAR_BIZ(biz);
-
-                h.GRID(map, ety =>
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").T(col).T(" FROM orgs WHERE id = @1");
+                if (dc.QueryTop(p => p.Set(id)))
                 {
-                    var v = ety.Value;
-                    h.HEADER_().T(v.name)._HEADER();
-                });
-            }, title: mrt.name);
+                    dc.Let(out byte[] bytes);
+                    if (bytes == null) wc.Give(204); // no content 
+                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
+                }
+                else
+                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                ArraySegment<byte> img = f[nameof(img)];
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE orgs SET ").T(col).T(" = @1 WHERE id = @2");
+                if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
+                {
+                    wc.Give(200); // ok
+                }
+                else
+                    wc.Give(500); // internal server error
+            }
         }
-
-        // public async Task icon(WebContext wc)
-        // {
-        //     short id = wc[0];
-        //     using var dc = NewDbContext();
-        //     if (await dc.QueryTopAsync("SELECT icon FROM orgs WHERE id = @1", p => p.Set(id)))
-        //     {
-        //         dc.Let(out byte[] bytes);
-        //         if (bytes == null) wc.Give(204); // no content 
-        //         else wc.Give(200, new StaticContent(bytes), shared: false, 60);
-        //     }
-        //     else wc.Give(404, shared: true, maxage: 3600 * 24); // not found
-        // }
     }
 
 
     public class AdmlyOrgVarWork : OrgVarWork
     {
-        [Ui("✎", "✎ 修改", @group: 2), Tool(AnchorShow)]
+        [Ui("修改入驻主体"), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
             var regs = ObtainMap<short, Reg>();
@@ -68,8 +57,8 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k != Org.TYP_BIZ && k != Org.TYP_SRC, required: true)._LI();
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k > 4, required: true)._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
@@ -92,7 +81,7 @@ namespace Revital
             }
         }
 
-        [Ui("☹", "☹ 负责人"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("웃", "设置负责人", group: 7), Tool(ButtonOpen, Appear.Small)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -112,7 +101,7 @@ namespace Revital
                         {
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
-                            h.LI_().FIELD("用户姓名", o.name)._LI();
+                            h.LI_().FIELD("用户名", o.name)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(mgr), 2)._BOTTOMBAR();
                         }
@@ -122,13 +111,25 @@ namespace Revital
             }
             else // POST
             {
-                short orgid = wc[0];
+                int orgid = wc[0];
                 int id = (await wc.ReadAsync<Form>())[nameof(id)];
                 using var dc = NewDbContext(IsolationLevel.ReadCommitted);
                 dc.Execute("UPDATE orgs SET mgrid = @1 WHERE id = @2", p => p.Set(id).Set(orgid));
-                dc.Execute("UPDATE users SET orgid = @1, orgly = 3 WHERE id = @2", p => p.Set(orgid).Set(id));
+                dc.Execute("UPDATE users SET orgid = @1, orgly = 15 WHERE id = @2", p => p.Set(orgid).Set(id));
                 wc.GivePane(200); // ok
             }
+        }
+
+        [Ui("◑", "机构图标", group: 7), Tool(ButtonCrop, Appear.Small)]
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, "icon");
+        }
+
+        [Ui("▤", "营业执照", group: 7), Tool(ButtonCrop, Appear.Large)]
+        public async Task cert(WebContext wc)
+        {
+            await doimg(wc, "cert");
         }
     }
 

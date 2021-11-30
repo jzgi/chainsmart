@@ -184,9 +184,7 @@ create table _wares
 	max smallint,
 	step smallint,
 	price money,
-	"off" money,
-	img bytea,
-	cert bytea
+	cap integer
 )
 inherits (_articles);
 
@@ -206,7 +204,7 @@ create table orgs
 			references orgs,
 	license varchar(20),
 	trust boolean,
-	regid smallint not null
+	regid smallint
 		constraint orgs_regid_fk
 			references regs,
 	addr varchar(30),
@@ -215,7 +213,8 @@ create table orgs
 	mgrid integer
 		constraint orgs_mgrid_fk
 			references users,
-	icon bytea
+	icon bytea,
+	cert bytea
 )
 inherits (_articles);
 
@@ -236,38 +235,31 @@ inherits (_wares);
 
 alter table posts owner to postgres;
 
-create table products
+create table pieces
 (
 	id integer not null
-		constraint products_pk
+		constraint produces_pk
 			primary key,
-	constraint products_orgid_fk
+	constraint produces_orgid_fk
 		foreign key (orgid) references orgs,
-	constraint products_itemid_fk
+	constraint produces_itemid_fk
 		foreign key (itemid) references items
 )
 inherits (_wares);
 
-alter table products owner to postgres;
+alter table pieces owner to postgres;
 
 create table plans
 (
 	id serial not null
 		constraint plans_pk
 			primary key,
-	productid integer,
+	pieceid integer,
 	starton date,
 	endon date,
 	fillon date,
-	fillg smallint,
-	finalg smallint,
-	funit varchar(4),
-	funitx smallint,
-	fmin smallint,
-	fmax smallint,
-	fstep smallint,
-	fprice money,
-	foff money
+	postg smallint,
+	postprice money
 )
 inherits (_wares);
 
@@ -283,7 +275,7 @@ SELECT o.typ,
        o.adapted,
        o.adapter,
        o.id,
-       o.forkie           AS fork,
+       o.fork,
        o.sprid,
        o.ctrid,
        o.license,

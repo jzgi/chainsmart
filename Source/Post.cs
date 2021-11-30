@@ -2,9 +2,9 @@
 
 namespace Revital
 {
-    /// 
-    /// A data model for biz post.
-    /// 
+    /// <summary>
+    /// A data model for post entry.
+    /// </summary>
     public class Post : _Ware, IKeyable<int>
     {
         public static readonly Post Empty = new Post();

@@ -25,7 +25,7 @@ namespace Revital
         }
     }
 
-    public class PubItemVarWork : ItemVarWork
+    public class PublyItemVarWork : ItemVarWork
     {
         public void @default(WebContext wc)
         {

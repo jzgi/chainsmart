@@ -3,12 +3,12 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    public abstract class PosWork : WebWork
+    public abstract class TermWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_BIZ, User.ORGLY_OP)]
-    public abstract class BizlyPosWork : PosWork
+    public abstract class BizlyTermWork : TermWork
     {
         public async Task @default(WebContext wc)
         {
@@ -16,12 +16,12 @@ namespace Revital
     }
 
     [Ui("零售计价终端", "desktop", fork: Item.TYP_AGRI)]
-    public class BizlyAgriPosWork : BizlyPosWork
+    public class BizlyAgriTermWork : BizlyTermWork
     {
     }
 
     [Ui("零售计价终端", "desktop", fork: Item.TYP_DIET)]
-    public class BizlyDietPosWork : BizlyPosWork
+    public class BizlyDietTermWork : BizlyTermWork
     {
     }
 }

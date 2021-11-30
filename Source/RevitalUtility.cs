@@ -52,40 +52,6 @@ namespace Revital
         }
 
 
-        public static HtmlContent TOPBAR_BIZ(this HtmlContent h, Org biz)
-        {
-            h.NAV_("uk-top-bar");
-
-            h.SECTION_();
-            h.T(biz.name);
-            h._SECTION();
-
-            h._NAV();
-            h.DIV_("uk-top-placeholder")._DIV();
-            return h;
-        }
-
-        static readonly string[] Subnavs = {"产品", "服务", "社工"};
-
-        public static HtmlContent TOPBAR_LOT(this HtmlContent h, Reg reg, int subscript, Map<short, Reg> regs)
-        {
-            h.NAV_("uk-top-bar");
-
-            h.SECTION_("uk-flex");
-            var regid = reg.id;
-            h.FORM_("uk-width-xsmall").SELECT(null, nameof(regid), regid, regs, refresh: true)._FORM();
-
-            h.SUBNAV(Subnavs, string.Empty, subscript);
-
-            h._SECTION();
-
-            h.T("<button class=\"uk-button uk-icon-button uk-danger uk-margin-left-auto\" formaction=\"/org/?regid=").T(regid).T("\" onclick=\"return dialog(this,8,false,4,'供应方')\">供方</button>");
-
-            h._NAV();
-            h.DIV_("uk-top-placeholder")._DIV();
-            return h;
-        }
-
         public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Item> opts, Map<short, string> cats, Func<Item, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);

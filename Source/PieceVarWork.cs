@@ -7,20 +7,20 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public abstract class ProductVarWork : WebWork
+    public abstract class PieceVarWork : WebWork
     {
     }
 
-    public class AdmlyProductVarWork : ProductVarWork
+    public class AdmlyPieceVarWork : PieceVarWork
     {
         public async Task @default(WebContext wc, int page)
         {
         }
     }
 
-    public class SrclyProductVarWork : ProductVarWork
+    public class SrclyPieceVarWork : PieceVarWork
     {
-        [Ui("修改", @group: 1), Tool(ButtonOpen)]
+        [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -53,7 +53,7 @@ namespace Revital
             }
         }
 
-        [Ui("图标", @group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", group: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             int id = wc[0];
@@ -73,7 +73,7 @@ namespace Revital
             }
         }
 
-        [Ui("图片", @group: 1), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图片", group: 1), Tool(ButtonCrop, Appear.Small)]
         public async Task img(WebContext wc)
         {
             int id = wc[0];
@@ -126,7 +126,7 @@ namespace Revital
         }
     }
 
-    public class PrdlyProductVarWork : ProductVarWork
+    public class PrdlyPieceVarWork : PieceVarWork
     {
     }
 }

@@ -3,22 +3,12 @@ using SkyChain;
 namespace Revital
 {
     /// 
-    /// A subscription to source content.
+    /// A bid to source content.
     /// 
     public class Bid : _Doc, IKeyable<int>
     {
         public static readonly Bid Empty = new Bid();
 
-        public const short
-            TYP_PRODUCT = 1,
-            TYP_SERVICE = 2,
-            TYP_EVENT = 3;
-
-        public static readonly Map<short, string> Typs = new Map<short, string>
-        {
-            {1, "现货"},
-            {2, "预订"},
-        };
 
         internal int id;
         internal short itemid;

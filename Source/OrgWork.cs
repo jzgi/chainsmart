@@ -9,7 +9,7 @@ namespace Revital
     {
     }
 
-    [Ui("平台入驻机构")]
+    [Ui("平台入驻主体")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -17,41 +17,80 @@ namespace Revital
             MakeVarWork<AdmlyOrgVarWork>();
         }
 
-        public async Task @default(WebContext wc)
+        [Ui("市场", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 5 ORDER BY typ, regid, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = 5 ORDER BY typ, regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label);
+                h.TOOLBAR(caption: Label, subscript: 5);
 
                 if (arr == null) return;
 
-                h.TABLE_();
-                short last = 0;
-                foreach (var o in arr)
+                h.TABLE(arr, o =>
                 {
-                    if (o.typ != last)
-                    {
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 4).T(Org.Typs[o.typ])._TD()._TR();
-                    }
-                    h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
                     h.TD(_Article.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
-                    h._TR();
-                    last = o.typ;
-                }
-                h._TABLE();
+                });
             });
         }
 
-        [Ui("新建"), Tool(ButtonShow)]
-        public async Task @new(WebContext wc)
+        [Ui("产源", group: 2), Tool(Anchor)]
+        public async Task src(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = 6 ORDER BY typ, regid, status DESC");
+            var arr = await dc.QueryAsync<Org>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: Label, subscript: 6);
+
+                if (arr == null) return;
+
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.id);
+                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
+                    h.TD_("uk-visible@s").T(o.addr)._TD();
+                    h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
+                    h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                });
+            });
+        }
+
+        [Ui("其他", group: 4), Tool(Anchor)]
+        public async Task other(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= 7 ORDER BY typ, regid, status DESC");
+            var arr = await dc.QueryAsync<Org>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: Label, subscript: 7);
+
+                if (arr == null) return;
+
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.id);
+                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
+                    h.TD_("uk-visible@s").T(o.addr)._TD();
+                    h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
+                    h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                });
+            });
+        }
+
+        [Ui("✚", "新建入驻主体", group: 7), Tool(ButtonShow)]
+        public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
             var regs = ObtainMap<short, Reg>();
@@ -68,13 +107,13 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 5, required: true)._LI();
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => typ == 7 ? (k >= 7) : k == typ, required: true)._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Org.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
