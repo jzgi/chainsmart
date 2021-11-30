@@ -119,7 +119,7 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Org>(0, new Org
+                var o = await wc.ReadObjectAsync(0, new Org
                 {
                     created = DateTime.Now,
                     creator = prin.name,

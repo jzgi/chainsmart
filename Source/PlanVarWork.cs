@@ -8,6 +8,57 @@ namespace Revital
 {
     public abstract class PlanVarWork : WebWork
     {
+        protected async Task doimg(WebContext wc, string col)
+        {
+            short id = wc[0];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").T(col).T(" FROM plans WHERE id = @1");
+                if (dc.QueryTop(p => p.Set(id)))
+                {
+                    dc.Let(out byte[] bytes);
+                    if (bytes == null) wc.Give(204); // no content 
+                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
+                }
+                else
+                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                ArraySegment<byte> img = f[nameof(img)];
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE plans SET ").T(col).T(" = @1 WHERE id = @2");
+                if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
+                {
+                    wc.Give(200); // ok
+                }
+                else wc.Give(500); // internal server error
+            }
+        }
+
+        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        public async Task rm(WebContext wc)
+        {
+            short id = wc[0];
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.ALERT("删除标品？");
+                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
+                });
+            }
+            else
+            {
+                using var dc = NewDbContext();
+                dc.Sql("DELETE FROM items WHERE id = @1");
+                await dc.ExecuteAsync(p => p.Set(id));
+
+                wc.GivePane(200);
+            }
+        }
     }
 
 
@@ -76,68 +127,16 @@ namespace Revital
             }
         }
 
-        [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
-        public async Task img(WebContext wc)
+        [Ui("◑", "项目图标", group: 3), Tool(ButtonCrop, Appear.Small)]
+        public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(img));
+            await doimg(wc, nameof(icon));
         }
 
-        [Ui("图片"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("▤", "营业执照", group: 3), Tool(ButtonCrop, Appear.Large)]
         public async Task cert(WebContext wc)
         {
             await doimg(wc, nameof(cert));
-        }
-
-        public async Task doimg(WebContext wc, string col)
-        {
-            short id = wc[0];
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").T(col).T(" FROM prods WHERE id = @1");
-                if (dc.QueryTop(p => p.Set(id)))
-                {
-                    dc.Let(out byte[] bytes);
-                    if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
-                }
-                else
-                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                ArraySegment<byte> img = f[nameof(img)];
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE prods SET ").T(col).T(" = @1 WHERE id = @2");
-                if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
-                {
-                    wc.Give(200); // ok
-                }
-                else wc.Give(500); // internal server error
-            }
-        }
-
-        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
-        public async Task rm(WebContext wc)
-        {
-            short id = wc[0];
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.ALERT("删除标品？");
-                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("DELETE FROM items WHERE id = @1");
-                await dc.ExecuteAsync(p => p.Set(id));
-
-                wc.GivePane(200);
-            }
         }
     }
 }

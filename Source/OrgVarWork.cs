@@ -123,13 +123,13 @@ namespace Revital
         [Ui("◑", "机构图标", group: 7), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, "icon");
+            await doimg(wc, nameof(icon));
         }
 
         [Ui("▤", "营业执照", group: 7), Tool(ButtonCrop, Appear.Large)]
         public async Task cert(WebContext wc)
         {
-            await doimg(wc, "cert");
+            await doimg(wc, nameof(cert));
         }
     }
 

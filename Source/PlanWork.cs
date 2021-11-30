@@ -44,6 +44,7 @@ namespace Revital
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
                     h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
                     last = o.cat;
