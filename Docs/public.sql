@@ -259,7 +259,10 @@ create table plans
 	endon date,
 	fillon date,
 	postg smallint,
-	postprice money
+	postprice money,
+	icon bytea,
+	img bytea,
+	cert bytea
 )
 inherits (_wares);
 

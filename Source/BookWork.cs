@@ -32,7 +32,7 @@ namespace Revital
             });
         }
 
-        [Ui("过往", group: 2), Tool(Anchor)]
+        [Ui("以往", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -54,36 +54,41 @@ namespace Revital
         }
 
 
-        [Ui("✚", "新建", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新增进货", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+
+            var ctr = Obtain<int, Org>(org.ctrid);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY typ, ");
+                dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
                 var arr = await dc.QueryAsync<Plan>(p => p.Set(org.ctrid));
+                var prods = ObtainMap<int, Plan>();
                 wc.GivePane(200, h =>
                 {
-                    short typ = wc.Query[nameof(typ)];
-
-                    h.FORM_().FIELDSUL_();
-                    if (typ > 0)
+                    h.FORM_().FIELDSUL_(ctr.name);
+                    short last = 0;
+                    foreach (var o in arr)
                     {
-                        var prods = ObtainMap<short, Plan>();
-                        for (int i = 0; i < prods?.Count; i++)
+                        if (o.cat != last)
                         {
-                            var o = prods.ValueAt(i);
-                            if (o.typ != typ)
-                            {
-                                continue;
-                            }
-
-                            h.LI_().T(o.name)._LI();
+                            h.LI_().SPAN_("uk-label").T(Item.Cats[o.cat])._SPAN()._LI();
                         }
-                    }
+                        h.LI_("uk-flex");
+                        h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
+                        h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
+                        h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
+                        h.SPAN(Plan.Typs[o.postg]);
+                        h.SPAN(_Article.Statuses[o.status]);
+                        // h.TDFORM(() => h.VARTOOLS(o.Key));
+                        h._LI();
 
+                        last = o.cat;
+                    }
                     h._FIELDSUL();
+
                     h.BOTTOMBAR_();
 
                     h._BOTTOMBAR();
@@ -102,7 +107,7 @@ namespace Revital
         }
     }
 
-    [Ui("网上进货管理", "cart", fork: Item.TYP_AGRI)]
+    [Ui("线上进货管理", "cart", fork: Item.TYP_AGRI)]
     public class BizlyAgriBookWork : BizlyBookWork
     {
         protected override void OnMake()
@@ -111,7 +116,7 @@ namespace Revital
         }
     }
 
-    [Ui("网上进货管理", fork: Item.TYP_DIET)]
+    [Ui("线上进货管理", fork: Item.TYP_DIET)]
     public class BizlyDietBookWork : BizlyBookWork
     {
         protected override void OnMake()

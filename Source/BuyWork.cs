@@ -79,12 +79,12 @@ namespace Revital
         }
     }
 
-    [Ui("网上销售管理", fork: Item.TYP_AGRI)]
+    [Ui("线上销售管理", fork: Item.TYP_AGRI)]
     public class BizlyAgriBuyWork : BizlyBuyWork
     {
     }
 
-    [Ui("网上销售管理", fork: Item.TYP_DIET)]
+    [Ui("线上销售管理", fork: Item.TYP_DIET)]
     public class BizlyDietBuyWork : BizlyBuyWork
     {
     }

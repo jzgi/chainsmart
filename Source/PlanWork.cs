@@ -17,16 +17,16 @@ namespace Revital
             MakeVarWork<CtrlyPlanVarWork>();
         }
 
-        [Ui("当前项目", group: 1), Tool(Anchor)]
-        public void @default(WebContext wc, int page)
+        [Ui("期前", group: 1), Tool(Anchor)]
+        public void pre(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND endon >= @2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @3");
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 AND starton > @2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @3");
             var arr = dc.Query<Plan>(p => p.Set(org.id).Set(DateTime.Today).Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(caption: Label);
 
                 if (arr == null) return;
 
@@ -55,16 +55,16 @@ namespace Revital
         }
 
 
-        [Ui("以往项目", group: 2), Tool(Anchor)]
-        public void past(WebContext wc, int page)
+        [Ui("期中", group: 2), Tool(Anchor)]
+        public void @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND endon < @2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @3");
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 AND @2 BETWEEN starton AND endon ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @3");
             var arr = dc.Query<Plan>(p => p.Set(org.id).Set(DateTime.Today).Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(caption: Label);
 
                 if (arr == null) return;
 
@@ -72,23 +72,101 @@ namespace Revital
                 short last = 0;
                 foreach (var o in arr)
                 {
-                    if (o.typ != last)
+                    if (o.cat != last)
                     {
-                        h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.typ])._TD()._TR();
+                        h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(_Article.Statuses[o.status]);
-                    h.TD(Plan.Typs[o.postg]);
+                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
+                    h.TD(Plan.Typs[o.postg]);
+                    h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
-                    last = o.typ;
+
+                    last = o.cat;
                 }
                 h._TABLE();
                 h.PAGINATION(arr.Length == 40);
             });
         }
 
-        [Ui("✚", "新建供应项目", group: 1), Tool(ButtonOpen)]
+        [Ui("期后", group: 4), Tool(Anchor)]
+        public void post(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 AND endon < @2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @3");
+            var arr = dc.Query<Plan>(p => p.Set(org.id).Set(DateTime.Today).Set(page));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: Label);
+
+                if (arr == null) return;
+
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.cat != last)
+                    {
+                        h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
+                    h.TD(Plan.Typs[o.postg]);
+                    h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h._TR();
+
+                    last = o.cat;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            });
+        }
+
+        [Ui("关闭", group: 8), Tool(Anchor)]
+        public void gone(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status = 0 ORDER BY cat, endon DESC LIMIT 40 OFFSET 40 * @3");
+            var arr = dc.Query<Plan>(p => p.Set(org.id).Set(DateTime.Today).Set(page));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(caption: Label);
+
+                if (arr == null) return;
+
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.cat != last)
+                    {
+                        h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
+                    h.TD(Plan.Typs[o.postg]);
+                    h.TD(_Article.Statuses[o.status]);
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h._TR();
+
+                    last = o.cat;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            });
+        }
+
+        [Ui("✚", "新建供应项目", group: 3), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();

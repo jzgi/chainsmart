@@ -10,7 +10,7 @@ namespace Revital
     {
         protected async Task doimg(WebContext wc, string col)
         {
-            short id = wc[0];
+            int id = wc[0];
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
@@ -64,7 +64,7 @@ namespace Revital
 
     public class CtrlyPlanVarWork : PlanVarWork
     {
-        [Ui("✎", "修改供应项目", group: 2), Tool(AnchorOpen)]
+        [Ui("✎", "修改供应项目"), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];
@@ -133,7 +133,13 @@ namespace Revital
             await doimg(wc, nameof(icon));
         }
 
-        [Ui("▤", "营业执照", group: 3), Tool(ButtonCrop, Appear.Large)]
+        [Ui("◩", "项目照片", group: 3), Tool(ButtonCrop, Appear.Large)]
+        public async Task img(WebContext wc)
+        {
+            await doimg(wc, nameof(img));
+        }
+
+        [Ui("▤", "质量证明", group: 3), Tool(ButtonCrop, Appear.Full)]
         public async Task cert(WebContext wc)
         {
             await doimg(wc, nameof(cert));

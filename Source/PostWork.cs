@@ -46,12 +46,12 @@ namespace Revital
         }
     }
 
-    [Ui("货架管理", fork: TYP_AGRI)]
+    [Ui("线上货架管理", fork: TYP_AGRI)]
     public class BizlyAgriPostWork : BizlyPostWork
     {
     }
 
-    [Ui("服务管理", fork: TYP_DIET)]
+    [Ui("线上服务管理", fork: TYP_DIET)]
     public class BizlyDietPostWork : BizlyPostWork
     {
     }

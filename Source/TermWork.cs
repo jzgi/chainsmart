@@ -15,12 +15,12 @@ namespace Revital
         }
     }
 
-    [Ui("零售计价终端", "desktop", fork: Item.TYP_AGRI)]
+    [Ui("零售终端", "desktop", fork: Item.TYP_AGRI)]
     public class BizlyAgriTermWork : BizlyTermWork
     {
     }
 
-    [Ui("零售计价终端", "desktop", fork: Item.TYP_DIET)]
+    [Ui("零售终端", "desktop", fork: Item.TYP_DIET)]
     public class BizlyDietTermWork : BizlyTermWork
     {
     }

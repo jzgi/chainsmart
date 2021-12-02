@@ -122,7 +122,8 @@ namespace Revital
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 h.TOOLBAR(caption: prin.name + "（" + role + "）");
 
-                h.UL_("uk-card uk-card-primary uk-card-body");
+                h.FORM_("uk-card uk-card-primary");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
@@ -143,6 +144,7 @@ namespace Revital
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("委托代办", org.trust)._LI();
                 h._UL();
+                h._FORM();
 
                 h.TASKUL();
             }, false, 3);

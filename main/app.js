@@ -336,13 +336,13 @@ function crop(trig, appear, title) {
             stylec = ' uk-modal-large';
             break;
         case LARGE:
-            wid = 480;
-            hei = 320;
+            wid = 420;
+            hei = 280;
             stylec = ' uk-modal-large';
             break;
-        default:
-            wid = 360;
-            hei = 360;
+        case FULL:
+            wid = 420;
+            hei = 420;
             stylec = ' uk-modal-large';
             break;
     }
@@ -351,7 +351,7 @@ function crop(trig, appear, title) {
     html += '<header class="uk-modal-header">';
 
     html += '<nav class="uk-button-group">';
-    html += '<span class="uk-modal-title">' + title + '</span>';
+    html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     html += '<button class="uk-button uk-button-primary" onclick="$(\'#imginp\').click()">选择</button>';
     html += '<button class="uk-button uk-button-primary" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
     html += '</nav>'; // control group
@@ -404,8 +404,7 @@ function upload(el, url) {
         {
             type: 'blob',
             size: 'viewport',
-            format: 'jpeg',
-            quality: 0.875
+            format: 'jpeg'
         }
     ).then(function (blob) {
 
