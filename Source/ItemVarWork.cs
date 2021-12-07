@@ -53,13 +53,15 @@ namespace Revital
                 var o = dc.QueryTop<Item>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("品类信息");
-                    h.LI_().SELECT("大类", nameof(o.typ), o.typ, Item.Cats)._LI();
-                    h.LI_().TEXT("品类名称", nameof(o.name), o.name, max: 10, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 10)._LI();
+                    h.FORM_().FIELDSUL_("标准品目信息");
+                    h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("归类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Item.Statuses, required: true)._LI();
+                    h.LI_().NUMBER("单位运费", nameof(o.unitfee), o.unitfee, min: 0.00M, max: 999.99M)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

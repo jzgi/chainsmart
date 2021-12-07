@@ -32,7 +32,7 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
 
-            s.Put(nameof(planid), planid);
+            if (planid == 0) s.PutNull(nameof(planid)); else s.Put(nameof(planid), planid);
         }
 
         public int Key => id;

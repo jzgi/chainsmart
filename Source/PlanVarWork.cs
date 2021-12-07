@@ -64,7 +64,7 @@ namespace Revital
 
     public class CtrlyPlanVarWork : PlanVarWork
     {
-        [Ui("✎", "修改供应项目"), Tool(AnchorOpen)]
+        [Ui("修改供应项目"), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];
@@ -114,7 +114,7 @@ namespace Revital
                 o.cat = item.cat;
                 o.name = item.name + '（' + o.ext + '）';
 
-                // insert
+                // update
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE plans ")._SET_(Plan.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>

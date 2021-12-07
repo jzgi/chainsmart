@@ -60,7 +60,7 @@ namespace Revital
             });
         }
 
-        [Ui("新建"), Tool(ButtonShow)]
+        [Ui("✚", "新建标准品目"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -72,13 +72,14 @@ namespace Revital
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("填写品目信息");
+                    h.FORM_().FIELDSUL_("标准品目信息");
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
-                    h.LI_().SELECT("分类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
-                    h.LI_().TEXT("品目名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().SELECT("归类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
-                    h.LI_().TEXT("标准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
+                    h.LI_().NUMBER("单位运费", nameof(o.unitfee), o.unitfee, min: 0.00M, max: 999.99M)._LI();
                     h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -98,7 +99,7 @@ namespace Revital
             }
         }
 
-        [Ui("✕", "删除"), Tool(ButtonPickShow, Appear.Small)]
+        // [Ui("✕", "删除"), Tool(ButtonPickShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {
             short id = wc[0];

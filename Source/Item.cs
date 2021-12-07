@@ -66,8 +66,9 @@ namespace Revital
 
         internal short id;
         internal short cat;
-        internal string unit; // basic unit
+        internal string unit; // standard unit
         internal string unitip;
+        internal decimal unitfee;
 
         // must have an icon
 
@@ -82,6 +83,7 @@ namespace Revital
             s.Get(nameof(cat), ref cat);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(unitfee), ref unitfee);
         }
 
         public override void Write(ISink s, byte proj = 0x0f)
@@ -95,6 +97,7 @@ namespace Revital
             s.Put(nameof(cat), cat);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
+            s.Put(nameof(unitfee), unitfee);
         }
 
         public short Key => id;

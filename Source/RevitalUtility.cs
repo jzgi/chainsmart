@@ -83,6 +83,37 @@ namespace Revital
             return h;
         }
 
+        public static HtmlContent SELECT_PLAN(this HtmlContent h, string label, string name, int v, Map<int, Plan> opts, Map<short, string> cats, Func<Plan, bool> filter = null, bool required = false)
+        {
+            h.SELECT_(label, name, false, required);
+            if (opts != null)
+            {
+                short last = 0; // last typ
+                for (int i = 0; i < opts.Count; i++)
+                {
+                    var plan = opts.ValueAt(i);
+                    if (filter != null && !filter(plan))
+                    {
+                        continue;
+                    }
+                    if (plan.cat != last)
+                    {
+                        if (last > 0)
+                        {
+                            h.T("</optgroup>");
+                        }
+                        h.T("<optgroup label=\"").T(cats[plan.cat]).T("\">");
+                    }
+                    h.OPTION(plan.id, plan.name);
+
+                    last = plan.cat;
+                }
+                h.T("</optgroup>");
+            }
+            h._SELECT();
+            return h;
+        }
+
 
         public static HtmlContent RECEIVER(this HtmlContent h, string tel)
         {

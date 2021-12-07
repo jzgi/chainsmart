@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
+using SkyChain.Chain;
 using static System.Data.IsolationLevel;
 
 namespace Revital
@@ -60,10 +61,10 @@ namespace Revital
                 }, 60 * 15
             );
 
-            CacheMap(dc =>
+            CacheSub((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans ORDER BY typ, status DESC");
-                    return dc.Query<int, Plan>();
+                    dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                    return dc.Query<int, Plan>(p => p.Set(orgid));
                 }, 60 * 15
             );
         }

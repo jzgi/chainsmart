@@ -89,6 +89,7 @@ create table items
 	cat smallint,
 	unit varchar(4),
 	unitip varchar(10),
+	unitfee money,
 	icon bytea
 )
 inherits (_articles);
@@ -110,7 +111,7 @@ alter table _docs owner to postgres;
 
 create table books
 (
-	id serial not null
+	id bigserial not null
 		constraint distribs_pk
 			primary key,
 	itemid smallint not null,
@@ -127,7 +128,7 @@ alter table books owner to postgres;
 
 create table buys
 (
-	id serial not null
+	id bigserial not null
 		constraint needs_pk
 			primary key,
 	postid smallint not null,
@@ -144,9 +145,9 @@ inherits (_docs);
 
 alter table buys owner to postgres;
 
-create table bids
+create table bids_
 (
-	id serial not null
+	id bigserial not null
 		constraint bids_pk
 			primary key,
 	itemid integer not null,
@@ -162,7 +163,7 @@ create table bids
 )
 inherits (_docs);
 
-alter table bids owner to postgres;
+alter table bids_ owner to postgres;
 
 create table userlgs
 (
@@ -224,17 +225,6 @@ alter table users
 	add constraint users_orgid_fk
 		foreign key (orgid) references orgs;
 
-create table posts
-(
-	id integer not null
-		constraint posts_pk
-			primary key,
-	planid integer
-)
-inherits (_wares);
-
-alter table posts owner to postgres;
-
 create table pieces
 (
 	id integer not null
@@ -267,6 +257,17 @@ create table plans
 inherits (_wares);
 
 alter table plans owner to postgres;
+
+create table posts
+(
+	id serial not null
+		constraint posts_pk
+			primary key,
+	planid integer
+)
+inherits (_wares);
+
+alter table posts owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

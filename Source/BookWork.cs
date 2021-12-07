@@ -82,7 +82,7 @@ namespace Revital
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
                         h.SPAN(Plan.Typs[o.postg]);
                         h.SPAN(_Article.Statuses[o.status]);
-                        // h.TDFORM(() => h.VARTOOLS(o.Key));
+                        h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
 
                         last = o.cat;
