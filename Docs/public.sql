@@ -11,7 +11,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table _articles
+create table _arts
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -23,7 +23,7 @@ create table _articles
 	adapter varchar(10)
 );
 
-alter table _articles owner to postgres;
+alter table _arts owner to postgres;
 
 create table users
 (
@@ -40,7 +40,7 @@ create table users
 	idcard varchar(18),
 	icon bytea
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table users owner to postgres;
 
@@ -65,7 +65,7 @@ create table regs
 			primary key,
 	idx smallint
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table regs owner to postgres;
 
@@ -77,7 +77,7 @@ create table agrees
 	ended date,
 	content jsonb
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table agrees owner to postgres;
 
@@ -92,7 +92,7 @@ create table items
 	unitfee money,
 	icon bytea
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table items owner to postgres;
 
@@ -105,7 +105,7 @@ create table _docs
 	handled timestamp(0),
 	handler varchar(10)
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table _docs owner to postgres;
 
@@ -187,7 +187,7 @@ create table _wares
 	price money,
 	cap integer
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table _wares owner to postgres;
 
@@ -199,9 +199,6 @@ create table orgs
 	fork smallint,
 	sprid integer
 		constraint orgs_sprid_fk
-			references orgs,
-	ctrid integer
-		constraint orgs_ctrid_fk
 			references orgs,
 	license varchar(20),
 	trust boolean,
@@ -217,7 +214,7 @@ create table orgs
 	icon bytea,
 	cert bytea
 )
-inherits (_articles);
+inherits (_arts);
 
 alter table orgs owner to postgres;
 
@@ -269,7 +266,39 @@ inherits (_wares);
 
 alter table posts owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, ctrid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create table orglnks
+(
+	ctrid integer
+		constraint routes_ctrid_fk
+			references orgs,
+	mrtid integer
+		constraint routes_mrtid_fk
+			references orgs
+)
+inherits (_arts);
+
+alter table orglnks owner to postgres;
+
+create index routes_ctrid_idx
+	on orglnks (ctrid);
+
+create index routes_mrtid_idx
+	on orglnks (mrtid);
+
+create table planagts
+(
+	planid integer
+		constraint planagts_planid_fk
+			references plans,
+	bizid integer
+		constraint planagts_bizid_fk
+			references orgs
+)
+inherits (_arts);
+
+alter table planagts owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -281,7 +310,6 @@ SELECT o.typ,
        o.id,
        o.fork,
        o.sprid,
-       o.ctrid,
        o.license,
        o.trust,
        o.regid,

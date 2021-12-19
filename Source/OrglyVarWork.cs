@@ -70,7 +70,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Article.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -135,11 +135,6 @@ namespace Revital
 #else
                     h.LI_().FIELD("所在驿站", spr.name)._LI();
 #endif
-                }
-                if (org.ctrid > 0)
-                {
-                    var ctr = Obtain<int, Org>(org.ctrid);
-                    h.LI_().FIELD("主供应中心", ctr.name)._LI();
                 }
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("委托代办", org.trust)._LI();
@@ -230,7 +225,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Article.Statuses[org.status])._LI();
+                h.LI_().FIELD("状态", _Art.Statuses[org.status])._LI();
                 h._UL();
                 h._FORM();
 

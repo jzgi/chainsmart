@@ -210,7 +210,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Article.STA_ENABLED,
+                    status = _Art.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

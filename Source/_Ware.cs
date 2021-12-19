@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// A data model for mercandise item that is for sale.
     /// </summary>
-    public abstract class _Ware : _Article
+    public abstract class _Ware : _Art
     {
         // the specialized extensible discriminator
         internal int orgid;

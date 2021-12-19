@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// A data model for produced piece.
     /// </summary>
-    public class Piece : _Article, IKeyable<int>
+    public class Piece : _Art, IKeyable<int>
     {
         public static readonly Piece Empty = new Piece();
 

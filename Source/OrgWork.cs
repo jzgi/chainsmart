@@ -35,7 +35,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -59,7 +59,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -83,7 +83,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Org.Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -101,19 +101,19 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Article.STA_ENABLED
+                    status = _Art.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("主体信息");
                     h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => typ == 7 ? (k >= 7) : k == typ, required: true)._LI();
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -180,7 +180,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Article.STA_ENABLED
+                    status = _Art.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -192,7 +192,7 @@ namespace Revital
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_INDOOR)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -255,7 +255,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Article.STA_ENABLED
+                    status = _Art.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -267,7 +267,7 @@ namespace Revital
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_INDOOR)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Article.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

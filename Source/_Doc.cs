@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A data model for workflow document.
     /// </summary>
-    public abstract class _Doc : _Article
+    public abstract class _Doc : _Art
     {
         public const short
             STA_CREATED = 1,

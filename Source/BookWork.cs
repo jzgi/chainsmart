@@ -59,12 +59,12 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
 
-            var ctr = Obtain<int, Org>(org.ctrid);
+            var ctr = Obtain<int, Org>(2);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
-                var arr = await dc.QueryAsync<Plan>(p => p.Set(org.ctrid));
+                var arr = await dc.QueryAsync<Plan>(p => p.Set(2));
                 var prods = ObtainMap<int, Plan>();
                 wc.GivePane(200, h =>
                 {
@@ -81,7 +81,7 @@ namespace Revital
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
                         h.SPAN(Plan.Typs[o.postg]);
-                        h.SPAN(_Article.Statuses[o.status]);
+                        h.SPAN(_Art.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
 

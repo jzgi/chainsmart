@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : _Article, IKeyable<int>, IForkable
+    public class Org : _Art, IKeyable<int>, IForkable
     {
         public static readonly Org Empty = new Org();
 
@@ -17,8 +17,7 @@ namespace Revital
             TYP_MRT = TYP_SPR | TYP_BIZ, // mart
             TYP_SRC = TYP_SPR | TYP_PRD, // source
             TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
-            TYP_CTR = 0b01000, // center
-            TYP_CTR_BIZ = TYP_CTR | TYP_BIZ; // center with biz
+            TYP_CTR = 0b01000; // center
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -32,14 +31,12 @@ namespace Revital
             {TYP_SRC, "产源"},
             {TYP_CHL, "购销渠道"},
             {TYP_CTR, "供应中心"},
-            {TYP_CTR_BIZ, "供应中心（经营）"},
         };
 
 
         internal int id;
         internal short fork;
         internal int sprid;
-        internal int ctrid;
         internal string license;
         internal bool trust;
         internal short regid;
@@ -63,7 +60,6 @@ namespace Revital
             }
             s.Get(nameof(fork), ref fork);
             s.Get(nameof(sprid), ref sprid);
-            s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(license), ref license);
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(regid), ref regid);
@@ -92,9 +88,6 @@ namespace Revital
 
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));
-
-            if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
-            else s.PutNull(nameof(ctrid));
 
             s.Put(nameof(license), license);
             s.Put(nameof(trust), trust);

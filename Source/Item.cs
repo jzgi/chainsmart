@@ -5,27 +5,29 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard item of product or service.
     /// </summary>
-    public class Item : _Article, IKeyable<short>
+    public class Item : _Art, IKeyable<short>
     {
         public static readonly Item Empty = new Item();
 
         public const short
-            TYP_AGRI = 1, // agriculture
-            TYP_DIET = 2, // dietary
-            TYP_FACT = 3, // factory
-            TYP_CARE = 4, // care
-            TYP_CHAR = 5, // charity
-            TYP_ADVT = 6; // advertising
+            TYP_AGRI = 0b00000001, // agriculture
+            TYP_DIET = 0b00000010, // dietary
+            TYP_FACT = 0b00000100, // factory
+            TYP_CARE = 0b00001000, // care
+            TYP_CHAR = 0b00010000, // charity
+            TYP_ADVT = 0b00100000; // advertising
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_AGRI, "生态农产"},
+            {TYP_AGRI, "农副产品"},
             {TYP_DIET, "调养饮食"},
             {TYP_FACT, "工业制品"},
             {TYP_CARE, "家政医养"},
             {TYP_CHAR, "公益志愿"},
             {TYP_ADVT, "广告宣传"},
+            // composition
+            {TYP_AGRI + TYP_DIET, "农副产品＋调养饮食"},
         };
 
 

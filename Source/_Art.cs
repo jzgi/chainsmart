@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A data model for managed object.
     /// </summary>
-    public abstract class _Article : IData
+    public abstract class _Art : IData
     {
         public const short
             STA_GONE = 0,

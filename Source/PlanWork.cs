@@ -43,7 +43,7 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -81,7 +81,7 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -118,7 +118,7 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -155,7 +155,7 @@ namespace Revital
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Article.Statuses[o.status]);
+                    h.TD(_Art.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -177,7 +177,7 @@ namespace Revital
                 var dt = DateTime.Today;
                 var o = new Plan
                 {
-                    status = _Article.STA_DISABLED,
+                    status = _Art.STA_DISABLED,
                     starton = dt,
                     endon = dt,
                     fillon = dt,
@@ -191,7 +191,7 @@ namespace Revital
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("起始日", nameof(o.starton), o.starton).DATE("截止日", nameof(o.endon), o.endon)._LI();
                     h.LI_().SELECT("交付日约束", nameof(o.typ), o.typ, Plan.Typs, required: true).DATE("指定交付日", nameof(o.fillon), o.fillon)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

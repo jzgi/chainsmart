@@ -45,7 +45,7 @@ namespace Revital
             {
                 var o = new Piece
                 {
-                    status = _Article.STA_ENABLED
+                    status = _Art.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -53,7 +53,7 @@ namespace Revital
                     h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Article.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
