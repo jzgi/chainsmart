@@ -84,7 +84,9 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(fork), fork);
+
+            if (fork > 0) s.Put(nameof(fork), fork);
+            else s.PutNull(nameof(fork));
 
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));

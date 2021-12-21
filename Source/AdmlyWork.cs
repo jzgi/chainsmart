@@ -19,6 +19,8 @@ namespace Revital
 
             MakeWork<AdmlyClearWork>("clear");
 
+            MakeWork<AdmlyReportWork>("rpt");
+
             MakeWork<AdmlyUserWork>("user");
 
             MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));

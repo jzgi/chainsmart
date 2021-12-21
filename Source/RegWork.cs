@@ -10,7 +10,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台地区／场区设置")]
+    [Ui("平台地区场区设置")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnMake()

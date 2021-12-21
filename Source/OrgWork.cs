@@ -67,7 +67,7 @@ namespace Revital
         }
 
         [Ui("中枢", group: 4), Tool(Anchor)]
-        public async Task other(WebContext wc, int page)
+        public async Task hub(WebContext wc, int page)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ >= 7 ORDER BY typ, regid, status DESC");
@@ -109,6 +109,10 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("机构信息");
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => typ == TYP_CHL ? (k >= TYP_CHL) : k == typ, required: true)._LI();
+                    if (typ == TYP_CHL)
+                    {
+                        h.LI_().SELECT("业务分属", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
+                    }
                     h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs, filter: (k, v) => k == 1, required: typ != TYP_SRC)._LI();

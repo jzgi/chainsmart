@@ -12,45 +12,44 @@ namespace Revital
         public const short
             TYP_AGRI = 0b00000001, // agriculture
             TYP_FACT = 0b00000010, // factory
-            TYP_SRVC = 0b00001000; // service
+            TYP_SRVC = 0b00000100; // service
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_AGRI, "农副产"},
             {TYP_FACT, "制造品"},
-            {TYP_SRVC, "服务类"},
-            {TYP_AGRI + TYP_SRVC, "农副产＋服务类"},
+            {TYP_SRVC, "泛服务"},
         };
 
         // categories
         public static readonly Map<short, string> Cats = new Map<short, string>
         {
-            // agriculture
-            {11, "蔬菜"},
-            {12, "瓜果"},
-            {13, "粮油"},
-            {14, "绿植"},
-            {15, "禽产"},
-            {16, "畜产"},
-            {17, "水产"},
-            {18, "副产"},
-            // factory
-            {31, "日用"},
-            {32, "家居"},
-            {33, "服装"},
-            {34, "电器"},
-            {35, "农资"},
-            // service
-            {51, "调养"},
-            {52, "餐品"},
-            {53, "快餐"},
-            {54, "家政"},
-            {55, "陪护"},
-            {56, "养老"},
-            {57, "公益"},
-            {58, "志愿"},
-            {59, "广告"}
+            // agriculture 1-20
+            {1, "蔬菜"},
+            {2, "瓜果"},
+            {3, "粮油"},
+            {4, "绿植"},
+            {5, "禽产"},
+            {6, "畜产"},
+            {7, "水产"},
+            {8, "副产"},
+            // factory 21-40
+            {21, "日用"},
+            {22, "家居"},
+            {23, "服装"},
+            {24, "电器"},
+            {25, "农资"},
+            // service 61-80
+            {61, "调养"},
+            {62, "餐品"},
+            {63, "快餐"},
+            {64, "家政"},
+            {65, "陪护"},
+            {66, "养老"},
+            {67, "公益"},
+            {68, "志愿"},
+            {69, "广告"}
         };
 
 
