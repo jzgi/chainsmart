@@ -11,30 +11,22 @@ namespace Revital
 
         public const short
             TYP_AGRI = 0b00000001, // agriculture
-            TYP_DIET = 0b00000010, // dietary
-            TYP_FACT = 0b00000100, // factory
-            TYP_CARE = 0b00001000, // care
-            TYP_CHAR = 0b00010000, // charity
-            TYP_ADVT = 0b00100000; // advertising
+            TYP_FACT = 0b00000010, // factory
+            TYP_SRVC = 0b00001000; // service
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_AGRI, "农副产品"},
-            {TYP_DIET, "调养饮食"},
-            {TYP_FACT, "工业制品"},
-            {TYP_CARE, "家政医养"},
-            {TYP_CHAR, "公益志愿"},
-            {TYP_ADVT, "广告宣传"},
-            // composition
-            {TYP_AGRI + TYP_DIET, "农副产品＋调养饮食"},
+            {TYP_AGRI, "农副产"},
+            {TYP_FACT, "制造品"},
+            {TYP_SRVC, "服务类"},
+            {TYP_AGRI + TYP_SRVC, "农副产＋服务类"},
         };
 
-
-        // types
+        // categories
         public static readonly Map<short, string> Cats = new Map<short, string>
         {
-            // agri
+            // agriculture
             {11, "蔬菜"},
             {12, "瓜果"},
             {13, "粮油"},
@@ -43,26 +35,22 @@ namespace Revital
             {16, "畜产"},
             {17, "水产"},
             {18, "副产"},
-            {19, "农资"},
-            // dietary
-            {21, "调养"},
-            {22, "餐品"},
-            {23, "快餐"},
             // factory
             {31, "日用"},
-            {31, "家居"},
-            {31, "服装"},
-            {31, "电器"},
-            // care
-            {41, "家政"},
-            {42, "陪护"},
-            {43, "养老"},
-            // charity
-            {51, "公益"},
-            {52, "志愿"},
-            // ad
-            {61, "广告"},
-            {62, "宣传"},
+            {32, "家居"},
+            {33, "服装"},
+            {34, "电器"},
+            {35, "农资"},
+            // service
+            {51, "调养"},
+            {52, "餐品"},
+            {53, "快餐"},
+            {54, "家政"},
+            {55, "陪护"},
+            {56, "养老"},
+            {57, "公益"},
+            {58, "志愿"},
+            {59, "广告"}
         };
 
 

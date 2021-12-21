@@ -35,7 +35,8 @@ namespace Revital
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    public abstract class BizlyBuyWork : BuyWork
+    [Ui("线上销售管理")]
+    public class BizlyBuyWork : BuyWork
     {
         protected override void OnMake()
         {
@@ -77,15 +78,5 @@ namespace Revital
                 });
             });
         }
-    }
-
-    [Ui("线上销售管理", fork: Item.TYP_AGRI)]
-    public class BizlyAgriBuyWork : BizlyBuyWork
-    {
-    }
-
-    [Ui("线上销售管理", fork: Item.TYP_DIET)]
-    public class BizlyDietBuyWork : BizlyBuyWork
-    {
     }
 }

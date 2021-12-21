@@ -18,7 +18,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("标准品目管理")]
+    [Ui("平台统一品目设置")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnMake()
@@ -26,10 +26,11 @@ namespace Revital
             MakeVarWork<AdmlyItemVarWork>();
         }
 
+        [Ui("农副产", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 1 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
@@ -60,7 +61,77 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建标准品目"), Tool(ButtonShow)]
+        [Ui("制造品", group: 2), Tool(Anchor)]
+        public void fact(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Item>(p => p.Set(page));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null) return;
+
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.cat != last)
+                    {
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TDCHECK(o.id);
+                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
+                    h.TD(_Art.Statuses[o.status]);
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h._TR();
+
+                    last = o.cat;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            });
+        }
+
+        [Ui("服务类", group: 4), Tool(Anchor)]
+        public void svrc(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 4 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            var arr = dc.Query<Item>(p => p.Set(page));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null) return;
+
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.cat != last)
+                    {
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TDCHECK(o.id);
+                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
+                    h.TD(_Art.Statuses[o.status]);
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h._TR();
+
+                    last = o.cat;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            });
+        }
+
+        [Ui("✚", "新建品目", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -72,9 +143,9 @@ namespace Revital
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("标准品目信息");
+                    h.FORM_().FIELDSUL_("品目信息");
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
-                    h.LI_().SELECT("归类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
+                    h.LI_().SELECT("分类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();

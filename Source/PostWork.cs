@@ -22,7 +22,8 @@ namespace Revital
         }
     }
 
-    public abstract class BizlyPostWork : PostWork
+    [Ui("展页内容管理")]
+    public class BizlyPostWork : PostWork
     {
         protected override void OnMake()
         {
@@ -195,16 +196,5 @@ namespace Revital
                 wc.GivePane(200); // close dialog
             }
         }
-    }
-
-
-    [Ui("展页内容管理", fork: TYP_AGRI)]
-    public class BizlyAgriPostWork : BizlyPostWork
-    {
-    }
-
-    [Ui("展页服务管理", fork: TYP_DIET)]
-    public class BizlyDietPostWork : BizlyPostWork
-    {
     }
 }

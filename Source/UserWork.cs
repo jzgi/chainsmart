@@ -9,7 +9,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台全域用户")]
+    [Ui("平台注册用户管理")]
     public class AdmlyUserWork : UserWork
     {
         protected override void OnMake()

@@ -236,28 +236,13 @@ namespace Revital
     {
     }
 
-    [Ui("供应项目管理", "calendar", fork: Item.TYP_DIET)]
-    public class CtrlyDietPlanWork : CtrlyPlanWork
-    {
-    }
-
     [Ui("供应项目管理", "calendar", fork: Item.TYP_FACT)]
     public class CtrlyFactPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", fork: Item.TYP_CARE)]
-    public class CtrlyCarePlanWork : CtrlyPlanWork
-    {
-    }
-
-    [Ui("公益项目管理", "calendar", fork: Item.TYP_CHAR)]
-    public class CtrlyCharPlanWork : CtrlyPlanWork
-    {
-    }
-
-    [Ui("传媒项目管理", "calendar", fork: Item.TYP_ADVT)]
-    public class CtrlyAdvtPlanWork : CtrlyPlanWork
+    [Ui("供应项目管理", "calendar", fork: Item.TYP_SRVC)]
+    public class CtrlySrvcPlanWork : CtrlyPlanWork
     {
     }
 }

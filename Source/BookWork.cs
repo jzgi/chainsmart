@@ -9,7 +9,8 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    public abstract class BizlyBookWork : BookWork
+    [Ui("线上预订")]
+    public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -107,24 +108,6 @@ namespace Revital
         }
     }
 
-    [Ui("线上进货管理", "cart", fork: Item.TYP_AGRI)]
-    public class BizlyAgriBookWork : BizlyBookWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<AgriBizlyBookVarWork>();
-        }
-    }
-
-    [Ui("线上进货管理", fork: Item.TYP_DIET)]
-    public class BizlyDietBookWork : BizlyBookWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<DietBizlyBookVarWork>();
-        }
-    }
-
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
     public abstract class CtrlyBookWork : BookWork
     {
@@ -206,16 +189,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<AgriCtrlyBookVarWork>();
-        }
-    }
-
-    [Ui("销售及分拣管理", "sign-out", fork: Item.TYP_DIET)]
-    public class CtrlyDietBookWork : CtrlyBookWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<DietCtrlyBookVarWork>();
+            MakeVarWork<CtrlyAgriBookVarWork>();
         }
     }
 
@@ -224,18 +198,8 @@ namespace Revital
     {
     }
 
-    [Ui("供应分派管理", "sign-out", fork: Item.TYP_CARE)]
-    public class CtrlyCareBookWork : CtrlyBookWork
-    {
-    }
-
-    [Ui("公益分派管理", "sign-out", fork: Item.TYP_CHAR)]
-    public class CtrlyCharBookWork : CtrlyBookWork
-    {
-    }
-
-    [Ui("传媒派发管理", "sign-out", fork: Item.TYP_ADVT)]
-    public class CtrlyAdvtBookWork : CtrlyBookWork
+    [Ui("供应分派管理", "sign-out", fork: Item.TYP_SRVC)]
+    public class CtrlySrvcBookWork : CtrlyBookWork
     {
     }
 }

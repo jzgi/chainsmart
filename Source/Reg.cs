@@ -8,12 +8,12 @@ namespace Revital
 
         public const short
             TYP_GEOGRAPHIC = 1,
-            TYP_INDOOR = 2;
+            TYP_SECTIONAL = 2;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_GEOGRAPHIC, "地区"},
-            {TYP_INDOOR, "场内"},
+            {TYP_SECTIONAL, "场区"},
         };
 
         internal short id;
@@ -43,7 +43,7 @@ namespace Revital
 
         public bool IsGeographic => typ == TYP_GEOGRAPHIC;
 
-        public bool IsIndoor => typ == TYP_INDOOR;
+        public bool IsSectional => typ == TYP_SECTIONAL;
 
         public override string ToString() => name;
     }

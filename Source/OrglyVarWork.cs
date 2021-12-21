@@ -97,13 +97,13 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<BizlyAgriPostWork, BizlyDietPostWork>("post");
+            MakeWork<BizlyPostWork>("post");
 
-            MakeWork<BizlyAgriBuyWork, BizlyDietBuyWork>("buy");
+            MakeWork<BizlyBuyWork>("buy");
 
-            MakeWork<BizlyAgriBookWork, BizlyDietBookWork>("book");
+            MakeWork<BizlyBookWork>("book");
 
-            MakeWork<BizlyAgriTermWork, BizlyDietTermWork>("pos");
+            MakeWork<BizlyStationWork>("term");
 
             MakeWork<MrtlyOrgWork>("org");
 
@@ -200,9 +200,9 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<CtrlyAgriPlanWork, CtrlyDietPlanWork, CtrlyFactPlanWork, CtrlyCarePlanWork, CtrlyAdvtPlanWork, CtrlyCharPlanWork>("plan");
+            MakeWork<CtrlyAgriPlanWork, CtrlyFactPlanWork, CtrlySrvcPlanWork>("plan");
 
-            MakeWork<CtrlyAgriBookWork, CtrlyDietBookWork, CtrlyFactBookWork, CtrlyCareBookWork, CtrlyAdvtBookWork, CtrlyCharBookWork>("book");
+            MakeWork<CtrlyAgriBookWork, CtrlyFactBookWork, CtrlySrvcBookWork>("book");
 
             MakeWork<CtrlyAgriBidWork>("bid");
 

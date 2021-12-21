@@ -4,7 +4,7 @@ using SkyChain.Web;
 namespace Revital
 {
     [UserAuthorize(admly: 1)]
-    [Ui("平台业务结算", "table")]
+    [Ui("平台业务结算管理", "table")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()

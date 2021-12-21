@@ -41,7 +41,7 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = TYP_DIET,
+                typ = TYP_AGRI,
                 name = "调养膳食"
             },
             new PostDescr
@@ -51,19 +51,9 @@ namespace Revital
             },
             new PostDescr
             {
-                typ = TYP_CARE,
+                typ = TYP_SRVC,
                 name = "家政陪护"
             },
-            new PostDescr
-            {
-                typ = TYP_ADVT,
-                name = "广告宣传"
-            },
-            new PostDescr
-            {
-                typ = TYP_CHAR,
-                name = "志愿公益"
-            }
         };
 
         short typ;

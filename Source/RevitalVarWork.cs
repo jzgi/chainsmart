@@ -20,7 +20,7 @@ namespace Revital
                 var bizs = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(cur));
                 wc.GivePage(200, h =>
                 {
-                    h.TOPBAR_().SUBNAV(regs, string.Empty, cur, filter: (k, v) => v.typ == Reg.TYP_INDOOR);
+                    h.TOPBAR_().SUBNAV(regs, string.Empty, cur, filter: (k, v) => v.typ == Reg.TYP_SECTIONAL);
                     h.T("<button class=\"uk-icon-button uk-circle uk-margin-left-auto\" formaction=\"search\" onclick=\"return dialog(this,8,false,4,'&#x1f6d2; 按厨坊下单')\"><span uk-icon=\"search\"></span></button>");
                     h._TOPBAR();
                     if (bizs != null)
