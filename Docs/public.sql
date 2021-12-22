@@ -211,6 +211,7 @@ create table orgs
 	mgrid integer
 		constraint orgs_mgrid_fk
 			references users,
+	rank smallint,
 	icon bytea,
 	cert bytea
 )
@@ -247,6 +248,7 @@ create table plans
 	fillon date,
 	postg smallint,
 	postprice money,
+	rank smallint,
 	icon bytea,
 	img bytea,
 	cert bytea
@@ -266,39 +268,26 @@ inherits (_wares);
 
 alter table posts owner to postgres;
 
-create table orglnks
+create table reachs
 (
 	ctrid integer
-		constraint routes_ctrid_fk
+		constraint reachs_ctrid_fk
 			references orgs,
 	mrtid integer
-		constraint routes_mrtid_fk
+		constraint reachs_mrtid_fk
 			references orgs
 )
 inherits (_arts);
 
-alter table orglnks owner to postgres;
+alter table reachs owner to postgres;
 
-create index routes_ctrid_idx
-	on orglnks (ctrid);
+create index reachs_ctrid_idx
+	on reachs (ctrid);
 
-create index routes_mrtid_idx
-	on orglnks (mrtid);
+create index reachs_mrtid_idx
+	on reachs (mrtid);
 
-create table planagts
-(
-	planid integer
-		constraint planagts_planid_fk
-			references plans,
-	bizid integer
-		constraint planagts_bizid_fk
-			references orgs
-)
-inherits (_arts);
-
-alter table planagts owner to postgres;
-
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -310,6 +299,7 @@ SELECT o.typ,
        o.id,
        o.fork,
        o.sprid,
+       o.rank,
        o.license,
        o.trust,
        o.regid,

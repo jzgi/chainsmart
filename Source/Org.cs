@@ -34,9 +34,19 @@ namespace Revital
         };
 
 
+        public static readonly Map<short, string> Ranks = new Map<short, string>
+        {
+            {0, "普通"},
+            {1, "铜牌"},
+            {2, "银牌"},
+            {3, "金牌"},
+        };
+
+
         internal int id;
         internal short fork;
         internal int sprid;
+        internal short rank;
         internal string license;
         internal bool trust;
         internal short regid;
@@ -60,6 +70,7 @@ namespace Revital
             }
             s.Get(nameof(fork), ref fork);
             s.Get(nameof(sprid), ref sprid);
+            s.Get(nameof(rank), ref rank);
             s.Get(nameof(license), ref license);
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(regid), ref regid);
@@ -91,6 +102,7 @@ namespace Revital
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));
 
+            s.Put(nameof(rank), rank);
             s.Put(nameof(license), license);
             s.Put(nameof(trust), trust);
 

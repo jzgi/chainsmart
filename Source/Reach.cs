@@ -2,9 +2,9 @@
 
 namespace Revital
 {
-    public class OrgLnk : _Art
+    public class Reach : _Art
     {
-        public static readonly OrgLnk Empty = new OrgLnk();
+        public static readonly Reach Empty = new Reach();
 
         public const short
             TYP_DISTRIB = 1,

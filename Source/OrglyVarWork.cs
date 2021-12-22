@@ -156,11 +156,11 @@ namespace Revital
         {
             MakeWork<PrdlyAgriPieceWork, PrdlyDietPieceWork>("product");
 
-            MakeWork<PrdlyAgriBidWork, PrdlyDietBidWork>("bid");
+            MakeWork<PrdlyBidWork>("bid");
 
             MakeWork<SrclyOrgWork>("org");
 
-            MakeWork<SrclyBidWork>("rpt");
+            MakeWork<SrclyReportWork>("rpt");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -202,11 +202,13 @@ namespace Revital
     {
         protected override void OnMake()
         {
+            MakeWork<CtrlyReachWork>("reach");
+
             MakeWork<CtrlyAgriPlanWork, CtrlyFactPlanWork, CtrlySrvcPlanWork>("plan");
 
             MakeWork<CtrlyAgriBookWork, CtrlyFactBookWork, CtrlySrvcBookWork>("book");
 
-            MakeWork<CtrlyAgriBidWork>("bid");
+            MakeWork<CtrlyBidWork>("bid");
 
             MakeWork<OrglyClearWork>("clear");
         }

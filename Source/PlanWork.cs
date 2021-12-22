@@ -191,7 +191,7 @@ namespace Revital
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("起始日", nameof(o.starton), o.starton).DATE("截止日", nameof(o.endon), o.endon)._LI();
                     h.LI_().SELECT("交付日约束", nameof(o.typ), o.typ, Plan.Typs, required: true).DATE("指定交付日", nameof(o.fillon), o.fillon)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("针对级别", nameof(o.rank), o.rank, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

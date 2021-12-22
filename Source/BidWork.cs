@@ -42,7 +42,8 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_CTR, ORGLY_OP)]
-    public abstract class CtrlyBidWork : BidWork
+    [Ui("采购及收货管理")]
+    public class CtrlyBidWork : BidWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -130,18 +131,9 @@ namespace Revital
         }
     }
 
-    [Ui("采购及收货管理")]
-    public class CtrlyAgriBidWork : CtrlyBidWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<CtrlyAgriBidVarWork>();
-        }
-    }
-
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
     [Ui("订货管理")]
-    public abstract class PrdlyBidWork : BidWork
+    public class PrdlyBidWork : BidWork
     {
         protected override void OnMake()
         {
@@ -169,22 +161,5 @@ namespace Revital
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
-    }
-
-    [Ui("订货管理")]
-    public class PrdlyAgriBidWork : PrdlyBidWork
-    {
-    }
-
-    [Ui("订货管理")]
-    public class PrdlyDietBidWork : PrdlyBidWork
-    {
-    }
-
-
-    [UserAuthorize(Org.TYP_SRC, ORGLY_OP)]
-    [Ui("产源销售报表")]
-    public class SrclyBidWork : BidWork
-    {
     }
 }

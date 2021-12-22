@@ -15,4 +15,12 @@ namespace Revital
         {
         }
     }
+
+    [Ui("产源运营报告")]
+    public class SrclyReportWork : WebWork
+    {
+        public async Task @default(WebContext wc)
+        {
+        }
+    }
 }
