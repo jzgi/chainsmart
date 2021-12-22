@@ -140,7 +140,7 @@ namespace Revital
 
     [UserAuthorize(TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场入驻机构")]
+    [Ui("市场入驻经营户管理")]
 #else
     [Ui("驿站入驻机构")]
 #endif

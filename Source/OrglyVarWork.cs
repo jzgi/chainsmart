@@ -97,6 +97,12 @@ namespace Revital
     {
         protected override void OnMake()
         {
+            MakeWork<MrtlyOrgWork>("org");
+
+            MakeWork<MrtlyUserWork>("user");
+
+            MakeWork<MrtlyReportWork>("rpt");
+
             MakeWork<BizlyPostWork>("post");
 
             MakeWork<BizlyBuyWork>("buy");
@@ -104,10 +110,6 @@ namespace Revital
             MakeWork<BizlyBookWork>("book");
 
             MakeWork<BizlyStationWork>("term");
-
-            MakeWork<MrtlyOrgWork>("org");
-
-            MakeWork<MrtlyUserWork>("cust");
 
             MakeWork<OrglyClearWork>("clear");
         }

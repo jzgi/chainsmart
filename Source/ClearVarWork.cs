@@ -1,6 +1,8 @@
-﻿namespace Revital
+﻿using SkyChain.Web;
+
+namespace Revital
 {
-    public class ClearVarWork
+    public class AdmlyClearVarWork : WebWork
     {
         
     }

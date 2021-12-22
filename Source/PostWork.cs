@@ -22,7 +22,7 @@ namespace Revital
         }
     }
 
-    [Ui("展页内容管理")]
+    [Ui("经营户展页管理")]
     public class BizlyPostWork : PostWork
     {
         protected override void OnMake()
