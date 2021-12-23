@@ -257,7 +257,9 @@ function dialog(trig, mode, pick, appear, title) {
         if (dlg) {
             if (dlg.classList.contains('button-trig')) {
                 document.body.removeChild(dlg);
-                location.reload(false);
+                if (dlg.classList.contains('uk-modal-full')) {
+                    location.reload(false);
+                }
             } else {
                 document.body.removeChild(dlg);
             }

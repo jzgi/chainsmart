@@ -109,7 +109,7 @@ namespace Revital
 
             MakeWork<BizlyBookWork>("book");
 
-            MakeWork<BizlyStationWork>("term");
+            MakeWork<BizlyStationWork>("station");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -154,13 +154,13 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrdlyAgriPieceWork, PrdlyDietPieceWork>("product");
-
-            MakeWork<PrdlyBidWork>("bid");
-
             MakeWork<SrclyOrgWork>("org");
 
             MakeWork<SrclyReportWork>("rpt");
+
+            MakeWork<PrdlyPieceWork>("piece");
+
+            MakeWork<PrdlyBidWork>("bid");
 
             MakeWork<OrglyClearWork>("clear");
         }

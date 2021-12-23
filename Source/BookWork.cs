@@ -9,7 +9,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("经营户线上采购")]
+    [Ui("［经营户］线上采购")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -184,7 +184,7 @@ namespace Revital
         }
     }
 
-    [Ui("销售及分拣管理", "sign-out", fork: Item.TYP_AGRI)]
+    [Ui("［供应中心］销售及分拣", "sign-out", fork: Item.TYP_AGRI)]
     public class CtrlyAgriBookWork : CtrlyBookWork
     {
         protected override void OnMake()
@@ -193,12 +193,12 @@ namespace Revital
         }
     }
 
-    [Ui("供应分拣管理", "sign-out", fork: Item.TYP_FACT)]
+    [Ui("［供应中心］供应及分拣", "sign-out", fork: Item.TYP_FACT)]
     public class CtrlyFactBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("供应分派管理", "sign-out", fork: Item.TYP_SRVC)]
+    [Ui("［供应中心］供应及分派", "sign-out", fork: Item.TYP_SRVC)]
     public class CtrlySrvcBookWork : CtrlyBookWork
     {
     }

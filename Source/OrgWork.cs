@@ -10,7 +10,7 @@ namespace Revital
     {
     }
 
-    [Ui("平台入驻机构设置")]
+    [Ui("［平台］入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -140,9 +140,9 @@ namespace Revital
 
     [UserAuthorize(TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场入驻经营户管理")]
+    [Ui("［市场］下属经营户管理")]
 #else
-    [Ui("驿站入驻机构")]
+    [Ui("［驿站］下属经营户管理")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -217,8 +217,8 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(TYP_PRD, 1)]
-    [Ui("产源入驻机构", "thumbnails")]
+    [UserAuthorize(TYP_SRC, 1)]
+    [Ui("［产源］下属生产户管理", "thumbnails")]
     public class SrclyOrgWork : OrgWork
     {
         protected override void OnMake()

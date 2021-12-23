@@ -31,7 +31,7 @@ namespace Revital
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");
-                    h.LI_().FIELD("生产户／地块", frm.name);
+                    h.LI_().FIELD("生产户", frm.name);
                     h.LI_().FIELD("分拣中心", ctr.name);
                     h._FIELDSUL();
                     h._FORM();
@@ -42,7 +42,7 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_CTR, ORGLY_OP)]
-    [Ui("采购及收货管理")]
+    [Ui("［供应中心］采购及收货")]
     public class CtrlyBidWork : BidWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -50,7 +50,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE fromid = @1 AND status < 2 ORDER BY id DESC LIMIT 30 OFFSET @2 * 30");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids_ WHERE fromid = @1 AND status < 2 ORDER BY id DESC LIMIT 30 OFFSET @2 * 30");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(org.id).Set(page), 0xff);
             wc.GivePage(200, h =>
             {
@@ -68,7 +68,7 @@ namespace Revital
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids WHERE ctrid = @1 AND status >= 2 ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
+            dc.Sql("SELECT ").collst(Bid.Empty).T(" FROM bids_ WHERE ctrid = @1 AND status >= 2 ORDER BY status, id DESC LIMIT 10 OFFSET @2 * 10");
             var arr = await dc.QueryAsync<Bid>(p => p.Set(orgid).Set(page), 0xff);
             wc.GivePage(200, h =>
             {
@@ -132,7 +132,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
-    [Ui("订货管理")]
+    [Ui("［生产户］销售管理")]
     public class PrdlyBidWork : BidWork
     {
         protected override void OnMake()

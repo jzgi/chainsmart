@@ -8,7 +8,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场运营报告")]
+    [Ui("［市场］运营报告")]
     public class MrtlyReportWork : WebWork
     {
         public async Task @default(WebContext wc)
@@ -16,7 +16,7 @@ namespace Revital
         }
     }
 
-    [Ui("产源运营报告")]
+    [Ui("［产源］运营报告")]
     public class SrclyReportWork : WebWork
     {
         public async Task @default(WebContext wc)

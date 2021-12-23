@@ -231,17 +231,17 @@ namespace Revital
         }
     }
 
-    [Ui("供应项目管理", "calendar", fork: Item.TYP_AGRI)]
+    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_AGRI)]
     public class CtrlyAgriPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", fork: Item.TYP_FACT)]
+    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_FACT)]
     public class CtrlyFactPlanWork : CtrlyPlanWork
     {
     }
 
-    [Ui("供应项目管理", "calendar", fork: Item.TYP_SRVC)]
+    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_SRVC)]
     public class CtrlySrvcPlanWork : CtrlyPlanWork
     {
     }

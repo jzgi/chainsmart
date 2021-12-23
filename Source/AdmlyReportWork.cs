@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    [Ui("平台运营报表")]
+    [Ui("［平台］运营报表")]
     public class AdmlyReportWork : WebWork
     {
     }

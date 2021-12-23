@@ -11,7 +11,8 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_PRD, ORGLY_OP)]
-    public abstract class PrdlyPieceWork : PieceWork
+    [Ui("［生产户］产品管理")]
+    public class PrdlyPieceWork : PieceWork
     {
         protected override void OnMake()
         {
@@ -67,15 +68,5 @@ namespace Revital
                 wc.GivePane(200); // close dialog
             }
         }
-    }
-
-    [Ui("产品管理")]
-    public class PrdlyAgriPieceWork : PrdlyPieceWork
-    {
-    }
-
-    [Ui("产品管理")]
-    public class PrdlyDietPieceWork : PrdlyPieceWork
-    {
     }
 }

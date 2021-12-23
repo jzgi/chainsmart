@@ -8,7 +8,7 @@ using static SkyChain.Web.Modal;
 namespace Revital
 {
     [UserAuthorize(admly: 1)]
-    [Ui("平台业务结算", "table")]
+    [Ui("［平台］业务结算", "table")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()
@@ -157,7 +157,7 @@ namespace Revital
         }
     }
 
-    [Ui("账户线上业务结算", "credit-card")]
+    [Ui("［账户］线上业务结算", "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()
@@ -166,10 +166,10 @@ namespace Revital
 
         public void @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
             dc.Sql("SELECT * FROM clears WHERE orgid = @1 ORDER BY id DESC LIMIT 20 OFFSET 20 * @2");
-            var arr = dc.Query<Clear>(p => p.Set(orgid).Set(page));
+            var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: "应收款项和数字资产");

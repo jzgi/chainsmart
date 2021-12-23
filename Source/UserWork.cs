@@ -9,7 +9,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台用户管理")]
+    [Ui("［平台］用户管理")]
     public class AdmlyUserWork : UserWork
     {
         protected override void OnMake()
@@ -88,7 +88,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场客群管理")]
+    [Ui("［市场］客群管理")]
     public class MrtlyUserWork : UserWork
     {
         protected override void OnMake()
