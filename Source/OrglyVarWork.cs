@@ -70,7 +70,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Art.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -148,19 +148,19 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_PRD, 1)]
-    [Ui("产源操作")]
-    public class SrclyVarWork : OrglyVarWork
+    [UserAuthorize(Org.TYP_SRC, 1)]
+    [Ui("供应链操作")]
+    public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
-            MakeWork<SrclyOrgWork>("org");
+            MakeWork<PrvlyOrgWork>("org");
 
-            MakeWork<SrclyReportWork>("rpt");
+            MakeWork<PrvlyReportWork>("rpt");
 
-            MakeWork<PrdlyPieceWork>("piece");
+            MakeWork<SrclyPlanWork>("plan");
 
-            MakeWork<PrdlyBidWork>("bid");
+            MakeWork<SrclyBookWork>("bid");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -197,18 +197,14 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("供应中心操作")]
+    [Ui("分拣中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
         {
             MakeWork<CtrlyReachWork>("reach");
 
-            MakeWork<CtrlyAgriPlanWork, CtrlyFactPlanWork, CtrlySrvcPlanWork>("plan");
-
             MakeWork<CtrlyAgriBookWork, CtrlyFactBookWork, CtrlySrvcBookWork>("book");
-
-            MakeWork<CtrlyBidWork>("bid");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -229,7 +225,7 @@ namespace Revital
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
                 h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Art.Statuses[org.status])._LI();
+                h.LI_().FIELD("状态", _Info.Statuses[org.status])._LI();
                 h._UL();
                 h._FORM();
 

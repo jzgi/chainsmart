@@ -10,11 +10,12 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    public abstract class CtrlyPlanWork : PlanWork
+    [Ui("［供应］供应项管理")]
+    public class SrclyPlanWork : PlanWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<CtrlyPlanVarWork>();
+            MakeVarWork<SrclyPlanVarWork>();
         }
 
         [Ui("期前", group: 1), Tool(Anchor)]
@@ -39,11 +40,11 @@ namespace Revital
                         h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(SrclyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -77,11 +78,11 @@ namespace Revital
                         h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(SrclyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -114,11 +115,11 @@ namespace Revital
                         h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(SrclyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -151,11 +152,11 @@ namespace Revital
                         h.TR_().TD_("uk-label", colspan: 6).T(Item.Cats[o.cat])._TD()._TR();
                     }
                     h.TR_();
-                    h.TD_().VARTOOL(o.Key, nameof(CtrlyPlanVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(SrclyPlanVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(Plan.Typs[o.postg]);
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
 
@@ -177,7 +178,7 @@ namespace Revital
                 var dt = DateTime.Today;
                 var o = new Plan
                 {
-                    status = _Art.STA_DISABLED,
+                    status = _Info.STA_DISABLED,
                     starton = dt,
                     endon = dt,
                     fillon = dt,
@@ -191,7 +192,7 @@ namespace Revital
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("起始日", nameof(o.starton), o.starton).DATE("截止日", nameof(o.endon), o.endon)._LI();
                     h.LI_().SELECT("交付日约束", nameof(o.typ), o.typ, Plan.Typs, required: true).DATE("指定交付日", nameof(o.fillon), o.fillon)._LI();
-                    h.LI_().SELECT("针对级别", nameof(o.rank), o.rank, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("针对级别", nameof(o.rank), o.rank, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -229,20 +230,5 @@ namespace Revital
                 wc.GivePane(200); // close dialog
             }
         }
-    }
-
-    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_AGRI)]
-    public class CtrlyAgriPlanWork : CtrlyPlanWork
-    {
-    }
-
-    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_FACT)]
-    public class CtrlyFactPlanWork : CtrlyPlanWork
-    {
-    }
-
-    [Ui("［供应中心］供应项管理", "calendar", fork: Item.TYP_SRVC)]
-    public class CtrlySrvcPlanWork : CtrlyPlanWork
-    {
     }
 }

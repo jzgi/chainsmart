@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class User : _Art, IKeyable<int>
+    public class User : _Info, IKeyable<int>
     {
         public static readonly User Empty = new User();
 

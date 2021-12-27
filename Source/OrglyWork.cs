@@ -15,7 +15,7 @@ namespace Revital
         protected override void OnMake()
         {
             // id of either current user or the specified
-            MakeVarWork<SrclyVarWork>((prin, key) =>
+            MakeVarWork<PrvlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return Obtain<int, Org>(orgid);

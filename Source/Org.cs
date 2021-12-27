@@ -6,40 +6,37 @@ namespace Revital
     /// <summary>
     /// The data model for an organizational unit.
     /// </summary>
-    public class Org : _Art, IKeyable<int>, IForkable
+    public class Org : _Info, IKeyable<int>, IForkable
     {
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_BIZ = 0b00001,
-            TYP_PRD = 0b00010, // produce
-            TYP_SPR = 0b00100, // super
-            TYP_MRT = TYP_SPR | TYP_BIZ, // mart
-            TYP_SRC = TYP_SPR | TYP_PRD, // source
-            TYP_CHL = TYP_SPR | TYP_BIZ | TYP_PRD, // channel
-            TYP_CTR = 0b01000; // center
+            TYP_SPR = 0b1000, // super
+            TYP_BIZ = 0b0001, // business
+            TYP_SRC = 0b0010, // source
+            TYP_CTR = 0b0100, // sector
+            TYP_MRT = TYP_SPR | TYP_BIZ, // market
+            TYP_PRV = TYP_SPR | TYP_SRC; // provisioning
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_BIZ, "经营户"},
-            {TYP_PRD, "生产户"},
+            {TYP_BIZ, "商户"},
+            {TYP_SRC, "供源"},
+            {TYP_CTR, "中心"},
 #if ZHNT
-            {TYP_MRT, "市场"},
+            {TYP_MRT, "综合市场"},
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_SRC, "产源"},
-            {TYP_CHL, "购销渠道"},
-            {TYP_CTR, "供应中心"},
+            {TYP_PRV, "供应板块"},
         };
 
 
         public static readonly Map<short, string> Ranks = new Map<short, string>
         {
             {0, "普通"},
-            {1, "铜牌"},
-            {2, "银牌"},
-            {3, "金牌"},
+            {1, "银牌"},
+            {2, "金牌"},
         };
 
 
@@ -133,9 +130,9 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSrc => typ == TYP_SRC;
+        public bool IsSrc => typ == TYP_PRV;
 
-        public bool IsPrd => typ == TYP_PRD;
+        public bool IsPrd => typ == TYP_SRC;
 
         public bool IsBiz => typ == TYP_BIZ;
 

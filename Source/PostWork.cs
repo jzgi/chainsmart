@@ -80,7 +80,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STA_DISABLED,
+                    status = _Info.STA_DISABLED,
                     unitx = 1,
                     min = 1,
                     max = 100,
@@ -146,7 +146,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STA_DISABLED,
+                    status = _Info.STA_DISABLED,
                     unitx = 1,
                     min = 1,
                     max = 10,
@@ -159,7 +159,7 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

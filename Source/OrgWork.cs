@@ -22,7 +22,7 @@ namespace Revital
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = 5 ORDER BY typ, regid, status DESC");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_MRT).T(" ORDER BY regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -36,21 +36,21 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
         }
 
-        [Ui("产源", group: 2), Tool(Anchor)]
-        public async Task src(WebContext wc, int page)
+        [Ui("分拣", group: 2), Tool(Anchor)]
+        public async Task ctr(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = 6 ORDER BY typ, regid, status DESC");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_CTR).T(" ORDER BY regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label, subscript: TYP_SRC);
+                h.TOOLBAR(caption: Label, subscript: TYP_CTR);
 
                 if (arr == null) return;
 
@@ -60,21 +60,21 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
         }
 
-        [Ui("中枢", group: 4), Tool(Anchor)]
-        public async Task hub(WebContext wc, int page)
+        [Ui("供应", group: 4), Tool(Anchor)]
+        public async Task sec(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ >= 7 ORDER BY typ, regid, status DESC");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_PRV).T(" ORDER BY status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label, subscript: TYP_CHL);
+                h.TOOLBAR(caption: Label, subscript: TYP_PRV);
 
                 if (arr == null) return;
 
@@ -84,7 +84,7 @@ namespace Revital
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -102,23 +102,23 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STA_ENABLED
+                    status = _Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("机构信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => typ == TYP_CHL ? (k >= TYP_CHL) : k == typ, required: true)._LI();
-                    if (typ == TYP_CHL)
-                    {
-                        h.LI_().SELECT("业务分属", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
-                    }
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => typ == k, required: true)._LI();
+                    // if (typ == TYP_CHL)
+                    // {
+                    //     h.LI_().SELECT("业务分属", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
+                    // }
                     h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs, filter: (k, v) => k == 1, required: typ != TYP_SRC)._LI();
+                    h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs, filter: (k, v) => k == 1, required: typ != TYP_PRV)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -185,7 +185,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STA_ENABLED
+                    status = _Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -197,7 +197,7 @@ namespace Revital
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECTIONAL)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -217,14 +217,14 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(TYP_SRC, 1)]
-    [Ui("［产源］下属生产户管理", "thumbnails")]
-    public class SrclyOrgWork : OrgWork
+    [UserAuthorize(TYP_PRV, 1)]
+    [Ui("［供应］下属供源管理", "thumbnails")]
+    public class PrvlyOrgWork : OrgWork
     {
         protected override void OnMake()
         {
-            State = TYP_SRC;
-            MakeVarWork<SrclyOrgVarWork>(state: TYP_SRC);
+            State = TYP_PRV;
+            MakeVarWork<SrclyOrgVarWork>(state: TYP_PRV);
         }
 
         public async Task @default(WebContext wc)
@@ -260,7 +260,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Art.STA_ENABLED
+                    status = _Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -272,7 +272,7 @@ namespace Revital
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECTIONAL)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Art.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

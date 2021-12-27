@@ -8,7 +8,7 @@ namespace Revital
     {
     }
 
-    [Ui("［供应中心］投放地设置")]
+    [Ui("［中心］到达地设置")]
     public class CtrlyReachWork : ReachWork
     {
         public async Task @default(WebContext wc)
@@ -37,7 +37,7 @@ namespace Revital
             {
                 var o = new Reach
                 {
-                    status = _Art.STA_ENABLED
+                    status = _Info.STA_ENABLED
                 };
                 var orgs = ObtainMap<int, Org>();
                 var regs = ObtainMap<short, Reg>();
@@ -48,7 +48,7 @@ namespace Revital
                     h.LI_().SELECT_MRT("市场", nameof(o.mrtid), o.mrtid, orgs, regs, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

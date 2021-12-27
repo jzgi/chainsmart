@@ -19,7 +19,7 @@ namespace Revital
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublyBidWork>("code");
+            MakeWork<PublyBookWork>("code");
 
             // management
 
@@ -210,7 +210,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = _Art.STA_ENABLED,
+                    status = _Info.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

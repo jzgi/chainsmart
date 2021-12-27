@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class Reach : _Art
+    public class Reach : _Info
     {
         public static readonly Reach Empty = new Reach();
 

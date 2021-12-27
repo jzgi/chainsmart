@@ -8,6 +8,37 @@ namespace Revital
     {
     }
 
+    public class PublyBookWork : BookWork
+    {
+        public async Task @default(WebContext wc, int code)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE codend >= @1 ORDER BY codend LIMIT 1");
+            var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
+            wc.GivePage(200, h =>
+            {
+                if (o == null || o.codend - o.codes >= code)
+                {
+                    h.ALERT("编码没有找到");
+                }
+                else
+                {
+                    var plan = Obtain<short, Plan>(o.planid);
+                    var frm = Obtain<int, Org>(o.toid);
+                    var ctr = Obtain<int, Org>(o.fromid);
+
+                    h.FORM_();
+                    h.FIELDSUL_("溯源信息");
+                    h.LI_().FIELD("生产户", frm.name);
+                    h.LI_().FIELD("分拣中心", ctr.name);
+                    h._FIELDSUL();
+                    h._FORM();
+                }
+            }, title: "中惠农通溯源系统");
+        }
+    }
+
+
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("［经营户］线上采购")]
     public class BizlyBookWork : BookWork
@@ -82,7 +113,7 @@ namespace Revital
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
                         h.SPAN(Plan.Typs[o.postg]);
-                        h.SPAN(_Art.Statuses[o.status]);
+                        h.SPAN(_Info.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
 
@@ -109,6 +140,49 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
+    [Ui("［供应］销售及分拣", "sign-out")]
+    public abstract class PrvlyBookWork : BookWork
+    {
+        [Ui("当前", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+        }
+    }
+
+    [UserAuthorize(Org.TYP_SRC, 1)]
+    [Ui("［生产户］销售管理")]
+    public class SrclyBookWork : BookWork
+    {
+        protected override void OnMake()
+        {
+            MakeVarWork<SrclyBookVarWork>();
+        }
+
+        [Ui("来单"), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            short orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(orgid));
+
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui("历史"), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            short orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(orgid));
+
+            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
+        }
+    }
+
+    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
+    [Ui("［供应］销售及分拣", "sign-out")]
     public abstract class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -184,7 +258,8 @@ namespace Revital
         }
     }
 
-    [Ui("［供应中心］销售及分拣", "sign-out", fork: Item.TYP_AGRI)]
+
+    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_AGRI)]
     public class CtrlyAgriBookWork : CtrlyBookWork
     {
         protected override void OnMake()
@@ -193,12 +268,12 @@ namespace Revital
         }
     }
 
-    [Ui("［供应中心］供应及分拣", "sign-out", fork: Item.TYP_FACT)]
+    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_FACT)]
     public class CtrlyFactBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("［供应中心］供应及分派", "sign-out", fork: Item.TYP_SRVC)]
+    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_SRVC)]
     public class CtrlySrvcBookWork : CtrlyBookWork
     {
     }

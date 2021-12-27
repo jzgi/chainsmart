@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard item of product or service.
     /// </summary>
-    public class Item : _Art, IKeyable<short>
+    public class Item : _Info, IKeyable<short>
     {
         public static readonly Item Empty = new Item();
 
@@ -19,7 +19,7 @@ namespace Revital
         {
             {TYP_AGRI, "农副产"},
             {TYP_FACT, "制造品"},
-            {TYP_SRVC, "泛服务"},
+            {TYP_SRVC, "服务类"},
         };
 
         // categories

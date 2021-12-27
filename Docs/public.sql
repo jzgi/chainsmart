@@ -4,14 +4,7 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create table clears
-(
-	id smallserial not null
-);
-
-alter table clears owner to postgres;
-
-create table _arts
+create table _infos
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -23,7 +16,7 @@ create table _arts
 	adapter varchar(10)
 );
 
-alter table _arts owner to postgres;
+alter table _infos owner to postgres;
 
 create table users
 (
@@ -40,7 +33,7 @@ create table users
 	idcard varchar(18),
 	icon bytea
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table users owner to postgres;
 
@@ -65,7 +58,7 @@ create table regs
 			primary key,
 	idx smallint
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table regs owner to postgres;
 
@@ -77,7 +70,7 @@ create table agrees
 	ended date,
 	content jsonb
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table agrees owner to postgres;
 
@@ -92,7 +85,7 @@ create table items
 	unitfee money,
 	icon bytea
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table items owner to postgres;
 
@@ -105,11 +98,11 @@ create table _docs
 	handled timestamp(0),
 	handler varchar(10)
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table _docs owner to postgres;
 
-create table books
+create table books_
 (
 	id bigserial not null
 		constraint distribs_pk
@@ -120,11 +113,18 @@ create table books
 	"off" money,
 	qty integer,
 	pay money,
-	refund money
+	refund money,
+	codend integer,
+	codes smallint,
+	seq_ integer,
+	cs_ varchar(32),
+	blockcs_ varchar(32),
+	peer_ smallint,
+	acct_ integer
 )
 inherits (_docs);
 
-alter table books owner to postgres;
+alter table books_ owner to postgres;
 
 create table buys
 (
@@ -145,26 +145,6 @@ inherits (_docs);
 
 alter table buys owner to postgres;
 
-create table bids_
-(
-	id bigserial not null
-		constraint bids_pk
-			primary key,
-	itemid integer not null,
-	planid integer,
-	yieldid integer,
-	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money,
-	codend integer,
-	codes smallint
-)
-inherits (_docs);
-
-alter table bids_ owner to postgres;
-
 create table userlgs
 (
 	userid integer not null,
@@ -173,7 +153,7 @@ create table userlgs
 
 alter table userlgs owner to postgres;
 
-create table _wares
+create table _arts
 (
 	orgid integer,
 	itemid integer,
@@ -187,9 +167,9 @@ create table _wares
 	price money,
 	cap integer
 )
-inherits (_arts);
+inherits (_infos);
 
-alter table _wares owner to postgres;
+alter table _arts owner to postgres;
 
 create table orgs
 (
@@ -215,27 +195,13 @@ create table orgs
 	icon bytea,
 	cert bytea
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table orgs owner to postgres;
 
 alter table users
 	add constraint users_orgid_fk
 		foreign key (orgid) references orgs;
-
-create table pieces
-(
-	id integer not null
-		constraint produces_pk
-			primary key,
-	constraint produces_orgid_fk
-		foreign key (orgid) references orgs,
-	constraint produces_itemid_fk
-		foreign key (itemid) references items
-)
-inherits (_wares);
-
-alter table pieces owner to postgres;
 
 create table plans
 (
@@ -253,7 +219,7 @@ create table plans
 	img bytea,
 	cert bytea
 )
-inherits (_wares);
+inherits (_arts);
 
 alter table plans owner to postgres;
 
@@ -264,7 +230,7 @@ create table posts
 			primary key,
 	planid integer
 )
-inherits (_wares);
+inherits (_arts);
 
 alter table posts owner to postgres;
 
@@ -277,7 +243,7 @@ create table reachs
 		constraint reachs_mrtid_fk
 			references orgs
 )
-inherits (_arts);
+inherits (_infos);
 
 alter table reachs owner to postgres;
 
@@ -286,6 +252,20 @@ create index reachs_ctrid_idx
 
 create index reachs_mrtid_idx
 	on reachs (mrtid);
+
+create table clears
+(
+	id serial not null
+		constraint clears_pk
+			primary key,
+	till timestamp(0),
+	recs integer,
+	amount money,
+	pay money
+)
+inherits (_infos);
+
+alter table clears owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

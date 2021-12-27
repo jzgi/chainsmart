@@ -142,4 +142,10 @@ namespace Revital
     public class DietCtrlyBookVarWork : CtrlyBookVarWork
     {
     }
+    
+    
+    public class SrclyBookVarWork : BookVarWork
+    {
+    }
+
 }

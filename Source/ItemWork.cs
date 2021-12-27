@@ -49,7 +49,7 @@ namespace Revital
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -84,7 +84,7 @@ namespace Revital
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -96,7 +96,7 @@ namespace Revital
             });
         }
 
-        [Ui("泛服务", group: 4), Tool(Anchor)]
+        [Ui("服务类", group: 4), Tool(Anchor)]
         public void svrc(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -119,7 +119,7 @@ namespace Revital
                     h.TR_();
                     h.TDCHECK(o.id);
                     h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Art.Statuses[o.status]);
+                    h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -139,7 +139,7 @@ namespace Revital
             {
                 var o = new Item
                 {
-                    status = _Art.STA_ENABLED
+                    status = _Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -151,7 +151,7 @@ namespace Revital
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
                     h.LI_().NUMBER("单位运费", nameof(o.unitfee), o.unitfee, min: 0.00M, max: 999.99M)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Art.Statuses, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

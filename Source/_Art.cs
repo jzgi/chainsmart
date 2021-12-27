@@ -1,72 +1,57 @@
-﻿using System;
-using SkyChain;
+﻿using SkyChain;
 
 namespace Revital
 {
     /// <summary>
-    /// A data model for managed object.
+    /// A data model for publishable and sellable items.
     /// </summary>
-    public abstract class _Art : IData
+    public abstract class _Art : _Info
     {
-        public const short
-            STA_GONE = 0,
-            STA_DISABLED = 1,
-            STA_ENABLED = 2,
-            STA_PREFERRED = 3;
+        // the specialized extensible discriminator
+        internal int orgid;
+        internal short itemid;
+        internal short cat;
+        internal string ext;
+        internal string unit;
+        internal short unitx;
+        internal short min;
+        internal short max;
+        internal short step;
+        internal decimal price;
+        internal int cap;
 
-        public static readonly Map<short, string> Statuses = new Map<short, string>
+        public override void Read(ISource s, byte proj = 0x0f)
         {
-            {STA_GONE, "注销"},
-            {STA_DISABLED, "禁用"},
-            {STA_ENABLED, "可用"},
-            {STA_PREFERRED, "优先"},
-        };
+            base.Read(s, proj);
 
-        public const byte ID = 1, LATER = 2, PRIVACY = 4;
-
-        internal short typ;
-        internal short status;
-        internal string name;
-        internal string tip;
-        internal DateTime created;
-        internal string creator;
-        internal DateTime adapted;
-        internal string adapter;
-
-        public virtual void Read(ISource s, byte proj = 0x0f)
-        {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
-            s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
-            s.Get(nameof(adapted), ref adapted);
-            s.Get(nameof(adapter), ref adapter);
+            s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(itemid), ref itemid);
+            s.Get(nameof(cat), ref cat);
+            s.Get(nameof(ext), ref ext);
+            s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitx), ref unitx);
+            s.Get(nameof(min), ref min);
+            s.Get(nameof(max), ref max);
+            s.Get(nameof(step), ref step);
+            s.Get(nameof(price), ref price);
+            s.Get(nameof(cap), ref cap);
         }
 
-        public virtual void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, byte proj = 0x0f)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
-            s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
-            s.Put(nameof(adapted), adapted);
-            s.Put(nameof(adapter), adapter);
+            base.Write(s, proj);
+
+            s.Put(nameof(orgid), orgid);
+            s.Put(nameof(itemid), itemid);
+            s.Put(nameof(cat), cat);
+            s.Put(nameof(ext), ext);
+            s.Put(nameof(unit), unit);
+            s.Put(nameof(unitx), unitx);
+            s.Put(nameof(min), min);
+            s.Put(nameof(max), max);
+            s.Put(nameof(step), step);
+            s.Put(nameof(price), price);
+            s.Put(nameof(cap), cap);
         }
-
-        public virtual bool IsDisabled => status <= STA_GONE;
-
-        public virtual bool IsShowable => status == STA_DISABLED;
-
-        public virtual bool CanShow => status >= STA_DISABLED;
-
-        public virtual bool IsWorkable => status == STA_ENABLED;
-
-        public virtual bool CanWork => status >= STA_ENABLED;
-
-        public virtual bool IsPreferable => status == STA_PREFERRED;
     }
 }
