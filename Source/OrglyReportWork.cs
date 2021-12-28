@@ -16,7 +16,7 @@ namespace Revital
         }
     }
 
-    [Ui("［供应］运营报告")]
+    [Ui("［板块］运营报告")]
     public class PrvlyReportWork : WebWork
     {
         public async Task @default(WebContext wc)

@@ -10,7 +10,7 @@ namespace Revital
     /// <summary>
     /// source and producer
     /// </summary>
-    public class SrclyWork : OrglyWork
+    public class PrvlyWork : OrglyWork
     {
         protected override void OnMake()
         {

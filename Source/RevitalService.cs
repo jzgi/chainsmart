@@ -25,7 +25,7 @@ namespace Revital
 
             MakeWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<SrclyWork>("srcly"); // for source and oroducer
+            MakeWork<PrvlyWork>("prvly"); // for source and oroducer
 
             MakeWork<CtrlyWork>("ctrly"); // for center
 

@@ -3,35 +3,30 @@
     {
       "type": "view",
       "name": "逛市场",
-      "url": "http://zhnt-x.com/"
+      "url": "http://jx.zhnt-x.com/"
     },
     {
       "name": "我的",
       "sub_button": [
         {
           "type": "view",
-          "name": "产源操作 🔒",
-          "url": "http://zhnt-x.com/srcly//"
+          "name": "产供端操作 🔒",
+          "url": "http://jx.zhnt-x.com/prvly//"
         },
         {
           "type": "view",
-          "name": "供应中心操作 🔒",
-          "url": "http://zhnt-x.com/ctrly//"
+          "name": "市场端操作 🔒",
+          "url": "http://jx.zhnt-x.com/mrtly//"
         },
         {
           "type": "view",
-          "name": "市集操作 🔒",
-          "url": "http://zhnt-x.com/mrtly//"
-        },
-        {
-          "type": "view",
-          "name": "我的订单",
-          "url": "http://zhnt-x.com/my//order/"
+          "name": "我的购买",
+          "url": "http://jx.zhnt-x.com/my//buy/"
         },
         {
           "type": "view",
           "name": "我的账号",
-          "url": "http://zhnt-x.com/my//"
+          "url": "http://jx.zhnt-x.com/my//"
         }
       ]
     }

@@ -35,7 +35,7 @@ namespace Revital
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("［经营户］线上销售")]
+    [Ui("［商户］线上销售")]
     public class BizlyBuyWork : BuyWork
     {
         protected override void OnMake()

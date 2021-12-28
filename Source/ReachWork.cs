@@ -8,7 +8,7 @@ namespace Revital
     {
     }
 
-    [Ui("［中心］到达地设置")]
+    [Ui("［中心］市场关联")]
     public class CtrlyReachWork : ReachWork
     {
         public async Task @default(WebContext wc)

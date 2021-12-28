@@ -14,7 +14,7 @@ namespace Revital
             TYP_SPR = 0b1000, // super
             TYP_BIZ = 0b0001, // business
             TYP_SRC = 0b0010, // source
-            TYP_CTR = 0b0100, // sector
+            TYP_CTR = 0b0100, // center
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
             TYP_PRV = TYP_SPR | TYP_SRC; // provisioning
 
@@ -24,11 +24,11 @@ namespace Revital
             {TYP_SRC, "供源"},
             {TYP_CTR, "中心"},
 #if ZHNT
-            {TYP_MRT, "综合市场"},
+            {TYP_MRT, "市场"},
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_PRV, "供应板块"},
+            {TYP_PRV, "产供板块"},
         };
 
 

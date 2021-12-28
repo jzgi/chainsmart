@@ -157,7 +157,7 @@ namespace Revital
         }
     }
 
-    [Ui("［账户］线上业务结算", "credit-card")]
+    [Ui("［账户］业务结算情况", "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()

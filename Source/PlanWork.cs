@@ -9,8 +9,8 @@ namespace Revital
     {
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ORGLY_OP)]
-    [Ui("［供应］供应项管理")]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OP)]
+    [Ui("［产源］供应项管理")]
     public class SrclyPlanWork : PlanWork
     {
         protected override void OnMake()

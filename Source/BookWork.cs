@@ -40,7 +40,7 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("［经营户］线上采购")]
+    [Ui("［商户］线上采购")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -150,7 +150,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("［生产户］销售管理")]
+    [Ui("［产源］销售管理")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnMake()
@@ -182,7 +182,16 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("［供应］销售及分拣", "sign-out")]
+    [Ui("［中心］收货管理", "sign-in")]
+    public class CtrlyReceiveWork : BookWork
+    {
+        [Ui("当前", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+        }
+    }
+
+    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
     public abstract class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]

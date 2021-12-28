@@ -66,7 +66,7 @@ namespace Revital
             });
         }
 
-        [Ui("供应", group: 4), Tool(Anchor)]
+        [Ui("产供", group: 4), Tool(Anchor)]
         public async Task sec(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -140,9 +140,9 @@ namespace Revital
 
     [UserAuthorize(TYP_MRT, 1)]
 #if ZHNT
-    [Ui("［市场］下属经营户管理")]
+    [Ui("［市场］下属商户管理")]
 #else
-    [Ui("［驿站］下属经营户管理")]
+    [Ui("［驿站］下属商户管理")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -218,7 +218,7 @@ namespace Revital
     }
 
     [UserAuthorize(TYP_PRV, 1)]
-    [Ui("［供应］下属供源管理", "thumbnails")]
+    [Ui("［板块］下属产源管理", "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnMake()

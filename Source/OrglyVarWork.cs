@@ -89,9 +89,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
 #if ZHNT
-    [Ui("市场操作")]
+    [Ui("市场端操作")]
 #else
-    [Ui("驿站操作")]
+    [Ui("驿站端操作")]
 #endif
     public class MrtlyVarWork : OrglyVarWork
     {
@@ -149,7 +149,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应链操作")]
+    [Ui("产供端操作")]
     public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
@@ -203,6 +203,8 @@ namespace Revital
         protected override void OnMake()
         {
             MakeWork<CtrlyReachWork>("reach");
+
+            MakeWork<CtrlyReceiveWork>("receive");
 
             MakeWork<CtrlyAgriBookWork, CtrlyFactBookWork, CtrlySrvcBookWork>("book");
 
