@@ -8,39 +8,8 @@ namespace Revital
     {
     }
 
-    public class PublyBookWork : BookWork
-    {
-        public async Task @default(WebContext wc, int code)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE codend >= @1 ORDER BY codend LIMIT 1");
-            var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
-            wc.GivePage(200, h =>
-            {
-                if (o == null || o.codend - o.codes >= code)
-                {
-                    h.ALERT("编码没有找到");
-                }
-                else
-                {
-                    var plan = Obtain<short, Product>(o.planid);
-                    var frm = Obtain<int, Org>(o.toid);
-                    var ctr = Obtain<int, Org>(o.fromid);
-
-                    h.FORM_();
-                    h.FIELDSUL_("溯源信息");
-                    h.LI_().FIELD("生产户", frm.name);
-                    h.LI_().FIELD("分拣中心", ctr.name);
-                    h._FIELDSUL();
-                    h._FORM();
-                }
-            }, title: "中惠农通溯源系统");
-        }
-    }
-
-
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("［商户］线上采购")]
+    [Ui("［商户］线上订货")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -48,7 +17,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = ObtainMap<short, Item>();

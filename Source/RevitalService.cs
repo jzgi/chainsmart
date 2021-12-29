@@ -19,7 +19,7 @@ namespace Revital
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublyBookWork>("code");
+            MakeWork<PublySrcWork>("code");
 
             // management
 

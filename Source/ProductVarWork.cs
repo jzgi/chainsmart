@@ -6,7 +6,7 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public abstract class PlanVarWork : WebWork
+    public abstract class ProductVarWork : WebWork
     {
         protected async Task doimg(WebContext wc, string col)
         {
@@ -62,7 +62,7 @@ namespace Revital
     }
 
 
-    public class SrclyProductVarWork : PlanVarWork
+    public class SrclyProductVarWork : ProductVarWork
     {
         [Ui("修改现货供应"), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)

@@ -63,7 +63,7 @@ namespace Revital
 
             CacheSub((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Product.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                    dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
                     return dc.Query<int, Product>(p => p.Set(orgid));
                 }, 60 * 15
             );

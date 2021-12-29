@@ -9,8 +9,9 @@ namespace Revital
     {
     }
 
+
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OP)]
-    [Ui("［产源］产品供应")]
+    [Ui("［产源］产品供应管理")]
     public class SrclyProductWork : ProductWork
     {
         protected override void OnMake()
@@ -130,7 +131,7 @@ namespace Revital
             }
         }
 
-        [Ui("✚", "新建期货供应", group: 2), Tool(ButtonOpen)]
+        [Ui("✚", "新建预售供应", group: 2), Tool(ButtonOpen)]
         public async Task newfut(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -138,7 +139,6 @@ namespace Revital
             var items = ObtainMap<short, Item>();
             if (wc.IsGet)
             {
-                var dt = DateTime.Today;
                 var o = new Product
                 {
                     typ = Product.TYP_FUTURE,
@@ -146,6 +146,7 @@ namespace Revital
                     created = DateTime.Now,
                     creator = prin.name,
                     orgid = org.id,
+                    fillon = DateTime.Today
                 };
                 wc.GivePane(200, h =>
                 {

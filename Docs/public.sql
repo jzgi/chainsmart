@@ -203,14 +203,11 @@ alter table users
 	add constraint users_orgid_fk
 		foreign key (orgid) references orgs;
 
-create table plans
+create table products
 (
 	id serial not null
 		constraint plans_pk
 			primary key,
-	pieceid integer,
-	starton date,
-	endon date,
 	fillon date,
 	postg smallint,
 	postprice money,
@@ -221,7 +218,7 @@ create table plans
 )
 inherits (_arts);
 
-alter table plans owner to postgres;
+alter table products owner to postgres;
 
 create table posts
 (
