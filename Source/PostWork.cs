@@ -127,7 +127,7 @@ namespace Revital
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO plans ").colset(Plan.Empty, 0)._VALUES_(Plan.Empty, 0);
+                dc.Sql("INSERT INTO plans ").colset(Product.Empty, 0)._VALUES_(Product.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

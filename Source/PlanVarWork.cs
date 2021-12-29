@@ -14,7 +14,7 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").T(col).T(" FROM plans WHERE id = @1");
+                dc.Sql("SELECT ").T(col).T(" FROM products WHERE id = @1");
                 if (dc.QueryTop(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
@@ -29,7 +29,7 @@ namespace Revital
                 var f = await wc.ReadAsync<Form>();
                 ArraySegment<byte> img = f[nameof(img)];
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE plans SET ").T(col).T(" = @1 WHERE id = @2");
+                dc.Sql("UPDATE products SET ").T(col).T(" = @1 WHERE id = @2");
                 if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
                 {
                     wc.Give(200); // ok
@@ -62,9 +62,9 @@ namespace Revital
     }
 
 
-    public class SrclyPlanVarWork : PlanVarWork
+    public class SrclyProductVarWork : PlanVarWork
     {
-        [Ui("修改供应项目"), Tool(AnchorOpen)]
+        [Ui("修改现货供应"), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];
@@ -74,25 +74,23 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE id = @1");
-                var o = dc.QueryTop<Plan>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
+                var o = dc.QueryTop<Product>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("标准品目", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
-                    h.LI_().TEXTAREA("特色描述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().DATE("起始日", nameof(o.starton), o.starton).DATE("截止日", nameof(o.endon), o.endon)._LI();
-                    h.LI_().SELECT("交付日约束", nameof(o.typ), o.typ, Plan.Typs, required: true).DATE("指定交付日", nameof(o.fillon), o.fillon)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
+                    h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().SELECT("供应对象", nameof(o.rank), o.rank, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("标准比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("最大容量", nameof(o.cap), o.cap)._LI();
-                    h.LI_().SELECT("市场价约束", nameof(o.postg), o.postg, Plan.Postgs, required: true).NUMBER("市场价", nameof(o.postprice), o.postprice, min: 0.00M, max: 10000.00M)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("现存量", nameof(o.cap), o.cap)._LI();
+                    h.LI_().SELECT("市场约束", nameof(o.postg), o.postg, Product.Postgs, required: true).NUMBER("市场价", nameof(o.postprice), o.postprice, min: 0.00M, max: 10000.00M)._LI();
 
                     h._FIELDSUL();
 
@@ -104,7 +102,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Plan
+                var o = await wc.ReadObjectAsync(0, new Product
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -116,7 +114,7 @@ namespace Revital
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE plans ")._SET_(Plan.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE products ")._SET_(Product.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
                     o.Write(p, 0);

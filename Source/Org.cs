@@ -21,8 +21,8 @@ namespace Revital
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_BIZ, "商户"},
-            {TYP_SRC, "供源"},
-            {TYP_CTR, "中心"},
+            {TYP_SRC, "产源"},
+            {TYP_CTR, "分拣中心"},
 #if ZHNT
             {TYP_MRT, "市场"},
 #else
@@ -34,9 +34,9 @@ namespace Revital
 
         public static readonly Map<short, string> Ranks = new Map<short, string>
         {
-            {0, "普通"},
-            {1, "银牌"},
-            {2, "金牌"},
+            {0, "普通商户"},
+            {1, "银牌商户"},
+            {2, "金牌商户"},
         };
 
 

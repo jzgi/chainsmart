@@ -3,7 +3,7 @@
 namespace Revital
 {
     /// <summary>
-    /// A data model for publishable and sellable items.
+    /// A data model for a merchandise article.
     /// </summary>
     public abstract class _Art : _Info
     {

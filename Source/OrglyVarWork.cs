@@ -158,9 +158,9 @@ namespace Revital
 
             MakeWork<PrvlyReportWork>("rpt");
 
-            MakeWork<SrclyPlanWork>("plan");
+            MakeWork<SrclyProductWork>("product");
 
-            MakeWork<SrclyBookWork>("bid");
+            MakeWork<SrclyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
         }

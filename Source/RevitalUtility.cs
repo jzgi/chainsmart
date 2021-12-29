@@ -60,22 +60,22 @@ namespace Revital
                 short last = 0; // last typ
                 for (int i = 0; i < opts.Count; i++)
                 {
-                    var item = opts.ValueAt(i);
-                    if (!filter(item))
+                    var it = opts.ValueAt(i);
+                    if (filter != null && !filter(it))
                     {
                         continue;
                     }
-                    if (item.cat != last)
+                    if (it.cat != last)
                     {
                         if (last > 0)
                         {
                             h.T("</optgroup>");
                         }
-                        h.T("<optgroup label=\"").T(cats[item.cat]).T("\">");
+                        h.T("<optgroup label=\"").T(cats[it.cat]).T("\">");
                     }
-                    h.OPTION(item.id, item.name);
+                    h.OPTION(it.id, it.name);
 
-                    last = item.cat;
+                    last = it.cat;
                 }
                 h.T("</optgroup>");
             }
@@ -114,7 +114,7 @@ namespace Revital
             return h;
         }
 
-        public static HtmlContent SELECT_PLAN(this HtmlContent h, string label, string name, int v, Map<int, Plan> opts, Map<short, string> cats, Func<Plan, bool> filter = null, bool required = false)
+        public static HtmlContent SELECT_PLAN(this HtmlContent h, string label, string name, int v, Map<int, Product> opts, Map<short, string> cats, Func<Product, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)

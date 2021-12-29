@@ -23,7 +23,7 @@ namespace Revital
                 }
                 else
                 {
-                    var plan = Obtain<short, Plan>(o.planid);
+                    var plan = Obtain<short, Product>(o.planid);
                     var frm = Obtain<int, Org>(o.toid);
                     var ctr = Obtain<int, Org>(o.fromid);
 
@@ -95,9 +95,9 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Plan.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
-                var arr = await dc.QueryAsync<Plan>(p => p.Set(2));
-                var prods = ObtainMap<int, Plan>();
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
+                var arr = await dc.QueryAsync<Product>(p => p.Set(2));
+                var prods = ObtainMap<int, Product>();
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_(ctr.name);
@@ -112,7 +112,7 @@ namespace Revital
                         h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
-                        h.SPAN(Plan.Typs[o.postg]);
+                        h.SPAN(Product.Typs[o.postg]);
                         h.SPAN(_Info.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
@@ -150,7 +150,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("［产源］销售管理")]
+    [Ui("［产源］批发管理")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnMake()
@@ -158,23 +158,23 @@ namespace Revital
             MakeVarWork<SrclyBookVarWork>();
         }
 
-        [Ui("来单"), Tool(Anchor)]
+        [Ui("当前"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE partyid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE toid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("历史"), Tool(Anchor)]
+        [Ui("以往"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE partyid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE toid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Book>(p => p.Set(orgid));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });

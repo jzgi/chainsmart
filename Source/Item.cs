@@ -10,9 +10,9 @@ namespace Revital
         public static readonly Item Empty = new Item();
 
         public const short
-            TYP_AGRI = 0b00000001, // agriculture
-            TYP_FACT = 0b00000010, // factory
-            TYP_SRVC = 0b00000100; // service
+            TYP_AGRI = 1, // agriculture
+            TYP_FACT = 2, // factory
+            TYP_SRVC = 4; // service
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
