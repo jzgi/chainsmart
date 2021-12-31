@@ -33,7 +33,7 @@ namespace Revital
                         h.TDCHECK(o.Key);
                         h.TD_();
                         h.T(o.name);
-                        if (o.typ == Reg.TYP_GEOGRAPHIC)
+                        if (o.typ == Reg.TYP_DIST)
                         {
                             h.T('（').T(Reg.Typs[o.typ]).T('）');
                         }
@@ -60,7 +60,7 @@ namespace Revital
                         h.TDCHECK(o.Key);
                         h.TD_();
                         h.T(o.name);
-                        if (o.typ == Reg.TYP_GEOGRAPHIC)
+                        if (o.typ == Reg.TYP_DIST)
                         {
                             h.T('（').T(Reg.Typs[o.typ]).T('）');
                         }

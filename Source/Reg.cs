@@ -7,13 +7,15 @@ namespace Revital
         public static readonly Reg Empty = new Reg();
 
         public const short
-            TYP_GEOGRAPHIC = 1,
-            TYP_SECTIONAL = 2;
+            TYP_PROV = 1,
+            TYP_DIST = 2,
+            TYP_SECT = 3;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_GEOGRAPHIC, "地区"},
-            {TYP_SECTIONAL, "场区"},
+            {TYP_PROV, "省份"},
+            {TYP_DIST, "地区"},
+            {TYP_SECT, "场区"},
         };
 
         internal short id;
@@ -41,9 +43,11 @@ namespace Revital
 
         public short Key => id;
 
-        public bool IsGeographic => typ == TYP_GEOGRAPHIC;
+        public bool IsProvince => typ == TYP_PROV;
 
-        public bool IsSectional => typ == TYP_SECTIONAL;
+        public bool IsDistrict => typ == TYP_DIST;
+
+        public bool IsSection => typ == TYP_SECT;
 
         public override string ToString() => name;
     }

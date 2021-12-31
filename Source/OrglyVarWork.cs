@@ -107,9 +107,9 @@ namespace Revital
 
             MakeWork<BizlyBuyWork>("buy");
 
-            MakeWork<BizlyBookWork>("book");
+            MakeWork<BizlyShopWork>("shop");
 
-            MakeWork<BizlyStationWork>("station");
+            MakeWork<BizlyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
         }
@@ -158,7 +158,7 @@ namespace Revital
 
             MakeWork<PrvlyReportWork>("rpt");
 
-            MakeWork<SrclyProductWork>("product");
+            MakeWork<SrclyProductWork>("prod");
 
             MakeWork<SrclyBookWork>("book");
 

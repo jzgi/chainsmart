@@ -27,7 +27,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    h.TD(o.pay, true);
+                    h.TD(o.mrtname, true);
                     // h.TD(Statuses[o.status]);
                 });
             });
@@ -35,7 +35,7 @@ namespace Revital
     }
 
     [UserAuthorize(orgly: ORGLY_OP)]
-    [Ui("［商户］线上销售")]
+    [Ui("［商户］线上零售")]
     public class BizlyBuyWork : BuyWork
     {
         protected override void OnMake()
@@ -55,7 +55,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    h.TD(o.pay, true);
+                    h.TD(o.mrtname, true);
                     // h.TD(Statuses[o.status]);
                 });
             });
@@ -73,7 +73,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    h.TD(o.pay, true);
+                    h.TD(o.mrtname, true);
                     // h.TD(Statuses[o.status]);
                 });
             });

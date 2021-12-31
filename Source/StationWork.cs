@@ -8,8 +8,8 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, User.ORGLY_OP)]
-    [Ui("［商户］零售工作台", "desktop")]
-    public class BizlyStationWork : StationWork
+    [Ui("［商户］线下零售", "desktop")]
+    public class BizlyShopWork : StationWork
     {
         public async Task @default(WebContext wc)
         {

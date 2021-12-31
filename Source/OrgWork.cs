@@ -19,15 +19,15 @@ namespace Revital
             var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
-                if (o == null || o.codend - o.codes >= code)
+                if (o == null || o.srcid - o.srcid >= code)
                 {
                     h.ALERT("编码没有找到");
                 }
                 else
                 {
-                    var plan = Obtain<short, Product>(o.planid);
-                    var frm = Obtain<int, Org>(o.toid);
-                    var ctr = Obtain<int, Org>(o.fromid);
+                    var plan = Obtain<short, Product>(o.itemid);
+                    var frm = Obtain<int, Org>(o.artname);
+                    var ctr = Obtain<int, Org>(o.artid);
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");
@@ -225,7 +225,7 @@ namespace Revital
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => k == TYP_BIZ, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECTIONAL)._LI();
+                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECT)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
@@ -255,19 +255,22 @@ namespace Revital
         protected override void OnMake()
         {
             State = TYP_PRV;
-            MakeVarWork<SrclyOrgVarWork>(state: TYP_PRV);
+            MakeVarWork<PrvlyOrgVarWork>(state: TYP_PRV);
         }
 
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY regid");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
             var regs = ObtainMap<short, Reg>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+                
+                if (arr == null) return;
+                
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
@@ -300,7 +303,7 @@ namespace Revital
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => k == TYP_BIZ, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECTIONAL)._LI();
+                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECT)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();

@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Book : _Doc, IKeyable<int>
+    public class Book : _Deal, IKeyable<long>
     {
         public static readonly Book Empty = new Book();
 
@@ -19,16 +19,23 @@ namespace Revital
         };
 
 
-        internal int id;
-        internal short planid;
-        internal short itemid;
-        internal decimal price;
-        internal decimal off;
-        internal int qty;
-        internal decimal pay;
-        internal decimal refund;
-        internal int codend;
-        internal short codes;
+        internal long id;
+        internal int bizid;
+        internal string bizname;
+        internal int mrtid;
+        internal string mrtname;
+        internal int ctrid;
+        internal string ctrname;
+        internal int prvid;
+        internal string prvname;
+        internal int srcid;
+        internal string srcname;
+
+        internal long seq_;
+        internal string cs_;
+        internal string blockcs_;
+        internal short peer_;
+        internal long rec_;
 
         public override void Read(ISource s, byte proj = 15)
         {
@@ -38,15 +45,22 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(planid), ref planid);
-            s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(price), ref price);
-            s.Get(nameof(off), ref off);
-            s.Get(nameof(qty), ref qty);
-            s.Get(nameof(pay), ref pay);
-            s.Get(nameof(refund), ref refund);
-            s.Get(nameof(codend), ref codend);
-            s.Get(nameof(codes), ref codes);
+            s.Get(nameof(bizid), ref bizid);
+            s.Get(nameof(bizname), ref bizname);
+            s.Get(nameof(mrtid), ref mrtid);
+            s.Get(nameof(mrtname), ref mrtname);
+            s.Get(nameof(ctrid), ref ctrid);
+            s.Get(nameof(ctrname), ref ctrname);
+            s.Get(nameof(prvid), ref prvid);
+            s.Get(nameof(prvname), ref prvname);
+            s.Get(nameof(srcid), ref srcid);
+            s.Get(nameof(srcname), ref srcname);
+
+            s.Get(nameof(seq_), ref seq_);
+            s.Get(nameof(cs_), ref cs_);
+            s.Get(nameof(blockcs_), ref blockcs_);
+            s.Get(nameof(peer_), ref peer_);
+            s.Get(nameof(rec_), ref rec_);
         }
 
         public override void Write(ISink s, byte proj = 15)
@@ -57,18 +71,25 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(planid), planid);
-            s.Put(nameof(itemid), itemid);
-            s.Put(nameof(price), price);
-            s.Put(nameof(off), off);
-            s.Put(nameof(qty), qty);
-            s.Put(nameof(pay), pay);
-            s.Put(nameof(refund), refund);
-            s.Put(nameof(codend), codend);
-            s.Put(nameof(codes), codes);
+            s.Put(nameof(bizid), bizid);
+            s.Put(nameof(bizname), bizname);
+            s.Put(nameof(mrtid), mrtid);
+            s.Put(nameof(mrtname), mrtname);
+            s.Put(nameof(ctrid), ctrid);
+            s.Put(nameof(ctrname), ctrname);
+            s.Put(nameof(prvid), prvid);
+            s.Put(nameof(prvname), prvname);
+            s.Put(nameof(srcid), srcid);
+            s.Put(nameof(srcname), srcname);
+
+            s.Put(nameof(seq_), seq_);
+            s.Put(nameof(cs_), cs_);
+            s.Put(nameof(blockcs_), blockcs_);
+            s.Put(nameof(peer_), peer_);
+            s.Put(nameof(rec_), rec_);
         }
 
-        public int Key => id;
+        public long Key => id;
 
         public bool IsOver(DateTime now) => false;
     }

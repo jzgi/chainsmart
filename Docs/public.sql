@@ -89,61 +89,21 @@ inherits (_infos);
 
 alter table items owner to postgres;
 
-create table _docs
+create table _deals
 (
-	sprid integer,
-	fromid integer,
-	toid integer,
-	ccid integer,
+	itemid integer,
+	artid integer,
+	artname integer,
 	handled timestamp(0),
-	handler varchar(10)
-)
-inherits (_infos);
-
-alter table _docs owner to postgres;
-
-create table books_
-(
-	id bigserial not null
-		constraint distribs_pk
-			primary key,
-	itemid smallint not null,
-	planid smallint,
+	handler varchar(10),
 	price money,
-	"off" money,
-	qty integer,
-	pay money,
-	refund money,
-	codend integer,
-	codes smallint,
-	seq_ integer,
-	cs_ varchar(32),
-	blockcs_ varchar(32),
-	peer_ smallint,
-	acct_ integer
-)
-inherits (_docs);
-
-alter table books_ owner to postgres;
-
-create table buys
-(
-	id bigserial not null
-		constraint needs_pk
-			primary key,
-	postid smallint not null,
-	itemid smallint,
-	uid integer not null,
-	uname varchar(10),
-	utel varchar(11),
-	uim varchar(28),
-	price money,
+	qty smallint,
 	pay money,
 	refund money
 )
-inherits (_docs);
+inherits (_infos);
 
-alter table buys owner to postgres;
+alter table _deals owner to postgres;
 
 create table userlgs
 (
@@ -153,7 +113,7 @@ create table userlgs
 
 alter table userlgs owner to postgres;
 
-create table _arts
+create table _articles
 (
 	orgid integer,
 	itemid integer,
@@ -169,7 +129,7 @@ create table _arts
 )
 inherits (_infos);
 
-alter table _arts owner to postgres;
+alter table _articles owner to postgres;
 
 create table orgs
 (
@@ -184,7 +144,8 @@ create table orgs
 	trust boolean,
 	regid smallint
 		constraint orgs_regid_fk
-			references regs,
+			references regs
+				on update cascade,
 	addr varchar(30),
 	x double precision,
 	y double precision,
@@ -206,7 +167,7 @@ alter table users
 create table products
 (
 	id serial not null
-		constraint plans_pk
+		constraint products_pk
 			primary key,
 	fillon date,
 	postg smallint,
@@ -214,9 +175,13 @@ create table products
 	rank smallint,
 	icon bytea,
 	img bytea,
-	cert bytea
+	cert bytea,
+	constraint products_orgid_fk
+		foreign key (orgid) references orgs,
+	constraint products_itemid_fk
+		foreign key (itemid) references items
 )
-inherits (_arts);
+inherits (_articles);
 
 alter table products owner to postgres;
 
@@ -225,9 +190,9 @@ create table posts
 	id serial not null
 		constraint posts_pk
 			primary key,
-	planid integer
+	productid integer
 )
-inherits (_arts);
+inherits (_articles);
 
 alter table posts owner to postgres;
 
@@ -263,6 +228,49 @@ create table clears
 inherits (_infos);
 
 alter table clears owner to postgres;
+
+create table buys
+(
+	id bigserial not null
+		constraint buys_pk
+			primary key,
+	bizid smallint not null,
+	bizname varchar(10),
+	mrtid smallint not null,
+	mrtname varchar(10),
+	uid integer not null,
+	uname varchar(10),
+	utel varchar(11),
+	uim varchar(28)
+)
+inherits (_deals);
+
+alter table buys owner to postgres;
+
+create table books_
+(
+	id bigserial not null
+		constraint books_pk
+			primary key,
+	bizid smallint not null,
+	bizname varchar(10),
+	mrtid smallint not null,
+	mrtname varchar(10),
+	ctrid smallint not null,
+	ctrname varchar(10),
+	prvid smallint not null,
+	prvname varchar(10),
+	srcid smallint not null,
+	srcname varchar(10),
+	seq_ integer,
+	cs_ varchar(32),
+	blockcs_ varchar(32),
+	peer_ smallint not null,
+	rec_ bigint
+)
+inherits (_deals);
+
+alter table books_ owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

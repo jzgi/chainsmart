@@ -9,7 +9,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("［商户］线上订货")]
+    [Ui("［商户］平台订货")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -27,7 +27,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TD(items[o.itemid].name);
-                    h.TD(o.qty);
+                    h.TD(o.ctrid);
                     h.TDFORM(() => { });
                 });
             });
@@ -48,7 +48,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TD(items[o.itemid].name);
-                    h.TD(o.qty);
+                    h.TD(o.ctrid);
                     h.TDFORM(() => { });
                 });
             });

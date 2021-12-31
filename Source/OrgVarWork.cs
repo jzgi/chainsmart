@@ -138,7 +138,7 @@ namespace Revital
     {
     }
 
-    public class SrclyOrgVarWork : OrgVarWork
+    public class PrvlyOrgVarWork : OrgVarWork
     {
     }
 }

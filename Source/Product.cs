@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// The data model for a particular product supply.
     /// </summary>
-    public class Product : _Art, IKeyable<int>
+    public class Product : _Article, IKeyable<int>
     {
         public static readonly Product Empty = new Product();
 

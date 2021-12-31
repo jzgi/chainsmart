@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// A data model for post entry.
     /// </summary>
-    public class Post : _Art, IKeyable<int>
+    public class Post : _Article, IKeyable<int>
     {
         public static readonly Post Empty = new Post();
 
