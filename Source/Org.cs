@@ -28,7 +28,7 @@ namespace Revital
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_PRV, "产供板块"},
+            {TYP_PRV, "供应"},
         };
 
 
@@ -130,9 +130,9 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSrc => typ == TYP_PRV;
+        public bool IsPrv => typ == TYP_PRV;
 
-        public bool IsPrd => typ == TYP_SRC;
+        public bool IsSrc => typ == TYP_SRC;
 
         public bool IsBiz => typ == TYP_BIZ;
 

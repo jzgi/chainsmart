@@ -156,6 +156,8 @@ namespace Revital
         {
             MakeWork<PrvlyOrgWork>("org");
 
+            MakeWork<PrvlyLinkWork>("link");
+
             MakeWork<PrvlyReportWork>("rpt");
 
             MakeWork<SrclyProductWork>("prod");
@@ -202,7 +204,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<CtrlyReachWork>("reach");
+            MakeWork<CtrlyLinkWork>("reach");
 
             MakeWork<CtrlyReceiveWork>("receive");
 

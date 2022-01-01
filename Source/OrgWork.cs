@@ -249,7 +249,7 @@ namespace Revital
     }
 
     [UserAuthorize(TYP_PRV, 1)]
-    [Ui("［板块］下属产源管理", "thumbnails")]
+    [Ui("［供应］下属产源管理", "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -261,27 +261,28 @@ namespace Revital
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+            var regs = ObtainMap<short, Reg>();
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY regid");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
-            var regs = ObtainMap<short, Reg>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 if (arr == null) return;
-                
+
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
                     h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
-                    h.TD(regs[o.regid].name);
+                    h.TD(regs[o.regid]?.name);
                     h.TDFORM(() => { });
                 });
             });
         }
 
-        [Ui("添加"), Tool(ButtonShow)]
+        [Ui("✚", "新建产源"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -299,7 +300,7 @@ namespace Revital
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("主体信息");
+                    h.FORM_().FIELDSUL_("产源信息");
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => k == TYP_BIZ, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();

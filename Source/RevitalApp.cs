@@ -56,7 +56,7 @@ namespace Revital
 
             CacheMap(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT);
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_CTR);
                     return dc.Query<int, Org>();
                 }, 60 * 15
             );

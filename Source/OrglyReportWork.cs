@@ -7,18 +7,18 @@ namespace Revital
     {
     }
 
-    [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("［市场］运营报告")]
-    public class MrtlyReportWork : OrglyReportWork
+    [UserAuthorize(Org.TYP_PRV, 1)]
+    [Ui("［供应］运营报告")]
+    public class PrvlyReportWork : OrglyReportWork
     {
         public async Task @default(WebContext wc)
         {
         }
     }
 
-    [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("［板块］运营报告")]
-    public class PrvlyReportWork : OrglyReportWork
+    [UserAuthorize(Org.TYP_MRT, 1)]
+    [Ui("［市场］运营报告")]
+    public class MrtlyReportWork : OrglyReportWork
     {
         public async Task @default(WebContext wc)
         {
