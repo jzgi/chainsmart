@@ -272,13 +272,35 @@ namespace Revital
 
                 if (arr == null) return;
 
-                h.TABLE(arr, o =>
+                h.TABLE_();
+                short last = 0;
+                foreach (var o in arr)
                 {
-                    h.TDCHECK(o.Key);
-                    h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
-                    h.TD(regs[o.regid]?.name);
-                    h.TDFORM(() => { });
-                });
+                    if (o.regid != last)
+                    {
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(regs[o.regid]?.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TDCHECK(o.id);
+                    h.TD_().VARTOOL(o.Key, nameof(PrvlyOrgVarWork.upd), caption: o.name)._TD();
+                    h.TD(_Info.Statuses[o.status]);
+                    h.TD_("uk-visible@l").T(o.tip)._TD();
+                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h._TR();
+
+                    last = o.regid;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+
+
+                // h.TABLE(arr, o =>
+                // {
+                //     h.TDCHECK(o.Key);
+                //     h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
+                //     h.TD(regs[o.regid]?.name);
+                //     h.TDFORM(() => { });
+                // });
             });
         }
 
@@ -288,40 +310,36 @@ namespace Revital
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var regs = ObtainMap<short, Reg>();
-
+            var m = new Org
+            {
+                typ = TYP_SRC,
+                sprid = org.id,
+                created = DateTime.Now,
+                creator = prin.name,
+                status = _Info.STA_ENABLED
+            };
             if (wc.IsGet)
             {
-                var m = new Org
-                {
-                    created = DateTime.Now,
-                    creator = prin.name,
-                    status = _Info.STA_ENABLED
-                };
-                m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("产源信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => k == TYP_BIZ, required: true)._LI();
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECT)._LI();
                     h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
-                    h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
+                    h.LI_().SELECT("所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Org
-                {
-                    sprid = org.id,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                var o = await wc.ReadObjectAsync(instance: m);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Empty, 0)._VALUES_(Empty, 0);
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p));
+
                 wc.GivePane(201); // created
             }
         }

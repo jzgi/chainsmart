@@ -140,5 +140,41 @@ namespace Revital
 
     public class PrvlyOrgVarWork : OrgVarWork
     {
+        [Ui("✎", "修改"), Tool(ButtonShow)]
+        public async Task upd(WebContext wc)
+        {
+            int id = wc[0];
+            var regs = ObtainMap<short, Reg>();
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("产源信息");
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 10, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else
+            {
+                var m = await wc.ReadObjectAsync<Org>(0);
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
+                dc.Execute(p =>
+                {
+                    m.Write(p, 0);
+                    p.Set(id);
+                });
+                wc.GivePane(200); // close
+            }
+        }
     }
 }

@@ -76,7 +76,7 @@ namespace Revital
             }
             else
             {
-                var o = await wc.ReadObjectAsync(inst: org); // use existing object
+                var o = await wc.ReadObjectAsync(instance: org); // use existing object
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",

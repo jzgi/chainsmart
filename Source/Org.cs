@@ -11,12 +11,14 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SPR = 0b1000, // super
-            TYP_BIZ = 0b0001, // business
-            TYP_SRC = 0b0010, // source
-            TYP_CTR = 0b0100, // center
+            TYP_FED = 0b10000, // federal
+            TYP_SPR = 0b01000, // super
+            TYP_BIZ = 0b00001, // business
+            TYP_SRC = 0b00010, // source
+            TYP_CTR = 0b00100, // center
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
-            TYP_PRV = TYP_SPR | TYP_SRC; // provisioning
+            TYP_PRV = TYP_SPR | TYP_SRC, // provisioning
+            TYP_PRV_X = TYP_FED | TYP_PRV; // federation provisioning
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -29,6 +31,7 @@ namespace Revital
             {TYP_MRT, "驿站"},
 #endif
             {TYP_PRV, "供应"},
+            {TYP_PRV_X, "供应（联盟共享）"},
         };
 
 
@@ -48,6 +51,7 @@ namespace Revital
         internal bool trust;
         internal short regid;
         internal string addr;
+        internal string tel;
         internal double x;
         internal double y;
 
@@ -72,6 +76,7 @@ namespace Revital
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(regid), ref regid);
             s.Get(nameof(addr), ref addr);
+            s.Get(nameof(tel), ref tel);
             s.Get(nameof(x), ref x);
             s.Get(nameof(y), ref y);
             if ((proj & LATER) == LATER)
@@ -107,6 +112,7 @@ namespace Revital
             else s.PutNull(nameof(regid));
 
             s.Put(nameof(addr), addr);
+            s.Put(nameof(tel), tel);
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
 
