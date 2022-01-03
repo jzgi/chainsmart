@@ -219,8 +219,7 @@ namespace Revital
 
         public static void SetTokenCookie(this WebContext wc, User o)
         {
-            const byte proj_all_but_privacy = 0x0f ^ User.PRIVACY;
-            string token = AuthenticateAttribute.EncryptPrincipal(o, proj_all_but_privacy);
+            string token = AuthenticateAttribute.EncryptPrincipal(o, 0x0fff);
             wc.SetCookie(nameof(token), token);
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
 using static Revital.User;
@@ -10,7 +11,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("［平台］地区场区设置")]
+    [Ui("［平台］区域设置")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnMake()
@@ -18,7 +19,7 @@ namespace Revital
             MakeVarWork<AdmlyRegVarWork>();
         }
 
-        [Ui("地区", group: 1), Tool(Anchor)]
+        [Ui("省份", group: 1), Tool(Anchor)]
         public void @default(WebContext wc)
         {
             wc.GivePage(200, h =>
@@ -30,23 +31,16 @@ namespace Revital
                 h.TABLE(arr,
                     o =>
                     {
-                        h.TDCHECK(o.Key);
-                        h.TD_();
-                        h.T(o.name);
-                        if (o.typ == Reg.TYP_DIST)
-                        {
-                            h.T('（').T(Reg.Typs[o.typ]).T('）');
-                        }
-                        h._TD();
-                        h.TD(_Info.Statuses[o.status]);
-                        h.TDFORM(() => h.VARTOOLS(o.Key));
+                        h.TD(o.name);
+                        h.TD(_Info.Symbols[o.status]);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 1));
                     }
                 );
             });
         }
 
-        [Ui("场区", group: 2), Tool(Anchor)]
-        public void section(WebContext wc)
+        [Ui("地市", group: 2), Tool(Anchor)]
+        public void distr(WebContext wc)
         {
             wc.GivePage(200, h =>
             {
@@ -57,30 +51,47 @@ namespace Revital
                 h.TABLE(arr,
                     o =>
                     {
-                        h.TDCHECK(o.Key);
-                        h.TD_();
-                        h.T(o.name);
-                        if (o.typ == Reg.TYP_DIST)
-                        {
-                            h.T('（').T(Reg.Typs[o.typ]).T('）');
-                        }
-                        h._TD();
-                        h.TD(_Info.Statuses[o.status]);
-                        h.TDFORM(() => h.VARTOOLS(o.Key));
+                        h.TD(o.name);
+                        h.TD(_Info.Symbols[o.status]);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 2));
                     }
                 );
             });
         }
 
-        [Ui("✚", "新建", group: 3), Tool(ButtonShow)]
+        [Ui("场区", group: 4), Tool(Anchor)]
+        public void section(WebContext wc)
+        {
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: 3);
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = 3 ORDER BY id, status DESC");
+                var arr = dc.Query<Reg>();
+                h.TABLE(arr,
+                    o =>
+                    {
+                        h.TD(o.name);
+                        h.TD(_Info.Symbols[o.status]);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 3));
+                    }
+                );
+            });
+        }
+
+        [Ui("✚", "新建区域", group: 3), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
+            var prin = (User) wc.Principal;
+            var o = new Reg
+            {
+                typ = (short) typ,
+                status = _Info.STA_ENABLED,
+                created = DateTime.Now,
+                creator = prin.name,
+            };
             if (wc.IsGet)
             {
-                var o = new Reg
-                {
-                    status = _Info.STA_ENABLED
-                };
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("区域属性");
@@ -94,7 +105,7 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Reg>();
+                o = await wc.ReadObjectAsync(instance: o);
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Item.Empty);
                 await dc.ExecuteAsync(p => o.Write(p));

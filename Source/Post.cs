@@ -9,10 +9,15 @@ namespace Revital
     {
         public static readonly Post Empty = new Post();
 
-        internal int id;
-        internal int planid;
+        public const short
+            INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
+            UPDATE = STATUS | LABEL | ADAPT | BASIC;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+
+        internal int id;
+        internal int productid;
+
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -20,10 +25,10 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(planid), ref planid);
+            s.Get(nameof(productid), ref productid);
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 
@@ -32,7 +37,7 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
 
-            if (planid == 0) s.PutNull(nameof(planid)); else s.Put(nameof(planid), planid);
+            if (productid == 0) s.PutNull(nameof(productid)); else s.Put(nameof(productid), productid);
         }
 
         public int Key => id;

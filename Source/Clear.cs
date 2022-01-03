@@ -21,11 +21,11 @@ namespace Revital
 
         internal short id;
 
-        public void Read(ISource s, byte proj = 15)
+        public void Read(ISource s, short proj = 0x0fff)
         {
         }
 
-        public void Write(ISink s, byte proj = 15)
+        public void Write(ISink s, short proj = 0x0fff)
         {
         }
     }

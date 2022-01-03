@@ -42,26 +42,51 @@ namespace Revital
             {2, "金牌商户"},
         };
 
+        public static readonly Map<short, string> Forks = new Map<short, string>
+        {
+            {Item.TYP_AGRI, "农副产"},
+            {Item.TYP_FACT, "制造品"},
+            {Item.TYP_SRVC, "服务类"},
+            {Item.TYP_AGRI | Item.TYP_SRVC, "农副产＋服务类"},
+        };
 
+        public const short
+            OP_INSERT = TYP | STATUS | LABEL | CREATE | SUPER | BASIS | OWN,
+            OP_UPDATE = STATUS | LABEL | ADAPT | BASIS | OWN,
+            OP_UPDATE_OWN = STATUS | OWN,
+            ID = 0x0020,
+            SUPER = 0x0040,
+            BASIS = 0x0080,
+            OWN = 0x0100;
+
+
+        // id
         internal int id;
-        internal short fork;
+
+        // super
         internal int sprid;
+
+        // basic
+        internal short fork;
         internal short rank;
         internal string license;
-        internal bool trust;
         internal short regid;
         internal string addr;
-        internal string tel;
         internal double x;
         internal double y;
 
+        // own
+        internal string tel;
+        internal bool trust;
+
+        // later
         internal int mgrid;
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
         internal bool icon;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -69,16 +94,25 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(fork), ref fork);
-            s.Get(nameof(sprid), ref sprid);
-            s.Get(nameof(rank), ref rank);
-            s.Get(nameof(license), ref license);
-            s.Get(nameof(trust), ref trust);
-            s.Get(nameof(regid), ref regid);
-            s.Get(nameof(addr), ref addr);
-            s.Get(nameof(tel), ref tel);
-            s.Get(nameof(x), ref x);
-            s.Get(nameof(y), ref y);
+            if ((proj & SUPER) == SUPER)
+            {
+                s.Get(nameof(sprid), ref sprid);
+            }
+            if ((proj & BASIS) == BASIS)
+            {
+                s.Get(nameof(fork), ref fork);
+                s.Get(nameof(rank), ref rank);
+                s.Get(nameof(license), ref license);
+                s.Get(nameof(regid), ref regid);
+                s.Get(nameof(addr), ref addr);
+                s.Get(nameof(x), ref x);
+                s.Get(nameof(y), ref y);
+            }
+            if ((proj & OWN) == OWN)
+            {
+                s.Get(nameof(tel), ref tel);
+                s.Get(nameof(trust), ref trust);
+            }
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -89,7 +123,7 @@ namespace Revital
             }
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 

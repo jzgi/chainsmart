@@ -154,7 +154,8 @@ create table orgs
 			references users,
 	rank smallint,
 	icon bytea,
-	cert bytea
+	cert bytea,
+	tel varchar(11)
 )
 inherits (_infos);
 
@@ -195,25 +196,6 @@ create table posts
 inherits (_articles);
 
 alter table posts owner to postgres;
-
-create table reachs
-(
-	ctrid integer
-		constraint reachs_ctrid_fk
-			references orgs,
-	mrtid integer
-		constraint reachs_mrtid_fk
-			references orgs
-)
-inherits (_infos);
-
-alter table reachs owner to postgres;
-
-create index reachs_ctrid_idx
-	on reachs (ctrid);
-
-create index reachs_mrtid_idx
-	on reachs (mrtid);
 
 create table clears
 (
@@ -272,7 +254,26 @@ inherits (_deals);
 
 alter table books_ owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create table links
+(
+	ctrid integer
+		constraint links_ctrid_fk
+			references orgs,
+	ptid integer
+		constraint links_ptid_fk
+			references orgs
+)
+inherits (_infos);
+
+alter table links owner to postgres;
+
+create index links_typctrid_idx
+	on links (typ, ctrid);
+
+create index links_typptid_idx
+	on links (typ, ptid);
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, tel, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -289,6 +290,7 @@ SELECT o.typ,
        o.trust,
        o.regid,
        o.addr,
+       o.tel,
        o.x,
        o.y,
        o.mgrid,

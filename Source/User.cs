@@ -49,18 +49,23 @@ namespace Revital
             {ORGLY_MGR, "管理"},
         };
 
+        public const short
+            INSERT = TYP | STATUS | LABEL | CREATE | BASIC,
+            UPDATE = STATUS | LABEL | ADAPT | BASIC;
+
+
         internal int id;
         internal string tel;
         internal string im;
+
+        // later
         internal string credential;
         internal short admly;
         internal int orgid;
         internal short orgly;
-        internal string license;
         internal string idcard;
-        internal bool icon;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -68,21 +73,22 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(tel), ref tel);
-            s.Get(nameof(im), ref im);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Get(nameof(tel), ref tel);
+                s.Get(nameof(im), ref im);
+            }
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(license), ref license);
                 s.Get(nameof(idcard), ref idcard);
-                s.Get(nameof(icon), ref icon);
             }
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 
@@ -90,17 +96,18 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(tel), tel);
-            s.Put(nameof(im), im);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Put(nameof(tel), tel);
+                s.Put(nameof(im), im);
+            }
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
-                s.Put(nameof(license), license);
                 s.Put(nameof(idcard), idcard);
-                s.Put(nameof(icon), icon);
             }
         }
 

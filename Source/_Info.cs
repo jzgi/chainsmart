@@ -22,7 +22,24 @@ namespace Revital
             {STA_PREFERRED, "优先"},
         };
 
-        public const byte ID = 1, LATER = 2, PRIVACY = 4;
+        public static readonly Map<short, string> Symbols = new Map<short, string>
+        {
+            {STA_GONE, "注销"},
+            {STA_DISABLED, "❌"},
+            {STA_ENABLED, "✔️"},
+            {STA_PREFERRED, "✔️"},
+        };
+
+        public const short
+            ID = 0x0001,
+            BASIC = 0x0002,
+            LATER = 0x0004,
+            TYP = 0x0008,
+            STATUS = 0x0010,
+            LABEL = 0x0020,
+            CREATE = 0x0040,
+            ADAPT = 0x0080;
+
 
         internal short typ;
         internal short status;
@@ -33,40 +50,70 @@ namespace Revital
         internal DateTime adapted;
         internal string adapter;
 
-        public virtual void Read(ISource s, byte proj = 0x0f)
+        public virtual void Read(ISource s, short proj = 0x0fff)
         {
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(status), ref status);
-            s.Get(nameof(name), ref name);
-            s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
-            s.Get(nameof(adapted), ref adapted);
-            s.Get(nameof(adapter), ref adapter);
+            if ((proj & TYP) == TYP)
+            {
+                s.Get(nameof(typ), ref typ);
+            }
+            if ((proj & STATUS) == STATUS)
+            {
+                s.Get(nameof(status), ref status);
+            }
+            if ((proj & LABEL) == LABEL)
+            {
+                s.Get(nameof(name), ref name);
+                s.Get(nameof(tip), ref tip);
+            }
+            if ((proj & CREATE) == CREATE)
+            {
+                s.Get(nameof(created), ref created);
+                s.Get(nameof(creator), ref creator);
+            }
+            if ((proj & ADAPT) == ADAPT)
+            {
+                s.Get(nameof(adapted), ref adapted);
+                s.Get(nameof(adapter), ref adapter);
+            }
         }
 
-        public virtual void Write(ISink s, byte proj = 0x0f)
+        public virtual void Write(ISink s, short proj = 0x0fff)
         {
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(status), status);
-            s.Put(nameof(name), name);
-            s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
-            s.Put(nameof(adapted), adapted);
-            s.Put(nameof(adapter), adapter);
+            if ((proj & TYP) == TYP)
+            {
+                s.Put(nameof(typ), typ);
+            }
+            if ((proj & STATUS) == STATUS)
+            {
+                s.Put(nameof(status), status);
+            }
+            if ((proj & LABEL) == LABEL)
+            {
+                s.Put(nameof(name), name);
+                s.Put(nameof(tip), tip);
+            }
+            if ((proj & CREATE) == CREATE)
+            {
+                s.Put(nameof(created), created);
+                s.Put(nameof(creator), creator);
+            }
+            if ((proj & ADAPT) == ADAPT)
+            {
+                s.Put(nameof(adapted), adapted);
+                s.Put(nameof(adapter), adapter);
+            }
         }
 
-        public virtual bool IsDisabled => status <= STA_GONE;
+        public virtual bool IsGone => status <= STA_GONE;
 
-        public virtual bool IsShowable => status == STA_DISABLED;
+        public virtual bool IsDisabled => status == STA_DISABLED;
 
         public virtual bool CanShow => status >= STA_DISABLED;
 
-        public virtual bool IsWorkable => status == STA_ENABLED;
+        public virtual bool IsEnabled => status == STA_ENABLED;
 
         public virtual bool CanWork => status >= STA_ENABLED;
 
-        public virtual bool IsPreferable => status == STA_PREFERRED;
+        public virtual bool IsPreferred => status == STA_PREFERRED;
     }
 }

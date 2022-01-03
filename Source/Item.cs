@@ -52,6 +52,12 @@ namespace Revital
             {69, "广告"}
         };
 
+        public const short
+            OP_INSERT = TYP | STATUS | LABEL | CREATE | BASIC,
+            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC,
+            ID = 0x0020,
+            BASIC = 0x0080;
+
 
         internal short id;
         internal short cat;
@@ -61,7 +67,7 @@ namespace Revital
 
         // must have an icon
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -69,13 +75,16 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(cat), ref cat);
-            s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitip), ref unitip);
-            s.Get(nameof(unitfee), ref unitfee);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Get(nameof(cat), ref cat);
+                s.Get(nameof(unit), ref unit);
+                s.Get(nameof(unitip), ref unitip);
+                s.Get(nameof(unitfee), ref unitfee);
+            }
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 
@@ -83,10 +92,13 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(cat), cat);
-            s.Put(nameof(unit), unit);
-            s.Put(nameof(unitip), unitip);
-            s.Put(nameof(unitfee), unitfee);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Put(nameof(cat), cat);
+                s.Put(nameof(unit), unit);
+                s.Put(nameof(unitip), unitip);
+                s.Put(nameof(unitfee), unitfee);
+            }
         }
 
         public short Key => id;

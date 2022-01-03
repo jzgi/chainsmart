@@ -18,27 +18,42 @@ namespace Revital
             {TYP_SECT, "场区"},
         };
 
+        public const short
+            OP_INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
+            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC,
+            ID = 0x0020,
+            BASIC = 0x0080;
+
+
         internal short id;
         internal short idx;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
+
             if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(idx), ref idx);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Get(nameof(idx), ref idx);
+            }
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
+
             if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(idx), idx);
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Put(nameof(idx), idx);
+            }
         }
 
         public short Key => id;

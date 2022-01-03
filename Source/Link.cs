@@ -20,7 +20,7 @@ namespace Revital
         internal int ctrid;
         internal int ptid;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -28,7 +28,7 @@ namespace Revital
             s.Get(nameof(ptid), ref ptid);
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 

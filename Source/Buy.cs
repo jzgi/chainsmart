@@ -19,7 +19,7 @@ namespace Revital
         internal string utel;
         internal string uim;
 
-        public override void Read(ISource s, byte proj = 0x0f)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             if ((proj & ID) == ID)
             {
@@ -35,7 +35,7 @@ namespace Revital
             s.Get(nameof(uim), ref uim);
         }
 
-        public override void Write(ISink s, byte proj = 0x0f)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             if ((proj & ID) == ID)
             {

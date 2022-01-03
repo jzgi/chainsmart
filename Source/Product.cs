@@ -29,6 +29,10 @@ namespace Revital
             {4, "统一市场价"},
         };
 
+        public const short
+            INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
+            UPDATE = STATUS | LABEL | ADAPT | BASIC;
+
 
         internal int id;
 
@@ -37,7 +41,7 @@ namespace Revital
         internal decimal postprice;
         internal short rank;
 
-        public override void Read(ISource s, byte proj = 15)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -52,7 +56,7 @@ namespace Revital
             s.Get(nameof(rank), ref rank);
         }
 
-        public override void Write(ISink s, byte proj = 15)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 

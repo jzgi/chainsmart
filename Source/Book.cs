@@ -37,7 +37,7 @@ namespace Revital
         internal short peer_;
         internal long rec_;
 
-        public override void Read(ISource s, byte proj = 15)
+        public override void Read(ISource s, short proj = 0x0fff)
         {
             base.Read(s, proj);
 
@@ -63,7 +63,7 @@ namespace Revital
             s.Get(nameof(rec_), ref rec_);
         }
 
-        public override void Write(ISink s, byte proj = 15)
+        public override void Write(ISink s, short proj = 0x0fff)
         {
             base.Write(s, proj);
 
