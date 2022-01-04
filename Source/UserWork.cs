@@ -17,7 +17,7 @@ namespace Revital
             MakeVarWork<AdmlyUserVarWork>();
         }
 
-        [Ui("浏览", @group: 1), Tool(Anchor)]
+        [Ui("浏览", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -31,8 +31,8 @@ namespace Revital
                     h.TDCHECK(o.id);
                     h.TD(o.name);
                     h.TD(o.tel);
-                    h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
-                    h.TD_("uk-width-medium uk-visible@s");
+                    h.TD_().T(Typs[o.typ])._TD();
+                    h.TD_("uk-visible@s");
                     if (o.orgid > 0)
                     {
                         // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
@@ -44,7 +44,7 @@ namespace Revital
             });
         }
 
-        [Ui("查询"), Tool(AnchorPrompt)]
+        [Ui("查询"), Tool(AnchorPrompt, Appear.Small)]
         public void search(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
@@ -72,15 +72,14 @@ namespace Revital
                         h.TDCHECK(o.id);
                         h.TD(o.name);
                         h.TD(o.tel);
-                        h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
-                        h.TD_("uk-width-medium uk-visible@s");
+                        h.TD_().T(Typs[o.typ])._TD();
+                        h.TD_("uk-visible@s");
                         if (o.orgid > 0)
                         {
                             // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
                         }
                         h._TD();
                         h.TD("⊘", when: o.IsGone);
-                        h.TDFORM(() => h.VARTOOLS(o.Key));
                     });
                 }, false, 3);
             }

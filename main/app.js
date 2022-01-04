@@ -229,7 +229,7 @@ function dialog(trig, mode, pick, appear, title) {
         }
         trigc = ' button-trig';
     } else if (tag == 'A') {
-        action = trig.href;
+        src = action = trig.href;
         method = 'get';
         src = action.indexOf('?') == -1 ? action + '?inner=true' : action + '&' + 'inner=true';
         trigc = ' anchor-trig';
@@ -237,18 +237,18 @@ function dialog(trig, mode, pick, appear, title) {
 
     title = title || trig.innerHTML;
 
-    var html = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
-    html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
+    var div = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
+    div += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     if (appear == LARGE || appear == SMALL) {
-        html += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
+        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
     }
-    html += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
+    div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
     if (mode != OPEN) {
-        html += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
+        div += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
     }
-    html += '</section></div>';
+    div += '</section></div>';
 
-    var e = appendTo(document.body, html);
+    var e = appendTo(document.body, div);
 
     // destroy in DOM on close
     e.addEventListener('hidden', function (e) {
