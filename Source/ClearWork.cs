@@ -8,7 +8,7 @@ using static SkyChain.Web.Modal;
 namespace Revital
 {
     [UserAuthorize(admly: 1)]
-    [Ui("［平台］业务结算", "table")]
+    [Ui("［平台］代收业务结算", "table")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()
@@ -16,20 +16,20 @@ namespace Revital
             MakeVarWork<AdmlyClearVarWork>();
         }
 
-        [Ui("零售业务", group: 1), Tool(Anchor)]
+        [Ui("零售", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("供应业务", group: 2), Tool(Anchor)]
+        [Ui("供应", group: 2), Tool(Anchor)]
         public async Task supply(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
         [UserAuthorize(admly: 1)]
-        [Ui("结算", group: 3), Tool(ButtonOpen)]
+        [Ui("∑", "结算", group: 3), Tool(ButtonOpen)]
         public async Task recalc(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
@@ -68,7 +68,7 @@ namespace Revital
             }
         }
 
-        [Ui("结账", group: 2), Tool(ButtonOpen)]
+        [Ui("➜", "结账", group: 2), Tool(ButtonOpen)]
         public async Task reckon(WebContext wc)
         {
             if (wc.IsGet)
@@ -105,7 +105,7 @@ namespace Revital
             }
         }
 
-        [Ui("付款", group: 1), Tool(ButtonPickPrompt)]
+        [Ui("➜", "付款", group: 1), Tool(ButtonPickPrompt)]
         public async Task pay(WebContext wc)
         {
             var prin = (User) wc.Principal;

@@ -35,22 +35,24 @@ namespace Revital
                 return false;
             }
 
-
             if (admly > 0)
             {
                 return (prin.admly & admly) == admly;
             }
 
-            if (orgtyp == 0 || orgly == 0) // require signin only
-            {
-                return true;
-            }
+            // require sign-in only
+            if (orgtyp == 0 || orgly == 0) return true;
 
             // check access to org
             var org = wc[typeof(OrglyVarWork)].As<Org>();
 
+            // is the manager of the org
+            if (org.mgrid == prin.id) return true;
+
+            // is of any role for the org
             if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly) return true;
 
+            // is trusted for the org
             return org.trust && org.sprid == prin.orgid;
         }
     }

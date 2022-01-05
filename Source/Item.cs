@@ -54,16 +54,14 @@ namespace Revital
 
         public const short
             OP_INSERT = TYP | STATUS | LABEL | CREATE | BASIC,
-            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC,
-            ID = 0x0020,
-            BASIC = 0x0080;
+            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC;
 
 
         internal short id;
         internal short cat;
         internal string unit; // standard unit
         internal string unitip;
-        internal decimal unitfee;
+        internal decimal fee;
 
         // must have an icon
 
@@ -80,7 +78,7 @@ namespace Revital
                 s.Get(nameof(cat), ref cat);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitip), ref unitip);
-                s.Get(nameof(unitfee), ref unitfee);
+                s.Get(nameof(fee), ref fee);
             }
         }
 
@@ -97,7 +95,7 @@ namespace Revital
                 s.Put(nameof(cat), cat);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitip), unitip);
-                s.Put(nameof(unitfee), unitfee);
+                s.Put(nameof(fee), fee);
             }
         }
 

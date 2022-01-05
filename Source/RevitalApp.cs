@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Db;
 using static System.Data.IsolationLevel;
 
 namespace Revital
@@ -20,7 +20,7 @@ namespace Revital
         {
             CacheUp();
 
-            Drive = new RevitalDrive();
+            MakeDuty<BookDuty>("book");
 
             // start the concluder thead
             // cycler.Start();
@@ -33,35 +33,35 @@ namespace Revital
 
         public static void CacheUp()
         {
-            CacheMap(dc =>
+            Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
-            CacheMap(dc =>
+            Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, id");
                     return dc.Query<short, Item>();
                 }, 60 * 15
             );
 
-            Cache<int, Org>((dc, id) =>
+            CacheObject<int, Org>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
                     return dc.QueryTop<Org>(p => p.Set(id));
                 }, 60 * 15
             );
 
-            CacheMap(dc =>
+            Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_CTR);
                     return dc.Query<int, Org>();
                 }, 60 * 15
             );
 
-            CacheSub((DbContext dc, int orgid) =>
+            CacheMap((DbContext dc, int orgid) =>
                 {
                     dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
                     return dc.Query<int, Product>(p => p.Set(orgid));

@@ -31,6 +31,7 @@ namespace Revital
                 h.TABLE(arr,
                     o =>
                     {
+                        h.TDCHECK(o.Key);
                         h.TD(o.name);
                         h.TD(_Info.Symbols[o.status]);
                         h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 1));
@@ -51,6 +52,7 @@ namespace Revital
                 h.TABLE(arr,
                     o =>
                     {
+                        h.TDCHECK(o.Key);
                         h.TD(o.name);
                         h.TD(_Info.Symbols[o.status]);
                         h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 2));
@@ -71,6 +73,7 @@ namespace Revital
                 h.TABLE(arr,
                     o =>
                     {
+                        h.TDCHECK(o.Key);
                         h.TD(o.name);
                         h.TD(_Info.Symbols[o.status]);
                         h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 3));
@@ -79,7 +82,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建区域", group: 3), Tool(ButtonShow)]
+        [Ui("✚", "新建区域", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;

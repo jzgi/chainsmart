@@ -47,7 +47,7 @@ namespace Revital
 
 
         [Ui("预售", group: 2), Tool(Anchor)]
-        public void fut(WebContext wc, int page)
+        public void pre(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
@@ -132,7 +132,7 @@ namespace Revital
         }
 
         [Ui("✚", "新建预售供应", group: 2), Tool(ButtonOpen)]
-        public async Task newfut(WebContext wc)
+        public async Task newpre(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;

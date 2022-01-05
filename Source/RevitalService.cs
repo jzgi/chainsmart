@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Db;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 
@@ -217,7 +217,7 @@ namespace Revital
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
+                dc.Sql("INSERT INTO users ").colset(o, User.INSERT)._VALUES_(o, User.INSERT).T(" RETURNING ").collst(User.Empty);
                 o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
                 // refresh cookie
@@ -229,9 +229,53 @@ namespace Revital
 
 
         /// <summary>
-        /// An order payment notification.
+        /// A booking payment notification.
         /// </summary>
-        public async Task onorder(WebContext wc)
+        public async Task onbook(WebContext wc)
+        {
+            var xe = await wc.ReadAsync<XElem>();
+            if (!OnNotified(xe, out var trade_no, out var cash))
+            {
+                wc.Give(400);
+                return;
+            }
+            int pos = 0;
+            var orderid = trade_no.ParseInt(ref pos);
+            try
+            {
+                // NOTE: WCPay may send notification more than once
+                using var dc = NewDbContext();
+                // verify that the ammount is correct
+                var today = DateTime.Today;
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Deal.STA_CREATED);
+                var price = (decimal) dc.Scalar(p => p.Set(orderid));
+                if (price == cash) // update order status and line states
+                {
+                    dc.Sql("UPDATE orders SET status = 1, pay = @1, issued = @2 WHERE id = @3 AND status = 0");
+                    await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
+                }
+                else // try to refund this payment
+                {
+                    await PostRefundAsync(trade_no, cash, cash, trade_no);
+                }
+            }
+            finally
+            {
+                // return xml to WCPay server
+                var x = new XmlContent(true, 1024);
+                x.ELEM("xml", null, () =>
+                {
+                    x.ELEM("return_code", "SUCCESS");
+                    x.ELEM("return_msg", "OK");
+                });
+                wc.Give(200, x);
+            }
+        }
+
+        /// <summary>
+        /// A buying payment notification.
+        /// </summary>
+        public async Task onbuy(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(xe, out var trade_no, out var cash))
