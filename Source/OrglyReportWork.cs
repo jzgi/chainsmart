@@ -8,7 +8,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("［供应］运营报告")]
+    [Ui("供应－供应业务报告")]
     public class PrvlyReportWork : OrglyReportWork
     {
         public async Task @default(WebContext wc)

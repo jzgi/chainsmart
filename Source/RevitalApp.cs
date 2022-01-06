@@ -20,7 +20,7 @@ namespace Revital
         {
             CacheUp();
 
-            MakeDuty<BookDuty>("book");
+            MakeChainlet<BookWare>("book");
 
             // start the concluder thead
             // cycler.Start();

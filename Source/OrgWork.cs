@@ -41,7 +41,7 @@ namespace Revital
     }
 
 
-    [Ui("［平台］入驻机构设置")]
+    [Ui("平台－入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -249,7 +249,7 @@ namespace Revital
     }
 
     [UserAuthorize(TYP_PRV, 1)]
-    [Ui("［供应］下属产源管理", "thumbnails")]
+    [Ui("供应－下属产源管理", "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnMake()

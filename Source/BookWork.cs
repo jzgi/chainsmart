@@ -109,7 +109,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("［供应］销售及分拣", "sign-out")]
+    [Ui("供应－销售及分拣", "sign-out")]
     public abstract class PrvlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -119,7 +119,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("［产源］批发管理")]
+    [Ui("产源－订货管理")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnMake()
@@ -127,24 +127,34 @@ namespace Revital
             MakeVarWork<SrclyBookVarWork>();
         }
 
-        [Ui("当前"), Tool(Anchor)]
+        [Ui("当前订货"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE toid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD(o.bizname);
+                    h.TD(o.qty);
+                });
+            });
         }
 
-        [Ui("以往"), Tool(Anchor)]
+        [Ui("以往订货"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE toid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
@@ -168,7 +178,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
+            dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE ctrid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
             await dc.QueryAsync(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {

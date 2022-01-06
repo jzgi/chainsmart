@@ -70,7 +70,7 @@ namespace Revital
         }
     }
 
-    [Ui("［供应］分拣中心关联")]
+    [Ui("供应－分拣中心关联")]
     public class PrvlyLinkWork : LinkWork
     {
         public async Task @default(WebContext wc)

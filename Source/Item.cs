@@ -18,7 +18,7 @@ namespace Revital
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_AGRI, "农副产"},
-            {TYP_FACT, "制造品"},
+            {TYP_FACT, "工业品"},
             {TYP_SRVC, "服务类"},
         };
 

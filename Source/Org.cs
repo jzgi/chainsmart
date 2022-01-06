@@ -42,21 +42,12 @@ namespace Revital
             {2, "金牌商户"},
         };
 
-        public static readonly Map<short, string> Forks = new Map<short, string>
-        {
-            {Item.TYP_AGRI, "农副产"},
-            {Item.TYP_FACT, "制造品"},
-            {Item.TYP_SRVC, "服务类"},
-            {Item.TYP_AGRI | Item.TYP_SRVC, "农副产＋服务类"},
-        };
 
         public const short
-            OP_INSERT = TYP | STATUS | LABEL | CREATE | SUPER | BASIS | OWN,
-            OP_UPDATE = STATUS | LABEL | ADAPT | BASIS | OWN,
+            OP_INSERT = TYP | STATUS | LABEL | CREATE | SUPER | BASIC | OWN,
+            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC | OWN,
             OP_UPDATE_OWN = STATUS | OWN,
-            ID = 0x0020,
             SUPER = 0x0040,
-            BASIS = 0x0080,
             OWN = 0x0100;
 
 
@@ -98,7 +89,7 @@ namespace Revital
             {
                 s.Get(nameof(sprid), ref sprid);
             }
-            if ((proj & BASIS) == BASIS)
+            if ((proj & BASIC) == BASIC)
             {
                 s.Get(nameof(fork), ref fork);
                 s.Get(nameof(rank), ref rank);

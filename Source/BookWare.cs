@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class BookDuty : ChainDuty
+    public class BookWare : Chainlet
     {
         public void supplys(ChainContext cc)
         {
