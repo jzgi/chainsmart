@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
@@ -36,8 +37,8 @@ namespace Revital
 
         public void @default(WebContext wc, int cmd)
         {
-            var orgs = ObtainMap<int, Org>();
-            var regs = ObtainMap<short, Reg>();
+            var orgs = Grab<int, Org>();
+            var regs = Grab<short, Reg>();
             int mrtid = wc.Query[nameof(mrtid)];
             if (cmd == 0)
             {
@@ -314,6 +315,11 @@ namespace Revital
                 });
                 wc.Give(200, x);
             }
+        }
+
+        public async Task callbook(WebContext wc)
+        {
+            var cc = Chain.NewChainContext(IsolationLevel.ReadUncommitted, wc);
         }
     }
 }

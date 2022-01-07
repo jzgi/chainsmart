@@ -33,8 +33,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var orgs = ObtainMap<int, Org>();
-            var regs = ObtainMap<short, Reg>();
+            var orgs = Grab<int, Org>();
+            var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
                 var o = new Link
@@ -95,8 +95,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var orgs = ObtainMap<int, Org>();
-            var regs = ObtainMap<short, Reg>();
+            var orgs = Grab<int, Org>();
+            var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
                 var o = new Link

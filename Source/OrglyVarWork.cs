@@ -131,7 +131,7 @@ namespace Revital
                 h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
                 if (org.sprid > 0)
                 {
-                    var spr = Obtain<int, Org>(org.sprid);
+                    var spr = GrabObject<int, Org>(org.sprid);
 #if ZHNT
                     h.LI_().FIELD("所在市场", spr.name)._LI();
 #else
@@ -170,7 +170,7 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var co = Obtain<int, Org>(org.sprid);
+            var co = GrabObject<int, Org>(org.sprid);
 
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
@@ -216,7 +216,7 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
             wc.GivePage(200, h =>

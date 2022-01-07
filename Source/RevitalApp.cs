@@ -20,8 +20,6 @@ namespace Revital
         {
             CacheUp();
 
-            MakeChainlet<BookWare>("book");
-
             // start the concluder thead
             // cycler.Start();
 

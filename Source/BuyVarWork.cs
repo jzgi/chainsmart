@@ -62,7 +62,7 @@ namespace Revital
         [Ui("协议", @group: 2), Tool(ButtonOpen)]
         public void agrmt(WebContext wc, int dietid)
         {
-            var diets = ObtainMap<short, Org>();
+            var diets = Grab<short, Org>();
             var diet = diets[(short) dietid];
             wc.GivePane(200, h =>
             {

@@ -25,9 +25,9 @@ namespace Revital
                 }
                 else
                 {
-                    var plan = Obtain<short, Product>(o.itemid);
-                    var frm = Obtain<int, Org>(o.artname);
-                    var ctr = Obtain<int, Org>(o.artid);
+                    var plan = GrabObject<short, Product>(o.itemid);
+                    var frm = GrabObject<int, Org>(o.artname);
+                    var ctr = GrabObject<int, Org>(o.artid);
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");
@@ -125,7 +125,7 @@ namespace Revital
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
 
             if (wc.IsGet)
             {
@@ -189,7 +189,7 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -208,7 +208,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
 
             if (wc.IsGet)
             {
@@ -261,7 +261,7 @@ namespace Revital
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY regid");
@@ -309,7 +309,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
             var m = new Org
             {
                 typ = TYP_SRC,

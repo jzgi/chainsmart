@@ -43,7 +43,7 @@ namespace Revital
             int id = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
-            var items = ObtainMap<short, Item>();
+            var items = Grab<short, Item>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

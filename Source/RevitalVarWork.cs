@@ -11,8 +11,8 @@ namespace Revital
         public async Task @default(WebContext wc, int cur)
         {
             int orgid = wc[0];
-            var org = Obtain<int, Org>(orgid);
-            var regs = ObtainMap<short, Reg>();
+            var org = GrabObject<int, Org>(orgid);
+            var regs = Grab<short, Reg>();
             if (org.IsMrt)
             {
                 using var dc = NewDbContext();

@@ -47,7 +47,7 @@ namespace Revital
         [Ui("修改入驻主体"), Tool(AnchorShow)]
         public async Task upd(WebContext wc)
         {
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
             short id = wc[0];
             if (wc.IsGet)
             {
@@ -144,7 +144,7 @@ namespace Revital
         public async Task upd(WebContext wc)
         {
             int id = wc[0];
-            var regs = ObtainMap<short, Reg>();
+            var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

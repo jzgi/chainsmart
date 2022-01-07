@@ -56,7 +56,7 @@ namespace Revital
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    var orgs = ObtainMap<short, Org>();
+                    var orgs = Grab<short, Org>();
                     h.TABLE(arr, o =>
                     {
                         // h.TD(Clear.Typs[o.typ]);
@@ -135,7 +135,7 @@ namespace Revital
                 if (arr != null)
                 {
                     var now = DateTime.Now;
-                    var orgs = ObtainMap<short, Org>();
+                    var orgs = Grab<short, Org>();
                     foreach (var o in arr)
                     {
                         string fail = null;

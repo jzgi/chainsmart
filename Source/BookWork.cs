@@ -20,7 +20,7 @@ namespace Revital
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
-            var items = ObtainMap<short, Item>();
+            var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -41,7 +41,7 @@ namespace Revital
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
-            var items = ObtainMap<short, Item>();
+            var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -60,13 +60,13 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
 
-            var ctr = Obtain<int, Org>(2);
+            var ctr = GrabObject<int, Org>(2);
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Product.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
                 var arr = await dc.QueryAsync<Product>(p => p.Set(2));
-                var prods = ObtainMap<int, Product>();
+                var prods = Grab<int, Product>();
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_(ctr.name);
@@ -194,11 +194,11 @@ namespace Revital
 
                     if (sprid != last)
                     {
-                        var spr = Obtain<int, Org>(sprid);
+                        var spr = GrabObject<int, Org>(sprid);
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
-                    var from = Obtain<int, Org>(fromid);
+                    var from = GrabObject<int, Org>(fromid);
                     h.TD(from.name);
                     h.TD_("uk-visible@l").T(sum)._TD();
                     h._TR();
@@ -230,11 +230,11 @@ namespace Revital
 
                     if (sprid != last)
                     {
-                        var spr = Obtain<int, Org>(sprid);
+                        var spr = GrabObject<int, Org>(sprid);
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
-                    var from = Obtain<int, Org>(fromid);
+                    var from = GrabObject<int, Org>(fromid);
                     h.TD(from.name);
                     h.TD_("uk-visible@l").T(sum)._TD();
                     h._TR();

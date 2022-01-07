@@ -18,7 +18,7 @@ namespace Revital
             MakeVarWork<PrvlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
-                    return Obtain<int, Org>(orgid);
+                    return GrabObject<int, Org>(orgid);
                 }
             );
         }
@@ -36,7 +36,7 @@ namespace Revital
             MakeVarWork<CtrlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
-                    return Obtain<int, Org>(orgid);
+                    return GrabObject<int, Org>(orgid);
                 }
             );
         }
@@ -54,7 +54,7 @@ namespace Revital
             MakeVarWork<MrtlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
-                    return Obtain<int, Org>(orgid);
+                    return GrabObject<int, Org>(orgid);
                 }
             );
         }

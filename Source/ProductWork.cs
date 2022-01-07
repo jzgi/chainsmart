@@ -77,7 +77,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var items = ObtainMap<short, Item>();
+            var items = Grab<short, Item>();
             if (wc.IsGet)
             {
                 var o = new Product
@@ -136,7 +136,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var items = ObtainMap<short, Item>();
+            var items = Grab<short, Item>();
             if (wc.IsGet)
             {
                 var o = new Product
