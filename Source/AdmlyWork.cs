@@ -54,6 +54,8 @@ namespace Revital
         public async Task access(WebContext wc, int cmd)
         {
             using var dc = NewDbContext();
+
+            // get all adm users
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE admly > 0");
             var arr = dc.Query<User>();
             short admly = 0;
@@ -66,33 +68,31 @@ namespace Revital
                 {
                     h.TABLE(arr, o =>
                         {
-                            h.TD_().T(o.name).SP().SUB(o.tel)._TD();
+                            h.TD(o.name);
+                            h.TD(o.tel);
                             h.TD(User.Admly[o.admly]);
-                            h.TDFORM(() => h.TOOL(nameof(access), caption: "✕", subscript: 2));
+                            h.TDFORM(() => h.TOOL(nameof(access), caption: "✕", subscript: 2, css: "uk-button-secondary"));
                         },
                         caption: "现有操作权限"
                     );
-                    h.FORM_().FIELDSUL_("指定用户");
+                    h.FORM_().FIELDSUL_("授权目标用户");
                     if (cmd == 0)
                     {
-                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false)._LI();
+                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
                     }
                     else if (cmd == 1) // search user
                     {
-                        // using var dc = NewDbContext();
+                        // get user by tel
                         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
-                            h.HIDDEN(nameof(o.id), o.id);
-                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false)._LI();
+                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0)._LI();
-                            h.BUTTON("确认", nameof(access), 2)._BOTTOMBAR();
+                            h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0, required: true)._LI();
+                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(access), 2)._LI();
+                            h.HIDDEN(nameof(o.id), o.id);
                         }
-                    }
-                    else
-                    {
                     }
                     h._FIELDSUL()._FORM();
                 }, false, 3);
@@ -101,10 +101,9 @@ namespace Revital
             {
                 var f = await wc.ReadAsync<Form>();
                 int id = f[nameof(id)];
-                admly = f[nameof(admly)];
-                // using var dc = NewDbContext();
+                admly = f[nameof(admly)]; // lead to removal when 0
                 dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
-                wc.GivePane(200); // ok
+                wc.GiveRedirect(nameof(access));
             }
         }
     }

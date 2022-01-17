@@ -603,14 +603,6 @@ a.uk-link-reset:hover,
     min-height: 32px;
 }
 
-.uk-list-divider::before {
-    border-top: 1px solid rgb(143 195 33 / 15%);
-}
-
-.uk-list-divider::after {
-    border-bottom: 1px solid rgb(143 195 33 / 15%);
-}
-
 .uk-list-divider > li:nth-child(n+2) {
     border-top: 1px solid rgb(143 195 33 / 15%);
 }
@@ -737,7 +729,10 @@ a.uk-link-reset:hover,
 
 .uk-table caption {
     text-align: left;
-    color: #8fc321;
+    text-transform: uppercase;
+    color: #333;
+    padding: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .uk-table > tr.uk-active,
@@ -748,9 +743,8 @@ a.uk-link-reset:hover,
 /*
  * Divider
  */
- .uk-table-divider > tr:not(:first-child),
- .uk-table-divider > :not(:first-child) > tr,
- .uk-table-divider > :first-child > tr:not(:first-child) {
+ .uk-table-divider > tr:not(:first-child)
+ {
      border-top: 1px solid rgb(143 195 33 / 15%);
  }
 
@@ -1236,8 +1230,7 @@ form legend {
     max-width: 100%;
     width: 100%;
     padding: 4px;
-    background-color: rgb(248 248 248 / 50%);
-    color: #000;
+    color: #333;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;

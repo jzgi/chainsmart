@@ -39,7 +39,7 @@ namespace Revital
         }
 
         [Ui("地市", group: 2), Tool(Anchor)]
-        public void distr(WebContext wc)
+        public void dist(WebContext wc)
         {
             wc.GivePage(200, h =>
             {
@@ -58,7 +58,7 @@ namespace Revital
         }
 
         [Ui("场区", group: 4), Tool(Anchor)]
-        public void section(WebContext wc)
+        public void sect(WebContext wc)
         {
             wc.GivePage(200, h =>
             {

@@ -42,8 +42,8 @@ namespace Revital
 
     public class AdmlyItemVarWork : ItemVarWork
     {
-        [Ui(group: 2), Tool(AnchorShow)]
-        public async Task @default(WebContext wc)
+        [Ui(group: 7), Tool(AnchorShow)]
+        public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
             if (wc.IsGet)
@@ -55,8 +55,8 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("标准品目信息");
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
-                    h.LI_().SELECT("归类", nameof(o.cat), o.cat, Item.Cats, required: true)._LI();
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 10, required: true)._LI();
+                    h.LI_().SELECT("类别", nameof(o.cat), o.cat, Item.Cats, filter: (k, v) => k < typ * 20 && k > (typ - 1) * 20, required: true)._LI();
+                    h.LI_().TEXT("品目名", nameof(o.name), o.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
                     h.LI_().TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
@@ -81,7 +81,7 @@ namespace Revital
             }
         }
 
-        [Ui("◪", "图片"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("◪", "图片", group: 7), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             short id = wc[0];
