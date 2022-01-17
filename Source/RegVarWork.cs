@@ -10,8 +10,8 @@ namespace Revital
 
     public class AdmlyRegVarWork : RegVarWork
     {
-        [Ui("✎", "修改", group: 7), Tool(ButtonShow)]
-        public async Task upd(WebContext wc, int typ)
+        [Ui(group: 7), Tool(ButtonShow)]
+        public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
             if (wc.IsGet)
@@ -44,26 +44,17 @@ namespace Revital
             }
         }
 
-        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        [Ui("✕", "删除", group: 7), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {
             short id = wc[0];
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-                var admly = (short) await dc.ScalarAsync("SELECT admly FROM users WHERE id = @1", p => p.Set(id));
-
+                const bool ok = true;
                 wc.GivePane(200, h =>
                 {
-                    if (admly < 7)
-                    {
-                        h.ALERT("删除人员权限？");
-                        h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                    }
-                    else
-                    {
-                        h.ALERT("不能删除主管理员权限");
-                    }
+                    h.ALERT("确定删除此项？");
+                    h.FORM_().HIDDEN(nameof(ok), ok)._FORM();
                 });
             }
             else

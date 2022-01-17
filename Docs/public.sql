@@ -29,9 +29,7 @@ create table users
 	admly smallint default 0 not null,
 	orgid smallint,
 	orgly smallint default 0 not null,
-	license varchar(20),
-	idcard varchar(18),
-	icon bytea
+	idcard varchar(18)
 )
 inherits (_infos);
 
@@ -82,7 +80,7 @@ create table items
 	cat smallint,
 	unit varchar(4),
 	unitip varchar(10),
-	unitfee money,
+	fee money,
 	icon bytea
 )
 inherits (_infos);
@@ -272,6 +270,18 @@ create index links_typctrid_idx
 
 create index links_typptid_idx
 	on links (typ, ptid);
+
+create table peers_
+(
+	id smallint not null
+		constraint peers_pk
+			primary key,
+	domain varchar(50),
+	secure boolean
+)
+inherits (_infos);
+
+alter table peers_ owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, tel, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

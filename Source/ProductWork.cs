@@ -11,7 +11,7 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OP)]
-    [Ui("产源－产品管理")]
+    [Ui("产源｜产品管理")]
     public class SrclyProductWork : ProductWork
     {
         protected override void OnMake()

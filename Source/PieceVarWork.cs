@@ -5,21 +5,21 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public class PostVarWork : WebWork
+    public class PieceVarWork : WebWork
     {
     }
 
     /// 
     /// post
     /// 
-    public class PublyPostVarWork : PostVarWork
+    public class PublyPieceVarWork : PieceVarWork
     {
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE id = @1");
-            var o = await dc.QueryTopAsync<Post>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM posts WHERE id = @1");
+            var o = await dc.QueryTopAsync<Piece>(p => p.Set(id));
             wc.GivePage(200, h =>
             {
                 // org
@@ -35,7 +35,7 @@ namespace Revital
         }
     }
 
-    public class BizlyPostVarWork : PostVarWork
+    public class BizlyPieceVarWork : PieceVarWork
     {
         [Ui("修改展页项", group: 2), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)
@@ -47,8 +47,8 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE id = @1");
-                var o = dc.QueryTop<Post>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM posts WHERE id = @1");
+                var o = dc.QueryTop<Piece>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
@@ -74,7 +74,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Post
+                var o = await wc.ReadObjectAsync(0, new Piece
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -86,7 +86,7 @@ namespace Revital
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE posts ")._SET_(Post.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE posts ")._SET_(Piece.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
                     o.Write(p, 0);

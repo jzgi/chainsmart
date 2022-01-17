@@ -8,7 +8,7 @@ using static SkyChain.Web.Modal;
 namespace Revital
 {
     [UserAuthorize(admly: 1)]
-    [Ui("平台－代收业务结算", "table")]
+    [Ui("平台｜代收业务结算", "table")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()
@@ -157,7 +157,7 @@ namespace Revital
         }
     }
 
-    [Ui("账户－业务结算情况", "credit-card")]
+    [Ui("账户｜业务结算情况", "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()

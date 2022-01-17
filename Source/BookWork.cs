@@ -109,7 +109,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("供应－销售及分拣", "sign-out")]
+    [Ui("供应｜销售及分拣", "sign-out")]
     public abstract class PrvlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -119,7 +119,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产源－订货管理")]
+    [Ui("产源｜订货管理")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnMake()

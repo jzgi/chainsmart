@@ -31,11 +31,11 @@ namespace Revital
         internal int srcid;
         internal string srcname;
 
+        internal short peerid_;
+        internal long coid_;
         internal long seq_;
         internal string cs_;
         internal string blockcs_;
-        internal short peer_;
-        internal long rec_;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {
@@ -56,11 +56,11 @@ namespace Revital
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(srcname), ref srcname);
 
+            s.Get(nameof(peerid_), ref peerid_);
+            s.Get(nameof(coid_), ref coid_);
             s.Get(nameof(seq_), ref seq_);
             s.Get(nameof(cs_), ref cs_);
             s.Get(nameof(blockcs_), ref blockcs_);
-            s.Get(nameof(peer_), ref peer_);
-            s.Get(nameof(rec_), ref rec_);
         }
 
         public override void Write(ISink s, short proj = 0x0fff)
@@ -82,11 +82,11 @@ namespace Revital
             s.Put(nameof(srcid), srcid);
             s.Put(nameof(srcname), srcname);
 
+            s.Put(nameof(peerid_), peerid_);
+            s.Put(nameof(coid_), coid_);
             s.Put(nameof(seq_), seq_);
             s.Put(nameof(cs_), cs_);
             s.Put(nameof(blockcs_), blockcs_);
-            s.Put(nameof(peer_), peer_);
-            s.Put(nameof(rec_), rec_);
         }
 
         public long Key => id;

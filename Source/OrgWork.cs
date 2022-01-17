@@ -41,7 +41,7 @@ namespace Revital
     }
 
 
-    [Ui("平台－入驻机构设置")]
+    [Ui("平台｜入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnMake()
@@ -57,23 +57,20 @@ namespace Revital
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label, subscript: TYP_MRT);
-
-                if (arr == null) return;
-
+                h.TOOLBAR(subscript: TYP_MRT);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
+                    h.TD_().A_VAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
         }
 
-        [Ui("分拣", group: 2), Tool(Anchor)]
+        [Ui("中转", group: 2), Tool(Anchor)]
         public async Task ctr(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -81,17 +78,14 @@ namespace Revital
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label, subscript: TYP_CTR);
-
-                if (arr == null) return;
-
+                h.TOOLBAR(subscript: TYP_CTR);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
+                    h.TD_().A_VAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -105,17 +99,14 @@ namespace Revital
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: Label, subscript: TYP_PRV);
-
-                if (arr == null) return;
-
+                h.TOOLBAR(subscript: TYP_PRV);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyOrgVarWork.upd), caption: o.name).SP().SUB(Typs[o.typ])._TD();
+                    h.TD_().A_VAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                 });
             });
@@ -249,7 +240,7 @@ namespace Revital
     }
 
     [UserAuthorize(TYP_PRV, 1)]
-    [Ui("供应－下属产源管理", "thumbnails")]
+    [Ui("供应｜下属产源管理", "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnMake()

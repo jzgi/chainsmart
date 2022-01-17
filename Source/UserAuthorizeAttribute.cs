@@ -26,7 +26,7 @@ namespace Revital
             this.admly = admly;
         }
 
-        public override bool Do(WebContext wc)
+        public override bool Do(WebContext wc, bool mock)
         {
             var prin = (User) wc.Principal;
 
@@ -47,13 +47,39 @@ namespace Revital
             var org = wc[typeof(OrglyVarWork)].As<Org>();
 
             // is the manager of the org
-            if (org.mgrid == prin.id) return true;
+            if (org.mgrid == prin.id)
+            {
+                if (!mock)
+                {
+                    wc.Party = org.name;
+                    wc.Role = "管理员";
+                }
+                return true;
+            }
 
             // is of any role for the org
-            if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly) return true;
+            if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly)
+            {
+                if (!mock)
+                {
+                    wc.Party = org.name;
+                    wc.Role = User.Orgly[orgly];
+                }
+                return true;
+            }
 
             // is trusted for the org
-            return org.trust && org.sprid == prin.orgid;
+            if (org.trust && org.sprid == prin.orgid)
+            {
+                if (!mock)
+                {
+                    wc.Party = org.name;
+                    wc.Role = "代办";
+                }
+                return true;
+            }
+
+            return false;
         }
     }
 }

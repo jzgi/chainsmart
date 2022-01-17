@@ -1,5 +1,4 @@
-﻿using System;
-using SkyChain;
+﻿using SkyChain;
 
 namespace Revital
 {
@@ -25,8 +24,8 @@ namespace Revital
 
         public const short
             ITEM = 0x0020,
-            HANDLE = 0x0040,
-            PAY = 0x0080;
+            PAY = 0x0040,
+            HANDLE = 0x0080;
 
 
         // item
@@ -35,14 +34,10 @@ namespace Revital
         internal int artname;
         internal decimal price;
         internal int qty;
-
-        // handle
-        internal DateTime handled;
-        internal string handler;
-
-        // pay
         internal decimal pay;
-        internal decimal refund;
+        internal string cs;
+        internal short state;
+        internal Act[] trace;
 
 
         public override void Read(ISource s, short proj = 0x0fff)
@@ -57,15 +52,15 @@ namespace Revital
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(qty), ref qty);
             }
-            if ((proj & HANDLE) == HANDLE)
-            {
-                s.Get(nameof(handled), ref handled);
-                s.Get(nameof(handler), ref handler);
-            }
             if ((proj & PAY) == PAY)
             {
                 s.Get(nameof(pay), ref pay);
-                s.Get(nameof(refund), ref refund);
+            }
+            if ((proj & HANDLE) == HANDLE)
+            {
+                s.Get(nameof(cs), ref cs);
+                s.Get(nameof(state), ref state);
+                s.Get(nameof(trace), ref trace);
             }
         }
 
@@ -81,15 +76,15 @@ namespace Revital
                 s.Put(nameof(price), price);
                 s.Put(nameof(qty), qty);
             }
-            if ((proj & HANDLE) == HANDLE)
-            {
-                s.Put(nameof(handled), handled);
-                s.Put(nameof(handler), handler);
-            }
             if ((proj & PAY) == PAY)
             {
                 s.Put(nameof(pay), pay);
-                s.Put(nameof(refund), refund);
+            }
+            if ((proj & HANDLE) == HANDLE)
+            {
+                s.Put(nameof(cs), cs);
+                s.Put(nameof(state), state);
+                s.Put(nameof(trace), trace);
             }
         }
     }

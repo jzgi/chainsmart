@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital
@@ -32,7 +32,7 @@ namespace Revital
             var o = Chain.Info;
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + User.Admly[prin.admly] + "）");
+                h.TOOLBAR(caption: prin.name + "（" + wc.Role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body uk-list uk-list-divider");
@@ -40,7 +40,7 @@ namespace Revital
                 {
                     h.LI_().FIELD("平台名称", o.Name)._LI();
                     h.LI_().FIELD("描述", o.Tip)._LI();
-                    h.LI_().FIELD("连接地址", o.Uri)._LI();
+                    h.LI_().FIELD("连接地址", o.Domain)._LI();
                 }
                 h._UL();
                 h._FORM();

@@ -36,8 +36,8 @@ namespace Revital
             else if (org.IsBiz)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
-                var posts = await dc.QueryAsync<Post>(p => p.Set(org.id));
+                dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM posts WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                var posts = await dc.QueryAsync<Piece>(p => p.Set(org.id));
                 wc.GivePage(200, h =>
                 {
                     h.TOPBAR_();

@@ -103,7 +103,7 @@ namespace Revital
 
             MakeWork<MrtlyReportWork>("rpt");
 
-            MakeWork<BizlyPostWork>("post");
+            MakeWork<BizlyPieceWork>("post");
 
             MakeWork<BizlyBuyWork>("buy");
 

@@ -44,8 +44,7 @@ namespace Revital
 
     public class AdmlyOrgVarWork : OrgVarWork
     {
-        [Ui("修改入驻主体"), Tool(AnchorShow)]
-        public async Task upd(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             var regs = Grab<short, Reg>();
             short id = wc[0];

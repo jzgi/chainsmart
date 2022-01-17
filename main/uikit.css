@@ -604,15 +604,15 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider::before {
-    border-top: 1px solid #ededed;
+    border-top: 1px solid rgb(143 195 33 / 15%);
 }
 
 .uk-list-divider::after {
-    border-bottom: 1px solid #ededed;
+    border-bottom: 1px solid rgb(143 195 33 / 15%);
 }
 
 .uk-list-divider > li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
+    border-top: 1px solid rgb(143 195 33 / 15%);
 }
 
 /*
@@ -751,7 +751,7 @@ a.uk-link-reset:hover,
  .uk-table-divider > tr:not(:first-child),
  .uk-table-divider > :not(:first-child) > tr,
  .uk-table-divider > :first-child > tr:not(:first-child) {
-     border-top: 1px solid #ededed;
+     border-top: 1px solid rgb(143 195 33 / 15%);
  }
 
 .uk-table-middle,

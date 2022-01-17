@@ -6,15 +6,15 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    public abstract class PostWork : WebWork
+    public abstract class PieceWork : WebWork
     {
     }
 
-    public class PublyPostWork : PostWork
+    public class PublyPieceWork : PieceWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<PublyPostVarWork>();
+            MakeVarWork<PublyPieceVarWork>();
         }
 
         public void @default(WebContext wc, int page)
@@ -23,11 +23,11 @@ namespace Revital
     }
 
     [Ui("［商户］线上货架")]
-    public class BizlyPostWork : PostWork
+    public class BizlyPieceWork : PieceWork
     {
         protected override void OnMake()
         {
-            MakeVarWork<BizlyPostVarWork>();
+            MakeVarWork<BizlyPieceVarWork>();
         }
 
         [Ui("上架", group: 1), Tool(Anchor)]
@@ -35,8 +35,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Post>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM peices WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Piece>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -54,14 +54,14 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM posts WHERE orgid = @1 AND status <= 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Post>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM peices WHERE orgid = @1 AND status <= 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Piece>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().VARTOOL(o.Key, nameof(BizlyPostVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().VARTOOL(o.Key, nameof(BizlyPieceVarWork.upd), caption: o.name).SP()._TD();
                     h.TD(o.price, true);
                     // h.TD(Statuses[o.status]);
                 });
@@ -81,7 +81,7 @@ namespace Revital
                 dc.Sql("SELECT DISTINCT productid FROM books_ WHERE ");
 
 
-                var o = new Post
+                var o = new Piece
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -120,7 +120,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Post
+                var o = await wc.ReadObjectAsync(0, new Piece
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -147,7 +147,7 @@ namespace Revital
             var items = Grab<short, Item>();
             if (wc.IsGet)
             {
-                var o = new Post
+                var o = new Piece
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -183,7 +183,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Post
+                var o = await wc.ReadObjectAsync(0, new Piece
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -195,7 +195,7 @@ namespace Revital
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO posts ").colset(Post.Empty, 0)._VALUES_(Post.Empty, 0);
+                dc.Sql("INSERT INTO posts ").colset(Piece.Empty, 0)._VALUES_(Piece.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

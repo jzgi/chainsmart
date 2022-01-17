@@ -42,8 +42,8 @@ namespace Revital
 
     public class AdmlyItemVarWork : ItemVarWork
     {
-        [Ui("修改", @group: 2), Tool(AnchorShow)]
-        public async Task upd(WebContext wc)
+        [Ui(group: 2), Tool(AnchorShow)]
+        public async Task @default(WebContext wc)
         {
             short id = wc[0];
             if (wc.IsGet)

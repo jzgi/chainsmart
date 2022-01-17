@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 
 namespace Revital

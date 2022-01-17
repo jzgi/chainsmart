@@ -25,9 +25,9 @@ namespace Revital
         public static readonly Map<short, string> Symbols = new Map<short, string>
         {
             {STA_GONE, "注销"},
-            {STA_DISABLED, "❌"},
-            {STA_ENABLED, "✔️"},
-            {STA_PREFERRED, "✔️"},
+            {STA_DISABLED, "禁用"},
+            {STA_ENABLED, null},
+            {STA_PREFERRED, null},
         };
 
         public const short

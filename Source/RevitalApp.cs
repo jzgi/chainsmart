@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Db;
+using SkyChain.Chain;
 using static System.Data.IsolationLevel;
 
 namespace Revital

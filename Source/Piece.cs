@@ -5,9 +5,9 @@ namespace Revital
     /// <summary>
     /// A data model for post entry.
     /// </summary>
-    public class Post : _Article, IKeyable<int>
+    public class Piece : _Article, IKeyable<int>
     {
-        public static readonly Post Empty = new Post();
+        public static readonly Piece Empty = new Piece();
 
         public const short
             INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
@@ -37,7 +37,8 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
 
-            if (productid == 0) s.PutNull(nameof(productid)); else s.Put(nameof(productid), productid);
+            if (productid == 0) s.PutNull(nameof(productid));
+            else s.Put(nameof(productid), productid);
         }
 
         public int Key => id;

@@ -18,7 +18,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("平台－统一品目设置")]
+    [Ui("平台｜统一品目设置")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnMake()
@@ -30,12 +30,11 @@ namespace Revital
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 1 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = ").T(Item.TYP_AGRI).T(" ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 1);
-
+                h.TOOLBAR(subscript: Item.TYP_AGRI);
                 if (arr == null) return;
 
                 h.TABLE_();
@@ -48,8 +47,8 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TDVAR(o.Key, o.name);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -65,12 +64,11 @@ namespace Revital
         public void fact(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 2 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = ").T(Item.TYP_FACT).T(" ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 2);
-
+                h.TOOLBAR(subscript: Item.TYP_FACT);
                 if (arr == null) return;
 
                 h.TABLE_();
@@ -83,8 +81,8 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TDVAR(o.Key, o.name);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();
@@ -100,12 +98,11 @@ namespace Revital
         public void svrc(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = 4 ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = ").T(Item.TYP_SRVC).T(" ORDER BY cat, status DESC LIMIT 40 OFFSET 40 * @1");
             var arr = dc.Query<Item>(p => p.Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 4);
-
+                h.TOOLBAR(subscript: Item.TYP_SRVC);
                 if (arr == null) return;
 
                 h.TABLE_();
@@ -118,8 +115,8 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(AdmlyItemVarWork.upd), caption: o.name)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TDVAR(o.Key, o.name);
+                    h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.VARTOOLS(o.Key));
                     h._TR();

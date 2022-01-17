@@ -11,7 +11,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台－区域设置")]
+    [Ui("平台｜地理区域设置")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnMake()
@@ -24,17 +24,15 @@ namespace Revital
         {
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 1);
+                h.TOOLBAR(subscript: Reg.TYP_PROV);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = 1 ORDER BY id, status DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROV).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
-                h.TABLE(arr,
-                    o =>
+                h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TD(o.name);
-                        h.TD(_Info.Symbols[o.status]);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 1));
+                        h.TDVAR(o.Key, o.name);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_PROV));
                     }
                 );
             });
@@ -45,17 +43,15 @@ namespace Revital
         {
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 2);
+                h.TOOLBAR(subscript: Reg.TYP_DIST);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = 2 ORDER BY id, status DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_DIST).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
-                h.TABLE(arr,
-                    o =>
+                h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TD(o.name);
-                        h.TD(_Info.Symbols[o.status]);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 2));
+                        h.TDVAR(o.Key, o.name);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_DIST));
                     }
                 );
             });
@@ -66,17 +62,15 @@ namespace Revital
         {
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: 3);
+                h.TOOLBAR(subscript: Reg.TYP_SECT);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = 3 ORDER BY id, status DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECT).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
-                h.TABLE(arr,
-                    o =>
+                h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TD(o.name);
-                        h.TD(_Info.Symbols[o.status]);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: 3));
+                        h.TDVAR(o.Key, o.name);
+                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_SECT));
                     }
                 );
             });

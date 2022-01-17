@@ -1,9 +1,8 @@
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Db;
+using SkyChain.Chain;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 
@@ -16,7 +15,7 @@ namespace Revital
         {
             MakeVarWork<RevitalVarWork>(); // org's home page
 
-            MakeWork<PublyPostWork>("post");
+            MakeWork<PublyPieceWork>("post");
 
             MakeWork<PublyItemWork>("item");
 
@@ -315,11 +314,6 @@ namespace Revital
                 });
                 wc.Give(200, x);
             }
-        }
-
-        public async Task callbook(WebContext wc)
-        {
-            var cc = Chain.NewChainContext(IsolationLevel.ReadUncommitted, wc);
         }
     }
 }
