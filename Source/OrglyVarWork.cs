@@ -22,30 +22,35 @@ namespace Revital
                 string tel = wc.Query[nameof(tel)];
                 wc.GivePage(200, h =>
                 {
-                    h.LIST(arr, o =>
+                    h.TABLE(arr, o =>
                         {
-                            h.SPAN_("uk-width-1-3").T(o.name).SP().SUB(o.tel)._SPAN();
-                            h.SPAN(User.Orgly[o.orgly], "uk-width-1-3");
-                        }
+                            h.TD(o.name);
+                            h.TD(o.tel);
+                            h.TD(User.Orgly[o.orgly]);
+                            h.TDFORM(() => h.TOOL(nameof(access), caption: "✕", subscript: 2, css: "uk-button-secondary"));
+                        },
+                        caption: "现有操作权限"
                     );
-                    h.FORM_().FIELDSUL_("添加操作权限");
-                    h.LI_("uk-flex").TEXT("用户手机", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false)._LI();
-                    h._FIELDSUL();
-                    if (cmd == 1) // search user
+                    h.FORM_().FIELDSUL_("授权目标用户");
+                    if (cmd == 0)
                     {
+                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
+                    }
+                    else if (cmd == 1) // search user
+                    {
+                        // get user by tel
                         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
-                            h.FIELDSUL_();
-                            h.HIDDEN(nameof(o.id), o.id);
+                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0)._LI();
-                            h._FIELDSUL();
-                            h.BOTTOMBAR_().BUTTON("确认", nameof(access), 2)._BOTTOMBAR();
+                            h.LI_().SELECT("权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0, required: true)._LI();
+                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(access), 2)._LI();
+                            h.HIDDEN(nameof(o.id), o.id);
                         }
                     }
-                    h._FORM();
+                    h._FIELDSUL()._FORM();
                 }, false, 3);
             }
             else
