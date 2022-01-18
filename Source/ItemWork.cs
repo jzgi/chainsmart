@@ -47,10 +47,10 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TDVAR(o.Key, o.name);
+                    h.TDAVAR(o.Key, o.name);
                     h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                     h._TR();
 
                     last = o.cat;
@@ -81,10 +81,10 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TDVAR(o.Key, o.name);
+                    h.TDAVAR(o.Key, o.name);
                     h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                     h._TR();
 
                     last = o.cat;
@@ -115,10 +115,10 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TDVAR(o.Key, o.name);
+                    h.TDAVAR(o.Key, o.name);
                     h.TD(_Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                     h._TR();
 
                     last = o.cat;

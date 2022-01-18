@@ -740,13 +740,12 @@ a.uk-link-reset:hover,
     background: rgb(143 195 33 / 10%);
 }
 
-/*
- * Divider
- */
- .uk-table-divider > tr:not(:first-child)
- {
-     border-top: 1px solid rgb(143 195 33 / 15%);
- }
+.uk-table-divider > tr:not(:first-child),
+/* .uk-table-divider > :not(:first-child) > tr, */
+.uk-table-divider > :first-child > tr:not(:first-child) 
+{
+    border-top: 1px solid rgb(143 195 33 / 15%);
+}
 
 .uk-table-middle,
 .uk-table-middle td {

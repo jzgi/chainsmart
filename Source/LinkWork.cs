@@ -70,7 +70,7 @@ namespace Revital
         }
     }
 
-    [Ui("供应｜分拣中心关联")]
+    [Ui("供应｜关联中转站")]
     public class PrvlyLinkWork : LinkWork
     {
         public async Task @default(WebContext wc)
@@ -90,7 +90,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("✚", "关联分拣中心"), Tool(Modal.ButtonShow)]
+        [Ui("✚", "添加"), Tool(Modal.ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -107,8 +107,8 @@ namespace Revital
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("关联信息");
-                    h.LI_().SELECT_ORG("分拣中心", nameof(o.ctrid), o.ctrid, orgs, regs, filter: x => x.IsCtr, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    h.LI_().SELECT_ORG("中转站", nameof(o.ctrid), o.ctrid, orgs, regs, filter: x => x.IsCtr, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

@@ -61,11 +61,11 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().A_VAR(o.Key, o.name)._TD();
+                    h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
                     h.TD(_Info.Symbols[o.status]);
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
@@ -82,11 +82,11 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().A_VAR(o.Key, o.name)._TD();
+                    h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
                     h.TD(_Info.Symbols[o.status]);
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
@@ -103,11 +103,11 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
-                    h.TD_().A_VAR(o.Key, o.name)._TD();
+                    h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
                     h.TD(_Info.Symbols[o.status]);
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
@@ -187,7 +187,7 @@ namespace Revital
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
-                    h.TD_().A_HREF_("/mrtly/", o.Key, "/", css: "uk-button-link")._ONCLICK_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
+                    // h.TD_().A_("/mrtly/", o.Key, "/", css: "uk-button-link")._DIALOG_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
                     h.TD(regs[o.regid].name);
                     h.TDFORM(() => { });
                 });
@@ -273,10 +273,10 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().VARTOOL(o.Key, nameof(PrvlyOrgVarWork.upd), caption: o.name)._TD();
+                    h.TD_().TOOLVAR(o.Key, nameof(PrvlyOrgVarWork.upd), caption: o.name)._TD();
                     h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                     h._TR();
 
                     last = o.regid;

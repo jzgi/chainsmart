@@ -31,8 +31,8 @@ namespace Revital
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TDVAR(o.Key, o.name);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_PROV));
+                        h.TDAVAR(o.Key, o.name);
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROV));
                     }
                 );
             });
@@ -50,8 +50,8 @@ namespace Revital
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TDVAR(o.Key, o.name);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_DIST));
+                        h.TDAVAR(o.Key, o.name);
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_DIST));
                     }
                 );
             });
@@ -69,8 +69,8 @@ namespace Revital
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
-                        h.TDVAR(o.Key, o.name);
-                        h.TDFORM(() => h.VARTOOLS(o.Key, subscript: Reg.TYP_SECT));
+                        h.TDAVAR(o.Key, o.name);
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_SECT));
                     }
                 );
             });

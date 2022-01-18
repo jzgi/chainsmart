@@ -1,18 +1,19 @@
 ﻿using System.Threading.Tasks;
 using SkyChain;
 using SkyChain.Web;
-using static SkyChain.Web.Modal;
 
 namespace Revital
 {
     public abstract class OrglyVarWork : WebWork
     {
         [UserAuthorize(orgly: 15)]
-        [Ui("操作权限"), Tool(ButtonOpen)]
+        [Ui("操作权限"), Tool(Modal.ButtonOpen)]
         public async Task access(WebContext wc, int cmd)
         {
             var org = wc[0].As<Org>();
             short orgly = 0;
+            int id = 0;
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(org.id));
@@ -27,7 +28,11 @@ namespace Revital
                             h.TD(o.name);
                             h.TD(o.tel);
                             h.TD(User.Orgly[o.orgly]);
-                            h.TDFORM(() => h.TOOL(nameof(access), caption: "✕", subscript: 2, css: "uk-button-secondary"));
+                            h.TDFORM(() =>
+                            {
+                                h.HIDDEN(nameof(id), o.id);
+                                h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
+                            });
                         },
                         caption: "现有操作权限"
                     );
@@ -55,16 +60,15 @@ namespace Revital
             }
             else
             {
-                short orgid = wc[-1];
                 var f = await wc.ReadAsync<Form>();
-                int id = f[nameof(id)];
+                id = f[nameof(id)];
                 orgly = f[nameof(orgly)];
-                dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(orgid).Set(orgly).Set(id));
-                wc.GivePane(200); // ok
+                dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(org.id).Set(orgly).Set(id));
+                wc.GiveRedirect(nameof(access)); // ok
             }
         }
 
-        [Ui("运行设置"), Tool(ButtonShow)]
+        [Ui("运行设置"), Tool(Modal.ButtonShow)]
         public async Task setg(WebContext wc)
         {
             var org = wc[0].As<Org>();
@@ -176,25 +180,22 @@ namespace Revital
         {
             var org = wc[0].As<Org>();
             var co = GrabObject<int, Org>(org.sprid);
-
             var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                h.TOOLBAR(caption: prin.name + "（" + role + "）");
+                h.TOOLBAR(caption: prin.name + "（" + wc.Role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsMrt)
+                if (!org.IsSpr)
                 {
-                    // h.LI_().FIELD("产源社", co.name)._LI();
+                    h.LI_().FIELD("供应板块", co.name)._LI();
                 }
-                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
+                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 h._UL();
                 h._FORM();
 
@@ -204,7 +205,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("分拣中心操作")]
+    [Ui("中转站操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
@@ -233,7 +234,7 @@ namespace Revital
                 h.UL_("uk-card-body ul-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
-                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
+                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 h.LI_().FIELD("状态", _Info.Statuses[org.status])._LI();
                 h._UL();
                 h._FORM();

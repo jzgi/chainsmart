@@ -61,7 +61,7 @@ namespace Revital
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().VARTOOL(o.Key, nameof(BizlyPieceVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().TOOLVAR(o.Key, nameof(BizlyPieceVarWork.upd), caption: o.name).SP()._TD();
                     h.TD(o.price, true);
                     // h.TD(Statuses[o.status]);
                 });

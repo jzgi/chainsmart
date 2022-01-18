@@ -34,11 +34,11 @@ namespace Revital
 
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().VARTOOL(o.Key, nameof(SrclyProductVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().TOOLVAR(o.Key, nameof(SrclyProductVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(_Info.Statuses[o.status]);
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
 
                 h.PAGINATION(arr.Length == 40);
@@ -61,11 +61,11 @@ namespace Revital
 
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().VARTOOL(o.Key, nameof(SrclyProductVarWork.upd), caption: o.name).SP()._TD();
+                    h.TD_().TOOLVAR(o.Key, nameof(SrclyProductVarWork.upd), caption: o.name).SP()._TD();
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
                     h.TD(_Info.Statuses[o.status]);
-                    h.TDFORM(() => h.VARTOOLS(o.Key));
+                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
 
                 h.PAGINATION(arr.Length == 40);

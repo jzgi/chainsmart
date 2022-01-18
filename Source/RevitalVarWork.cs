@@ -28,7 +28,7 @@ namespace Revital
                         h.GRID(bizs, o =>
                         {
                             h.HEADER_("uk-card-header").T(o.name)._HEADER();
-                            h.A_HREF_("/", o.id, "/", end: true).T(o.name)._A();
+                            h.A_("/", o.id, "/", end: true).T(o.name)._A();
                         }, width: 2);
                     }
                 }, title: org.name);
@@ -48,7 +48,7 @@ namespace Revital
                     {
                         h.HEADER_().T(o.name)._HEADER();
 
-                        h.A_HREF_("/post/", o.id, "/", end: true).T(o.name)._A();
+                        h.A_("/post/", o.id, "/", end: true).T(o.name)._A();
                     });
                 }, title: org.name);
             }

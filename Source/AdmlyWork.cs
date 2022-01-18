@@ -59,6 +59,7 @@ namespace Revital
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE admly > 0");
             var arr = dc.Query<User>();
             short admly = 0;
+            int id = 0;
 
             if (wc.IsGet)
             {
@@ -71,7 +72,11 @@ namespace Revital
                             h.TD(o.name);
                             h.TD(o.tel);
                             h.TD(User.Admly[o.admly]);
-                            h.TDFORM(() => h.TOOL(nameof(access), caption: "✕", subscript: 2, css: "uk-button-secondary"));
+                            h.TDFORM(() =>
+                            {
+                                h.HIDDEN(nameof(id), o.id);
+                                h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
+                            });
                         },
                         caption: "现有操作权限"
                     );
@@ -100,7 +105,7 @@ namespace Revital
             else
             {
                 var f = await wc.ReadAsync<Form>();
-                int id = f[nameof(id)];
+                id = f[nameof(id)];
                 admly = f[nameof(admly)]; // lead to removal when 0
                 dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
                 wc.GiveRedirect(nameof(access));
