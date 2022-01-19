@@ -61,7 +61,8 @@ namespace Revital
         internal short cat;
         internal string unit; // standard unit
         internal string unitip;
-        internal decimal fee;
+        internal decimal feertl; // fee in retail process
+        internal decimal feesup; // fee in retail process
 
         // must have an icon
 
@@ -78,7 +79,8 @@ namespace Revital
                 s.Get(nameof(cat), ref cat);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitip), ref unitip);
-                s.Get(nameof(fee), ref fee);
+                s.Get(nameof(feertl), ref feertl);
+                s.Get(nameof(feesup), ref feesup);
             }
         }
 
@@ -95,7 +97,8 @@ namespace Revital
                 s.Put(nameof(cat), cat);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitip), unitip);
-                s.Put(nameof(fee), fee);
+                s.Put(nameof(feertl), feertl);
+                s.Put(nameof(feesup), feesup);
             }
         }
 

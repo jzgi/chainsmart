@@ -139,8 +139,7 @@ namespace Revital
 
     public class PrvlyOrgVarWork : OrgVarWork
     {
-        [Ui("✎", "修改"), Tool(ButtonShow)]
-        public async Task upd(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
@@ -174,6 +173,12 @@ namespace Revital
                 });
                 wc.GivePane(200); // close
             }
+        }
+
+        [Ui("✎", "修改"), Tool(ButtonShow)]
+        public async Task df(WebContext wc)
+        {
+            int id = wc[0];
         }
     }
 }

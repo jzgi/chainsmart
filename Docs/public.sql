@@ -4,6 +4,17 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
+create type chain_step_type as
+(
+	"user" varchar(10),
+	role varchar(10),
+	party varchar(10),
+	op varchar(10),
+	stamp timestamp(0)
+);
+
+alter type chain_step_type owner to postgres;
+
 create table _infos
 (
 	typ smallint not null,
@@ -80,7 +91,8 @@ create table items
 	cat smallint,
 	unit varchar(4),
 	unitip varchar(10),
-	fee money,
+	feertl money,
+	feesup money,
 	icon bytea
 )
 inherits (_infos);
@@ -92,12 +104,14 @@ create table _deals
 	itemid integer,
 	artid integer,
 	artname integer,
-	handled timestamp(0),
-	handler varchar(10),
 	price money,
 	qty smallint,
 	pay money,
-	refund money
+	cs varchar(32),
+	state smallint,
+	trace chain_step_type[],
+	amt money,
+	fee money
 )
 inherits (_infos);
 
@@ -135,9 +149,7 @@ create table orgs
 		constraint orgs_pk
 			primary key,
 	fork smallint,
-	sprid integer
-		constraint orgs_sprid_fk
-			references orgs,
+	sprid integer,
 	license varchar(20),
 	trust boolean,
 	regid smallint
@@ -184,73 +196,16 @@ inherits (_articles);
 
 alter table products owner to postgres;
 
-create table posts
+create table pieces
 (
 	id serial not null
-		constraint posts_pk
+		constraint pieces_pk
 			primary key,
 	productid integer
 )
 inherits (_articles);
 
-alter table posts owner to postgres;
-
-create table clears
-(
-	id serial not null
-		constraint clears_pk
-			primary key,
-	till timestamp(0),
-	recs integer,
-	amount money,
-	pay money
-)
-inherits (_infos);
-
-alter table clears owner to postgres;
-
-create table buys
-(
-	id bigserial not null
-		constraint buys_pk
-			primary key,
-	bizid smallint not null,
-	bizname varchar(10),
-	mrtid smallint not null,
-	mrtname varchar(10),
-	uid integer not null,
-	uname varchar(10),
-	utel varchar(11),
-	uim varchar(28)
-)
-inherits (_deals);
-
-alter table buys owner to postgres;
-
-create table books_
-(
-	id bigserial not null
-		constraint books_pk
-			primary key,
-	bizid smallint not null,
-	bizname varchar(10),
-	mrtid smallint not null,
-	mrtname varchar(10),
-	ctrid smallint not null,
-	ctrname varchar(10),
-	prvid smallint not null,
-	prvname varchar(10),
-	srcid smallint not null,
-	srcname varchar(10),
-	seq_ integer,
-	cs_ varchar(32),
-	blockcs_ varchar(32),
-	peer_ smallint not null,
-	rec_ bigint
-)
-inherits (_deals);
-
-alter table books_ owner to postgres;
+alter table pieces owner to postgres;
 
 create table links
 (
@@ -273,6 +228,12 @@ create index links_typptid_idx
 
 create table peers_
 (
+	typ smallint not null,
+	status smallint default 0 not null,
+	name varchar(10) not null,
+	tip varchar(30),
+	created timestamp(0),
+	creator varchar(10),
 	id smallint not null
 		constraint peers_pk
 			primary key,
@@ -282,6 +243,73 @@ create table peers_
 inherits (_infos);
 
 alter table peers_ owner to postgres;
+
+create table ledgers
+(
+	orgid integer,
+	dt date,
+	itemid smallint,
+	arcv numeric,
+	apay money
+)
+inherits (_infos);
+
+alter table ledgers owner to postgres;
+
+create table clears
+(
+	orgid integer not null,
+	dt date,
+	sprid integer not null,
+	count integer,
+	amt money
+)
+inherits (_infos);
+
+alter table clears owner to postgres;
+
+create table books_
+(
+	id bigserial not null
+		constraint books_pk
+			primary key,
+	bizid integer not null,
+	bizname varchar(10),
+	mrtid integer not null,
+	mrtname varchar(10),
+	ctrid integer not null,
+	ctrname varchar(10),
+	prvid integer not null,
+	prvname varchar(10),
+	srcid integer not null,
+	srcname varchar(10),
+	peerid_ smallint,
+	coid_ bigint,
+	seq_ integer,
+	cs_ varchar(32),
+	blockcs_ varchar(32)
+)
+inherits (_deals);
+
+alter table books_ owner to postgres;
+
+create table buys
+(
+	id bigserial not null
+		constraint buys_pk
+			primary key,
+	bizid integer not null,
+	bizname varchar(10),
+	mrtid integer not null,
+	mrtname varchar(10),
+	uid integer not null,
+	uname varchar(10),
+	utel varchar(11),
+	uim varchar(28)
+)
+inherits (_deals);
+
+alter table buys owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, tel, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

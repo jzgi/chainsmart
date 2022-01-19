@@ -17,8 +17,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -38,8 +38,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -98,9 +98,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Book>(0);
+                var o = await wc.ReadObjectAsync<Book_>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Book_.Empty, 0)._VALUES_(Book_.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -132,8 +132,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -153,15 +153,15 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book_>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("［中心］收货管理", "sign-in")]
+    [Ui("中转｜收货管理", "sign-in")]
     public class CtrlyReceiveWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -247,7 +247,7 @@ namespace Revital
     }
 
 
-    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_AGRI)]
+    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_AGRI)]
     public class CtrlyAgriBookWork : CtrlyBookWork
     {
         protected override void OnMake()
@@ -256,12 +256,12 @@ namespace Revital
         }
     }
 
-    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_FACT)]
+    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_FACT)]
     public class CtrlyFactBookWork : CtrlyBookWork
     {
     }
 
-    [Ui("［中心］分拣管理", "sign-out", fork: Item.TYP_SRVC)]
+    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_SRVC)]
     public class CtrlySrvcBookWork : CtrlyBookWork
     {
     }

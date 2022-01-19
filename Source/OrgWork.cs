@@ -15,8 +15,8 @@ namespace Revital
         public async Task @default(WebContext wc, int code)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM orgs WHERE codend >= @1 ORDER BY codend LIMIT 1");
-            var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
+            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM orgs WHERE codend >= @1 ORDER BY codend LIMIT 1");
+            var o = await dc.QueryTopAsync<Book_>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
                 if (o == null || o.srcid - o.srcid >= code)
@@ -260,9 +260,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
                 if (arr == null) return;
-
                 h.TABLE_();
                 short last = 0;
                 foreach (var o in arr)
@@ -273,7 +271,7 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().TOOLVAR(o.Key, nameof(PrvlyOrgVarWork.upd), caption: o.name)._TD();
+                    h.TD_().AVAR(o.Key, o.name).SP().ADIALOG__("/prvly/", o.id, "/?astack=true", 8, false, Appear.Full).T("代办")._A()._TD();
                     h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
@@ -328,7 +326,7 @@ namespace Revital
             {
                 var o = await wc.ReadObjectAsync(instance: m);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
+                dc.Sql("INSERT INTO orgs ").colset(Empty, 0)._VALUES_(Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p));
 
                 wc.GivePane(201); // created

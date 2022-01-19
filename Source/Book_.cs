@@ -3,19 +3,19 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Book : _Deal, IKeyable<long>
+    public class Book_ : _Deal, IKeyable<long>
     {
-        public static readonly Book Empty = new Book();
+        public static readonly Book_ Empty = new Book_();
 
         public const short
-            TYP_PRODUCT = 1,
-            TYP_SERVICE = 2,
-            TYP_EVENT = 3;
+            TYP_SPOT = 1,
+            TYP_PRESALE = 2;
+
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {1, "现货"},
-            {2, "预订"},
+            {TYP_SPOT, "现货"},
+            {TYP_PRESALE, "预售"},
         };
 
 

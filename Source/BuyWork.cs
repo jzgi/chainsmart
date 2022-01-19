@@ -34,7 +34,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(orgly: ORGLY_OP)]
+    [UserAuthorize(orgly: ORGLY_OPN)]
     [Ui("［商户］线上零售")]
     public class BizlyBuyWork : BuyWork
     {

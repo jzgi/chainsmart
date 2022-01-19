@@ -3,11 +3,23 @@
 namespace Revital
 {
     /// <summary>
-    /// A retail order, for online and offline
+    /// An online or offline retail order
     /// </summary>
     public class Buy : _Deal, IKeyable<long>
     {
         public static readonly Buy Empty = new Buy();
+
+        public const short
+            TYP_ONLINE = 1,
+            TYP_OFFLINE = 2;
+
+
+        public static readonly Map<short, string> Typs = new Map<short, string>
+        {
+            {TYP_ONLINE, "网上"},
+            {TYP_OFFLINE, "线下"},
+        };
+
 
         internal long id;
         internal int bizid;

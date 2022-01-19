@@ -24,14 +24,14 @@ namespace Revital
         {
             {TYP_BIZ, "商户"},
             {TYP_SRC, "产源"},
-            {TYP_CTR, "分拣中心"},
+            {TYP_CTR, "中转"},
 #if ZHNT
             {TYP_MRT, "市场"},
 #else
             {TYP_MRT, "驿站"},
 #endif
             {TYP_PRV, "供应"},
-            {TYP_PRV_X, "供应（联盟共享）"},
+            {TYP_PRV_X, "供应（联盟）"},
         };
 
 

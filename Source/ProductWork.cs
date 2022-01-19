@@ -10,7 +10,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OP)]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源｜产品管理")]
     public class SrclyProductWork : ProductWork
     {

@@ -7,8 +7,8 @@ using static SkyChain.Web.Modal;
 
 namespace Revital
 {
-    [UserAuthorize(admly: 1)]
-    [Ui("平台｜代收业务结算", "table")]
+    [UserAuthorize(admly: User.ADMLY_)]
+    [Ui("平台｜代收款项结算", "table")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnMake()
@@ -17,20 +17,183 @@ namespace Revital
         }
 
         [Ui("零售", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc)
+        public async Task @default(WebContext wc, int page)
         {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_RETAIL).T(" ORDER BY dt DESC");
+            var arr = await dc.QueryAsync<Clear>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    return;
+                }
+                h.TABLE_();
+                var last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.sprid != last)
+                    {
+                        var spr = GrabObject<int, Org>(o.sprid);
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(o.dt);
+                    h.TD(o.name);
+                    h._TR();
+
+                    last = o.sprid;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            }, false, 3);
         }
 
-        [Ui("供应", group: 2), Tool(Anchor)]
-        public async Task supply(WebContext wc)
+        [Ui("⋮", group: 2), Tool(Anchor)]
+        public async Task hisrtl(WebContext wc, int page)
         {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_RETAIL).T(" ORDER BY dt DESC");
+            var arr = await dc.QueryAsync<Clear>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    return;
+                }
+                h.TABLE_();
+                var last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.sprid != last)
+                    {
+                        var spr = GrabObject<int, Org>(o.sprid);
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(o.dt);
+                    h.TD(o.name);
+                    h._TR();
+
+                    last = o.sprid;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            }, false, 3);
+        }
+
+        [Ui("供应链", group: 4), Tool(Anchor)]
+        public async Task sup(WebContext wc)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" ORDER BY dt DESC");
+            var arr = await dc.QueryAsync<Clear>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    return;
+                }
+                h.TABLE_();
+                var last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.sprid != last)
+                    {
+                        var spr = GrabObject<int, Org>(o.sprid);
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(o.dt);
+                    h.TD(o.name);
+                    h._TR();
+
+                    last = o.sprid;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            }, false, 3);
+        }
+
+        [Ui("⋮", group: 8), Tool(Anchor)]
+        public async Task hissup(WebContext wc, int page)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_RETAIL).T(" ORDER BY dt DESC");
+            var arr = await dc.QueryAsync<Clear>();
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    return;
+                }
+                h.TABLE_();
+                var last = 0;
+                foreach (var o in arr)
+                {
+                    if (o.sprid != last)
+                    {
+                        var spr = GrabObject<int, Org>(o.sprid);
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(o.dt);
+                    h.TD(o.name);
+                    h._TR();
+
+                    last = o.sprid;
+                }
+                h._TABLE();
+                h.PAGINATION(arr.Length == 40);
+            }, false, 3);
         }
 
         [UserAuthorize(admly: 1)]
-        [Ui("∑", "结算", group: 3), Tool(ButtonOpen)]
-        public async Task recalc(WebContext wc)
+        [Ui("∑", "结算零售代收款项", group: 1), Tool(ButtonOpen, Appear.Small)]
+        public async Task calcrtl(WebContext wc)
+        {
+            if (wc.IsGet)
+            {
+                var till = DateTime.Today.AddDays(-1);
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_(post: false).FIELDSUL_("选择截止（包含）日期");
+                    h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // OUTER
+            {
+                DateTime till = wc.Query[nameof(till)];
+                using var dc = NewDbContext(IsolationLevel.RepeatableRead);
+
+                await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
+
+                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
+                var arr = await dc.QueryAsync<Clear>();
+
+                wc.GivePage(200, h =>
+                {
+                    h.TOOLBAR();
+                    var orgs = Grab<short, Org>();
+                    h.TABLE(arr, o =>
+                    {
+                        // h.TD(Clear.Typs[o.typ]);
+                        // h.TD(orgs[o.orgid]?.name);
+                        // h.TD_().T(o.till, 3, 0)._TD();
+                        // h.TD(o.amt, currency: true);
+                    });
+                }, false, 3);
+            }
+        }
+
+        [UserAuthorize(admly: 1)]
+        [Ui("∑", "供应链代收结算", group: 4), Tool(ButtonOpen)]
+        public async Task calcsup(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
             if (inner)
@@ -68,44 +231,8 @@ namespace Revital
             }
         }
 
-        [Ui("➜", "结账", group: 2), Tool(ButtonOpen)]
-        public async Task reckon(WebContext wc)
-        {
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                await dc.QueryTopAsync("SELECT count(*), sum(amt) AS total FROM clears WHERE status = 0");
-                dc.Let(out short count);
-                dc.Let(out decimal total);
-                wc.GivePane(200, h =>
-                {
-                    if (count == 0)
-                    {
-                        h.ALERT("没有待结账的记录");
-                        return;
-                    }
-                    h.FORM_().FIELDSUL_("结账");
-                    h.LI_().FIELD("总金额", total)._LI();
-                    h._FIELDSUL();
-                    h.BOTTOMBAR_().BUTTON("确认", nameof(reckon))._BOTTOMBAR();
-                    h._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext(IsolationLevel.ReadCommitted);
-                await dc.QueryTopAsync("SELECT min(till), max(till) FROM clears WHERE status = 0");
-                dc.Let(out DateTime min);
-                dc.Let(out DateTime max);
-                if (min == max)
-                {
-                    await dc.ExecuteAsync("SELECT reckon(@1)", p => p.Set(min));
-                }
-                wc.GivePane(200);
-            }
-        }
 
-        [Ui("➜", "付款", group: 1), Tool(ButtonPickPrompt)]
+        [Ui("⇉", "网上付款", group: 5), Tool(ButtonPickPrompt)]
         public async Task pay(WebContext wc)
         {
             var prin = (User) wc.Principal;
@@ -148,7 +275,7 @@ namespace Revital
                         {
                             using var dc = NewDbContext(level: IsolationLevel.ReadCommitted);
                             dc.Sql("UPDATE clears SET status = 2, opred = @1, oprid = @2, WHERE id = @2 AND status = 1");
-                            await dc.ExecuteAsync(p => p.Set(now).Set(prin.id).Set(o.id));
+                            await dc.ExecuteAsync(p => p.Set(now).Set(prin.id).Set(o.orgid));
                         }
                     }
                 }
@@ -157,7 +284,7 @@ namespace Revital
         }
     }
 
-    [Ui("账户｜业务结算情况", "credit-card")]
+    [Ui("账户｜平台代收结算", "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnMake()
@@ -175,7 +302,6 @@ namespace Revital
                 h.TOOLBAR(caption: "应收款项和数字资产");
                 h.TABLE(arr, o =>
                 {
-                    h.TDCHECK(o.id);
                     // h.TD(Clear.Typs[o.typ]);
                     // h.TD_().T(o.till, 3, 0)._TD();
                     // h.TD(o.amt, currency: true);

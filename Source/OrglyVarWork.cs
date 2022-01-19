@@ -112,7 +112,9 @@ namespace Revital
 
             MakeWork<MrtlyReportWork>("rpt");
 
-            MakeWork<BizlyPieceWork>("post");
+            MakeWork<BizlyLedgerWork>("ledger");
+
+            MakeWork<BizlyPieceWork>("peice");
 
             MakeWork<BizlyBuyWork>("buy");
 
@@ -121,6 +123,7 @@ namespace Revital
             MakeWork<BizlyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
+
         }
 
         public void @default(WebContext wc)
@@ -163,9 +166,9 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrvlyOrgWork>("org");
-
             MakeWork<PrvlyLinkWork>("link");
+
+            MakeWork<PrvlyOrgWork>("org");
 
             MakeWork<PrvlyReportWork>("rpt");
 
@@ -205,7 +208,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中转站操作")]
+    [Ui("中转操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
         protected override void OnMake()

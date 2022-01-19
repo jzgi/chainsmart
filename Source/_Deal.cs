@@ -34,6 +34,8 @@ namespace Revital
         internal int artname;
         internal decimal price;
         internal int qty;
+        internal decimal amt;
+        internal decimal fee;
         internal decimal pay;
         internal string cs;
         internal short state;
@@ -54,6 +56,8 @@ namespace Revital
             }
             if ((proj & PAY) == PAY)
             {
+                s.Get(nameof(amt), ref amt);
+                s.Get(nameof(fee), ref fee);
                 s.Get(nameof(pay), ref pay);
             }
             if ((proj & HANDLE) == HANDLE)
@@ -78,6 +82,8 @@ namespace Revital
             }
             if ((proj & PAY) == PAY)
             {
+                s.Put(nameof(amt), amt);
+                s.Put(nameof(fee), fee);
                 s.Put(nameof(pay), pay);
             }
             if ((proj & HANDLE) == HANDLE)

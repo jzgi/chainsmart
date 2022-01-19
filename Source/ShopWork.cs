@@ -7,7 +7,7 @@ namespace Revital
     {
     }
 
-    [UserAuthorize(Org.TYP_BIZ, User.ORGLY_OP)]
+    [UserAuthorize(Org.TYP_BIZ, User.ORGLY_OPN)]
     [Ui("［商户］线下零售", "desktop")]
     public class BizlyShopWork : ShopWork
     {

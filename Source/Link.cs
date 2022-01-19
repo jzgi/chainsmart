@@ -7,18 +7,18 @@ namespace Revital
         public static readonly Link Empty = new Link();
 
         public const short
-            TYP_DOWN = 1,
-            TYP_UP = 2;
+            TYP_TOMRT = 1,
+            TYP_TOCTR = 2;
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_DOWN, "下游"},
-            {TYP_UP, "上游"},
+            {TYP_TOMRT, "关联市场"},
+            {TYP_TOCTR, "关联中转"},
         };
 
         internal int ctrid;
-        internal int ptid;
+        internal int ptid; // mrtid or srcid
 
         public override void Read(ISource s, short proj = 0x0fff)
         {

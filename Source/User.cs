@@ -20,33 +20,35 @@ namespace Revital
         };
 
         public const short
-            ADMLY_ = 0b0001,
-            ADMLY_ADT = 0b0011,
-            ADMLY_OP = 0b0101,
+            ADMLY_ = 0b0001, // common
+            ADMLY_OPN = 0b0011,
+            ADMLY_SAL = 0b0101,
+            ADMLY_FIN = 0b1001,
             ADMLY_MGT = 0b1111;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
             {0, null},
-            {ADMLY_, "访客"},
-            {ADMLY_ADT, "审查"},
-            {ADMLY_OP, "操作"},
-            {ADMLY_MGT, "管理"},
+            {ADMLY_SAL, "销售"},
+            {ADMLY_OPN, "运营"},
+            {ADMLY_FIN, "财务"},
+            {ADMLY_MGT, "统管"},
         };
 
         public const short
-            ORGLY_ = 0b0001,
-            ORGLY_SPR = 0b0011,
-            ORGLY_OP = 0b0101,
-            ORGLY_MGR = 0b1111;
+            ORGLY_ = 0b0001, // common
+            ORGLY_OPN = 0b0011,
+            ORGLY_SAL = 0b0101,
+            ORGLY_FIN = 0b1001,
+            ORGLY_MGT = 0b1111;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_, "访客"},
-            {ORGLY_SPR, "审查"},
-            {ORGLY_OP, "操作"},
-            {ORGLY_MGR, "管理"},
+            {ORGLY_SAL, "销售"},
+            {ORGLY_OPN, "运营"},
+            {ORGLY_FIN, "财务"},
+            {ORGLY_MGT, "统管"},
         };
 
         public const short

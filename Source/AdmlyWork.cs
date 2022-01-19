@@ -49,7 +49,7 @@ namespace Revital
             });
         }
 
-        [UserAuthorize(admly: User.ADMLY_OP)]
+        [UserAuthorize(admly: User.ADMLY_OPN)]
         [Ui("操作权限"), Tool(Modal.ButtonOpen)]
         public async Task access(WebContext wc, int cmd)
         {

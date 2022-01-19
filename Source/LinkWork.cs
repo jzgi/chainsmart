@@ -4,18 +4,18 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    public class LinkWork : WebWork
+    public abstract class LinkWork : WebWork
     {
     }
 
-    [Ui("［中心］市场关联")]
+    [Ui("中转｜关联市场设置")]
     public class CtrlyLinkWork : LinkWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_DOWN).T(" AND ctrid = @1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_TOMRT).T(" AND ctrid = @1 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Link>(p => p.Set(org.id), 0xff);
             wc.GivePage(200, h =>
             {
@@ -28,7 +28,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("✚", "关联市场"), Tool(Modal.ButtonShow)]
+        [Ui("✚", "添加市场"), Tool(Modal.ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -39,7 +39,7 @@ namespace Revital
             {
                 var o = new Link
                 {
-                    typ = Link.TYP_UP,
+                    typ = Link.TYP_TOCTR,
                     status = _Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
@@ -54,7 +54,7 @@ namespace Revital
             {
                 var o = await wc.ReadObjectAsync(0, new Link
                 {
-                    typ = Link.TYP_DOWN,
+                    typ = Link.TYP_TOMRT,
                     created = DateTime.Now,
                     creator = prin.name,
                     ctrid = org.id
@@ -70,14 +70,14 @@ namespace Revital
         }
     }
 
-    [Ui("供应｜关联中转站")]
+    [Ui("供应｜关联中转设置")]
     public class PrvlyLinkWork : LinkWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_UP).T(" AND ptid = @1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_TOCTR).T(" AND ptid = @1 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Link>(p => p.Set(org.id), 0xff);
             wc.GivePage(200, h =>
             {
@@ -90,7 +90,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("✚", "添加"), Tool(Modal.ButtonShow)]
+        [Ui("✚", "添加中转"), Tool(Modal.ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -101,7 +101,7 @@ namespace Revital
             {
                 var o = new Link
                 {
-                    typ = Link.TYP_UP,
+                    typ = Link.TYP_TOCTR,
                     status = _Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
@@ -116,7 +116,7 @@ namespace Revital
             {
                 var o = await wc.ReadObjectAsync(0, new Link
                 {
-                    typ = Link.TYP_UP,
+                    typ = Link.TYP_TOCTR,
                     created = DateTime.Now,
                     creator = prin.name,
                     ptid = org.id
