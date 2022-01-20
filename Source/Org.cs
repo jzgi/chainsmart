@@ -24,7 +24,7 @@ namespace Revital
         {
             {TYP_BIZ, "商户"},
             {TYP_SRC, "产源"},
-            {TYP_CTR, "中转"},
+            {TYP_CTR, "控配"},
 #if ZHNT
             {TYP_MRT, "市场"},
 #else

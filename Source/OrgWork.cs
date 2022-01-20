@@ -15,8 +15,8 @@ namespace Revital
         public async Task @default(WebContext wc, int code)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM orgs WHERE codend >= @1 ORDER BY codend LIMIT 1");
-            var o = await dc.QueryTopAsync<Book_>(p => p.Set(code));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM orgs WHERE codend >= @1 ORDER BY codend LIMIT 1");
+            var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
                 if (o == null || o.srcid - o.srcid >= code)
@@ -70,7 +70,7 @@ namespace Revital
             });
         }
 
-        [Ui("中转", group: 2), Tool(Anchor)]
+        [Ui("控配", group: 2), Tool(Anchor)]
         public async Task ctr(WebContext wc, int page)
         {
             using var dc = NewDbContext();

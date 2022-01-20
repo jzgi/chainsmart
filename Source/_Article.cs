@@ -3,12 +3,12 @@
 namespace Revital
 {
     /// <summary>
-    /// A data model for a merchandise article.
+    /// A data model for merchandise article.
     /// </summary>
     public abstract class _Article : _Info
     {
-        public const short 
-            ORG = 0x0020, 
+        public const short
+            ORG = 0x0020,
             ITEM = 0x0040;
 
 

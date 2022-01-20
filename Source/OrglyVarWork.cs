@@ -166,7 +166,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrvlyLinkWork>("link");
+            MakeWork<PrvlyRouteWork>("link");
 
             MakeWork<PrvlyOrgWork>("org");
 
@@ -213,7 +213,7 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<CtrlyLinkWork>("reach");
+            MakeWork<CtrlyRouteWork>("reach");
 
             MakeWork<CtrlyReceiveWork>("receive");
 

@@ -3,9 +3,9 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Book_ : _Deal, IKeyable<long>
+    public class Book : _Deal, IKeyable<long>
     {
-        public static readonly Book_ Empty = new Book_();
+        public static readonly Book Empty = new Book();
 
         public const short
             TYP_SPOT = 1,

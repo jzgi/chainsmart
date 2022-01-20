@@ -4,19 +4,19 @@ using SkyChain.Web;
 
 namespace Revital
 {
-    public abstract class LinkWork : WebWork
+    public abstract class RouteWork : WebWork
     {
     }
 
-    [Ui("中转｜关联市场设置")]
-    public class CtrlyLinkWork : LinkWork
+    [Ui("中转｜市场线路设置")]
+    public class CtrlyRouteWork : RouteWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_TOMRT).T(" AND ctrid = @1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Link>(p => p.Set(org.id), 0xff);
+            dc.Sql("SELECT ").collst(Route.Empty).T(" FROM links WHERE typ = ").T(Route.TYP_TOMRT).T(" AND ctrid = @1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Route>(p => p.Set(org.id), 0xff);
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -37,9 +37,9 @@ namespace Revital
             var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
-                var o = new Link
+                var o = new Route
                 {
-                    typ = Link.TYP_TOCTR,
+                    typ = Route.TYP_TOCTR,
                     status = _Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
@@ -52,9 +52,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Link
+                var o = await wc.ReadObjectAsync(0, new Route
                 {
-                    typ = Link.TYP_TOMRT,
+                    typ = Route.TYP_TOMRT,
                     created = DateTime.Now,
                     creator = prin.name,
                     ctrid = org.id
@@ -62,7 +62,7 @@ namespace Revital
                 o.name = orgs[o.ptid].name;
 
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO links ").colset(Link.Empty, 0)._VALUES_(Link.Empty, 0);
+                dc.Sql("INSERT INTO links ").colset(Route.Empty, 0)._VALUES_(Route.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -70,15 +70,15 @@ namespace Revital
         }
     }
 
-    [Ui("供应｜关联中转设置")]
-    public class PrvlyLinkWork : LinkWork
+    [Ui("供应｜中转线路设置")]
+    public class PrvlyRouteWork : RouteWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Link.Empty).T(" FROM links WHERE typ = ").T(Link.TYP_TOCTR).T(" AND ptid = @1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Link>(p => p.Set(org.id), 0xff);
+            dc.Sql("SELECT ").collst(Route.Empty).T(" FROM links WHERE typ = ").T(Route.TYP_TOCTR).T(" AND ptid = @1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Route>(p => p.Set(org.id), 0xff);
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -99,9 +99,9 @@ namespace Revital
             var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
-                var o = new Link
+                var o = new Route
                 {
-                    typ = Link.TYP_TOCTR,
+                    typ = Route.TYP_TOCTR,
                     status = _Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
@@ -114,9 +114,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Link
+                var o = await wc.ReadObjectAsync(0, new Route
                 {
-                    typ = Link.TYP_TOCTR,
+                    typ = Route.TYP_TOCTR,
                     created = DateTime.Now,
                     creator = prin.name,
                     ptid = org.id
@@ -124,7 +124,7 @@ namespace Revital
                 o.name = orgs[o.ctrid].name;
 
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO links ").colset(Link.Empty, 0)._VALUES_(Link.Empty, 0);
+                dc.Sql("INSERT INTO links ").colset(Route.Empty, 0)._VALUES_(Route.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

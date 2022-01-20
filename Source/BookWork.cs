@@ -17,8 +17,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -38,8 +38,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -81,7 +81,7 @@ namespace Revital
                         h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
-                        h.SPAN(Product.Typs[o.postg]);
+                        h.SPAN(Product.Typs[o.mrtg]);
                         h.SPAN(_Info.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
@@ -98,9 +98,9 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync<Book_>(0);
+                var o = await wc.ReadObjectAsync<Book>(0);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Book_.Empty, 0)._VALUES_(Book_.Empty, 0);
+                dc.Sql("INSERT INTO buys ").colset(Book.Empty, 0)._VALUES_(Book.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog
@@ -132,8 +132,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book_>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -153,8 +153,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book_.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book_>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }

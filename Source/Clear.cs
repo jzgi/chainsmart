@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Clear : _Info
+    public class Clear : _Info, IKeyable<int>
     {
         public static readonly Clear Empty = new Clear();
 
@@ -18,6 +18,20 @@ namespace Revital
             {TYP_SUPPLY, "供应链"},
         };
 
+        public const short
+            STA_ = 0,
+            STA_APPROVED = 2,
+            STA_PAID = 3;
+
+
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STA_, "新结算"},
+            {STA_APPROVED, "已确认"},
+            {STA_PAID, "已支付"},
+        };
+
+        internal int id;
         internal int orgid;
         internal DateTime dt;
         internal int sprid;
@@ -28,6 +42,10 @@ namespace Revital
         {
             base.Read(s, proj);
 
+            if ((proj & TYP) == TYP)
+            {
+                s.Get(nameof(id), ref id);
+            }
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(dt), ref dt);
             s.Get(nameof(sprid), ref sprid);
@@ -39,11 +57,17 @@ namespace Revital
         {
             base.Write(s, proj);
 
+            if ((proj & TYP) == TYP)
+            {
+                s.Put(nameof(id), id);
+            }
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(dt), dt);
             s.Put(nameof(sprid), sprid);
             s.Put(nameof(count), count);
             s.Put(nameof(amt), amt);
         }
+
+        public int Key => id;
     }
 }

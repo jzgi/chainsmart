@@ -2,9 +2,9 @@
 
 namespace Revital
 {
-    public class Link : _Info
+    public class Route : _Info
     {
-        public static readonly Link Empty = new Link();
+        public static readonly Route Empty = new Route();
 
         public const short
             TYP_TOMRT = 1,

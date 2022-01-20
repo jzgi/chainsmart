@@ -4,7 +4,7 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create type chain_step_type as
+create type act_type as
 (
 	"user" varchar(10),
 	role varchar(10),
@@ -13,7 +13,7 @@ create type chain_step_type as
 	stamp timestamp(0)
 );
 
-alter type chain_step_type owner to postgres;
+alter type act_type owner to postgres;
 
 create table _infos
 (
@@ -109,9 +109,7 @@ create table _deals
 	pay money,
 	cs varchar(32),
 	state smallint,
-	trace chain_step_type[],
-	amt money,
-	fee money
+	trace act_type[]
 )
 inherits (_infos);
 
@@ -181,10 +179,9 @@ create table products
 		constraint products_pk
 			primary key,
 	fillon date,
-	postg smallint,
-	postprice money,
-	rank smallint,
-	icon bytea,
+	mrtg smallint,
+	mrtprice money,
+	rankg smallint,
 	img bytea,
 	cert bytea,
 	constraint products_orgid_fk
@@ -207,24 +204,24 @@ inherits (_articles);
 
 alter table pieces owner to postgres;
 
-create table links
+create table routes
 (
 	ctrid integer
-		constraint links_ctrid_fk
+		constraint routes_ctrid_fk
 			references orgs,
 	ptid integer
-		constraint links_ptid_fk
+		constraint routes_ptid_fk
 			references orgs
 )
 inherits (_infos);
 
-alter table links owner to postgres;
+alter table routes owner to postgres;
 
-create index links_typctrid_idx
-	on links (typ, ctrid);
+create index routes_typctrid_idx
+	on routes (typ, ctrid);
 
-create index links_typptid_idx
-	on links (typ, ptid);
+create index routes_typptid_idx
+	on routes (typ, ptid);
 
 create table peers_
 (
@@ -255,18 +252,6 @@ create table ledgers
 inherits (_infos);
 
 alter table ledgers owner to postgres;
-
-create table clears
-(
-	orgid integer not null,
-	dt date,
-	sprid integer not null,
-	count integer,
-	amt money
-)
-inherits (_infos);
-
-alter table clears owner to postgres;
 
 create table books_
 (
@@ -310,6 +295,21 @@ create table buys
 inherits (_deals);
 
 alter table buys owner to postgres;
+
+create table clears
+(
+	id serial not null
+		constraint clears_pkey
+			primary key,
+	orgid integer not null,
+	dt date,
+	sprid integer not null,
+	count integer,
+	amt money
+)
+inherits (_infos);
+
+alter table clears owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, tel, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,

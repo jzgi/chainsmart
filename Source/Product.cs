@@ -37,9 +37,9 @@ namespace Revital
         internal int id;
 
         internal DateTime fillon;
-        internal short postg;
-        internal decimal postprice;
-        internal short rank;
+        internal short mrtg;
+        internal decimal mrtprice;
+        internal short rankg;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {
@@ -51,9 +51,9 @@ namespace Revital
             }
 
             s.Get(nameof(fillon), ref fillon);
-            s.Get(nameof(postg), ref postg);
-            s.Get(nameof(postprice), ref postprice);
-            s.Get(nameof(rank), ref rank);
+            s.Get(nameof(mrtg), ref mrtg);
+            s.Get(nameof(mrtprice), ref mrtprice);
+            s.Get(nameof(rankg), ref rankg);
         }
 
         public override void Write(ISink s, short proj = 0x0fff)
@@ -65,9 +65,9 @@ namespace Revital
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(fillon), fillon);
-            s.Put(nameof(postg), postg);
-            s.Put(nameof(postprice), postprice);
-            s.Put(nameof(rank), rank);
+            s.Put(nameof(mrtg), mrtg);
+            s.Put(nameof(mrtprice), mrtprice);
+            s.Put(nameof(rankg), rankg);
         }
 
         public int Key => id;
