@@ -8,6 +8,36 @@ namespace Revital
     {
     }
 
+    public class PublyBookWork : OrgWork
+    {
+        public async Task @default(WebContext wc, int code)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE id = @1 LIMIT 1");
+            var o = await dc.QueryTopAsync<Book>(p => p.Set(code));
+            wc.GivePage(200, h =>
+            {
+                if (o == null || o.srcid - o.srcid >= code)
+                {
+                    h.ALERT("编码没有找到");
+                }
+                else
+                {
+                    var plan = GrabObject<short, Product>(o.itemid);
+                    var frm = GrabObject<int, Org>(o.artname);
+                    var ctr = GrabObject<int, Org>(o.artid);
+
+                    h.FORM_();
+                    h.FIELDSUL_("溯源信息");
+                    h.LI_().FIELD("生产户", frm.name);
+                    h.LI_().FIELD("分拣中心", ctr.name);
+                    h._FIELDSUL();
+                    h._FORM();
+                }
+            }, title: "中惠农通溯源系统");
+        }
+    }
+
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("［商户］平台订货")]
     public class BizlyBookWork : BookWork

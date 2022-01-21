@@ -4,7 +4,7 @@ using SkyChain.Web;
 namespace Revital
 {
     /// <summary>
-    /// The home page for mart.
+    /// The home page for markets and businesses therein..
     /// </summary>
     public class RevitalVarWork : WebWork
     {
@@ -36,7 +36,7 @@ namespace Revital
             else if (org.IsBiz)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM posts WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
                 var posts = await dc.QueryAsync<Piece>(p => p.Set(org.id));
                 wc.GivePage(200, h =>
                 {
@@ -47,8 +47,7 @@ namespace Revital
                     h.GRID(posts, o =>
                     {
                         h.HEADER_().T(o.name)._HEADER();
-
-                        h.A_("/post/", o.id, "/", end: true).T(o.name)._A();
+                        h.A_("/piece/", o.id, "/", end: true).T(o.name)._A();
                     });
                 }, title: org.name);
             }

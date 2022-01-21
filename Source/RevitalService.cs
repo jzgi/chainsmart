@@ -13,19 +13,19 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeVarWork<RevitalVarWork>(); // org's home page
+            MakeVarWork<RevitalVarWork>(); // market home page
 
-            MakeWork<PublyPieceWork>("post");
+            MakeWork<PublyPieceWork>("piece");
 
             MakeWork<PublyItemWork>("item");
 
-            MakeWork<PublySrcWork>("code");
+            MakeWork<PublyBookWork>("code");
 
             // management
 
             MakeWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<PrvlyWork>("prvly"); // for source and oroducer
+            MakeWork<PrvlyWork>("prvly"); // for provider and source
 
             MakeWork<CtrlyWork>("ctrly"); // for center
 
@@ -38,61 +38,72 @@ namespace Revital
         {
             var orgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();
+            short regid = wc.Query[nameof(regid)];
             int mrtid = wc.Query[nameof(mrtid)];
             if (cmd == 0)
             {
-                mrtid = wc.Cookies[nameof(mrtid)].ToInt();
                 if (mrtid == 0)
                 {
-                    mrtid = wc.Cookies[nameof(mrtid)].ToShort();
+                    mrtid = wc.Cookies[nameof(mrtid)].ToInt();
                 }
                 wc.GivePane(200, h =>
                 {
                     h.FORM_();
+
+                    // show last-time selected
+                    //
+                    h.TOPBAR_();
                     if (mrtid > 0)
                     {
                         var o = orgs[mrtid];
-                        h.FIELDSUL_("我默认的市场").LI_();
-                        h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, true, tip: o.addr, required: true)._SPAN();
-                        h.SPAN_("uk-badge").A_POI(o.x, o.y, o.name, o.addr)._SPAN();
-                        h._LI()._FIELDSUL();
+                        PutMrt(h, o, true);
                     }
-                    h.FIELDSUL_("选择就近的市场");
+                    h._TOPBAR();
+
+                    // output for selection
+                    //
+                    h.FIELDSUL_();
+                    if (regid == 0)
+                    {
+                        regid = regs.First(v => v.IsDistrict).id;
+                    }
+                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsDistrict, required: true, refresh: true)._LI();
                     bool exist = false;
                     for (int i = 0; i < orgs.Count; i++)
                     {
                         var o = orgs.ValueAt(i);
-                        exist = true;
+                        if (!o.IsMrt || o.regid != regid)
+                        {
+                            continue;
+                        }
                         h.LI_("uk-flex");
-                        h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, false, tip: o.addr, required: true).SP().SP().A_TEL("☏", o.Tel, css: "uk-small")._SPAN();
-                        // h.A_TEL_ICON(o.name, o.Tel);
-                        h.SPAN_("uk-margin-auto-left");
-                        if (o.x > 0 && o.y > 0)
-                        {
-                            h.A_POI(o.x, o.y, o.name, o.addr, o.Tel);
-                        }
-                        else
-                        {
-                            h.T("<span class=\"uk-icon-link uk-inactive\" uk-icon=\"location\"></span>");
-                        }
-                        h._SPAN();
+                        PutMrt(h, o);
                         h._LI();
+                        exist = true;
                     }
                     if (!exist)
                     {
                         h.LI_().T("（暂无市场）")._LI();
                     }
                     h._FIELDSUL();
+
                     h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
                     h._FORM();
                 }, false, 15);
             }
             else if (cmd == 1) // agreement
             {
-                const bool agree = true;
-                var u = mrtid.ToString();
-                wc.SetCookie(nameof(mrtid), mrtid.ToString(), maxage: 3600 * 300);
-                wc.GiveRedirect("/" + u + "/");
+                var mrtidstr = mrtid.ToString();
+                wc.SetCookie(nameof(mrtid), mrtidstr, maxage: 3600 * 300);
+                wc.GiveRedirect(mrtidstr + "/");
+            }
+
+            void PutMrt(HtmlContent h, Org o, bool selected = false)
+            {
+                h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, selected, required: true)._SPAN();
+                h.SPAN_("uk-margin-auto-left");
+                h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
+                h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
             }
         }
 

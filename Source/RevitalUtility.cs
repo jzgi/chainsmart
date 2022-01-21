@@ -40,14 +40,21 @@ namespace Revital
         }
 
 
-        public static HtmlContent A_POI(this HtmlContent h, double x, double y, string title, string addr, string tel = null)
+        public static HtmlContent A_POI(this HtmlContent h, double x, double y, string title, string addr, string tel = null, bool active = true)
         {
-            h.T("<a class=\"uk-icon-link\" uk-icon=\"location\" href=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:").T(y).T(',').T(x).T(";title:").T(title).T(";addr:").T(addr);
-            if (tel != null)
+            if (active)
             {
-                h.T(";tel:").T(tel);
+                h.T("<a class=\"uk-icon-link\" uk-icon=\"location\" href=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:").T(y).T(',').T(x).T(";title:").T(title).T(";addr:").T(addr);
+                if (tel != null)
+                {
+                    h.T(";tel:").T(tel);
+                }
+                h.T("\" onclick=\"return dialog(this,8,false,1,'')\"></a>");
             }
-            h.T("\" onclick=\"return dialog(this,8,false,1,'')\"></a>");
+            else
+            {
+                h.T("<span class=\"uk-icon-link uk-inactive\" uk-icon=\"location\"></span>");
+            }
             return h;
         }
 
