@@ -11,45 +11,42 @@ namespace Revital
 
         public const short
             TYP_AGRI = 1, // agriculture
-            TYP_FACT = 2, // factory
-            TYP_SRVC = 4; // service
+            TYP_SRVC = 2, // service
+            TYP_FACT = 4; // factory
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_AGRI, "农副产"},
-            {TYP_FACT, "工业品"},
-            {TYP_SRVC, "服务类"},
+            {TYP_AGRI, "农副产品"},
+            {TYP_SRVC, "加工服务"},
+            {TYP_FACT, "工业制品"},
         };
 
         // categories
         public static readonly Map<short, string> Cats = new Map<short, string>
         {
-            // agriculture 1-20
+            // agriculture 1-10
             {1, "蔬菜"},
             {2, "瓜果"},
             {3, "粮油"},
-            {4, "副产"},
-            {5, "禽产"},
-            {6, "畜产"},
-            {7, "水产"},
-            {8, "其它"},
-            // factory 21-40
+            {4, "肉蛋"},
+            {5, "水产"},
+            {6, "农资"},
+            {9, "其它"},
+            // process & service 11-20
+            {11, "调养"},
+            {12, "餐品"},
+            {13, "家政"},
+            {14, "养老"},
+            {15, "公益"},
+            {16, "广告"},
+            {19, "其它"},
+            // factory 21-30
             {21, "日用"},
             {22, "家居"},
             {23, "服装"},
             {24, "电器"},
-            {25, "农资"},
-            // service 61-80
-            {61, "调养"},
-            {62, "餐品"},
-            {63, "快餐"},
-            {64, "家政"},
-            {65, "陪护"},
-            {66, "养老"},
-            {67, "公益"},
-            {68, "志愿"},
-            {69, "广告"}
+            {29, "其它"},
         };
 
         public const short
@@ -61,8 +58,6 @@ namespace Revital
         internal short cat;
         internal string unit; // standard unit
         internal string unitip;
-        internal decimal feertl; // fee in retail process
-        internal decimal feesup; // fee in retail process
 
         // must have an icon
 
@@ -79,8 +74,6 @@ namespace Revital
                 s.Get(nameof(cat), ref cat);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitip), ref unitip);
-                s.Get(nameof(feertl), ref feertl);
-                s.Get(nameof(feesup), ref feesup);
             }
         }
 
@@ -97,8 +90,6 @@ namespace Revital
                 s.Put(nameof(cat), cat);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitip), unitip);
-                s.Put(nameof(feertl), feertl);
-                s.Put(nameof(feesup), feesup);
             }
         }
 

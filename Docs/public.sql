@@ -91,8 +91,6 @@ create table items
 	cat smallint,
 	unit varchar(4),
 	unitip varchar(10),
-	feertl money,
-	feesup money,
 	icon bytea
 )
 inherits (_infos);

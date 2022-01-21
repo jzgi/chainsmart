@@ -3500,13 +3500,12 @@ ul.uk-nav-sub {
     font-size: 0.875rem;
     font-weight: bold;
     list-style: none;
-    margin-left: 1rem;
 }
 
 .uk-subnav > * {
     flex: none;
     padding: 2px 0;
-    margin: 0 8px;
+    margin: 0 6px;
     position: relative;
     border: 2px solid transparent;
 }
