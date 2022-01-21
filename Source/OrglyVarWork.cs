@@ -110,11 +110,9 @@ namespace Revital
 
             MakeWork<MrtlyUserWork>("user");
 
-            MakeWork<MrtlyReportWork>("rpt");
+            MakeWork<MrtlyDailyWork>("daily");
 
-            MakeWork<BizlyLedgerWork>("ledger");
-
-            MakeWork<BizlyPieceWork>("peice");
+            MakeWork<BizlyPieceWork>("piece");
 
             MakeWork<BizlyBuyWork>("buy");
 
@@ -123,7 +121,6 @@ namespace Revital
             MakeWork<BizlyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
-
         }
 
         public void @default(WebContext wc)
@@ -166,11 +163,11 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrvlyRouteWork>("link");
+            MakeWork<PrvlyRouteWork>("route");
 
             MakeWork<PrvlyOrgWork>("org");
 
-            MakeWork<PrvlyReportWork>("rpt");
+            MakeWork<PrvlyDailyWork>("daily");
 
             MakeWork<SrclyProductWork>("prod");
 
@@ -215,9 +212,7 @@ namespace Revital
         {
             MakeWork<CtrlyRouteWork>("reach");
 
-            MakeWork<CtrlyReceiveWork>("receive");
-
-            MakeWork<CtrlyAgriBookWork, CtrlyFactBookWork, CtrlySrvcBookWork>("book");
+            MakeWork<CtrlyBookWork>("book");
 
             MakeWork<OrglyClearWork>("clear");
         }

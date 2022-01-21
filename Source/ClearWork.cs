@@ -20,7 +20,7 @@ namespace Revital
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_RETAIL).T(" ORDER BY dt DESC");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY dt DESC");
             var arr = await dc.QueryAsync<Clear>();
             wc.GivePage(200, h =>
             {
@@ -70,7 +70,7 @@ namespace Revital
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_RETAIL).T(" ORDER BY dt DESC");
+                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY dt DESC");
                 var arr = await dc.QueryAsync<Clear>();
                 wc.GivePage(200, h =>
                 {

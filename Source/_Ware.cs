@@ -3,9 +3,9 @@
 namespace Revital
 {
     /// <summary>
-    /// A data model for merchandise article.
+    /// A data model for sellable merchandise.
     /// </summary>
-    public abstract class _Article : _Info
+    public abstract class _Ware : _Info
     {
         public const short
             ORG = 0x0020,

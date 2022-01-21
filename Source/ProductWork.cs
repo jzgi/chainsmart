@@ -17,7 +17,7 @@ namespace Revital
         protected override void OnMake()
         {
             MakeVarWork<SrclyProductVarWork>();
-        }
+        } 
 
         [Ui("现货", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)

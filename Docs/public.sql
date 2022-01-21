@@ -123,7 +123,7 @@ create table userlgs
 
 alter table userlgs owner to postgres;
 
-create table _articles
+create table _wares
 (
 	orgid integer,
 	itemid integer,
@@ -139,7 +139,7 @@ create table _articles
 )
 inherits (_infos);
 
-alter table _articles owner to postgres;
+alter table _wares owner to postgres;
 
 create table orgs
 (
@@ -189,7 +189,7 @@ create table products
 	constraint products_itemid_fk
 		foreign key (itemid) references items
 )
-inherits (_articles);
+inherits (_wares);
 
 alter table products owner to postgres;
 
@@ -200,7 +200,7 @@ create table pieces
 			primary key,
 	productid integer
 )
-inherits (_articles);
+inherits (_wares);
 
 alter table pieces owner to postgres;
 
@@ -241,17 +241,18 @@ inherits (_infos);
 
 alter table peers_ owner to postgres;
 
-create table ledgers
+create table dailys
 (
 	orgid integer,
 	dt date,
 	itemid smallint,
-	arcv numeric,
-	apay money
+	count integer,
+	amt money,
+	qty integer
 )
 inherits (_infos);
 
-alter table ledgers owner to postgres;
+alter table dailys owner to postgres;
 
 create table books_
 (

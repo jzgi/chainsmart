@@ -24,8 +24,8 @@ namespace Revital
                 else
                 {
                     var plan = GrabObject<short, Product>(o.itemid);
-                    var frm = GrabObject<int, Org>(o.artname);
-                    var ctr = GrabObject<int, Org>(o.artid);
+                    var frm = GrabObject<int, Org>(o.warename);
+                    var ctr = GrabObject<int, Org>(o.wareid);
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");
@@ -138,17 +138,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("供应｜销售及分拣", "sign-out")]
-    public abstract class PrvlyBookWork : BookWork
-    {
-        [Ui("当前", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-        }
-    }
-
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     [Ui("产源｜订货管理")]
     public class SrclyBookWork : BookWork
     {
@@ -164,7 +154,6 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
-
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -191,17 +180,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("中转｜收货管理", "sign-in")]
-    public class CtrlyReceiveWork : BookWork
-    {
-        [Ui("当前", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    public abstract class CtrlyBookWork : BookWork
+    public class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -274,25 +253,5 @@ namespace Revital
                 h._MAIN();
             });
         }
-    }
-
-
-    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_AGRI)]
-    public class CtrlyAgriBookWork : CtrlyBookWork
-    {
-        protected override void OnMake()
-        {
-            MakeVarWork<CtrlyAgriBookVarWork>();
-        }
-    }
-
-    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_FACT)]
-    public class CtrlyFactBookWork : CtrlyBookWork
-    {
-    }
-
-    [Ui("中转｜分拣管理", "sign-out", fork: Item.TYP_SRVC)]
-    public class CtrlySrvcBookWork : CtrlyBookWork
-    {
     }
 }

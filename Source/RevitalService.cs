@@ -38,14 +38,17 @@ namespace Revital
         {
             var orgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();
+
             short regid = wc.Query[nameof(regid)];
             int mrtid = wc.Query[nameof(mrtid)];
+
             if (cmd == 0)
             {
                 if (mrtid == 0)
                 {
                     mrtid = wc.Cookies[nameof(mrtid)].ToInt();
                 }
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_();
@@ -93,9 +96,9 @@ namespace Revital
             }
             else if (cmd == 1) // agreement
             {
-                var mrtidstr = mrtid.ToString();
-                wc.SetCookie(nameof(mrtid), mrtidstr, maxage: 3600 * 300);
-                wc.GiveRedirect(mrtidstr + "/");
+                wc.SetCookie(nameof(mrtid), mrtid.ToString(), maxage: 3600 * 300);
+
+                wc.GiveRedirect(mrtid + "/");
             }
 
             void PutMrt(HtmlContent h, Org o, bool selected = false)

@@ -30,8 +30,8 @@ namespace Revital
 
         // item
         internal short itemid;
-        internal int artid;
-        internal int artname;
+        internal int wareid;
+        internal int warename;
         internal decimal price;
         internal int qty;
         internal decimal pay;
@@ -47,8 +47,8 @@ namespace Revital
             if ((proj & ITEM) == ITEM)
             {
                 s.Get(nameof(itemid), ref itemid);
-                s.Get(nameof(artid), ref artid);
-                s.Get(nameof(artname), ref artname);
+                s.Get(nameof(wareid), ref wareid);
+                s.Get(nameof(warename), ref warename);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(qty), ref qty);
             }
@@ -71,8 +71,8 @@ namespace Revital
             if ((proj & ITEM) == ITEM)
             {
                 s.Put(nameof(itemid), itemid);
-                s.Put(nameof(artid), artid);
-                s.Put(nameof(artname), artname);
+                s.Put(nameof(wareid), wareid);
+                s.Put(nameof(warename), warename);
                 s.Put(nameof(price), price);
                 s.Put(nameof(qty), qty);
             }

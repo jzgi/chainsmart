@@ -8,14 +8,14 @@ namespace Revital
         public static readonly Clear Empty = new Clear();
 
         public const short
-            TYP_RETAIL = 1,
-            TYP_SUPPLY = 2;
+            TYP_BUY = 1,
+            TYP_BOOK = 2;
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_RETAIL, "零售"},
-            {TYP_SUPPLY, "供应链"},
+            {TYP_BUY, "零售"},
+            {TYP_BOOK, "订货"},
         };
 
         public const short
@@ -37,6 +37,7 @@ namespace Revital
         internal int sprid;
         internal short count;
         internal decimal amt;
+        internal int qty;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {
@@ -51,6 +52,7 @@ namespace Revital
             s.Get(nameof(sprid), ref sprid);
             s.Get(nameof(count), ref count);
             s.Get(nameof(amt), ref amt);
+            s.Get(nameof(qty), ref qty);
         }
 
         public override void Write(ISink s, short proj = 0x0fff)
@@ -66,6 +68,7 @@ namespace Revital
             s.Put(nameof(sprid), sprid);
             s.Put(nameof(count), count);
             s.Put(nameof(amt), amt);
+            s.Put(nameof(qty), qty);
         }
 
         public int Key => id;

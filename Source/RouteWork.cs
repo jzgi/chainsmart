@@ -8,7 +8,7 @@ namespace Revital
     {
     }
 
-    [Ui("中转｜市场线路设置")]
+    [Ui("中转｜配送市场关联")]
     public class CtrlyRouteWork : RouteWork
     {
         public async Task @default(WebContext wc)
@@ -70,14 +70,14 @@ namespace Revital
         }
     }
 
-    [Ui("供应｜中转线路设置")]
+    [Ui("供应｜控配中心关联")]
     public class PrvlyRouteWork : RouteWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Route.Empty).T(" FROM links WHERE typ = ").T(Route.TYP_TOCTR).T(" AND ptid = @1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Route.Empty).T(" FROM routes WHERE typ = ").T(Route.TYP_TOCTR).T(" AND ptid = @1 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Route>(p => p.Set(org.id), 0xff);
             wc.GivePage(200, h =>
             {
