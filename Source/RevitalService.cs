@@ -261,7 +261,7 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Deal.STA_CREATED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Info.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
@@ -305,7 +305,7 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Deal.STA_CREATED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Info.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {

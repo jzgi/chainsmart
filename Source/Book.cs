@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Book : _Deal, IKeyable<long>
+    public class Book : _Info, IKeyable<long>
     {
         public static readonly Book Empty = new Book();
 
@@ -31,6 +31,17 @@ namespace Revital
         internal int srcid;
         internal string srcname;
 
+        internal int wareid;
+        internal string warename;
+        internal short itemid;
+        internal decimal price;
+        internal short qty;
+        internal decimal pay;
+        
+        internal string cs;
+        internal short state;
+        internal Act[] trace;
+
         internal short peerid_;
         internal long coid_;
         internal long seq_;
@@ -56,6 +67,17 @@ namespace Revital
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(srcname), ref srcname);
 
+            s.Get(nameof(wareid), ref wareid);
+            s.Get(nameof(warename), ref warename);
+            s.Get(nameof(itemid), ref itemid);
+            s.Get(nameof(price), ref price);
+            s.Get(nameof(qty), ref qty);
+            s.Get(nameof(pay), ref pay);
+
+            s.Get(nameof(cs), ref cs);
+            s.Get(nameof(state), ref state);
+            s.Get(nameof(trace), ref trace);
+            
             s.Get(nameof(peerid_), ref peerid_);
             s.Get(nameof(coid_), ref coid_);
             s.Get(nameof(seq_), ref seq_);
@@ -81,6 +103,12 @@ namespace Revital
             s.Put(nameof(prvname), prvname);
             s.Put(nameof(srcid), srcid);
             s.Put(nameof(srcname), srcname);
+
+            s.Put(nameof(wareid), wareid);
+            s.Put(nameof(warename), warename);
+            s.Put(nameof(itemid), itemid);
+            s.Put(nameof(price), price);
+            s.Put(nameof(qty), qty);
 
             s.Put(nameof(peerid_), peerid_);
             s.Put(nameof(coid_), coid_);

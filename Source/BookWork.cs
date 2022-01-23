@@ -24,7 +24,7 @@ namespace Revital
                 else
                 {
                     var plan = GrabObject<short, Product>(o.itemid);
-                    var frm = GrabObject<int, Org>(o.warename);
+                    var frm = GrabObject<int, Org>(o.wareid);
                     var ctr = GrabObject<int, Org>(o.wareid);
 
                     h.FORM_();
@@ -56,7 +56,7 @@ namespace Revital
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD(items[o.itemid].name);
+                    // h.TD(items[o.itemid].name);
                     h.TD(o.ctrid);
                     h.TDFORM(() => { });
                 });
@@ -77,7 +77,7 @@ namespace Revital
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD(items[o.itemid].name);
+                    // h.TD(items[o.itemid].name);
                     h.TD(o.ctrid);
                     h.TDFORM(() => { });
                 });
@@ -162,7 +162,7 @@ namespace Revital
                 {
                     h.TDCHECK(o.Key);
                     h.TD(o.bizname);
-                    h.TD(o.qty);
+                    // h.TD(o.qty);
                 });
             });
         }
@@ -180,6 +180,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
+    [Ui("控配｜质控配送操作")]
     public class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]

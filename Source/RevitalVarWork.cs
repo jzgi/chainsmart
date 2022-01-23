@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using SkyChain;
 using SkyChain.Web;
 
 namespace Revital
@@ -8,29 +9,32 @@ namespace Revital
     /// </summary>
     public class RevitalVarWork : WebWork
     {
-        public async Task @default(WebContext wc, int cur)
+        public async Task @default(WebContext wc, int sect)
         {
             int orgid = wc[0];
             var org = GrabObject<int, Org>(orgid);
             var regs = Grab<short, Reg>();
+
             if (org.IsMrt)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND regid = @2 AND status > 0 ORDER BY addr");
-                var bizs = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(cur));
+                var bizs = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sect));
+                if (sect == 0) // when default sect
+                {
+                    wc.Subscript = sect = 99;
+                    bizs = bizs.AddOf(org); // append the supervising market
+                }
                 wc.GivePage(200, h =>
                 {
-                    h.TOPBAR_().SUBNAV(regs, string.Empty, cur, filter: (k, v) => v.typ == Reg.TYP_SECT);
+                    h.TOPBAR_().SUBNAV(regs, string.Empty, sect, filter: (k, v) => v.typ == Reg.TYP_SECT);
                     h.T("<button class=\"uk-icon-button uk-circle uk-margin-left-auto\" formaction=\"search\" onclick=\"return dialog(this,8,false,4,'&#x1f6d2; 按厨坊下单')\"><span uk-icon=\"search\"></span></button>");
                     h._TOPBAR();
-                    if (bizs != null)
+                    h.GRID(bizs, o =>
                     {
-                        h.GRID(bizs, o =>
-                        {
-                            h.HEADER_("uk-card-header").T(o.name)._HEADER();
-                            h.A_("/", o.id, "/", end: true).T(o.name)._A();
-                        }, width: 2);
-                    }
+                        h.HEADER_("uk-card-header").T(o.name)._HEADER();
+                        h.ADIALOG_("/", o.id, "/", 8, false, Appear.Large).T(o.name)._A();
+                    }, width: 2);
                 }, title: org.name);
             }
             else if (org.IsBiz)

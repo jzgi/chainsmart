@@ -24,18 +24,17 @@ namespace Revital
                 wc.GivePage(200, h =>
                 {
                     h.TABLE(arr, o =>
+                    {
+                        h.TD(o.name);
+                        h.TD(o.tel);
+                        h.TD(User.Orgly[o.orgly]);
+                        h.TDFORM(() =>
                         {
-                            h.TD(o.name);
-                            h.TD(o.tel);
-                            h.TD(User.Orgly[o.orgly]);
-                            h.TDFORM(() =>
-                            {
-                                h.HIDDEN(nameof(id), o.id);
-                                h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
-                            });
-                        },
-                        caption: "现有操作权限"
-                    );
+                            h.HIDDEN(nameof(id), o.id);
+                            h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
+                        });
+                    }, caption: "现有操作权限");
+
                     h.FORM_().FIELDSUL_("授权目标用户");
                     if (cmd == 0)
                     {
@@ -163,8 +162,6 @@ namespace Revital
     {
         protected override void OnMake()
         {
-            MakeWork<PrvlyRouteWork>("route");
-
             MakeWork<PrvlyOrgWork>("org");
 
             MakeWork<PrvlyDailyWork>("daily");
@@ -205,7 +202,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中转操作")]
+    [Ui("控配中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
         protected override void OnMake()
@@ -213,8 +210,6 @@ namespace Revital
             MakeWork<CtrlyRouteWork>("reach");
 
             MakeWork<CtrlyBookWork>("book");
-
-            MakeWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)

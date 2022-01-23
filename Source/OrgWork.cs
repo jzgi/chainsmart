@@ -241,7 +241,7 @@ namespace Revital
                     }
                     h.TR_();
                     h.TDCHECK(o.id);
-                    h.TD_().AVAR(o.Key, o.name).SP().ADIALOG__("/prvly/", o.id, "/?astack=true", 8, false, Appear.Full).T("代办")._A()._TD();
+                    h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/prvly/", o.id, "/?astack=true", 8, false, Appear.Full).T("代办")._A()._TD();
                     h.TD(_Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
