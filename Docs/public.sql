@@ -15,6 +15,18 @@ create type act_type as
 
 alter type act_type owner to postgres;
 
+create type buyware_type as
+(
+	wareid integer,
+	warename varchar(20),
+	itemid smallint,
+	price money,
+	qty smallint,
+	total money
+);
+
+alter type buyware_type owner to postgres;
+
 create table _infos
 (
 	typ smallint not null,
@@ -28,37 +40,6 @@ create table _infos
 );
 
 alter table _infos owner to postgres;
-
-create table users
-(
-	id serial not null
-		constraint users_pk
-			primary key,
-	tel varchar(11) not null,
-	im varchar(28),
-	credential varchar(32),
-	admly smallint default 0 not null,
-	orgid smallint,
-	orgly smallint default 0 not null,
-	idcard varchar(18)
-)
-inherits (_infos);
-
-alter table users owner to postgres;
-
-create index users_admly_idx
-	on users (admly)
-	where (admly > 0);
-
-create unique index users_im_idx
-	on users (im);
-
-create index users_orgid_idx
-	on users (orgid)
-	where (orgid > 0);
-
-create unique index users_tel_idx
-	on users (tel);
 
 create table regs
 (
@@ -96,22 +77,6 @@ create table items
 inherits (_infos);
 
 alter table items owner to postgres;
-
-create table _deals
-(
-	itemid integer,
-	artid integer,
-	artname integer,
-	price money,
-	qty smallint,
-	pay money,
-	cs varchar(32),
-	state smallint,
-	trace act_type[]
-)
-inherits (_infos);
-
-alter table _deals owner to postgres;
 
 create table userlgs
 (
@@ -155,21 +120,48 @@ create table orgs
 	addr varchar(30),
 	x double precision,
 	y double precision,
-	mgrid integer
-		constraint orgs_mgrid_fk
-			references users,
+	tel varchar(11),
 	rank smallint,
-	icon bytea,
-	cert bytea,
-	tel varchar(11)
+	emblem varchar(10),
+	mgrid integer,
+	cert bytea
 )
 inherits (_infos);
 
 alter table orgs owner to postgres;
 
-alter table users
-	add constraint users_orgid_fk
-		foreign key (orgid) references orgs;
+create table users
+(
+	id serial not null
+		constraint users_pk
+			primary key,
+	tel varchar(11) not null,
+	im varchar(28),
+	credential varchar(32),
+	admly smallint default 0 not null,
+	orgid smallint
+		constraint users_orgid_fk
+			references orgs,
+	orgly smallint default 0 not null,
+	idcard varchar(18)
+)
+inherits (_infos);
+
+alter table users owner to postgres;
+
+create index users_admly_idx
+	on users (admly)
+	where (admly > 0);
+
+create unique index users_im_idx
+	on users (im);
+
+create index users_orgid_idx
+	on users (orgid)
+	where (orgid > 0);
+
+create unique index users_tel_idx
+	on users (tel);
 
 create table products
 (
@@ -252,49 +244,6 @@ inherits (_infos);
 
 alter table dailys owner to postgres;
 
-create table books_
-(
-	id bigserial not null
-		constraint books_pk
-			primary key,
-	bizid integer not null,
-	bizname varchar(10),
-	mrtid integer not null,
-	mrtname varchar(10),
-	ctrid integer not null,
-	ctrname varchar(10),
-	prvid integer not null,
-	prvname varchar(10),
-	srcid integer not null,
-	srcname varchar(10),
-	peerid_ smallint,
-	coid_ bigint,
-	seq_ integer,
-	cs_ varchar(32),
-	blockcs_ varchar(32)
-)
-inherits (_deals);
-
-alter table books_ owner to postgres;
-
-create table buys
-(
-	id bigserial not null
-		constraint buys_pk
-			primary key,
-	bizid integer not null,
-	bizname varchar(10),
-	mrtid integer not null,
-	mrtname varchar(10),
-	uid integer not null,
-	uname varchar(10),
-	utel varchar(11),
-	uim varchar(28)
-)
-inherits (_deals);
-
-alter table buys owner to postgres;
-
 create table clears
 (
 	id serial not null
@@ -310,7 +259,65 @@ inherits (_infos);
 
 alter table clears owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, rank, license, trust, regid, addr, tel, x, y, mgrid, mgrname, mgrtel, mgrim, icon) as
+create table books_
+(
+	id bigserial not null
+		constraint books_pk
+			primary key,
+	bizid integer not null,
+	bizname varchar(10),
+	mrtid integer not null,
+	mrtname varchar(10),
+	ctrid integer not null,
+	ctrname varchar(10),
+	prvid integer not null,
+	prvname varchar(10),
+	srcid integer not null,
+	srcname varchar(10),
+	itemid integer,
+	wareid integer,
+	warename integer,
+	price money,
+	qty smallint,
+	fee money,
+	pay money,
+	cs varchar(32),
+	state smallint,
+	trace act_type[],
+	peerid_ smallint,
+	coid_ bigint,
+	seq_ integer,
+	cs_ varchar(32),
+	blockcs_ varchar(32)
+)
+inherits (_infos);
+
+alter table books_ owner to postgres;
+
+create table buys
+(
+	id bigserial not null
+		constraint buys_pk
+			primary key,
+	bizid integer not null,
+	bizname varchar(10),
+	mrtid integer not null,
+	mrtname varchar(10),
+	uid integer not null,
+	uname varchar(10),
+	utel varchar(11),
+	uaddr varchar(20),
+	uim varchar(28),
+	totalp money,
+	fee money,
+	pay money,
+	wares buyware_type[]
+)
+inherits (_infos);
+
+alter table buys owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, rank, emblem, mgrid, mgrname, mgrtel, mgrim, cert) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -322,19 +329,20 @@ SELECT o.typ,
        o.id,
        o.fork,
        o.sprid,
-       o.rank,
        o.license,
        o.trust,
        o.regid,
        o.addr,
-       o.tel,
        o.x,
        o.y,
+       o.tel,
+       o.rank,
+       o.emblem,
        o.mgrid,
        m.name             AS mgrname,
        m.tel              AS mgrtel,
        m.im               AS mgrim,
-       o.icon IS NOT NULL AS icon
+       o.cert IS NOT NULL AS cert
 FROM orgs o
          LEFT JOIN users m
                    ON o.mgrid =

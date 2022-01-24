@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Store;
 using SkyChain.Web;
 
 namespace Revital
@@ -23,13 +23,13 @@ namespace Revital
 
             MakeWork<AdmlyUserWork>("user");
 
-            MakeWork<ChainWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            MakeWork<FedWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
         }
 
         public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var o = Chain.Info;
+            var o = Home.Info;
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(caption: prin.name + "（" + wc.Role + "）");

@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Store;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 
 namespace Revital
 {
     [UserAuthenticate]
-    public class RevitalService : ChainService
+    public class RevitalService : FedService
     {
         protected override void OnMake()
         {

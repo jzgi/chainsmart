@@ -1,5 +1,6 @@
 using System;
 using SkyChain;
+using SkyChain.Store;
 
 namespace Revital
 {
@@ -37,7 +38,7 @@ namespace Revital
         internal decimal price;
         internal short qty;
         internal decimal pay;
-        
+
         internal string cs;
         internal short state;
         internal Act[] trace;
@@ -77,7 +78,7 @@ namespace Revital
             s.Get(nameof(cs), ref cs);
             s.Get(nameof(state), ref state);
             s.Get(nameof(trace), ref trace);
-            
+
             s.Get(nameof(peerid_), ref peerid_);
             s.Get(nameof(coid_), ref coid_);
             s.Get(nameof(seq_), ref seq_);

@@ -33,6 +33,7 @@ namespace Revital
         internal decimal totalp;
         internal decimal fee;
         internal decimal pay;
+        internal BuyWare[] wares;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {
@@ -51,6 +52,7 @@ namespace Revital
             s.Get(nameof(totalp), ref totalp);
             s.Get(nameof(fee), ref fee);
             s.Get(nameof(pay), ref pay);
+            s.Get(nameof(wares), ref wares);
         }
 
         public override void Write(ISink s, short proj = 0x0fff)
@@ -71,6 +73,7 @@ namespace Revital
             s.Put(nameof(totalp), totalp);
             s.Put(nameof(fee), fee);
             s.Put(nameof(pay), pay);
+            s.Put(nameof(wares), wares);
         }
 
         public long Key => id;

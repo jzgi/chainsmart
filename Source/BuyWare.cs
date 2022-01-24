@@ -2,16 +2,17 @@
 
 namespace Revital
 {
-    public class BuyLn : IData
+    public class BuyWare : IData
     {
         public static readonly Buy Empty = new Buy();
 
-        internal long buyid;
-        internal int wareid;
-        internal string warename;
-        internal short itemid;
-        internal decimal price;
-        internal short qty;
+        public long buyid;
+        public int wareid;
+        public string warename;
+        public short itemid;
+        public decimal price;
+        public short qty;
+        public decimal total;
 
         public void Read(ISource s, short proj = 0x0fff)
         {

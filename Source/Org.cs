@@ -69,13 +69,14 @@ namespace Revital
         // own
         internal string tel;
         internal bool trust;
+        internal string emblem;
 
         // later
         internal int mgrid;
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal bool icon;
+        internal bool cert;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {
@@ -103,6 +104,7 @@ namespace Revital
             {
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(trust), ref trust);
+                s.Get(nameof(emblem), ref emblem);
             }
             if ((proj & LATER) == LATER)
             {
@@ -110,7 +112,7 @@ namespace Revital
                 s.Get(nameof(mgrname), ref mgrname);
                 s.Get(nameof(mgrtel), ref mgrtel);
                 s.Get(nameof(mgrim), ref mgrim);
-                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(cert), ref cert);
             }
         }
 
@@ -129,25 +131,30 @@ namespace Revital
             if (sprid > 0) s.Put(nameof(sprid), sprid);
             else s.PutNull(nameof(sprid));
 
-            s.Put(nameof(rank), rank);
-            s.Put(nameof(license), license);
-            s.Put(nameof(trust), trust);
-
-            if (regid > 0) s.Put(nameof(regid), regid);
-            else s.PutNull(nameof(regid));
-
-            s.Put(nameof(addr), addr);
-            s.Put(nameof(tel), tel);
-            s.Put(nameof(x), x);
-            s.Put(nameof(y), y);
-
+            if ((proj & BASIC) == BASIC)
+            {
+                s.Put(nameof(fork), fork);
+                s.Put(nameof(rank), rank);
+                s.Put(nameof(license), license);
+                if (regid > 0) s.Put(nameof(regid), regid);
+                else s.PutNull(nameof(regid));
+                s.Put(nameof(addr), addr);
+                s.Put(nameof(x), x);
+                s.Put(nameof(y), y);
+            }
+            if ((proj & OWN) == OWN)
+            {
+                s.Put(nameof(tel), tel);
+                s.Put(nameof(trust), trust);
+                s.Put(nameof(emblem), emblem);
+            }
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
                 s.Put(nameof(mgrname), mgrname);
                 s.Put(nameof(mgrtel), mgrtel);
                 s.Put(nameof(mgrim), mgrim);
-                s.Put(nameof(icon), icon);
+                s.Put(nameof(cert), cert);
             }
         }
 
