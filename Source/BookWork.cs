@@ -142,9 +142,9 @@ namespace Revital
     [Ui("产源｜订货管理")]
     public class SrclyBookWork : BookWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<SrclyBookVarWork>();
+            CreateVarWork<SrclyBookVarWork>();
         }
 
         [Ui("当前订货"), Tool(Anchor)]

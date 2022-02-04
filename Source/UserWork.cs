@@ -12,9 +12,9 @@ namespace Revital
     [Ui("平台｜用户管理")]
     public class AdmlyUserWork : UserWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<AdmlyUserVarWork>();
+            CreateVarWork<AdmlyUserVarWork>();
         }
 
         [Ui("浏览", group: 1), Tool(Anchor)]
@@ -90,9 +90,9 @@ namespace Revital
     [Ui("［市场］客群管理")]
     public class MrtlyUserWork : UserWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<MrtlyUserVarWork>();
+            CreateVarWork<MrtlyUserVarWork>();
         }
 
         [Ui("浏览", group: 1), Tool(Anchor)]

@@ -9,29 +9,29 @@ using static Revital.WeChatUtility;
 namespace Revital
 {
     [UserAuthenticate]
-    public class RevitalService : FedService
+    public class MainService : FedService
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<RevitalVarWork>(); // market home page
+            CreateVarWork<RevitalVarWork>(); // market home page
 
-            MakeWork<PublyPieceWork>("piece");
+            CreateWork<PublyPieceWork>("piece");
 
-            MakeWork<PublyItemWork>("item");
+            CreateWork<PublyItemWork>("item");
 
-            MakeWork<PublyBookWork>("code");
+            CreateWork<PublyBookWork>("code");
 
             // management
 
-            MakeWork<AdmlyWork>("admly"); // platform admin
+            CreateWork<AdmlyWork>("admly"); // platform admin
 
-            MakeWork<PrvlyWork>("prvly"); // for provider and source
+            CreateWork<PrvlyWork>("prvly"); // for provider and source
 
-            MakeWork<CtrlyWork>("ctrly"); // for center
+            CreateWork<CtrlyWork>("ctrly"); // for center
 
-            MakeWork<MrtlyWork>("mrtly"); // for market and biz
+            CreateWork<MrtlyWork>("mrtly"); // for market and biz
 
-            MakeWork<MyWork>("my");
+            CreateWork<MyWork>("my");
         }
 
         public void @default(WebContext wc, int cmd)

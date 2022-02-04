@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class BuyWare : IData
+    public class WareLn : IData
     {
         public static readonly Buy Empty = new Buy();
 

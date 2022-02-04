@@ -14,9 +14,9 @@ namespace Revital
     [Ui("产源｜产品管理")]
     public class SrclyProductWork : ProductWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<SrclyProductVarWork>();
+            CreateVarWork<SrclyProductVarWork>();
         } 
 
         [Ui("现货", group: 1), Tool(Anchor)]

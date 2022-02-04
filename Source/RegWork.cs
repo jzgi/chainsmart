@@ -14,9 +14,9 @@ namespace Revital
     [Ui("平台｜地理区域设置")]
     public class AdmlyRegWork : RegWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<AdmlyRegVarWork>();
+            CreateVarWork<AdmlyRegVarWork>();
         }
 
         [Ui("省份", group: 1), Tool(Anchor)]
@@ -57,7 +57,7 @@ namespace Revital
             });
         }
 
-        [Ui("场区", group: 4), Tool(Anchor)]
+        [Ui("场地", group: 4), Tool(Anchor)]
         public void sect(WebContext wc)
         {
             wc.GivePage(200, h =>

@@ -9,11 +9,24 @@ namespace Revital
     {
     }
 
+    [UserAuthorize(admly: User.ADMLY_)]
+    [Ui("平台｜交易日报")]
+    public class AdmlyDailyWork : DailyWork
+    {
+        protected override void OnCreate()
+        {
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
+
     [UserAuthorize(Org.TYP_MRT, User.ORGLY_)]
     [Ui("市场｜交易日报")]
     public class MrtlyDailyWork : DailyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
         }
 
@@ -70,7 +83,7 @@ namespace Revital
     [Ui("供应｜交易日报")]
     public class PrvlyDailyWork : DailyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
         }
 

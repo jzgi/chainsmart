@@ -18,13 +18,33 @@ namespace Revital
         /// </summary>
         public static async Task Main(string[] args)
         {
-            CacheUp();
-
             // start the concluder thead
             // cycler.Start();
 
-            // web
-            MakeService<RevitalService>("main");
+            if (args.Length == 0 || args.Contains("main"))
+            {
+                CacheUp();
+
+                CreateService<MainService>("main");
+            }
+            else
+            {
+                if (args.Contains("biz"))
+                {
+                    CreateService<ProxyService>("biz");
+                }
+
+                if (args.Contains("img"))
+                {
+                    CreateService<ProxyService>("img");
+                }
+
+                if (args.Contains("msg"))
+                {
+                    CreateService<ProxyService>("msg");
+                }
+            }
+
             await StartAsync();
         }
 

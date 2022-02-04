@@ -10,9 +10,9 @@ namespace Revital
     [Ui("账号信息")]
     public class MyVarWork : WebWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeWork<MyBuyWork>("buy");
+            CreateWork<MyBuyWork>("buy");
         }
 
         [UserAuthorize]

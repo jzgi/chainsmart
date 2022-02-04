@@ -33,7 +33,7 @@ namespace Revital
         internal decimal totalp;
         internal decimal fee;
         internal decimal pay;
-        internal BuyWare[] wares;
+        internal WareLn[] wares;
 
         public override void Read(ISource s, short proj = 0x0fff)
         {

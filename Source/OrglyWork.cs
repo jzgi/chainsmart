@@ -12,10 +12,10 @@ namespace Revital
     /// </summary>
     public class PrvlyWork : OrglyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             // id of either current user or the specified
-            MakeVarWork<PrvlyVarWork>((prin, key) =>
+            CreateVarWork<PrvlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -30,10 +30,10 @@ namespace Revital
     /// </summary>
     public class CtrlyWork : OrglyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             // id of either current user or the specified
-            MakeVarWork<CtrlyVarWork>((prin, key) =>
+            CreateVarWork<CtrlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -48,10 +48,10 @@ namespace Revital
     /// </summary>
     public class MrtlyWork : OrglyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             // id of either current user or the specified
-            MakeVarWork<MrtlyVarWork>((prin, key) =>
+            CreateVarWork<MrtlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);

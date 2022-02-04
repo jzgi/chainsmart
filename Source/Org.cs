@@ -69,7 +69,6 @@ namespace Revital
         // own
         internal string tel;
         internal bool trust;
-        internal string emblem;
 
         // later
         internal int mgrid;
@@ -104,7 +103,6 @@ namespace Revital
             {
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(trust), ref trust);
-                s.Get(nameof(emblem), ref emblem);
             }
             if ((proj & LATER) == LATER)
             {
@@ -146,7 +144,6 @@ namespace Revital
             {
                 s.Put(nameof(tel), tel);
                 s.Put(nameof(trust), trust);
-                s.Put(nameof(emblem), emblem);
             }
             if ((proj & LATER) == LATER)
             {

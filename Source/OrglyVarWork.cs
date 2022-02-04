@@ -8,7 +8,7 @@ namespace Revital
     {
         [UserAuthorize(orgly: 15)]
         [Ui("操作权限"), Tool(Modal.ButtonOpen)]
-        public async Task access(WebContext wc, int cmd)
+        public async Task acl(WebContext wc, int cmd)
         {
             var org = wc[0].As<Org>();
             short orgly = 0;
@@ -31,14 +31,14 @@ namespace Revital
                         h.TDFORM(() =>
                         {
                             h.HIDDEN(nameof(id), o.id);
-                            h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
+                            h.TOOL(nameof(acl), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
                         });
                     }, caption: "现有操作权限");
 
                     h.FORM_().FIELDSUL_("授权目标用户");
                     if (cmd == 0)
                     {
-                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
+                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(acl), 1, post: false, css: "uk-button-secondary")._LI();
                     }
                     else if (cmd == 1) // search user
                     {
@@ -47,10 +47,10 @@ namespace Revital
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
-                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
+                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(acl), 1, post: false, css: "uk-button-secondary")._LI();
                             h.LI_().FIELD("用户姓名", o.name)._LI();
                             h.LI_().SELECT("权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0, required: true)._LI();
-                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(access), 2)._LI();
+                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(acl), 2)._LI();
                             h.HIDDEN(nameof(o.id), o.id);
                         }
                     }
@@ -63,7 +63,7 @@ namespace Revital
                 id = f[nameof(id)];
                 orgly = f[nameof(orgly)];
                 dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(org.id).Set(orgly).Set(id));
-                wc.GiveRedirect(nameof(access)); // ok
+                wc.GiveRedirect(nameof(acl)); // ok
             }
         }
 
@@ -103,23 +103,25 @@ namespace Revital
 #endif
     public class MrtlyVarWork : OrglyVarWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeWork<MrtlyOrgWork>("org");
+            CreateWork<MrtlyOrgWork>("org");
 
-            MakeWork<MrtlyUserWork>("user");
+            CreateWork<MrtlyUserWork>("user");
 
-            MakeWork<MrtlyDailyWork>("daily");
+            CreateWork<MrtlyDailyWork>("daily");
 
-            MakeWork<BizlyPieceWork>("piece");
+            CreateWork<BizlyPieceWork>("piece");
 
-            MakeWork<BizlyBuyWork>("buy");
+            CreateWork<BizlyBuyWork>("buy");
 
-            MakeWork<BizlyShopWork>("shop");
+            CreateWork<BizlyShopWork>("shop");
 
-            MakeWork<BizlyBookWork>("book");
+            CreateWork<BizlyBookWork>("book");
 
-            MakeWork<OrglyClearWork>("clear");
+            CreateWork<OrglyClearWork>("clear");
+            
+            // CreateWork<OrglyMsgWork>("msg");
         }
 
         public void @default(WebContext wc)
@@ -160,17 +162,17 @@ namespace Revital
     [Ui("产供端操作")]
     public class PrvlyVarWork : OrglyVarWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeWork<PrvlyOrgWork>("org");
+            CreateWork<PrvlyOrgWork>("org");
 
-            MakeWork<PrvlyDailyWork>("daily");
+            CreateWork<PrvlyDailyWork>("daily");
 
-            MakeWork<SrclyProductWork>("prod");
+            CreateWork<SrclyProductWork>("prod");
 
-            MakeWork<SrclyBookWork>("book");
+            CreateWork<SrclyBookWork>("book");
 
-            MakeWork<OrglyClearWork>("clear");
+            CreateWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)
@@ -205,11 +207,11 @@ namespace Revital
     [Ui("控配中心操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeWork<CtrlyRouteWork>("reach");
+            CreateWork<CtrlyWayWork>("way");
 
-            MakeWork<CtrlyBookWork>("book");
+            CreateWork<CtrlyBookWork>("book");
         }
 
         public void @default(WebContext wc)

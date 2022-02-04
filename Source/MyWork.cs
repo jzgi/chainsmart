@@ -5,10 +5,10 @@ namespace Revital
 {
     public class MyWork : WebWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             // id of either current user or the specified
-            MakeVarWork<MyVarWork>((prin, key) => key?.ToInt() ?? ((User) prin).id);
+            CreateVarWork<MyVarWork>((prin, key) => key?.ToInt() ?? ((User) prin).id);
         }
     }
 }

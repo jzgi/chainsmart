@@ -12,9 +12,9 @@ namespace Revital
 
     public class PublyPieceWork : PieceWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<PublyPieceVarWork>();
+            CreateVarWork<PublyPieceVarWork>();
         }
 
         public void @default(WebContext wc, int page)
@@ -25,9 +25,9 @@ namespace Revital
     [Ui("［商户］线上货架")]
     public class BizlyPieceWork : PieceWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<BizlyPieceVarWork>();
+            CreateVarWork<BizlyPieceVarWork>();
         }
 
         [Ui("上架", group: 1), Tool(Anchor)]

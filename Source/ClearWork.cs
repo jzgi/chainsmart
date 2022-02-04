@@ -11,9 +11,9 @@ namespace Revital
     [Ui("平台｜代收款项结算", "table")]
     public class AdmlyClearWork : WebWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<AdmlyClearVarWork>();
+            CreateVarWork<AdmlyClearVarWork>();
         }
 
         [Ui("零售商户", group: 1), Tool(Anchor)]
@@ -144,9 +144,9 @@ namespace Revital
     [Ui("账户｜平台代收款项", "credit-card")]
     public class OrglyClearWork : WebWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<OrglyClearVarWork>();
+            CreateVarWork<OrglyClearVarWork>();
         }
 
         public void @default(WebContext wc, int page)

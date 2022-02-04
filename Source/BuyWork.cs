@@ -10,9 +10,9 @@ namespace Revital
 
     public class MyBuyWork : BuyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<MyBuyVarWork>();
+            CreateVarWork<MyBuyVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -38,9 +38,9 @@ namespace Revital
     [Ui("［商户］线上零售")]
     public class BizlyBuyWork : BuyWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<BizlyBuyVarWork>();
+            CreateVarWork<BizlyBuyVarWork>();
         }
 
         public async Task @default(WebContext wc)

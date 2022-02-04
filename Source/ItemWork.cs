@@ -11,9 +11,9 @@ namespace Revital
 
     public class PublyItemWork : ItemWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<PublyItemVarWork>();
+            CreateVarWork<PublyItemVarWork>();
         }
     }
 
@@ -21,9 +21,9 @@ namespace Revital
     [Ui("平台｜统一品目设置")]
     public class AdmlyItemWork : ItemWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<AdmlyItemVarWork>();
+            CreateVarWork<AdmlyItemVarWork>();
         }
 
         [Ui("农副产", group: 1), Tool(Anchor)]

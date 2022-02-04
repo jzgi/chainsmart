@@ -9,21 +9,21 @@ namespace Revital
     [Ui("平台管理")]
     public class AdmlyWork : WebWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeWork<AdmlyRegWork>("reg");
+            CreateWork<AdmlyRegWork>("reg");
 
-            MakeWork<AdmlyOrgWork>("org");
+            CreateWork<AdmlyOrgWork>("org");
 
-            MakeWork<AdmlyItemWork>("item");
+            CreateWork<AdmlyItemWork>("item");
 
-            MakeWork<AdmlyClearWork>("clear");
+            CreateWork<AdmlyClearWork>("clear");
 
-            MakeWork<AdmlyReportWork>("rpt");
+            CreateWork<AdmlyDailyWork>("daily");
 
-            MakeWork<AdmlyUserWork>("user");
+            CreateWork<AdmlyUserWork>("user");
 
-            MakeWork<FedWork>("chain", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            CreateWork<FedWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
         }
 
         public void @default(WebContext wc)

@@ -15,7 +15,7 @@ namespace Revital
         {
             {TYP_PROV, "省份"},
             {TYP_DIST, "地区"},
-            {TYP_SECT, "场区"},
+            {TYP_SECT, "场地"},
         };
 
         public const short

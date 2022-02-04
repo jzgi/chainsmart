@@ -14,9 +14,9 @@ namespace Revital
     [Ui("平台｜入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
-            MakeVarWork<AdmlyOrgVarWork>();
+            CreateVarWork<AdmlyOrgVarWork>();
         }
 
         [Ui("市场", group: 1), Tool(Anchor)]
@@ -138,10 +138,10 @@ namespace Revital
 #endif
     public class MrtlyOrgWork : OrgWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             State = TYP_BIZ;
-            MakeVarWork<MrtlyOrgVarWork>(state: TYP_BIZ);
+            CreateVarWork<MrtlyOrgVarWork>(state: TYP_BIZ);
         }
 
         public async Task @default(WebContext wc)
@@ -213,10 +213,10 @@ namespace Revital
     [Ui("供应｜下属产源管理", "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
-        protected override void OnMake()
+        protected override void OnCreate()
         {
             State = TYP_PRV;
-            MakeVarWork<PrvlyOrgVarWork>(state: TYP_PRV);
+            CreateVarWork<PrvlyOrgVarWork>(state: TYP_PRV);
         }
 
         public async Task @default(WebContext wc)
