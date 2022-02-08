@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
+using SkyChain.Store;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 
@@ -81,7 +82,7 @@ namespace Revital
 
                     h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
                     h._FORM();
-                }, false, 15);
+                }, false, 15, title: Home.Info.Name);
             }
             else if (cmd == 1) // agreement
             {

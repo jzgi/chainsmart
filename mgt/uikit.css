@@ -701,11 +701,8 @@ a.uk-link-reset:hover,
     border-collapse: collapse;
     border-spacing: 0;
     width: -webkit-fill-available;
-    background-color: #fff;
     overflow-x: auto;
     margin: 4px 0;
-    border-top: 1px solid #ededed;
-    border-bottom: 1px solid #ededed;
 }
 
 .uk-table th {
@@ -716,6 +713,12 @@ a.uk-link-reset:hover,
     color: #8fc321;
     background-color: #f8f8f8;
     text-transform: uppercase;
+}
+
+.uk-table tbody {
+    background-color: #fff;
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
 }
 
 .uk-table td {
@@ -730,8 +733,11 @@ a.uk-link-reset:hover,
 .uk-table caption {
     text-align: left;
     text-transform: uppercase;
-    color: #333;
-    padding: 0.5rem;
+    color: #8fc321;
+    padding: 4px;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
     font-size: 0.875rem;
 }
 
@@ -1140,8 +1146,11 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #333;
-    padding: 0.5rem;
+    color: #8fc321;
+    padding: 4px;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
     font-size: 0.875rem;
 }
 
