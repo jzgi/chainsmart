@@ -7,7 +7,7 @@ namespace Revital
     /// <summary>
     /// The home page for markets and businesses therein..
     /// </summary>
-    public class RevitalVarWork : WebWork
+    public class PubVarWork : WebWork
     {
         public async Task @default(WebContext wc, int sect)
         {

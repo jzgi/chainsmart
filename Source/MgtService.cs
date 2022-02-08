@@ -9,20 +9,10 @@ using static Revital.WeChatUtility;
 namespace Revital
 {
     [UserAuthenticate]
-    public class MainService : FedService
+    public class MgtService : FedService
     {
         protected override void OnCreate()
         {
-            CreateVarWork<RevitalVarWork>(); // market home page
-
-            CreateWork<PublyPieceWork>("piece");
-
-            CreateWork<PublyItemWork>("item");
-
-            CreateWork<PublyBookWork>("code");
-
-            // management
-
             CreateWork<AdmlyWork>("admly"); // platform admin
 
             CreateWork<PrvlyWork>("prvly"); // for provider and source
@@ -30,8 +20,6 @@ namespace Revital
             CreateWork<CtrlyWork>("ctrly"); // for center
 
             CreateWork<MrtlyWork>("mrtly"); // for market and biz
-
-            CreateWork<MyWork>("my");
         }
 
         public void @default(WebContext wc, int cmd)

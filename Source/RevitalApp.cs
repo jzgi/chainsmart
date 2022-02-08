@@ -25,23 +25,20 @@ namespace Revital
             {
                 CacheUp();
 
-                CreateService<MainService>("main");
+                CreateService<PubService>("pub");
+
+                CreateService<MgtService>("mgt");
             }
             else
             {
-                if (args.Contains("biz"))
+                if (args.Contains("pub-p"))
                 {
-                    CreateService<ProxyService>("biz");
+                    CreateService<ProxyService>("pub");
                 }
 
-                if (args.Contains("img"))
+                if (args.Contains("mgt-p"))
                 {
-                    CreateService<ProxyService>("img");
-                }
-
-                if (args.Contains("msg"))
-                {
-                    CreateService<ProxyService>("msg");
+                    CreateService<ProxyService>("mgt");
                 }
             }
 
