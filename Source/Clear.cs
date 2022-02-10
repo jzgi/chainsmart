@@ -39,7 +39,7 @@ namespace Revital
         internal decimal amt;
         internal int qty;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
 
@@ -55,7 +55,7 @@ namespace Revital
             s.Get(nameof(qty), ref qty);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             base.Write(s, proj);
 

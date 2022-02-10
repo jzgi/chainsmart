@@ -7,7 +7,7 @@ namespace Revital
     /// <summary>
     /// The home page for markets and businesses therein..
     /// </summary>
-    public class PubVarWork : WebWork
+    public class WwwVarWork : WebWork
     {
         public async Task @default(WebContext wc, int sect)
         {
@@ -32,8 +32,10 @@ namespace Revital
                     h._TOPBAR();
                     h.GRID(bizs, o =>
                     {
-                        h.HEADER_("uk-card-header").T(o.name)._HEADER();
-                        h.ADIALOG_("/", o.id, "/", 8, false, Appear.Large).T(o.name)._A();
+                        h.SECTION_("uk-card-body");
+                        h.SPAN(o.ShopLabel, "uk-circle");
+                        h.ADIALOG_("/", o.id, "/", 8, false, Appear.Large, css: "uk-button-link").T(o.Shop)._A();
+                        h._SECTION();
                     }, width: 2);
                 }, title: org.name);
             }

@@ -41,7 +41,7 @@ namespace Revital
         internal decimal mrtprice;
         internal short rankg;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
 
@@ -56,7 +56,7 @@ namespace Revital
             s.Get(nameof(rankg), ref rankg);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             base.Write(s, proj);
 

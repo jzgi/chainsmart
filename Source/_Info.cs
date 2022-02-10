@@ -50,54 +50,30 @@ namespace Revital
         internal DateTime adapted;
         internal string adapter;
 
-        public virtual void Read(ISource s, short proj = 0x0fff)
+        public virtual void Read(ISource s, short proj = 0xff)
         {
-            if ((proj & TYP) == TYP)
-            {
-                s.Get(nameof(typ), ref typ);
-            }
-            if ((proj & STATUS) == STATUS)
-            {
-                s.Get(nameof(status), ref status);
-            }
-            if ((proj & LABEL) == LABEL)
-            {
-                s.Get(nameof(name), ref name);
-                s.Get(nameof(tip), ref tip);
-            }
-            if ((proj & CREATE) == CREATE)
-            {
-                s.Get(nameof(created), ref created);
-                s.Get(nameof(creator), ref creator);
-            }
-            if ((proj & ADAPT) == ADAPT)
+            s.Get(nameof(typ), ref typ);
+            s.Get(nameof(status), ref status);
+            s.Get(nameof(name), ref name);
+            s.Get(nameof(tip), ref tip);
+            s.Get(nameof(created), ref created);
+            s.Get(nameof(creator), ref creator);
+            if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
             }
         }
 
-        public virtual void Write(ISink s, short proj = 0x0fff)
+        public virtual void Write(ISink s, short proj = 0xff)
         {
-            if ((proj & TYP) == TYP)
-            {
-                s.Put(nameof(typ), typ);
-            }
-            if ((proj & STATUS) == STATUS)
-            {
-                s.Put(nameof(status), status);
-            }
-            if ((proj & LABEL) == LABEL)
-            {
-                s.Put(nameof(name), name);
-                s.Put(nameof(tip), tip);
-            }
-            if ((proj & CREATE) == CREATE)
-            {
-                s.Put(nameof(created), created);
-                s.Put(nameof(creator), creator);
-            }
-            if ((proj & ADAPT) == ADAPT)
+            s.Put(nameof(typ), typ);
+            s.Put(nameof(status), status);
+            s.Put(nameof(name), name);
+            s.Put(nameof(tip), tip);
+            s.Put(nameof(created), created);
+            s.Put(nameof(creator), creator);
+            if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);

@@ -21,7 +21,7 @@ namespace Revital
 
         internal int mrtid;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
 
@@ -29,7 +29,7 @@ namespace Revital
             s.Get(nameof(mrtid), ref mrtid);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             base.Write(s, proj);
 

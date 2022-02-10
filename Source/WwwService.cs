@@ -9,11 +9,11 @@ using static Revital.WeChatUtility;
 namespace Revital
 {
     [UserAuthenticate]
-    public class PubService : WebService
+    public class WwwService : WebService
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PubVarWork>(); // market home page
+            CreateVarWork<WwwVarWork>(); // market home page
 
             CreateWork<PublyPieceWork>("piece");
 

@@ -35,7 +35,7 @@ namespace Revital
         internal decimal pay;
         internal WareLn[] wares;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             if ((proj & ID) == ID)
             {
@@ -55,7 +55,7 @@ namespace Revital
             s.Get(nameof(wares), ref wares);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             if ((proj & ID) == ID)
             {

@@ -17,7 +17,7 @@ namespace Revital
         internal int id;
         internal int productid;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
 
@@ -28,7 +28,7 @@ namespace Revital
             s.Get(nameof(productid), ref productid);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             base.Write(s, proj);
 

@@ -91,7 +91,7 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Marks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -155,7 +155,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().DATE("发货日期", nameof(o.fillon), o.fillon)._LI();
-                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Marks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

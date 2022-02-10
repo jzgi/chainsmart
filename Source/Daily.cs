@@ -30,7 +30,7 @@ namespace Revital
 
         internal decimal amt;
 
-        public override void Read(ISource s, short proj = 0x0fff)
+        public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
 
@@ -41,7 +41,7 @@ namespace Revital
             s.Get(nameof(amt), ref amt);
         }
 
-        public override void Write(ISink s, short proj = 0x0fff)
+        public override void Write(ISink s, short proj = 0xff)
         {
             base.Write(s, proj);
 

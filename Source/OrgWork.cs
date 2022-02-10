@@ -40,7 +40,7 @@ namespace Revital
             });
         }
 
-        [Ui("控配", group: 2), Tool(Anchor)]
+        [Ui("中枢", group: 2), Tool(Anchor)]
         public async Task ctr(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -61,7 +61,7 @@ namespace Revital
             });
         }
 
-        [Ui("产供", group: 4), Tool(Anchor)]
+        [Ui("供应", group: 4), Tool(Anchor)]
         public async Task sec(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -92,6 +92,7 @@ namespace Revital
             {
                 var m = new Org
                 {
+                    typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
                     status = _Info.STA_ENABLED
@@ -99,18 +100,18 @@ namespace Revital
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("机构信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => typ == k, required: true)._LI();
+                    h.FORM_().FIELDSUL_(Typs[m.typ] + "机构信息");
+                    // h.LI_().SELECT("类型", nameof(m.typ), m.typ, Typs, filter: (k, v) => typ == k, required: true)._LI();
                     // if (typ == TYP_CHL)
                     // {
                     //     h.LI_().SELECT("业务分属", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     // }
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("地区", nameof(m.regid), m.regid, regs, filter: (k, v) => k == 1, required: typ != TYP_PRV)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -118,6 +119,7 @@ namespace Revital
             {
                 var o = await wc.ReadObjectAsync(0, new Org
                 {
+                    typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
                 });

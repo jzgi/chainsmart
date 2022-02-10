@@ -25,7 +25,7 @@ namespace Revital
             {
                 CacheUp();
 
-                CreateService<PubService>("pub");
+                CreateService<WwwService>("www");
 
                 CreateService<MgtService>("mgt");
             }
