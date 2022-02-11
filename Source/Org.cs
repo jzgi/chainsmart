@@ -1,5 +1,5 @@
 ﻿using SkyChain;
-using SkyChain.Source.Web;
+using SkyChain.Web;
 
 namespace Revital
 {
@@ -63,7 +63,7 @@ namespace Revital
         internal string mgrtel;
         internal string mgrim;
         internal bool cert;
-        internal short[] distrg;
+        internal short[] distg; // district covering
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -86,7 +86,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(distrg), ref distrg);
+            s.Get(nameof(distg), ref distg);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -120,7 +120,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(distrg), distrg);
+            s.Put(nameof(distg), distg);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -155,7 +155,7 @@ namespace Revital
 
         public bool HasXy => IsMrt || IsSrc || IsCtr;
 
-        public bool HasDistrg => IsSrc || IsCtr;
+        public bool HasDistg => IsSrc || IsCtr;
 
         public bool HasLocality => IsMrt || IsCtr;
 

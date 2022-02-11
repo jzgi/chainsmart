@@ -46,8 +46,9 @@ namespace Revital
     {
         public async Task @default(WebContext wc, int typ)
         {
-            var regs = Grab<short, Reg>();
             short id = wc[0];
+            var prin = (User) wc.Principal;
+            var regs = Grab<short, Reg>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
@@ -69,9 +70,9 @@ namespace Revital
                     {
                         h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     }
-                    if (m.HasDistrg)
+                    if (m.HasDistg)
                     {
-                        h.LI_().SELECT("辐射地市", nameof(m.distrg), m.distrg, regs, filter: (k, v) => v.IsDistr, size: 10)._LI();
+                        h.LI_().SELECT("辐射地市", nameof(m.distg), m.distg, regs, filter: (k, v) => v.IsDistr, size: 10)._LI();
                     }
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
@@ -79,7 +80,12 @@ namespace Revital
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync<Org>();
+                var m = await wc.ReadObjectAsync(0, new Org
+                {
+                    typ = (short) typ,
+                    adapted = DateTime.Now,
+                    adapter = prin.name
+                });
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
                 dc.Execute(p =>

@@ -11,15 +11,15 @@ namespace Revital
 
         public const short
             TYP_AGRI = 1, // agriculture
-            TYP_SRVC = 2, // service
-            TYP_FACT = 4; // factory
+            TYP_FACT = 2, // factory
+            TYP_SRVC = 3; // service
 
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_AGRI, "农副产品"},
-            {TYP_SRVC, "加工服务"},
-            {TYP_FACT, "工业制品"},
+            {TYP_AGRI, "农副产"},
+            {TYP_FACT, "制造品"},
+            {TYP_SRVC, "服务业"},
         };
 
         // categories
@@ -29,23 +29,25 @@ namespace Revital
             {1, "蔬菜"},
             {2, "瓜果"},
             {3, "粮油"},
-            {4, "肉蛋"},
-            {5, "水产"},
-            {6, "农资"},
+            {4, "畜产"},
+            {5, "禽产"},
+            {6, "水产"},
             {9, "其它"},
-            // process & service 11-20
-            {11, "调养"},
-            {12, "餐品"},
-            {13, "家政"},
-            {14, "养老"},
-            {15, "公益"},
-            {16, "广告"},
-            {19, "其它"},
+
             // factory 21-30
-            {21, "日用"},
-            {22, "家居"},
-            {23, "服装"},
-            {24, "电器"},
+            {11, "日用"},
+            {12, "家居"},
+            {13, "服装"},
+            {14, "电器"},
+            {19, "其它"},
+
+            // process & service 11-20
+            {21, "调养"},
+            {22, "餐品"},
+            {23, "家政"},
+            {24, "养老"},
+            {25, "公益"},
+            {26, "广告"},
             {29, "其它"},
         };
 
@@ -83,6 +85,8 @@ namespace Revital
         }
 
         public short Key => id;
+
+        public static bool IsCatOfTyp(short c, short t) => c < t * 10 && c > (t - 1) * 10;
 
         public override string ToString() => name;
     }

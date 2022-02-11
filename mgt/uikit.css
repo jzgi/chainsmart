@@ -739,6 +739,7 @@ a.uk-link-reset:hover,
     display: flex;
     align-items: center;
     font-size: 0.875rem;
+    box-sizing: border-box;
 }
 
 .uk-table > tr.uk-active,

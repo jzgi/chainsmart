@@ -62,7 +62,7 @@ namespace Revital
         }
 
         [Ui("供应", group: 4), Tool(Anchor)]
-        public async Task sec(WebContext wc, int page)
+        public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_PRV).T(" ORDER BY status DESC");
@@ -114,9 +114,9 @@ namespace Revital
                     {
                         h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     }
-                    if (m.HasDistrg)
+                    if (m.HasDistg)
                     {
-                        h.LI_().SELECT("辐射地市", nameof(m.distrg), m.distrg, regs, filter: (k, v) => v.IsDistr, size: 10)._LI();
+                        h.LI_().SELECT("辐射地市", nameof(m.distg), m.distg, regs, filter: (k, v) => v.IsDistr, size: 10)._LI();
                     }
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();

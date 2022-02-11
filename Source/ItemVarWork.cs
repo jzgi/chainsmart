@@ -46,33 +46,36 @@ namespace Revital
         public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
+            var prin = (User) wc.Principal;
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
-                var o = dc.QueryTop<Item>(p => p.Set(id));
+                var m = dc.QueryTop<Item>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("标准品目信息");
-                    h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, filter: (k, v) => k == typ, required: true)._LI();
-                    h.LI_().SELECT("类别", nameof(o.cat), o.cat, Item.Cats, filter: (k, v) => k < typ * 20 && k > (typ - 1) * 20, required: true)._LI();
-                    h.LI_().TEXT("品目名", nameof(o.name), o.name, max: 10, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
-                    h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(o.unitip), o.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    var typname = Item.Typs[m.typ];
+                    h.FORM_().FIELDSUL_(typname + "品目信息");
+                    h.LI_().SELECT("原始类别", nameof(m.cat), m.cat, Item.Cats, filter: (k, v) => Item.IsCatOfTyp(k, m.typ), required: true)._LI();
+                    h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXT("基本单位", nameof(m.unit), m.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(m.unitip), m.unitip, max: 8)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Item
+                var m = await wc.ReadObjectAsync(0, new Item
                 {
+                    adapted = DateTime.Now,
+                    adapter = prin.name
                 });
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE items")._SET_(Item.Empty, 0).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    o.Write(p, 0);
+                    m.Write(p, 0);
                     p.Set(id);
                 });
                 wc.GivePane(200); // close
