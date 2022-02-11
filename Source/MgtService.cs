@@ -161,7 +161,7 @@ namespace Revital
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, User.INSERT)._VALUES_(o, User.INSERT).T(" RETURNING ").collst(User.Empty);
+                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
                 o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
                 // refresh cookie

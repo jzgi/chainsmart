@@ -29,11 +29,6 @@ namespace Revital
             {4, "统一市场价"},
         };
 
-        public const short
-            INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
-            UPDATE = STATUS | LABEL | ADAPT | BASIC;
-
-
         internal int id;
 
         internal DateTime fillon;

@@ -30,15 +30,7 @@ namespace Revital
             {STA_PREFERRED, null},
         };
 
-        public const short
-            ID = 0x0001,
-            BASIC = 0x0002,
-            LATER = 0x0004,
-            TYP = 0x0008,
-            STATUS = 0x0010,
-            LABEL = 0x0020,
-            CREATE = 0x0040,
-            ADAPT = 0x0080;
+        public const short ID = 0x0001, NATIVE = 0x0002, LATER = 0x0004, EXTRA = 0x0100;
 
 
         internal short typ;
@@ -52,7 +44,10 @@ namespace Revital
 
         public virtual void Read(ISource s, short proj = 0xff)
         {
-            s.Get(nameof(typ), ref typ);
+            if ((proj & NATIVE) == NATIVE)
+            {
+                s.Get(nameof(typ), ref typ);
+            }
             s.Get(nameof(status), ref status);
             s.Get(nameof(name), ref name);
             s.Get(nameof(tip), ref tip);
@@ -67,7 +62,10 @@ namespace Revital
 
         public virtual void Write(ISink s, short proj = 0xff)
         {
-            s.Put(nameof(typ), typ);
+            if ((proj & NATIVE) == NATIVE)
+            {
+                s.Put(nameof(typ), typ);
+            }
             s.Put(nameof(status), status);
             s.Put(nameof(name), name);
             s.Put(nameof(tip), tip);

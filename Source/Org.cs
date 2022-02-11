@@ -34,10 +34,9 @@ namespace Revital
 
         public static readonly Map<short, string> Marks = new Map<short, string>
         {
-            {1, "Ａ段位"},
-            {2, "Ｂ段位"},
-            {4, "Ｃ段位"},
-            {7, "全段位"},
+            {0, "普通"},
+            {1, "银牌"},
+            {2, "金牌"},
         };
 
 
@@ -64,6 +63,7 @@ namespace Revital
         internal string mgrtel;
         internal string mgrim;
         internal bool cert;
+        internal short[] distrg;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -73,7 +73,10 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(sprid), ref sprid);
+            if ((proj & NATIVE) == NATIVE)
+            {
+                s.Get(nameof(sprid), ref sprid);
+            }
             s.Get(nameof(fork), ref fork);
             s.Get(nameof(mark), ref mark);
             s.Get(nameof(license), ref license);
@@ -83,6 +86,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
+            s.Get(nameof(distrg), ref distrg);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -101,9 +105,11 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-
-            if (sprid > 0) s.Put(nameof(sprid), sprid);
-            else s.PutNull(nameof(sprid));
+            if ((proj & NATIVE) == NATIVE)
+            {
+                if (sprid > 0) s.Put(nameof(sprid), sprid);
+                else s.PutNull(nameof(sprid));
+            }
             s.Put(nameof(fork), fork);
             s.Put(nameof(mark), mark);
             s.Put(nameof(license), license);
@@ -114,7 +120,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-
+            s.Put(nameof(distrg), distrg);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -147,7 +153,11 @@ namespace Revital
 
         public bool IsCtr => typ == TYP_CTR;
 
-        public bool IsOfCtr => (typ & TYP_CTR) == TYP_CTR;
+        public bool HasXy => IsMrt || IsSrc || IsCtr;
+
+        public bool HasDistrg => IsSrc || IsCtr;
+
+        public bool HasLocality => IsMrt || IsCtr;
 
         public string Shop => IsMrt ? tip : name;
 

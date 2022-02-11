@@ -43,7 +43,7 @@ namespace Revital
         {
             base.Read(s, proj);
 
-            if ((proj & TYP) == TYP)
+            if ((proj & EXTRA) == EXTRA)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -59,7 +59,7 @@ namespace Revital
         {
             base.Write(s, proj);
 
-            if ((proj & TYP) == TYP)
+            if ((proj & EXTRA) == EXTRA)
             {
                 s.Put(nameof(id), id);
             }

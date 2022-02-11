@@ -58,9 +58,9 @@ namespace Revital
                     h.FIELDSUL_();
                     if (regid == 0)
                     {
-                        regid = regs.First(v => v.IsDistrict).id;
+                        regid = regs.First(v => v.IsDistr).id;
                     }
-                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsDistrict, required: true, refresh: true)._LI();
+                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsDistr, required: true, refresh: true)._LI();
                     bool exist = false;
                     for (int i = 0; i < orgs.Count; i++)
                     {
@@ -221,7 +221,7 @@ namespace Revital
                     created = DateTime.Now,
                 };
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, User.INSERT)._VALUES_(o, User.INSERT).T(" RETURNING ").collst(User.Empty);
+                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
                 o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
                 // refresh cookie

@@ -49,11 +49,6 @@ namespace Revital
             {29, "其它"},
         };
 
-        public const short
-            OP_INSERT = TYP | STATUS | LABEL | CREATE | BASIC,
-            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC;
-
-
         internal short id;
         internal short cat;
         internal string unit; // standard unit
@@ -69,12 +64,9 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Get(nameof(cat), ref cat);
-                s.Get(nameof(unit), ref unit);
-                s.Get(nameof(unitip), ref unitip);
-            }
+            s.Get(nameof(cat), ref cat);
+            s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitip), ref unitip);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -85,12 +77,9 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Put(nameof(cat), cat);
-                s.Put(nameof(unit), unit);
-                s.Put(nameof(unitip), unitip);
-            }
+            s.Put(nameof(cat), cat);
+            s.Put(nameof(unit), unit);
+            s.Put(nameof(unitip), unitip);
         }
 
         public short Key => id;

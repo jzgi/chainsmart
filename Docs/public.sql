@@ -15,7 +15,7 @@ create type act_type as
 
 alter type act_type owner to postgres;
 
-create type buyware_type as
+create type wareln_type as
 (
 	wareid integer,
 	warename varchar(20),
@@ -25,7 +25,7 @@ create type buyware_type as
 	total money
 );
 
-alter type buyware_type owner to postgres;
+alter type wareln_type owner to postgres;
 
 create table _infos
 (
@@ -121,10 +121,10 @@ create table orgs
 	x double precision,
 	y double precision,
 	tel varchar(11),
-	rank smallint,
-	emblem varchar(10),
+	mark smallint,
 	mgrid integer,
-	cert bytea
+	cert bytea,
+	distrg smallint[]
 )
 inherits (_infos);
 
@@ -194,24 +194,24 @@ inherits (_wares);
 
 alter table pieces owner to postgres;
 
-create table routes
+create table ways
 (
 	ctrid integer
-		constraint routes_ctrid_fk
+		constraint ways_ctrid_fk
 			references orgs,
-	ptid integer
-		constraint routes_ptid_fk
+	mrtid integer
+		constraint ways_mrtid_fk
 			references orgs
 )
 inherits (_infos);
 
-alter table routes owner to postgres;
+alter table ways owner to postgres;
 
-create index routes_typctrid_idx
-	on routes (typ, ctrid);
+create index ways_typctr_idx
+	on ways (typ, ctrid);
 
-create index routes_typptid_idx
-	on routes (typ, ptid);
+create index ways_typpath_idx
+	on ways (typ, mrtid);
 
 create table peers_
 (
@@ -317,7 +317,7 @@ inherits (_infos);
 
 alter table buys owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, rank, emblem, mgrid, mgrname, mgrtel, mgrim, cert) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, mark, sprid, license, trust, regid, addr, x, y, tel, distrg, mgrid, mgrname, mgrtel, mgrim, cert) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -328,6 +328,7 @@ SELECT o.typ,
        o.adapter,
        o.id,
        o.fork,
+       o.mark,
        o.sprid,
        o.license,
        o.trust,
@@ -336,8 +337,7 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.rank,
-       o.emblem,
+       o.distrg,
        o.mgrid,
        m.name             AS mgrname,
        m.tel              AS mgrtel,

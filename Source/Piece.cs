@@ -9,11 +9,6 @@ namespace Revital
     {
         public static readonly Piece Empty = new Piece();
 
-        public const short
-            INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
-            UPDATE = STATUS | LABEL | ADAPT | BASIC;
-
-
         internal int id;
         internal int productid;
 
@@ -36,7 +31,6 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-
             if (productid == 0) s.PutNull(nameof(productid));
             else s.Put(nameof(productid), productid);
         }

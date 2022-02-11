@@ -18,13 +18,6 @@ namespace Revital
             {TYP_SECT, "场地"},
         };
 
-        public const short
-            OP_INSERT = TYP | STATUS | LABEL | CREATE | ID | BASIC,
-            OP_UPDATE = STATUS | LABEL | ADAPT | BASIC,
-            ID = 0x0020,
-            BASIC = 0x0080;
-
-
         internal short id;
         internal short idx;
 
@@ -36,10 +29,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Get(nameof(idx), ref idx);
-            }
+            s.Get(nameof(idx), ref idx);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -50,19 +40,16 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Put(nameof(idx), idx);
-            }
+            s.Put(nameof(idx), idx);
         }
 
         public short Key => id;
 
-        public bool IsProvince => typ == TYP_PROV;
+        public bool IsProv => typ == TYP_PROV;
 
-        public bool IsDistrict => typ == TYP_DIST;
+        public bool IsDistr => typ == TYP_DIST;
 
-        public bool IsSection => typ == TYP_SECT;
+        public bool IsSect => typ == TYP_SECT;
 
         public override string ToString() => name;
     }

@@ -51,11 +51,6 @@ namespace Revital
             {ORGLY_MGT, "统管"},
         };
 
-        public const short
-            INSERT = TYP | STATUS | LABEL | CREATE | BASIC,
-            UPDATE = STATUS | LABEL | ADAPT | BASIC;
-
-
         internal int id;
         internal string tel;
         internal string im;
@@ -75,11 +70,8 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Get(nameof(tel), ref tel);
-                s.Get(nameof(im), ref im);
-            }
+            s.Get(nameof(tel), ref tel);
+            s.Get(nameof(im), ref im);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(credential), ref credential);
@@ -98,11 +90,8 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BASIC) == BASIC)
-            {
-                s.Put(nameof(tel), tel);
-                s.Put(nameof(im), im);
-            }
+            s.Put(nameof(tel), tel);
+            s.Put(nameof(im), im);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(credential), credential);
