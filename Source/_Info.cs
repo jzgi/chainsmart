@@ -30,7 +30,7 @@ namespace Revital
             {STA_PREFERRED, null},
         };
 
-        public const short ID = 0x0001, NATIVE = 0x0002, LATER = 0x0004, EXTRA = 0x0100;
+        public const short ID = 0x0001, NATIVE = 0x0002, SPECIAL = 0x0004, LATER = 0x0008, EXTRA = 0x0100;
 
 
         internal short typ;
@@ -47,12 +47,12 @@ namespace Revital
             if ((proj & NATIVE) == NATIVE)
             {
                 s.Get(nameof(typ), ref typ);
+                s.Get(nameof(created), ref created);
+                s.Get(nameof(creator), ref creator);
             }
             s.Get(nameof(status), ref status);
             s.Get(nameof(name), ref name);
             s.Get(nameof(tip), ref tip);
-            s.Get(nameof(created), ref created);
-            s.Get(nameof(creator), ref creator);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(adapted), ref adapted);
@@ -65,12 +65,12 @@ namespace Revital
             if ((proj & NATIVE) == NATIVE)
             {
                 s.Put(nameof(typ), typ);
+                s.Put(nameof(created), created);
+                s.Put(nameof(creator), creator);
             }
             s.Put(nameof(status), status);
             s.Put(nameof(name), name);
             s.Put(nameof(tip), tip);
-            s.Put(nameof(created), created);
-            s.Put(nameof(creator), creator);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(adapted), adapted);

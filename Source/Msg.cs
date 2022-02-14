@@ -16,7 +16,7 @@ namespace Revital
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_MRT, "市场"},
-            {TYP_PRV, "供应"},
+            {TYP_PRV, "供给"},
         };
 
 

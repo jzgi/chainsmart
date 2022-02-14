@@ -58,9 +58,9 @@ namespace Revital
                     h.FIELDSUL_();
                     if (regid == 0)
                     {
-                        regid = regs.First(v => v.IsDistr).id;
+                        regid = regs.First(v => v.IsDist).id;
                     }
-                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsDistr, required: true, refresh: true)._LI();
+                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsDist, required: true, refresh: true)._LI();
                     bool exist = false;
                     for (int i = 0; i < orgs.Count; i++)
                     {

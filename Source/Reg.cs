@@ -47,7 +47,7 @@ namespace Revital
 
         public bool IsProv => typ == TYP_PROV;
 
-        public bool IsDistr => typ == TYP_DIST;
+        public bool IsDist => typ == TYP_DIST;
 
         public bool IsSect => typ == TYP_SECT;
 

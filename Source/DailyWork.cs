@@ -80,7 +80,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
-    [Ui("供应｜交易日报")]
+    [Ui("供给｜交易日报")]
     public class PrvlyDailyWork : DailyWork
     {
         protected override void OnCreate()

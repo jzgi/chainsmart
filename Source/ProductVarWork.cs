@@ -64,7 +64,7 @@ namespace Revital
 
     public class SrclyProductVarWork : ProductVarWork
     {
-        [Ui("修改现货供应"), Tool(AnchorOpen)]
+        [Ui("修改现货供给"), Tool(AnchorOpen)]
         public async Task upd(WebContext wc)
         {
             short id = wc[0];
@@ -80,9 +80,9 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Cats, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
+                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Marks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    h.LI_().SELECT("供给对象", nameof(o.rankg), o.rankg, Org.Marks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

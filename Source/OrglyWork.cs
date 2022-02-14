@@ -10,7 +10,7 @@ namespace Revital
     /// <summary>
     /// source and producer
     /// </summary>
-    [Ui("产供端操作")]
+    [Ui("供给端操作")]
     public class PrvlyWork : OrglyWork
     {
         protected override void OnCreate()

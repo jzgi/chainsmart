@@ -13,6 +13,8 @@ namespace Revital
     {
         protected override void OnCreate()
         {
+            CreateVarWork<MgtVarWork>();
+
             CreateWork<AdmlyWork>("admly"); // platform admin
 
             CreateWork<MrtlyWork>("mrtly"); // for market and biz
@@ -24,9 +26,24 @@ namespace Revital
 
         public void @default(WebContext wc, int cmd)
         {
+            var regs = Grab<short, Reg>();
+
             wc.GivePage(200, h =>
             {
-                h.FORM_().FIELDSUL_("请选择功能");
+                h.FORM_();
+                h.FIELDSUL_("批发功能");
+                for (int i = 0; i < regs.Count; i++)
+                {
+                    var r = regs.ValueAt(i);
+                    if (!r.IsDist) continue;
+                    h.LI_("uk-flex");
+                    h.A_(r.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(r.name)._A();
+                    // h.P(wrk.Tip, "uk-padding uk-width-expand");
+                    h._LI();
+                }
+                h._FIELDSUL();
+
+                h.FIELDSUL_("管理功能");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);
@@ -36,6 +53,7 @@ namespace Revital
                     h._LI();
                 }
                 h._FIELDSUL();
+
                 h._FORM();
             }, true, 3600, title: Home.Info.Name + "管理");
         }

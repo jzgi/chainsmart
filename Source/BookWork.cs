@@ -105,7 +105,7 @@ namespace Revital
                     {
                         if (o.cat != last)
                         {
-                            h.LI_().SPAN_("uk-label").T(Item.Cats[o.cat])._SPAN()._LI();
+                            h.LI_().SPAN_("uk-label").T(Item.Typs[o.cat])._SPAN()._LI();
                         }
                         h.LI_("uk-flex");
                         h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
@@ -135,47 +135,6 @@ namespace Revital
 
                 wc.GivePane(200); // close dialog
             }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源｜订货管理")]
-    public class SrclyBookWork : BookWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<SrclyBookVarWork>();
-        }
-
-        [Ui("当前订货"), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.Key);
-                    h.TD(o.bizname);
-                    // h.TD(o.qty);
-                });
-            });
-        }
-
-        [Ui("以往订货"), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
-
-            wc.GivePage(200, h => { h.TOOLBAR(caption: "来自平台的订单"); });
         }
     }
 
@@ -254,5 +213,56 @@ namespace Revital
                 h._MAIN();
             });
         }
+    }
+
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
+    [Ui("产源｜订货管理")]
+    public abstract class SrclyBookWork : BookWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<SrclyBookVarWork>();
+        }
+
+        [Ui("当前订货"), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD(o.bizname);
+                    // h.TD(o.qty);
+                });
+            });
+        }
+
+        [Ui("以往订货"), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h => { h.TOOLBAR(tip: "来自平台的订单"); });
+        }
+    }
+
+    [Ui("产源｜订货管理", fork: Org.FRK_CTR)]
+    public class SrclyCtrBookWork : SrclyBookWork
+    {
+    }
+
+    [Ui("产源｜订货管理", fork: Org.FRK_OTH)]
+    public class SrclyElseBookWork : SrclyBookWork
+    {
     }
 }

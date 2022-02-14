@@ -42,7 +42,6 @@ namespace Revital
 
     public class AdmlyItemVarWork : ItemVarWork
     {
-        [Ui(group: 7), Tool(AnchorShow)]
         public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
@@ -56,7 +55,7 @@ namespace Revital
                 {
                     var typname = Item.Typs[m.typ];
                     h.FORM_().FIELDSUL_(typname + "品目信息");
-                    h.LI_().SELECT("原始类别", nameof(m.cat), m.cat, Item.Cats, filter: (k, v) => Item.IsCatOfTyp(k, m.typ), required: true)._LI();
+                    h.LI_().SELECT("原始类别", nameof(m.cat), m.cat, Item.Typs, filter: (k, v) => Item.IsCatOfTyp(k, m.typ), required: true)._LI();
                     h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("基本单位", nameof(m.unit), m.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(m.unitip), m.unitip, max: 8)._LI();

@@ -1141,7 +1141,7 @@ button.uk-icon:not(:disabled) {
 
 .uk-fieldset {
     border: none;
-    margin: 0 0 4px 0;
+    margin: 4px 0;
     padding: 0;
 }
 

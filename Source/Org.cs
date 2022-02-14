@@ -11,12 +11,12 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SPR = 0b01000, // super
+            TYP_PRT = 0b01000, // parent
             TYP_BIZ = 0b00001, // business
             TYP_SRC = 0b00010, // source
             TYP_CTR = 0b00100, // center
-            TYP_MRT = TYP_SPR | TYP_BIZ, // market
-            TYP_PRV = TYP_SPR | TYP_SRC; // federation provisioning
+            TYP_MRT = TYP_PRT | TYP_BIZ, // market
+            TYP_PRV = TYP_PRT | TYP_SRC; // federation provisioning
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -28,7 +28,15 @@ namespace Revital
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_PRV, "供应"},
+            {TYP_PRV, "供给"},
+        };
+
+        public const short FRK_CTR = 1, FRK_OTH = 2;
+
+        public static readonly Map<short, string> Forks = new Map<short, string>
+        {
+            {FRK_CTR, "中枢配送"},
+            {FRK_OTH, "其他配送"},
         };
 
 
@@ -43,7 +51,7 @@ namespace Revital
         // id
         internal int id;
 
-        // super
+        // super id
         internal int sprid;
 
         internal short fork;
@@ -63,7 +71,7 @@ namespace Revital
         internal string mgrtel;
         internal string mgrim;
         internal bool cert;
-        internal short[] distg; // district covering
+        internal short[] dists; // district covering
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -73,7 +81,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & NATIVE) == NATIVE)
+            if ((proj & NATIVE) == NATIVE || (proj & SPECIAL) == SPECIAL)
             {
                 s.Get(nameof(sprid), ref sprid);
             }
@@ -86,7 +94,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(distg), ref distg);
+            s.Get(nameof(dists), ref dists);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -105,7 +113,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & NATIVE) == NATIVE)
+            if ((proj & NATIVE) == NATIVE || (proj & SPECIAL) == SPECIAL)
             {
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));
@@ -120,7 +128,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(distg), distg);
+            s.Put(nameof(dists), dists);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -139,7 +147,15 @@ namespace Revital
 
         public string Im => mgrim;
 
-        public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
+        /// <summary>
+        /// Whether a parent unit or not
+        /// </summary>
+        public bool IsPrt => (typ & TYP_PRT) == TYP_PRT;
+
+        /// <summary>
+        /// Whether a super unit or not
+        /// </summary>
+        public bool IsSpr => IsPrt || IsCtr;
 
         public bool IsPrv => typ == TYP_PRV;
 
@@ -154,8 +170,6 @@ namespace Revital
         public bool IsCtr => typ == TYP_CTR;
 
         public bool HasXy => IsMrt || IsSrc || IsCtr;
-
-        public bool HasDistg => IsSrc || IsCtr;
 
         public bool HasLocality => IsMrt || IsCtr;
 

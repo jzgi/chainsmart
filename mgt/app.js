@@ -112,9 +112,38 @@ function childOf(el, name) {
     return null;
 }
 
+function subscriptUri(uri, num) {
+    var a = uri.split('?'); 
+    var p = a[0].length - 1;
+    var dash;
+    while (p > 0) {
+        var c = a[0].charAt(p);
+        if (c == '/') {
+            dash = -1;
+            break;
+        }
+        if (c == '-') {
+            dash = p;
+            break;
+        }
+        p--;
+    }
+    if (dash == -1) {
+        var ret = a[0] + '-' + num;
+        if (a.length > 1) {
+            ret += '?' + a[1];
+        }
+        return ret;
+    } else {
+        var ret = a[0].substring(0, dash) + '-' + num;
+        if (a.length > 1) {
+            ret += '?' + a[1];
+        }
+        return ret;
+    }
+}
 
-
-function serialize(form, rangekey) {
+function serialize(form) {
     if (!form || form.nodeName !== "FORM") {
         return null;
     }
@@ -130,7 +159,6 @@ function serialize(form, rangekey) {
                 switch (form.elements[i].type) {
                     case 'text':
                     case 'hidden':
-                        if (!rangekey && form.elements[i].name == 'rangekey') break;
                     case 'password':
                     case 'color':
                     case 'date':
@@ -219,7 +247,7 @@ function dialog(trig, mode, pick, appear, title) {
         var qstr;
         if (pick) { // if must pick form fields
             if (!serialize(trig.form)) return false; // exclude hidden fields
-            qstr = serialize(trig.form, true);
+            qstr = serialize(trig.form);
             if (!qstr) return false;
         }
         if (qstr) {

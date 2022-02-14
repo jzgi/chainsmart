@@ -49,6 +49,7 @@ namespace Revital
             short id = wc[0];
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
+            var orgs = Grab<int, Org>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
@@ -62,35 +63,31 @@ namespace Revital
                     // {
                     //     h.LI_().SELECT("业务分属", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
                     // }
-                    h.LI_().TEXT(typname + "名称", nameof(m.name), m.name, min: 2, max: 10, required: true)._LI();
+                    h.LI_().TEXT(typname + "名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDistr : v.IsProv, required: !m.IsPrv)._LI();
+                    if (m.IsPrv) h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
+                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsPrv)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
-                    if (m.HasXy)
-                    {
-                        h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    }
-                    if (m.HasDistg)
-                    {
-                        h.LI_().SELECT("辐射地市", nameof(m.distg), m.distg, regs, filter: (k, v) => v.IsDistr, size: 10)._LI();
-                    }
+                    if (m.HasXy) h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                    if (m.IsMrt) h.LI_().SELECT("关联中枢", nameof(m.sprid), m.sprid, orgs, filter: (k, v) => v.IsCtr, required: true)._LI();
+                    if (m.IsSrc) h.LI_().SELECT("辐射地市", nameof(m.dists), m.dists, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync(0, new Org
+                var m = await wc.ReadObjectAsync(_Info.SPECIAL, new Org
                 {
                     typ = (short) typ,
                     adapted = DateTime.Now,
                     adapter = prin.name
                 });
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, _Info.SPECIAL).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, _Info.SPECIAL);
                     p.Set(id);
                 });
                 wc.GivePane(200); // close
@@ -170,7 +167,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("产源信息");
                     h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("业务分支", nameof(m.fork), m.fork, Item.Typs, required: true)._LI();
+                    h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
                     h.LI_().SELECT("所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);

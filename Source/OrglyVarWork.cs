@@ -120,7 +120,7 @@ namespace Revital
             CreateWork<BizlyBookWork>("book");
 
             CreateWork<OrglyClearWork>("clear");
-            
+
             // CreateWork<OrglyMsgWork>("msg");
         }
 
@@ -132,7 +132,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                h.TOOLBAR(caption: prin.name + "（" + role + "）");
+                h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body uk-list uk-list-divider");
@@ -159,7 +159,6 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产供端操作")]
     public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
@@ -170,7 +169,7 @@ namespace Revital
 
             CreateWork<SrclyProductWork>("prod");
 
-            CreateWork<SrclyBookWork>("book");
+            CreateWork<SrclyCtrBookWork, SrclyElseBookWork>("book");
 
             CreateWork<OrglyClearWork>("clear");
         }
@@ -183,16 +182,16 @@ namespace Revital
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(caption: prin.name + "（" + wc.Role + "）");
+                h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
                 h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsSpr)
+                if (!org.IsPrt)
                 {
-                    h.LI_().FIELD("供应板块", co.name)._LI();
+                    h.LI_().FIELD("供给板块", co.name)._LI();
                 }
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 h._UL();
@@ -204,13 +203,11 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("控配中心操作")]
+    [Ui("中枢操作")]
     public class CtrlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            CreateWork<CtrlyWayWork>("way");
-
             CreateWork<CtrlyBookWork>("book");
         }
 
@@ -223,7 +220,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                h.TOOLBAR(caption: prin.name + "（" + role + "）");
+                h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body ul-list uk-list-divider");
