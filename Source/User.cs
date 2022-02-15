@@ -11,44 +11,43 @@ namespace Revital
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {0, null},
-            {1, "初级护理员"},
-            {2, "中级护理员"},
-            {3, "高级护理员"},
-            {7, "三级健康管理师"},
-            {8, "二级健康管理师"},
-            {9, "一级健康管理师"},
+            {1, "健康市场运营师"},
+            {2, "健康管理师"},
         };
 
         public const short
-            ADMLY_ = 0b0001, // common
-            ADMLY_OPN = 0b0011,
-            ADMLY_SAL = 0b0101,
-            ADMLY_FIN = 0b1001,
-            ADMLY_MGT = 0b1111;
+            ADMLY_ = 0b000001, // common
+            ADMLY_OPN = 0b000011,
+            ADMLY_SAL = 0b000101,
+            ADMLY_LOG = 0b001001,
+            ADMLY_FIN = 0b010001,
+            ADMLY_MGT = 255;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
-            {0, null},
-            {ADMLY_SAL, "销售"},
             {ADMLY_OPN, "运营"},
+            {ADMLY_SAL, "销售"},
+            {ADMLY_LOG, "物流"},
             {ADMLY_FIN, "财务"},
-            {ADMLY_MGT, "统管"},
+            {ADMLY_MGT, "超级"},
         };
 
         public const short
-            ORGLY_ = 0b0001, // common
-            ORGLY_OPN = 0b0011,
-            ORGLY_SAL = 0b0101,
-            ORGLY_FIN = 0b1001,
-            ORGLY_MGT = 0b1111;
+            ORGLY_ = 0b000001, // common
+            ORGLY_OPN = 0b000011,
+            ORGLY_SAL = 0b000101,
+            ORGLY_LOG = 0b001001,
+            ORGLY_FIN = 0b010001,
+            ORGLY_MGT = 255;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_SAL, "销售"},
             {ORGLY_OPN, "运营"},
+            {ORGLY_SAL, "销售"},
+            {ORGLY_LOG, "物流"},
             {ORGLY_FIN, "财务"},
-            {ORGLY_MGT, "统管"},
+            {ORGLY_MGT, "超级"},
         };
 
         internal int id;

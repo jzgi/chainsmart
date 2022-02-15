@@ -58,12 +58,12 @@ namespace Revital
             }
 
             // is of any role for the org
-            if ((org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly)
+            if (org.id == prin.orgid && (org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly)
             {
                 if (!mock)
                 {
                     wc.Party = org.name;
-                    wc.Role = User.Orgly[orgly];
+                    wc.Role = User.Orgly[prin.orgly];
                 }
                 return true;
             }
