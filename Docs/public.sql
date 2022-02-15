@@ -31,7 +31,7 @@ create table _infos
 (
 	typ smallint not null,
 	status smallint default 0 not null,
-	name varchar(10) not null,
+	name varchar(12) not null,
 	tip varchar(30),
 	created timestamp(0),
 	creator varchar(10),
@@ -121,10 +121,10 @@ create table orgs
 	x double precision,
 	y double precision,
 	tel varchar(11),
-	mark smallint,
+	rank smallint,
 	mgrid integer,
 	cert bytea,
-	distrg smallint[]
+	dists smallint[]
 )
 inherits (_infos);
 
@@ -217,7 +217,7 @@ create table peers_
 (
 	typ smallint not null,
 	status smallint default 0 not null,
-	name varchar(10) not null,
+	name varchar(12) not null,
 	tip varchar(30),
 	created timestamp(0),
 	creator varchar(10),
@@ -311,13 +311,13 @@ create table buys
 	totalp money,
 	fee money,
 	pay money,
-	wares buyware_type[]
+	wares wareln_type[]
 )
 inherits (_infos);
 
 alter table buys owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, mark, sprid, license, trust, regid, addr, x, y, tel, distrg, mgrid, mgrname, mgrtel, mgrim, cert) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, rank, sprid, license, trust, regid, addr, x, y, tel, dists, mgrid, mgrname, mgrtel, mgrim, cert) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -328,7 +328,7 @@ SELECT o.typ,
        o.adapter,
        o.id,
        o.fork,
-       o.mark,
+       o.rank,
        o.sprid,
        o.license,
        o.trust,
@@ -337,7 +337,7 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.distrg,
+       o.dists,
        o.mgrid,
        m.name             AS mgrname,
        m.tel              AS mgrtel,

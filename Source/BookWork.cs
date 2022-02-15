@@ -103,20 +103,20 @@ namespace Revital
                     short last = 0;
                     foreach (var o in arr)
                     {
-                        if (o.cat != last)
+                        if (o.typ != last)
                         {
-                            h.LI_().SPAN_("uk-label").T(Item.Typs[o.cat])._SPAN()._LI();
+                            h.LI_().SPAN_("uk-label").T(Item.Typs[o.typ])._SPAN()._LI();
                         }
                         h.LI_("uk-flex");
                         h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
-                        h.SPAN(Product.Typs[o.mrtg]);
+                        h.SPAN(Item.Typs[o.mrtg]);
                         h.SPAN(_Info.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
 
-                        last = o.cat;
+                        last = o.typ;
                     }
                     h._FIELDSUL();
 

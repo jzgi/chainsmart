@@ -10,17 +10,7 @@ namespace Revital
     {
         public static readonly Product Empty = new Product();
 
-        public const short
-            TYP_SPOT = 1,
-            TYP_FUTURE = 2;
-
-        public static readonly Map<short, string> Typs = new Map<short, string>
-        {
-            {TYP_SPOT, "现货供给"},
-            {TYP_FUTURE, "预售供给"},
-        };
-
-        public static readonly Map<short, string> Postgs = new Map<short, string>
+        public static readonly Map<short, string> Mrtgs = new Map<short, string>
         {
             {0, "不管市场价"},
             {1, "建议市场价"},

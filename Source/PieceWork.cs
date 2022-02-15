@@ -61,7 +61,7 @@ namespace Revital
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().TOOLVAR(o.Key, nameof(BizlyPieceVarWork.upd), caption: o.name).SP()._TD();
+                    // h.TD_().TOOLVAR(o.Key, nameof(BizlyPieceVarWork.upd), caption: o.name).SP()._TD();
                     h.TD(o.price, true);
                     // h.TD(Statuses[o.status]);
                 });
@@ -127,7 +127,7 @@ namespace Revital
                     orgid = org.id,
                 });
                 var item = items[o.itemid];
-                o.cat = item.cat;
+                o.typ = item.typ;
                 o.name = item.name + '（' + o.ext + '）';
 
                 // insert
@@ -190,7 +190,7 @@ namespace Revital
                     orgid = org.id,
                 });
                 var item = items[o.itemid];
-                o.cat = item.cat;
+                o.typ = item.typ;
                 o.name = item.name + '（' + o.ext + '）';
 
                 // insert

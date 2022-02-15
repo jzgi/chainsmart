@@ -64,8 +64,7 @@ namespace Revital
 
     public class SrclyProductVarWork : ProductVarWork
     {
-        [Ui("修改现货供给"), Tool(AnchorOpen)]
-        public async Task upd(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             short id = wc[0];
             var org = wc[-2].As<Org>();
@@ -82,7 +81,7 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("供给对象", nameof(o.rankg), o.rankg, Org.Marks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    h.LI_().SELECT("供给对象", nameof(o.rankg), o.rankg, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -90,7 +89,7 @@ namespace Revital
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("现存量", nameof(o.cap), o.cap)._LI();
-                    h.LI_().SELECT("市场约束", nameof(o.mrtg), o.mrtg, Product.Postgs, required: true).NUMBER("市场价", nameof(o.mrtprice), o.mrtprice, min: 0.00M, max: 10000.00M)._LI();
+                    h.LI_().SELECT("市场约束", nameof(o.mrtg), o.mrtg, Product.Mrtgs, required: true).NUMBER("市场价", nameof(o.mrtprice), o.mrtprice, min: 0.00M, max: 10000.00M)._LI();
 
                     h._FIELDSUL();
 
@@ -102,22 +101,22 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Product
+                var m = await wc.ReadObjectAsync(0, new Product
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
                     orgid = org.id,
                 });
-                var item = items[o.itemid];
-                o.cat = item.cat;
-                o.name = item.name + '（' + o.ext + '）';
+                var item = items[m.itemid];
+                m.typ = item.typ;
+                m.name = item.name + '（' + m.ext + '）';
 
                 // update
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE products ")._SET_(Product.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
-                    o.Write(p, 0);
+                    m.Write(p, 0);
                     p.Set(id);
                 });
 

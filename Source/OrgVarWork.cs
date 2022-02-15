@@ -189,10 +189,27 @@ namespace Revital
             }
         }
 
-        [Ui("✎", "修改"), Tool(ButtonShow)]
-        public async Task df(WebContext wc)
+        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        public async Task rm(WebContext wc)
         {
             int id = wc[0];
+            if (wc.IsGet)
+            {
+                const bool ok = true;
+                wc.GivePane(200, h =>
+                {
+                    h.ALERT("确定删除此项？");
+                    h.FORM_().HIDDEN(nameof(ok), ok)._FORM();
+                });
+            }
+            else
+            {
+                using var dc = NewDbContext();
+                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
+                await dc.ExecuteAsync(p => p.Set(id));
+
+                wc.GivePane(200);
+            }
         }
     }
 }

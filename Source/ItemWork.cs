@@ -86,9 +86,10 @@ namespace Revital
                     created = DateTime.Now,
                     creator = prin.name
                 });
+                const short proj = _Info.NATIVE;
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO items ").colset(Item.Empty, 0)._VALUES_(Item.Empty, 0);
-                await dc.ExecuteAsync(p => o.Write(p, 0));
+                dc.Sql("INSERT INTO items ").colset(Item.Empty, proj)._VALUES_(Item.Empty, proj);
+                await dc.ExecuteAsync(p => o.Write(p, proj));
 
                 wc.GivePane(200); // close dialog
             }

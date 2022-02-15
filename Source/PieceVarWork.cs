@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using SkyChain.Web;
-using static SkyChain.Web.Modal;
 
 namespace Revital
 {
@@ -37,8 +36,7 @@ namespace Revital
 
     public class BizlyPieceVarWork : PieceVarWork
     {
-        [Ui("修改展页项", group: 2), Tool(AnchorOpen)]
-        public async Task upd(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
@@ -74,22 +72,22 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Piece
+                var m = await wc.ReadObjectAsync(0, new Piece
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
                     orgid = org.id,
                 });
-                var item = items[o.itemid];
-                o.cat = item.cat;
-                o.name = item.name + '（' + o.ext + '）';
+                var item = items[m.itemid];
+                m.typ = item.typ;
+                m.name = item.name + '（' + m.ext + '）';
 
                 // update
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE posts ")._SET_(Piece.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
-                    o.Write(p, 0);
+                    m.Write(p, 0);
                     p.Set(id);
                 });
 

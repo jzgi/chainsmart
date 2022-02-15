@@ -35,7 +35,6 @@ namespace Revital
         };
 
         internal short id;
-        internal short cat;
         internal string unit; // standard unit
         internal string unitip;
 
@@ -49,7 +48,6 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(cat), ref cat);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
         }
@@ -62,14 +60,11 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(cat), cat);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
         }
 
         public short Key => id;
-
-        public static bool IsCatOfTyp(short c, short t) => c < t * 10 && c > (t - 1) * 10;
 
         public override string ToString() => name;
     }
