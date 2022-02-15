@@ -10,7 +10,6 @@ namespace Revital
         // the specialized extensible discriminator
         internal int orgid;
         internal short itemid;
-        
         internal string ext;
         internal string unit;
         internal short unitx;
@@ -24,11 +23,11 @@ namespace Revital
         {
             base.Read(s, proj);
 
-            if ((proj & NATIVE) == NATIVE)
+            if ((proj & BORN) == BORN)
             {
                 s.Get(nameof(orgid), ref orgid);
-                s.Get(nameof(itemid), ref itemid);
             }
+            s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(ext), ref ext);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
@@ -43,7 +42,7 @@ namespace Revital
         {
             base.Write(s, proj);
 
-            if ((proj & NATIVE) == NATIVE)
+            if ((proj & BORN) == BORN)
             {
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(itemid), itemid);

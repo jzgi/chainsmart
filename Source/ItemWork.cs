@@ -18,7 +18,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("平台｜统一品目设置")]
+    [Ui("平台｜规范品目设置")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnCreate()
@@ -54,7 +54,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建统一品目"), Tool(ButtonShow)]
+        [Ui("✚", "新建规范品目"), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
@@ -80,16 +80,16 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Item
+                const short proj = _Info.BORN;
+                var m = await wc.ReadObjectAsync(0, new Item
                 {
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name
                 });
-                const short proj = _Info.NATIVE;
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO items ").colset(Item.Empty, proj)._VALUES_(Item.Empty, proj);
-                await dc.ExecuteAsync(p => o.Write(p, proj));
+                await dc.ExecuteAsync(p => m.Write(p, proj));
 
                 wc.GivePane(200); // close dialog
             }

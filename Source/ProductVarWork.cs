@@ -37,28 +37,6 @@ namespace Revital
                 else wc.Give(500); // internal server error
             }
         }
-
-        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
-        public async Task rm(WebContext wc)
-        {
-            short id = wc[0];
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.ALERT("删除标品？");
-                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("DELETE FROM items WHERE id = @1");
-                await dc.ExecuteAsync(p => p.Set(id));
-
-                wc.GivePane(200);
-            }
-        }
     }
 
 
@@ -79,9 +57,10 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, filter: x => x.typ == org.fork, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
+                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("供给对象", nameof(o.rankg), o.rankg, Org.Ranks).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, required: true)._LI();
+                    h.LI_().SELECT("发货约定", nameof(o.fillg), o.fillg, Product.Fillgs, required: true).DATE("指定日期", nameof(o.fillon), o.fillon)._LI();
+                    h.LI_().SELECT("供应级别", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -92,9 +71,6 @@ namespace Revital
                     h.LI_().SELECT("市场约束", nameof(o.mrtg), o.mrtg, Product.Mrtgs, required: true).NUMBER("市场价", nameof(o.mrtprice), o.mrtprice, min: 0.00M, max: 10000.00M)._LI();
 
                     h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确定");
-
                     h._FORM();
                 });
             }
@@ -105,7 +81,6 @@ namespace Revital
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
-                    orgid = org.id,
                 });
                 var item = items[m.itemid];
                 m.typ = item.typ;
@@ -124,22 +99,38 @@ namespace Revital
             }
         }
 
-        [Ui("◑", "项目图标", group: 3), Tool(ButtonCrop, Appear.Small)]
-        public async Task icon(WebContext wc)
-        {
-            await doimg(wc, nameof(icon));
-        }
-
-        [Ui("◩", "项目照片", group: 3), Tool(ButtonCrop, Appear.Large)]
+        [Ui("◩", "照片"), Tool(ButtonCrop, Appear.Large)]
         public async Task img(WebContext wc)
         {
             await doimg(wc, nameof(img));
         }
 
-        [Ui("▤", "质量证明", group: 3), Tool(ButtonCrop, Appear.Full)]
+        [Ui("▤", "质检"), Tool(ButtonCrop, Appear.Full)]
         public async Task cert(WebContext wc)
         {
             await doimg(wc, nameof(cert));
+        }
+
+        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        public async Task rm(WebContext wc)
+        {
+            int id = wc[0];
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.ALERT("删除标品？");
+                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
+                });
+            }
+            else
+            {
+                using var dc = NewDbContext();
+                dc.Sql("DELETE FROM products WHERE id = @1");
+                await dc.ExecuteAsync(p => p.Set(id));
+
+                wc.GivePane(200);
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Revital
 
         public static readonly Map<short, string> Ranks = new Map<short, string>
         {
-            {0, "普通"},
+            {0, "一般"},
             {1, "银牌"},
             {2, "金牌"},
         };
@@ -81,7 +81,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & NATIVE) == NATIVE || (proj & SPECIAL) == SPECIAL)
+            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
             {
                 s.Get(nameof(sprid), ref sprid);
             }
@@ -113,7 +113,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & NATIVE) == NATIVE || (proj & SPECIAL) == SPECIAL)
+            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
             {
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));

@@ -1181,6 +1181,7 @@ form legend {
 
 .uk-input {
     overflow: visible;
+    min-width: 4rem;
 }
 
 .uk-select {

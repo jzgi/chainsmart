@@ -55,6 +55,7 @@ namespace Revital
                 {
                     var typname = Item.Typs[m.typ];
                     h.FORM_().FIELDSUL_(typname + "品目信息");
+                    h.LI_().SELECT("原类型", nameof(m.typ), m.typ, Item.Typs, required: true)._LI();
                     h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("基本单位", nameof(m.unit), m.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(m.unitip), m.unitip, max: 8)._LI();
@@ -64,23 +65,24 @@ namespace Revital
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync(0, new Item
+                const short proj = _Info.TYP;
+                var m = await wc.ReadObjectAsync(proj, new Item
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name
                 });
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE items")._SET_(Item.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE items")._SET_(Item.Empty, proj).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, proj);
                     p.Set(id);
                 });
                 wc.GivePane(200); // close
             }
         }
 
-        [Ui("◪", "图片", group: 7), Tool(ButtonCrop, Appear.Small)]
+        [Ui("◑", "图标"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             short id = wc[0];

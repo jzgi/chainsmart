@@ -133,15 +133,15 @@ namespace Revital
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(_Info.NATIVE, new Org
+                var o = await wc.ReadObjectAsync(_Info.BORN, new Org
                 {
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
                 });
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Empty, _Info.NATIVE)._VALUES_(Empty, _Info.NATIVE);
-                await dc.ExecuteAsync(p => o.Write(p, _Info.NATIVE));
+                dc.Sql("INSERT INTO orgs ").colset(Empty, _Info.BORN)._VALUES_(Empty, _Info.BORN);
+                await dc.ExecuteAsync(p => o.Write(p, _Info.BORN));
                 wc.GivePane(201); // created
             }
         }
@@ -293,7 +293,7 @@ namespace Revital
             }
             else // POST
             {
-                const short proj = _Info.NATIVE;
+                const short proj = _Info.BORN;
                 var o = await wc.ReadObjectAsync(proj, instance: m);
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Empty, proj)._VALUES_(Empty, proj);

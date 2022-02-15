@@ -77,17 +77,17 @@ namespace Revital
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync(_Info.SPECIAL, new Org
+                var m = await wc.ReadObjectAsync(_Info.DUAL, new Org
                 {
                     typ = (short) typ,
                     adapted = DateTime.Now,
                     adapter = prin.name
                 });
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, _Info.SPECIAL).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, _Info.DUAL).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, _Info.SPECIAL);
+                    m.Write(p, _Info.DUAL);
                     p.Set(id);
                 });
                 wc.GivePane(200); // close

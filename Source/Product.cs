@@ -10,6 +10,12 @@ namespace Revital
     {
         public static readonly Product Empty = new Product();
 
+        public static readonly Map<short, string> Fillgs = new Map<short, string>
+        {
+            {0, "次日发货"},
+            {1, "指定日期"},
+        };
+
         public static readonly Map<short, string> Mrtgs = new Map<short, string>
         {
             {0, "不管市场价"},
@@ -21,6 +27,7 @@ namespace Revital
 
         internal int id;
 
+        internal short fillg;
         internal DateTime fillon;
         internal short mrtg;
         internal decimal mrtprice;
@@ -35,6 +42,7 @@ namespace Revital
                 s.Get(nameof(id), ref id);
             }
 
+            s.Get(nameof(fillg), ref fillg);
             s.Get(nameof(fillon), ref fillon);
             s.Get(nameof(mrtg), ref mrtg);
             s.Get(nameof(mrtprice), ref mrtprice);
@@ -49,6 +57,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
+            s.Put(nameof(fillg), fillg);
             s.Put(nameof(fillon), fillon);
             s.Put(nameof(mrtg), mrtg);
             s.Put(nameof(mrtprice), mrtprice);

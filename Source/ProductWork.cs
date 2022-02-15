@@ -23,7 +23,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND status DESC, typ LIMIT 40 OFFSET 40 * @2");
+            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 ORDER BY status DESC, typ LIMIT 40 OFFSET 40 * @2");
             var arr = dc.Query<Product>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
@@ -45,7 +45,7 @@ namespace Revital
         }
 
 
-        [Ui("✚", "新建产品", group: 1), Tool(ButtonOpen)]
+        [Ui("✚", "新建产品"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -53,8 +53,10 @@ namespace Revital
             var items = Grab<short, Item>();
             if (wc.IsGet)
             {
+                var tomorrow = DateTime.Today.AddDays(1);
                 var o = new Product
                 {
+                    fillon = tomorrow,
                     status = _Info.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
@@ -63,7 +65,8 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("供应对象", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("发货约定", nameof(o.fillg), o.fillg, Product.Fillgs, required: true).DATE("指定日期", nameof(o.fillon), o.fillon, min: tomorrow)._LI();
+                    h.LI_().SELECT("供应级别", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -74,30 +77,27 @@ namespace Revital
                     h.LI_().SELECT("市场约束", nameof(o.mrtg), o.mrtg, Product.Mrtgs, required: true).NUMBER("市场价", nameof(o.mrtprice), o.mrtprice, min: 0.00M, max: 10000.00M)._LI();
 
                     h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确定");
-
                     h._FORM();
                 });
             }
             else // POST
             {
+                const short proj = _Info.BORN;
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Product
+                var m = await wc.ReadObjectAsync(proj, new Product
                 {
+                    orgid = org.id,
                     created = DateTime.Now,
                     creator = prin.name,
-                    orgid = org.id,
                 });
-                var item = items[o.itemid];
-                o.typ = item.typ;
-                o.name = item.name + '（' + o.ext + '）';
+                var item = items[m.itemid];
+                m.typ = item.typ;
+                m.name = item.name + '（' + m.ext + '）';
 
                 // insert
-                const short proj = _Info.NATIVE;
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO products ").colset(Product.Empty, proj)._VALUES_(Product.Empty, proj);
-                await dc.ExecuteAsync(p => o.Write(p, proj));
+                await dc.ExecuteAsync(p => m.Write(p, proj));
 
                 wc.GivePane(200); // close dialog
             }
