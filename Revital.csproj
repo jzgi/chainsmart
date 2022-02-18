@@ -29,4 +29,9 @@
       <ProjectReference Include="..\SkyChain\SkyChain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Source\Dir" />
+      <Folder Include="Source\Site" />
+    </ItemGroup>
+
 </Project>
