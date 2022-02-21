@@ -25,9 +25,9 @@ namespace Revital
             {
                 CacheUp();
 
-                CreateService<WwwService>("www");
+                CreateService<DirService>("www");
 
-                CreateService<MgtService>("mgt");
+                CreateService<SiteService>("mgt");
             }
             else
             {
