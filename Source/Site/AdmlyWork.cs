@@ -49,7 +49,7 @@ namespace Revital.Site
 
         [UserAuthorize(admly: User.ADMLY_OPN)]
         [Ui("操作权限"), Tool(Modal.ButtonOpen)]
-        public async Task access(WebContext wc, int cmd)
+        public async Task acl(WebContext wc, int cmd)
         {
             using var dc = NewDbContext();
 
@@ -73,7 +73,7 @@ namespace Revital.Site
                             h.TDFORM(() =>
                             {
                                 h.HIDDEN(nameof(id), o.id);
-                                h.TOOL(nameof(access), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
+                                h.TOOL(nameof(acl), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
                             });
                         },
                         caption: "现有操作权限"
@@ -81,7 +81,7 @@ namespace Revital.Site
                     h.FORM_().FIELDSUL_("授权目标用户");
                     if (cmd == 0)
                     {
-                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
+                        h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(acl), 1, post: false, css: "uk-button-secondary")._LI();
                     }
                     else if (cmd == 1) // search user
                     {
@@ -90,10 +90,10 @@ namespace Revital.Site
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
-                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(access), 1, post: false, css: "uk-button-secondary")._LI();
+                            h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(acl), 1, post: false, css: "uk-button-secondary")._LI();
                             h.LI_().FIELD("用户姓名", o.name)._LI();
                             h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0, required: true)._LI();
-                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(access), 2)._LI();
+                            h.LI_("uk-flex uk-flex-center").BUTTON("确认", nameof(acl), 2)._LI();
                             h.HIDDEN(nameof(o.id), o.id);
                         }
                     }
@@ -106,7 +106,7 @@ namespace Revital.Site
                 id = f[nameof(id)];
                 admly = f[nameof(admly)]; // lead to removal when 0
                 dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
-                wc.GiveRedirect(nameof(access));
+                wc.GiveRedirect(nameof(acl));
             }
         }
     }

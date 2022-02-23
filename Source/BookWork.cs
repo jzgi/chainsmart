@@ -8,7 +8,7 @@ namespace Revital
     {
     }
 
-    public class PublyBookWork : OrgWork
+    public class PublyBookWork : BookWork
     {
         public async Task @default(WebContext wc, int code)
         {

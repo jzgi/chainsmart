@@ -4,12 +4,8 @@ using SkyChain.Web;
 using static Revital.Org;
 using static SkyChain.Web.Modal;
 
-namespace Revital
+namespace Revital.Site
 {
-    public abstract class OrgWork : WebWork
-    {
-    }
-
 
     [Ui("平台｜入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
