@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard item of product or service.
     /// </summary>
-    public class Item : _Info, IKeyable<short>
+    public class Item : Info, IKeyable<short>
     {
         public static readonly Item Empty = new Item();
 
@@ -40,11 +40,11 @@ namespace Revital
 
         // must have an icon
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -52,11 +52,11 @@ namespace Revital
             s.Get(nameof(unitip), ref unitip);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }

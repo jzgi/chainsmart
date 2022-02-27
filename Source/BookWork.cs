@@ -112,7 +112,7 @@ namespace Revital
                         h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
                         h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
                         h.SPAN(Item.Typs[o.mrtg]);
-                        h.SPAN(_Info.Statuses[o.status]);
+                        h.SPAN(Info.Statuses[o.status]);
                         h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
                         h._LI();
 

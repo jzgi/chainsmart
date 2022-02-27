@@ -91,7 +91,7 @@ namespace Revital.Site
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("状态", _Info.Statuses[org.status])._LI();
+                h.LI_().FIELD("状态", Info.Statuses[org.status])._LI();
                 h._UL();
                 h._FORM();
 

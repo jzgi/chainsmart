@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Daily : _Info
+    public class Daily : Info
     {
         public static readonly Daily Empty = new Daily();
 
@@ -30,9 +30,9 @@ namespace Revital
 
         internal decimal amt;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(dt), ref dt);
@@ -41,9 +41,9 @@ namespace Revital
             s.Get(nameof(amt), ref amt);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(dt), dt);

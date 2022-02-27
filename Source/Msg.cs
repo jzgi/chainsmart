@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Msg : _Info
+    public class Msg : Info
     {
         public static readonly Msg Empty = new Msg();
 
@@ -20,14 +20,14 @@ namespace Revital
         };
 
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
         }
     }
 }

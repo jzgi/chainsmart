@@ -83,7 +83,7 @@ namespace Revital.Main
             var o = new Reg
             {
                 typ = (short) typ,
-                status = _Info.STA_ENABLED,
+                status = Info.STA_ENABLED,
                 created = DateTime.Now,
                 creator = prin.name,
             };
@@ -96,7 +96,7 @@ namespace Revital.Main
                     h.LI_().SELECT("类型", nameof(o.typ), o.typ, Reg.Typs, filter: (k, v) => k == typ, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, _Info.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

@@ -1,0 +1,28 @@
+{
+  "logging": 2,
+  "farmkey": "ebce206103e439514f3c4748c683274e",
+  "certpasswd": "fVC2ToAq",
+  "store": {
+    "host": "/temp",
+    "port": 5432,
+    "database": "site",
+    "username": "postgres",
+    "password": "Gs721004",
+    "name": "江西",
+    "tip": "中惠农通江西站点",
+    "ref": "http://localhost:80"
+  },
+  "web-site": {
+    "address": "http://localhost:81"
+  },
+  "ext": {
+    "url": "http://zhnt-x.com",
+    "appid": "wx15809e9c6f599b8c",
+    "appsecret": "2df432cb748a371d1388f428af9eabe1",
+    "mchid": "1584964561",
+    "noncestr": "30a5fe271",
+    "spbillcreateip": "81.69.218.155",
+    "key": "28165acab74c2fbf3b042b5d2f87d274",
+    "idcertcode": "b05b4c8bc1ec4fad90309adad7026aca"
+  }
+}

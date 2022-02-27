@@ -4,7 +4,7 @@ using SkyChain.Store;
 
 namespace Revital
 {
-    public class Book : _Info, IKeyable<long>
+    public class Book : Info, IKeyable<long>
     {
         public static readonly Book Empty = new Book();
 
@@ -49,11 +49,11 @@ namespace Revital
         internal string cs_;
         internal string blockcs_;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -86,11 +86,11 @@ namespace Revital
             s.Get(nameof(blockcs_), ref blockcs_);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }

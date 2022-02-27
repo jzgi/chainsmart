@@ -71,23 +71,23 @@ namespace Revital.Main
                     if (m.HasXy) h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (m.IsMrt) h.LI_().SELECT("关联中枢", nameof(m.sprid), m.sprid, orgs, filter: (k, v) => v.IsCtr, required: true)._LI();
                     if (m.IsSrc) h.LI_().SELECT("辐射地市", nameof(m.dists), m.dists, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync(_Info.DUAL, new Org
+                var m = await wc.ReadObjectAsync(Info.DUAL, new Org
                 {
                     typ = (short) typ,
                     adapted = DateTime.Now,
                     adapter = prin.name
                 });
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, _Info.DUAL).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, Info.DUAL).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, _Info.DUAL);
+                    m.Write(p, Info.DUAL);
                     p.Set(id);
                 });
                 wc.GivePane(200); // close
@@ -171,7 +171,7 @@ namespace Revital.Main
                     h.LI_().SELECT("所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

@@ -36,7 +36,7 @@ namespace Revital.Main
                     h.TDAVAR(o.Key, o.name);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TD(Info.Statuses[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
 
@@ -57,7 +57,7 @@ namespace Revital.Main
                 var o = new Product
                 {
                     fillon = tomorrow,
-                    status = _Info.STA_DISABLED,
+                    status = Info.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -66,7 +66,7 @@ namespace Revital.Main
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("发货约定", nameof(o.fillg), o.fillg, Product.Fillgs, required: true).DATE("指定日期", nameof(o.fillon), o.fillon, min: tomorrow)._LI();
-                    h.LI_().SELECT("供应级别", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, _Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("供应级别", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -82,7 +82,7 @@ namespace Revital.Main
             }
             else // POST
             {
-                const short proj = _Info.BORN;
+                const short proj = Info.BORN;
                 // populate 
                 var m = await wc.ReadObjectAsync(proj, new Product
                 {

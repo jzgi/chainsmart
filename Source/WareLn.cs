@@ -14,7 +14,7 @@ namespace Revital
         public short qty;
         public decimal total;
 
-        public void Read(ISource s, short proj = 0xff)
+        public void Read(ISource s, short mask = 0xff)
         {
             s.Get(nameof(buyid), ref buyid);
             s.Get(nameof(wareid), ref wareid);
@@ -24,7 +24,7 @@ namespace Revital
             s.Get(nameof(qty), ref qty);
         }
 
-        public void Write(ISink s, short proj = 0xff)
+        public void Write(ISink s, short mask = 0xff)
         {
             s.Put(nameof(buyid), buyid);
             s.Put(nameof(wareid), wareid);

@@ -3,7 +3,7 @@ using SkyChain;
 
 namespace Revital
 {
-    public class Clear : _Info, IKeyable<int>
+    public class Clear : Info, IKeyable<int>
     {
         public static readonly Clear Empty = new Clear();
 
@@ -39,11 +39,11 @@ namespace Revital
         internal decimal amt;
         internal int qty;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
-            if ((proj & EXTRA) == EXTRA)
+            if ((mask & EXTRA) == EXTRA)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -55,11 +55,11 @@ namespace Revital
             s.Get(nameof(qty), ref qty);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
-            if ((proj & EXTRA) == EXTRA)
+            if ((mask & EXTRA) == EXTRA)
             {
                 s.Put(nameof(id), id);
             }

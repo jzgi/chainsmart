@@ -34,7 +34,7 @@ namespace Revital.Main
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Symbols[o.status]);
+                    h.TD(Info.Symbols[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -55,7 +55,7 @@ namespace Revital.Main
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Symbols[o.status]);
+                    h.TD(Info.Symbols[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -76,7 +76,7 @@ namespace Revital.Main
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(_Info.Symbols[o.status]);
+                    h.TD(Info.Symbols[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -96,7 +96,7 @@ namespace Revital.Main
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Info.STA_ENABLED
+                    status = Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -127,21 +127,21 @@ namespace Revital.Main
                     {
                         h.LI_().SELECT("辐射地市", nameof(m.dists), m.dists, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
                     }
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(_Info.BORN, new Org
+                var o = await wc.ReadObjectAsync(Info.BORN, new Org
                 {
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
                 });
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Empty, _Info.BORN)._VALUES_(Empty, _Info.BORN);
-                await dc.ExecuteAsync(p => o.Write(p, _Info.BORN));
+                dc.Sql("INSERT INTO orgs ").colset(Empty, Info.BORN)._VALUES_(Empty, Info.BORN);
+                await dc.ExecuteAsync(p => o.Write(p, Info.BORN));
                 wc.GivePane(201); // created
             }
         }
@@ -195,7 +195,7 @@ namespace Revital.Main
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Info.STA_ENABLED
+                    status = Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -206,7 +206,7 @@ namespace Revital.Main
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECT)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -255,7 +255,7 @@ namespace Revital.Main
                 {
                     h.TDCHECK(o.id);
                     h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/prvly/", o.id, "/?astack=true", 8, false, Appear.Full).T("代办")._A()._TD();
-                    h.TD(_Info.Statuses[o.status]);
+                    h.TD(Info.Statuses[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -275,7 +275,7 @@ namespace Revital.Main
                 regid = (short) regid,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = _Info.STA_ENABLED
+                status = Info.STA_ENABLED
             };
             if (wc.IsGet)
             {
@@ -287,13 +287,13 @@ namespace Revital.Main
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short proj = _Info.BORN;
+                const short proj = Info.BORN;
                 var o = await wc.ReadObjectAsync(proj, instance: m);
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Empty, proj)._VALUES_(Empty, proj);

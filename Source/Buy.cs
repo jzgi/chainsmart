@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// An online or offline retail order
     /// </summary>
-    public class Buy : _Info, IKeyable<long>
+    public class Buy : Info, IKeyable<long>
     {
         public static readonly Buy Empty = new Buy();
 
@@ -35,9 +35,9 @@ namespace Revital
         internal decimal pay;
         internal WareLn[] wares;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -55,9 +55,9 @@ namespace Revital
             s.Get(nameof(wares), ref wares);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }

@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// The data model for a particular product supply.
     /// </summary>
-    public class Product : _Info, IKeyable<int>
+    public class Product : Info, IKeyable<int>
     {
         public static readonly Product Empty = new Product();
 
@@ -44,15 +44,15 @@ namespace Revital
         internal decimal price;
         internal int cap;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BORN) == BORN)
+            if ((mask & BORN) == BORN)
             {
                 s.Get(nameof(orgid), ref orgid);
             }
@@ -73,15 +73,15 @@ namespace Revital
             s.Get(nameof(rankg), ref rankg);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BORN) == BORN)
+            if ((mask & BORN) == BORN)
             {
                 s.Put(nameof(orgid), orgid);
             }

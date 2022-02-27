@@ -42,7 +42,7 @@ namespace Revital.Site
                 {
                     h.TDCHECK(o.id);
                     h.TDAVAR(o.Key, o.name);
-                    h.TD(_Info.Symbols[o.status]);
+                    h.TD(Info.Symbols[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -62,7 +62,7 @@ namespace Revital.Site
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = _Info.STA_ENABLED
+                    status = Info.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -71,13 +71,13 @@ namespace Revital.Site
                     h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("基本单位", nameof(m.unit), m.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(m.unitip), m.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, _Info.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short proj = _Info.BORN;
+                const short proj = Info.BORN;
                 var m = await wc.ReadObjectAsync(0, new Item
                 {
                     typ = (short) typ,

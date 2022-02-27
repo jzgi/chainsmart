@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class Reg : _Info, IKeyable<short>
+    public class Reg : Info, IKeyable<short>
     {
         public static readonly Reg Empty = new Reg();
 
@@ -21,22 +21,22 @@ namespace Revital
         internal short id;
         internal short idx;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short mask = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(idx), ref idx);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short mask = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, mask);
 
-            if ((proj & ID) == ID)
+            if ((mask & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }

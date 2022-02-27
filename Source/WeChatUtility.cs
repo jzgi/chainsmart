@@ -36,7 +36,7 @@ namespace Revital
 
         static WeChatUtility()
         {
-            var s = extcfg;
+            var s = ext;
             s.Get(nameof(url), ref url);
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);

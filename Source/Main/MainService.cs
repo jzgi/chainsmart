@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Web;
 using SkyChain;
 using SkyChain.Store;
 using SkyChain.Web;
@@ -21,6 +22,20 @@ namespace Revital.Main
             CreateWork<AdmlyWork>("admly"); // platform admin
 
             CreateWork<MyWork>("my");
+        }
+
+        public override void @enum(WebContext wc)
+        {
+            var sites = Service.Netted;
+            wc.GivePage(200, h =>
+            {
+                h.UL_("uk-subnav");
+                foreach (var site in sites)
+                {
+                    var v = site.Value;
+                }
+                h._UL();
+            });
         }
 
         public void @default(WebContext wc, int cmd)
@@ -118,7 +133,7 @@ namespace Revital.Main
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Info.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Info.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
@@ -162,7 +177,7 @@ namespace Revital.Main
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(_Info.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Info.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
@@ -184,6 +199,65 @@ namespace Revital.Main
                     x.ELEM("return_msg", "OK");
                 });
                 wc.Give(200, x);
+            }
+        }
+
+
+        public async Task signup(WebContext wc)
+        {
+            // must have openid
+            string openid = wc.Cookies[nameof(openid)];
+            if (openid == null)
+            {
+                wc.Give(400); // bad request
+                return;
+            }
+
+            string name = null;
+            string tel = null;
+            string url;
+            if (wc.IsGet) // GET
+            {
+                wc.GivePage(200, h =>
+                {
+                    url = wc.Query[nameof(url)];
+                    url = HttpUtility.UrlDecode(url);
+
+                    h.FORM_().FIELDSUL_("注册信息");
+                    h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true);
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h._FIELDSUL();
+                    h.HIDDEN(nameof(url), url);
+
+                    h.SECTION_("uk-section uk-col uk-flex-middle");
+                    h.P("如需接受消息通知清关注");
+                    h.PIC("/qrcode.jpg", css: "uk-width-medium");
+                    h._SECTION();
+
+                    h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
+                    h._FORM();
+                }, title: "用户注册");
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                url = f[nameof(url)];
+                var o = new User
+                {
+                    status = Info.STA_ENABLED,
+                    name = f[nameof(name)],
+                    tel = f[nameof(tel)],
+                    im = openid,
+                    created = DateTime.Now,
+                };
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
+                o = await dc.QueryTopAsync<User>(p => o.Write(p));
+
+                // refresh cookie
+                wc.Principal = o;
+                wc.SetTokenCookie(o);
+                wc.GiveRedirect(url);
             }
         }
     }
