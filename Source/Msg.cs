@@ -20,14 +20,14 @@ namespace Revital
         };
 
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
         }
     }
 }

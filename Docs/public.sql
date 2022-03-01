@@ -27,7 +27,7 @@ create type wareln_type as
 
 alter type wareln_type owner to postgres;
 
-create table _infos
+create table infos
 (
 	typ smallint not null,
 	status smallint default 0 not null,
@@ -39,7 +39,7 @@ create table _infos
 	adapter varchar(10)
 );
 
-alter table _infos owner to postgres;
+alter table infos owner to postgres;
 
 create table regs
 (
@@ -48,7 +48,7 @@ create table regs
 			primary key,
 	idx smallint
 )
-inherits (_infos);
+inherits (infos);
 
 alter table regs owner to postgres;
 
@@ -60,49 +60,20 @@ create table agrees
 	ended date,
 	content jsonb
 )
-inherits (_infos);
+inherits (infos);
 
 alter table agrees owner to postgres;
 
 create table items
 (
-	id serial not null
-		constraint items_pk
-			primary key,
-	cat smallint,
+	id integer not null,
 	unit varchar(4),
 	unitip varchar(10),
 	icon bytea
 )
-inherits (_infos);
+inherits (infos);
 
 alter table items owner to postgres;
-
-create table userlgs
-(
-	userid integer not null,
-	cont jsonb
-);
-
-alter table userlgs owner to postgres;
-
-create table _wares
-(
-	orgid integer,
-	itemid integer,
-	cat smallint,
-	ext varchar(10),
-	unit varchar(4),
-	unitx smallint,
-	min smallint,
-	max smallint,
-	step smallint,
-	price money,
-	cap integer
-)
-inherits (_infos);
-
-alter table _wares owner to postgres;
 
 create table orgs
 (
@@ -126,7 +97,7 @@ create table orgs
 	cert bytea,
 	dists smallint[]
 )
-inherits (_infos);
+inherits (infos);
 
 alter table orgs owner to postgres;
 
@@ -145,7 +116,7 @@ create table users
 	orgly smallint default 0 not null,
 	idcard varchar(18)
 )
-inherits (_infos);
+inherits (infos);
 
 alter table users owner to postgres;
 
@@ -163,74 +134,6 @@ create index users_orgid_idx
 create unique index users_tel_idx
 	on users (tel);
 
-create table products
-(
-	id serial not null
-		constraint products_pk
-			primary key,
-	fillon date,
-	mrtg smallint,
-	mrtprice money,
-	rankg smallint,
-	img bytea,
-	cert bytea,
-	constraint products_orgid_fk
-		foreign key (orgid) references orgs,
-	constraint products_itemid_fk
-		foreign key (itemid) references items
-)
-inherits (_wares);
-
-alter table products owner to postgres;
-
-create table pieces
-(
-	id serial not null
-		constraint pieces_pk
-			primary key,
-	productid integer
-)
-inherits (_wares);
-
-alter table pieces owner to postgres;
-
-create table ways
-(
-	ctrid integer
-		constraint ways_ctrid_fk
-			references orgs,
-	mrtid integer
-		constraint ways_mrtid_fk
-			references orgs
-)
-inherits (_infos);
-
-alter table ways owner to postgres;
-
-create index ways_typctr_idx
-	on ways (typ, ctrid);
-
-create index ways_typpath_idx
-	on ways (typ, mrtid);
-
-create table peers_
-(
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(12) not null,
-	tip varchar(30),
-	created timestamp(0),
-	creator varchar(10),
-	id smallint not null
-		constraint peers_pk
-			primary key,
-	domain varchar(50),
-	secure boolean
-)
-inherits (_infos);
-
-alter table peers_ owner to postgres;
-
 create table dailys
 (
 	orgid integer,
@@ -240,7 +143,7 @@ create table dailys
 	amt money,
 	qty integer
 )
-inherits (_infos);
+inherits (infos);
 
 alter table dailys owner to postgres;
 
@@ -255,11 +158,11 @@ create table clears
 	count integer,
 	amt money
 )
-inherits (_infos);
+inherits (infos);
 
 alter table clears owner to postgres;
 
-create table books_
+create table books
 (
 	id bigserial not null
 		constraint books_pk
@@ -290,9 +193,9 @@ create table books_
 	cs_ varchar(32),
 	blockcs_ varchar(32)
 )
-inherits (_infos);
+inherits (infos);
 
-alter table books_ owner to postgres;
+alter table books owner to postgres;
 
 create table buys
 (
@@ -313,9 +216,94 @@ create table buys
 	pay money,
 	wares wareln_type[]
 )
-inherits (_infos);
+inherits (infos);
 
 alter table buys owner to postgres;
+
+create table products
+(
+	id integer not null
+		constraint products_pk
+			primary key,
+	fillg smallint,
+	fillon date,
+	orgid integer
+		constraint products_orgid_fk
+			references orgs,
+	itemid integer,
+	ext varchar(10),
+	unit varchar(4),
+	unitx smallint,
+	min smallint,
+	max smallint,
+	step smallint,
+	price money,
+	cap integer,
+	mrtg smallint,
+	mrtprice money,
+	rankg smallint,
+	img bytea,
+	cert bytea
+)
+inherits (infos);
+
+alter table products owner to postgres;
+
+create table pieces
+(
+	id serial not null
+		constraint pieces_pk
+			primary key,
+	productid integer,
+	orgid integer,
+	itemid integer,
+	ext varchar(10),
+	unit varchar(4),
+	unitx smallint,
+	min smallint,
+	max smallint,
+	step smallint,
+	price money,
+	cap integer
+)
+inherits (infos);
+
+alter table pieces owner to postgres;
+
+create table peers
+(
+	id smallint not null
+		constraint peers_pk
+			primary key,
+	domain varchar(50),
+	secure boolean,
+	fedkey varchar(32)
+)
+inherits (infos);
+
+alter table peers owner to postgres;
+
+create table carbons
+(
+	seq integer,
+	acct varchar(20),
+	name varchar(12),
+	amt integer,
+	bal integer,
+	cs uuid,
+	blockcs uuid,
+	stamp timestamp(0)
+);
+
+alter table carbons owner to postgres;
+
+create table peercarbons
+(
+	peerid smallint
+)
+inherits (carbons);
+
+alter table peercarbons owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, rank, sprid, license, trust, regid, addr, x, y, tel, dists, mgrid, mgrname, mgrtel, mgrim, cert) as
 SELECT o.typ,

@@ -21,22 +21,22 @@ namespace Revital
         internal short id;
         internal short idx;
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(idx), ref idx);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }

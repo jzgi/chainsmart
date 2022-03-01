@@ -61,17 +61,17 @@ namespace Revital
         internal short orgly;
         internal string idcard;
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(im), ref im);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
@@ -81,17 +81,17 @@ namespace Revital
             }
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(tel), tel);
             s.Put(nameof(im), im);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);

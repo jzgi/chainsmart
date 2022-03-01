@@ -73,15 +73,15 @@ namespace Revital
         internal bool cert;
         internal short[] dists; // district covering
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((mask & BORN) == BORN || (mask & DUAL) == DUAL)
+            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
             {
                 s.Get(nameof(sprid), ref sprid);
             }
@@ -95,7 +95,7 @@ namespace Revital
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(dists), ref dists);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
                 s.Get(nameof(mgrname), ref mgrname);
@@ -105,15 +105,15 @@ namespace Revital
             }
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((mask & BORN) == BORN || (mask & DUAL) == DUAL)
+            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
             {
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));
@@ -129,7 +129,7 @@ namespace Revital
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
             s.Put(nameof(dists), dists);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
                 s.Put(nameof(mgrname), mgrname);

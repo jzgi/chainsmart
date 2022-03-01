@@ -9,6 +9,7 @@ namespace Revital
     {
         public static readonly Piece Empty = new Piece();
 
+        internal int id;
         internal int orgid;
         internal short itemid;
         internal string ext;
@@ -19,18 +20,19 @@ namespace Revital
         internal short step;
         internal decimal price;
         internal int cap;
-        internal int id;
+
         internal int productid;
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((mask & BORN) == BORN)
+            s.Get(nameof(productid), ref productid);
+            if ((proj & BORN) == BORN)
             {
                 s.Get(nameof(orgid), ref orgid);
             }
@@ -43,18 +45,19 @@ namespace Revital
             s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
             s.Get(nameof(cap), ref cap);
-            s.Get(nameof(productid), ref productid);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((mask & BORN) == BORN)
+            if (productid == 0) s.PutNull(nameof(productid));
+            else s.Put(nameof(productid), productid);
+            if ((proj & BORN) == BORN)
             {
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(itemid), itemid);
@@ -67,8 +70,6 @@ namespace Revital
             s.Put(nameof(step), step);
             s.Put(nameof(price), price);
             s.Put(nameof(cap), cap);
-            if (productid == 0) s.PutNull(nameof(productid));
-            else s.Put(nameof(productid), productid);
         }
 
         public int Key => id;

@@ -39,11 +39,11 @@ namespace Revital
         internal decimal amt;
         internal int qty;
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
-            if ((mask & EXTRA) == EXTRA)
+            if ((proj & EXTRA) == EXTRA)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -55,11 +55,11 @@ namespace Revital
             s.Get(nameof(qty), ref qty);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & EXTRA) == EXTRA)
+            if ((proj & EXTRA) == EXTRA)
             {
                 s.Put(nameof(id), id);
             }

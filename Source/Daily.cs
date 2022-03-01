@@ -30,9 +30,9 @@ namespace Revital
 
         internal decimal amt;
 
-        public override void Read(ISource s, short mask = 0xff)
+        public override void Read(ISource s, short proj = 0xff)
         {
-            base.Read(s, mask);
+            base.Read(s, proj);
 
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(dt), ref dt);
@@ -41,9 +41,9 @@ namespace Revital
             s.Get(nameof(amt), ref amt);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(dt), dt);

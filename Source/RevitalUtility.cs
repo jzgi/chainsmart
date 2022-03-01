@@ -31,7 +31,7 @@ namespace Revital
         public static string GetUrlLink(string uri)
         {
             string url;
-            url = Application.ext[nameof(url)];
+            url = Application.Ext[nameof(url)];
             if (uri == null)
             {
                 return url;

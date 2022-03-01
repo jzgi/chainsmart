@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Revital.Main;
-using Revital.Site;
 using SkyChain;
-using SkyChain.Store;
+using SkyChain.Chain;
 using static System.Data.IsolationLevel;
 
 namespace Revital
@@ -25,39 +23,41 @@ namespace Revital
 
             if (args.Length == 0 || args.Contains("main"))
             {
-                CacheUp(true);
-                CreateService<MainService>("main");
+                CacheUp();
+
+                CreateService<WwwService>("www");
+
+                CreateService<MgtService>("mgt");
             }
-            else if (args.Contains("site"))
+            else
             {
-                CacheUp(false);
-                CreateService<SiteService>("site");
-            }
-            else if (args.Contains("main-p"))
-            {
-                CreateService<ProxyService>("main");
-            }
-            if (args.Contains("site-p"))
-            {
-                CreateService<ProxyService>("site");
+                if (args.Contains("pub-p"))
+                {
+                    CreateService<ProxyService>("pub");
+                }
+
+                if (args.Contains("mgt-p"))
+                {
+                    CreateService<ProxyService>("mgt");
+                }
             }
 
             await StartAsync();
         }
 
 
-        public static void CacheUp(bool main)
+        public static void CacheUp()
         {
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs_ ORDER BY typ, id");
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
 
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_ ORDER BY cat, id");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, id");
                     return dc.Query<short, Item>();
                 }, 60 * 15
             );

@@ -48,13 +48,13 @@ namespace Revital
         internal DateTime adapted;
         internal string adapter;
 
-        public virtual void Read(ISource s, short mask = 0xff)
+        public virtual void Read(ISource s, short proj = 0xff)
         {
-            if ((mask & TYP) == TYP || (mask & BORN) == BORN)
+            if ((proj & TYP) == TYP || (proj & BORN) == BORN)
             {
                 s.Get(nameof(typ), ref typ);
             }
-            if ((mask & BORN) == BORN)
+            if ((proj & BORN) == BORN)
             {
                 s.Get(nameof(created), ref created);
                 s.Get(nameof(creator), ref creator);
@@ -62,20 +62,20 @@ namespace Revital
             s.Get(nameof(status), ref status);
             s.Get(nameof(name), ref name);
             s.Get(nameof(tip), ref tip);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
             }
         }
 
-        public virtual void Write(ISink s, short mask = 0xff)
+        public virtual void Write(ISink s, short proj = 0xff)
         {
-            if ((mask & TYP) == TYP || (mask & BORN) == BORN)
+            if ((proj & TYP) == TYP || (proj & BORN) == BORN)
             {
                 s.Put(nameof(typ), typ);
             }
-            if ((mask & BORN) == BORN)
+            if ((proj & BORN) == BORN)
             {
                 s.Put(nameof(created), created);
                 s.Put(nameof(creator), creator);
@@ -83,7 +83,7 @@ namespace Revital
             s.Put(nameof(status), status);
             s.Put(nameof(name), name);
             s.Put(nameof(tip), tip);
-            if ((mask & LATER) == LATER)
+            if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);

@@ -27,12 +27,6 @@ namespace Revital
 
         internal int id;
 
-        internal short fillg;
-        internal DateTime fillon;
-        internal short mrtg;
-        internal decimal mrtprice;
-        internal short rankg;
-
         internal int orgid;
         internal short itemid;
         internal string ext;
@@ -44,15 +38,22 @@ namespace Revital
         internal decimal price;
         internal int cap;
 
-        public override void Read(ISource s, short mask = 0xff)
-        {
-            base.Read(s, mask);
+        internal short fillg;
+        internal DateTime fillon;
+        internal short mrtg;
+        internal decimal mrtprice;
+        internal short rankg;
 
-            if ((mask & ID) == ID)
+        public override void Read(ISource s, short proj = 0xff)
+        {
+            base.Read(s, proj);
+
+            if ((proj & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((mask & BORN) == BORN)
+
+            if ((proj & BORN) == BORN)
             {
                 s.Get(nameof(orgid), ref orgid);
             }
@@ -73,19 +74,19 @@ namespace Revital
             s.Get(nameof(rankg), ref rankg);
         }
 
-        public override void Write(ISink s, short mask = 0xff)
+        public override void Write(ISink s, short proj = 0xff)
         {
-            base.Write(s, mask);
+            base.Write(s, proj);
 
-            if ((mask & ID) == ID)
+            if ((proj & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((mask & BORN) == BORN)
+            if ((proj & BORN) == BORN)
             {
                 s.Put(nameof(orgid), orgid);
+                s.Put(nameof(itemid), itemid);
             }
-            s.Put(nameof(itemid), itemid);
             s.Put(nameof(ext), ext);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);

@@ -1,8 +1,8 @@
 {
   "logging": 2,
-  "farmkey": "ebce206103e439514f3c4748c683274e",
   "certpasswd": "fVC2ToAq",
-  "store": {
+  "famkey": "ebce206103e439514f3c4748c683274e",
+  "chain": {
     "host": "/temp",
     "port": 5432,
     "database": "site",
@@ -10,7 +10,7 @@
     "password": "Gs721004",
     "name": "江西",
     "tip": "中惠农通江西站点",
-    "ref": "http://localhost:80"
+    "famref": "http://localhost:80"
   },
   "web-site": {
     "address": "http://localhost:81"
