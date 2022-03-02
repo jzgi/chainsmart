@@ -10,9 +10,9 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
+    [UserAuthorize(Org.TYP_FRM, User.ORGLY_OPN)]
     [Ui("产源｜产品管理")]
-    public class SrclyProductWork : ProductWork
+    public class FrmlyProductWork : ProductWork
     {
         protected override void OnCreate()
         {

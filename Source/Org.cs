@@ -11,34 +11,33 @@ namespace Revital
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_PRT = 0b01000, // parent
+            TYP_SPR = 0b01000, // supervisor
             TYP_BIZ = 0b00001, // business
-            TYP_SRC = 0b00010, // source
+            TYP_FRM = 0b00010, // farm
             TYP_CTR = 0b00100, // center
-            TYP_MRT = TYP_PRT | TYP_BIZ, // market
-            TYP_PRV = TYP_PRT | TYP_SRC; // federation provisioning
+            TYP_MRT = TYP_SPR | TYP_BIZ, // market
+            TYP_SRC = TYP_SPR | TYP_FRM; // source
+
+        public const short FRK_CTR = 1, FRK_OTH = 2;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_BIZ, "商户"},
-            {TYP_SRC, "产源"},
+            {TYP_FRM, "大户"},
             {TYP_CTR, "中枢"},
 #if ZHNT
             {TYP_MRT, "市场"},
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_PRV, "供给"},
+            {TYP_SRC, "产源"},
         };
-
-        public const short FRK_CTR = 1, FRK_OTH = 2;
 
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
-            {FRK_CTR, "中枢配送"},
-            {FRK_OTH, "其他配送"},
+            {FRK_CTR, "中枢配运"},
+            {FRK_OTH, "其他配运"},
         };
-
 
         public static readonly Map<short, string> Ranks = new Map<short, string>
         {
@@ -47,6 +46,11 @@ namespace Revital
             {2, "金牌"},
         };
 
+        public static readonly Map<short, string> Targs = new Map<short, string>
+        {
+            {1, "全部"},
+            {2, "指定"},
+        };
 
         // id
         internal int id;
@@ -65,13 +69,13 @@ namespace Revital
         internal string tel;
         internal bool trust;
 
-        // later
         internal int mgrid;
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
         internal bool cert;
-        internal short[] dists; // district covering
+        internal short linkg;
+        internal int[] links; // centers or farms
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -94,7 +98,8 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(dists), ref dists);
+            s.Get(nameof(linkg), ref linkg);
+            s.Get(nameof(links), ref links);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -128,7 +133,8 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(dists), dists);
+            s.Put(nameof(linkg), linkg);
+            s.Put(nameof(links), links);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -138,6 +144,8 @@ namespace Revital
                 s.Put(nameof(cert), cert);
             }
         }
+
+        #region Properties
 
         public int Key => id;
 
@@ -150,16 +158,16 @@ namespace Revital
         /// <summary>
         /// Whether a parent unit or not
         /// </summary>
-        public bool IsPrt => (typ & TYP_PRT) == TYP_PRT;
+        public bool IsPrt => (typ & TYP_SPR) == TYP_SPR;
 
         /// <summary>
         /// Whether a super unit or not
         /// </summary>
         public bool IsSpr => IsPrt || IsCtr;
 
-        public bool IsPrv => typ == TYP_PRV;
+        public bool IsPrv => typ == TYP_SRC;
 
-        public bool IsSrc => typ == TYP_SRC;
+        public bool IsSrc => typ == TYP_FRM;
 
         public bool IsBiz => typ == TYP_BIZ;
 
@@ -178,5 +186,7 @@ namespace Revital
         public string ShopLabel => IsMrt ? "体验" : addr;
 
         public override string ToString() => name;
+
+        #endregion
     }
 }

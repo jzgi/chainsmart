@@ -70,7 +70,7 @@ namespace Revital
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     if (m.HasXy) h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (m.IsMrt) h.LI_().SELECT("关联中枢", nameof(m.sprid), m.sprid, orgs, filter: (k, v) => v.IsCtr, required: true)._LI();
-                    if (m.IsSrc) h.LI_().SELECT("辐射地市", nameof(m.dists), m.dists, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
+                    // if (m.IsSrc) h.LI_().SELECT("辐射地市", nameof(m.targs), m.targs, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -151,7 +151,7 @@ namespace Revital
     {
     }
 
-    public class PrvlyOrgVarWork : OrgVarWork
+    public class SrclyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -205,7 +205,7 @@ namespace Revital
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
+                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_FRM);
                 await dc.ExecuteAsync(p => p.Set(id));
 
                 wc.GivePane(200);

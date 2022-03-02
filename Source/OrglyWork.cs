@@ -10,13 +10,13 @@ namespace Revital
     /// <summary>
     /// source and producer
     /// </summary>
-    [Ui("供给端操作")]
-    public class PrvlyWork : OrglyWork
+    [Ui("产源端操作")]
+    public class SrclyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<PrvlyVarWork>((prin, key) =>
+            CreateVarWork<SrclyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -26,7 +26,7 @@ namespace Revital
     }
 
 
-    [Ui("控配中心操作")]
+    [Ui("中枢操作")]
     public class CtrlyWork : OrglyWork
     {
         protected override void OnCreate()

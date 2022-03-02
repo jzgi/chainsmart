@@ -79,9 +79,9 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
-    [Ui("供给｜交易日报")]
-    public class PrvlyDailyWork : DailyWork
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_)]
+    [Ui("产源｜交易日报")]
+    public class SrclyDailyWork : DailyWork
     {
         protected override void OnCreate()
         {
@@ -107,7 +107,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_PRV, User.ORGLY_FIN)]
+        [UserAuthorize(Org.TYP_SRC, User.ORGLY_FIN)]
         [Ui("生成"), Tool(Modal.ButtonShow)]
         public async Task gen(WebContext wc, int page)
         {

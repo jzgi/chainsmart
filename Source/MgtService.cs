@@ -15,13 +15,13 @@ namespace Revital
         {
             CreateVarWork<MgtVarWork>();
 
-            CreateWork<AdmlyWork>("admly"); // platform admin
+            CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<MrtlyWork>("mrtly"); // for market and biz
-
-            CreateWork<PrvlyWork>("prvly"); // for provider and source
+            CreateWork<SrclyWork>("srcly"); // for source & farms
 
             CreateWork<CtrlyWork>("ctrly"); // for center
+
+            CreateWork<MrtlyWork>("mrtly"); // for markets and bizs
         }
 
         public void @default(WebContext wc, int cmd)

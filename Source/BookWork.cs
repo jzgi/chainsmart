@@ -39,7 +39,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("［商户］平台订货")]
+    [Ui("商户｜平台订货")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -139,7 +139,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("控配｜质控配送操作")]
+    [Ui("中枢｜质控配送操作")]
     public class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -215,13 +215,13 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源｜订货管理")]
-    public abstract class SrclyBookWork : BookWork
+    [UserAuthorize(Org.TYP_FRM, User.ORGLY_SAL)]
+    [Ui("大户｜订货管理")]
+    public abstract class FrmlyBookWork : BookWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyBookVarWork>();
+            CreateVarWork<FrmlyBookVarWork>();
         }
 
         [Ui("当前订货"), Tool(Anchor)]
@@ -256,13 +256,13 @@ namespace Revital
         }
     }
 
-    [Ui("产源｜订货管理", fork: Org.FRK_CTR)]
-    public class SrclyCtrBookWork : SrclyBookWork
+    [Ui("大户｜订货管理", fork: Org.FRK_CTR)]
+    public class FrmlyCtrBookWork : FrmlyBookWork
     {
     }
 
-    [Ui("产源｜订货管理", fork: Org.FRK_OTH)]
-    public class SrclyElseBookWork : SrclyBookWork
+    [Ui("大户｜订货管理", fork: Org.FRK_OTH)]
+    public class FrmlyElseBookWork : FrmlyBookWork
     {
     }
 }

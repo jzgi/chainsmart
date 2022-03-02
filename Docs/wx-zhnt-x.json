@@ -1,0 +1,39 @@
+{
+  "button": [
+    {
+      "type": "view",
+      "name": "逛市场",
+      "url": "http://www.jx.ezhnt.cn/"
+    },
+    {
+      "name": "我的",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "产源端操作 🔒",
+          "url": "http://mgt.jx.ezhnt.cn/prvly//"
+        },
+        {
+          "type": "view",
+          "name": "中枢操作 🔒",
+          "url": "http://mgt.jx.ezhnt.cn/mrtly//"
+        },
+        {
+          "type": "view",
+          "name": "市场端操作 🔒",
+          "url": "http://mgt.jx.ezhnt.cn/mrtly//"
+        },
+        {
+          "type": "view",
+          "name": "我的购买",
+          "url": "http://www.jx.ezhnt.cn/my//buy/"
+        },
+        {
+          "type": "view",
+          "name": "我的账号",
+          "url": "http://www.jx.ezhnt.cn/my//"
+        }
+      ]
+    }
+  ]
+}

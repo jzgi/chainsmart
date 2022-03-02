@@ -144,7 +144,7 @@ namespace Revital
     }
     
     
-    public class SrclyBookVarWork : BookVarWork
+    public class FrmlyBookVarWork : BookVarWork
     {
     }
 

@@ -158,18 +158,19 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
-    public class PrvlyVarWork : OrglyVarWork
+    [UserAuthorize(Org.TYP_FRM, 1)]
+    [Ui("产源端操作")]
+    public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            CreateWork<PrvlyOrgWork>("org");
+            CreateWork<SrclyOrgWork>("org");
 
-            CreateWork<PrvlyDailyWork>("daily");
+            CreateWork<SrclyDailyWork>("daily");
 
-            CreateWork<SrclyProductWork>("prod");
+            CreateWork<FrmlyProductWork>("prod");
 
-            CreateWork<SrclyCtrBookWork, SrclyElseBookWork>("book");
+            CreateWork<FrmlyCtrBookWork, FrmlyElseBookWork>("book");
 
             CreateWork<OrglyClearWork>("clear");
         }

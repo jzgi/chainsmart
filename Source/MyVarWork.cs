@@ -23,8 +23,8 @@ namespace Revital
             {
                 h.TOOLBAR();
 
-                h.FORM_("uk-card uk-card-default");
-                h.UL_("uk-card-body");
+                h.FORM_("uk-card uk-card-primary");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("姓名", prin.name)._LI();
                 h.LI_().FIELD("手机号码", prin.tel)._LI();
                 h.LI_().FIELD("专业", User.Typs[prin.typ])._LI();

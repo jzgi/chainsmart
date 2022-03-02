@@ -61,15 +61,15 @@ namespace Revital
             });
         }
 
-        [Ui("供给", group: 4), Tool(Anchor)]
+        [Ui("产源", group: 4), Tool(Anchor)]
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_PRV).T(" ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM orgs_vw WHERE typ = ").T(TYP_SRC).T(" ORDER BY status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: TYP_PRV);
+                h.TOOLBAR(subscript: TYP_SRC);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
@@ -125,7 +125,7 @@ namespace Revital
                     }
                     if (m.IsSrc)
                     {
-                        h.LI_().SELECT("辐射地市", nameof(m.dists), m.dists, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
+                        // h.LI_().SELECT("辐射地市", nameof(m.targs), m.targs, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
                     }
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
@@ -226,13 +226,13 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(TYP_PRV, 1)]
-    [Ui("供给｜下属产源管理", "thumbnails")]
-    public class PrvlyOrgWork : OrgWork
+    [UserAuthorize(TYP_SRC, 1)]
+    [Ui("产源｜下属大户管理", "thumbnails")]
+    public class SrclyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrvlyOrgVarWork>();
+            CreateVarWork<SrclyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int regid)
@@ -270,7 +270,7 @@ namespace Revital
             var regs = Grab<short, Reg>();
             var m = new Org
             {
-                typ = TYP_SRC,
+                typ = TYP_FRM,
                 sprid = org.id,
                 regid = (short) regid,
                 created = DateTime.Now,
