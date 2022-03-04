@@ -150,9 +150,9 @@ namespace Revital
 
     [UserAuthorize(TYP_MRT, 1)]
 #if ZHNT
-    [Ui("［市场］下属商户管理")]
+    [Ui("市场｜下属商户管理", "album")]
 #else
-    [Ui("［驿站］下属商户管理")]
+    [Ui("市场｜下属商户管理", "album")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {

@@ -58,7 +58,7 @@ namespace Revital
 
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY cat, id");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, id");
                     return dc.Query<short, Item>();
                 }, 60 * 15
             );

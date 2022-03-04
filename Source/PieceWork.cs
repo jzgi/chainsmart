@@ -22,7 +22,7 @@ namespace Revital
         }
     }
 
-    [Ui("［商户］线上货架")]
+    [Ui("商户｜线上货架设置", "thumbnails")]
     public class BizlyPieceWork : PieceWork
     {
         protected override void OnCreate()
@@ -35,7 +35,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM peices WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Piece>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {

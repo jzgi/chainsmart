@@ -8,7 +8,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, User.ORGLY_OPN)]
-    [Ui("［商户］线下零售", "desktop")]
+    [Ui("商户｜线下零售", "chevron-down")]
     public class BizlyShopWork : ShopWork
     {
         public async Task @default(WebContext wc)

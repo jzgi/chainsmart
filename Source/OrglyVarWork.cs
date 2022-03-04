@@ -97,9 +97,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
 #if ZHNT
-    [Ui("市场端操作")]
+    [Ui("市场业务操作")]
 #else
-    [Ui("驿站端操作")]
+    [Ui("驿站业务操作")]
 #endif
     public class MrtlyVarWork : OrglyVarWork
     {
@@ -109,15 +109,19 @@ namespace Revital
 
             CreateWork<MrtlyUserWork>("user");
 
+            CreateWork<MrtlyBookWork>("mbook");
+
+            CreateWork<MrtlyBuyWork>("mbuy");
+
             CreateWork<MrtlyDailyWork>("daily");
 
             CreateWork<BizlyPieceWork>("piece");
 
-            CreateWork<BizlyBuyWork>("buy");
+            CreateWork<BizlyBuyWork>("bbuy");
 
             CreateWork<BizlyShopWork>("shop");
 
-            CreateWork<BizlyBookWork>("book");
+            CreateWork<BizlyBookWork>("bbook");
 
             CreateWork<OrglyClearWork>("clear");
 
@@ -142,14 +146,13 @@ namespace Revital
                 if (org.sprid > 0)
                 {
                     var spr = GrabObject<int, Org>(org.sprid);
-#if ZHNT
-                    h.LI_().FIELD("所在市场", spr.name)._LI();
-#else
-                    h.LI_().FIELD("所在驿站", spr.name)._LI();
-#endif
+                    h.LI_().FIELD("向上对接", spr.name)._LI();
                 }
-                h.LI_().FIELD2("负责人", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("委托代办", org.trust)._LI();
+                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
+                if (org.IsBiz)
+                {
+                    h.LI_().FIELD("委托代办", org.trust)._LI();
+                }
                 h._UL();
                 h._FORM();
 
@@ -159,7 +162,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_FRM, 1)]
-    [Ui("产源端操作")]
+    [Ui("产源业务操作")]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()

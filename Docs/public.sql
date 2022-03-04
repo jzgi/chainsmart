@@ -95,7 +95,8 @@ create table orgs
 	rank smallint,
 	mgrid integer,
 	cert bytea,
-	dists smallint[]
+	links smallint[],
+	linkg smallint
 )
 inherits (infos);
 
@@ -305,7 +306,7 @@ inherits (carbons);
 
 alter table peercarbons owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, rank, sprid, license, trust, regid, addr, x, y, tel, dists, mgrid, mgrname, mgrtel, mgrim, cert) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, rank, sprid, license, trust, regid, addr, x, y, tel, linkg, links, mgrid, mgrname, mgrtel, mgrim, cert) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -325,7 +326,8 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.dists,
+       o.linkg,
+       o.links,
        o.mgrid,
        m.name             AS mgrname,
        m.tel              AS mgrtel,

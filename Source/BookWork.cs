@@ -38,8 +38,18 @@ namespace Revital
         }
     }
 
+    [UserAuthorize(Org.TYP_MRT, 1)]
+    [Ui("市场｜供应链电商收货", "sign-in")]
+    public class MrtlyBookWork : BookWork
+    {
+        [Ui("当前", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+        }
+    }
+
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户｜平台订货")]
+    [Ui("商户｜线上订货", "file-text")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -47,13 +57,13 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE bizid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(tip: "当前订货");
                 h.TABLE(arr, o =>
                 {
                     // h.TD(items[o.itemid].name);
@@ -63,18 +73,18 @@ namespace Revital
             });
         }
 
-        [Ui("以往", group: 2), Tool(Anchor)]
+        [Ui("历史", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status >= 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE bizid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(tip: "历史订货");
                 h.TABLE(arr, o =>
                 {
                     // h.TD(items[o.itemid].name);

@@ -10,7 +10,7 @@ namespace Revital
     /// <summary>
     /// source and producer
     /// </summary>
-    [Ui("产源端操作")]
+    [Ui("产源业务操作")]
     public class SrclyWork : OrglyWork
     {
         protected override void OnCreate()
@@ -43,9 +43,9 @@ namespace Revital
 
 
 #if ZHNT
-    [Ui("市场端操作")]
+    [Ui("市场业务操作")]
 #else
-    [Ui("驿站端操作")]
+    [Ui("驿站业务操作")]
 #endif
     public class MrtlyWork : OrglyWork
     {

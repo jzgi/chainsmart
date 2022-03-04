@@ -87,7 +87,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("［市场］客群管理")]
+    [Ui("市场｜消费者管理", "users")]
     public class MrtlyUserWork : UserWork
     {
         protected override void OnCreate()

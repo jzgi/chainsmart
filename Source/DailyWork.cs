@@ -23,7 +23,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, User.ORGLY_)]
-    [Ui("市场｜交易日报")]
+    [Ui("市场｜交易日报", "table")]
     public class MrtlyDailyWork : DailyWork
     {
         protected override void OnCreate()
