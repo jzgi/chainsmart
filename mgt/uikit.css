@@ -1811,6 +1811,9 @@ button.uk-button-secondary {
     background-color: inherit;
     border: 0;
     color: #333;
+    display: flex;
+    justify-content: start;
+    align-items: center;
     font-size: 0.875rem;
     font-weight: normal;
     align-items: center;
@@ -2140,6 +2143,20 @@ button.uk-button-secondary {
     align-items: center;
     justify-content: center;
     background-color: #ededed;
+}
+
+.uk-circle-label {
+    border-radius: 50% !important;
+    border: 1px solid #8fc321;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #8fc321;
+    font-size: 0.875rem;
 }
 
 .uk-tile {

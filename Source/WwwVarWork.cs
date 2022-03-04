@@ -28,12 +28,12 @@ namespace Revital
                 wc.GivePage(200, h =>
                 {
                     h.TOPBAR_().SUBNAV(regs, string.Empty, sect, filter: (k, v) => v.typ == Reg.TYP_SECT);
-                    h.T("<button class=\"uk-icon-button uk-circle uk-margin-left-auto\" formaction=\"search\" onclick=\"return dialog(this,8,false,4,'&#x1f6d2; 按厨坊下单')\"><span uk-icon=\"search\"></span></button>");
+                    h.ADIALOG_(nameof(search), "-", sect, 8, false, Appear.Full).ICON("search", "uk-icon-button")._A();
                     h._TOPBAR();
                     h.GRID(bizs, o =>
                     {
-                        h.SECTION_("uk-card-body");
-                        h.SPAN(o.ShopLabel, "uk-circle");
+                        h.SECTION_("uk-flex uk-card-body");
+                        h.SPAN(o.ShopLabel, "uk-circle-label").SP();
                         h.ADIALOG_("/", o.id, "/", 8, false, Appear.Large, css: "uk-button-link").T(o.Shop)._A();
                         h._SECTION();
                     }, width: 2);
@@ -59,8 +59,35 @@ namespace Revital
             }
         }
 
-        public async Task search(WebContext wc, int cur)
+        public async Task search(WebContext wc, int sect)
         {
+            bool inner = wc.Query[nameof(inner)];
+            int orgid = wc[0];
+            var regs = Grab<short, Reg>();
+            if (inner)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                var posts = await dc.QueryAsync<Piece>(p => p.Set(orgid));
+                wc.GivePane(200, h =>
+                {
+                    h.TOOLBAR(tip: "查询" + regs[(short) sect].name);
+
+                    h.FORM_();
+                    h.RADIO("sdfs", "sdfasdf");
+                    h.T("erwer");
+                    h.BOTTOM_BUTTON("确定");
+                    h._FORM();
+                }, true, 60);
+            }
+            else
+            {
+                wc.GivePage(200, h =>
+                {
+                    h.TOPBAR_().SUBNAV(regs, string.Empty, sect, filter: (k, v) => v.typ == Reg.TYP_SECT);
+                    h.T("");
+                }, true, 60);
+            }
         }
     }
 }

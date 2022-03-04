@@ -10,17 +10,12 @@
       "sub_button": [
         {
           "type": "view",
-          "name": "产源端操作 🔒",
-          "url": "http://mgt.jx.ezhnt.cn/prvly//"
+          "name": "产源业务操作 🔒",
+          "url": "http://mgt.jx.ezhnt.cn/srcly//"
         },
         {
           "type": "view",
-          "name": "中枢操作 🔒",
-          "url": "http://mgt.jx.ezhnt.cn/mrtly//"
-        },
-        {
-          "type": "view",
-          "name": "市场端操作 🔒",
+          "name": "市场业务操作 🔒",
           "url": "http://mgt.jx.ezhnt.cn/mrtly//"
         },
         {

@@ -78,7 +78,7 @@ namespace Revital
             {
                 // get booking orders
                 using var dc = NewDbContext();
-                dc.Sql("SELECT DISTINCT productid FROM books_ WHERE ");
+                dc.Sql("SELECT DISTINCT productid FROM books WHERE ");
 
 
                 var o = new Piece

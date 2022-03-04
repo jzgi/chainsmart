@@ -47,7 +47,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE fromid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE fromid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
@@ -229,7 +229,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -249,7 +249,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books_ WHERE srcid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(tip: "来自平台的订单"); });

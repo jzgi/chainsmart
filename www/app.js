@@ -259,7 +259,10 @@ function dialog(trig, mode, pick, appear, title) {
     } else if (tag == 'A') {
         src = action = trig.href;
         method = 'get';
-        src = action.indexOf('?') == -1 ? action + '?inner=true' : action + '&' + 'inner=true';
+        if (mode == OPEN && appear == FULL) {
+            src += src.indexOf('?') == -1 ? '?astack=true' : '&astack=true';
+        }
+        src += src.indexOf('?') == -1 ? '?inner=true' : '&inner=true';
         trigc = ' anchor-trig';
     }
 
