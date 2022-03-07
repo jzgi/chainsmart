@@ -65,8 +65,8 @@ namespace Revital
                     // }
                     h.LI_().TEXT(typname + "名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsPrv) h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsPrv)._LI();
+                    if (m.IsSrc) h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
+                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsSrc)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     if (m.HasXy) h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (m.IsMrt) h.LI_().SELECT("关联中枢", nameof(m.sprid), m.sprid, orgs, filter: (k, v) => v.IsCtr, required: true)._LI();

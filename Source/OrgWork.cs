@@ -11,7 +11,7 @@ namespace Revital
     }
 
 
-    [Ui("平台｜入驻机构设置")]
+    [Ui("平台入驻机构设置")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -109,11 +109,11 @@ namespace Revital
                     // }
                     h.LI_().TEXT(typname + "名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsPrv)
+                    if (m.IsSrc)
                     {
                         h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Forks, required: true)._LI();
                     }
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsPrv)._LI();
+                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsSrc)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     if (m.HasXy)
                     {
@@ -123,7 +123,7 @@ namespace Revital
                     {
                         h.LI_().SELECT("关联中枢", nameof(m.sprid), m.sprid, orgs, filter: (k, v) => v.IsCtr, required: true)._LI();
                     }
-                    if (m.IsSrc)
+                    if (m.IsFrm)
                     {
                         // h.LI_().SELECT("辐射地市", nameof(m.targs), m.targs, regs, filter: (k, v) => v.IsDist, size: 10)._LI();
                     }
@@ -150,9 +150,9 @@ namespace Revital
 
     [UserAuthorize(TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场｜下属商户管理", "album")]
+    [Ui("市场下属商户管理", "album")]
 #else
-    [Ui("市场｜下属商户管理", "album")]
+    [Ui("市场下属商户管理", "album")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -227,7 +227,7 @@ namespace Revital
     }
 
     [UserAuthorize(TYP_SRC, 1)]
-    [Ui("产源｜下属大户管理", "thumbnails")]
+    [Ui("产源下属大户管理", "thumbnails")]
     public class SrclyOrgWork : OrgWork
     {
         protected override void OnCreate()

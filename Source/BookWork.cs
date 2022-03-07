@@ -39,7 +39,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场｜供应链电商收货", "sign-in")]
+    [Ui("市场供应链电商收货", "sign-in")]
     public class MrtlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -49,7 +49,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户｜线上订货", "file-text")]
+    [Ui("商户线上订货", "file-text")]
     public class BizlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -225,9 +225,10 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_FRM, User.ORGLY_SAL)]
-    [Ui("大户｜订货管理")]
-    public abstract class FrmlyBookWork : BookWork
+
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
+    [Ui("产源供应链电商发货")]
+    public abstract class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
         {
@@ -266,13 +267,69 @@ namespace Revital
         }
     }
 
-    [Ui("大户｜订货管理", fork: Org.FRK_CTR)]
+    [Ui("产源供应链电商发货", "sign-out", fork: Org.FRK_CTR)]
+    public class SrclyCtrBookWork : SrclyBookWork
+    {
+    }
+
+    [Ui("产源供应链电商发货", "sign-out", fork: Org.FRK_OWN)]
+    public class SrclyOwnBookWork : SrclyBookWork
+    {
+    }
+
+    [UserAuthorize(Org.TYP_FRM, User.ORGLY_SAL)]
+    [Ui("大户线上销售")]
+    public abstract class FrmlyBookWork : BookWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<FrmlyBookVarWork>();
+        }
+
+        [Ui("当前"), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(tip: "当前销售订货");
+
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD(o.bizname);
+                    // h.TD(o.qty);
+                });
+            });
+        }
+
+        [Ui("历史"), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(tip: "历史销售订货");
+                h.TABLE_();
+                h._TABLE();
+            });
+        }
+    }
+
+    [Ui("大户线上销售", "cloud-upload", fork: Org.FRK_CTR)]
     public class FrmlyCtrBookWork : FrmlyBookWork
     {
     }
 
-    [Ui("大户｜订货管理", fork: Org.FRK_OTH)]
-    public class FrmlyElseBookWork : FrmlyBookWork
+    [Ui("大户线上销售", "cloud-upload", fork: Org.FRK_OWN)]
+    public class FrmlyOwnBookWork : FrmlyBookWork
     {
     }
 }

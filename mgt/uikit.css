@@ -1172,6 +1172,10 @@ form legend {
     overflow: visible;
 }
 
+.uk-input[type=date] {
+    min-width: 4rem;
+}
+
 .uk-select {
     text-transform: none;
 }

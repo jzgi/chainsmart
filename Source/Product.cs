@@ -12,8 +12,14 @@ namespace Revital
 
         public static readonly Map<short, string> Fillgs = new Map<short, string>
         {
-            {0, "次日发货"},
+            {0, "现货即发"},
             {1, "指定日期"},
+        };
+
+        public static readonly Map<short, string> Targs = new Map<short, string>
+        {
+            {0, "全体商户"},
+            {1, "代理商户"},
         };
 
         public static readonly Map<short, string> Mrtgs = new Map<short, string>

@@ -35,7 +35,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场｜零售电商发货", "sign-out")]
+    [Ui("市场零售电商发货", "sign-out")]
     public class MrtlyBuyWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Modal.Anchor)]
@@ -46,7 +46,7 @@ namespace Revital
 
 
     [UserAuthorize(orgly: ORGLY_OPN)]
-    [Ui("商户｜线上零售", "chevron-up")]
+    [Ui("商户线上零售", "cloud-upload")]
     public class BizlyBuyWork : BuyWork
     {
         protected override void OnCreate()

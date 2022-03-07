@@ -169,11 +169,13 @@ namespace Revital
         {
             CreateWork<SrclyOrgWork>("org");
 
+            CreateWork<SrclyCtrBookWork, SrclyOwnBookWork>("sbook");
+
             CreateWork<SrclyDailyWork>("daily");
 
-            CreateWork<FrmlyProductWork>("prod");
+            CreateWork<FrmlyProductWork>("product");
 
-            CreateWork<FrmlyCtrBookWork, FrmlyElseBookWork>("book");
+            CreateWork<FrmlyCtrBookWork, FrmlyOwnBookWork>("fbook");
 
             CreateWork<OrglyClearWork>("clear");
         }
@@ -192,10 +194,13 @@ namespace Revital
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("主体名称", org.name)._LI();
                 h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD("地址", org.addr)._LI();
-                if (!org.IsPrt)
+                if (org.addr != null)
                 {
-                    h.LI_().FIELD("供给板块", co.name)._LI();
+                    h.LI_().FIELD("地址", org.addr)._LI();
+                }
+                if (!org.IsSpr)
+                {
+                    h.LI_().FIELD("向上对接", co.name)._LI();
                 }
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 h._UL();

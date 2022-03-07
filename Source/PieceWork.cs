@@ -22,7 +22,7 @@ namespace Revital
         }
     }
 
-    [Ui("商户｜线上货架设置", "thumbnails")]
+    [Ui("商户线上货架设置", "thumbnails")]
     public class BizlyPieceWork : PieceWork
     {
         protected override void OnCreate()

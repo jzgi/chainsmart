@@ -11,7 +11,7 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_FRM, User.ORGLY_OPN)]
-    [Ui("产源｜产品管理")]
+    [Ui("大户线上货架设置", "thumbnails")]
     public class FrmlyProductWork : ProductWork
     {
         protected override void OnCreate()
@@ -66,7 +66,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("发货约定", nameof(o.fillg), o.fillg, Product.Fillgs, required: true).DATE("指定日期", nameof(o.fillon), o.fillon, min: tomorrow)._LI();
-                    h.LI_().SELECT("供应级别", nameof(o.rankg), o.rankg, Org.Ranks, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("目标商户", nameof(o.rankg), o.rankg, Product.Targs, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

@@ -18,7 +18,9 @@ namespace Revital
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
             TYP_SRC = TYP_SPR | TYP_FRM; // source
 
-        public const short FRK_CTR = 1, FRK_OTH = 2;
+        public const short
+            FRK_CTR = 1, // center 
+            FRK_OWN = 2; // own
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -36,20 +38,14 @@ namespace Revital
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
             {FRK_CTR, "中枢配运"},
-            {FRK_OTH, "其他配运"},
+            {FRK_OWN, "自行配运"},
         };
 
         public static readonly Map<short, string> Ranks = new Map<short, string>
         {
-            {0, "一般"},
-            {1, "银牌"},
-            {2, "金牌"},
-        };
-
-        public static readonly Map<short, string> Targs = new Map<short, string>
-        {
-            {1, "全部"},
-            {2, "指定"},
+            {0, "直批"},
+            {1, "小而美"},
+            {2, "原生态"},
         };
 
         // id
@@ -155,29 +151,23 @@ namespace Revital
 
         public string Im => mgrim;
 
-        /// <summary>
-        /// Whether a parent unit or not
-        /// </summary>
-        public bool IsPrt => (typ & TYP_SPR) == TYP_SPR;
+        public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        /// <summary>
-        /// Whether a super unit or not
-        /// </summary>
-        public bool IsSpr => IsPrt || IsCtr;
+        public bool IsSrc => typ == TYP_SRC;
 
-        public bool IsPrv => typ == TYP_SRC;
-
-        public bool IsSrc => typ == TYP_FRM;
+        public bool IsFrm => typ == TYP_FRM;
 
         public bool IsBiz => typ == TYP_BIZ;
 
         public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
+        public bool IsOfFrm => (typ & TYP_FRM) == TYP_FRM;
+
         public bool IsMrt => typ == TYP_MRT;
 
         public bool IsCtr => typ == TYP_CTR;
 
-        public bool HasXy => IsMrt || IsSrc || IsCtr;
+        public bool HasXy => IsMrt || IsFrm || IsCtr;
 
         public bool HasLocality => IsMrt || IsCtr;
 

@@ -9,7 +9,7 @@ using static System.Data.IsolationLevel;
 
 namespace Revital
 {
-    public class Program : Application
+    public class RevitalApplication : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);

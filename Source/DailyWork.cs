@@ -10,7 +10,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台｜交易日报")]
+    [Ui("平台交易日报")]
     public class AdmlyDailyWork : DailyWork
     {
         protected override void OnCreate()
@@ -23,7 +23,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, User.ORGLY_)]
-    [Ui("市场｜交易日报", "table")]
+    [Ui("市场交易日报", "table")]
     public class MrtlyDailyWork : DailyWork
     {
         protected override void OnCreate()
@@ -80,7 +80,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_)]
-    [Ui("产源｜交易日报")]
+    [Ui("产源交易日报")]
     public class SrclyDailyWork : DailyWork
     {
         protected override void OnCreate()
