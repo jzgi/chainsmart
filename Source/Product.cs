@@ -25,10 +25,10 @@ namespace Revital
             {4, "统一市场价"},
         };
 
-        public static readonly Map<short, string> Targgs = new Map<short, string>
+        public static readonly Map<short, string> Bookgs = new Map<short, string>
         {
-            {0, "全体商户"},
-            {1, "代理商户"},
+            {0, "无限制"},
+            {1, "须市场授权"},
         };
 
         internal int id;
@@ -48,7 +48,7 @@ namespace Revital
         internal DateTime fillon;
         internal short mrtg;
         internal decimal mrtprice;
-        internal short targg;
+        internal short bookg;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -77,7 +77,7 @@ namespace Revital
             s.Get(nameof(fillon), ref fillon);
             s.Get(nameof(mrtg), ref mrtg);
             s.Get(nameof(mrtprice), ref mrtprice);
-            s.Get(nameof(targg), ref targg);
+            s.Get(nameof(bookg), ref bookg);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -106,7 +106,7 @@ namespace Revital
             s.Put(nameof(fillon), fillon);
             s.Put(nameof(mrtg), mrtg);
             s.Put(nameof(mrtprice), mrtprice);
-            s.Put(nameof(targg), targg);
+            s.Put(nameof(bookg), bookg);
         }
 
         public int Key => id;
