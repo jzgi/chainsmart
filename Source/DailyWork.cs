@@ -10,20 +10,17 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台交易日报")]
+    [Ui("平台业务日报")]
     public class AdmlyDailyWork : DailyWork
     {
-        protected override void OnCreate()
-        {
-        }
-
         public void @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 
     [UserAuthorize(Org.TYP_MRT, User.ORGLY_)]
-    [Ui("市场交易日报", "table")]
+    [Ui("市场业务日报")]
     public class MrtlyDailyWork : DailyWork
     {
         protected override void OnCreate()
@@ -80,7 +77,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_)]
-    [Ui("产源交易日报")]
+    [Ui("产源业务日报")]
     public class SrclyDailyWork : DailyWork
     {
         protected override void OnCreate()

@@ -18,7 +18,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_MGT)]
-    [Ui("平台品目设置")]
+    [Ui("平台品目设置", "list")]
     public class AdmlyItemWork : ItemWork
     {
         protected override void OnCreate()

@@ -146,9 +146,14 @@ namespace Revital
                 if (org.sprid > 0)
                 {
                     var spr = GrabObject<int, Org>(org.sprid);
-                    h.LI_().FIELD("向上对接", spr.name)._LI();
+                    h.LI_().FIELD("所在市场", spr.name)._LI();
                 }
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
+                if (org.ctras != null)
+                {
+                    var ctr = GrabObject<int, Org>(org.ctras[0]);
+                    h.LI_().FIELD("关联中枢", ctr.name)._LI();
+                }
                 if (org.IsBiz)
                 {
                     h.LI_().FIELD("委托代办", org.trust)._LI();
@@ -183,7 +188,7 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var co = GrabObject<int, Org>(org.sprid);
+            var orgs = Grab<int, Org>();
             var prin = (User) wc.Principal;
 
             wc.GivePage(200, h =>
@@ -200,9 +205,15 @@ namespace Revital
                 }
                 if (!org.IsSpr)
                 {
-                    h.LI_().FIELD("向上对接", co.name)._LI();
+                    var spr = orgs[org.sprid];
+                    h.LI_().FIELD("所在产源", spr.name)._LI();
                 }
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
+                var ctras = org.ctras;
+                if (ctras != null)
+                {
+                    h.LI_().FIELD("关联中枢", ctras, orgs)._LI();
+                }
                 h._UL();
                 h._FORM();
 

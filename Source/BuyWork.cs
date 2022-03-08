@@ -8,6 +8,7 @@ namespace Revital
     {
     }
 
+
     public class MyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -34,6 +35,15 @@ namespace Revital
         }
     }
 
+    [Ui("平台零售电商报告", "table")]
+    public class AdmlyBuyWork : BuyWork
+    {
+        public async Task @default(WebContext wc)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+    }
+
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("市场零售电商发货", "sign-out")]
     public class MrtlyBuyWork : BookWork
@@ -41,6 +51,7 @@ namespace Revital
         [Ui("当前", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 

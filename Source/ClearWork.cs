@@ -8,7 +8,7 @@ using static SkyChain.Web.Modal;
 namespace Revital
 {
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台代收款项结算", "table")]
+    [Ui("平台代收款项结算", "credit-card")]
     public class AdmlyClearWork : WebWork
     {
         protected override void OnCreate()

@@ -8,6 +8,15 @@ namespace Revital
     {
     }
 
+    [Ui("平台供应链电商报告", "table")]
+    public class AdmlyBookWork : OrgWork
+    {
+        public async Task @default(WebContext wc)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+    }
+
     public class PublyBookWork : OrgWork
     {
         public async Task @default(WebContext wc, int code)
