@@ -125,7 +125,7 @@ namespace Revital
 
             CreateWork<OrglyClearWork>("clear");
 
-            // CreateWork<OrglyMsgWork>("msg");
+            CreateWork<OrglyMsgWork>("msg");
         }
 
         public void @default(WebContext wc)

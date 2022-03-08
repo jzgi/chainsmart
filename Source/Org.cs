@@ -41,11 +41,11 @@ namespace Revital
             {FRK_OWN, "自行配运"},
         };
 
-        public static readonly Map<short, string> Ranks = new Map<short, string>
+        public static readonly Map<short, string> Zones = new Map<short, string>
         {
-            {0, "直批"},
-            {1, "小而美"},
-            {2, "原生态"},
+            {1, "大市场"},
+            {2, "小而美"},
+            {3, "原生态"},
         };
 
         // id
@@ -55,7 +55,7 @@ namespace Revital
         internal int sprid;
 
         internal short fork;
-        internal short rank;
+        internal short zone;
         internal string license;
         internal short regid;
         internal string addr;
@@ -69,9 +69,8 @@ namespace Revital
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal bool cert;
-        internal short linkg;
-        internal int[] links; // centers or farms
+        internal int[] ctras; // connection to centers 
+        internal bool img;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -86,7 +85,7 @@ namespace Revital
                 s.Get(nameof(sprid), ref sprid);
             }
             s.Get(nameof(fork), ref fork);
-            s.Get(nameof(rank), ref rank);
+            s.Get(nameof(zone), ref zone);
             s.Get(nameof(license), ref license);
             s.Get(nameof(regid), ref regid);
             s.Get(nameof(addr), ref addr);
@@ -94,15 +93,14 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(linkg), ref linkg);
-            s.Get(nameof(links), ref links);
+            s.Get(nameof(ctras), ref ctras);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
                 s.Get(nameof(mgrname), ref mgrname);
                 s.Get(nameof(mgrtel), ref mgrtel);
                 s.Get(nameof(mgrim), ref mgrim);
-                s.Get(nameof(cert), ref cert);
+                s.Get(nameof(img), ref img);
             }
         }
 
@@ -120,7 +118,7 @@ namespace Revital
                 else s.PutNull(nameof(sprid));
             }
             s.Put(nameof(fork), fork);
-            s.Put(nameof(rank), rank);
+            s.Put(nameof(zone), zone);
             s.Put(nameof(license), license);
             if (regid > 0) s.Put(nameof(regid), regid);
             else s.PutNull(nameof(regid));
@@ -129,15 +127,14 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(linkg), linkg);
-            s.Put(nameof(links), links);
+            s.Put(nameof(ctras), ctras);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
                 s.Put(nameof(mgrname), mgrname);
                 s.Put(nameof(mgrtel), mgrtel);
                 s.Put(nameof(mgrim), mgrim);
-                s.Put(nameof(cert), cert);
+                s.Put(nameof(img), img);
             }
         }
 

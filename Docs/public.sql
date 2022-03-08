@@ -92,11 +92,10 @@ create table orgs
 	x double precision,
 	y double precision,
 	tel varchar(11),
-	rank smallint,
+	zone smallint,
 	mgrid integer,
-	cert bytea,
-	links smallint[],
-	linkg smallint
+	ctras integer[],
+	img bytea
 )
 inherits (infos);
 
@@ -306,7 +305,7 @@ inherits (carbons);
 
 alter table peercarbons owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, rank, sprid, license, trust, regid, addr, x, y, tel, linkg, links, mgrid, mgrname, mgrtel, mgrim, cert) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, ctras, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -317,7 +316,7 @@ SELECT o.typ,
        o.adapter,
        o.id,
        o.fork,
-       o.rank,
+       o.zone,
        o.sprid,
        o.license,
        o.trust,
@@ -326,13 +325,12 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.linkg,
-       o.links,
+       o.ctras,
        o.mgrid,
-       m.name             AS mgrname,
-       m.tel              AS mgrtel,
-       m.im               AS mgrim,
-       o.cert IS NOT NULL AS cert
+       m.name            AS mgrname,
+       m.tel             AS mgrtel,
+       m.im              AS mgrim,
+       o.img IS NOT NULL AS img
 FROM orgs o
          LEFT JOIN users m
                    ON o.mgrid =
