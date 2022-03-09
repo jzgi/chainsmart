@@ -28,11 +28,11 @@ namespace Revital
             {TYP_FRM, "大户"},
             {TYP_CTR, "中枢"},
 #if ZHNT
-            {TYP_MRT, "市场"},
+            {TYP_MRT, "市场（兼商户）"},
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_SRC, "产源"},
+            {TYP_SRC, "产源（兼大户）"},
         };
 
         public static readonly Map<short, string> Forks = new Map<short, string>

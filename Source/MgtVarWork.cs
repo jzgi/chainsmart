@@ -14,7 +14,6 @@ namespace Revital
             int regid = wc[0];
             var org = GrabObject<int, Org>(regid);
             var regs = Grab<short, Reg>();
-
             if (org.IsMrt)
             {
                 using var dc = NewDbContext();

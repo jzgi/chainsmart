@@ -26,24 +26,23 @@ namespace Revital
 
         public void @default(WebContext wc, int cmd)
         {
-            var regs = Grab<short, Reg>();
+            var orgs = Grab<int, Org>();
 
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("批发功能");
-                for (int i = 0; i < regs.Count; i++)
+                h.FIELDSUL_("批发目标分组");
+                for (int i = 0; i < orgs.Count; i++)
                 {
-                    var r = regs.ValueAt(i);
-                    if (!r.IsDist) continue;
+                    var org = orgs.ValueAt(i);
+                    if (!org.IsCtr) continue;
                     h.LI_("uk-flex");
-                    h.A_(r.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(r.name)._A();
-                    // h.P(wrk.Tip, "uk-padding uk-width-expand");
+                    h.A_(org.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(org.name)._A();
                     h._LI();
                 }
                 h._FIELDSUL();
 
-                h.FIELDSUL_("管理功能");
+                h.FIELDSUL_("管理分组");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);
@@ -76,10 +75,7 @@ namespace Revital
                 }
                 else if (we.Code == 403)
                 {
-                    wc.GivePage(403, m =>
-                    {
-                        m.ALERT("此功能需要系统授权后才能使用。", head: "⛔ 没有访问权限");
-                    }, title: "权限保护");
+                    wc.GivePage(403, m => { m.ALERT("此功能需要系统授权后才能使用。", head: "⛔ 没有访问权限"); }, title: "权限保护");
                 }
             }
             else

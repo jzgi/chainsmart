@@ -1140,9 +1140,13 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #333;
-    padding: 0.5rem;
+    color: #8fc321;
+    padding: 4px;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
     font-size: 0.875rem;
+    box-sizing: border-box;
 }
 
 .uk-fieldset > ul {
