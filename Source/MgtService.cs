@@ -2,14 +2,14 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Nodal;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 
 namespace Revital
 {
     [UserAuthenticate]
-    public class MgtService : FedService
+    public class MgtService : NodeService
     {
         protected override void OnCreate()
         {
@@ -31,13 +31,13 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("批发目标分组");
+                h.FIELDSUL_("供应链市场分组");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
                     if (!org.IsCtr) continue;
                     h.LI_("uk-flex");
-                    h.A_(org.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(org.name)._A();
+                    h.A_(org.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(org.name).T("组")._A();
                     h._LI();
                 }
                 h._FIELDSUL();

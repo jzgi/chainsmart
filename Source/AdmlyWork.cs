@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Nodal;
 using SkyChain.Web;
 
 namespace Revital
@@ -25,7 +25,7 @@ namespace Revital
 
             CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<FedWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            CreateWork<NodalWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
 
             CreateWork<AdmlyClearWork>("clear");
         }

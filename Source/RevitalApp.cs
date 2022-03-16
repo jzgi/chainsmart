@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Nodal;
 using SkyChain.Web;
 using static System.Data.IsolationLevel;
 
 namespace Revital
 {
-    public class RevitalApplication : Application
+    public class RevitalApp : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);

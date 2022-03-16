@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using SkyChain;
-using SkyChain.Chain;
+using SkyChain.Nodal;
 using SkyChain.Web;
 using static Revital.WeChatUtility;
 

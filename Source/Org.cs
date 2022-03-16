@@ -168,6 +168,19 @@ namespace Revital
 
         public bool HasLocality => IsMrt || IsCtr;
 
+
+        public bool HasCtr(int ctrid)
+        {
+            if (ctras != null)
+            {
+                for (int i = 0; i < ctras.Length; i++)
+                {
+                    if (ctras[i] == ctrid) return true;
+                }
+            }
+            return false;
+        }
+
         public string Shop => IsMrt ? tip : name;
 
         public string ShopLabel => IsMrt ? "体验" : addr;
