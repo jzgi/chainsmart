@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain.Web;
-using static SkyChain.Web.Modal;
+using Chainly.Web;
+using static Chainly.Web.Modal;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -43,11 +44,11 @@ namespace Revital
         public async Task ctr(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_CTR).T(" ORDER BY regid, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_DST).T(" ORDER BY regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Org.TYP_CTR);
+                h.TOOLBAR(subscript: Org.TYP_DST);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
@@ -64,11 +65,11 @@ namespace Revital
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_SRC).T(" ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_SEC).T(" ORDER BY status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Org.TYP_SRC);
+                h.TOOLBAR(subscript: Org.TYP_SEC);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
@@ -217,9 +218,9 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产源下属大户管理", "thumbnails")]
-    public class SrclyOrgWork : OrgWork
+    [UserAuthorize(Org.TYP_SEC, 1)]
+    [Ui("版块产源管理", "thumbnails")]
+    public class SeclyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
@@ -256,7 +257,7 @@ namespace Revital
             var regs = Grab<short, Reg>();
             var m = new Org
             {
-                typ = Org.TYP_FRM,
+                typ = Org.TYP_SRC,
                 sprid = org.id,
                 regid = org.regid,
                 created = DateTime.Now,

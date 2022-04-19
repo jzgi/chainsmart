@@ -26,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Chainly\Chainly.csproj" />
       <ProjectReference Include="..\SkyChain\SkyChain.csproj" />
     </ItemGroup>
 

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Nodal;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Nodal;
+using Chainly.Web;
 using static System.Data.IsolationLevel;
 
 namespace Revital
 {
-    public class RevitalApp : Application
+    public class RevitalApplication : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -29,17 +29,19 @@ namespace Revital
                 CreateService<WwwService>("www");
 
                 CreateService<MgtService>("mgt");
+
+                CreateService<FedExtService>("fed");
             }
             else
             {
                 if (args.Contains("pub-p"))
                 {
-                    CreateService<WebProxy>("pub");
+                    CreateService<ProxyService>("pub");
                 }
 
                 if (args.Contains("mgt-p"))
                 {
-                    CreateService<WebProxy>("mgt");
+                    CreateService<ProxyService>("mgt");
                 }
             }
 
@@ -72,7 +74,7 @@ namespace Revital
 
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_CTR);
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_DST);
                     return dc.Query<int, Org>();
                 }, 60 * 15
             );
@@ -118,7 +120,7 @@ namespace Revital
                         catch (Exception e)
                         {
                             dc.Rollback();
-                            ERR(e.Message);
+                            Err(e.Message);
                         }
                     }
 
@@ -143,13 +145,13 @@ namespace Revital
                         catch (Exception e)
                         {
                             dc.Rollback();
-                            ERR(e.Message);
+                            Err(e.Message);
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    ERR(nameof(Cycle) + ": " + e.Message);
+                    Err(nameof(Cycle) + ": " + e.Message);
                 }
             }
         }

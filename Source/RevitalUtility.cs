@@ -1,8 +1,8 @@
 using System;
 using System.Text;
-using SkyChain;
-using SkyChain.Web;
-using static SkyChain.CryptoUtility;
+using Chainly;
+using Chainly.Web;
+using static Chainly.CryptoUtility;
 
 namespace Revital
 {

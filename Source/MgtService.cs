@@ -1,15 +1,16 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using SkyChain;
-using SkyChain.Nodal;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Nodal;
+using Chainly.Web;
 using static Revital.WeChatUtility;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
     [UserAuthenticate]
-    public class MgtService : NodeService
+    public class MgtService : FedService
     {
         protected override void OnCreate()
         {
@@ -17,9 +18,7 @@ namespace Revital
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<SrclyWork>("srcly"); // for source & farms
-
-            CreateWork<CtrlyWork>("ctrly"); // for center
+            CreateWork<PrvlyWork>("prvly"); // for provision sector & source & center
 
             CreateWork<MrtlyWork>("mrtly"); // for markets and bizs
         }
@@ -54,7 +53,7 @@ namespace Revital
                 h._FIELDSUL();
 
                 h._FORM();
-            }, true, 3600, title: Home.Self.Name + "管理");
+            }, true, 3600, title: Self.Name + "管理");
         }
 
         public void @catch(WebContext wc)

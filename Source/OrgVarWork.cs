@@ -1,9 +1,10 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
-using static SkyChain.Web.Modal;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Web.Modal;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -209,7 +210,7 @@ namespace Revital
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_FRM);
+                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
                 await dc.ExecuteAsync(p => p.Set(id));
 
                 wc.GivePane(200);

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -166,21 +167,23 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_FRM, 1)]
+    [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("产源业务操作")]
-    public class SrclyVarWork : OrglyVarWork
+    public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            CreateWork<SrclyOrgWork>("org");
+            CreateWork<SeclyOrgWork>("org");
+
+            CreateWork<SeclyCtrBookWork, SeclyOwnBookWork>("pbook");
+
+            CreateWork<SeclyDailyWork>("daily");
+
+            CreateWork<CtrlyBookWork>("cbook");
+
+            CreateWork<SrclyProductWork>("product");
 
             CreateWork<SrclyCtrBookWork, SrclyOwnBookWork>("sbook");
-
-            CreateWork<SrclyDailyWork>("daily");
-
-            CreateWork<FrmlyProductWork>("product");
-
-            CreateWork<FrmlyCtrBookWork, FrmlyOwnBookWork>("fbook");
 
             CreateWork<OrglyClearWork>("clear");
         }
@@ -195,10 +198,10 @@ namespace Revital
             {
                 h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
 
-                h.FORM_("uk-card uk-card-primary");
+                h.FORM_("uk-card uk-card-default");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("主体名称", org.name)._LI();
-                h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("机构类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD("机构名称", org.name)._LI();
                 if (org.addr != null)
                 {
                     h.LI_().FIELD("地址", org.addr)._LI();
@@ -214,40 +217,6 @@ namespace Revital
                 {
                     h.LI_().FIELD("关联中枢", ctras, orgs)._LI();
                 }
-                h._UL();
-                h._FORM();
-
-                h.TASKLIST();
-            }, false, 3);
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中枢操作")]
-    public class CtrlyVarWork : OrglyVarWork
-    {
-        protected override void OnCreate()
-        {
-            CreateWork<CtrlyBookWork>("book");
-        }
-
-        public void @default(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            var regs = Grab<short, Reg>();
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-            wc.GivePage(200, h =>
-            {
-                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                h.TOOLBAR(tip: prin.name + "（" + role + "）");
-
-                h.FORM_("uk-card uk-card-primary");
-                h.UL_("uk-card-body ul-list uk-list-divider");
-                h.LI_().FIELD("主体名称", org.name)._LI();
-                h.LI_().FIELD2("地址", regs[org.regid]?.name, org.addr)._LI();
-                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
-                h.LI_().FIELD("状态", Info.Statuses[org.status])._LI();
                 h._UL();
                 h._FORM();
 

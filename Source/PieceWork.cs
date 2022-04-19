@@ -1,8 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain.Web;
+using Chainly.Web;
 using static Revital.Item;
-using static SkyChain.Web.Modal;
+using static Chainly.Web.Modal;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {

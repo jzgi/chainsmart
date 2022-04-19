@@ -1,11 +1,13 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
-using static SkyChain.Web.Appear;
-using static SkyChain.Web.Modal;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Web.Appear;
+using static Chainly.Web.Modal;
 using static Revital.WeChatUtility;
+using static Chainly.Web.Application;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -150,13 +152,13 @@ namespace Revital
                     if (err != null) // not success
                     {
                         dc.Rollback();
-                        ERR(err);
+                        Err(err);
                     }
                 }
                 catch (Exception)
                 {
                     dc.Rollback();
-                    ERR("退款失败: orderid = " + orderid);
+                    Err("退款失败: orderid = " + orderid);
                     return;
                 }
                 wc.GivePane(200);

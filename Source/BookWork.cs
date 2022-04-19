@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
-using SkyChain.Web;
-using static SkyChain.Web.Modal;
+using Chainly.Web;
+using static Chainly.Web.Modal;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -157,8 +158,8 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ORGLY_)]
-    [Ui("中枢｜质控配送操作")]
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("中枢质控配送操作")]
     public class CtrlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -235,7 +236,7 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
+    [UserAuthorize(Org.TYP_SEC, User.ORGLY_SAL)]
     [Ui("产源供应链电商发货")]
     public abstract class SrclyBookWork : BookWork
     {
@@ -276,18 +277,18 @@ namespace Revital
         }
     }
 
-    [Ui("产源供应链电商发货", "sign-out", fork: Org.FRK_CTR)]
-    public class SrclyCtrBookWork : SrclyBookWork
+    [Ui("版块产源销售统筹", "sign-out", fork: Org.FRK_CTR)]
+    public class SeclyCtrBookWork : SrclyBookWork
     {
     }
 
-    [Ui("产源供应链电商发货", "sign-out", fork: Org.FRK_OWN)]
-    public class SrclyOwnBookWork : SrclyBookWork
+    [Ui("版块产源销售统筹", "sign-out", fork: Org.FRK_OWN)]
+    public class SeclyOwnBookWork : SrclyBookWork
     {
     }
 
-    [UserAuthorize(Org.TYP_FRM, User.ORGLY_SAL)]
-    [Ui("大户线上销售")]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
+    [Ui("产源管理商户订货")]
     public abstract class FrmlyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -332,13 +333,13 @@ namespace Revital
         }
     }
 
-    [Ui("大户线上销售", "cloud-upload", fork: Org.FRK_CTR)]
-    public class FrmlyCtrBookWork : FrmlyBookWork
+    [Ui("产源销售管理", "cloud-upload", fork: Org.FRK_CTR)]
+    public class SrclyCtrBookWork : FrmlyBookWork
     {
     }
 
-    [Ui("大户线上销售", "cloud-upload", fork: Org.FRK_OWN)]
-    public class FrmlyOwnBookWork : FrmlyBookWork
+    [Ui("产源销售管理", "cloud-upload", fork: Org.FRK_OWN)]
+    public class SrclyOwnBookWork : FrmlyBookWork
     {
     }
 }

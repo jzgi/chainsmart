@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Nodal;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Nodal;
+using Chainly.Web;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -25,7 +26,7 @@ namespace Revital
 
             CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<NodalWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            CreateWork<FedMgtWork>("nodal", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
 
             CreateWork<AdmlyClearWork>("clear");
         }
@@ -33,7 +34,7 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var o = Home.Self;
+            var o = Self;
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
@@ -44,7 +45,7 @@ namespace Revital
                 {
                     h.LI_().FIELD("平台名称", o.Name)._LI();
                     h.LI_().FIELD("描述", o.Tip)._LI();
-                    h.LI_().FIELD("连接地址", o.Domain)._LI();
+                    h.LI_().FIELD("连接地址", o.WebUrl)._LI();
                 }
                 h._UL();
                 h._FORM();

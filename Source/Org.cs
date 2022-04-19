@@ -1,5 +1,5 @@
-﻿using SkyChain;
-using SkyChain.Web;
+﻿using Chainly;
+using Chainly.Web;
 
 namespace Revital
 {
@@ -13,10 +13,11 @@ namespace Revital
         public const short
             TYP_SPR = 0b01000, // supervisor
             TYP_BIZ = 0b00001, // business
-            TYP_FRM = 0b00010, // farm
-            TYP_CTR = 0b00100, // center
+            TYP_SRC = 0b00010, // source
+            TYP_DST = 0b00100, // distribution
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
-            TYP_SRC = TYP_SPR | TYP_FRM; // source
+            TYP_SEC = TYP_SPR | TYP_SRC, // provision sector
+            TYP_PRV = TYP_SPR | TYP_SRC | TYP_DST; // provision center
 
         public const short
             FRK_CTR = 1, // center 
@@ -25,14 +26,14 @@ namespace Revital
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_BIZ, "商户"},
-            {TYP_FRM, "大户"},
-            {TYP_CTR, "中枢"},
+            {TYP_SRC, "产源"},
 #if ZHNT
-            {TYP_MRT, "市场（兼商户）"},
+            {TYP_MRT, "市场"},
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_SRC, "产源（兼大户）"},
+            {TYP_SEC, "供应版块"},
+            {TYP_PRV, "供应中枢"},
         };
 
         public static readonly Map<short, string> Forks = new Map<short, string>
@@ -150,19 +151,19 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSrc => typ == TYP_SRC;
+        public bool IsSrc => typ == TYP_SEC;
 
-        public bool IsFrm => typ == TYP_FRM;
+        public bool IsFrm => typ == TYP_SRC;
 
         public bool IsBiz => typ == TYP_BIZ;
 
         public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsOfFrm => (typ & TYP_FRM) == TYP_FRM;
+        public bool IsOfFrm => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsMrt => typ == TYP_MRT;
 
-        public bool IsCtr => typ == TYP_CTR;
+        public bool IsCtr => typ == TYP_DST;
 
         public bool HasXy => IsMrt || IsFrm || IsCtr;
 

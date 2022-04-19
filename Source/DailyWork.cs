@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -76,9 +77,9 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_)]
-    [Ui("产源业务日报")]
-    public class SrclyDailyWork : DailyWork
+    [UserAuthorize(Org.TYP_SEC, User.ORGLY_)]
+    [Ui("版块业务日报")]
+    public class SeclyDailyWork : DailyWork
     {
         protected override void OnCreate()
         {
@@ -104,7 +105,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ORGLY_FIN)]
+        [UserAuthorize(Org.TYP_SEC, User.ORGLY_FIN)]
         [Ui("生成"), Tool(Modal.ButtonShow)]
         public async Task gen(WebContext wc, int page)
         {

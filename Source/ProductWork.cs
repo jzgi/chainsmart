@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using SkyChain.Web;
-using static SkyChain.Web.Modal;
+using Chainly.Web;
+using static Chainly.Web.Modal;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -10,9 +11,9 @@ namespace Revital
     }
 
 
-    [UserAuthorize(Org.TYP_FRM, User.ORGLY_OPN)]
-    [Ui("大户线上货架设置", "thumbnails")]
-    public class FrmlyProductWork : ProductWork
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
+    [Ui("产源货架设置", "thumbnails")]
+    public class SrclyProductWork : ProductWork
     {
         protected override void OnCreate()
         {

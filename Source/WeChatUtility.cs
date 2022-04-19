@@ -3,10 +3,10 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
-using static SkyChain.CryptoUtility;
-using static SkyChain.Application;
+using Chainly;
+using Chainly.Web;
+using static Chainly.CryptoUtility;
+using static Chainly.Web.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace Revital
@@ -59,7 +59,7 @@ namespace Revital
             }
             catch (Exception e)
             {
-                WAR("failed to load certificate: " + e.Message);
+                War("failed to load certificate: " + e.Message);
             }
         }
 

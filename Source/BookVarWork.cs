@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using SkyChain;
-using SkyChain.Web;
-using static SkyChain.Web.Modal;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Web.Application;
+using static Chainly.Nodal.Store;
+using static Chainly.Web.Modal;
 
 namespace Revital
 {
@@ -40,7 +42,7 @@ namespace Revital
                     }
                     catch (Exception e)
                     {
-                        ERR(e.Message);
+                        Err(e.Message);
                         dc.Rollback();
                     }
                 }
@@ -142,10 +144,9 @@ namespace Revital
     public class DietCtrlyBookVarWork : CtrlyBookVarWork
     {
     }
-    
-    
+
+
     public class FrmlyBookVarWork : BookVarWork
     {
     }
-
 }

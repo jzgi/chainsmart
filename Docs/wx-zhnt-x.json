@@ -3,30 +3,30 @@
     {
       "type": "view",
       "name": "逛市场",
-      "url": "http://www.jx.ezhnt.cn/"
+      "url": "http://www.jx.zhnt-x.com/"
     },
     {
       "name": "我的",
       "sub_button": [
         {
           "type": "view",
-          "name": "产源业务操作 🔒",
-          "url": "http://mgt.jx.ezhnt.cn/srcly//"
+          "name": "供应产源业务 🔒",
+          "url": "http://mgt.jx.zhnt-x.com/prvly//"
         },
         {
           "type": "view",
-          "name": "市场业务操作 🔒",
+          "name": "市场商户业务 🔒",
           "url": "http://mgt.jx.ezhnt.cn/mrtly//"
         },
         {
           "type": "view",
           "name": "我的购买",
-          "url": "http://www.jx.ezhnt.cn/my//buy/"
+          "url": "http://www.jx.zhnt-x.com/my//buy/"
         },
         {
           "type": "view",
           "name": "我的账号",
-          "url": "http://www.jx.ezhnt.cn/my//"
+          "url": "http://www.jx.zhnt-x.com/my//"
         }
       ]
     }

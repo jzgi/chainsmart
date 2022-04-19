@@ -1,5 +1,6 @@
-using SkyChain;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Web;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -10,13 +11,13 @@ namespace Revital
     /// <summary>
     /// source and producer
     /// </summary>
-    [Ui("产源业务操作")]
-    public class SrclyWork : OrglyWork
+    [Ui("供应产源业务")]
+    public class PrvlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<SrclyVarWork>((prin, key) =>
+            CreateVarWork<PrvlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -24,28 +25,11 @@ namespace Revital
             );
         }
     }
-
-
-    [Ui("中枢操作")]
-    public class CtrlyWork : OrglyWork
-    {
-        protected override void OnCreate()
-        {
-            // id of either current user or the specified
-            CreateVarWork<CtrlyVarWork>((prin, key) =>
-                {
-                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
-                    return GrabObject<int, Org>(orgid);
-                }
-            );
-        }
-    }
-
 
 #if ZHNT
-    [Ui("市场业务操作")]
+    [Ui("市场商户业务")]
 #else
-    [Ui("驿站业务操作")]
+    [Ui("驿站商户业务")]
 #endif
     public class MrtlyWork : OrglyWork
     {

@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using SkyChain;
-using SkyChain.Nodal;
-using SkyChain.Web;
+using Chainly;
+using Chainly.Nodal;
+using Chainly.Web;
 using static Revital.WeChatUtility;
+using static Chainly.Nodal.Store;
 
 namespace Revital
 {
@@ -82,7 +83,7 @@ namespace Revital
 
                     h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
                     h._FORM();
-                }, false, 15, title: Home.Self.Name);
+                }, false, 15, title: Store.Self.Name);
             }
             else if (cmd == 1) // agreement
             {

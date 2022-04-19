@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using SkyChain.Nodal;
-using SkyChain.Web;
+using Chainly.Nodal;
+using Chainly.Web;
 
 namespace Revital
 {
@@ -61,7 +61,7 @@ namespace Revital
                     }
 
                     // create principal
-                    using var dc = Home.NewDbContext();
+                    using var dc = Store.NewDbContext();
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
