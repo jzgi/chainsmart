@@ -4,7 +4,7 @@ using Chainly.Web;
 namespace Revital
 {
     /// <summary>
-    /// The data model for an organizational unit.
+    /// A generic data model for organizational unit.
     /// </summary>
     public class Org : Info, IKeyable<int>, IForkable
     {
@@ -17,7 +17,7 @@ namespace Revital
             TYP_DST = 0b00100, // distribution
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
             TYP_SEC = TYP_SPR | TYP_SRC, // provision sector
-            TYP_PRV = TYP_SPR | TYP_SRC | TYP_DST; // provision center
+            TYP_CTR = TYP_SPR | TYP_SRC | TYP_DST; // provision center
 
         public const short
             FRK_CTR = 1, // center 
@@ -32,21 +32,14 @@ namespace Revital
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_SEC, "供应版块"},
-            {TYP_PRV, "供应中枢"},
+            {TYP_SEC, "版块"},
+            {TYP_CTR, "中枢"},
         };
 
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
-            {FRK_CTR, "中枢配运"},
+            {FRK_CTR, "经过中枢"},
             {FRK_OWN, "自行配运"},
-        };
-
-        public static readonly Map<short, string> Zones = new Map<short, string>
-        {
-            {1, "大市场"},
-            {2, "小而美"},
-            {3, "原生态"},
         };
 
         // id
@@ -56,7 +49,6 @@ namespace Revital
         internal int sprid;
 
         internal short fork;
-        internal short zone;
         internal string license;
         internal short regid;
         internal string addr;
@@ -70,7 +62,7 @@ namespace Revital
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal int[] ctras; // connection to centers 
+        internal int[] toctrs; // toward centers (sector or market) 
         internal bool img;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -81,12 +73,11 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
+            if ((proj & BORN) == BORN)
             {
                 s.Get(nameof(sprid), ref sprid);
             }
             s.Get(nameof(fork), ref fork);
-            s.Get(nameof(zone), ref zone);
             s.Get(nameof(license), ref license);
             s.Get(nameof(regid), ref regid);
             s.Get(nameof(addr), ref addr);
@@ -94,7 +85,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(ctras), ref ctras);
+            s.Get(nameof(toctrs), ref toctrs);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -113,13 +104,12 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BORN) == BORN || (proj & DUAL) == DUAL)
+            if ((proj & BORN) == BORN)
             {
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));
             }
             s.Put(nameof(fork), fork);
-            s.Put(nameof(zone), zone);
             s.Put(nameof(license), license);
             if (regid > 0) s.Put(nameof(regid), regid);
             else s.PutNull(nameof(regid));
@@ -128,7 +118,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(ctras), ctras);
+            s.Put(nameof(toctrs), toctrs);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -151,32 +141,34 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSrc => typ == TYP_SEC;
+        public bool IsSector => typ == TYP_SEC;
 
-        public bool IsFrm => typ == TYP_SRC;
+        public bool IsOfSector => (typ & TYP_SEC) == TYP_SEC;
+
+        public bool IsSource => typ == TYP_SRC;
 
         public bool IsBiz => typ == TYP_BIZ;
 
         public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
 
-        public bool IsOfFrm => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsMrt => typ == TYP_MRT;
 
-        public bool IsCtr => typ == TYP_DST;
+        public bool IsCtr => typ == TYP_CTR;
 
-        public bool HasXy => IsMrt || IsFrm || IsCtr;
+        public bool HasXy => IsMrt || IsSource || IsCtr;
 
         public bool HasLocality => IsMrt || IsCtr;
 
 
         public bool HasCtr(int ctrid)
         {
-            if (ctras != null)
+            if (toctrs != null)
             {
-                for (int i = 0; i < ctras.Length; i++)
+                for (int i = 0; i < toctrs.Length; i++)
                 {
-                    if (ctras[i] == ctrid) return true;
+                    if (toctrs[i] == ctrid) return true;
                 }
             }
             return false;

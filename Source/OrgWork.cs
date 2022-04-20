@@ -27,7 +27,7 @@ namespace Revital
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Org.TYP_MRT);
+                h.TOOLBAR(subscript: 1);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
@@ -40,36 +40,15 @@ namespace Revital
             });
         }
 
-        [Ui("中枢", group: 2), Tool(Anchor)]
-        public async Task ctr(WebContext wc, int page)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_DST).T(" ORDER BY regid, status DESC");
-            var arr = await dc.QueryAsync<Org>();
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(subscript: Org.TYP_DST);
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD_().AVAR(o.Key, o.name)._TD();
-                    h.TD_("uk-visible@s").T(o.addr)._TD();
-                    h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(Info.Symbols[o.status]);
-                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
-                });
-            });
-        }
-
-        [Ui("产源", group: 4), Tool(Anchor)]
+        [Ui("供应", group: 2), Tool(Anchor)]
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_SEC).T(" ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_SEC).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Org.TYP_SEC);
+                h.TOOLBAR(subscript: 2);
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.id);
@@ -83,7 +62,7 @@ namespace Revital
         }
 
         [Ui("✚", "新建入驻机构", group: 7), Tool(ButtonShow)]
-        public async Task @new(WebContext wc, int typ)
+        public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
@@ -93,23 +72,30 @@ namespace Revital
             {
                 var m = new Org
                 {
-                    typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
                     status = Info.STA_ENABLED
                 };
+                if (cmd == 1)
+                {
+                    m.typ = Org.TYP_MRT;
+                }
+
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    var typname = Org.Typs[m.typ];
-                    h.FORM_().FIELDSUL_(typname + "机构信息");
-                    h.LI_().TEXT(typname + "名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsSrc)
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场机构信息" : "供应机构信息");
+                    if (cmd == 2)
                     {
-                        h.LI_().SELECT("物流投放", nameof(m.fork), m.fork, Org.Forks, required: true).SELECT("业务版块", nameof(m.zone), m.zone, Org.Zones, required: true)._LI();
+                        h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsSrc)._LI();
+                    h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    if (m.IsSector)
+                    {
+                        h.LI_().SELECT("物流投放", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
+                    }
+                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsSector)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     if (m.HasXy)
                     {
@@ -117,7 +103,7 @@ namespace Revital
                     }
                     if (m.IsSpr)
                     {
-                        h.LI_().SELECT("关联中枢", nameof(m.ctras), m.ctras, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsSrc, required: true)._LI();
+                        h.LI_().SELECT("关联中枢", nameof(m.toctrs), m.toctrs, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsSector, required: true)._LI();
                     }
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
@@ -127,7 +113,7 @@ namespace Revital
             {
                 var o = await wc.ReadObjectAsync(Info.BORN, new Org
                 {
-                    typ = (short) typ,
+                    typ = (short) (cmd == 1 ? Org.TYP_MRT : 0),
                     created = DateTime.Now,
                     creator = prin.name,
                 });
