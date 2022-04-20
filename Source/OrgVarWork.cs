@@ -42,6 +42,23 @@ namespace Revital
         }
     }
 
+    public class PublySecVarWork : OrgVarWork
+    {
+        /// <summary>
+        /// To display products related to present sector.
+        /// </summary>
+        public async Task @default(WebContext wc, int page)
+        {
+            int id = wc[0];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM products WHERE status > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY created LIMIT 20 OFFSET 20 * @2");
+            var m = await dc.QueryAsync<Org>(p => p.Set(id).Set(page));
+            wc.GivePage(200, h =>
+            {
+                
+            });
+        }
+    }
 
     public class AdmlyOrgVarWork : OrgVarWork
     {

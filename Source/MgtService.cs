@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using Chainly;
-using Chainly.Nodal;
 using Chainly.Web;
 using static Revital.WeChatUtility;
 using static Chainly.Nodal.Store;
@@ -10,15 +9,19 @@ using static Chainly.Nodal.Store;
 namespace Revital
 {
     [UserAuthenticate]
-    public class MgtService : FedService
+    public class MgtService : WebService
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MgtVarWork>();
+            CreateVarWork<MgtVarWork>(); // sectors related to present center
+
+            CreateWork<PublySecWork>("sec"); // products related to present sector
+
+            CreateWork<PublyProductWork>("prod"); // for admin
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<PrvlyWork>("prvly"); // for provision sector & source & center
+            CreateWork<PrvlyWork>("prvly"); // for provision sector / source / center
 
             CreateWork<MrtlyWork>("mrtly"); // for markets and bizs
         }

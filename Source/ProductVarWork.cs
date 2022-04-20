@@ -40,6 +40,12 @@ namespace Revital
         }
     }
 
+    public class MgtProductVarWork : ProductVarWork
+    {
+        public async Task @default(WebContext wc)
+        {
+        }
+    }
 
     public class SrclyProductVarWork : ProductVarWork
     {

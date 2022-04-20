@@ -10,6 +10,13 @@ namespace Revital
     {
     }
 
+    public class PublySecWork : OrgWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublySecVarWork>();
+        }
+    }
 
     [Ui("平台入驻机构设置", "album")]
     public class AdmlyOrgWork : OrgWork

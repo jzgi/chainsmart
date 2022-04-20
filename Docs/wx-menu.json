@@ -10,13 +10,13 @@
       "sub_button": [
         {
           "type": "view",
-          "name": "供应产源业务 🔒",
+          "name": "供应产源操作 🔒",
           "url": "http://mgt.jx.zhnt-x.com/prvly//"
         },
         {
           "type": "view",
-          "name": "市场商户业务 🔒",
-          "url": "http://mgt.jx.ezhnt.cn/mrtly//"
+          "name": "市场商户操作 🔒",
+          "url": "http://mgt.jx.zhnt-x.com/mrtly//"
         },
         {
           "type": "view",

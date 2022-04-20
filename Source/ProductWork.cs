@@ -10,6 +10,17 @@ namespace Revital
     {
     }
 
+    public class PublyProductWork : ProductWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<MgtProductVarWork>();
+        }
+
+        public void @default(WebContext wc, int page)
+        {
+        }
+    }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源货架设置", "thumbnails")]

@@ -30,7 +30,7 @@ namespace Revital
 
                 CreateService<MgtService>("mgt");
 
-                CreateService<FedExtService>("fed");
+                CreateService<FedService>("fed");
             }
             else
             {
