@@ -162,7 +162,9 @@ namespace Revital
         public bool HasLocality => IsMrt || IsCtr;
 
 
-        public bool HasCtr(int ctrid)
+        public bool MustTieToCtr => IsSpr && !IsCtr;
+
+        public bool IsTiedToCtr(int ctrid)
         {
             if (toctrs != null)
             {

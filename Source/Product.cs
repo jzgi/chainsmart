@@ -1,5 +1,4 @@
-﻿using System;
-using Chainly;
+﻿using Chainly;
 
 namespace Revital
 {
@@ -10,19 +9,13 @@ namespace Revital
     {
         public static readonly Product Empty = new Product();
 
-        public static readonly Map<short, string> Fillgs = new Map<short, string>
-        {
-            {0, "现货即发"},
-            {1, "指定日期"},
-        };
-
         public static readonly Map<short, string> Mrtgs = new Map<short, string>
         {
             {0, "不管市场价"},
             {1, "建议市场价"},
-            {2, "市场价上限"},
-            {3, "市场价下限"},
-            {4, "统一市场价"},
+            {2, "上限市场价"},
+            {3, "下限市场价"},
+            {4, "强制市场价"},
         };
 
         public static readonly Map<short, string> Bookgs = new Map<short, string>
@@ -43,12 +36,9 @@ namespace Revital
         internal short step;
         internal decimal price;
         internal int cap;
-
-        internal short fillg;
-        internal DateTime fillon;
         internal short mrtg;
         internal decimal mrtprice;
-        internal short bookg;
+        internal bool auth;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -72,12 +62,9 @@ namespace Revital
             s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
             s.Get(nameof(cap), ref cap);
-
-            s.Get(nameof(fillg), ref fillg);
-            s.Get(nameof(fillon), ref fillon);
             s.Get(nameof(mrtg), ref mrtg);
             s.Get(nameof(mrtprice), ref mrtprice);
-            s.Get(nameof(bookg), ref bookg);
+            s.Get(nameof(auth), ref auth);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -101,12 +88,9 @@ namespace Revital
             s.Put(nameof(step), step);
             s.Put(nameof(price), price);
             s.Put(nameof(cap), cap);
-
-            s.Put(nameof(fillg), fillg);
-            s.Put(nameof(fillon), fillon);
             s.Put(nameof(mrtg), mrtg);
             s.Put(nameof(mrtprice), mrtprice);
-            s.Put(nameof(bookg), bookg);
+            s.Put(nameof(auth), auth);
         }
 
         public int Key => id;

@@ -94,7 +94,7 @@ create table orgs
 	tel varchar(11),
 	zone smallint,
 	mgrid integer,
-	ctras integer[],
+	toctrs integer[],
 	img bytea
 )
 inherits (infos);
@@ -156,46 +156,12 @@ create table clears
 	dt date,
 	sprid integer not null,
 	count integer,
-	amt money
+	amt money,
+	qty integer
 )
 inherits (infos);
 
 alter table clears owner to postgres;
-
-create table books
-(
-	id bigserial not null
-		constraint books_pk
-			primary key,
-	bizid integer not null,
-	bizname varchar(10),
-	mrtid integer not null,
-	mrtname varchar(10),
-	ctrid integer not null,
-	ctrname varchar(10),
-	prvid integer not null,
-	prvname varchar(10),
-	srcid integer not null,
-	srcname varchar(10),
-	itemid integer,
-	wareid integer,
-	warename integer,
-	price money,
-	qty smallint,
-	fee money,
-	pay money,
-	cs varchar(32),
-	state smallint,
-	trace act_type[],
-	peerid_ smallint,
-	coid_ bigint,
-	seq_ integer,
-	cs_ varchar(32),
-	blockcs_ varchar(32)
-)
-inherits (infos);
-
-alter table books owner to postgres;
 
 create table buys
 (
@@ -220,35 +186,6 @@ inherits (infos);
 
 alter table buys owner to postgres;
 
-create table products
-(
-	id integer not null
-		constraint products_pk
-			primary key,
-	fillg smallint,
-	fillon date,
-	orgid integer
-		constraint products_orgid_fk
-			references orgs,
-	itemid integer,
-	ext varchar(10),
-	unit varchar(4),
-	unitx smallint,
-	min smallint,
-	max smallint,
-	step smallint,
-	price money,
-	cap integer,
-	mrtg smallint,
-	mrtprice money,
-	rankg smallint,
-	img bytea,
-	cert bytea
-)
-inherits (infos);
-
-alter table products owner to postgres;
-
 create table pieces
 (
 	id serial not null
@@ -270,20 +207,7 @@ inherits (infos);
 
 alter table pieces owner to postgres;
 
-create table peers
-(
-	id smallint not null
-		constraint peers_pk
-			primary key,
-	domain varchar(50),
-	secure boolean,
-	fedkey varchar(32)
-)
-inherits (infos);
-
-alter table peers owner to postgres;
-
-create table carbons
+create table ledgers_
 (
 	seq integer,
 	acct varchar(20),
@@ -295,17 +219,98 @@ create table carbons
 	stamp timestamp(0)
 );
 
-alter table carbons owner to postgres;
+alter table ledgers_ owner to postgres;
 
-create table peercarbons
+create table peerledgs_
 (
 	peerid smallint
 )
-inherits (carbons);
+inherits (ledgers_);
 
-alter table peercarbons owner to postgres;
+alter table peerledgs_ owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, ctras, mgrid, mgrname, mgrtel, mgrim, img) as
+create table deals_
+(
+	id bigserial not null
+);
+
+alter table deals_ owner to postgres;
+
+create table peers_
+(
+	id smallint not null
+		constraint peers_pk
+			primary key,
+	weburl varchar(50),
+	secret varchar(16)
+)
+inherits (infos);
+
+alter table peers_ owner to postgres;
+
+create table accts_
+(
+	no varchar(20),
+	v integer
+)
+inherits (infos);
+
+alter table accts_ owner to postgres;
+
+create table books
+(
+	id bigserial not null
+		constraint books_pk
+			primary key,
+	itemid integer,
+	productid integer,
+	srcid integer not null,
+	srcname varchar(12),
+	bizid integer not null,
+	bizname varchar(12),
+	secid integer not null,
+	secby varchar(12),
+	ctrid integer not null,
+	ctrby varchar(12),
+	mrtid integer not null,
+	mrtby varchar(12),
+	price money,
+	qty smallint,
+	amt money,
+	pay money
+)
+inherits (infos);
+
+alter table books owner to postgres;
+
+create table products
+(
+	id integer not null
+		constraint products_pk
+			primary key,
+	orgid integer
+		constraint products_orgid_fk
+			references orgs,
+	itemid integer,
+	ext varchar(10),
+	unit varchar(4),
+	unitx smallint,
+	min smallint,
+	max smallint,
+	step smallint,
+	price money,
+	cap integer,
+	mrtg smallint,
+	mrtprice money,
+	auth boolean,
+	img bytea,
+	cert bytea
+)
+inherits (infos);
+
+alter table products owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -325,7 +330,7 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.ctras,
+       o.toctrs,
        o.mgrid,
        m.name            AS mgrname,
        m.tel             AS mgrtel,

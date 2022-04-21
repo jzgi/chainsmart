@@ -141,8 +141,7 @@ namespace Revital
 
                 h.FORM_("uk-card uk-card-primary");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("主体名称", org.name)._LI();
-                h.LI_().FIELD("类型", Org.Typs[org.typ])._LI();
+                h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
                 h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
                 if (org.sprid > 0)
                 {
@@ -191,7 +190,7 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var orgs = Grab<int, Org>();
+            var topOrgs = Grab<int, Org>();
             var prin = (User) wc.Principal;
 
             wc.GivePage(200, h =>
@@ -200,22 +199,15 @@ namespace Revital
 
                 h.FORM_("uk-card uk-card-default");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("机构类型", Org.Typs[org.typ])._LI();
-                h.LI_().FIELD("机构名称", org.name)._LI();
+                h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
                 if (org.addr != null)
                 {
                     h.LI_().FIELD("地址", org.addr)._LI();
                 }
-                if (!org.IsSpr)
-                {
-                    var spr = orgs[org.sprid];
-                    h.LI_().FIELD("所在产源", spr.name)._LI();
-                }
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
-                var ctras = org.toctrs;
-                if (ctras != null)
+                if (org.MustTieToCtr)
                 {
-                    h.LI_().FIELD("关联中枢", ctras, orgs)._LI();
+                    h.LI_().FIELDA("关联中枢", org.toctrs, topOrgs)._LI();
                 }
                 h._UL();
                 h._FORM();

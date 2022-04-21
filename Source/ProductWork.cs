@@ -10,18 +10,6 @@ namespace Revital
     {
     }
 
-    public class PublyProductWork : ProductWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<MgtProductVarWork>();
-        }
-
-        public void @default(WebContext wc, int page)
-        {
-        }
-    }
-
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源货架设置", "thumbnails")]
     public class SrclyProductWork : ProductWork
@@ -68,7 +56,6 @@ namespace Revital
                 var tomorrow = DateTime.Today.AddDays(1);
                 var o = new Product
                 {
-                    fillon = tomorrow,
                     status = Info.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
@@ -77,8 +64,7 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("发货约定", nameof(o.fillg), o.fillg, Product.Fillgs, required: true).DATE("指定日期", nameof(o.fillon), o.fillon, min: tomorrow)._LI();
-                    h.LI_().SELECT("商户订货", nameof(o.bookg), o.bookg, Product.Bookgs, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().CHECKBOX("商户订货", nameof(o.auth), o.auth, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

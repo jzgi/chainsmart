@@ -10,47 +10,52 @@ namespace Revital
         /// <summary>
         /// To display sectors related to present provision center.
         /// </summary>
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
-            int id = wc[0];
-
+            int ctrid = wc[0];
             var topOrgs = Grab<int, Org>();
-            var ctr = topOrgs[id];
+            var ctr = topOrgs[ctrid];
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_()._TOPBAR();
+                h.TOPBAR_().H4_().T("品控中枢：").T(ctr.name)._H4()._TOPBAR();
 
+                h.UL_("uk-list");
                 for (int i = 0; i < topOrgs.Count; i++)
                 {
                     var org = topOrgs.ValueAt(i);
-                    if (org.toctrs != null && org.toctrs.Contains(id))
+                    if (org.IsTiedToCtr(ctrid))
                     {
-                        h.LI_();
-
+                        h.LI_("uk-card uk-card-default");
+                        h.HEADER(org.name, "uk-card-header");
                         h._LI();
                     }
                 }
+                h._UL();
             });
         }
 
-        public async Task prod(WebContext wc, int sect)
+        /// <summary>
+        /// To display products related to present sector.
+        /// </summary>
+        public async Task sec(WebContext wc, int secid)
         {
             int ctrid = wc[0];
-            var org = GrabObject<int, Org>(ctrid);
+            var topOrgs = Grab<int, Org>();
+            var org = Grab<int, Org>();
             var regs = Grab<short, Reg>();
 
             // get list of assocated sources
             var orgs = Grab<int, Org>();
             var ids = new ValueList<int>();
-            orgs.ForEach((k, v) => v.HasCtr(ctrid), (k, v) => ids.Add(k));
+            orgs.ForEach((k, v) => v.IsTiedToCtr(ctrid), (k, v) => ids.Add(k));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
-            var bizs = await dc.QueryAsync<Product>(p => p.Set(ctrid).Set(sect));
+            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE status > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
+            var bizs = await dc.QueryAsync<Product>(p => p.Set(ctrid).Set(secid));
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().SUBNAV(regs, string.Empty, sect, filter: (k, v) => v.typ == Reg.TYP_SECT);
+                h.TOPBAR_().SUBNAV(regs, string.Empty, secid, filter: (k, v) => v.typ == Reg.TYP_SECT);
                 h.T("<button class=\"uk-icon-button uk-circle uk-margin-left-auto\" formaction=\"search\" onclick=\"return dialog(this,8,false,4,'&#x1f6d2; 按厨坊下单')\"><span uk-icon=\"search\"></span></button>");
                 h._TOPBAR();
                 h.GRID(bizs, o =>
@@ -58,7 +63,11 @@ namespace Revital
                     h.SECTION_("uk-card-body");
                     h._SECTION();
                 }, width: 2);
-            }, title: org.name);
+            });
+        }
+
+        public async Task product(WebContext wc, int productid)
+        {
         }
 
         public async Task search(WebContext wc, int cur)
