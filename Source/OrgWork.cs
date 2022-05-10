@@ -43,7 +43,7 @@ namespace Revital
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_SEC).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -203,7 +203,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SEC, 1)]
+    [UserAuthorize(Org.TYP_PRV, 1)]
     [Ui("版块产源管理", "thumbnails")]
     public class SeclyOrgWork : OrgWork
     {

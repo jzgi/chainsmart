@@ -184,7 +184,7 @@ create table buys
 )
 inherits (infos);
 
-alter table buys owner to postgres;
+alter table orders owner to postgres;
 
 create table pieces
 (
@@ -205,7 +205,7 @@ create table pieces
 )
 inherits (infos);
 
-alter table pieces owner to postgres;
+alter table posts owner to postgres;
 
 create table ledgers_
 (
@@ -281,7 +281,7 @@ create table books
 )
 inherits (infos);
 
-alter table books owner to postgres;
+alter table buys owner to postgres;
 
 create table products
 (

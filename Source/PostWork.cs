@@ -7,15 +7,15 @@ using static Chainly.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class PieceWork : WebWork
+    public abstract class PostWork : WebWork
     {
     }
 
-    public class PublyPieceWork : PieceWork
+    public class PublyPostWork : PostWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyPieceVarWork>();
+            CreateVarWork<PublyPostVarWork>();
         }
 
         public void @default(WebContext wc, int page)
@@ -24,11 +24,11 @@ namespace Revital
     }
 
     [Ui("商户线上货架设置", "thumbnails")]
-    public class BizlyPieceWork : PieceWork
+    public class BizlyPostWork : PostWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<BizlyPieceVarWork>();
+            CreateVarWork<BizlyPostVarWork>();
         }
 
         [Ui("上架", group: 1), Tool(Anchor)]
@@ -36,8 +36,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM pieces WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Piece>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM pieces WHERE orgid = @1 AND status >= 2 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Post>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -55,8 +55,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Piece.Empty).T(" FROM peices WHERE orgid = @1 AND status <= 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Piece>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Post.Empty).T(" FROM peices WHERE orgid = @1 AND status <= 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Post>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -82,7 +82,7 @@ namespace Revital
                 dc.Sql("SELECT DISTINCT productid FROM books WHERE ");
 
 
-                var o = new Piece
+                var o = new Post
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -121,7 +121,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Piece
+                var o = await wc.ReadObjectAsync(0, new Post
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -148,7 +148,7 @@ namespace Revital
             var items = Grab<short, Item>();
             if (wc.IsGet)
             {
-                var o = new Piece
+                var o = new Post
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -184,7 +184,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Piece
+                var o = await wc.ReadObjectAsync(0, new Post
                 {
                     created = DateTime.Now,
                     creator = prin.name,
@@ -196,7 +196,7 @@ namespace Revital
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO posts ").colset(Piece.Empty, 0)._VALUES_(Piece.Empty, 0);
+                dc.Sql("INSERT INTO posts ").colset(Post.Empty, 0)._VALUES_(Post.Empty, 0);
                 await dc.ExecuteAsync(p => o.Write(p, 0));
 
                 wc.GivePane(200); // close dialog

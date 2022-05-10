@@ -77,7 +77,7 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_SEC, User.ORGLY_)]
+    [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
     [Ui("版块业务日报")]
     public class SeclyDailyWork : DailyWork
     {
@@ -105,7 +105,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_SEC, User.ORGLY_FIN)]
+        [UserAuthorize(Org.TYP_PRV, User.ORGLY_FIN)]
         [Ui("生成"), Tool(Modal.ButtonShow)]
         public async Task gen(WebContext wc, int page)
         {

@@ -110,19 +110,19 @@ namespace Revital
 
             CreateWork<MrtlyUserWork>("user");
 
-            CreateWork<MrtlyBookWork>("mbook");
+            CreateWork<MrtlyBuyWork>("mbook");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
             CreateWork<MrtlyDailyWork>("daily");
 
-            CreateWork<BizlyPieceWork>("piece");
+            CreateWork<BizlyPostWork>("piece");
 
-            CreateWork<BizlyBuyWork>("bbuy");
+            CreateWork<BizlyOrderWork>("bbuy");
 
             CreateWork<BizlyShopWork>("shop");
 
-            CreateWork<BizlyBookWork>("bbook");
+            CreateWork<BizlyBuyWork>("bbook");
 
             CreateWork<OrglyClearWork>("clear");
 
@@ -174,15 +174,15 @@ namespace Revital
         {
             CreateWork<SeclyOrgWork>("org");
 
-            CreateWork<SeclyCtrBookWork, SeclyOwnBookWork>("pbook");
+            CreateWork<SeclyCtrBuyWork, SeclyOwnBuyWork>("pbook");
 
             CreateWork<SeclyDailyWork>("daily");
 
-            CreateWork<CtrlyBookWork>("cbook");
+            CreateWork<CtrlyBuyWork>("cbook");
 
             CreateWork<SrclyProductWork>("product");
 
-            CreateWork<SrclyCtrBookWork, SrclyOwnBookWork>("sbook");
+            CreateWork<SrclyCtrBuyWork, SrclyOwnBuyWork>("sbook");
 
             CreateWork<OrglyClearWork>("clear");
         }

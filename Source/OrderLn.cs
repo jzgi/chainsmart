@@ -2,23 +2,22 @@
 
 namespace Revital
 {
-    public class WareLn : IData
+    public class OrderLn : IData
     {
-        public static readonly Buy Empty = new Buy();
+        public static readonly Order Empty = new Order();
 
-        public long buyid;
-        public int wareid;
-        public string warename;
+        public long orderid;
+        public int prodid;
+        public string prodname;
         public short itemid;
         public decimal price;
         public short qty;
-        public decimal total;
 
         public void Read(ISource s, short proj = 0xff)
         {
-            s.Get(nameof(buyid), ref buyid);
-            s.Get(nameof(wareid), ref wareid);
-            s.Get(nameof(warename), ref warename);
+            s.Get(nameof(orderid), ref orderid);
+            s.Get(nameof(prodid), ref prodid);
+            s.Get(nameof(prodname), ref prodname);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(price), ref price);
             s.Get(nameof(qty), ref qty);
@@ -26,14 +25,14 @@ namespace Revital
 
         public void Write(ISink s, short proj = 0xff)
         {
-            s.Put(nameof(buyid), buyid);
-            s.Put(nameof(wareid), wareid);
-            s.Put(nameof(warename), warename);
+            s.Put(nameof(orderid), orderid);
+            s.Put(nameof(prodid), prodid);
+            s.Put(nameof(prodname), prodname);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(price), price);
             s.Put(nameof(qty), qty);
         }
 
-        public long Key => buyid;
+        public long Key => orderid;
     }
 }

@@ -20,7 +20,7 @@ namespace Revital
 
             CreateWork<AdmlyBookWork>("book");
 
-            CreateWork<AdmlyBuyWork>("buy");
+            CreateWork<AdmlyOrderWork>("buy");
 
             CreateWork<AdmlyDailyWork>("daily");
 

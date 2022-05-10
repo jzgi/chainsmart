@@ -16,7 +16,7 @@ namespace Revital
         {
             CreateVarWork<WwwVarWork>(); // market home page
 
-            CreateWork<PublyPieceWork>("piece");
+            CreateWork<PublyPostWork>("piece");
 
             CreateWork<PublyItemWork>("item");
 

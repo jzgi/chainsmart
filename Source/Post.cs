@@ -5,9 +5,9 @@ namespace Revital
     /// <summary>
     /// A data model for post entry.
     /// </summary>
-    public class Piece : Info, IKeyable<int>
+    public class Post : Info, IKeyable<int>
     {
-        public static readonly Piece Empty = new Piece();
+        public static readonly Post Empty = new Post();
 
         internal int id;
         internal int orgid;

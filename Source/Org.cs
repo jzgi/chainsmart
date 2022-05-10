@@ -16,7 +16,7 @@ namespace Revital
             TYP_SRC = 0b00010, // source
             TYP_DST = 0b00100, // distribution
             TYP_MRT = TYP_SPR | TYP_BIZ, // market
-            TYP_SEC = TYP_SPR | TYP_SRC, // provision sector
+            TYP_PRV = TYP_SPR | TYP_SRC, // provision sector
             TYP_CTR = TYP_SPR | TYP_SRC | TYP_DST; // provision center
 
         public const short
@@ -32,7 +32,7 @@ namespace Revital
 #else
             {TYP_MRT, "驿站"},
 #endif
-            {TYP_SEC, "版块"},
+            {TYP_PRV, "版块"},
             {TYP_CTR, "中枢"},
         };
 
@@ -141,9 +141,9 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSector => typ == TYP_SEC;
+        public bool IsSector => typ == TYP_PRV;
 
-        public bool IsOfSector => (typ & TYP_SEC) == TYP_SEC;
+        public bool IsOfSector => (typ & TYP_PRV) == TYP_PRV;
 
         public bool IsSource => typ == TYP_SRC;
 

@@ -13,7 +13,7 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateWork<MyBuyWork>("buy");
+            CreateWork<MyOrderWork>("buy");
         }
 
         [UserAuthorize]
