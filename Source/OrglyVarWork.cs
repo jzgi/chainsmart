@@ -128,7 +128,7 @@ namespace Revital
 
             CreateWork<OrglyClearWork>("clear");
 
-            CreateWork<AdmlyPostWork>("msg");
+            CreateWork<AdmlyNoteWork>("msg");
         }
 
         public void @default(WebContext wc)

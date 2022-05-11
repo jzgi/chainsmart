@@ -22,7 +22,7 @@ namespace Revital
 
             CreateWork<AdmlyBuyWork>("buy");
 
-            CreateWork<AdmlyPostWork>("post");
+            CreateWork<AdmlyNoteWork>("post");
 
             CreateWork<AdmlyDailyWork>("daily");
 
