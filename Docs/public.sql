@@ -6,309 +6,322 @@ alter schema public owner to postgres;
 
 create type act_type as
 (
-	"user" varchar(10),
-	role varchar(10),
-	party varchar(10),
-	op varchar(10),
-	stamp timestamp(0)
+    "user" varchar(10),
+    role varchar(10),
+    party varchar(10),
+    op varchar(10),
+    stamp timestamp(0)
 );
 
 alter type act_type owner to postgres;
 
-create type wareln_type as
+create type purchop_type as
 (
-	wareid integer,
-	warename varchar(20),
-	itemid smallint,
-	price money,
-	qty smallint,
-	total money
+    state smallint,
+    label varchar(12),
+    orgid integer,
+    uid integer,
+    uname varchar(12),
+    utel varchar(11),
+    stamp timestamp(0)
 );
 
-alter type wareln_type owner to postgres;
+alter type purchop_type owner to postgres;
+
+create type buyln_type as
+(
+    prodid integer,
+    prodname varchar(12),
+    itemid smallint,
+    price money,
+    qty smallint,
+    qtyre smallint
+);
+
+alter type buyln_type owner to postgres;
 
 create table infos
 (
-	typ smallint not null,
-	status smallint default 0 not null,
-	name varchar(12) not null,
-	tip varchar(30),
-	created timestamp(0),
-	creator varchar(10),
-	adapted timestamp(0),
-	adapter varchar(10)
+    typ smallint not null,
+    status smallint default 0 not null,
+    name varchar(12) not null,
+    tip varchar(30),
+    created timestamp(0),
+    creator varchar(10),
+    adapted timestamp(0),
+    adapter varchar(10)
 );
 
 alter table infos owner to postgres;
 
 create table regs
 (
-	id smallint not null
-		constraint regs_pk
-			primary key,
-	idx smallint
+    id smallint not null
+        constraint regs_pk
+            primary key,
+    idx smallint
 )
-inherits (infos);
+    inherits (infos);
 
 alter table regs owner to postgres;
 
-create table agrees
-(
-	id serial not null,
-	orgid smallint,
-	started date,
-	ended date,
-	content jsonb
-)
-inherits (infos);
-
-alter table agrees owner to postgres;
-
 create table items
 (
-	id integer not null,
-	unit varchar(4),
-	unitip varchar(10),
-	icon bytea
+    id integer not null,
+    unit varchar(4),
+    unitip varchar(10),
+    icon bytea
 )
-inherits (infos);
+    inherits (infos);
+
+comment on table items is 'standard items';
 
 alter table items owner to postgres;
 
 create table orgs
 (
-	id serial not null
-		constraint orgs_pk
-			primary key,
-	fork smallint,
-	sprid integer,
-	license varchar(20),
-	trust boolean,
-	regid smallint
-		constraint orgs_regid_fk
-			references regs
-				on update cascade,
-	addr varchar(30),
-	x double precision,
-	y double precision,
-	tel varchar(11),
-	zone smallint,
-	mgrid integer,
-	toctrs integer[],
-	img bytea
+    id serial not null
+        constraint orgs_pk
+            primary key,
+    fork smallint,
+    sprid integer,
+    license varchar(20),
+    trust boolean,
+    regid smallint
+        constraint orgs_regid_fk
+            references regs
+            on update cascade,
+    addr varchar(30),
+    x double precision,
+    y double precision,
+    tel varchar(11),
+    zone smallint,
+    mgrid integer,
+    toctrs integer[],
+    img bytea
 )
-inherits (infos);
+    inherits (infos);
 
 alter table orgs owner to postgres;
 
 create table users
 (
-	id serial not null
-		constraint users_pk
-			primary key,
-	tel varchar(11) not null,
-	im varchar(28),
-	credential varchar(32),
-	admly smallint default 0 not null,
-	orgid smallint
-		constraint users_orgid_fk
-			references orgs,
-	orgly smallint default 0 not null,
-	idcard varchar(18)
+    id serial not null
+        constraint users_pk
+            primary key,
+    tel varchar(11) not null,
+    im varchar(28),
+    credential varchar(32),
+    admly smallint default 0 not null,
+    orgid smallint
+        constraint users_orgid_fk
+            references orgs,
+    orgly smallint default 0 not null,
+    idcard varchar(18)
 )
-inherits (infos);
+    inherits (infos);
 
 alter table users owner to postgres;
 
 create index users_admly_idx
-	on users (admly)
-	where (admly > 0);
+    on users (admly)
+    where (admly > 0);
 
 create unique index users_im_idx
-	on users (im);
+    on users (im);
 
 create index users_orgid_idx
-	on users (orgid)
-	where (orgid > 0);
+    on users (orgid)
+    where (orgid > 0);
 
 create unique index users_tel_idx
-	on users (tel);
+    on users (tel);
 
 create table dailys
 (
-	orgid integer,
-	dt date,
-	itemid smallint,
-	count integer,
-	amt money,
-	qty integer
+    orgid integer,
+    dt date,
+    itemid smallint,
+    count integer,
+    amt money,
+    qty integer
 )
-inherits (infos);
+    inherits (infos);
 
 alter table dailys owner to postgres;
 
 create table clears
 (
-	id serial not null
-		constraint clears_pkey
-			primary key,
-	orgid integer not null,
-	dt date,
-	sprid integer not null,
-	count integer,
-	amt money,
-	qty integer
+    id serial not null
+        constraint clears_pkey
+            primary key,
+    orgid integer not null,
+    dt date,
+    sprid integer not null,
+    count integer,
+    amt money,
+    qty integer
 )
-inherits (infos);
+    inherits (infos);
 
 alter table clears owner to postgres;
 
-create table buys
-(
-	id bigserial not null
-		constraint buys_pk
-			primary key,
-	bizid integer not null,
-	bizname varchar(10),
-	mrtid integer not null,
-	mrtname varchar(10),
-	uid integer not null,
-	uname varchar(10),
-	utel varchar(11),
-	uaddr varchar(20),
-	uim varchar(28),
-	totalp money,
-	fee money,
-	pay money,
-	wares wareln_type[]
-)
-inherits (infos);
-
-alter table orders owner to postgres;
-
-create table pieces
-(
-	id serial not null
-		constraint pieces_pk
-			primary key,
-	productid integer,
-	orgid integer,
-	itemid integer,
-	ext varchar(10),
-	unit varchar(4),
-	unitx smallint,
-	min smallint,
-	max smallint,
-	step smallint,
-	price money,
-	cap integer
-)
-inherits (infos);
-
-alter table posts owner to postgres;
-
 create table ledgers_
 (
-	seq integer,
-	acct varchar(20),
-	name varchar(12),
-	amt integer,
-	bal integer,
-	cs uuid,
-	blockcs uuid,
-	stamp timestamp(0)
+    seq integer,
+    acct varchar(20),
+    name varchar(12),
+    amt integer,
+    bal integer,
+    cs uuid,
+    blockcs uuid,
+    stamp timestamp(0)
 );
 
 alter table ledgers_ owner to postgres;
 
 create table peerledgs_
 (
-	peerid smallint
+    peerid smallint
 )
-inherits (ledgers_);
+    inherits (ledgers_);
 
 alter table peerledgs_ owner to postgres;
 
-create table deals_
-(
-	id bigserial not null
-);
-
-alter table deals_ owner to postgres;
-
 create table peers_
 (
-	id smallint not null
-		constraint peers_pk
-			primary key,
-	weburl varchar(50),
-	secret varchar(16)
+    id smallint not null
+        constraint peers_pk
+            primary key,
+    weburl varchar(50),
+    secret varchar(16)
 )
-inherits (infos);
+    inherits (infos);
 
 alter table peers_ owner to postgres;
 
 create table accts_
 (
-	no varchar(20),
-	v integer
+    no varchar(20),
+    v integer
 )
-inherits (infos);
+    inherits (infos);
 
 alter table accts_ owner to postgres;
 
-create table books
+create table notes
 (
-	id bigserial not null
-		constraint books_pk
-			primary key,
-	itemid integer,
-	productid integer,
-	srcid integer not null,
-	srcname varchar(12),
-	bizid integer not null,
-	bizname varchar(12),
-	secid integer not null,
-	secby varchar(12),
-	ctrid integer not null,
-	ctrby varchar(12),
-	mrtid integer not null,
-	mrtby varchar(12),
-	price money,
-	qty smallint,
-	amt money,
-	pay money
+    id serial not null,
+    fromid integer,
+    toid integer
 )
-inherits (infos);
+    inherits (infos);
+
+comment on table notes is 'annoucements and notices';
+
+alter table notes owner to postgres;
+
+create table purchs
+(
+    id bigserial not null
+        constraint purchs_pk
+            primary key,
+    bizid integer not null,
+    srcid integer not null,
+    prvid integer not null,
+    ctrid integer not null,
+    mrtid integer not null,
+    prodid integer,
+    prodname varchar(12),
+    itemid smallint,
+    unit varchar(4),
+    unitx smallint,
+    mode smallint,
+    price money,
+    "off" money,
+    qty smallint,
+    pay money,
+    qtyre smallint,
+    payre money,
+    ops purchop_type[],
+    state smallint,
+    bunit varchar(4),
+    bunitx smallint,
+    bprice money,
+    bmin smallint,
+    bmax smallint,
+    bstep smallint
+)
+    inherits (infos);
+
+comment on table purchs is 'purchases and resales';
+
+comment on column purchs.unitx is 'times of standard unit';
+
+comment on column purchs.qtyre is 'qty reduced';
+
+comment on column purchs.payre is 'pay refunded';
+
+alter table purchs owner to postgres;
+
+create table buys
+(
+    id bigserial not null
+        constraint buys_pk
+            primary key,
+    bizid integer not null,
+    mrtid integer not null,
+    uid integer not null,
+    uname varchar(10),
+    utel varchar(11),
+    uaddr varchar(20),
+    uim varchar(28),
+    lns buyln_type[],
+    pay money,
+    payre money
+)
+    inherits (infos);
+
+comment on table buys is 'customer buys';
 
 alter table buys owner to postgres;
 
-create table products
+create table prods
 (
-	id integer not null
-		constraint products_pk
-			primary key,
-	orgid integer
-		constraint products_orgid_fk
-			references orgs,
-	itemid integer,
-	ext varchar(10),
-	unit varchar(4),
-	unitx smallint,
-	min smallint,
-	max smallint,
-	step smallint,
-	price money,
-	cap integer,
-	mrtg smallint,
-	mrtprice money,
-	auth boolean,
-	img bytea,
-	cert bytea
+    id serial not null
+        constraint prods_pk
+            primary key,
+    orgid integer,
+    itemid integer,
+    ext varchar(10),
+    store smallint,
+    duration smallint,
+    foragt boolean,
+    unit varchar(4),
+    unitx smallint,
+    price money,
+    cap smallint,
+    min smallint,
+    max smallint,
+    step smallint,
+    threshold smallint,
+    deadline date,
+    "off" money,
+    accumul smallint,
+    img bytea,
+    pic bytea
 )
-inherits (infos);
+    inherits (infos);
 
-alter table products owner to postgres;
+comment on table prods is 'products from sources';
+
+comment on column prods.store is 'storage method';
+
+comment on column prods.unitx is 'times of standard unit';
+
+comment on column prods.accumul is 'group-purchase accumulative';
+
+alter table prods owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,

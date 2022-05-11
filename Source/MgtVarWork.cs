@@ -51,8 +51,8 @@ namespace Revital
             orgs.ForEach((k, v) => v.IsTiedToCtr(ctrid), (k, v) => ids.Add(k));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE status > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
-            var bizs = await dc.QueryAsync<Product>(p => p.Set(ctrid).Set(secid));
+            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM products WHERE status > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
+            var bizs = await dc.QueryAsync<Prod>(p => p.Set(ctrid).Set(secid));
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().SUBNAV(regs, string.Empty, secid, filter: (k, v) => v.typ == Reg.TYP_SECT);

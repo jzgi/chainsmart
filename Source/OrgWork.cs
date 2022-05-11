@@ -205,7 +205,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_PRV, 1)]
     [Ui("版块产源管理", "thumbnails")]
-    public class SeclyOrgWork : OrgWork
+    public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {

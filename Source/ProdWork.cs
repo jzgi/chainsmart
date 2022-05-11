@@ -6,25 +6,25 @@ using static Chainly.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class ProductWork : WebWork
+    public abstract class ProdWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源货架设置", "thumbnails")]
-    public class SrclyProductWork : ProductWork
+    public class SrclyProdWork : ProdWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyProductVarWork>();
+            CreateVarWork<SrclyProdVarWork>();
         }
 
-        public void @default(WebContext wc, int page)
+        public void @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 ORDER BY status DESC, typ LIMIT 40 OFFSET 40 * @2");
-            var arr = dc.Query<Product>(p => p.Set(org.id).Set(page));
+            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 ORDER BY status DESC");
+            var arr = dc.Query<Prod>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -54,8 +54,10 @@ namespace Revital
             if (wc.IsGet)
             {
                 var tomorrow = DateTime.Today.AddDays(1);
-                var o = new Product
+                var o = new Prod
                 {
+                    unitx = 1,
+                    min = 1, max = 1, step = 1, cap = 5000,
                     status = Info.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
@@ -64,15 +66,15 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().CHECKBOX("商户订货", nameof(o.authreq), o.authreq, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Prod.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Prod.Durations, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.foragt), o.foragt).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("标准比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
+                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("单位倍比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("现存量", nameof(o.cap), o.cap)._LI();
-                    // h.LI_().SELECT("市场约束", nameof(o.mode), o.mode, Product.Mrtgs, required: true).NUMBER("市场价", nameof(o.discount), o.discount, min: 0.00M, max: 10000.00M)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("总存量", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL();
                     h._FORM();
@@ -80,9 +82,9 @@ namespace Revital
             }
             else // POST
             {
-                const short proj = Info.BORN;
+                const short msk = Info.BORN;
                 // populate 
-                var m = await wc.ReadObjectAsync(proj, new Product
+                var m = await wc.ReadObjectAsync(msk, new Prod
                 {
                     orgid = org.id,
                     created = DateTime.Now,
@@ -94,8 +96,8 @@ namespace Revital
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO products ").colset(Product.Empty, proj)._VALUES_(Product.Empty, proj);
-                await dc.ExecuteAsync(p => m.Write(p, proj));
+                dc.Sql("INSERT INTO prods ").colset(Prod.Empty, msk)._VALUES_(Prod.Empty, msk);
+                await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
             }

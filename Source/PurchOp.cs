@@ -3,17 +3,14 @@ using Chainly;
 
 namespace Revital
 {
-    public class BuyAct : IData
+    public struct PurchOp : IData
     {
-        int bookid;
-        short status;
-        int orgid;
+        short state;
         string label;
-        string tip;
-        string uid;
+        int orgid;
+        int uid;
         string uname;
         string utel;
-
         DateTime stamp;
 
         public void Read(ISource s, short msk = 255)

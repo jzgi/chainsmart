@@ -7,7 +7,7 @@ using static Chainly.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class ProductVarWork : WebWork
+    public abstract class ProdVarWork : WebWork
     {
         protected async Task doimg(WebContext wc, string col)
         {
@@ -40,7 +40,7 @@ namespace Revital
         }
     }
 
-    public class SrclyProductVarWork : ProductVarWork
+    public class SrclyProdVarWork : ProdVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -51,23 +51,23 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
-                var o = dc.QueryTop<Product>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1");
+                var o = dc.QueryTop<Prod>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().CHECKBOX("商户订货", nameof(o.authreq), o.authreq, required: true).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Prod.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Prod.Durations, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.foragt), o.foragt).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("标准比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
+                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("单位倍比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("现存量", nameof(o.cap), o.cap)._LI();
-                    // h.LI_().SELECT("市场约束", nameof(o.@group), o.@group, Product.Mrtgs, required: true).NUMBER("市场价", nameof(o.discount), o.discount, min: 0.00M, max: 10000.00M)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("总存量", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL();
                     h._FORM();
@@ -76,7 +76,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var m = await wc.ReadObjectAsync(0, new Product
+                var m = await wc.ReadObjectAsync(0, new Prod
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -87,7 +87,7 @@ namespace Revital
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE products ")._SET_(Product.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE prods ")._SET_(Prod.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);

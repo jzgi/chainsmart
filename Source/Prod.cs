@@ -9,35 +9,56 @@ namespace Revital
     /// <remarks>
     /// It can be upgraded to the group-book mode and then back. 
     /// </remarks>
-    public class Product : Info, IKeyable<int>
+    public class Prod : Info, IKeyable<int>
     {
-        public static readonly Product Empty = new Product();
+        public static readonly Prod Empty = new Prod();
+
+        public const short
+            MOD_NULL = 0,
+            MOD_AUTHREQ = 1,
+            MOD_GROUP = 2;
+
+        public static readonly Map<short, string> Mods = new Map<short, string>
+        {
+            {MOD_NULL, null},
+            {MOD_AUTHREQ, "授权"},
+            {MOD_GROUP, "团购"},
+        };
+
+        public static readonly Map<short, string> Stores = new Map<short, string>
+        {
+            {0, "常规"},
+            {1, "冷藏"},
+            {2, "冷冻"},
+        };
+
+        public static readonly short[] Durations = {3, 5, 7, 10, 15, 20, 30, 45, 60, 90, 120};
 
         internal int id;
 
         internal int orgid;
         internal short itemid;
         internal string ext;
+        internal short store;
+        internal short duration;
         internal string unit;
         internal short unitx;
 
         // individual order relevant
 
-        internal int min;
-        internal int max;
-        internal int step;
         internal decimal price;
-        internal bool authreq; // authorization required
+        internal short cap;
+        internal short min;
+        internal short max;
+        internal short step;
+        internal bool foragt; // 
 
         // when changed to group-book mode
 
-        internal short mode; // 
-        internal decimal discount;
-        internal int threshold;
+        internal short threshold;
         internal DateTime deadline;
-
-        internal int cap;
-        internal int total;
+        internal decimal off;
+        internal short accumul;
 
 
         public override void Read(ISource s, short proj = 0xff)
@@ -55,6 +76,8 @@ namespace Revital
             }
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(ext), ref ext);
+            s.Get(nameof(store), ref store);
+            s.Get(nameof(duration), ref duration);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
 
@@ -62,15 +85,14 @@ namespace Revital
             s.Get(nameof(max), ref max);
             s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
-            s.Get(nameof(authreq), ref authreq);
 
-            s.Get(nameof(mode), ref mode);
-            s.Get(nameof(discount), ref discount);
+            s.Get(nameof(foragt), ref foragt);
+            s.Get(nameof(off), ref off);
             s.Get(nameof(threshold), ref threshold);
             s.Get(nameof(deadline), ref deadline);
 
             s.Get(nameof(cap), ref cap);
-            s.Get(nameof(total), ref total);
+            s.Get(nameof(accumul), ref accumul);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -88,6 +110,8 @@ namespace Revital
             }
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(ext), ext);
+            s.Put(nameof(store), store);
+            s.Put(nameof(duration), duration);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
 
@@ -95,15 +119,14 @@ namespace Revital
             s.Put(nameof(max), max);
             s.Put(nameof(step), step);
             s.Put(nameof(price), price);
-            s.Put(nameof(authreq), authreq);
 
-            s.Put(nameof(mode), mode);
-            s.Put(nameof(discount), discount);
+            s.Put(nameof(foragt), foragt);
+            s.Put(nameof(off), off);
             s.Put(nameof(threshold), threshold);
             s.Put(nameof(deadline), deadline);
 
             s.Put(nameof(cap), cap);
-            s.Put(nameof(total), total);
+            s.Put(nameof(accumul), accumul);
         }
 
         public int Key => id;

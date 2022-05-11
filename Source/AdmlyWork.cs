@@ -18,9 +18,11 @@ namespace Revital
 
             CreateWork<AdmlyItemWork>("item");
 
-            CreateWork<AdmlyBookWork>("book");
+            CreateWork<AdmlyPurchWork>("book");
 
-            CreateWork<AdmlyOrderWork>("buy");
+            CreateWork<AdmlyBuyWork>("buy");
+
+            CreateWork<AdmlyPostWork>("post");
 
             CreateWork<AdmlyDailyWork>("daily");
 

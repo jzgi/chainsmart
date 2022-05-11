@@ -43,8 +43,8 @@ namespace Revital
             else if (org.IsBiz)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Post.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
-                var posts = await dc.QueryAsync<Post>(p => p.Set(org.id));
+                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                var posts = await dc.QueryAsync<Purch>(p => p.Set(org.id));
                 wc.GivePage(200, h =>
                 {
                     h.TOPBAR_();
@@ -68,8 +68,8 @@ namespace Revital
             if (inner)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Post.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
-                var posts = await dc.QueryAsync<Post>(p => p.Set(orgid));
+                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM pieces WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                var posts = await dc.QueryAsync<Purch>(p => p.Set(orgid));
                 wc.GivePane(200, h =>
                 {
                     h.TOOLBAR(tip: "查询" + regs[(short) sect].name);

@@ -106,27 +106,29 @@ namespace Revital
     {
         protected override void OnCreate()
         {
+            // mrt
+
             CreateWork<MrtlyOrgWork>("org");
 
             CreateWork<MrtlyUserWork>("user");
 
-            CreateWork<MrtlyBuyWork>("mbook");
+            CreateWork<MrtlyPurchWork>("mpur");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
             CreateWork<MrtlyDailyWork>("daily");
 
-            CreateWork<BizlyPostWork>("piece");
+            // biz
 
-            CreateWork<BizlyOrderWork>("bbuy");
+            CreateWork<BizlyPurchWork>("bpur");
 
-            CreateWork<BizlyShopWork>("shop");
+            CreateWork<BizlyBuyWork>("bbuy");
 
-            CreateWork<BizlyBuyWork>("bbook");
+            // common
 
             CreateWork<OrglyClearWork>("clear");
 
-            CreateWork<OrglyMsgWork>("msg");
+            CreateWork<AdmlyPostWork>("msg");
         }
 
         public void @default(WebContext wc)
@@ -172,17 +174,17 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateWork<SeclyOrgWork>("org");
+            CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<SeclyCtrBuyWork, SeclyOwnBuyWork>("pbook");
+            CreateWork<PrvlyStandardPurchWork, PrvlyCustomPurchWork>("ppur");
 
-            CreateWork<SeclyDailyWork>("daily");
+            CreateWork<PrvlyDailyWork>("daily");
 
-            CreateWork<CtrlyBuyWork>("cbook");
+            CreateWork<SrclyProdWork>("prod");
 
-            CreateWork<SrclyProductWork>("product");
+            CreateWork<SrclyCtrPurchWork, SrclyOwnPurchWork>("spur");
 
-            CreateWork<SrclyCtrBuyWork, SrclyOwnBuyWork>("sbook");
+            CreateWork<CtrlyPurchWork>("cpur");
 
             CreateWork<OrglyClearWork>("clear");
         }
