@@ -296,7 +296,7 @@ create table prods
     ext varchar(10),
     store smallint,
     duration smallint,
-    foragt boolean,
+    toagt boolean,
     unit varchar(4),
     unitx smallint,
     price money,
@@ -304,10 +304,11 @@ create table prods
     min smallint,
     max smallint,
     step smallint,
-    threshold smallint,
-    deadline date,
+    starton timestamp(0),
+    endon timestamp(0),
     "off" money,
-    accumul smallint,
+    threshold smallint,
+    present smallint,
     img bytea,
     pic bytea
 )
@@ -319,7 +320,7 @@ comment on column prods.store is 'storage method';
 
 comment on column prods.unitx is 'times of standard unit';
 
-comment on column prods.accumul is 'group-purchase accumulative';
+comment on column prods.present is 'group-purchase accumulative';
 
 alter table prods owner to postgres;
 

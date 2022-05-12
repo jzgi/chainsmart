@@ -51,14 +51,15 @@ namespace Revital
         internal short min;
         internal short max;
         internal short step;
-        internal bool foragt; // 
+        internal bool toagt; // 
 
         // when changed to group-book mode
 
-        internal short threshold;
-        internal DateTime deadline;
+        internal DateTime starton;
+        internal DateTime endon;
         internal decimal off;
-        internal short accumul;
+        internal short threshold;
+        internal short present;
 
 
         public override void Read(ISource s, short proj = 0xff)
@@ -78,21 +79,21 @@ namespace Revital
             s.Get(nameof(ext), ref ext);
             s.Get(nameof(store), ref store);
             s.Get(nameof(duration), ref duration);
+            s.Get(nameof(toagt), ref toagt);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
+            s.Get(nameof(price), ref price);
+            s.Get(nameof(cap), ref cap);
 
             s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
             s.Get(nameof(step), ref step);
-            s.Get(nameof(price), ref price);
 
-            s.Get(nameof(foragt), ref foragt);
+            s.Get(nameof(starton), ref starton);
+            s.Get(nameof(endon), ref endon);
             s.Get(nameof(off), ref off);
             s.Get(nameof(threshold), ref threshold);
-            s.Get(nameof(deadline), ref deadline);
-
-            s.Get(nameof(cap), ref cap);
-            s.Get(nameof(accumul), ref accumul);
+            s.Get(nameof(present), ref present);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -112,21 +113,21 @@ namespace Revital
             s.Put(nameof(ext), ext);
             s.Put(nameof(store), store);
             s.Put(nameof(duration), duration);
+            s.Put(nameof(toagt), toagt);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
+            s.Put(nameof(price), price);
+            s.Put(nameof(cap), cap);
 
             s.Put(nameof(min), min);
             s.Put(nameof(max), max);
             s.Put(nameof(step), step);
-            s.Put(nameof(price), price);
 
-            s.Put(nameof(foragt), foragt);
+            s.Put(nameof(starton), starton);
+            s.Put(nameof(endon), endon);
             s.Put(nameof(off), off);
             s.Put(nameof(threshold), threshold);
-            s.Put(nameof(deadline), deadline);
-
-            s.Put(nameof(cap), cap);
-            s.Put(nameof(accumul), accumul);
+            s.Put(nameof(present), present);
         }
 
         public int Key => id;

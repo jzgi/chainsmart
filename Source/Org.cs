@@ -141,7 +141,20 @@ namespace Revital
 
         public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsSector => typ == TYP_PRV;
+        public bool IsPrv => typ == TYP_PRV;
+
+        public bool IsPrvWith(int ctrid)
+        {
+            if (!IsPrv || toctrs == null)
+            {
+                return false;
+            }
+            for (int i = 0; i < toctrs.Length; i++)
+            {
+                if (toctrs[i] == ctrid) return true;
+            }
+            return false;
+        }
 
         public bool IsOfSector => (typ & TYP_PRV) == TYP_PRV;
 
@@ -163,18 +176,6 @@ namespace Revital
 
 
         public bool MustTieToCtr => IsSpr && !IsCtr;
-
-        public bool IsTiedToCtr(int ctrid)
-        {
-            if (toctrs != null)
-            {
-                for (int i = 0; i < toctrs.Length; i++)
-                {
-                    if (toctrs[i] == ctrid) return true;
-                }
-            }
-            return false;
-        }
 
         public string Shop => IsMrt ? tip : name;
 

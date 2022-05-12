@@ -24,7 +24,7 @@ namespace Revital
         public async Task @default(WebContext wc, int code)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM books WHERE id = @1 LIMIT 1");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE id = @1 LIMIT 1");
             var o = await dc.QueryTopAsync<Purch>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
@@ -68,7 +68,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM books WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
@@ -89,7 +89,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM books WHERE bizid = @1 AND status >= 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
@@ -115,7 +115,7 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM plans WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
+                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
                 var arr = await dc.QueryAsync<Prod>(p => p.Set(2));
                 var prods = Grab<int, Prod>();
                 wc.GivePane(200, h =>
@@ -168,7 +168,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE ctrid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
+            dc.Sql("SELECT sprid, fromid, sum(pay) FROM purchs WHERE ctrid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
             await dc.QueryAsync(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -204,7 +204,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT sprid, fromid, sum(pay) FROM books WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
+            dc.Sql("SELECT sprid, fromid, sum(pay) FROM purchs WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
             await dc.QueryAsync(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -301,7 +301,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
             var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -320,7 +320,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Purch>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

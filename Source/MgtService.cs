@@ -13,7 +13,7 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MgtVarWork>(); // sectors related to present center
+            CreateVarWork<MgtVarWork>(); // provisions related to present center
 
             CreateWork<AdmlyWork>("admly"); // for admin
 

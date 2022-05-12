@@ -37,7 +37,7 @@ namespace Revital
                         h.SPAN(o.ShopLabel, "uk-circle-label").SP();
                         h.ADIALOG_("/", o.id, "/", 8, false, Appear.Large, css: "uk-button-link").T(o.Shop)._A();
                         h._SECTION();
-                    }, width: 2);
+                    }, min: 2);
                 }, title: org.name);
             }
             else if (org.IsBiz)

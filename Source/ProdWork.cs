@@ -22,23 +22,37 @@ namespace Revital
         public void @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+
+            var items = Grab<short, Item>();
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 ORDER BY status DESC");
             var arr = dc.Query<Prod>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(tip: "产品和货架");
 
                 if (arr == null) return;
 
-                h.TABLE(arr, o =>
+                h.GRID(arr, o =>
                 {
-                    h.TDAVAR(o.Key, o.name);
-                    h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
-                    h.TD(Info.Statuses[o.status]);
-                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                    var item = items[o.itemid];
+
+                    h.HEADER_("uk-card-header").PIC("/item/icon", circle: true).AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h.SPAN_().CNY(o.price).T(" 每").T(o.unit).T('（').T(o.unitx).T(item.unit).T('）')._SPAN();
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
                 });
+
+                // h.TABLE(arr, o =>
+                // {
+                //     h.TDAVAR(o.Key, o.name);
+                //     h.TD_("uk-visible@l").T(o.tip)._TD();
+                //     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
+                //     h.TD(Info.Statuses[o.status]);
+                //     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                // });
 
                 h.PAGINATION(arr.Length == 40);
             });
@@ -67,7 +81,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Prod.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Prod.Durations, required: true)._LI();
-                    h.LI_().CHECKBOX("只供给代理", nameof(o.foragt), o.foragt).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.toagt), o.toagt).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

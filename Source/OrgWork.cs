@@ -90,11 +90,11 @@ namespace Revital
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsSector)
+                    if (m.IsPrv)
                     {
                         h.LI_().SELECT("物流投放", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
                     }
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsSector)._LI();
+                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsPrv)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     if (m.HasXy)
                     {
@@ -102,7 +102,7 @@ namespace Revital
                     }
                     if (m.IsSpr)
                     {
-                        h.LI_().SELECT("关联中枢", nameof(m.toctrs), m.toctrs, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsSector, required: true)._LI();
+                        h.LI_().SELECT("关联中枢", nameof(m.toctrs), m.toctrs, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsPrv, required: true)._LI();
                     }
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
