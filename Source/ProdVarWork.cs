@@ -44,7 +44,7 @@ namespace Revital
     {
         public async Task @default(WebContext wc)
         {
-            short id = wc[0];
+            int prodid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
             var items = Grab<short, Item>();
@@ -52,7 +52,7 @@ namespace Revital
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1");
-                var o = dc.QueryTop<Prod>(p => p.Set(id));
+                var o = dc.QueryTop<Prod>(p => p.Set(prodid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
@@ -91,11 +91,33 @@ namespace Revital
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
-                    p.Set(id);
+                    p.Set(prodid);
                 });
 
                 wc.GivePane(200); // close dialog
             }
+        }
+
+        [Ui("冲量", "限时冲量模式"), Tool(ButtonShow, Appear.Small)]
+        public async Task lim(WebContext wc)
+        {
+            int prodid = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1");
+            var o = dc.QueryTop<Prod>(p => p.Set(prodid));
+
+            wc.GivePage(200, h =>
+            {
+                h.FORM_();
+                h.FIELDSUL_("通过优惠，不达量可撤销订单");
+                h.LI_().DATE("开始日期", nameof(o.starton), o.starton)._LI();
+                h.LI_().DATE("截止日期", nameof(o.endon), o.endon)._LI();
+                h.LI_().NUMBER("优惠额度", nameof(o.off), o.off)._LI();
+                h.LI_().NUMBER("目标冲量", nameof(o.threshold), o.threshold)._LI();
+                h._FIELDSUL();
+                h._FORM();
+            });
         }
 
         [Ui("◩", "照片"), Tool(ButtonCrop, Appear.Large)]

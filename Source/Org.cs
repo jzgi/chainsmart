@@ -174,6 +174,7 @@ namespace Revital
 
         public bool HasLocality => IsMrt || IsCtr;
 
+        public int ToCtrId => toctrs?[0] ?? 0;
 
         public bool MustTieToCtr => IsSpr && !IsCtr;
 

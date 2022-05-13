@@ -181,7 +181,6 @@ namespace Revital
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k == Org.TYP_BIZ, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("区域", nameof(m.regid), m.regid, regs, filter: (k, v) => v.typ == Reg.TYP_SECT)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses)._LI();
                     h._FIELDSUL()._FORM();

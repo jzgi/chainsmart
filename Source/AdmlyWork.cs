@@ -22,7 +22,7 @@ namespace Revital
 
             CreateWork<AdmlyBuyWork>("buy");
 
-            CreateWork<AdmlyNoteWork>("post");
+            CreateWork<AdmlyNoteWork>("note");
 
             CreateWork<AdmlyDailyWork>("daily");
 
@@ -53,6 +53,25 @@ namespace Revital
                 h._FORM();
 
                 h.TASKLIST();
+            });
+        }
+
+        [UserAuthorize(admly: User.ADMLY_OPN)]
+        [Ui("运行参数"), Tool(Modal.ButtonOpen)]
+        public async Task setg(WebContext wc, int cmd)
+        {
+            var ext = Application.Ext;
+
+            decimal rtlpct = ext[nameof(rtlpct)];
+            decimal suppct = ext[nameof(suppct)];
+            wc.GivePage(200, h =>
+            {
+                h.FORM_().FIELDSUL_("可变运维参数");
+                h.LI_().FIELD("零售方扣点", rtlpct)._LI();
+                h.LI_().FIELD("供应方扣点", suppct)._LI();
+                h.LI_()._LI();
+                h.LI_()._LI();
+                h._FIELDSUL()._FORM();
             });
         }
 

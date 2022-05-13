@@ -60,10 +60,10 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户线上采购", "商户", "file-text")]
+    [Ui("商户供应链采购", "商户在线上直接向产源下单订货，货到后安排上架销售", "file-text")]
     public class BizlyPurchWork : PurchWork
     {
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("采购记录", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -84,8 +84,8 @@ namespace Revital
             });
         }
 
-        [Ui("历史", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
+        [Ui("上架销售", group: 2), Tool(Anchor)]
+        public async Task onsale(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
@@ -105,57 +105,11 @@ namespace Revital
             });
         }
 
-
-        [Ui("✚", "新增进货", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc)
+        [Ui("✚", "新增采购", group: 1), Tool(ButtonOpen)]
+        public void @new(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
-
-            var ctr = GrabObject<int, Org>(2);
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 AND status > 0 ORDER BY cat, status DESC");
-                var arr = await dc.QueryAsync<Prod>(p => p.Set(2));
-                var prods = Grab<int, Prod>();
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_(ctr.name);
-                    short last = 0;
-                    foreach (var o in arr)
-                    {
-                        if (o.typ != last)
-                        {
-                            h.LI_().SPAN_("uk-label").T(Item.Typs[o.typ])._SPAN()._LI();
-                        }
-                        h.LI_("uk-flex");
-                        h.SPAN_("uk-width-1-4").T(o.name)._SPAN();
-                        h.SPAN_("uk-visible@l").T(o.tip)._SPAN();
-                        h.SPAN_().CNY(o.price, true).T("／").T(o.unit)._SPAN();
-                        // h.SPAN(Item.Typs[o.authreq]);
-                        h.SPAN(Info.Statuses[o.status]);
-                        h.BUTTON("✕", "", 1, onclick: "this.form.targid.value = ", css: "uk-width-micro uk-button-secondary");
-                        h._LI();
-
-                        last = o.typ;
-                    }
-                    h._FIELDSUL();
-
-                    h.BOTTOMBAR_();
-
-                    h._BOTTOMBAR();
-                    h._FORM();
-                });
-            }
-            else // POST
-            {
-                var o = await wc.ReadObjectAsync<Purch>(0);
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO buys ").colset(Purch.Empty, 0)._VALUES_(Purch.Empty, 0);
-                await dc.ExecuteAsync(p => o.Write(p, 0));
-
-                wc.GivePane(200); // close dialog
-            }
+            var mrt = wc[-1].As<Org>();
+            wc.GiveRedirect("/" + mrt.ToCtrId + "/");
         }
     }
 

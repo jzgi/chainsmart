@@ -40,7 +40,6 @@ namespace Revital
 
         internal short mode;
         internal int prodid;
-        internal string prodname;
         internal short itemid;
 
         internal string unit;
@@ -86,7 +85,6 @@ namespace Revital
 
                 s.Get(nameof(mode), ref mode);
                 s.Get(nameof(prodid), ref prodid);
-                s.Get(nameof(prodname), ref prodname);
                 s.Get(nameof(itemid), ref itemid);
 
                 s.Get(nameof(unit), ref unit);
@@ -132,7 +130,6 @@ namespace Revital
 
                 s.Put(nameof(mode), mode);
                 s.Put(nameof(prodid), prodid);
-                s.Put(nameof(prodname), prodname);
                 s.Put(nameof(itemid), itemid);
 
                 s.Put(nameof(unit), unit);

@@ -58,25 +58,6 @@ namespace Revital
             });
         }
 
-        [Ui("场地", group: 4), Tool(Anchor)]
-        public void sect(WebContext wc)
-        {
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(subscript: Reg.TYP_SECT);
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECT).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<Reg>();
-                h.TABLE(arr, o =>
-                    {
-                        h.TDCHECK(o.Key);
-                        h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_SECT));
-                    }
-                );
-            });
-        }
-
         [Ui("✚", "新建区域", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
