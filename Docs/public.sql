@@ -150,22 +150,6 @@ create table dailys
 
 alter table dailys owner to postgres;
 
-create table clears
-(
-    id serial not null
-        constraint clears_pkey
-            primary key,
-    orgid integer not null,
-    dt date,
-    sprid integer not null,
-    count integer,
-    amt money,
-    qty integer
-)
-    inherits (infos);
-
-alter table clears owner to postgres;
-
 create table ledgers_
 (
     seq integer,
@@ -232,7 +216,6 @@ create table purchs
     ctrid integer not null,
     mrtid integer not null,
     prodid integer,
-    prodname varchar(12),
     itemid smallint,
     unit varchar(4),
     unitx smallint,
@@ -323,6 +306,23 @@ comment on column prods.unitx is 'times of standard unit';
 comment on column prods.present is 'group-purchase accumulative';
 
 alter table prods owner to postgres;
+
+create table clears
+(
+    id serial not null
+        constraint clears_pk
+            primary key,
+    dt date,
+    orgid integer not null,
+    sprid integer not null,
+    orders integer,
+    total money,
+    rate money,
+    pay integer
+)
+    inherits (infos);
+
+alter table clears owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,

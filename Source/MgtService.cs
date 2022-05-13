@@ -35,7 +35,7 @@ namespace Revital
                     var org = orgs.ValueAt(i);
                     if (!org.IsCtr) continue;
                     h.LI_("uk-flex");
-                    h.A_(org.Key, "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(org.name).T("组")._A();
+                    h.A_(org.Key, "/", css: "uk-button uk-button-link uk-flex-left").T(org.name).T("组")._A();
                     h._LI();
                 }
                 h._FIELDSUL();
@@ -45,7 +45,7 @@ namespace Revital
                 {
                     var wrk = Works.ValueAt(i);
                     h.LI_("uk-flex");
-                    h.A_(wrk.Key, wrk.HasVarWork ? "//" : "/", end: true, css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A();
+                    h.A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A();
                     // h.P(wrk.Tip, "uk-padding uk-width-expand");
                     h._LI();
                 }

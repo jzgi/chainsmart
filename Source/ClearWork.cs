@@ -164,7 +164,7 @@ namespace Revital
                     h.TDCHECK(o.Key);
                     h.TD_().T(o.dt, 3, 0)._TD();
                     h.TD(Clear.Typs[o.typ]);
-                    h.TD(o.amt, currency: true);
+                    h.TD(o.total, currency: true);
                     h.TD(Clear.Statuses[o.status]);
                 });
                 h.PAGINATION(arr?.Length == 20);
