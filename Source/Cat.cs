@@ -3,15 +3,15 @@
 namespace Revital
 {
     /// <summary>
-    /// The data modal for an standard item of product or service.
+    /// The data modal for an standard category.
     /// </summary>
-    public class Item : Info, IKeyable<short>
+    public class Cat : Info, IKeyable<short>
     {
-        public static readonly Item Empty = new Item();
+        public static readonly Cat Empty = new Cat();
 
         internal short id;
-        internal string unit; // standard unit
-        internal string unitip;
+        internal short idx;
+        internal short num; // sub resources
 
         // must have an icon
 
@@ -23,8 +23,8 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(idx), ref idx);
+            s.Get(nameof(num), ref num);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -35,8 +35,8 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(unit), unit);
-            s.Put(nameof(unitip), unitip);
+            s.Put(nameof(idx), idx);
+            s.Put(nameof(num), num);
         }
 
         public short Key => id;

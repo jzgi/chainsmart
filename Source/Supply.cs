@@ -39,7 +39,7 @@ namespace Revital
         internal int mrtid;
 
         internal short mode;
-        internal int prodid;
+        internal int wareid;
         internal short itemid;
 
         internal string unit;
@@ -84,7 +84,7 @@ namespace Revital
                 s.Get(nameof(srcid), ref srcid);
 
                 s.Get(nameof(mode), ref mode);
-                s.Get(nameof(prodid), ref prodid);
+                s.Get(nameof(wareid), ref wareid);
                 s.Get(nameof(itemid), ref itemid);
 
                 s.Get(nameof(unit), ref unit);
@@ -129,7 +129,7 @@ namespace Revital
                 s.Put(nameof(srcid), srcid);
 
                 s.Put(nameof(mode), mode);
-                s.Put(nameof(prodid), prodid);
+                s.Put(nameof(wareid), wareid);
                 s.Put(nameof(itemid), itemid);
 
                 s.Put(nameof(unit), unit);

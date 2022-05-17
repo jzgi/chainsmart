@@ -34,9 +34,9 @@ namespace Revital
                 }
                 else
                 {
-                    var plan = GrabObject<short, Prod>(o.itemid);
-                    var frm = GrabObject<int, Org>(o.prodid);
-                    var ctr = GrabObject<int, Org>(o.prodid);
+                    var plan = GrabObject<short, Ware>(o.itemid);
+                    var frm = GrabObject<int, Org>(o.wareid);
+                    var ctr = GrabObject<int, Org>(o.wareid);
 
                     h.FORM_();
                     h.FIELDSUL_("溯源信息");

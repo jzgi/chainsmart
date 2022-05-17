@@ -4,14 +4,14 @@ using Chainly;
 namespace Revital
 {
     /// <summary>
-    /// A product supply data model.
+    /// A sellable ware model.
     /// </summary>
     /// <remarks>
-    /// It can be upgraded to the group-book mode and then back. 
+    /// It can be upgraded to the group-purchase mode and then back. 
     /// </remarks>
-    public class Prod : Info, IKeyable<int>
+    public class Ware : Info, IKeyable<int>
     {
-        public static readonly Prod Empty = new Prod();
+        public static readonly Ware Empty = new Ware();
 
         public const short
             MOD_NULL = 0,

@@ -59,7 +59,7 @@ namespace Revital
         }
 
 
-        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Item> opts, Map<short, string> cats, Func<Item, bool> filter = null, bool required = false)
+        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Item> opts, Map<short, Cat> cats, Func<Item, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)
@@ -78,7 +78,7 @@ namespace Revital
                         {
                             h.T("</optgroup>");
                         }
-                        h.T("<optgroup label=\"").T(cats[it.typ]).T("\">");
+                        h.T("<optgroup label=\"").T(cats[it.typ].name).T("\">");
                     }
                     h.OPTION(it.id, it.name);
 

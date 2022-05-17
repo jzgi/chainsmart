@@ -106,8 +106,8 @@ namespace Revital
             orgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => ids.Add(k));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE state > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
-            var arr = await dc.QueryAsync<Prod>(p => p.Set(ctrid).Set(prvid));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE state > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(ctrid).Set(prvid));
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().T(ctr.tip).T(" > ").T(prv.name)._TOPBAR();
@@ -128,8 +128,8 @@ namespace Revital
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Prod>(p => p.Set(prodid));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
+            var obj = await dc.QueryTopAsync<Ware>(p => p.Set(prodid));
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");

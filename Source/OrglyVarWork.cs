@@ -180,7 +180,7 @@ namespace Revital
 
             CreateWork<PrvlyDailyWork>("daily");
 
-            CreateWork<SrclyProdWork>("prod");
+            CreateWork<SrclyWareWork>("prod");
 
             CreateWork<SrclyCtrSupplyWork, SrclyOwnSupplyWork>("spur");
 

@@ -7,7 +7,7 @@ using static Chainly.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class ProdVarWork : WebWork
+    public abstract class WareVarWork : WebWork
     {
         protected async Task doimg(WebContext wc, string col)
         {
@@ -40,26 +40,27 @@ namespace Revital
         }
     }
 
-    public class SrclyProdVarWork : ProdVarWork
+    public class SrclyWareVarWork : WareVarWork
     {
         public async Task @default(WebContext wc)
         {
             int prodid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
+            var cats = Grab<short, Cat>();
             var items = Grab<short, Item>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1");
-                var o = dc.QueryTop<Prod>(p => p.Set(prodid));
+                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1");
+                var o = dc.QueryTop<Ware>(p => p.Set(prodid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
+                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Prod.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Prod.Durations, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Ware.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Ware.Durations, required: true)._LI();
                     h.LI_().CHECKBOX("只供给代理", nameof(o.toagt), o.toagt).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
@@ -76,7 +77,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var m = await wc.ReadObjectAsync(0, new Prod
+                var m = await wc.ReadObjectAsync(0, new Ware
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -87,7 +88,7 @@ namespace Revital
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE prods ")._SET_(Prod.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE prods ")._SET_(Ware.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
@@ -104,8 +105,8 @@ namespace Revital
             int prodid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE id = @1");
-            var o = dc.QueryTop<Prod>(p => p.Set(prodid));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1");
+            var o = dc.QueryTop<Ware>(p => p.Set(prodid));
 
             wc.GivePage(200, h =>
             {

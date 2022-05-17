@@ -53,7 +53,14 @@ namespace Revital
         {
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
+                    dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE state > 0 ORDER BY idx");
+                    return dc.Query<short, Cat>();
+                }, 3600 * 24
+            );
+
+            Cache(dc =>
+                {
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, idx");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );
@@ -81,8 +88,8 @@ namespace Revital
 
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
-                    return dc.Query<int, Prod>(p => p.Set(orgid));
+                    dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
+                    return dc.Query<int, Ware>(p => p.Set(orgid));
                 }, 60 * 15
             );
         }

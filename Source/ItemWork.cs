@@ -30,16 +30,17 @@ namespace Revital
 
         public void @default(WebContext wc, int typ)
         {
+            var cats = Grab<short, Cat>();
             if (typ == 0)
             {
-                wc.Subscript = typ = Item.Typs.KeyAt(0);
+                wc.Subscript = typ = cats.KeyAt(0);
             }
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE typ = @1 ORDER BY state DESC");
             var arr = dc.Query<Item>(p => p.Set(typ));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(typ, opts: Item.Typs);
+                h.TOOLBAR(typ, opts: cats);
 
                 if (arr == null) return;
 
@@ -60,6 +61,7 @@ namespace Revital
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
+            var cats = Grab<short, Cat>();
             if (wc.IsGet)
             {
                 var m = new Item
@@ -71,7 +73,7 @@ namespace Revital
                 };
                 wc.GivePane(200, h =>
                 {
-                    var typname = Item.Typs[m.typ];
+                    var typname = cats[m.typ];
                     h.FORM_().FIELDSUL_(typname + "品目信息");
                     h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
