@@ -11,8 +11,18 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台业务日报")]
-    public class AdmlyDailyWork : DailyWork
+    [Ui("平台供应链业务日报", icon: "calendar")]
+    public class AdmlySupplyDailyWork : DailyWork
+    {
+        public void @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+    }
+
+    [UserAuthorize(admly: User.ADMLY_)]
+    [Ui("平台零售业务日报", icon: "calendar")]
+    public class AdmlyBuyDailyWork : DailyWork
     {
         public void @default(WebContext wc, int page)
         {

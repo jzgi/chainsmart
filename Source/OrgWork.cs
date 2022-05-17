@@ -11,7 +11,7 @@ namespace Revital
     {
     }
 
-    [Ui("平台入驻机构设置", "album")]
+    [Ui("平台入驻机构设置", icon: "thumbnails")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnCreate()

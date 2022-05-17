@@ -18,21 +18,19 @@ namespace Revital
 
             CreateWork<AdmlyItemWork>("item");
 
-            CreateWork<AdmlySupplyWork>("book");
+            CreateWork<AdmlySupplyDailyWork>("sdaily");
 
-            CreateWork<AdmlyBuyWork>("buy");
+            CreateWork<AdmlyBuyDailyWork>("bdaily");
 
-            CreateWork<AdmlyNoteWork>("note");
+            CreateWork<AdmlySupplyClearWork>("sclear");
 
-            CreateWork<AdmlyDailyWork>("daily");
+            CreateWork<AdmlyBuyClearWork>("bclear");
 
             CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<FedMgtWork>("nodal", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            CreateWork<AdmlyNoteWork>("note");
 
-            CreateWork<AdmlySupplyClearWork>("supplyclr");
-
-            CreateWork<AdmlyBuyClearWork>("buyclr");
+            CreateWork<FedMgtWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
         }
 
         public void @default(WebContext wc)
@@ -67,9 +65,9 @@ namespace Revital
             decimal suppct = ext[nameof(suppct)];
             wc.GivePage(200, h =>
             {
-                h.FORM_().FIELDSUL_("可变运维参数");
-                h.LI_().FIELD("零售方扣点", rtlpct)._LI();
-                h.LI_().FIELD("供应方扣点", suppct)._LI();
+                h.FORM_().FIELDSUL_("运维参数需运维技术员调整");
+                h.LI_().FIELD("零售业务扣点", rtlpct)._LI();
+                h.LI_().FIELD("供应业务扣点", suppct)._LI();
                 h.LI_()._LI();
                 h.LI_()._LI();
                 h._FIELDSUL()._FORM();

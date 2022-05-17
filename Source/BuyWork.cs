@@ -9,15 +9,6 @@ namespace Revital
     {
     }
 
-    [Ui("平台零售报告", "table")]
-    public class AdmlyBuyWork : BuyWork
-    {
-        public async Task @default(WebContext wc)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
-        }
-    }
-
     public class MyBuyWork : BuyWork
     {
         protected override void OnCreate()

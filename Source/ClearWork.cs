@@ -9,7 +9,7 @@ using static Chainly.Nodal.Store;
 namespace Revital
 {
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台供应链代收结款", "代收的供应订货款项", "credit-card")]
+    [Ui("平台供应链代收结款", icon: "credit-card")]
     public class AdmlySupplyClearWork : WebWork
     {
         protected override void OnCreate()
@@ -141,7 +141,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台零售代收结款", "结算代收的零售订单款项")]
+    [Ui("平台零售代收结款", icon: "credit-card")]
     public class AdmlyBuyClearWork : WebWork
     {
         protected override void OnCreate()

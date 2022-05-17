@@ -13,7 +13,7 @@ namespace Revital
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台地理区域设置", "world")]
+    [Ui("平台地理区域设置", icon: "world")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnCreate()

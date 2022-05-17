@@ -9,15 +9,6 @@ namespace Revital
     {
     }
 
-    [Ui("平台供应链交易报告", "平台", "table")]
-    public class AdmlySupplyWork : SupplyWork
-    {
-        public async Task @default(WebContext wc)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
-        }
-    }
-
     [Ui("消费者溯源")]
     public class MySupplyWork : SupplyWork
     {
