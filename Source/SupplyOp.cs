@@ -3,7 +3,7 @@ using Chainly;
 
 namespace Revital
 {
-    public struct PurchOp : IData
+    public struct SupplyOp : IData
     {
         short state;
         string label;

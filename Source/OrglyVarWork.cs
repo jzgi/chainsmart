@@ -79,7 +79,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.state), org.state, Info.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -88,8 +88,8 @@ namespace Revital
                 var o = await wc.ReadObjectAsync(instance: org); // use existing object
                 using var dc = NewDbContext();
                 // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, status = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(org.id));
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, date = @3 WHERE id = @4",
+                    p => p.Set(o.tip).Set(o.state).Set(org.id));
 
                 wc.GivePane(200);
             }
@@ -112,7 +112,7 @@ namespace Revital
 
             CreateWork<MrtlyUserWork>("user");
 
-            CreateWork<MrtlyPurchWork>("mpur");
+            CreateWork<MrtlySupplyWork>("mpur");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
@@ -120,7 +120,7 @@ namespace Revital
 
             // biz
 
-            CreateWork<BizlyPurchWork>("bpur");
+            CreateWork<BizlySupplyWork>("bpur");
 
             CreateWork<BizlyBuyWork>("bbuy");
 
@@ -176,15 +176,15 @@ namespace Revital
         {
             CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<PrvlyStandardPurchWork, PrvlyCustomPurchWork>("ppur");
+            CreateWork<PrvlyStandardSupplyWork, PrvlyCustomSupplyWork>("ppur");
 
             CreateWork<PrvlyDailyWork>("daily");
 
             CreateWork<SrclyProdWork>("prod");
 
-            CreateWork<SrclyCtrPurchWork, SrclyOwnPurchWork>("spur");
+            CreateWork<SrclyCtrSupplyWork, SrclyOwnSupplyWork>("spur");
 
-            CreateWork<CtrlyPurchWork>("cpur");
+            CreateWork<CtrlySupplyWork>("cpur");
 
             CreateWork<OrglyClearWork>("clear");
         }

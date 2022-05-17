@@ -4,33 +4,33 @@ using Chainly;
 namespace Revital
 {
     /// <summary>
-    /// A buy to a particular product.
+    /// A purchase or supply to a particular product.
     /// </summary>
-    public class Purch : Info, IKeyable<long>
+    public class Supply : Info, IKeyable<int>, IFlowable
     {
-        public static readonly Purch Empty = new Purch();
+        public static readonly Supply Empty = new Supply();
 
         // states
         public const short
-            STA_SRC_REFUND = 1,
-            STA_PAID = 2,
-            STA_ON_SRC = 3,
-            STA_ON_CTR = 4,
-            STA_ON_MRT = 5;
+            STU_SRC_REFUND = 1,
+            STU_PAID = 2,
+            STU_ON_SRC = 3,
+            STU_ON_CTR = 4,
+            STU_ON_MRT = 5;
 
 
-        public static readonly Map<short, string> States = new Map<short, string>
+        public static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {0, null},
-            {STA_SRC_REFUND, "已退款"},
-            {STA_PAID, "已付款"},
-            {STA_ON_SRC, "备发货"},
-            {STA_ON_CTR, "到中库"},
-            {STA_ON_MRT, "到市场"},
+            {STU_SRC_REFUND, "已退款"},
+            {STU_PAID, "已付款"},
+            {STU_ON_SRC, "备发货"},
+            {STU_ON_CTR, "到中库"},
+            {STU_ON_MRT, "到市场"},
         };
 
 
-        internal long id;
+        internal int id;
 
         internal int bizid;
         internal int prvid;
@@ -52,8 +52,8 @@ namespace Revital
         internal decimal payre; // pay refunded
 
         // workflow
-        internal PurchOp[] ops;
-        internal short state;
+        internal SupplyOp[] ops;
+        internal short status;
 
 
         #region FOR-BUY
@@ -99,7 +99,7 @@ namespace Revital
                 s.Get(nameof(qtyre), ref qtyre);
                 s.Get(nameof(payre), ref payre);
                 s.Get(nameof(ops), ref ops);
-                s.Get(nameof(state), ref state);
+                s.Get(nameof(status), ref status);
             }
             if ((proj & EXTRA) == EXTRA)
             {
@@ -144,7 +144,7 @@ namespace Revital
                 s.Put(nameof(qtyre), qtyre);
                 s.Put(nameof(payre), payre);
                 s.Put(nameof(ops), ops);
-                s.Put(nameof(state), state);
+                s.Put(nameof(status), status);
             }
             if ((proj & EXTRA) == EXTRA)
             {
@@ -157,8 +157,10 @@ namespace Revital
             }
         }
 
-        public long Key => id;
+        public int Key => id;
 
         public bool IsOver(DateTime now) => false;
+
+        public short Status => status;
     }
 }

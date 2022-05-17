@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Chainly;
 using Chainly.Web;
 using static Chainly.Web.Modal;
 using static Chainly.Nodal.Store;
@@ -26,7 +27,7 @@ namespace Revital
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods WHERE orgid = @1 ORDER BY state DESC");
             var arr = dc.Query<Prod>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
@@ -72,7 +73,7 @@ namespace Revital
                 {
                     unitx = 1,
                     min = 1, max = 1, step = 1, cap = 5000,
-                    status = Info.STA_DISABLED,
+                    state = Info.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -81,7 +82,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, Item.Typs, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Prod.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Prod.Durations, required: true)._LI();
-                    h.LI_().CHECKBOX("只供给代理", nameof(o.toagt), o.toagt).SELECT("状态", nameof(o.status), o.status, Info.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.toagt), o.toagt).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 

@@ -39,7 +39,7 @@ namespace Revital
                         // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
                     }
                     h._TD();
-                    h.TD("⊘", @if: o.IsGone);
+                    h.TD("⊘", @if: o.IsDisabled);
                 });
                 h.PAGINATION(arr?.Length == 30);
             });
@@ -80,7 +80,7 @@ namespace Revital
                             // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
                         }
                         h._TD();
-                        h.TD("⊘", @if: o.IsGone);
+                        h.TD("⊘", @if: o.IsDisabled);
                     });
                 }, false, 3);
             }
@@ -117,7 +117,7 @@ namespace Revital
                         // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
                     }
                     h._TD();
-                    h.TD("⊘", @if: o.IsGone);
+                    h.TD("⊘", @if: o.IsDisabled);
                 });
                 h.PAGINATION(arr?.Length == 30);
             });
@@ -158,7 +158,7 @@ namespace Revital
                             // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
                         }
                         h._TD();
-                        h.TD("⊘", @if: o.IsGone);
+                        h.TD("⊘", @if: o.IsDisabled);
                         h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                     });
                 }, false, 3);

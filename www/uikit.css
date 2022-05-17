@@ -1087,7 +1087,7 @@ button.uk-icon:not(:disabled) {
     width: 100%;
     top: 0;
     font-size: 0.875rem;
-    background-color: #ededed;
+    background-color: #fff;
     color:#333;
     z-index: 9;
     display: flex;

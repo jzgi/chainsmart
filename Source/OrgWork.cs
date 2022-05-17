@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Chainly;
 using Chainly.Web;
 using static Chainly.Web.Modal;
 using static Chainly.Nodal.Store;
@@ -22,7 +23,7 @@ namespace Revital
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, state DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -33,17 +34,17 @@ namespace Revital
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(Info.Symbols[o.status]);
+                    h.TD(o.state == 1 ? null : Info.States[o.state]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
 
-        [Ui("供应", group: 2), Tool(Anchor)]
+        [Ui("供应版块", group: 2), Tool(Anchor)]
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, state DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -54,13 +55,13 @@ namespace Revital
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(Info.Symbols[o.status]);
+                    h.TD(o.state == 1 ? null : Info.States[o.state]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
 
-        [Ui("✚", "新建入驻机构", group: 7), Tool(ButtonShow)]
+        [Ui("✚", "新建机构", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -71,40 +72,31 @@ namespace Revital
             {
                 var m = new Org
                 {
+                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_PRV,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Info.STA_ENABLED
+                    state = Info.STA_ENABLED
                 };
-                if (cmd == 1)
-                {
-                    m.typ = Org.TYP_MRT;
-                }
 
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场机构信息" : "供应机构信息");
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供应版块属性");
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsPrv)
+                    if (m.IsOfPrv)
                     {
-                        h.LI_().SELECT("物流投放", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
+                        h.LI_().SELECT("物流方式", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
                     }
-                    h.LI_().SELECT(m.HasLocality ? "所在地市" : "所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.HasLocality ? v.IsDist : v.IsProv, required: !m.IsPrv)._LI();
+                    h.LI_().SELECT(m.IsMrt ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMrt ? v.IsMrtDiv : v.IsProv, required: !m.IsPrv)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
-                    if (m.HasXy)
-                    {
-                        h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    }
-                    if (m.IsSpr)
-                    {
-                        h.LI_().SELECT("关联中枢", nameof(m.toctrs), m.toctrs, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsPrv, required: true)._LI();
-                    }
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().SELECT("关联中枢", nameof(m.toctrs), m.toctrs, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsPrv, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -172,7 +164,7 @@ namespace Revital
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Info.STA_ENABLED
+                    state = Info.STA_ENABLED
                 };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
@@ -182,7 +174,7 @@ namespace Revital
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -215,7 +207,7 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, id LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY state DESC, id LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
@@ -226,7 +218,7 @@ namespace Revital
                 {
                     h.TDCHECK(o.id);
                     h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/srcly/", o.id, "/", 8, false, Appear.Full).T("代办")._A()._TD();
-                    h.TD(Info.Statuses[o.status]);
+                    h.TD(Info.States[o.state]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -246,7 +238,7 @@ namespace Revital
                 regid = org.regid,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Info.STA_ENABLED
+                state = Info.STA_ENABLED
             };
             if (wc.IsGet)
             {
@@ -257,7 +249,7 @@ namespace Revital
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Info.Statuses).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

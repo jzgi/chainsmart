@@ -18,7 +18,7 @@ namespace Revital
 
             CreateWork<AdmlyItemWork>("item");
 
-            CreateWork<AdmlyPurchWork>("book");
+            CreateWork<AdmlySupplyWork>("book");
 
             CreateWork<AdmlyBuyWork>("buy");
 
@@ -30,7 +30,9 @@ namespace Revital
 
             CreateWork<FedMgtWork>("nodal", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
 
-            CreateWork<AdmlyClearWork>("clear");
+            CreateWork<AdmlySupplyClearWork>("supplyclr");
+
+            CreateWork<AdmlyBuyClearWork>("buyclr");
         }
 
         public void @default(WebContext wc)
@@ -41,13 +43,12 @@ namespace Revital
             {
                 h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
 
-                h.FORM_("uk-card uk-card-primary");
+                h.FORM_("uk-card uk-card-default");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 if (o != null)
                 {
                     h.LI_().FIELD("平台名称", o.Name)._LI();
                     h.LI_().FIELD("描述", o.Tip)._LI();
-                    h.LI_().FIELD("连接地址", o.WebUrl)._LI();
                 }
                 h._UL();
                 h._FORM();

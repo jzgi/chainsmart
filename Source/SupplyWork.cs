@@ -5,12 +5,12 @@ using static Chainly.Nodal.Store;
 
 namespace Revital
 {
-    public class PurchWork : WebWork
+    public class SupplyWork : WebWork
     {
     }
 
     [Ui("平台供应链交易报告", "平台", "table")]
-    public class AdmlyPurchWork : PurchWork
+    public class AdmlySupplyWork : SupplyWork
     {
         public async Task @default(WebContext wc)
         {
@@ -19,13 +19,13 @@ namespace Revital
     }
 
     [Ui("消费者溯源")]
-    public class MyPurchWork : PurchWork
+    public class MySupplyWork : SupplyWork
     {
         public async Task @default(WebContext wc, int code)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE id = @1 LIMIT 1");
-            var o = await dc.QueryTopAsync<Purch>(p => p.Set(code));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE id = @1 LIMIT 1");
+            var o = await dc.QueryTopAsync<Supply>(p => p.Set(code));
             wc.GivePage(200, h =>
             {
                 if (o == null || o.srcid - o.srcid >= code)
@@ -51,7 +51,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("市场供应链交易管理", "市场", "sign-in")]
-    public class MrtlyPurchWork : PurchWork
+    public class MrtlySupplyWork : SupplyWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -61,15 +61,15 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
     [Ui("商户供应链采购", "商户在线上直接向产源下单订货，货到后安排上架销售", "file-text")]
-    public class BizlyPurchWork : PurchWork
+    public class BizlySupplyWork : SupplyWork
     {
         [Ui("采购记录", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Supply>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -89,8 +89,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
+            var arr = await dc.QueryAsync<Supply>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -115,7 +115,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢品控配运管理", "中枢")]
-    public class CtrlyPurchWork : PurchWork
+    public class CtrlySupplyWork : SupplyWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -193,11 +193,11 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_SAL)]
     [Ui("版块销售管理", "版块")]
-    public abstract class PrvlyPurchWork : PurchWork
+    public abstract class PrvlySupplyWork : SupplyWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrvlyPurchVarWork>();
+            CreateVarWork<PrvlySupplyVarWork>();
         }
 
         [Ui("当前销售"), Tool(Anchor)]
@@ -205,8 +205,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Supply>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -224,30 +224,30 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Supply>(p => p.Set(org.id));
 
             wc.GivePage(200, h => { h.TOOLBAR(tip: "来自平台的订单"); });
         }
     }
 
-    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_CTR)]
-    public class PrvlyStandardPurchWork : PrvlyPurchWork
+    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_BY_CTR)]
+    public class PrvlyStandardSupplyWork : PrvlySupplyWork
     {
     }
 
-    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_OWN)]
-    public class PrvlyCustomPurchWork : PrvlyPurchWork
+    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_ON_OWN)]
+    public class PrvlyCustomSupplyWork : PrvlySupplyWork
     {
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     [Ui("产源线上销售管理", "产源")]
-    public abstract class FrmlyPurchWork : PurchWork
+    public abstract class FrmlySupplyWork : SupplyWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyPurchVarWork>();
+            CreateVarWork<MrtlySupplyVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -255,8 +255,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Supply>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: "当前销售订货");
@@ -274,8 +274,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Supply>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -286,13 +286,13 @@ namespace Revital
         }
     }
 
-    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_CTR)]
-    public class SrclyCtrPurchWork : FrmlyPurchWork
+    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_BY_CTR)]
+    public class SrclyCtrSupplyWork : FrmlySupplyWork
     {
     }
 
-    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_OWN)]
-    public class SrclyOwnPurchWork : FrmlyPurchWork
+    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_ON_OWN)]
+    public class SrclyOwnSupplyWork : FrmlySupplyWork
     {
     }
 }

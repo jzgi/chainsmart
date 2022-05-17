@@ -43,7 +43,7 @@ alter type buyln_type owner to postgres;
 create table infos
 (
     typ smallint not null,
-    status smallint default 0 not null,
+    state smallint default 0 not null,
     name varchar(12) not null,
     tip varchar(30),
     created timestamp(0),
@@ -59,9 +59,12 @@ create table regs
     id smallint not null
         constraint regs_pk
             primary key,
-    idx smallint
+    idx smallint,
+    num smallint
 )
     inherits (infos);
+
+comment on column regs.num is 'sub resources';
 
 alter table regs owner to postgres;
 
@@ -95,7 +98,7 @@ create table orgs
     x double precision,
     y double precision,
     tel varchar(11),
-    zone smallint,
+    tag varchar(4),
     mgrid integer,
     toctrs integer[],
     img bytea
@@ -227,7 +230,7 @@ create table purchs
     qtyre smallint,
     payre money,
     ops purchop_type[],
-    state smallint,
+    status smallint,
     bunit varchar(4),
     bunitx smallint,
     bprice money,
@@ -261,7 +264,8 @@ create table buys
     uim varchar(28),
     lns buyln_type[],
     pay money,
-    payre money
+    payre money,
+    status smallint
 )
     inherits (infos);
 
@@ -318,15 +322,16 @@ create table clears
     orders integer,
     total money,
     rate money,
-    pay integer
+    pay integer,
+    status smallint
 )
     inherits (infos);
 
 alter table clears owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, zone, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, tag, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,
-       o.status,
+       o.state,
        o.name,
        o.tip,
        o.created,
@@ -335,7 +340,7 @@ SELECT o.typ,
        o.adapter,
        o.id,
        o.fork,
-       o.zone,
+       o.tag,
        o.sprid,
        o.license,
        o.trust,

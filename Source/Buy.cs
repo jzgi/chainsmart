@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// An online or offline retail order
     /// </summary>
-    public class Buy : Info, IKeyable<long>
+    public class Buy : Info, IKeyable<long>, IFlowable
     {
         public static readonly Buy Empty = new Buy();
 
@@ -13,13 +13,11 @@ namespace Revital
             TYP_ONLINE = 1,
             TYP_OFFLINE = 2;
 
-
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_ONLINE, "网上"},
             {TYP_OFFLINE, "线下"},
         };
-
 
         internal long id;
         internal int bizid;
@@ -32,6 +30,7 @@ namespace Revital
         internal BuyLn[] lns;
         internal decimal pay;
         internal decimal payre; // pay refunded
+        internal short status;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -46,9 +45,10 @@ namespace Revital
             s.Get(nameof(utel), ref utel);
             s.Get(nameof(uaddr), ref uaddr);
             s.Get(nameof(uim), ref uim);
+            s.Get(nameof(lns), ref lns);
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(payre), ref payre);
-            s.Get(nameof(lns), ref lns);
+            s.Get(nameof(status), ref status);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -57,7 +57,6 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-
             s.Put(nameof(bizid), bizid);
             s.Put(nameof(mrtid), mrtid);
             s.Put(nameof(uid), uid);
@@ -65,11 +64,14 @@ namespace Revital
             s.Put(nameof(utel), utel);
             s.Put(nameof(uaddr), uaddr);
             s.Put(nameof(uim), uim);
+            s.Put(nameof(lns), lns);
             s.Put(nameof(pay), pay);
             s.Put(nameof(payre), payre);
-            s.Put(nameof(lns), lns);
+            s.Put(nameof(status), status);
         }
 
         public long Key => id;
+
+        public short Status => status;
     }
 }

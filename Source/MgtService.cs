@@ -13,7 +13,7 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MgtVarWork>(); // provisions related to present center
+            CreateVarWork<PublyCtrVarWork>(); // provisions related to present center
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
@@ -29,14 +29,14 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("供应链市场分组");
+                h.FIELDSUL_("供应链分区");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
-                    if (!org.IsCtr) continue;
-                    h.LI_("uk-flex");
-                    h.A_(org.Key, "/", css: "uk-button uk-button-link uk-flex-left").T(org.name).T("组")._A();
-                    h._LI();
+                    if (org.IsCtr)
+                    {
+                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip).T("组")._A()._LI();
+                    }
                 }
                 h._FIELDSUL();
 
@@ -169,7 +169,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    status = Info.STA_ENABLED,
+                    state = Info.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
@@ -190,7 +190,7 @@ namespace Revital
         /// <summary>
         /// A booking payment notification.
         /// </summary>
-        public async Task onbook(WebContext wc)
+        public async Task onpurch(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(xe, out var trade_no, out var cash))

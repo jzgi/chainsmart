@@ -7,7 +7,11 @@ namespace Revital
     {
     }
 
-    public class AdmlyClearVarWork : ClearVarWork
+    public class AdmlySupplyClearVarWork : ClearVarWork
+    {
+    }
+
+    public class AdmlyBuyClearVarWork : ClearVarWork
     {
     }
 

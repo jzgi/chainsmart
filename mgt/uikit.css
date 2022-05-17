@@ -604,7 +604,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider > li:nth-child(n+2) {
-    border-top: 1px solid rgb(143 195 33 / 15%);
+    border-top: 1px solid #f8f8f8;
 }
 
 /*
@@ -744,7 +744,7 @@ a.uk-link-reset:hover,
 /* .uk-table-divider > :not(:first-child) > tr, */
 .uk-table-divider > :first-child > tr:not(:first-child) 
 {
-    border-top: 1px solid rgb(143 195 33 / 15%);
+    border-top: 1px solid #f8f8f8;
 }
 
 .uk-table-middle,
@@ -1140,7 +1140,7 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #8fc321;
+    color: #333;
     padding: 4px;
     min-height: 2.5rem;
     display: flex;

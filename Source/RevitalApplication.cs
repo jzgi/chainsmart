@@ -81,7 +81,7 @@ namespace Revital
 
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM products WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                    dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
                     return dc.Query<int, Prod>(p => p.Set(orgid));
                 }, 60 * 15
             );
