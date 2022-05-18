@@ -8,6 +8,7 @@ namespace Revital
 
         internal int id;
         internal int bizid;
+        internal int wareid;
         internal string unit;
         internal short unitx;
         internal decimal price;
@@ -26,6 +27,7 @@ namespace Revital
             if ((msk & BORN) == BORN)
             {
                 s.Get(nameof(bizid), ref bizid);
+                s.Get(nameof(wareid), ref wareid);
             }
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
@@ -46,6 +48,7 @@ namespace Revital
             if ((msk & BORN) == BORN)
             {
                 s.Put(nameof(bizid), bizid);
+                s.Put(nameof(wareid), wareid);
             }
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);

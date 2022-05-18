@@ -4,11 +4,11 @@ using Chainly;
 namespace Revital
 {
     /// <summary>
-    /// A whole supply process to a particular product.
+    /// A purchase process to product.
     /// </summary>
-    public class Supply : Info, IKeyable<int>, IFlowable
+    public class Purch : Info, IKeyable<int>, IFlowable
     {
-        public static readonly Supply Empty = new Supply();
+        public static readonly Purch Empty = new Purch();
 
         // states
         public const short
@@ -52,7 +52,7 @@ namespace Revital
         internal decimal payre; // pay refunded
 
         // workflow
-        internal SupplyOp[] ops;
+        internal PurchOp[] ops;
         internal short status;
 
 

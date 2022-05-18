@@ -9,19 +9,19 @@ using static Chainly.Web.Modal;
 
 namespace Revital
 {
-    public class SupplyVarWork : WebWork
+    public class PurchVarWork : WebWork
     {
     }
 
-    public class PrvlySupplyVarWork : SupplyVarWork
+    public class PrvlyPurchVarWork : PurchVarWork
     {
     }
 
-    public abstract class SrclySupplyVarWork : SupplyVarWork
+    public abstract class SrclyPurchVarWork : PurchVarWork
     {
     }
 
-    public class SrclyStandardSupplyVarWork : SrclySupplyVarWork
+    public class SrclyStdPurchVarWork : SrclyPurchVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -31,8 +31,8 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Supply>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Purch>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -67,14 +67,14 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Supply>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Purch>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Supply
+                var m = new Purch
                 {
                 };
                 m.Read(f);
@@ -133,16 +133,16 @@ namespace Revital
         // [Ui("核实"), Tool(Modal.ButtonShow)]
     }
 
-    public class SrclyCustomSupplyVarWork : SrclySupplyVarWork
+    public class SrclyCustomPurchVarWork : SrclyPurchVarWork
     {
     }
 
-    public class CtrlySupplyVarWork : SupplyVarWork
+    public class CtrlyPurchVarWork : PurchVarWork
     {
     }
 
 
-    public class MrtlySupplyVarWork : SupplyVarWork
+    public class MrtlyPurchVarWork : PurchVarWork
     {
     }
 }

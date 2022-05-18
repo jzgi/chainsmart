@@ -15,7 +15,7 @@ create type act_type as
 
 alter type act_type owner to postgres;
 
-create type supplyop_type as
+create type purchop_type as
 (
     state smallint,
     label varchar(12),
@@ -26,7 +26,7 @@ create type supplyop_type as
     stamp timestamp(0)
 );
 
-alter type supplyop_type owner to postgres;
+alter type purchop_type owner to postgres;
 
 create type buyln_type as
 (
@@ -207,7 +207,7 @@ comment on table notes is 'annoucements and notices';
 
 alter table notes owner to postgres;
 
-create table supplys
+create table purchs
 (
     id bigserial not null
         constraint supplys_pk
@@ -233,15 +233,13 @@ create table supplys
 )
     inherits (infos);
 
-comment on table supplys is 'purchases and resales';
+comment on column purchs.unitx is 'times of standard unit';
 
-comment on column supplys.unitx is 'times of standard unit';
+comment on column purchs.qtyre is 'qty reduced';
 
-comment on column supplys.qtyre is 'qty reduced';
+comment on column purchs.payre is 'pay refunded';
 
-comment on column supplys.payre is 'pay refunded';
-
-alter table supplys owner to postgres;
+alter table purchs owner to postgres;
 
 create table buys
 (

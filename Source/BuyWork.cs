@@ -49,9 +49,9 @@ namespace Revital
 
     [UserAuthorize(orgly: ORGLY_OPN)]
 #if ZHNT
-    [Ui("商户线上销售", icon: "chevron-down")]
+    [Ui("商户零售订单", icon: "chevron-down")]
 #else
-    [Ui("驿站线上销售", icon: "chevron-down")]
+    [Ui("驿站零售订单", icon: "chevron-down")]
 #endif
     public class BizlyBuyWork : BuyWork
     {

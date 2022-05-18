@@ -51,7 +51,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("⌸", "浏览结算历史", group: 2), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("⌹", "浏览结算历史", group: 2), Tool(AnchorPrompt, Appear.Small)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();
@@ -183,7 +183,7 @@ namespace Revital
             }, false, 3);
         }
 
-        [Ui("⌸", "浏览结算历史", group: 2), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("⌹", "浏览结算历史", group: 2), Tool(AnchorPrompt, Appear.Small)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();

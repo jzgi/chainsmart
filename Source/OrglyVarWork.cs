@@ -110,7 +110,7 @@ namespace Revital
 
             CreateWork<MrtlyOrgWork>("org");
 
-            CreateWork<MrtlySupplyWork>("msply");
+            CreateWork<MrtlyPurchWork>("mpurch");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
@@ -118,7 +118,7 @@ namespace Revital
 
             // biz
 
-            CreateWork<BizlySupplyWork>("bsply");
+            CreateWork<BizlyPurchWork>("bpurch");
 
             CreateWork<BizlyStockWork>("stock");
 
@@ -175,15 +175,15 @@ namespace Revital
         {
             CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<PrvlyStandardSupplyWork, PrvlyCustomSupplyWork>("ppur");
+            CreateWork<PrvlyStandardPurchWork, PrvlyCustomPurchWork>("ppur");
 
             CreateWork<PrvlyDailyWork>("daily");
 
             CreateWork<SrclyWareWork>("prod");
 
-            CreateWork<SrclyCtrSupplyWork, SrclyOwnSupplyWork>("spur");
+            CreateWork<SrclyCtrPurchWork, SrclyOwnPurchWork>("spur");
 
-            CreateWork<CtrlySupplyWork>("cpur");
+            CreateWork<CtrlyPurchWork>("cpur");
 
             CreateWork<OrglyClearWork>("clear");
         }

@@ -44,8 +44,8 @@ namespace Revital
             int bizid = wc[0];
             var biz = GrabObject<int, Org>(bizid);
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Supply>(p => p.Set(biz.id));
+            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Purch>(p => p.Set(biz.id));
             wc.GivePage(200, h =>
             {
                 h.FORM_().FIELDSUL_();
@@ -90,7 +90,7 @@ namespace Revital
         }
 
         /// <summary>
-        /// To display products related to present sector.
+        /// To display products under a provision.
         /// </summary>
         public async Task prv(WebContext wc, int prvid)
         {
@@ -106,7 +106,7 @@ namespace Revital
             orgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => ids.Add(k));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE state > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE state > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(ctrid).Set(prvid));
             wc.GivePage(200, h =>
             {
