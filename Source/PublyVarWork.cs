@@ -68,59 +68,44 @@ namespace Revital
     public class PublyCtrVarWork : WebWork
     {
         /// <summary>
-        /// To display provisions related to present center.
+        /// To display bound provisions and wares therein.
         /// </summary>
-        public void @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             int ctrid = wc[0];
             var topOrgs = Grab<int, Org>();
             var ctr = topOrgs[ctrid];
 
+            var lst = new ValueList<int>();
+            topOrgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => lst.Add(v.id));
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Ware.Empty, Info.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
+            var arr = await dc.QueryAsync<Ware>();
             wc.GivePage(200, h =>
             {
-                h.GRID(topOrgs, o =>
+                h.TABLE_();
+                var last = 0;
+                for (var i = 0; i < arr?.Length; i++)
                 {
-                    h.HEADER(o.name, "uk-card-header");
-                    h.A_("prv-", o.id).T(o.name)._A();
-                    h.SECTION_("uk-card-body");
-                    h.T(o.tip);
-                    h._HEADER();
-                }, o => o.IsPrvWith(ctrid));
+                    var o = arr[i];
+                    if (o.prvid != last)
+                    {
+                        var spr = topOrgs[o.prvid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(o.name);
+                    h.TD(o.price, true);
+                    h._TR();
+
+                    last = o.prvid;
+                }
+                h._TABLE();
             }, title: ctr.tip);
         }
 
-        /// <summary>
-        /// To display products under a provision.
-        /// </summary>
-        public async Task prv(WebContext wc, int prvid)
-        {
-            int ctrid = wc[0];
-            var topOrgs = Grab<int, Org>();
-            var ctr = topOrgs[ctrid];
-            var prv = topOrgs[prvid];
-            var regs = Grab<short, Reg>();
-
-            // get list of assocated sources
-            var orgs = Grab<int, Org>();
-            var ids = new ValueList<int>();
-            orgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => ids.Add(k));
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE state > 0 AND orgid IN (SELECT id FROM orgs WHERE sprid = @1) ORDER BY typ");
-            var arr = await dc.QueryAsync<Ware>(p => p.Set(ctrid).Set(prvid));
-            wc.GivePage(200, h =>
-            {
-                h.TOPBAR_().T(ctr.tip).T(" > ").T(prv.name)._TOPBAR();
-                h.GRID(arr, o =>
-                {
-                    h.SECTION_("uk-card-body");
-                    h.T(o.name);
-                    h._SECTION();
-                }, min: 2);
-            });
-        }
-
-        public async Task prod(WebContext wc, int prodid)
+        public async Task ware(WebContext wc, int wareid)
         {
             int prvid = wc[0];
             var topOrgs = Grab<int, Org>();
@@ -129,7 +114,7 @@ namespace Revital
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Ware>(p => p.Set(prodid));
+            var obj = await dc.QueryTopAsync<Ware>(p => p.Set(wareid));
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");

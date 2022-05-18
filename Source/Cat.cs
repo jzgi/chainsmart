@@ -9,7 +9,6 @@ namespace Revital
     {
         public static readonly Cat Empty = new Cat();
 
-        internal short id;
         internal short idx;
         internal short num; // sub resources
 
@@ -19,10 +18,6 @@ namespace Revital
         {
             base.Read(s, proj);
 
-            if ((proj & ID) == ID)
-            {
-                s.Get(nameof(id), ref id);
-            }
             s.Get(nameof(idx), ref idx);
             s.Get(nameof(num), ref num);
         }
@@ -31,15 +26,11 @@ namespace Revital
         {
             base.Write(s, proj);
 
-            if ((proj & ID) == ID)
-            {
-                s.Put(nameof(id), id);
-            }
             s.Put(nameof(idx), idx);
             s.Put(nameof(num), num);
         }
 
-        public short Key => id;
+        public short Key => typ;
 
         public override string ToString() => name;
     }

@@ -36,7 +36,7 @@ namespace Revital
 
         internal int id;
 
-        internal int orgid;
+        internal int srcid;
         internal short itemid;
         internal string ext;
         internal short store;
@@ -61,6 +61,8 @@ namespace Revital
         internal short threshold;
         internal short present;
 
+        // extra
+        internal int prvid;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -73,7 +75,7 @@ namespace Revital
 
             if ((proj & BORN) == BORN)
             {
-                s.Get(nameof(orgid), ref orgid);
+                s.Get(nameof(srcid), ref srcid);
             }
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(ext), ref ext);
@@ -94,6 +96,11 @@ namespace Revital
             s.Get(nameof(off), ref off);
             s.Get(nameof(threshold), ref threshold);
             s.Get(nameof(present), ref present);
+
+            if ((proj & EXTRA) == EXTRA)
+            {
+                s.Get(nameof(prvid), ref prvid);
+            }
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -107,7 +114,8 @@ namespace Revital
 
             if ((proj & BORN) == BORN)
             {
-                s.Put(nameof(orgid), orgid);
+                s.Put(nameof(prvid), prvid);
+                s.Put(nameof(srcid), srcid);
             }
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(ext), ext);

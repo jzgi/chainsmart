@@ -62,7 +62,7 @@ namespace Revital
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal int[] toctrs; // toward centers (sector or market) 
+        internal int[] ctrties; // tied centers 
         internal bool img;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -85,7 +85,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(toctrs), ref toctrs);
+            s.Get(nameof(ctrties), ref ctrties);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -118,7 +118,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(toctrs), toctrs);
+            s.Put(nameof(ctrties), ctrties);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -147,13 +147,13 @@ namespace Revital
 
         public bool IsPrvWith(int ctrid)
         {
-            if (!IsPrv || toctrs == null)
+            if (!IsPrv || ctrties == null)
             {
                 return false;
             }
-            for (int i = 0; i < toctrs.Length; i++)
+            for (int i = 0; i < ctrties.Length; i++)
             {
-                if (toctrs[i] == ctrid) return true;
+                if (ctrties[i] == ctrid) return true;
             }
             return false;
         }
@@ -174,7 +174,7 @@ namespace Revital
 
         public bool HasXy => IsMrt || IsSource || IsCtr;
 
-        public int ToCtrId => toctrs?[0] ?? 0;
+        public int ToCtrId => ctrties?[0] ?? 0;
 
         public bool MustTieToCtr => IsSpr && !IsCtr;
 

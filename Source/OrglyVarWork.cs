@@ -150,9 +150,9 @@ namespace Revital
                     var spr = GrabObject<int, Org>(org.sprid);
                     h.LI_().FIELD("所在市场", spr.name)._LI();
                 }
-                if (org.toctrs != null)
+                if (org.ctrties != null)
                 {
-                    var ctr = GrabObject<int, Org>(org.toctrs[0]);
+                    var ctr = GrabObject<int, Org>(org.ctrties[0]);
                     h.LI_().FIELD("关联中枢", ctr.name)._LI();
                 }
                 if (org.IsBiz)
@@ -208,7 +208,7 @@ namespace Revital
                 h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 if (org.MustTieToCtr)
                 {
-                    h.LI_().FIELDA("关联中枢", org.toctrs, topOrgs)._LI();
+                    h.LI_().FIELDA("关联中枢", org.ctrties, topOrgs)._LI();
                 }
                 h._UL();
                 h._FORM();

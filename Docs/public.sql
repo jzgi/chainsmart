@@ -54,58 +54,6 @@ create table infos
 
 alter table infos owner to postgres;
 
-create table regs
-(
-    id smallint not null
-        constraint regs_pk
-            primary key,
-    idx smallint,
-    num smallint
-)
-    inherits (infos);
-
-comment on column regs.num is 'sub resources';
-
-alter table regs owner to postgres;
-
-create table items
-(
-    id integer not null,
-    unit varchar(4),
-    unitip varchar(10),
-    icon bytea
-)
-    inherits (infos);
-
-comment on table items is 'standard items';
-
-alter table items owner to postgres;
-
-create table orgs
-(
-    id serial not null
-        constraint orgs_pk
-            primary key,
-    fork smallint,
-    sprid integer,
-    license varchar(20),
-    trust boolean,
-    regid smallint
-        constraint orgs_regid_fk
-            references regs
-            on update cascade,
-    addr varchar(30),
-    x double precision,
-    y double precision,
-    tel varchar(11),
-    mgrid integer,
-    toctrs integer[],
-    img bytea
-)
-    inherits (infos);
-
-alter table orgs owner to postgres;
-
 create table users
 (
     id serial not null
@@ -115,9 +63,7 @@ create table users
     im varchar(28),
     credential varchar(32),
     admly smallint default 0 not null,
-    orgid smallint
-        constraint users_orgid_fk
-            references orgs,
+    orgid smallint,
     orgly smallint default 0 not null,
     idcard varchar(18)
 )
@@ -138,6 +84,53 @@ create index users_orgid_idx
 
 create unique index users_tel_idx
     on users (tel);
+
+create table regs
+(
+    id smallint not null
+        constraint regs_pk
+            primary key,
+    idx smallint,
+    num smallint
+)
+    inherits (infos);
+
+comment on column regs.num is 'sub resources';
+
+alter table regs owner to postgres;
+
+create table orgs
+(
+    id serial not null
+        constraint orgs_pk
+            primary key,
+    fork smallint,
+    sprid integer
+        constraint orgs_sprid_fk
+            references orgs,
+    license varchar(20),
+    trust boolean,
+    regid smallint
+        constraint orgs_regid_fk
+            references regs
+            on update cascade,
+    addr varchar(30),
+    x double precision,
+    y double precision,
+    tel varchar(11),
+    mgrid integer
+        constraint orgs_mgrid_fk
+            references users,
+    ctrties integer[],
+    img bytea
+)
+    inherits (infos);
+
+alter table orgs owner to postgres;
+
+alter table users
+    add constraint users_orgid_fk
+        foreign key (orgid) references orgs;
 
 create table dailys
 (
@@ -264,44 +257,6 @@ comment on table buys is 'customer buys';
 
 alter table buys owner to postgres;
 
-create table wares
-(
-    id serial not null
-        constraint wares_pk
-            primary key,
-    orgid integer,
-    itemid integer,
-    ext varchar(10),
-    store smallint,
-    duration smallint,
-    toagt boolean,
-    unit varchar(4),
-    unitx smallint,
-    price money,
-    cap smallint,
-    min smallint,
-    max smallint,
-    step smallint,
-    starton timestamp(0),
-    endon timestamp(0),
-    "off" money,
-    threshold smallint,
-    present smallint,
-    img bytea,
-    pic bytea
-)
-    inherits (infos);
-
-comment on table wares is 'sellable wares by sources';
-
-comment on column wares.store is 'storage method';
-
-comment on column wares.unitx is 'times of standard unit';
-
-comment on column wares.present is 'group-purchase accumulative';
-
-alter table wares owner to postgres;
-
 create table clears
 (
     id serial not null
@@ -322,17 +277,77 @@ alter table clears owner to postgres;
 
 create table cats
 (
-    id smallint not null
-        constraint cats_pk
-            primary key,
     idx smallint,
-    num smallint
+    num smallint,
+    constraint cats_pk
+        primary key (typ)
 )
     inherits (infos);
 
 comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
+
+create table items
+(
+    id integer not null
+        constraint items_pk
+            primary key,
+    unit varchar(4),
+    unitip varchar(10),
+    icon bytea,
+    constraint items_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (infos);
+
+comment on table items is 'standard items';
+
+alter table items owner to postgres;
+
+create table wares
+(
+    id serial not null
+        constraint wares_pk
+            primary key,
+    srcid integer
+        constraint wares_srcid_fk
+            references orgs,
+    itemid integer
+        constraint wares_itemid_fk
+            references items,
+    ext varchar(10),
+    store smallint,
+    duration smallint,
+    toagt boolean,
+    unit varchar(4),
+    unitx smallint,
+    price money,
+    cap smallint,
+    min smallint,
+    max smallint,
+    step smallint,
+    starton timestamp(0),
+    endon timestamp(0),
+    "off" money,
+    threshold smallint,
+    present smallint,
+    img bytea,
+    pic bytea,
+    constraint wares_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (infos);
+
+comment on table wares is 'sellable wares by sources';
+
+comment on column wares.store is 'storage method';
+
+comment on column wares.unitx is 'times of standard unit';
+
+comment on column wares.present is 'group-purchase accumulative';
+
+alter table wares owner to postgres;
 
 create table stocks
 (
@@ -352,7 +367,7 @@ create table stocks
 
 alter table stocks owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrties, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -371,7 +386,7 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.toctrs,
+       o.ctrties,
        o.mgrid,
        m.name            AS mgrname,
        m.tel             AS mgrtel,

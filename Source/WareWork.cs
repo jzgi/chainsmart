@@ -110,7 +110,7 @@ namespace Revital
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Ware
                 {
-                    orgid = org.id,
+                    srcid = org.id,
                     created = DateTime.Now,
                     creator = prin.name,
                 });
