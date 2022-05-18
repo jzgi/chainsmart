@@ -9,39 +9,8 @@ namespace Revital
     {
     }
 
-    [Ui("消费者溯源")]
-    public class MySupplyWork : SupplyWork
-    {
-        public async Task @default(WebContext wc, int code)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE id = @1 LIMIT 1");
-            var o = await dc.QueryTopAsync<Supply>(p => p.Set(code));
-            wc.GivePage(200, h =>
-            {
-                if (o == null || o.srcid - o.srcid >= code)
-                {
-                    h.ALERT("编码没有找到");
-                }
-                else
-                {
-                    var plan = GrabObject<short, Ware>(o.itemid);
-                    var frm = GrabObject<int, Org>(o.wareid);
-                    var ctr = GrabObject<int, Org>(o.wareid);
-
-                    h.FORM_();
-                    h.FIELDSUL_("溯源信息");
-                    h.LI_().FIELD("生产户", frm.name);
-                    h.LI_().FIELD("分拣中心", ctr.name);
-                    h._FIELDSUL();
-                    h._FORM();
-                }
-            }, title: "中惠农通溯源系统");
-        }
-    }
-
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场供应链交易管理", "市场", "sign-in")]
+    [Ui("市场供应链业务", icon: "sign-in")]
     public class MrtlySupplyWork : SupplyWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -51,15 +20,19 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
-    [Ui("商户供应链采购", "商户在线上直接向产源下单订货，货到后安排上架销售", "file-text")]
+#if ZHNT
+    [Ui("商户线上采购", icon: "chevron-up")]
+#else
+    [Ui("驿站线上采购", icon: "chevron-up")]
+#endif
     public class BizlySupplyWork : SupplyWork
     {
-        [Ui("采购记录", group: 1), Tool(Anchor)]
+        [Ui("当前订货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM supplys WHERE bizid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Supply>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
@@ -222,12 +195,12 @@ namespace Revital
         }
     }
 
-    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_BY_CTR)]
+    [Ui("版块销售管理", icon: "sign-out", fork: Org.FRK_BY_CTR)]
     public class PrvlyStandardSupplyWork : PrvlySupplyWork
     {
     }
 
-    [Ui("版块销售管理", "版块", "sign-out", fork: Org.FRK_ON_OWN)]
+    [Ui("版块销售管理", icon: "sign-out", fork: Org.FRK_ON_OWN)]
     public class PrvlyCustomSupplyWork : PrvlySupplyWork
     {
     }
@@ -267,7 +240,6 @@ namespace Revital
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Supply.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Supply>(p => p.Set(org.id));
-
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: "历史销售订货");

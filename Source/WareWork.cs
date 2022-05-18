@@ -11,6 +11,14 @@ namespace Revital
     {
     }
 
+    public class PublyWareWork : WareWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublyWareVarWork>();
+        }
+    }
+
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源货架设置", "thumbnails")]
     public class SrclyWareWork : WareWork

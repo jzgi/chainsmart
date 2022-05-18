@@ -98,7 +98,6 @@ create table orgs
     x double precision,
     y double precision,
     tel varchar(11),
-    tag varchar(4),
     mgrid integer,
     toctrs integer[],
     img bytea
@@ -229,14 +228,8 @@ create table supplys
     pay money,
     qtyre smallint,
     payre money,
-    ops purchop_type[],
-    status smallint,
-    bunit varchar(4),
-    bunitx smallint,
-    bprice money,
-    bmin smallint,
-    bmax smallint,
-    bstep smallint
+    ops supplyop_type[],
+    status smallint
 )
     inherits (infos);
 
@@ -343,7 +336,25 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, tag, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
+create table stocks
+(
+    id serial not null
+        constraint stocks_pk
+            primary key,
+    bizid integer,
+    wareid integer,
+    unit varchar(4),
+    unitx smallint,
+    price money,
+    min smallint,
+    max smallint,
+    step smallint
+)
+    inherits (infos);
+
+alter table stocks owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, toctrs, mgrid, mgrname, mgrtel, mgrim, img) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -354,7 +365,6 @@ SELECT o.typ,
        o.adapter,
        o.id,
        o.fork,
-       o.tag,
        o.sprid,
        o.license,
        o.trust,

@@ -40,6 +40,10 @@ namespace Revital
         }
     }
 
+    public class PublyWareVarWork : WareVarWork
+    {
+    }
+
     public class SrclyWareVarWork : WareVarWork
     {
         public async Task @default(WebContext wc)

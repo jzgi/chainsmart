@@ -88,8 +88,12 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场消费者管理", "users")]
-    public class MrtlyUserWork : UserWork
+#if ZHNT
+    [Ui("商户客户管理", icon: "users")]
+#else
+    [Ui("驿站客户管理", icon: "users")]
+#endif
+    public class BizlyUserWork : UserWork
     {
         protected override void OnCreate()
         {
@@ -100,7 +104,7 @@ namespace Revital
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY id DESC WHERE LIMIT 30 OFFSET 30 * @1");
             var arr = dc.Query<User>(p => p.Set(page));
             wc.GivePage(200, h =>
             {

@@ -4,7 +4,7 @@ using Chainly;
 namespace Revital
 {
     /// <summary>
-    /// A purchase or supply to a particular product.
+    /// A whole supply process to a particular product.
     /// </summary>
     public class Supply : Info, IKeyable<int>, IFlowable
     {
@@ -58,13 +58,6 @@ namespace Revital
 
         #region FOR-BUY
 
-        internal string bunit;
-        internal short bunitx;
-        internal decimal bprice;
-        internal short bmin;
-        internal short bmax;
-        internal short bstep;
-
         #endregion
 
         public override void Read(ISource s, short proj = 0xff)
@@ -101,15 +94,6 @@ namespace Revital
                 s.Get(nameof(ops), ref ops);
                 s.Get(nameof(status), ref status);
             }
-            if ((proj & EXTRA) == EXTRA)
-            {
-                s.Get(nameof(bunit), ref bunit);
-                s.Get(nameof(bunitx), ref bunitx);
-                s.Get(nameof(bprice), ref bprice);
-                s.Get(nameof(bmin), ref bmin);
-                s.Get(nameof(bmax), ref bmax);
-                s.Get(nameof(bstep), ref bstep);
-            }
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -145,15 +129,6 @@ namespace Revital
                 s.Put(nameof(payre), payre);
                 s.Put(nameof(ops), ops);
                 s.Put(nameof(status), status);
-            }
-            if ((proj & EXTRA) == EXTRA)
-            {
-                s.Put(nameof(bunit), bunit);
-                s.Put(nameof(bunitx), bunitx);
-                s.Put(nameof(bprice), bprice);
-                s.Put(nameof(bmin), bmin);
-                s.Put(nameof(bmax), bmax);
-                s.Put(nameof(bstep), bstep);
             }
         }
 

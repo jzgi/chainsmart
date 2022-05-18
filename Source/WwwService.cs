@@ -20,7 +20,7 @@ namespace Revital
 
             CreateWork<PublyItemWork>("item");
 
-            CreateWork<MySupplyWork>("code");
+            CreateWork<PublyWareWork>("ware");
 
             CreateWork<MyWork>("my");
         }

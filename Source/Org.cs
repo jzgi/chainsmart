@@ -54,7 +54,6 @@ namespace Revital
         internal string addr;
         internal double x;
         internal double y;
-        internal string tag;
 
         internal string tel;
         internal bool trust;
@@ -85,7 +84,6 @@ namespace Revital
             s.Get(nameof(x), ref x);
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
-            s.Get(nameof(tag), ref tag);
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(toctrs), ref toctrs);
             if ((proj & LATER) == LATER)
@@ -119,7 +117,6 @@ namespace Revital
             s.Put(nameof(x), x);
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
-            s.Put(nameof(tag), tag);
             s.Put(nameof(trust), trust);
             s.Put(nameof(toctrs), toctrs);
             if ((proj & LATER) == LATER)

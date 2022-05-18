@@ -119,9 +119,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场下属商户管理", "album")]
+    [Ui("市场商户管理", icon: "thumbnails")]
 #else
-    [Ui("市场下属商户管理", "album")]
+    [Ui("市场驿站管理", icon: "thumbnails")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -133,47 +133,56 @@ namespace Revital
 
         public async Task @default(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
+            var mrt = wc[-1].As<Org>();
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
-            var regs = Grab<short, Reg>();
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
-                    // h.TD_().A_("/mrtly/", o.Key, "/", css: "uk-button-link")._DIALOG_("return dialog(this,8,false,4,'');").T(o.name)._A()._TD();
-                    h.TD(regs[o.regid].name);
+                    h.TD_().ADIALOG_("/mrtly/", o.Key, "/", 8, false, Appear.Full).T(o.name)._A()._TD();
                     h.TDFORM(() => { });
                 });
             });
         }
 
-        [Ui("添加"), Tool(ButtonShow)]
+        [Ui("✚", "添加"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var regs = Grab<short, Reg>();
-
+            var m = new Org
+            {
+                typ = Org.TYP_BIZ,
+                created = DateTime.Now,
+                creator = prin.name,
+                state = Info.STA_ENABLED,
+                sprid = org.id,
+            };
             if (wc.IsGet)
             {
-                var m = new Org
-                {
-                    created = DateTime.Now,
-                    creator = prin.name,
-                    state = Info.STA_ENABLED
-                };
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("主体信息");
-                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k == Org.TYP_BIZ, required: true)._LI();
+                    h.FORM_().FIELDSUL_(
+#if ZHNT
+                        "商户属性"
+#else
+                        "驿站属性"
+#endif
+                    );
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().TEXT("编址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
+#if ZHNT
+                    h.LI_().TEXT("编码", nameof(m.addr), m.addr, max: 4)._LI();
+#else
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+#endif
                     h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States)._LI();
                     h._FIELDSUL()._FORM();
                 });

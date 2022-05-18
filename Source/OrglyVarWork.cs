@@ -110,9 +110,7 @@ namespace Revital
 
             CreateWork<MrtlyOrgWork>("org");
 
-            CreateWork<MrtlyUserWork>("user");
-
-            CreateWork<MrtlySupplyWork>("mpur");
+            CreateWork<MrtlySupplyWork>("msply");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
@@ -120,15 +118,17 @@ namespace Revital
 
             // biz
 
-            CreateWork<BizlySupplyWork>("bpur");
+            CreateWork<BizlySupplyWork>("bsply");
+
+            CreateWork<BizlyStockWork>("stock");
 
             CreateWork<BizlyBuyWork>("bbuy");
+
+            CreateWork<BizlyUserWork>("user");
 
             // common
 
             CreateWork<OrglyClearWork>("clear");
-
-            CreateWork<AdmlyNoteWork>("msg");
         }
 
         public void @default(WebContext wc)
@@ -141,7 +141,7 @@ namespace Revital
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
-                h.FORM_("uk-card uk-card-primary");
+                h.FORM_("uk-card uk-card-default");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
                 h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
@@ -150,7 +150,6 @@ namespace Revital
                     var spr = GrabObject<int, Org>(org.sprid);
                     h.LI_().FIELD("所在市场", spr.name)._LI();
                 }
-                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 if (org.toctrs != null)
                 {
                     var ctr = GrabObject<int, Org>(org.toctrs[0]);
