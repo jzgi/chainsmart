@@ -4,17 +4,6 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create type act_type as
-(
-    "user" varchar(10),
-    role varchar(10),
-    party varchar(10),
-    op varchar(10),
-    stamp timestamp(0)
-);
-
-alter type act_type owner to postgres;
-
 create type purchop_type as
 (
     state smallint,
@@ -221,7 +210,7 @@ create table purchs
     pay money,
     qtyre smallint,
     payre money,
-    ops supplyop_type[],
+    ops purchop_type[],
     status smallint
 )
     inherits (infos);

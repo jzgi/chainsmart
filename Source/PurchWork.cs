@@ -78,7 +78,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢品控配运管理", "中枢")]
+    [Ui("中枢配运管理")]
     public class CtrlyPurchWork : PurchWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -156,7 +156,6 @@ namespace Revital
 
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_SAL)]
-    [Ui("版块销售管理", "版块")]
     public abstract class PrvlyPurchWork : PurchWork
     {
         protected override void OnCreate()
@@ -195,19 +194,18 @@ namespace Revital
         }
     }
 
-    [Ui("版块销售管理", icon: "sign-out", fork: Org.FRK_BY_CTR)]
-    public class PrvlyStandardPurchWork : PrvlyPurchWork
+    [Ui("版块标准供应管理", icon: "sign-out", fork: Org.FRK_STD)]
+    public class PrvlyStdPurchWork : PrvlyPurchWork
     {
     }
 
-    [Ui("版块销售管理", icon: "sign-out", fork: Org.FRK_ON_OWN)]
-    public class PrvlyCustomPurchWork : PrvlyPurchWork
+    [Ui("版块自由供应管理", icon: "sign-out", fork: Org.FRK_FREE)]
+    public class PrvlyFreePurchWork : PrvlyPurchWork
     {
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源线上销售管理", "产源")]
-    public abstract class FrmlyPurchWork : PurchWork
+    public abstract class SrclyPurchWork : PurchWork
     {
         protected override void OnCreate()
         {
@@ -249,13 +247,13 @@ namespace Revital
         }
     }
 
-    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_BY_CTR)]
-    public class SrclyCtrPurchWork : FrmlyPurchWork
+    [Ui("产源标准供应业务", icon: "cloud-upload", fork: Org.FRK_STD)]
+    public class SrclyCtrPurchWork : SrclyPurchWork
     {
     }
 
-    [Ui("产源线上销售管理", "cloud-upload", fork: Org.FRK_ON_OWN)]
-    public class SrclyOwnPurchWork : FrmlyPurchWork
+    [Ui("产源自由供应业务", icon: "cloud-upload", fork: Org.FRK_FREE)]
+    public class SrclyFreePurchWork : SrclyPurchWork
     {
     }
 }

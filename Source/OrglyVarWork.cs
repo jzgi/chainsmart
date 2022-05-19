@@ -175,13 +175,13 @@ namespace Revital
         {
             CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<PrvlyStandardPurchWork, PrvlyCustomPurchWork>("ppur");
+            CreateWork<PrvlyStdPurchWork, PrvlyFreePurchWork>("ppur");
 
             CreateWork<PrvlyDailyWork>("daily");
 
             CreateWork<SrclyWareWork>("prod");
 
-            CreateWork<SrclyCtrPurchWork, SrclyOwnPurchWork>("spur");
+            CreateWork<SrclyCtrPurchWork, SrclyFreePurchWork>("spur");
 
             CreateWork<CtrlyPurchWork>("cpur");
 
@@ -205,7 +205,6 @@ namespace Revital
                 {
                     h.LI_().FIELD("地址", org.addr)._LI();
                 }
-                h.LI_().FIELD2("管理员", org.mgrname, org.mgrtel)._LI();
                 if (org.MustTieToCtr)
                 {
                     h.LI_().FIELDA("关联中枢", org.ctrties, topOrgs)._LI();

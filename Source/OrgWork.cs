@@ -204,12 +204,12 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("版块产源管理", "thumbnails")]
+    [Ui("版块产源管理", icon: "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyOrgVarWork>();
+            CreateVarWork<PrvlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -234,17 +234,17 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建大户"), Tool(ButtonShow)]
+        [Ui("✚", "新建产源"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
+            var prv = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
             var m = new Org
             {
                 typ = Org.TYP_SRC,
-                sprid = org.id,
-                regid = org.regid,
+                fork = prv.fork,
+                sprid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 state = Info.STA_ENABLED
@@ -253,22 +253,24 @@ namespace Revital
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("大户信息");
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 10, required: true)._LI();
+                    h.FORM_().FIELDSUL_("产源属性");
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Info.States, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short proj = Info.BORN;
-                var o = await wc.ReadObjectAsync(proj, instance: m);
+                const short msk = Info.BORN;
+                var o = await wc.ReadObjectAsync(msk, instance: m);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, proj)._VALUES_(Org.Empty, proj);
-                await dc.ExecuteAsync(p => o.Write(p, proj));
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
+                await dc.ExecuteAsync(p => o.Write(p, msk));
 
                 wc.GivePane(201); // created
             }

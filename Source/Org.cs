@@ -20,8 +20,8 @@ namespace Revital
             TYP_CTR = TYP_SPR | TYP_SRC | TYP_DST; // provision center
 
         public const short
-            FRK_BY_CTR = 1, // center 
-            FRK_ON_OWN = 2; // own
+            FRK_STD = 1, // center 
+            FRK_FREE = 2; // own
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -38,8 +38,8 @@ namespace Revital
 
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
-            {FRK_BY_CTR, "经过中枢"},
-            {FRK_ON_OWN, "自行配运"},
+            {FRK_STD, "标准（经由中枢）"},
+            {FRK_FREE, "自由（自行安排）"},
         };
 
         // id

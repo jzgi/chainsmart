@@ -20,7 +20,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产源货架设置", "thumbnails")]
+    [Ui("产源货架设置", icon: "album")]
     public class SrclyWareWork : WareWork
     {
         protected override void OnCreate()

@@ -148,7 +148,7 @@ namespace Revital
     {
     }
 
-    public class SrclyOrgVarWork : OrgVarWork
+    public class PrvlyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -161,14 +161,14 @@ namespace Revital
                 var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产源信息");
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 10, required: true)._LI();
+                    h.FORM_().FIELDSUL_("产源属性");
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("物流分支", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
-                    h.LI_().SELECT("所在省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States).CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Info.States, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
