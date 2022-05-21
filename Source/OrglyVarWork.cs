@@ -15,9 +15,20 @@ namespace Revital
             short orgly = 0;
             int id = 0;
 
+            // retrieve the access list
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-            var arr = dc.Query<User>(p => p.Set(org.id));
+            dc.Sql("SELECT name,tel,orgly FROM users WHERE orgid = @1 AND orgly > 0");
+            var arr = dc.Query<Aclet>(p => p.Set(org.id));
+            if (org.mgrid > 0) // append the org mgr
+            {
+                arr.AddOf(new Aclet
+                {
+                    id = org.mgrid,
+                    name = org.mgrname,
+                    tel = org.mgrtel,
+                    orgly = 255
+                });
+            }
 
             if (wc.IsGet)
             {
@@ -26,24 +37,22 @@ namespace Revital
                 {
                     h.TABLE(arr, o =>
                     {
-                        h.TD(o.name);
-                        h.TD(o.tel);
+                        h.TD_().T(o.name).SP().SUB(o.tel)._TD();
                         h.TD(User.Orgly[o.orgly]);
                         h.TDFORM(() =>
                         {
                             h.HIDDEN(nameof(id), o.id);
                             h.TOOL(nameof(acl), caption: "✕", subscript: 2, tool: ToolAttribute.BUTTON_CONFIRM, css: "uk-button-secondary");
                         });
-                    }, caption: "现有操作权限");
+                    }, caption: "现有权限");
 
-                    h.FORM_().FIELDSUL_("授权目标用户");
+                    h.FORM_().FIELDSUL_("授权给用户");
                     if (cmd == 0)
                     {
                         h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(acl), 1, post: false, css: "uk-button-secondary")._LI();
                     }
-                    else if (cmd == 1) // search user
+                    else if (cmd == 1) // find the user by tel
                     {
-                        // get user by tel
                         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
@@ -64,6 +73,7 @@ namespace Revital
                 id = f[nameof(id)];
                 orgly = f[nameof(orgly)];
                 dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(org.id).Set(orgly).Set(id));
+
                 wc.GiveRedirect(nameof(acl)); // ok
             }
         }
@@ -175,15 +185,20 @@ namespace Revital
         {
             CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<PrvlyStdPurchWork, PrvlyFreePurchWork>("ppur");
+            CreateWork<PrvlyDailyWork>("prpt");
 
-            CreateWork<PrvlyDailyWork>("daily");
 
-            CreateWork<SrclyWareWork>("prod");
+            CreateWork<SrclyWareWork>("ware");
 
-            CreateWork<SrclyCtrPurchWork, SrclyFreePurchWork>("spur");
+            CreateWork<SrclyStdPurchWork, SrclyFreePurchWork>("spur");
+
+            CreateWork<SrclyRptWork>("srpt");
+
 
             CreateWork<CtrlyPurchWork>("cpur");
+            
+            CreateWork<CtrlyRptWork>("crpt");
+
 
             CreateWork<OrglyClearWork>("clear");
         }

@@ -64,16 +64,16 @@ namespace Revital
         // extra
         internal int prvid;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short msk = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
 
-            if ((proj & BORN) == BORN)
+            if ((msk & BORN) == BORN)
             {
                 s.Get(nameof(srcid), ref srcid);
             }
@@ -97,24 +97,23 @@ namespace Revital
             s.Get(nameof(threshold), ref threshold);
             s.Get(nameof(present), ref present);
 
-            if ((proj & EXTRA) == EXTRA)
+            if ((msk & EXTRA) == EXTRA)
             {
                 s.Get(nameof(prvid), ref prvid);
             }
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
 
-            if ((proj & BORN) == BORN)
+            if ((msk & BORN) == BORN)
             {
-                s.Put(nameof(prvid), prvid);
                 s.Put(nameof(srcid), srcid);
             }
             s.Put(nameof(itemid), itemid);

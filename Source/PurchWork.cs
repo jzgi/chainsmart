@@ -27,7 +27,7 @@ namespace Revital
 #endif
     public class BizlyPurchWork : PurchWork
     {
-        [Ui("当前订货", group: 1), Tool(Anchor)]
+        [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -77,133 +77,6 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢配运管理")]
-    public class CtrlyPurchWork : PurchWork
-    {
-        [Ui("当前", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT sprid, fromid, sum(pay) FROM purchs WHERE ctrid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
-            await dc.QueryAsync(p => p.Set(org.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.MAIN_();
-                int last = 0;
-                while (dc.Next())
-                {
-                    dc.Let(out int sprid);
-                    dc.Let(out int fromid);
-                    dc.Let(out decimal sum);
-
-                    if (sprid != last)
-                    {
-                        var spr = GrabObject<int, Org>(sprid);
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    var from = GrabObject<int, Org>(fromid);
-                    h.TD(from.name);
-                    h.TD_("uk-visible@l").T(sum)._TD();
-                    h._TR();
-
-                    last = sprid;
-                }
-                h._MAIN();
-            });
-        }
-
-        [Ui("⌹", "以往", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT sprid, fromid, sum(pay) FROM purchs WHERE toid = @1 AND status = 1 GROUP BY sprid, fromid ORDER BY sprid, fromid");
-            await dc.QueryAsync(p => p.Set(org.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.MAIN_();
-                int last = 0;
-                while (dc.Next())
-                {
-                    dc.Let(out int sprid);
-                    dc.Let(out int fromid);
-                    dc.Let(out decimal sum);
-
-                    if (sprid != last)
-                    {
-                        var spr = GrabObject<int, Org>(sprid);
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    var from = GrabObject<int, Org>(fromid);
-                    h.TD(from.name);
-                    h.TD_("uk-visible@l").T(sum)._TD();
-                    h._TR();
-
-                    last = sprid;
-                }
-                h._MAIN();
-            });
-        }
-    }
-
-
-    [UserAuthorize(Org.TYP_PRV, User.ORGLY_SAL)]
-    public abstract class PrvlyPurchWork : PurchWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<PrvlyPurchVarWork>();
-        }
-
-        [Ui("当前销售"), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.Key);
-                    // h.TD(o.qty);
-                });
-            });
-        }
-
-        [Ui("历史", "以往销售"), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE prvid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(org.id));
-
-            wc.GivePage(200, h => { h.TOOLBAR(tip: "来自平台的订单"); });
-        }
-    }
-
-    [Ui("版块标准供应管理", icon: "sign-out", fork: Org.FRK_STD)]
-    public class PrvlyStdPurchWork : PrvlyPurchWork
-    {
-    }
-
-    [Ui("版块自由供应管理", icon: "sign-out", fork: Org.FRK_FREE)]
-    public class PrvlyFreePurchWork : PrvlyPurchWork
-    {
-    }
-
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     public abstract class SrclyPurchWork : PurchWork
     {
@@ -215,19 +88,36 @@ namespace Revital
         [Ui("当前"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            var org = wc[-1].As<Org>();
+            var src = wc[-1].As<Org>();
+            var topOrgs = Grab<int, Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT wareid, last(name), ctrid, sum(qty - qtyre) FROM purchs WHERE srcid = @1 AND status = ").T(Purch.STU_SRC_GOT).T(" GROUP BY wareid, ctrid");
+            await dc.QueryAsync(p => p.Set(src.id));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: "当前销售订货");
-
-                h.TABLE(arr, o =>
+                h.TOOLBAR();
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
                 {
-                    h.TDCHECK(o.Key);
-                    // h.TD(o.qty);
-                });
+                    dc.Let(out int wareid);
+                    dc.Let(out string name);
+                    dc.Let(out int ctrid);
+                    dc.Let(out decimal qty);
+
+                    if (ctrid != last)
+                    {
+                        var spr = topOrgs[ctrid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty)._TD();
+                    h._TR();
+
+                    last = ctrid;
+                }
+                h._MAIN();
             });
         }
 
@@ -247,13 +137,150 @@ namespace Revital
         }
     }
 
-    [Ui("产源标准供应业务", icon: "cloud-upload", fork: Org.FRK_STD)]
-    public class SrclyCtrPurchWork : SrclyPurchWork
+    [Ui("产源标准销售管理", icon: "star", fork: Org.FRK_STD)]
+    public class SrclyStdPurchWork : SrclyPurchWork
     {
     }
 
-    [Ui("产源自由供应业务", icon: "cloud-upload", fork: Org.FRK_FREE)]
+    [Ui("产源自由销售管理", icon: "star", fork: Org.FRK_FREE)]
     public class SrclyFreePurchWork : SrclyPurchWork
     {
+    }
+
+
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
+    [Ui("产源业务报表")]
+    public class SrclyRptWork : PurchWork
+    {
+        public async Task @default(WebContext wc, int page)
+        {
+        }
+    }
+
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("中枢验收分运管理", icon: "tag")]
+    public class CtrlyPurchWork : PurchWork
+    {
+        [Ui("待收", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var ctr = wc[-1].As<Org>();
+            var topOrgs = Grab<int, Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_SRC_SNT).T(" GROUP BY prvid, wareid ORDER BY prvid");
+            await dc.QueryAsync(p => p.Set(ctr.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int prvid);
+                    dc.Let(out int wareid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty);
+
+                    if (prvid != last)
+                    {
+                        var spr = topOrgs[prvid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty)._TD();
+                    h._TR();
+
+                    last = prvid;
+                }
+                h._MAIN();
+            });
+        }
+
+        [Ui("已收", group: 2), Tool(Anchor)]
+        public async Task rcvd(WebContext wc, int page)
+        {
+            var ctr = wc[-1].As<Org>();
+            var topOrgs = Grab<int, Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = 2 GROUP BY mrtid, wareid ORDER BY mrtid");
+            await dc.QueryAsync(p => p.Set(ctr.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int mrtid);
+                    dc.Let(out int wareid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty
+                    );
+                    if (mrtid != last)
+                    {
+                        var spr = topOrgs[mrtid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty)._TD();
+                    h._TR();
+
+                    last = mrtid;
+                }
+                h._MAIN();
+            });
+        }
+
+        [Ui("已发", group: 3), Tool(Anchor)]
+        public async Task snt(WebContext wc, int page)
+        {
+            var ctr = wc[-1].As<Org>();
+            var topOrgs = Grab<int, Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = 2 GROUP BY mrtid, wareid ORDER BY mrtid");
+            await dc.QueryAsync(p => p.Set(ctr.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int mrtid);
+                    dc.Let(out int wareid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty
+                    );
+                    if (mrtid != last)
+                    {
+                        var spr = topOrgs[mrtid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty)._TD();
+                    h._TR();
+
+                    last = mrtid;
+                }
+                h._MAIN();
+            });
+        }
+    }
+
+
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("中枢业务报表")]
+    public class CtrlyRptWork : PurchWork
+    {
+        [Ui("待收", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+        }
     }
 }

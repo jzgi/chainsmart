@@ -12,21 +12,28 @@ namespace Revital
 
         // states
         public const short
-            STU_SRC_REFUND = 1,
-            STU_PAID = 2,
-            STU_ON_SRC = 3,
-            STU_ON_CTR = 4,
-            STU_ON_MRT = 5;
+            STU_BIZ_ = 0,
+            STU_BIZ_REF = 1, // refund
+            STU_SRC_GOT = 3, // paid
+            STU_SRC_RET = 4,
+            STU_SRC_SNT = 5,
+            STU_CTR_RCV = 6, // received
+            STU_CTR_RET = 7, // returned
+            STU_CTR_SNT = 8, // sent
+            STU_BIZ_RCV = 9;
 
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {0, null},
-            {STU_SRC_REFUND, "已退款"},
-            {STU_PAID, "已付款"},
-            {STU_ON_SRC, "备发货"},
-            {STU_ON_CTR, "到中库"},
-            {STU_ON_MRT, "到市场"},
+            {STU_BIZ_REF, "产源退款"},
+            {STU_SRC_GOT, "商户付款"},
+            {STU_SRC_RET, "中库退返"},
+            {STU_SRC_SNT, "产源发货"},
+            {STU_CTR_RCV, "暂入中库"},
+            {STU_CTR_RET, "商户拒收"},
+            {STU_CTR_SNT, "中库运出"},
+            {STU_BIZ_RCV, "商户确收"},
         };
 
 

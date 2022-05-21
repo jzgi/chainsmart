@@ -1,6 +1,6 @@
 
 html {
-    font-family: -apple-system, Droidsansfallback, "Microsoft YaHei";
+    font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Hiragino Sans GB,Microsoft YaHei UI,Microsoft YaHei,Arial,sans-serif;
     font-size: 16px;
     font-weight: normal;
     line-height: normal;
@@ -29,6 +29,7 @@ body.uk-pane {
 
 form {
     display: block;
+    padding: 4px; 
 }
 
 a {

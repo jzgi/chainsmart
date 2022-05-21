@@ -9,6 +9,8 @@ namespace Revital
 {
     public abstract class WareWork : WebWork
     {
+        public const string ERR = "table";
+
     }
 
     public class PublyWareWork : WareWork
@@ -20,50 +22,37 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产源货架设置", icon: "album")]
+    [Ui("产源产品设置", icon: ERR)]
     public class SrclyWareWork : WareWork
     {
+
         protected override void OnCreate()
         {
             CreateVarWork<SrclyWareVarWork>();
         }
 
-        public void @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
-
+            var src = wc[-1].As<Org>();
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE orgid = @1 ORDER BY state DESC");
-            var arr = dc.Query<Ware>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE srcid = @1 ORDER BY state DESC");
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: "产品和货架");
-
+                h.TOOLBAR();
                 if (arr == null) return;
-
                 h.GRID(arr, o =>
                 {
                     var item = items[o.itemid];
 
-                    h.HEADER_("uk-card-header").PIC("/item/icon", circle: true).AVAR(o.Key, o.name)._HEADER();
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h.SPAN_().CNY(o.price).T(" 每").T(o.unit).T('（').T(o.unitx).T(item.unit).T('）')._SPAN();
                     h._SECTION();
                     h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
                 });
-
-                // h.TABLE(arr, o =>
-                // {
-                //     h.TDAVAR(o.Key, o.name);
-                //     h.TD_("uk-visible@l").T(o.tip)._TD();
-                //     h.TD_().CNY(o.price, true).T("／").T(o.unit)._TD();
-                //     h.TD(Info.Statuses[o.status]);
-                //     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
-                // });
-
-                h.PAGINATION(arr.Length == 40);
             });
         }
 

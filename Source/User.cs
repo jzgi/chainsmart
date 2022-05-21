@@ -47,7 +47,7 @@ namespace Revital
             {ORGLY_SAL, "销售"},
             {ORGLY_LOG, "物流"},
             {ORGLY_FIN, "财务"},
-            {ORGLY_MGT, "超级"},
+            {ORGLY_MGT, "超管"},
         };
 
         internal int id;
@@ -60,6 +60,7 @@ namespace Revital
         internal int orgid;
         internal short orgly;
         internal string idcard;
+        internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -78,6 +79,7 @@ namespace Revital
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
                 s.Get(nameof(idcard), ref idcard);
+                s.Get(nameof(icon), ref icon);
             }
         }
 
@@ -98,6 +100,7 @@ namespace Revital
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
                 s.Put(nameof(idcard), idcard);
+                s.Put(nameof(icon), icon);
             }
         }
 

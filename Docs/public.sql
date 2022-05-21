@@ -54,7 +54,8 @@ create table users
     admly smallint default 0 not null,
     orgid smallint,
     orgly smallint default 0 not null,
-    idcard varchar(18)
+    idcard varchar(18),
+    icon bytea
 )
     inherits (infos);
 
@@ -192,7 +193,7 @@ alter table notes owner to postgres;
 create table purchs
 (
     id bigserial not null
-        constraint supplys_pk
+        constraint purchs_pk
             primary key,
     bizid integer not null,
     srcid integer not null,
@@ -387,4 +388,64 @@ FROM orgs o
                       m.id;
 
 alter table orgs_vw owner to postgres;
+
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
+SELECT u.typ,
+       u.state,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.id,
+       u.tel,
+       u.im,
+       u.credential,
+       u.admly,
+       u.orgid,
+       u.orgly,
+       u.idcard,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
+
+create function first_agg(anyelement, anyelement) returns anyelement
+    immutable
+    strict
+    parallel safe
+    language sql
+as $$
+SELECT $1
+$$;
+
+alter function first_agg(anyelement, anyelement) owner to postgres;
+
+create function last_agg(anyelement, anyelement) returns anyelement
+    immutable
+    strict
+    parallel safe
+    language sql
+as $$
+SELECT $2
+$$;
+
+alter function last_agg(anyelement, anyelement) owner to postgres;
+
+create aggregate first(anyelement) (
+    sfunc = first_agg,
+    stype = anyelement,
+    parallel = safe
+    );
+
+alter aggregate first(anyelement) owner to postgres;
+
+create aggregate last(anyelement) (
+    sfunc = last_agg,
+    stype = anyelement,
+    parallel = safe
+    );
+
+alter aggregate last(anyelement) owner to postgres;
 
