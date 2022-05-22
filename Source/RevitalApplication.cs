@@ -22,8 +22,9 @@ namespace Revital
             // start the concluder thead
             // cycler.Start();
 
-            RegisterComposite<BuyLn>();
-            RegisterComposite<PurchOp>();
+            AddComposite<BuyLn>();
+
+            AddComposite<PurchOp>();
 
             if (args.Length == 0 || args.Contains("main"))
             {
@@ -63,7 +64,7 @@ namespace Revital
 
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, idx");
+                    dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                     return dc.Query<short, Reg>();
                 }, 3600 * 24
             );

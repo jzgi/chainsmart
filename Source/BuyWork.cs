@@ -21,28 +21,13 @@ namespace Revital
         {
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND state > 0  ORDER BY id DESC LIMIT 5 OFFSET 5 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND state > 0  ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
             wc.GivePage(200, h =>
             {
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    // h.TD(o.mrtname, true);
-                    // h.TD(Statuses[o.status]);
-                });
+                h.GRID(arr, o => { h.T(o.name); });
+                h.PAGINATION(arr?.Length > 10);
             });
-        }
-    }
-
-    [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场线上销售动态")]
-    public class MrtlyBuyWork : BuyWork
-    {
-        [Ui("当前", group: 1), Tool(Modal.Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 
@@ -79,7 +64,7 @@ namespace Revital
             });
         }
 
-        [Ui("⌸", "历史订单", group: 2), Tool(Modal.Anchor)]
+        [Ui("以往", "历史订单", group: 2), Tool(Modal.Anchor)]
         public async Task closed(WebContext wc)
         {
             short orgid = wc[-1];
@@ -96,6 +81,17 @@ namespace Revital
                     // h.TD(Statuses[o.status]);
                 });
             });
+        }
+    }
+
+    [UserAuthorize(Org.TYP_MRT, 1)]
+    [Ui("市场线上销售动态")]
+    public class MrtlyBuyWork : BuyWork
+    {
+        [Ui("当前", group: 1), Tool(Modal.Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 }

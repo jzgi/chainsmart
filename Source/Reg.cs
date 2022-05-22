@@ -8,12 +8,14 @@ namespace Revital
 
         public const short
             TYP_PROV = 1,
-            TYP_MRT_DIV = 2;
+            TYP_MRT_DIV = 2,
+            TYP_STK_SEC = 3;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_PROV, "省份"},
             {TYP_MRT_DIV, "市场区划"},
+            {TYP_STK_SEC, "商品分组"},
         };
 
         internal short id;
@@ -49,6 +51,8 @@ namespace Revital
         public bool IsProv => typ == TYP_PROV;
 
         public bool IsMrtDiv => typ == TYP_MRT_DIV;
+
+        public bool IsStkGrp => typ == TYP_STK_SEC;
 
         public override string ToString() => name;
     }

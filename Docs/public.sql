@@ -19,9 +19,9 @@ alter type purchop_type owner to postgres;
 
 create type buyln_type as
 (
-    wareid integer,
+    stockid integer,
     name varchar(12),
-    itemid smallint,
+    wareid smallint,
     price money,
     qty smallint,
     qtyre smallint
@@ -68,12 +68,11 @@ create index users_admly_idx
 create unique index users_im_idx
     on users (im);
 
-create index users_orgid_idx
-    on users (orgid)
-    where (orgid > 0);
-
 create unique index users_tel_idx
     on users (tel);
+
+create index users_orgid_idx
+    on users (orgid);
 
 create table regs
 (

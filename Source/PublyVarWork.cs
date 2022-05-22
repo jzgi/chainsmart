@@ -15,17 +15,23 @@ namespace Revital
     /// </summary>
     public class PublyMrtVarWork : PublyVarWork
     {
-        public async Task @default(WebContext wc)
+        public async Task @default(WebContext wc, int sec)
         {
             int mrtid = wc[0];
             var mrt = GrabObject<int, Org>(mrtid);
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND status > 0 ORDER BY addr");
-            var bizs = await dc.QueryAsync<Org>(p => p.Set(mrtid));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND regid = @2 AND state > 0 ORDER BY addr");
+            var bizs = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
+            if (sec == 0) // when default sect
+            {
+                wc.Subscript = sec = 99;
+                bizs = bizs.AddOf(mrt); // append the supervising market
+            }
             wc.GivePage(200, h =>
             {
+                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.typ == Reg.TYP_STK_SEC)._TOPBAR();
                 h.GRID(bizs, o =>
                 {
                     h.SECTION_("uk-flex uk-card-body");
