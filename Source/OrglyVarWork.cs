@@ -124,15 +124,13 @@ namespace Revital
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
-            CreateWork<MrtlyDailyWork>("daily");
-
             // biz
 
             CreateWork<BizlyPurchWork>("bpurch");
 
-            CreateWork<BizlyStockWork>("stock");
-
             CreateWork<BizlyBuyWork>("bbuy");
+
+            CreateWork<BizlyStockWork>("stock");
 
             CreateWork<BizlyUserWork>("user");
 
@@ -149,28 +147,45 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                h.TOOLBAR(tip: prin.name + "（" + role + "）");
+                // h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
-                h.FORM_("uk-card uk-card-default");
-                h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
-                h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
-                if (org.sprid > 0)
+                h.FORM_("uk-card uk-card-default uk-card-body uk-flex");
+                if (prin.icon)
                 {
-                    var spr = GrabObject<int, Org>(org.sprid);
-                    h.LI_().FIELD("所在市场", spr.name)._LI();
+                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
                 }
-                if (org.ctrties != null)
+                else
                 {
-                    var ctr = GrabObject<int, Org>(org.ctrties[0]);
-                    h.LI_().FIELD("关联中枢", ctr.name)._LI();
+                    h.PIC("/org.webp", circle: true, css: "uk-width-small");
                 }
-                if (org.IsBiz)
-                {
-                    h.LI_().FIELD("委托代办", org.trust)._LI();
-                }
-                h._UL();
+                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
+                h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
+                h.SPAN(org.tel);
+                h.SPAN(User.Typs[prin.typ]);
+                h._DIV();
                 h._FORM();
+
+                
+                // h.FORM_("uk-card uk-card-default");
+                // h.UL_("uk-card-body uk-list uk-list-divider");
+                // h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
+                // h.LI_().FIELD(org.IsMrt ? "地址" : "编址", org.addr)._LI();
+                // if (org.sprid > 0)
+                // {
+                //     var spr = GrabObject<int, Org>(org.sprid);
+                //     h.LI_().FIELD("所在市场", spr.name)._LI();
+                // }
+                // if (org.ctrties != null)
+                // {
+                //     var ctr = GrabObject<int, Org>(org.ctrties[0]);
+                //     h.LI_().FIELD("关联中枢", ctr.name)._LI();
+                // }
+                // if (org.IsBiz)
+                // {
+                //     h.LI_().FIELD("委托代办", org.trust)._LI();
+                // }
+                // h._UL();
+                // h._FORM();
 
                 h.TASKLIST();
             }, false, 3);
@@ -185,19 +200,21 @@ namespace Revital
         {
             CreateWork<PrvlyOrgWork>("org");
 
-            CreateWork<PrvlyDailyWork>("prpt");
+            CreateWork<PrvlyRptWork>("prpt");
 
 
             CreateWork<SrclyWareWork>("ware");
 
-            CreateWork<SrclyStdPurchWork, SrclyFreePurchWork>("spur");
+            CreateWork<SrclyStdPurchWork, SrclyOwnPurchWork>("spur");
 
-            CreateWork<SrclyRptWork>("srpt");
+            CreateWork<SrclyPurchRptWork>("srpt");
 
 
-            CreateWork<CtrlyPurchWork>("cpur");
-            
-            CreateWork<CtrlyRptWork>("crpt");
+            CreateWork<CtrlyPurchRcvWork>("crcv");
+
+            CreateWork<CtrlyPurchDistrWork>("cdistr");
+
+            CreateWork<CtrlyPurchRptWork>("crpt");
 
 
             CreateWork<OrglyClearWork>("clear");
@@ -211,21 +228,37 @@ namespace Revital
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
 
-                h.FORM_("uk-card uk-card-default");
-                h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
-                if (org.addr != null)
+                h.FORM_("uk-card uk-card-default uk-card-body uk-flex");
+                if (prin.icon)
                 {
-                    h.LI_().FIELD("地址", org.addr)._LI();
+                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
                 }
-                if (org.MustTieToCtr)
+                else
                 {
-                    h.LI_().FIELDA("关联中枢", org.ctrties, topOrgs)._LI();
+                    h.PIC("/org.png", circle: true, css: "uk-width-small");
                 }
-                h._UL();
+                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
+                h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
+                h.SPAN(org.tel);
+                h.SPAN(User.Typs[prin.typ]);
+                h._DIV();
                 h._FORM();
+
+
+                // h.FORM_("uk-card uk-card-default");
+                // h.UL_("uk-card-body uk-list uk-list-divider");
+                // h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
+                // if (org.addr != null)
+                // {
+                //     h.LI_().FIELD("地址", org.addr)._LI();
+                // }
+                // if (org.MustTieToCtr)
+                // {
+                //     h.LI_().FIELDA("关联中枢", org.ctrties, topOrgs)._LI();
+                // }
+                // h._UL();
+                // h._FORM();
 
                 h.TASKLIST();
             }, false, 3);

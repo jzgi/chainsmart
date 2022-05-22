@@ -10,7 +10,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场供应链业务", icon: "sign-in")]
+    [Ui("市场线上采购动态")]
     public class MrtlyPurchWork : PurchWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -21,13 +21,13 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
 #if ZHNT
-    [Ui("商户采购订货", icon: "chevron-up")]
+    [Ui("商户线上采购", icon: "pull")]
 #else
-    [Ui("驿站采购订货", icon: "chevron-up")]
+    [Ui("驿站线上采购", icon: "pull")]
 #endif
     public class BizlyPurchWork : PurchWork
     {
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("当前采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -69,7 +69,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新增订货", group: 1), Tool(ButtonOpen)]
+        [Ui("&#128931;", "新增采购", group: 1), Tool(ButtonOpen)]
         public void @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -143,14 +143,14 @@ namespace Revital
     }
 
     [Ui("产源自由销售管理", icon: "star", fork: Org.FRK_FREE)]
-    public class SrclyFreePurchWork : SrclyPurchWork
+    public class SrclyOwnPurchWork : SrclyPurchWork
     {
     }
 
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     [Ui("产源业务报表")]
-    public class SrclyRptWork : PurchWork
+    public class SrclyPurchRptWork : PurchWork
     {
         public async Task @default(WebContext wc, int page)
         {
@@ -158,8 +158,8 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢验收分运管理", icon: "tag")]
-    public class CtrlyPurchWork : PurchWork
+    [Ui("中枢供应验收管理", icon: "sign-in")]
+    public class CtrlyPurchRcvWork : PurchWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -203,9 +203,93 @@ namespace Revital
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_RCVD).T(" GROUP BY prvid, wareid ORDER BY prvid");
+            await dc.QueryAsync(p => p.Set(ctr.id));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.MAIN_();
+                int last = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int prvid);
+                    dc.Let(out int wareid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty);
+
+                    if (prvid != last)
+                    {
+                        var spr = topOrgs[prvid];
+                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
+                    }
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty)._TD();
+                    h._TR();
+
+                    last = prvid;
+                }
+                h._MAIN();
+            });
+        }
+
+        [Ui("▷", "验收入库", group: 1), Tool(ButtonShow)]
+        public async Task rev(WebContext wc, int page)
+        {
+            var prin = (User) wc.Principal;
+            short orgid = wc[-1];
+            short typ = 0;
+            decimal amt = 0;
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("指定统计区间");
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("◁", "取消入库", group: 2), Tool(ButtonShow)]
+        public async Task unrcv(WebContext wc, int page)
+        {
+            var prin = (User) wc.Principal;
+            short orgid = wc[-1];
+            short typ = 0;
+            decimal amt = 0;
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("指定统计区间");
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                wc.GivePane(200); // close dialog
+            }
+        }
+    }
+
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("中枢供应分发管理", icon: "sign-out")]
+    public class CtrlyPurchDistrWork : PurchWork
+    {
+        [Ui("待发", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var ctr = wc[-1].As<Org>();
+            var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = 2 GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_RCVD).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -235,14 +319,14 @@ namespace Revital
             });
         }
 
-        [Ui("已发", group: 3), Tool(Anchor)]
+        [Ui("已发", group: 2), Tool(Anchor)]
         public async Task snt(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = 2 GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_SNT).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -271,12 +355,54 @@ namespace Revital
                 h._MAIN();
             });
         }
+
+        [Ui("▷", "发出", group: 1), Tool(ButtonShow)]
+        public async Task rev(WebContext wc, int page)
+        {
+            var prin = (User) wc.Principal;
+            short orgid = wc[-1];
+            short typ = 0;
+            decimal amt = 0;
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("指定统计区间");
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("◁", "取消发出", group: 2), Tool(ButtonShow)]
+        public async Task unrcv(WebContext wc, int page)
+        {
+            var prin = (User) wc.Principal;
+            short orgid = wc[-1];
+            short typ = 0;
+            decimal amt = 0;
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("指定统计区间");
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                wc.GivePane(200); // close dialog
+            }
+        }
     }
 
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢业务报表")]
-    public class CtrlyRptWork : PurchWork
+    public class CtrlyPurchRptWork : PurchWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)

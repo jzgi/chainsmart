@@ -17,7 +17,7 @@ namespace Revital
             STU_SRC_GOT = 3, // paid
             STU_SRC_RET = 4,
             STU_SRC_SNT = 5,
-            STU_CTR_RCV = 6, // received
+            STU_CTR_RCVD = 6, // received
             STU_CTR_RET = 7, // returned
             STU_CTR_SNT = 8, // sent
             STU_BIZ_RCV = 9;
@@ -30,7 +30,7 @@ namespace Revital
             {STU_SRC_GOT, "商户付款"},
             {STU_SRC_RET, "中库退返"},
             {STU_SRC_SNT, "产源发货"},
-            {STU_CTR_RCV, "暂入中库"},
+            {STU_CTR_RCVD, "暂入中库"},
             {STU_CTR_RET, "商户拒收"},
             {STU_CTR_SNT, "中库运出"},
             {STU_BIZ_RCV, "商户确收"},

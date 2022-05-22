@@ -119,16 +119,15 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场商户管理", icon: "thumbnails")]
+    [Ui("市场下属商户管理", icon: "thumbnails")]
 #else
-    [Ui("市场驿站管理", icon: "thumbnails")]
+    [Ui("市场下属驿站管理", icon: "thumbnails")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            State = Org.TYP_BIZ;
-            CreateVarWork<MrtlyOrgVarWork>(state: Org.TYP_BIZ);
+            CreateVarWork<MrtlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc)
@@ -149,7 +148,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "添加"), Tool(ButtonShow)]
+        [Ui("新建"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -234,7 +233,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "新建产源"), Tool(ButtonShow)]
+        [Ui("＋", "新建产源"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var prv = wc[-1].As<Org>();

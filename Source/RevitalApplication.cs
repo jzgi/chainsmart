@@ -22,6 +22,9 @@ namespace Revital
             // start the concluder thead
             // cycler.Start();
 
+            RegisterComposite<BuyLn>();
+            RegisterComposite<PurchOp>();
+
             if (args.Length == 0 || args.Contains("main"))
             {
                 CacheUp();

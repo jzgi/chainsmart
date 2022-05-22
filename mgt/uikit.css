@@ -1103,9 +1103,18 @@ button.uk-icon:not(:disabled) {
     border-bottom: 1px solid #ccc;
 }
 
+.uk-top-bar.uk-large {
+    height: 4rem;
+    min-height: 4rem;
+}
 
 .uk-top-placeholder {
     height: 3rem;
+    width: 100%;
+}
+
+.uk-top-placeholder.uk-large {
+    height: 4rem;
     width: 100%;
 }
 
@@ -2339,7 +2348,6 @@ form > li,
 
 .uk-card-default {
     margin: 4px;
-    padding: 0;
     background-color: #fff;
     border-radius: 2px;
 }
@@ -2712,12 +2720,12 @@ form > li,
 .uk-label {
     text-transform: uppercase;
     white-space: nowrap;
-    color: #8fc321;
     font-size: 0.875rem;
 }
 
 label.uk-label {
     display: flex;
+    color: #f59604;
     margin-right: 0.25rem;
     width: 5.25rem;
     min-width: 5.25rem;
@@ -5640,29 +5648,26 @@ ul.uk-nav-sub {
 }
 /* Pixel */
 .uk-width-micro {
-    width: 32px;
+    width: 2rem;
 }
 .uk-width-tiny {
-    width: 48px;
+    width: 3rem;
 }
 .uk-width-xsmall {
-    width: 80px !important;
-    min-width: 80px !important;
+    width: 4rem !important;
+    min-width: 4rem !important;
 }
 .uk-width-small {
-    width: 90px !important;
-    min-width: 90px !important;
+    width: 5.25rem !important;
+    min-width: 5.25rem !important;
 }
 .uk-width-medium {
-    width: 120px !important;
-    min-width: 120px !important;
+    width: 7.5rem !important;
+    min-width: 7.5rem !important;
 }
 .uk-width-large {
-    width: 160px !important;
-    min-width: 160px !important;
-}
-.uk-width-xlarge {
-    width: 200px;
+    width: 10rem !important;
+    min-width: 10rem !important;
 }
 
 /* Auto */

@@ -11,9 +11,9 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_BIZ, 1)]
 #if ZHNT
-    [Ui("商户货架设置", icon: "album")]
+    [Ui("商户商品设置", icon: "table")]
 #else
-    [Ui("驿站货架设置", icon: "album")]
+    [Ui("驿站商品设置", icon: "table")]
 #endif
     public class BizlyStockWork : StockWork
     {
@@ -22,7 +22,7 @@ namespace Revital
             CreateVarWork<BizlyStockVarWork>();
         }
 
-        [Ui("在销售", group: 1), Tool(Modal.Anchor)]
+        [Ui("在售", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var biz = wc[-1].As<Org>();
@@ -43,7 +43,7 @@ namespace Revital
             });
         }
 
-        [Ui("⌹", "已下架", group: 2), Tool(Modal.Anchor)]
+        [Ui("下架", group: 2), Tool(Modal.Anchor)]
         public async Task off(WebContext wc, int page)
         {
             var biz = wc[-1].As<Org>();
@@ -64,7 +64,7 @@ namespace Revital
             });
         }
 
-        [Ui("✚", "添加商品", group: 1), Tool(Modal.ButtonOpen)]
+        [Ui("&#128931;", "添加商品", group: 1), Tool(Modal.ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var biz = wc[-1].As<Org>();

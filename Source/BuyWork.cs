@@ -9,6 +9,7 @@ namespace Revital
     {
     }
 
+    [Ui("我的购买", icon: "tag")]
     public class MyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -24,7 +25,6 @@ namespace Revital
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
@@ -36,7 +36,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场零售业务", icon: "sign-out")]
+    [Ui("市场线上销售动态")]
     public class MrtlyBuyWork : BuyWork
     {
         [Ui("当前", group: 1), Tool(Modal.Anchor)]
@@ -49,9 +49,9 @@ namespace Revital
 
     [UserAuthorize(orgly: ORGLY_OPN)]
 #if ZHNT
-    [Ui("商户零售订单", icon: "chevron-down")]
+    [Ui("商户线上销售", icon: "push")]
 #else
-    [Ui("驿站零售订单", icon: "chevron-down")]
+    [Ui("驿站线上销售", icon: "push")]
 #endif
     public class BizlyBuyWork : BuyWork
     {
