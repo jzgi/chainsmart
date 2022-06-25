@@ -1,8 +1,8 @@
 using System;
 using System.Text;
-using Chainly;
-using Chainly.Web;
-using static Chainly.CryptoUtility;
+using CoChain;
+using CoChain.Web;
+using static CoChain.CryptoUtility;
 
 namespace Revital
 {

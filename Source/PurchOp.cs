@@ -1,5 +1,5 @@
 ﻿using System;
-using Chainly;
+using CoChain;
 
 namespace Revital
 {

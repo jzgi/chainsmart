@@ -1,8 +1,8 @@
-﻿using Chainly.Web;
+﻿using CoChain.Web;
 
 namespace Revital
 {
-    public class FedService : Chainly.Nodal.FedService
+    public class FedService : CoChain.Nodal.FedService
     {
         public override void dir(WebContext wc)
         {

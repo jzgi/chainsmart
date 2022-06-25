@@ -3,10 +3,10 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using Chainly;
-using Chainly.Web;
-using static Chainly.CryptoUtility;
-using static Chainly.Web.Application;
+using CoChain;
+using CoChain.Web;
+using static CoChain.CryptoUtility;
+using static CoChain.Web.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace Revital

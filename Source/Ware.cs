@@ -1,5 +1,5 @@
 ﻿using System;
-using Chainly;
+using CoChain;
 
 namespace Revital
 {
@@ -13,17 +13,13 @@ namespace Revital
     {
         public static readonly Ware Empty = new Ware();
 
-        public const short
-            MOD_NULL = 0,
-            MOD_AUTHREQ = 1,
-            MOD_GROUP = 2;
-
-        public static readonly Map<short, string> Mods = new Map<short, string>
+        public new static readonly Map<short, string> States = new Map<short, string>
         {
-            {MOD_NULL, null},
-            {MOD_AUTHREQ, "授权"},
-            {MOD_GROUP, "团购"},
+            {STA_DISABLED, "停售"},
+            {STA_ENABLED, "在售"},
+            {STA_HOT, "冲量"},
         };
+
 
         public static readonly Map<short, string> Stores = new Map<short, string>
         {
@@ -51,15 +47,14 @@ namespace Revital
         internal short min;
         internal short max;
         internal short step;
-        internal bool toagt; // 
+        internal bool agt; // 
 
         // when changed to group-book mode
 
-        internal DateTime starton;
-        internal DateTime endon;
+        internal DateTime expected;
         internal decimal off;
         internal short threshold;
-        internal short present;
+        internal short addup;
 
         // extra
         internal int prvid;
@@ -81,7 +76,7 @@ namespace Revital
             s.Get(nameof(ext), ref ext);
             s.Get(nameof(store), ref store);
             s.Get(nameof(duration), ref duration);
-            s.Get(nameof(toagt), ref toagt);
+            s.Get(nameof(agt), ref agt);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
@@ -91,11 +86,10 @@ namespace Revital
             s.Get(nameof(max), ref max);
             s.Get(nameof(step), ref step);
 
-            s.Get(nameof(starton), ref starton);
-            s.Get(nameof(endon), ref endon);
+            s.Get(nameof(expected), ref expected);
             s.Get(nameof(off), ref off);
             s.Get(nameof(threshold), ref threshold);
-            s.Get(nameof(present), ref present);
+            s.Get(nameof(addup), ref addup);
 
             if ((msk & EXTRA) == EXTRA)
             {
@@ -120,7 +114,7 @@ namespace Revital
             s.Put(nameof(ext), ext);
             s.Put(nameof(store), store);
             s.Put(nameof(duration), duration);
-            s.Put(nameof(toagt), toagt);
+            s.Put(nameof(agt), agt);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
@@ -130,11 +124,10 @@ namespace Revital
             s.Put(nameof(max), max);
             s.Put(nameof(step), step);
 
-            s.Put(nameof(starton), starton);
-            s.Put(nameof(endon), endon);
+            s.Put(nameof(expected), expected);
             s.Put(nameof(off), off);
             s.Put(nameof(threshold), threshold);
-            s.Put(nameof(present), present);
+            s.Put(nameof(addup), addup);
         }
 
         public int Key => id;

@@ -1,5 +1,5 @@
 using System;
-using Chainly;
+using CoChain;
 
 namespace Revital
 {
@@ -10,6 +10,7 @@ namespace Revital
     {
         public static readonly Purch Empty = new Purch();
 
+        
         // states
         public const short
             STU_BIZ_ = 0,
@@ -45,10 +46,10 @@ namespace Revital
         internal int ctrid;
         internal int mrtid;
 
-        internal short mode;
         internal int wareid;
         internal short itemid;
 
+        internal DateTime targeted;
         internal string unit;
         internal short unitx;
         internal decimal price;
@@ -83,7 +84,7 @@ namespace Revital
                 s.Get(nameof(prvid), ref prvid);
                 s.Get(nameof(srcid), ref srcid);
 
-                s.Get(nameof(mode), ref mode);
+                s.Get(nameof(targeted), ref targeted);
                 s.Get(nameof(wareid), ref wareid);
                 s.Get(nameof(itemid), ref itemid);
 
@@ -119,7 +120,7 @@ namespace Revital
                 s.Put(nameof(prvid), prvid);
                 s.Put(nameof(srcid), srcid);
 
-                s.Put(nameof(mode), mode);
+                s.Put(nameof(targeted), targeted);
                 s.Put(nameof(wareid), wareid);
                 s.Put(nameof(itemid), itemid);
 

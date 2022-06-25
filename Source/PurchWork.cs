@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using Chainly.Web;
-using static Chainly.Web.Modal;
-using static Chainly.Nodal.Store;
+using CoChain.Web;
+using static CoChain.Web.Modal;
+using static CoChain.Nodal.Store;
 
 namespace Revital
 {

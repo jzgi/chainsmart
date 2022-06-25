@@ -1,16 +1,15 @@
 using System;
 using System.Threading.Tasks;
-using Chainly;
-using Chainly.Web;
-using static Chainly.Web.Modal;
-using static Chainly.Nodal.Store;
+using CoChain;
+using CoChain.Web;
+using static CoChain.Web.Modal;
+using static CoChain.Nodal.Store;
 
 namespace Revital
 {
     public abstract class WareWork : WebWork
     {
         public const string ERR = "table";
-
     }
 
     public class PublyWareWork : WareWork
@@ -25,7 +24,6 @@ namespace Revital
     [Ui("产源产品设置", icon: ERR)]
     public class SrclyWareWork : WareWork
     {
-
         protected override void OnCreate()
         {
             CreateVarWork<SrclyWareVarWork>();
@@ -57,7 +55,7 @@ namespace Revital
         }
 
 
-        [Ui("✚", "新建产品"), Tool(ButtonShow)]
+        [Ui("新建", "新建产品"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -80,7 +78,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Ware.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Ware.Durations, required: true)._LI();
-                    h.LI_().CHECKBOX("只供给代理", nameof(o.toagt), o.toagt).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -105,7 +103,7 @@ namespace Revital
                 });
                 var item = items[m.itemid];
                 m.typ = item.typ;
-                m.name = item.name + '（' + m.ext + '）';
+                m.name = item.name + '－' + m.ext;
 
                 // insert
                 using var dc = NewDbContext();

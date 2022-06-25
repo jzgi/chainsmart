@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using Chainly;
-using Chainly.Web;
+using CoChain;
+using CoChain.Web;
 using static Revital.WeChatUtility;
-using static Chainly.Nodal.Store;
+using static CoChain.Nodal.Store;
 
 namespace Revital
 {

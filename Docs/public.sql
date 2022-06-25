@@ -290,9 +290,9 @@ create table items
 )
     inherits (infos);
 
-comment on table items is 'standard items';
+comment on table mops is 'standard items';
 
-alter table items owner to postgres;
+alter table mops owner to postgres;
 
 create table wares
 (
@@ -304,7 +304,7 @@ create table wares
             references orgs,
     itemid integer
         constraint wares_itemid_fk
-            references items,
+            references mops,
     ext varchar(10),
     store smallint,
     duration smallint,

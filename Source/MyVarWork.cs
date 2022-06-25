@@ -1,9 +1,9 @@
 using System.Threading.Tasks;
-using Chainly;
-using Chainly.Web;
+using CoChain;
+using CoChain.Web;
 using static System.String;
-using static Chainly.Web.Modal;
-using static Chainly.Nodal.Store;
+using static CoChain.Web.Modal;
+using static CoChain.Nodal.Store;
 
 namespace Revital
 {
