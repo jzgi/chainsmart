@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Daily : Info
+    public class Daily : Entity
     {
         public static readonly Daily Empty = new Daily();
 

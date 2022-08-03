@@ -6,7 +6,7 @@ using CoChain.Web;
 using static CoChain.Web.Appear;
 using static CoChain.Web.Modal;
 using static Revital.WeChatUtility;
-using static CoChain.Web.Application;
+using static CoChain.Application;
 using static CoChain.Nodal.Store;
 
 namespace Revital

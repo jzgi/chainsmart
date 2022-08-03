@@ -69,7 +69,7 @@ namespace Revital
                 {
                     unitx = 1,
                     min = 1, max = 1, step = 1, cap = 5000,
-                    state = Info.STA_DISABLED,
+                    state = Entity.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -78,7 +78,7 @@ namespace Revital
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Ware.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Ware.Durations, required: true)._LI();
-                    h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
@@ -93,7 +93,7 @@ namespace Revital
             }
             else // POST
             {
-                const short msk = Info.BORN;
+                const short msk = Entity.BORN;
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Ware
                 {

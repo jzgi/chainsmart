@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard category.
     /// </summary>
-    public class Cat : Info, IKeyable<short>
+    public class Cat : Entity, IKeyable<short>
     {
         public static readonly Cat Empty = new Cat();
 

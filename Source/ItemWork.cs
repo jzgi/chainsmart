@@ -48,7 +48,7 @@ namespace Revital
                 {
                     h.TDCHECK(o.id);
                     h.TDAVAR(o.Key, o.name);
-                    h.TD(o.state == 1 ? null : Info.States[o.state]);
+                    h.TD(o.state == 1 ? null : Entity.States[o.state]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -69,7 +69,7 @@ namespace Revital
                     typ = (short) typ,
                     created = DateTime.Now,
                     creator = prin.name,
-                    state = Info.STA_ENABLED
+                    state = Entity.STA_ENABLED
                 };
                 wc.GivePane(200, h =>
                 {
@@ -78,13 +78,13 @@ namespace Revital
                     h.LI_().TEXT("品目名", nameof(m.name), m.name, max: 10, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("基本单位", nameof(m.unit), m.unit, min: 1, max: 4, required: true).TEXT("单位脚注", nameof(m.unitip), m.unitip, max: 8)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Info.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short proj = Info.BORN;
+                const short proj = Entity.BORN;
                 var m = await wc.ReadObjectAsync(0, new Item
                 {
                     typ = (short) typ,

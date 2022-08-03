@@ -9,7 +9,7 @@ using static System.Data.IsolationLevel;
 
 namespace Revital
 {
-    public class RevitalApplication : Application
+    public class RevitalApp : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -26,17 +26,7 @@ namespace Revital
 
             AddComposite<PurchOp>();
 
-            if (args.Length == 0 || args.Contains("main"))
-            {
-                CacheUp();
-
-                CreateService<WwwService>("www");
-
-                CreateService<MgtService>("mgt");
-
-                CreateService<FedService>("fed");
-            }
-            else
+            if (args.Contains("proxy"))
             {
                 if (args.Contains("pub-p"))
                 {
@@ -47,6 +37,16 @@ namespace Revital
                 {
                     CreateService<ProxyService>("mgt");
                 }
+            }
+            else
+            {
+                CacheUp();
+
+                CreateService<WwwService>("www");
+
+                CreateService<MgtService>("mgt");
+
+                CreateService<FedService>("fed");
             }
 
             await StartAsync();

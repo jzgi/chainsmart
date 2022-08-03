@@ -3,7 +3,7 @@ using System.Data;
 using System.Threading.Tasks;
 using CoChain;
 using CoChain.Web;
-using static CoChain.Web.Application;
+using static CoChain.Application;
 using static CoChain.Nodal.Store;
 using static CoChain.Web.Modal;
 

@@ -3,7 +3,7 @@ using CoChain;
 
 namespace Revital
 {
-    public class User : Info, IKeyable<int>
+    public class User : Entity, IKeyable<int>
     {
         public static readonly User Empty = new User();
 

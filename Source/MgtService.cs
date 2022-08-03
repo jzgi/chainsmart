@@ -29,7 +29,7 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("供应链分区");
+                h.FIELDSUL_("供应链版块");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
@@ -40,7 +40,7 @@ namespace Revital
                 }
                 h._FIELDSUL();
 
-                h.FIELDSUL_("管理分组");
+                h.FIELDSUL_("管理分类");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);
@@ -169,7 +169,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    state = Info.STA_ENABLED,
+                    state = Entity.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
@@ -206,7 +206,7 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Info.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Entity.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {

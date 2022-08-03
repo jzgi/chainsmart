@@ -89,7 +89,7 @@ namespace Revital
                     h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("单位倍比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).SELECT("状态", nameof(o.state), o.state, Info.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL();
                     h._FORM();
                 });

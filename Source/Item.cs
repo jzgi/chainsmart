@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard item of product or service.
     /// </summary>
-    public class Item : Info, IKeyable<short>
+    public class Item : Entity, IKeyable<short>
     {
         public static readonly Item Empty = new Item();
 

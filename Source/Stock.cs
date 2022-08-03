@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class Stock : Info, IKeyable<int>
+    public class Stock : Entity, IKeyable<int>
     {
         public static readonly Stock Empty = new Stock();
 

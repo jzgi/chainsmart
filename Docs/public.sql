@@ -41,7 +41,7 @@ create table infos
     adapter varchar(10)
 );
 
-alter table infos owner to postgres;
+alter table entities owner to postgres;
 
 create table users
 (
@@ -57,7 +57,7 @@ create table users
     idcard varchar(18),
     icon bytea
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table users owner to postgres;
 
@@ -82,11 +82,11 @@ create table regs
     idx smallint,
     num smallint
 )
-    inherits (infos);
+    inherits (entities);
 
-comment on column regs.num is 'sub resources';
+comment on column scenes.num is 'sub resources';
 
-alter table regs owner to postgres;
+alter table scenes owner to postgres;
 
 create table orgs
 (
@@ -101,7 +101,7 @@ create table orgs
     trust boolean,
     regid smallint
         constraint orgs_regid_fk
-            references regs
+            references scenes
             on update cascade,
     addr varchar(30),
     x double precision,
@@ -113,7 +113,7 @@ create table orgs
     ctrties integer[],
     img bytea
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table orgs owner to postgres;
 
@@ -130,7 +130,7 @@ create table dailys
     amt money,
     qty integer
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table dailys owner to postgres;
 
@@ -164,7 +164,7 @@ create table peers_
     weburl varchar(50),
     secret varchar(16)
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table peers_ owner to postgres;
 
@@ -173,7 +173,7 @@ create table accts_
     no varchar(20),
     v integer
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table accts_ owner to postgres;
 
@@ -183,7 +183,7 @@ create table notes
     fromid integer,
     toid integer
 )
-    inherits (infos);
+    inherits (entities);
 
 comment on table notes is 'annoucements and notices';
 
@@ -213,7 +213,7 @@ create table purchs
     ops purchop_type[],
     status smallint
 )
-    inherits (infos);
+    inherits (entities);
 
 comment on column purchs.unitx is 'times of standard unit';
 
@@ -240,7 +240,7 @@ create table buys
     payre money,
     status smallint
 )
-    inherits (infos);
+    inherits (entities);
 
 comment on table buys is 'customer buys';
 
@@ -260,7 +260,7 @@ create table clears
     pay integer,
     status smallint
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table clears owner to postgres;
 
@@ -271,7 +271,7 @@ create table cats
     constraint cats_pk
         primary key (typ)
 )
-    inherits (infos);
+    inherits (entities);
 
 comment on column cats.num is 'sub resources';
 
@@ -288,11 +288,11 @@ create table items
     constraint items_typ_fk
         foreign key (typ) references cats
 )
-    inherits (infos);
+    inherits (entities);
 
-comment on table mops is 'standard items';
+comment on table mtasks is 'standard items';
 
-alter table mops owner to postgres;
+alter table mtasks owner to postgres;
 
 create table wares
 (
@@ -304,7 +304,7 @@ create table wares
             references orgs,
     itemid integer
         constraint wares_itemid_fk
-            references mops,
+            references mtasks,
     ext varchar(10),
     store smallint,
     duration smallint,
@@ -326,7 +326,7 @@ create table wares
     constraint wares_typ_fk
         foreign key (typ) references cats
 )
-    inherits (infos);
+    inherits (entities);
 
 comment on table wares is 'sellable wares by sources';
 
@@ -352,7 +352,7 @@ create table stocks
     max smallint,
     step smallint
 )
-    inherits (infos);
+    inherits (entities);
 
 alter table stocks owner to postgres;
 

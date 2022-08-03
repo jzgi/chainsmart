@@ -59,7 +59,7 @@ namespace Revital
         [Ui("运行参数"), Tool(Modal.ButtonOpen)]
         public async Task setg(WebContext wc, int cmd)
         {
-            var ext = Application.Ext;
+            var ext = Application.Prog;
 
             decimal rtlpct = ext[nameof(rtlpct)];
             decimal suppct = ext[nameof(suppct)];

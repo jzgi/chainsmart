@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Note : Info
+    public class Note : Entity
     {
         public static readonly Note Empty = new Note();
 

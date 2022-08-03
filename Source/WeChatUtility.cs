@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using CoChain;
 using CoChain.Web;
 using static CoChain.CryptoUtility;
-using static CoChain.Web.Application;
+using static CoChain.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace Revital
@@ -36,7 +36,7 @@ namespace Revital
 
         static WeChatUtility()
         {
-            var s = Ext;
+            var s = Prog;
             s.Get(nameof(url), ref url);
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);

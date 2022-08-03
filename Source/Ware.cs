@@ -9,7 +9,7 @@ namespace Revital
     /// <remarks>
     /// It can be upgraded to the group-purchase mode and then back. 
     /// </remarks>
-    public class Ware : Info, IKeyable<int>
+    public class Ware : Entity, IKeyable<int>
     {
         public static readonly Ware Empty = new Ware();
 

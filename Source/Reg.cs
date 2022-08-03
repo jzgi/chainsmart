@@ -2,7 +2,7 @@
 
 namespace Revital
 {
-    public class Reg : Info, IKeyable<short>
+    public class Reg : Entity, IKeyable<short>
     {
         public static readonly Reg Empty = new Reg();
 

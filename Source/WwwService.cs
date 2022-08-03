@@ -215,7 +215,7 @@ namespace Revital
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    state = Info.STA_ENABLED,
+                    state = Entity.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
@@ -252,7 +252,7 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Info.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Entity.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
@@ -296,7 +296,7 @@ namespace Revital
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Info.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Entity.STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {

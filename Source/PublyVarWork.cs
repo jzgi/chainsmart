@@ -86,7 +86,7 @@ namespace Revital
             topOrgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => lst.Add(v.id));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty, Info.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
+            dc.Sql("SELECT ").collst(Ware.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
             var arr = await dc.QueryAsync<Ware>();
             wc.GivePage(200, h =>
             {

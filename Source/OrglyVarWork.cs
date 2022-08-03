@@ -89,7 +89,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.state), org.state, Info.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

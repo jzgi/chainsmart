@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A purchase process to product.
     /// </summary>
-    public class Purch : Info, IKeyable<int>, IFlowable
+    public class Purch : Entity, IKeyable<int>, IFlowable
     {
         public static readonly Purch Empty = new Purch();
 
