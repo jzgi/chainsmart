@@ -17,9 +17,9 @@ namespace Revital
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<PrvlyWork>("prvly"); // for provision sector / source / center
+            CreateWork<PrvnlyWork>("prvly"); // for provision sector / source / center
 
-            CreateWork<MrtlyWork>("mrtly"); // for markets and bizs
+            CreateWork<MartlyWork>("mrtly"); // for markets and bizs
         }
 
         public void @default(WebContext wc, int cmd)
@@ -33,7 +33,7 @@ namespace Revital
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
-                    if (org.IsCtr)
+                    if (org.IsCenter)
                     {
                         h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip).T("组")._A()._LI();
                     }

@@ -9,7 +9,7 @@ using static System.Data.IsolationLevel;
 
 namespace Revital
 {
-    public class RevitalApp : Application
+    public class RevitalApplication : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -24,7 +24,7 @@ namespace Revital
 
             AddComposite<BuyLn>();
 
-            AddComposite<PurchOp>();
+            AddComposite<BookOp>();
 
             if (args.Contains("proxy"))
             {
@@ -92,8 +92,8 @@ namespace Revital
 
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
-                    return dc.Query<int, Ware>(p => p.Set(orgid));
+                    dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
+                    return dc.Query<int, Product>(p => p.Set(orgid));
                 }, 60 * 15
             );
         }

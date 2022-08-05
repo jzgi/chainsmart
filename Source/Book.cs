@@ -4,90 +4,103 @@ using CoChain;
 namespace Revital
 {
     /// <summary>
-    /// A purchase process to product.
+    /// A product booking record & process.
     /// </summary>
-    public class Purch : Entity, IKeyable<int>, IFlowable
+    public class Book : Entity, IKeyable<int>, IFlowable
     {
-        public static readonly Purch Empty = new Purch();
+        public static readonly Book Empty = new Book();
 
-        
         // states
         public const short
-            STU_BIZ_ = 0,
-            STU_BIZ_REF = 1, // refund
+            STU_SHP_ = 0, // shop
+            STU_SHP_REF = 1, // refund
             STU_SRC_GOT = 3, // paid
             STU_SRC_RET = 4,
             STU_SRC_SNT = 5,
             STU_CTR_RCVD = 6, // received
             STU_CTR_RET = 7, // returned
             STU_CTR_SNT = 8, // sent
-            STU_BIZ_RCV = 9;
+            STU_SHP_RCV = 9;
 
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {0, null},
-            {STU_BIZ_REF, "产源退款"},
+            {STU_SHP_REF, "产源退款"},
             {STU_SRC_GOT, "商户付款"},
             {STU_SRC_RET, "中库退返"},
             {STU_SRC_SNT, "产源发货"},
             {STU_CTR_RCVD, "暂入中库"},
             {STU_CTR_RET, "商户拒收"},
             {STU_CTR_SNT, "中库运出"},
-            {STU_BIZ_RCV, "商户确收"},
+            {STU_SHP_RCV, "商户确收"},
         };
 
 
         internal int id;
 
-        internal int bizid;
-        internal int prvid;
-        internal int srcid;
-        internal int ctrid;
-        internal int mrtid;
+        internal int shpid; // shop
+        internal string shpop;
+        internal DateTime shpon;
+        internal int prvid; // provision
+        internal string prvop;
+        internal DateTime prvon;
+        internal int srcid; // source
+        internal string srcop;
+        internal DateTime srcon;
+        internal int ctrid; // center
+        internal string ctrop;
+        internal DateTime ctron;
+        internal int mrtid; // market
+        internal string mrtop;
+        internal DateTime mrton;
 
-        internal int wareid;
+        internal int productid;
         internal short itemid;
 
-        internal DateTime targeted;
+        internal DateTime shipat;
         internal string unit;
         internal short unitx;
         internal decimal price;
         internal decimal off;
         internal short qty;
-        internal decimal pay;
         internal short qtyre; // qty reduced
+        internal decimal pay;
         internal decimal payre; // pay refunded
 
-        // workflow
-        internal PurchOp[] ops;
         internal short status;
 
 
-        #region FOR-BUY
-
-        #endregion
-
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short msk = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BORN) == BORN)
+            if ((msk & BORN) == BORN)
             {
-                s.Get(nameof(bizid), ref bizid);
+                s.Get(nameof(shpid), ref shpid);
+                s.Get(nameof(shpop), ref shpop);
+                s.Get(nameof(shpon), ref shpon);
                 s.Get(nameof(mrtid), ref mrtid);
+                s.Get(nameof(mrtop), ref mrtop);
+                s.Get(nameof(mrton), ref mrton);
                 s.Get(nameof(ctrid), ref ctrid);
+                s.Get(nameof(ctrop), ref ctrop);
+                s.Get(nameof(ctron), ref ctron);
                 s.Get(nameof(prvid), ref prvid);
+                s.Get(nameof(prvop), ref prvop);
+                s.Get(nameof(prvon), ref prvon);
                 s.Get(nameof(srcid), ref srcid);
+                s.Get(nameof(srcop), ref srcop);
+                s.Get(nameof(srcon), ref srcon);
 
-                s.Get(nameof(targeted), ref targeted);
-                s.Get(nameof(wareid), ref wareid);
+                s.Get(nameof(productid), ref productid);
                 s.Get(nameof(itemid), ref itemid);
 
+                s.Get(nameof(shipat), ref shipat);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
@@ -95,35 +108,45 @@ namespace Revital
                 s.Get(nameof(qty), ref qty);
                 s.Get(nameof(pay), ref pay);
             }
-            if ((proj & LATER) == LATER)
+            if ((msk & LATER) == LATER)
             {
                 s.Get(nameof(qtyre), ref qtyre);
                 s.Get(nameof(payre), ref payre);
-                s.Get(nameof(ops), ref ops);
                 s.Get(nameof(status), ref status);
             }
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BORN) == BORN)
+            if ((msk & BORN) == BORN)
             {
-                s.Put(nameof(bizid), bizid);
+                s.Put(nameof(shpid), shpid);
+                s.Put(nameof(shpop), shpop);
+                s.Put(nameof(shpon), shpon);
                 s.Put(nameof(mrtid), mrtid);
+                s.Put(nameof(mrtop), mrtop);
+                s.Put(nameof(mrton), mrton);
                 s.Put(nameof(ctrid), ctrid);
+                s.Put(nameof(ctrop), ctrop);
+                s.Put(nameof(ctron), ctron);
                 s.Put(nameof(prvid), prvid);
+                s.Put(nameof(prvop), prvop);
+                s.Put(nameof(prvon), prvon);
                 s.Put(nameof(srcid), srcid);
+                s.Put(nameof(srcop), srcop);
+                s.Put(nameof(srcon), srcon);
 
-                s.Put(nameof(targeted), targeted);
-                s.Put(nameof(wareid), wareid);
+
+                s.Put(nameof(productid), productid);
                 s.Put(nameof(itemid), itemid);
 
+                s.Put(nameof(shipat), shipat);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
@@ -131,11 +154,10 @@ namespace Revital
                 s.Put(nameof(qty), qty);
                 s.Put(nameof(pay), pay);
             }
-            if ((proj & LATER) == LATER)
+            if ((msk & LATER) == LATER)
             {
                 s.Put(nameof(qtyre), qtyre);
                 s.Put(nameof(payre), payre);
-                s.Put(nameof(ops), ops);
                 s.Put(nameof(status), status);
             }
         }

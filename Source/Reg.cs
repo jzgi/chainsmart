@@ -2,25 +2,30 @@
 
 namespace Revital
 {
-    public class Reg : Entity, IKeyable<short>
+    /// <summary>
+    /// A geographic or spatial region.
+    /// </summary>
+    public class Reg : Entity, IKeyable<short>, IDirectory
     {
         public static readonly Reg Empty = new Reg();
 
         public const short
-            TYP_PROV = 1,
-            TYP_MRT_DIV = 2,
-            TYP_STK_SEC = 3;
+            TYP_PROVINCE = 1,
+            TYP_CITY = 2,
+            TYP_SECTION = 3;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PROV, "省份"},
-            {TYP_MRT_DIV, "市场区划"},
-            {TYP_STK_SEC, "商品分组"},
+            {TYP_PROVINCE, "省份"},
+            {TYP_CITY, "地市"},
+            {TYP_SECTION, "分区"},
         };
 
         internal short id;
+
         internal short idx;
-        internal short num; // number of resources contained
+
+        internal short num; // number of sub-resources
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -48,11 +53,15 @@ namespace Revital
 
         public short Key => id;
 
-        public bool IsProv => typ == TYP_PROV;
+        public short Idx => idx;
 
-        public bool IsMrtDiv => typ == TYP_MRT_DIV;
+        public short Num => num;
 
-        public bool IsStkGrp => typ == TYP_STK_SEC;
+        public bool IsProvince => typ == TYP_PROVINCE;
+
+        public bool IsCity => typ == TYP_CITY;
+
+        public bool IsSection => typ == TYP_SECTION;
 
         public override string ToString() => name;
     }

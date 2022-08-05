@@ -4,7 +4,7 @@ using CoChain.Web;
 namespace Revital
 {
     /// <summary>
-    /// A generic data model for organizational unit.
+    /// An organizational unit.
     /// </summary>
     public class Org : Entity, IKeyable<int>, IForkable
     {
@@ -12,23 +12,19 @@ namespace Revital
 
         public const short
             TYP_SPR = 0b01000, // supervisor
-            TYP_BIZ = 0b00001, // business
+            TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
-            TYP_DST = 0b00100, // distribution
-            TYP_MRT = TYP_SPR | TYP_BIZ, // market
+            TYP_DST = 0b00100, // distributor
+            TYP_MRT = TYP_SPR | TYP_SHP, // market
             TYP_PRV = TYP_SPR | TYP_SRC, // provision sector
             TYP_CTR = TYP_SPR | TYP_SRC | TYP_DST; // provision center
-
-        public const short
-            FRK_STD = 1, // center 
-            FRK_FREE = 2; // own
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
 #if ZHNT
-            {TYP_BIZ, "商户"},
+            {TYP_SHP, "商户"},
 #else
-            {TYP_BIZ, "驿站"},
+            {TYP_SHP, "驿站"},
 #endif
             {TYP_SRC, "产源"},
             {TYP_MRT, "市场"},
@@ -36,10 +32,14 @@ namespace Revital
             {TYP_CTR, "中枢"},
         };
 
+        public const short
+            FRK_STD = 1, // standard, center-based 
+            FRK_OWN = 2; // on own
+
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
-            {FRK_STD, "标准（经由中枢）"},
-            {FRK_FREE, "自由（自行安排）"},
+            {FRK_STD, "标准运控"},
+            {FRK_OWN, "自行安排"},
         };
 
         // id
@@ -62,8 +62,8 @@ namespace Revital
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal int[] ctrties; // tied centers 
-        internal bool img;
+        internal int[] ctrties; // center ties, can be null 
+        internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -92,7 +92,7 @@ namespace Revital
                 s.Get(nameof(mgrname), ref mgrname);
                 s.Get(nameof(mgrtel), ref mgrtel);
                 s.Get(nameof(mgrim), ref mgrim);
-                s.Get(nameof(img), ref img);
+                s.Get(nameof(icon), ref icon);
             }
         }
 
@@ -125,7 +125,7 @@ namespace Revital
                 s.Put(nameof(mgrname), mgrname);
                 s.Put(nameof(mgrtel), mgrtel);
                 s.Put(nameof(mgrim), mgrim);
-                s.Put(nameof(img), img);
+                s.Put(nameof(icon), icon);
             }
         }
 
@@ -139,15 +139,15 @@ namespace Revital
 
         public string Im => mgrim;
 
-        public bool IsSpr => (typ & TYP_SPR) == TYP_SPR;
+        public bool HasSuper => (typ & TYP_SPR) == TYP_SPR;
 
-        public bool IsPrv => typ == TYP_PRV;
+        public bool IsProvision => typ == TYP_PRV;
 
-        public bool IsOfPrv => (typ & TYP_PRV) == TYP_PRV;
+        public bool HasProvision => (typ & TYP_PRV) == TYP_PRV;
 
         public bool IsPrvWith(int ctrid)
         {
-            if (!IsPrv || ctrties == null)
+            if (!IsProvision || ctrties == null)
             {
                 return false;
             }
@@ -158,29 +158,27 @@ namespace Revital
             return false;
         }
 
-        public bool IsOfSector => (typ & TYP_PRV) == TYP_PRV;
-
         public bool IsSource => typ == TYP_SRC;
 
-        public bool IsBiz => typ == TYP_BIZ;
+        public bool HasSource => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsOfBiz => (typ & TYP_BIZ) == TYP_BIZ;
+        public bool IsShop => typ == TYP_SHP;
 
-        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
+        public bool HasShop => (typ & TYP_SHP) == TYP_SHP;
 
-        public bool IsMrt => typ == TYP_MRT;
+        public bool IsMarket => typ == TYP_MRT;
 
-        public bool IsCtr => typ == TYP_CTR;
+        public bool IsCenter => typ == TYP_CTR;
 
-        public bool HasXy => IsMrt || IsSource || IsCtr;
+        public bool HasXy => IsMarket || IsSource || IsCenter;
 
         public int ToCtrId => ctrties?[0] ?? 0;
 
-        public bool MustTieToCtr => IsSpr && !IsCtr;
+        public bool MustTieToCtr => HasSuper && !IsCenter;
 
-        public string Shop => IsMrt ? tip : name;
+        public string ShopName => IsMarket ? tip : name;
 
-        public string ShopLabel => IsMrt ? "体验" : addr;
+        public string ShopLabel => IsMarket ? "体验" : addr;
 
         public override string ToString() => name;
 

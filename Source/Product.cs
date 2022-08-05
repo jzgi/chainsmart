@@ -4,14 +4,11 @@ using CoChain;
 namespace Revital
 {
     /// <summary>
-    /// A sellable ware model.
+    /// A bookable product from certain source. It can be upgraded to the group-book mode and then back.
     /// </summary>
-    /// <remarks>
-    /// It can be upgraded to the group-purchase mode and then back. 
-    /// </remarks>
-    public class Ware : Entity, IKeyable<int>
+    public class Product : Entity, IKeyable<int>
     {
-        public static readonly Ware Empty = new Ware();
+        public static readonly Product Empty = new Product();
 
         public new static readonly Map<short, string> States = new Map<short, string>
         {
@@ -37,6 +34,7 @@ namespace Revital
         internal string ext;
         internal short store;
         internal short duration;
+        internal bool agt; // agent only 
         internal string unit;
         internal short unitx;
 
@@ -47,16 +45,16 @@ namespace Revital
         internal short min;
         internal short max;
         internal short step;
-        internal bool agt; // 
 
         // when changed to group-book mode
 
-        internal DateTime expected;
+        internal DateTime shipat;
         internal decimal off;
         internal short threshold;
         internal short addup;
 
         // extra
+        [NonSerialized]
         internal int prvid;
 
         public override void Read(ISource s, short msk = 0xff)
@@ -86,7 +84,7 @@ namespace Revital
             s.Get(nameof(max), ref max);
             s.Get(nameof(step), ref step);
 
-            s.Get(nameof(expected), ref expected);
+            s.Get(nameof(shipat), ref shipat);
             s.Get(nameof(off), ref off);
             s.Get(nameof(threshold), ref threshold);
             s.Get(nameof(addup), ref addup);
@@ -124,7 +122,7 @@ namespace Revital
             s.Put(nameof(max), max);
             s.Put(nameof(step), step);
 
-            s.Put(nameof(expected), expected);
+            s.Put(nameof(shipat), shipat);
             s.Put(nameof(off), off);
             s.Put(nameof(threshold), threshold);
             s.Put(nameof(addup), addup);

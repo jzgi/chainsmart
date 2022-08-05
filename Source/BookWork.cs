@@ -5,13 +5,13 @@ using static CoChain.Nodal.Store;
 
 namespace Revital
 {
-    public class PurchWork : WebWork
+    public class BookWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("市场线上采购动态")]
-    public class MrtlyPurchWork : PurchWork
+    public class MrtlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -19,21 +19,21 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_BIZ, 1)]
+    [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
     [Ui("商户线上采购", icon: "pull")]
 #else
     [Ui("驿站线上采购", icon: "pull")]
 #endif
-    public class BizlyPurchWork : PurchWork
+    public class BizlyBookWork : BookWork
     {
         [Ui("当前采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -53,8 +53,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             var items = Grab<short, Item>();
             wc.GivePage(200, h =>
@@ -78,11 +78,11 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    public abstract class SrclyPurchWork : PurchWork
+    public abstract class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyPurchVarWork>();
+            CreateVarWork<MrtlyBookVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -91,7 +91,7 @@ namespace Revital
             var src = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT wareid, last(name), ctrid, sum(qty - qtyre) FROM purchs WHERE srcid = @1 AND status = ").T(Purch.STU_SRC_GOT).T(" GROUP BY wareid, ctrid");
+            dc.Sql("SELECT wareid, last(name), ctrid, sum(qty - qtyre) FROM purchs WHERE srcid = @1 AND status = ").T(Book.STU_SRC_GOT).T(" GROUP BY wareid, ctrid");
             await dc.QueryAsync(p => p.Set(src.id));
             wc.GivePage(200, h =>
             {
@@ -126,8 +126,8 @@ namespace Revital
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Purch>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: "历史销售订货");
@@ -138,19 +138,19 @@ namespace Revital
     }
 
     [Ui("产源标准销售管理", icon: "star", fork: Org.FRK_STD)]
-    public class SrclyStdPurchWork : SrclyPurchWork
+    public class SrclyStdBookWork : SrclyBookWork
     {
     }
 
-    [Ui("产源自由销售管理", icon: "star", fork: Org.FRK_FREE)]
-    public class SrclyOwnPurchWork : SrclyPurchWork
+    [Ui("产源自由销售管理", icon: "star", fork: Org.FRK_OWN)]
+    public class SrclyOwnBookWork : SrclyBookWork
     {
     }
 
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     [Ui("产源业务报表")]
-    public class SrclyPurchRptWork : PurchWork
+    public class SrclyBookRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
         {
@@ -159,7 +159,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢供应验收管理", icon: "sign-in")]
-    public class CtrlyPurchRcvWork : PurchWork
+    public class CtrlyBookRcvWork : BookWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -167,7 +167,7 @@ namespace Revital
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_SRC_SNT).T(" GROUP BY prvid, wareid ORDER BY prvid");
+            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_SRC_SNT).T(" GROUP BY prvid, wareid ORDER BY prvid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -204,7 +204,7 @@ namespace Revital
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_RCVD).T(" GROUP BY prvid, wareid ORDER BY prvid");
+            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_RCVD).T(" GROUP BY prvid, wareid ORDER BY prvid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -280,7 +280,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢供应分发管理", icon: "sign-out")]
-    public class CtrlyPurchDistrWork : PurchWork
+    public class CtrlyBookDistrWork : BookWork
     {
         [Ui("待发", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -289,7 +289,7 @@ namespace Revital
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_RCVD).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_RCVD).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -326,7 +326,7 @@ namespace Revital
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Purch.STU_CTR_SNT).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_SNT).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -402,7 +402,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢业务报表")]
-    public class CtrlyPurchRptWork : PurchWork
+    public class CtrlyBookRptWork : BookWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)

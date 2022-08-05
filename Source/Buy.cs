@@ -20,7 +20,7 @@ namespace Revital
         };
 
         internal long id;
-        internal int bizid;
+        internal int shpid;
         internal int mrtid;
         internal int uid;
         internal string uname;
@@ -38,7 +38,7 @@ namespace Revital
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(bizid), ref bizid);
+            s.Get(nameof(shpid), ref shpid);
             s.Get(nameof(mrtid), ref mrtid);
             s.Get(nameof(uid), ref uid);
             s.Get(nameof(uname), ref uname);
@@ -57,7 +57,7 @@ namespace Revital
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(bizid), bizid);
+            s.Put(nameof(shpid), shpid);
             s.Put(nameof(mrtid), mrtid);
             s.Put(nameof(uid), uid);
             s.Put(nameof(uname), uname);

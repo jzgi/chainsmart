@@ -9,19 +9,19 @@ using static CoChain.Web.Modal;
 
 namespace Revital
 {
-    public class PurchVarWork : WebWork
+    public class BookVarWork : WebWork
     {
     }
 
-    public class PrvlyPurchVarWork : PurchVarWork
+    public class PrvlyBookVarWork : BookVarWork
     {
     }
 
-    public abstract class SrclyPurchVarWork : PurchVarWork
+    public abstract class SrclyBookVarWork : BookVarWork
     {
     }
 
-    public class SrclyStdPurchVarWork : SrclyPurchVarWork
+    public class SrclyStdBookVarWork : SrclyBookVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -31,8 +31,8 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Purch>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(lotid));
             }
             else // POST
             {
@@ -67,14 +67,14 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM lots_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Purch>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Book.Empty).T(" FROM lots_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Book>(p => p.Set(id));
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 short typ = f[nameof(typ)];
-                var m = new Purch
+                var m = new Book
                 {
                 };
                 m.Read(f);
@@ -133,16 +133,16 @@ namespace Revital
         // [Ui("核实"), Tool(Modal.ButtonShow)]
     }
 
-    public class SrclyCustomPurchVarWork : SrclyPurchVarWork
+    public class SrclyCustomBookVarWork : SrclyBookVarWork
     {
     }
 
-    public class CtrlyPurchVarWork : PurchVarWork
+    public class CtrlyBookVarWork : BookVarWork
     {
     }
 
 
-    public class MrtlyPurchVarWork : PurchVarWork
+    public class MrtlyBookVarWork : BookVarWork
     {
     }
 }

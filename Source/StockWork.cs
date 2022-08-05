@@ -9,7 +9,7 @@ namespace Revital
     {
     }
 
-    [UserAuthorize(Org.TYP_BIZ, 1)]
+    [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
     [Ui("商户商品设置", icon: "table")]
 #else

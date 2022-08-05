@@ -88,14 +88,14 @@ namespace Revital
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.IsOfPrv)
+                    if (m.HasProvision)
                     {
                         h.LI_().SELECT("物流方式", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
                     }
-                    h.LI_().SELECT(m.IsMrt ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMrt ? v.IsMrtDiv : v.IsProv, required: !m.IsPrv)._LI();
+                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsProvision)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("关联中枢", nameof(m.ctrties), m.ctrties, orgs, filter: (k, v) => v.IsCtr, multiple: m.IsPrv, required: true)._LI();
+                    h.LI_().SELECT("关联中枢", nameof(m.ctrties), m.ctrties, orgs, filter: (k, v) => v.IsCenter, multiple: m.IsProvision, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -123,11 +123,11 @@ namespace Revital
 #else
     [Ui("市场下属驿站管理", icon: "thumbnails")]
 #endif
-    public class MrtlyOrgWork : OrgWork
+    public class MartlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyOrgVarWork>();
+            CreateVarWork<MartlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc)
@@ -155,7 +155,7 @@ namespace Revital
             var prin = (User) wc.Principal;
             var m = new Org
             {
-                typ = Org.TYP_BIZ,
+                typ = Org.TYP_SHP,
                 created = DateTime.Now,
                 creator = prin.name,
                 state = Entity.STA_ENABLED,
@@ -204,11 +204,11 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_PRV, 1)]
     [Ui("版块下属产源管理", icon: "thumbnails")]
-    public class PrvlyOrgWork : OrgWork
+    public class PrvnlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrvlyOrgVarWork>();
+            CreateVarWork<PrvnlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -255,7 +255,7 @@ namespace Revital
                     h.FORM_().FIELDSUL_("产源属性");
                     h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProv, required: true)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);

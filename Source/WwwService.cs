@@ -20,7 +20,7 @@ namespace Revital
 
             CreateWork<PublyItemWork>("item");
 
-            CreateWork<PublyWareWork>("ware");
+            CreateWork<PublyProductWork>("ware");
 
             CreateWork<MyWork>("my");
         }
@@ -59,14 +59,14 @@ namespace Revital
                     h.FIELDSUL_();
                     if (regid == 0)
                     {
-                        regid = regs.First(v => v.IsMrtDiv).id;
+                        regid = regs.First(v => v.IsSection).id;
                     }
-                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsMrtDiv, required: true, refresh: true)._LI();
+                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsSection, required: true, refresh: true)._LI();
                     bool exist = false;
                     for (int i = 0; i < orgs.Count; i++)
                     {
                         var o = orgs.ValueAt(i);
-                        if (!o.IsMrt || o.regid != regid)
+                        if (!o.IsMarket || o.regid != regid)
                         {
                             continue;
                         }

@@ -7,26 +7,26 @@ using static CoChain.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class WareWork : WebWork
+    public abstract class ProductWork : WebWork
     {
         public const string ERR = "table";
     }
 
-    public class PublyWareWork : WareWork
+    public class PublyProductWork : ProductWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyWareVarWork>();
+            CreateVarWork<PublyProductVarWork>();
         }
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源产品设置", icon: ERR)]
-    public class SrclyWareWork : WareWork
+    public class SrclyProductWork : ProductWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyWareVarWork>();
+            CreateVarWork<SrclyProductVarWork>();
         }
 
         public async Task @default(WebContext wc)
@@ -35,8 +35,8 @@ namespace Revital
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE srcid = @1 ORDER BY state DESC");
-            var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM wares WHERE srcid = @1 ORDER BY state DESC");
+            var arr = await dc.QueryAsync<Product>(p => p.Set(src.id));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -65,7 +65,7 @@ namespace Revital
             if (wc.IsGet)
             {
                 var tomorrow = DateTime.Today.AddDays(1);
-                var o = new Ware
+                var o = new Product
                 {
                     unitx = 1,
                     min = 1, max = 1, step = 1, cap = 5000,
@@ -77,7 +77,7 @@ namespace Revital
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Ware.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Ware.Durations, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
                     h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
@@ -95,7 +95,7 @@ namespace Revital
             {
                 const short msk = Entity.BORN;
                 // populate 
-                var m = await wc.ReadObjectAsync(msk, new Ware
+                var m = await wc.ReadObjectAsync(msk, new Product
                 {
                     srcid = org.id,
                     created = DateTime.Now,
@@ -107,7 +107,7 @@ namespace Revital
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO prods ").colset(Ware.Empty, msk)._VALUES_(Ware.Empty, msk);
+                dc.Sql("INSERT INTO prods ").colset(Product.Empty, msk)._VALUES_(Product.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog

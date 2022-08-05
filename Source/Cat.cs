@@ -5,12 +5,13 @@ namespace Revital
     /// <summary>
     /// The data modal for an standard category.
     /// </summary>
-    public class Cat : Entity, IKeyable<short>
+    public class Cat : Entity, IKeyable<short>, IDirectory
     {
         public static readonly Cat Empty = new Cat();
 
         internal short idx;
-        internal short num; // sub resources
+
+        internal short num; // number of items
 
         // must have an icon
 
@@ -33,5 +34,9 @@ namespace Revital
         public short Key => typ;
 
         public override string ToString() => name;
+
+        public short Idx => idx;
+
+        public short Num => num;
     }
 }

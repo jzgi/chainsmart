@@ -31,12 +31,12 @@ namespace Revital
             }
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.typ == Reg.TYP_STK_SEC)._TOPBAR();
+                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.typ == Reg.TYP_SECTION)._TOPBAR();
                 h.GRID(bizs, o =>
                 {
                     h.SECTION_("uk-flex uk-card-body");
                     h.SPAN(o.ShopLabel, "uk-circle-label").SP();
-                    h.A_("/biz/", o.id, "/", css: "uk-button-link").T(o.Shop).T(o.name)._A();
+                    h.A_("/biz/", o.id, "/", css: "uk-button-link").T(o.ShopName).T(o.name)._A();
                     h._SECTION();
                 }, min: 2);
             }, title: mrt.name);
@@ -50,8 +50,8 @@ namespace Revital
             int bizid = wc[0];
             var biz = GrabObject<int, Org>(bizid);
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Purch.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Purch>(p => p.Set(biz.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(biz.id));
             wc.GivePage(200, h =>
             {
                 h.FORM_().FIELDSUL_();
@@ -86,8 +86,8 @@ namespace Revital
             topOrgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => lst.Add(v.id));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
-            var arr = await dc.QueryAsync<Ware>();
+            dc.Sql("SELECT ").collst(Product.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
+            var arr = await dc.QueryAsync<Product>();
             wc.GivePage(200, h =>
             {
                 h.TABLE_();
@@ -119,8 +119,8 @@ namespace Revital
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Ware>(p => p.Set(wareid));
+            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
+            var obj = await dc.QueryTopAsync<Product>(p => p.Set(wareid));
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");

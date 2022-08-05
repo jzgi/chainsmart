@@ -3,7 +3,7 @@ using CoChain;
 
 namespace Revital
 {
-    public struct PurchOp : IData
+    public struct BookOp : IData
     {
         short state;
         

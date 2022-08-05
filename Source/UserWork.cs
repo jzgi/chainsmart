@@ -88,16 +88,12 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-#if ZHNT
-    [Ui("商户客户管理", icon: "users")]
-#else
-    [Ui("驿站客户管理", icon: "users")]
-#endif
-    public class BizlyUserWork : UserWork
+    [Ui("市场客户管理", icon: "users")]
+    public class MartlyUserWork : UserWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyUserVarWork>();
+            CreateVarWork<MartlyUserVarWork>();
         }
 
         [Ui("浏览", group: 1), Tool(Anchor)]

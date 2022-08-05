@@ -26,15 +26,15 @@ namespace Revital
         {
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Reg.TYP_PROV);
+                h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROV).T(" ORDER BY id, state DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, state DESC");
                 var arr = dc.Query<Reg>();
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
                         h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROV));
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROVINCE));
                     }
                 );
             });
@@ -45,15 +45,15 @@ namespace Revital
         {
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Reg.TYP_MRT_DIV);
+                h.TOOLBAR(subscript: Reg.TYP_SECTION);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_MRT_DIV).T(" ORDER BY id, state DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, state DESC");
                 var arr = dc.Query<Reg>();
                 h.TABLE(arr, o =>
                     {
                         h.TDCHECK(o.Key);
                         h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_MRT_DIV));
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_SECTION));
                     }
                 );
             });

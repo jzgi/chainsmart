@@ -7,7 +7,7 @@ using static CoChain.Nodal.Store;
 
 namespace Revital
 {
-    public abstract class WareVarWork : WebWork
+    public abstract class ProductVarWork : WebWork
     {
         protected async Task doimg(WebContext wc, string col)
         {
@@ -40,11 +40,11 @@ namespace Revital
         }
     }
 
-    public class PublyWareVarWork : WareVarWork
+    public class PublyProductVarWork : ProductVarWork
     {
     }
 
-    public class SrclyWareVarWork : WareVarWork
+    public class SrclyProductVarWork : ProductVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -56,15 +56,15 @@ namespace Revital
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1");
-                var o = dc.QueryTop<Ware>(p => p.Set(prodid));
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1");
+                var o = dc.QueryTop<Product>(p => p.Set(prodid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
                     h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Ware.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Ware.Durations, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
                     h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
@@ -81,7 +81,7 @@ namespace Revital
             else // POST
             {
                 // populate 
-                var m = await wc.ReadObjectAsync(0, new Ware
+                var m = await wc.ReadObjectAsync(0, new Product
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -92,7 +92,7 @@ namespace Revital
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE prods ")._SET_(Ware.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE prods ")._SET_(Product.Empty, 0).T(" WHERE id = @1");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
@@ -109,14 +109,14 @@ namespace Revital
             int prodid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM prods WHERE id = @1");
-            var o = dc.QueryTop<Ware>(p => p.Set(prodid));
+            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1");
+            var o = dc.QueryTop<Product>(p => p.Set(prodid));
 
             wc.GivePage(200, h =>
             {
                 h.FORM_();
                 h.FIELDSUL_("通过优惠，不达量可撤销订单");
-                h.LI_().DATE("截止日期", nameof(o.expected), o.expected)._LI();
+                h.LI_().DATE("截止日期", nameof(o.shipat), o.shipat)._LI();
                 h.LI_().NUMBER("优惠额度", nameof(o.off), o.off)._LI();
                 h.LI_().NUMBER("目标冲量", nameof(o.threshold), o.threshold)._LI();
                 h._FIELDSUL();

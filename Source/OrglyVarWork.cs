@@ -106,33 +106,33 @@ namespace Revital
         }
     }
 
-    [UserAuthorize(Org.TYP_BIZ, 1)]
+    [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
     [Ui("市场业务操作")]
 #else
     [Ui("驿站业务操作")]
 #endif
-    public class MrtlyVarWork : OrglyVarWork
+    public class MartlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
             // mrt
 
-            CreateWork<MrtlyOrgWork>("org");
+            CreateWork<MartlyOrgWork>("org");
 
-            CreateWork<MrtlyPurchWork>("mpurch");
+            CreateWork<MrtlyBookWork>("mpurch");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
             // biz
 
-            CreateWork<BizlyPurchWork>("bpurch");
+            CreateWork<BizlyBookWork>("bpurch");
 
             CreateWork<BizlyBuyWork>("bbuy");
 
             CreateWork<BizlyStockWork>("stock");
 
-            CreateWork<BizlyUserWork>("user");
+            CreateWork<MartlyUserWork>("user");
 
             // common
 
@@ -194,27 +194,27 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("产源业务操作")]
-    public class PrvlyVarWork : OrglyVarWork
+    public class PrvnlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            CreateWork<PrvlyOrgWork>("org");
+            CreateWork<PrvnlyOrgWork>("org");
 
             CreateWork<PrvlyRptWork>("prpt");
 
 
-            CreateWork<SrclyWareWork>("ware");
+            CreateWork<SrclyProductWork>("ware");
 
-            CreateWork<SrclyStdPurchWork, SrclyOwnPurchWork>("spur");
+            CreateWork<SrclyStdBookWork, SrclyOwnBookWork>("spur");
 
-            CreateWork<SrclyPurchRptWork>("srpt");
+            CreateWork<SrclyBookRptWork>("srpt");
 
 
-            CreateWork<CtrlyPurchRcvWork>("crcv");
+            CreateWork<CtrlyBookRcvWork>("crcv");
 
-            CreateWork<CtrlyPurchDistrWork>("cdistr");
+            CreateWork<CtrlyBookDistrWork>("cdistr");
 
-            CreateWork<CtrlyPurchRptWork>("crpt");
+            CreateWork<CtrlyBookRptWork>("crpt");
 
 
             CreateWork<OrglyClearWork>("clear");
