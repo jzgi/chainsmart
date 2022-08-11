@@ -9,7 +9,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     font-size: 0.875rem;
     -webkit-user-select: none;  
     -moz-user-select: none;    
@@ -23,13 +23,8 @@ body::-webkit-scrollbar {
     display: none; 
 }
 
-body.uk-pane {
-    background-color: #f8f8f8;
-}
-
 form {
     display: block;
-    padding: 4px; 
 }
 
 a {
@@ -561,7 +556,7 @@ a.uk-link-reset:hover,
     display: inline-block;
     width: 100px;
     max-width: 100%;
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #ededed;
     vertical-align: top;
 }
 
@@ -605,7 +600,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider > li:nth-child(n+2) {
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #ededed;
 }
 
 /*
@@ -2725,7 +2720,7 @@ form > li,
 
 label.uk-label {
     display: flex;
-    color: #f59604;
+    color: #8fc321;
     margin-right: 0.25rem;
     width: 5.25rem;
     min-width: 5.25rem;
@@ -4299,7 +4294,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 .uk-modal-footer {
@@ -4309,7 +4304,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     margin: 0;
     border: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 /*

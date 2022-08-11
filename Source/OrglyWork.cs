@@ -12,12 +12,12 @@ namespace Revital
     /// source and producer
     /// </summary>
     [Ui("供应产源操作")]
-    public class PrvnlyWork : OrglyWork
+    public class PrvlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<PrvnlyVarWork>((prin, key) =>
+            CreateVarWork<PrvlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -31,12 +31,12 @@ namespace Revital
 #else
     [Ui("驿站商户操作")]
 #endif
-    public class MartlyWork : OrglyWork
+    public class MrtlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<MartlyVarWork>((prin, key) =>
+            CreateVarWork<MrtlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);

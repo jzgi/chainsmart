@@ -3,7 +3,7 @@ using CoChain;
 
 namespace Revital
 {
-    public class Clear : Entity, IKeyable<int>, IFlowable
+    public class Clear : Entity, IKeyable<int>, IWorkflow
     {
         public static readonly Clear Empty = new Clear();
 

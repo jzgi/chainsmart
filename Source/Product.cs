@@ -30,32 +30,12 @@ namespace Revital
         internal int id;
 
         internal int srcid;
-        internal short itemid;
         internal string ext;
         internal short store;
         internal short duration;
         internal bool agt; // agent only 
         internal string unit;
-        internal short unitx;
-
-        // individual order relevant
-
-        internal decimal price;
-        internal short cap;
-        internal short min;
-        internal short max;
-        internal short step;
-
-        // when changed to group-book mode
-
-        internal DateTime shipat;
-        internal decimal off;
-        internal short threshold;
-        internal short addup;
-
-        // extra
-        [NonSerialized]
-        internal int prvid;
+        internal string unitip;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -70,29 +50,12 @@ namespace Revital
             {
                 s.Get(nameof(srcid), ref srcid);
             }
-            s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(ext), ref ext);
             s.Get(nameof(store), ref store);
             s.Get(nameof(duration), ref duration);
             s.Get(nameof(agt), ref agt);
             s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitx), ref unitx);
-            s.Get(nameof(price), ref price);
-            s.Get(nameof(cap), ref cap);
-
-            s.Get(nameof(min), ref min);
-            s.Get(nameof(max), ref max);
-            s.Get(nameof(step), ref step);
-
-            s.Get(nameof(shipat), ref shipat);
-            s.Get(nameof(off), ref off);
-            s.Get(nameof(threshold), ref threshold);
-            s.Get(nameof(addup), ref addup);
-
-            if ((msk & EXTRA) == EXTRA)
-            {
-                s.Get(nameof(prvid), ref prvid);
-            }
+            s.Get(nameof(unitip), ref unitip);
         }
 
         public override void Write(ISink s, short msk = 0xff)
@@ -108,24 +71,12 @@ namespace Revital
             {
                 s.Put(nameof(srcid), srcid);
             }
-            s.Put(nameof(itemid), itemid);
             s.Put(nameof(ext), ext);
             s.Put(nameof(store), store);
             s.Put(nameof(duration), duration);
             s.Put(nameof(agt), agt);
             s.Put(nameof(unit), unit);
-            s.Put(nameof(unitx), unitx);
-            s.Put(nameof(price), price);
-            s.Put(nameof(cap), cap);
-
-            s.Put(nameof(min), min);
-            s.Put(nameof(max), max);
-            s.Put(nameof(step), step);
-
-            s.Put(nameof(shipat), shipat);
-            s.Put(nameof(off), off);
-            s.Put(nameof(threshold), threshold);
-            s.Put(nameof(addup), addup);
+            s.Put(nameof(unitip), unitip);
         }
 
         public int Key => id;

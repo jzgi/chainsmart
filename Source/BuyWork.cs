@@ -38,7 +38,7 @@ namespace Revital
 #else
     [Ui("驿站线上销售", icon: "push")]
 #endif
-    public class BizlyBuyWork : BuyWork
+    public class ShplyBuyWork : BuyWork
     {
         protected override void OnCreate()
         {

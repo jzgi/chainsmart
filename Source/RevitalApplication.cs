@@ -24,8 +24,6 @@ namespace Revital
 
             AddComposite<BuyLn>();
 
-            AddComposite<BookOp>();
-
             if (args.Contains("proxy"))
             {
                 if (args.Contains("pub-p"))

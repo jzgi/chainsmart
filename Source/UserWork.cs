@@ -89,11 +89,11 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("市场客户管理", icon: "users")]
-    public class MartlyUserWork : UserWork
+    public class MrtlyUserWork : UserWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MartlyUserVarWork>();
+            CreateVarWork<MrtlyUserVarWork>();
         }
 
         [Ui("浏览", group: 1), Tool(Anchor)]

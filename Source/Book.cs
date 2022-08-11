@@ -6,7 +6,7 @@ namespace Revital
     /// <summary>
     /// A product booking record & process.
     /// </summary>
-    public class Book : Entity, IKeyable<int>, IFlowable
+    public class Book : Entity, IKeyable<int>, IWorkflow
     {
         public static readonly Book Empty = new Book();
 

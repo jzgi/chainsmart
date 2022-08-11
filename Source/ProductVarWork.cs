@@ -62,17 +62,14 @@ namespace Revital
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT_ITEM("品目名", nameof(o.itemid), o.itemid, items, cats, required: true).TEXT("附加名", nameof(o.ext), o.ext, max: 10)._LI();
+                    h.LI_().SELECT("品目名", nameof(o.typ), o.typ, cats, required: true).TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
                     h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
 
-                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("单位倍比", nameof(o.unitx), o.unitx, min: 1, max: 1000, required: true)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("总存量", nameof(o.cap), o.cap)._LI();
+                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitip), o.unitip)._LI();
 
                     h._FIELDSUL();
                     h._FORM();
@@ -86,9 +83,6 @@ namespace Revital
                     adapted = DateTime.Now,
                     adapter = prin.name,
                 });
-                var item = items[m.itemid];
-                m.typ = item.typ;
-                m.name = item.name + '－' + m.ext;
 
                 // update
                 using var dc = NewDbContext();
@@ -116,9 +110,6 @@ namespace Revital
             {
                 h.FORM_();
                 h.FIELDSUL_("通过优惠，不达量可撤销订单");
-                h.LI_().DATE("截止日期", nameof(o.shipat), o.shipat)._LI();
-                h.LI_().NUMBER("优惠额度", nameof(o.off), o.off)._LI();
-                h.LI_().NUMBER("目标冲量", nameof(o.threshold), o.threshold)._LI();
                 h._FIELDSUL();
                 h._FORM();
             });

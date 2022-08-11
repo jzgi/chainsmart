@@ -2,45 +2,62 @@
 
 namespace Revital
 {
-    /// <summary>
-    /// The data modal for an standard item of product or service.
-    /// </summary>
-    public class Item : Entity, IKeyable<short>
+    public class Item : Entity, IKeyable<int>
     {
         public static readonly Item Empty = new Item();
 
-        internal short id;
-        internal string unit; // standard unit
+        internal int id;
+        internal int shpid;
+        internal int productid;
+        internal string unit;
         internal string unitip;
+        internal decimal price;
+        internal short min;
+        internal short max;
+        internal short step;
 
-        // must have an icon
-
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short msk = 255)
         {
-            base.Read(s, proj);
+            base.Read(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Get(nameof(id), ref id);
             }
+            if ((msk & BORN) == BORN)
+            {
+                s.Get(nameof(shpid), ref shpid);
+                s.Get(nameof(productid), ref productid);
+            }
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(price), ref price);
+            s.Get(nameof(min), ref min);
+            s.Get(nameof(max), ref max);
+            s.Get(nameof(step), ref step);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 255)
         {
-            base.Write(s, proj);
+            base.Write(s, msk);
 
-            if ((proj & ID) == ID)
+            if ((msk & ID) == ID)
             {
                 s.Put(nameof(id), id);
             }
+            if ((msk & BORN) == BORN)
+            {
+                s.Put(nameof(shpid), shpid);
+                s.Put(nameof(productid), productid);
+            }
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
+            s.Put(nameof(price), price);
+            s.Put(nameof(min), min);
+            s.Put(nameof(max), max);
+            s.Put(nameof(step), step);
         }
 
-        public short Key => id;
-
-        public override string ToString() => name;
+        public int Key => id;
     }
 }

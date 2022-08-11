@@ -16,8 +16,6 @@ namespace Revital
 
             CreateWork<AdmlyOrgWork>("org");
 
-            CreateWork<AdmlyItemWork>("item");
-
             CreateWork<AdmlySupplyDailyWork>("sdaily");
 
             CreateWork<AdmlyBuyDailyWork>("bdaily");

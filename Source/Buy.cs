@@ -5,7 +5,7 @@ namespace Revital
     /// <summary>
     /// An online or offline retail order
     /// </summary>
-    public class Buy : Entity, IKeyable<long>, IFlowable
+    public class Buy : Entity, IKeyable<long>, IWorkflow
     {
         public static readonly Buy Empty = new Buy();
 

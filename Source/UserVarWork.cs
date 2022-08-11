@@ -41,7 +41,7 @@ namespace Revital
         }
     }
 
-    public class MartlyUserVarWork : UserVarWork
+    public class MrtlyUserVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonShow)]
         public async Task upd(WebContext wc)

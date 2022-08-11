@@ -29,7 +29,7 @@ create type buyln_type as
 
 alter type buyln_type owner to postgres;
 
-create table infos
+create table entities
 (
     typ smallint not null,
     state smallint default 0 not null,
@@ -84,9 +84,9 @@ create table regs
 )
     inherits (entities);
 
-comment on column scenes.num is 'sub resources';
+comment on column regs.num is 'sub resources';
 
-alter table scenes owner to postgres;
+alter table regs owner to postgres;
 
 create table orgs
 (
@@ -101,7 +101,7 @@ create table orgs
     trust boolean,
     regid smallint
         constraint orgs_regid_fk
-            references scenes
+            references regs
             on update cascade,
     addr varchar(30),
     x double precision,
@@ -111,7 +111,7 @@ create table orgs
         constraint orgs_mgrid_fk
             references users,
     ctrties integer[],
-    img bytea
+    icon bytea
 )
     inherits (entities);
 
@@ -189,46 +189,12 @@ comment on table notes is 'annoucements and notices';
 
 alter table notes owner to postgres;
 
-create table purchs
-(
-    id bigserial not null
-        constraint purchs_pk
-            primary key,
-    bizid integer not null,
-    srcid integer not null,
-    prvid integer not null,
-    ctrid integer not null,
-    mrtid integer not null,
-    wareid integer,
-    itemid smallint,
-    unit varchar(4),
-    unitx smallint,
-    mode smallint,
-    price money,
-    "off" money,
-    qty smallint,
-    pay money,
-    qtyre smallint,
-    payre money,
-    ops purchop_type[],
-    status smallint
-)
-    inherits (entities);
-
-comment on column purchs.unitx is 'times of standard unit';
-
-comment on column purchs.qtyre is 'qty reduced';
-
-comment on column purchs.payre is 'pay refunded';
-
-alter table purchs owner to postgres;
-
 create table buys
 (
     id bigserial not null
         constraint buys_pk
             primary key,
-    bizid integer not null,
+    shpid integer not null,
     mrtid integer not null,
     uid integer not null,
     uname varchar(10),
@@ -277,86 +243,127 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table items
-(
-    id integer not null
-        constraint items_pk
-            primary key,
-    unit varchar(4),
-    unitip varchar(10),
-    icon bytea,
-    constraint items_typ_fk
-        foreign key (typ) references cats
-)
-    inherits (entities);
-
-comment on table mtasks is 'standard items';
-
-alter table mtasks owner to postgres;
-
-create table wares
+create table products
 (
     id serial not null
-        constraint wares_pk
+        constraint products_pk
             primary key,
     srcid integer
-        constraint wares_srcid_fk
+        constraint products_srcid_fk
             references orgs,
-    itemid integer
-        constraint wares_itemid_fk
-            references mtasks,
     ext varchar(10),
     store smallint,
     duration smallint,
-    toagt boolean,
+    agt boolean,
     unit varchar(4),
-    unitx smallint,
+    unitip varchar(12),
     price money,
-    cap smallint,
-    min smallint,
-    max smallint,
-    step smallint,
-    starton timestamp(0),
-    endon timestamp(0),
     "off" money,
-    threshold smallint,
-    present smallint,
-    img bytea,
+    icon bytea,
     pic bytea,
-    constraint wares_typ_fk
+    constraint products_typ_fk
         foreign key (typ) references cats
 )
     inherits (entities);
 
-comment on table wares is 'sellable wares by sources';
+comment on table products is 'sellable wares by sources';
 
-comment on column wares.store is 'storage method';
+comment on column products.store is 'storage method';
 
-comment on column wares.unitx is 'times of standard unit';
+comment on column products.unitip is 'ratio to standard unit';
 
-comment on column wares.present is 'group-purchase accumulative';
+alter table products owner to postgres;
 
-alter table wares owner to postgres;
-
-create table stocks
+create table items
 (
     id serial not null
-        constraint stocks_pk
+        constraint items_pk
             primary key,
-    bizid integer,
-    wareid integer,
+    shpid integer,
+    productid integer,
     unit varchar(4),
     unitx smallint,
     price money,
     min smallint,
     max smallint,
-    step smallint
+    step smallint,
+    icon bytea,
+    pic bytea
 )
     inherits (entities);
 
-alter table stocks owner to postgres;
+alter table items owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrties, mgrid, mgrname, mgrtel, mgrim, img) as
+create table books
+(
+    id bigserial not null
+        constraint books_pk
+            primary key,
+    shpid integer not null,
+    shpop varchar(12),
+    shpon timestamp(0),
+    srcid integer not null,
+    srcop varchar(12),
+    srcon timestamp(0),
+    prvid integer not null,
+    prvpop varchar(12),
+    prvon timestamp(0),
+    ctrid integer not null,
+    ctrop varchar(12),
+    ctron timestamp(0),
+    mrtid integer not null,
+    mrtop varchar(12),
+    mrton timestamp(0),
+    productid integer,
+    unit varchar(4),
+    unitx smallint,
+    shipat date,
+    price money,
+    "off" money,
+    qty integer,
+    qtyre integer,
+    pay money,
+    payre money,
+    status smallint
+)
+    inherits (entities);
+
+comment on column books.unitx is 'ratio to standard unit';
+
+comment on column books.qtyre is 'qty reduced';
+
+comment on column books.payre is 'pay refunded';
+
+alter table books owner to postgres;
+
+create table lots
+(
+    id serial not null,
+    productid integer,
+    srcid integer,
+    srcop varchar(12),
+    srcon timestamp(0),
+    prvid integer,
+    prvop varchar(12),
+    prvon timestamp(0),
+    ctrid integer,
+    ctrop varchar(12),
+    ctron timestamp(0),
+    ownid integer,
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    status smallint
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrties, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -377,10 +384,10 @@ SELECT o.typ,
        o.tel,
        o.ctrties,
        o.mgrid,
-       m.name            AS mgrname,
-       m.tel             AS mgrtel,
-       m.im              AS mgrim,
-       o.img IS NOT NULL AS img
+       m.name             AS mgrname,
+       m.tel              AS mgrtel,
+       m.im               AS mgrim,
+       o.icon IS NOT NULL AS icon
 FROM orgs o
          LEFT JOIN users m
                    ON o.mgrid =

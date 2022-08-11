@@ -17,9 +17,9 @@ namespace Revital
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<PrvnlyWork>("prvly"); // for provision sector / source / center
+            CreateWork<PrvlyWork>("prvly"); // for provision sector / source / center
 
-            CreateWork<MartlyWork>("mrtly"); // for markets and bizs
+            CreateWork<MrtlyWork>("mrtly"); // for markets and shops
         }
 
         public void @default(WebContext wc, int cmd)
@@ -29,18 +29,18 @@ namespace Revital
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("供应链版块");
+                h.FIELDSUL_("目标市场");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
                     if (org.IsCenter)
                     {
-                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip).T("组")._A()._LI();
+                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip)._A()._LI();
                     }
                 }
                 h._FIELDSUL();
 
-                h.FIELDSUL_("管理分类");
+                h.FIELDSUL_("管理功能");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);

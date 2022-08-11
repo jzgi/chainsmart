@@ -6,7 +6,7 @@ namespace Revital
     {
     }
 
-    public class PublyBizWork : PublyWork
+    public class PublyShpWork : PublyWork
     {
         protected override void OnCreate()
         {

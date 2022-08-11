@@ -14,11 +14,11 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyMrtVarWork>(); // market home page
+            CreateVarWork<PublyMrtVarWork>(); // market's home page
 
-            CreateWork<PublyBizWork>("biz");
+            CreateWork<PublyShpWork>("shp");
 
-            CreateWork<PublyItemWork>("item");
+            // CreateWork<PublyItemWork>("item");
 
             CreateWork<PublyProductWork>("ware");
 

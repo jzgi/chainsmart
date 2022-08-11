@@ -86,7 +86,7 @@ namespace Revital
             topOrgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => lst.Add(v.id));
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM wares AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
+            dc.Sql("SELECT ").collst(Product.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM products AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
             var arr = await dc.QueryAsync<Product>();
             wc.GivePage(200, h =>
             {
@@ -95,17 +95,17 @@ namespace Revital
                 for (var i = 0; i < arr?.Length; i++)
                 {
                     var o = arr[i];
-                    if (o.prvid != last)
-                    {
-                        var spr = topOrgs[o.prvid];
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                    }
+                    // if (o.prvid != last)
+                    // {
+                    //     var spr = topOrgs[o.prvid];
+                    //     h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    // }
                     h.TR_();
                     h.TD(o.name);
-                    h.TD(o.price, true);
+                    // h.TD(o.price, true);
                     h._TR();
 
-                    last = o.prvid;
+                    // last = o.prvid;
                 }
                 h._TABLE();
             }, title: ctr.tip);

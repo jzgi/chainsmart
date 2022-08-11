@@ -112,27 +112,27 @@ namespace Revital
 #else
     [Ui("驿站业务操作")]
 #endif
-    public class MartlyVarWork : OrglyVarWork
+    public class MrtlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            // mrt
+            // market
 
-            CreateWork<MartlyOrgWork>("org");
+            CreateWork<MrtlyOrgWork>("org");
 
-            CreateWork<MrtlyBookWork>("mpurch");
+            CreateWork<MrtlyBookWork>("mbook");
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
-            // biz
+            // shop
 
-            CreateWork<BizlyBookWork>("bpurch");
+            CreateWork<ShplyBookWork>("sbook");
 
-            CreateWork<BizlyBuyWork>("bbuy");
+            CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<BizlyStockWork>("stock");
+            CreateWork<ShplyItemWork>("stock");
 
-            CreateWork<MartlyUserWork>("user");
+            CreateWork<MrtlyUserWork>("user");
 
             // common
 
@@ -165,7 +165,7 @@ namespace Revital
                 h._DIV();
                 h._FORM();
 
-                
+
                 // h.FORM_("uk-card uk-card-default");
                 // h.UL_("uk-card-body uk-list uk-list-divider");
                 // h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
@@ -194,7 +194,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("产源业务操作")]
-    public class PrvnlyVarWork : OrglyVarWork
+    public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
@@ -203,14 +203,16 @@ namespace Revital
             CreateWork<PrvlyRptWork>("prpt");
 
 
-            CreateWork<SrclyProductWork>("ware");
+            CreateWork<SrclyProductWork>("sprod");
 
-            CreateWork<SrclyStdBookWork, SrclyOwnBookWork>("spur");
+            CreateWork<SrclyLotWork>("slot");
+
+            CreateWork<SrclyStdBookWork, SrclyOwnBookWork>("sbook");
 
             CreateWork<SrclyBookRptWork>("srpt");
 
 
-            CreateWork<CtrlyBookRcvWork>("crcv");
+            CreateWork<CtrlyLotWork>("clot");
 
             CreateWork<CtrlyBookDistrWork>("cdistr");
 
@@ -228,7 +230,6 @@ namespace Revital
 
             wc.GivePage(200, h =>
             {
-
                 h.FORM_("uk-card uk-card-default uk-card-body uk-flex");
                 if (prin.icon)
                 {

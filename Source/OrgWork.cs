@@ -123,7 +123,7 @@ namespace Revital
 #else
     [Ui("市场下属驿站管理", icon: "thumbnails")]
 #endif
-    public class MartlyOrgWork : OrgWork
+    public class MrtlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {

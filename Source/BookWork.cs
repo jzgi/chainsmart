@@ -25,7 +25,7 @@ namespace Revital
 #else
     [Ui("驿站线上采购", icon: "pull")]
 #endif
-    public class BizlyBookWork : BookWork
+    public class ShplyBookWork : BookWork
     {
         [Ui("当前采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
