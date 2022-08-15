@@ -1,4 +1,4 @@
-﻿namespace Revital
+﻿namespace CoSupply
 {
     /// <summary>
     /// To indicate an workflow data model.

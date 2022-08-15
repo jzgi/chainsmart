@@ -4897,16 +4897,12 @@ ul.uk-nav-sub {
 }
 
 .uk-tooltip {
-    /* 1 */
     display: none;
-    /* 2 */
     position: absolute;
     z-index: 1030;
-    /* 3 */
     box-sizing: border-box;
-    max-width: 200px;
+    max-width: 320px;
     padding: 3px 6px;
-    /* 4 */
     background: #333;
     border-radius: 2px;
     color: #fff;

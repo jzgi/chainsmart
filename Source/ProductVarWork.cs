@@ -5,7 +5,7 @@ using CoChain.Web;
 using static CoChain.Web.Modal;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     public abstract class ProductVarWork : WebWork
     {
@@ -48,21 +48,20 @@ namespace Revital
     {
         public async Task @default(WebContext wc)
         {
-            int prodid = wc[0];
+            int productid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
-            var items = Grab<short, Item>();
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1");
-                var o = dc.QueryTop<Product>(p => p.Set(prodid));
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
+                var o = dc.QueryTop<Product>(p => p.Set(productid));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
 
-                    h.LI_().SELECT("品目名", nameof(o.typ), o.typ, cats, required: true).TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true).TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
                     h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
@@ -90,41 +89,23 @@ namespace Revital
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
-                    p.Set(prodid);
+                    p.Set(productid);
                 });
 
                 wc.GivePane(200); // close dialog
             }
         }
 
-        [Ui("冲量", "限时冲量模式"), Tool(ButtonShow, Appear.Small)]
-        public async Task lim(WebContext wc)
+        [Ui("◩", "图片"), Tool(ButtonCrop, Appear.Large)]
+        public async Task icon(WebContext wc)
         {
-            int prodid = wc[0];
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1");
-            var o = dc.QueryTop<Product>(p => p.Set(prodid));
-
-            wc.GivePage(200, h =>
-            {
-                h.FORM_();
-                h.FIELDSUL_("通过优惠，不达量可撤销订单");
-                h._FIELDSUL();
-                h._FORM();
-            });
-        }
-
-        [Ui("◩", "照片"), Tool(ButtonCrop, Appear.Large)]
-        public async Task img(WebContext wc)
-        {
-            await doimg(wc, nameof(img));
+            await doimg(wc, nameof(icon));
         }
 
         [Ui("▤", "质检"), Tool(ButtonCrop, Appear.Full)]
-        public async Task cert(WebContext wc)
+        public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(cert));
+            await doimg(wc, nameof(pic));
         }
 
         [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]

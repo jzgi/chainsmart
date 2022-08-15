@@ -4,7 +4,7 @@ using CoChain.Nodal;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     [UserAuthorize(admly: User.ADMLY_)]
     [Ui("平台管理")]

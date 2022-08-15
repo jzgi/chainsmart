@@ -3,7 +3,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -198,25 +198,25 @@ namespace Revital
     {
         protected override void OnCreate()
         {
-            CreateWork<PrvnlyOrgWork>("org");
+            CreateWork<PrvnlyOrgWork>("porg");
 
             CreateWork<PrvlyRptWork>("prpt");
 
 
             CreateWork<SrclyProductWork>("sprod");
 
-            CreateWork<SrclyLotWork>("slot");
+            CreateWork<SrclyDistribWork>("sdistrib");
 
-            CreateWork<SrclyStdBookWork, SrclyOwnBookWork>("sbook");
+            CreateWork<SrclyBookWork>("sbook");
 
-            CreateWork<SrclyBookRptWork>("srpt");
+            CreateWork<SrclyRptWork>("srpt");
 
 
-            CreateWork<CtrlyLotWork>("clot");
+            CreateWork<CtrlyDistribWork>("cdistrib");
 
-            CreateWork<CtrlyBookDistrWork>("cdistr");
+            CreateWork<CtrlyBookWork>("cbook");
 
-            CreateWork<CtrlyBookRptWork>("crpt");
+            CreateWork<CtrlyRptWork>("crpt");
 
 
             CreateWork<OrglyClearWork>("clear");

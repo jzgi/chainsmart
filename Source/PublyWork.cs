@@ -1,6 +1,6 @@
 ﻿using CoChain.Web;
 
-namespace Revital
+namespace CoSupply
 {
     public class PublyWork : WebWork
     {

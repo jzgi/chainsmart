@@ -5,7 +5,7 @@ using CoChain.Web;
 using static CoChain.Web.Modal;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     public abstract class ProductWork : WebWork
     {
@@ -21,7 +21,7 @@ namespace Revital
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产源产品信息设置", icon: ERR)]
+    [Ui("产源产品设置", icon: ERR)]
     public class SrclyProductWork : ProductWork
     {
         protected override void OnCreate()

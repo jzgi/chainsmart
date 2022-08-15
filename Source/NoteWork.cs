@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using CoChain;
 using CoChain.Web;
 
-namespace Revital
+namespace CoSupply
 {
     public abstract class NoteWork : WebWork
     {

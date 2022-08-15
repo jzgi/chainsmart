@@ -3,7 +3,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     public class PublyVarWork : WebWork
     {
@@ -83,7 +83,7 @@ namespace Revital
             var ctr = topOrgs[ctrid];
 
             var lst = new ValueList<int>();
-            topOrgs.ForEach((k, v) => v.IsPrvWith(ctrid), (k, v) => lst.Add(v.id));
+            topOrgs.ForEach((k, v) => v.ctrid == ctrid, (k, v) => lst.Add(v.id));
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Product.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM products AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");

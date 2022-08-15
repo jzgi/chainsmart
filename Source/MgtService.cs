@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using System.Web;
 using CoChain;
 using CoChain.Web;
-using static Revital.WeChatUtility;
+using static CoSupply.WeChatUtility;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoSupply
 {
     [UserAuthenticate]
     public class MgtService : WebService
