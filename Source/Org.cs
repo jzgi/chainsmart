@@ -62,7 +62,7 @@ namespace Revital
         internal string mgrname;
         internal string mgrtel;
         internal string mgrim;
-        internal int[] ctrties; // center ties, can be null 
+        internal int ctrid; // tied center, can be null 
         internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -85,7 +85,7 @@ namespace Revital
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(ctrties), ref ctrties);
+            s.Get(nameof(ctrid), ref ctrid);
             if ((proj & LATER) == LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
@@ -118,7 +118,7 @@ namespace Revital
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(ctrties), ctrties);
+            s.Put(nameof(ctrid), ctrid);
             if ((proj & LATER) == LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
@@ -145,18 +145,6 @@ namespace Revital
 
         public bool HasProvision => (typ & TYP_PRV) == TYP_PRV;
 
-        public bool IsPrvWith(int ctrid)
-        {
-            if (!IsProvision || ctrties == null)
-            {
-                return false;
-            }
-            for (int i = 0; i < ctrties.Length; i++)
-            {
-                if (ctrties[i] == ctrid) return true;
-            }
-            return false;
-        }
 
         public bool IsSource => typ == TYP_SRC;
 
@@ -171,8 +159,6 @@ namespace Revital
         public bool IsCenter => typ == TYP_CTR;
 
         public bool HasXy => IsMarket || IsSource || IsCenter;
-
-        public int ToCtrId => ctrties?[0] ?? 0;
 
         public bool MustTieToCtr => HasSuper && !IsCenter;
 

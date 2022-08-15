@@ -17,11 +17,8 @@ namespace Revital
     {
     }
 
-    public abstract class SrclyBookVarWork : BookVarWork
-    {
-    }
 
-    public class SrclyStdBookVarWork : SrclyBookVarWork
+    public class SrclyBookVarWork : BookVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)

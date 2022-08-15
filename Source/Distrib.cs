@@ -4,11 +4,26 @@ using CoChain;
 namespace Revital
 {
     /// <summary>
-    /// A product lot that is for selling.
+    /// A product lot that is for transfering & selling.
     /// </summary>
-    public class Lot : Entity, IKeyable<int>
+    public class Distrib : Entity, IKeyable<int>
     {
-        public static readonly Lot Empty = new Lot();
+        public static readonly Distrib Empty = new Distrib();
+
+        public const short
+            TYP_SELL_N_MOVE = 1, // sell and move center
+            TYP_MOVE_N_SELL = 2, // move to center and sell
+            TYP_TRANSFER_MOVE = 3, // transfer and move to another source
+            TYP_DIRECT_SALE = 4; // direct
+
+        public static readonly Map<short, string> Typs = new Map<short, string>
+        {
+            {TYP_SELL_N_MOVE, "先售后运"},
+            {TYP_MOVE_N_SELL, "先运后售"},
+            {TYP_TRANSFER_MOVE, "转移"},
+            {TYP_DIRECT_SALE, "直售直运"},
+        };
+
 
         public new static readonly Map<short, string> States = new Map<short, string>
         {

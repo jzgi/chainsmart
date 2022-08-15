@@ -73,16 +73,17 @@ namespace Revital
         public void @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
-            wc.GiveRedirect("/" + mrt.ToCtrId + "/");
+            wc.GiveRedirect("/" + mrt.ctrid + "/");
         }
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    public abstract class SrclyBookWork : BookWork
+    [Ui("产源客户订单管理", icon: "sign-in")]
+    public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyBookVarWork>();
+            CreateVarWork<SrclyBookVarWork>();
         }
 
         [Ui("当前"), Tool(Anchor)]
@@ -137,20 +138,10 @@ namespace Revital
         }
     }
 
-    [Ui("产源标准销售管理", icon: "star", fork: Org.FRK_STD)]
-    public class SrclyStdBookWork : SrclyBookWork
-    {
-    }
-
-    [Ui("产源自由销售管理", icon: "star", fork: Org.FRK_OWN)]
-    public class SrclyOwnBookWork : SrclyBookWork
-    {
-    }
-
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
     [Ui("产源业务报表")]
-    public class SrclyBookRptWork : BookWork
+    public class SrclyRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
         {
@@ -280,7 +271,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢供应分发管理", icon: "sign-out")]
-    public class CtrlyBookDistrWork : BookWork
+    public class CtrlyBookWork : BookWork
     {
         [Ui("待发", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
@@ -402,7 +393,7 @@ namespace Revital
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中枢业务报表")]
-    public class CtrlyBookRptWork : BookWork
+    public class CtrlyRptWork : BookWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)

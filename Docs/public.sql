@@ -110,7 +110,7 @@ create table orgs
     mgrid integer
         constraint orgs_mgrid_fk
             references users,
-    ctrties integer[],
+    ctrid integer,
     icon bytea
 )
     inherits (entities);
@@ -336,7 +336,7 @@ comment on column books.payre is 'pay refunded';
 
 alter table books owner to postgres;
 
-create table lots
+create table distribs
 (
     id serial not null,
     productid integer,
@@ -361,39 +361,7 @@ create table lots
 )
     inherits (entities);
 
-alter table lots owner to postgres;
-
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrties, mgrid, mgrname, mgrtel, mgrim, icon) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.id,
-       o.fork,
-       o.sprid,
-       o.license,
-       o.trust,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o.tel,
-       o.ctrties,
-       o.mgrid,
-       m.name             AS mgrname,
-       m.tel              AS mgrtel,
-       m.im               AS mgrim,
-       o.icon IS NOT NULL AS icon
-FROM orgs o
-         LEFT JOIN users m
-                   ON o.mgrid =
-                      m.id;
-
-alter table orgs_vw owner to postgres;
+alter table distribs owner to postgres;
 
 create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,
@@ -416,6 +384,38 @@ SELECT u.typ,
 FROM users u;
 
 alter table users_vw owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.id,
+       o.fork,
+       o.sprid,
+       o.license,
+       o.trust,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.tel,
+       o.ctrid,
+       o.mgrid,
+       m.name             AS mgrname,
+       m.tel              AS mgrtel,
+       m.im               AS mgrim,
+       o.icon IS NOT NULL AS icon
+FROM orgs o
+         LEFT JOIN users m
+                   ON o.mgrid =
+                      m.id;
+
+alter table orgs_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
