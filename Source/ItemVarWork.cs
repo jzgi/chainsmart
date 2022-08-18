@@ -1,6 +1,6 @@
 ﻿using CoChain.Web;
 
-namespace CoSupply
+namespace Revital
 {
     public class ItemVarWork : WebWork
     {

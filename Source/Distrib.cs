@@ -1,7 +1,7 @@
 ﻿using System;
 using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// A product lot that is for transfering & selling.

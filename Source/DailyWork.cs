@@ -4,7 +4,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace CoSupply
+namespace Revital
 {
     public abstract class DailyWork : WebWork
     {

@@ -7,7 +7,7 @@ using static CoChain.Application;
 using static CoChain.Nodal.Store;
 using static CoChain.Web.Modal;
 
-namespace CoSupply
+namespace Revital
 {
     public class BookVarWork : WebWork
     {

@@ -1,6 +1,6 @@
 ﻿using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// A geographic or spatial region.

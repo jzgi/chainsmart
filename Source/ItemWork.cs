@@ -3,7 +3,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace CoSupply
+namespace Revital
 {
     public class ItemWork : WebWork
     {

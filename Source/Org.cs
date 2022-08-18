@@ -1,7 +1,7 @@
 ﻿using CoChain;
 using CoChain.Web;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// An organizational unit.

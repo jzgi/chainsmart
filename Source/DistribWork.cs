@@ -1,7 +1,7 @@
 ﻿using CoChain.Web;
 using static CoChain.Web.Modal;
 
-namespace CoSupply
+namespace Revital
 {
     public class DistribWork : WebWork
     {

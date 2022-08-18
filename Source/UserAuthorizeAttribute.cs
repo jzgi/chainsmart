@@ -1,7 +1,7 @@
 ﻿using System;
 using CoChain.Web;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// To implement principal authorization of access to the target resources.

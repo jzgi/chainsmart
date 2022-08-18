@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using CoChain.Web;
-using static CoSupply.User;
+using static Revital.User;
 using static CoChain.Nodal.Store;
 
-namespace CoSupply
+namespace Revital
 {
     public abstract class BuyWork : WebWork
     {

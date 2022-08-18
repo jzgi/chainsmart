@@ -1,7 +1,7 @@
 using System;
 using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// A product booking record & process.

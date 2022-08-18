@@ -1,4 +1,4 @@
-﻿namespace CoSupply
+﻿namespace Revital
 {
     public static class Global
     {

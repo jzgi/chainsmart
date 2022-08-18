@@ -1,6 +1,6 @@
 ﻿using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     /// <summary>
     /// The data modal for an standard category.

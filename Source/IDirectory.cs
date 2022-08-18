@@ -1,4 +1,4 @@
-﻿namespace CoSupply
+﻿namespace Revital
 {
     public interface IDirectory
     {

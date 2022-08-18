@@ -3,7 +3,7 @@ using CoChain.Web;
 using static CoChain.Web.Modal;
 using static CoChain.Nodal.Store;
 
-namespace CoSupply
+namespace Revital
 {
     public class BookWork : WebWork
     {

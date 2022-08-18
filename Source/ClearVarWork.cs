@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CoChain.Web;
 
-namespace CoSupply
+namespace Revital
 {
     public abstract class ClearVarWork : WebWork
     {

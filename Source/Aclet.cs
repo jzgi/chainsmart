@@ -1,6 +1,6 @@
 ﻿using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     public struct Aclet : IData
     {

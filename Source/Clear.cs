@@ -1,7 +1,7 @@
 ﻿using System;
 using CoChain;
 
-namespace CoSupply
+namespace Revital
 {
     public class Clear : Entity, IKeyable<int>, IWorkflow
     {
