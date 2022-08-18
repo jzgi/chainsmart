@@ -1,6 +1,6 @@
 ﻿﻿using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     public class Item : Entity, IKeyable<int>
     {

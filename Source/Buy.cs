@@ -1,6 +1,6 @@
 ﻿﻿using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// An online or offline retail order

@@ -1,4 +1,4 @@
-﻿﻿namespace Revital
+﻿﻿namespace CoBiz
 {
     public static class Global
     {

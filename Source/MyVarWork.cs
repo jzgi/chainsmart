@@ -5,7 +5,7 @@ using static System.String;
 using static CoChain.Web.Modal;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoBiz
 {
     [UserAuthorize]
     [Ui("账号信息")]

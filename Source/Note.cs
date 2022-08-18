@@ -1,6 +1,6 @@
 ﻿﻿using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// A reportive record of daily transaction for goods.

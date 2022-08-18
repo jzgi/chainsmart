@@ -5,11 +5,11 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Web.Appear;
 using static CoChain.Web.Modal;
-using static Revital.WeChatUtility;
+using static CoBiz.WeChatUtility;
 using static CoChain.Application;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoBiz
 {
     public class BuyVarWork : WebWork
     {

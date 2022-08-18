@@ -4,7 +4,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.CryptoUtility;
 
-namespace Revital
+namespace CoBiz
 {
     public static class RevitalUtility
     {

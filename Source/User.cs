@@ -1,7 +1,7 @@
 ﻿﻿using System;
 using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     public class User : Entity, IKeyable<int>
     {

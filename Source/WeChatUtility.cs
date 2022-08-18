@@ -9,7 +9,7 @@ using static CoChain.CryptoUtility;
 using static CoChain.Application;
 using WebUtility = System.Net.WebUtility;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.

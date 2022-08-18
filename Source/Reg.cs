@@ -1,6 +1,6 @@
 ﻿﻿using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// A geographic or spatial region.

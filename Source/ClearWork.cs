@@ -6,7 +6,7 @@ using CoChain.Web;
 using static CoChain.Web.Modal;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoBiz
 {
     [UserAuthorize(admly: User.ADMLY_)]
     [Ui("平台供应链代收结款", icon: "credit-card")]

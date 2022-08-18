@@ -1,9 +1,9 @@
 ﻿﻿using CoChain.Web;
 using static CoChain.Web.Modal;
-using static Revital.User;
+using static CoBiz.User;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoBiz
 {
     public abstract class UserWork : WebWork
     {

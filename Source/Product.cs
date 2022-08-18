@@ -1,7 +1,7 @@
 ﻿﻿using System;
 using CoChain;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// A bookable product from certain source. It can be upgraded to the group-book mode and then back.

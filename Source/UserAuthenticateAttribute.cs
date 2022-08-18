@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using CoChain.Nodal;
 using CoChain.Web;
 
-namespace Revital
+namespace CoBiz
 {
     /// <summary>
     /// To establish principal identity. 

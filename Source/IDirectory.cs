@@ -1,4 +1,4 @@
-﻿﻿namespace Revital
+﻿﻿namespace CoBiz
 {
     public interface IDirectory
     {

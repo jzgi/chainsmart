@@ -7,7 +7,7 @@ using CoChain.Nodal;
 using CoChain.Web;
 using static System.Data.IsolationLevel;
 
-namespace Revital
+namespace CoBiz
 {
     public class RevitalApplication : Application
     {

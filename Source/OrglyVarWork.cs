@@ -3,7 +3,7 @@ using CoChain;
 using CoChain.Web;
 using static CoChain.Nodal.Store;
 
-namespace Revital
+namespace CoBiz
 {
     public abstract class OrglyVarWork : WebWork
     {

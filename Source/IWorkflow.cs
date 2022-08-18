@@ -1,4 +1,4 @@
-﻿﻿namespace Revital
+﻿﻿namespace CoBiz
 {
     /// <summary>
     /// To indicate an workflow data model.
