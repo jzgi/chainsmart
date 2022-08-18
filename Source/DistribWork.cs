@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿﻿using CoChain.Web;
+=======
+﻿using CoChain.Web;
+>>>>>>> 19f63ac69a573c68a8eb8def6ceaa69023ef26c3
 using static CoChain.Web.Modal;
 
 namespace Revital
