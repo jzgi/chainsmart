@@ -1,4 +1,4 @@
-﻿namespace Revital
+﻿﻿namespace Revital
 {
     /// <summary>
     /// To indicate an workflow data model.

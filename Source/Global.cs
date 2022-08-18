@@ -1,4 +1,4 @@
-﻿namespace Revital
+﻿﻿namespace Revital
 {
     public static class Global
     {
