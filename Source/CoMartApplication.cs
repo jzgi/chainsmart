@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Nodal;
-using CoChain.Web;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
 using static System.Data.IsolationLevel;
 
-namespace CoBiz
+namespace ChainMart
 {
-    public class RevitalApplication : Application
+    public class CoMartApplication : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);

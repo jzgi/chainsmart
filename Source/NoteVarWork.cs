@@ -1,6 +1,6 @@
-﻿﻿using CoChain.Web;
+﻿﻿using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class NoteVarWork : WebWork
     {

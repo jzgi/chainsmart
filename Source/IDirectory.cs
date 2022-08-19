@@ -1,4 +1,4 @@
-﻿﻿namespace CoBiz
+﻿﻿namespace ChainMart
 {
     public interface IDirectory
     {

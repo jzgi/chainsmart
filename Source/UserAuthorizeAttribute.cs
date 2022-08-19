@@ -1,7 +1,7 @@
 ﻿﻿using System;
-using CoChain.Web;
+using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// To implement principal authorization of access to the target resources.

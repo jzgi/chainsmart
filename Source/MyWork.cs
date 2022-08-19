@@ -1,7 +1,7 @@
-using CoChain;
-using CoChain.Web;
+using ChainFx;
+using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class MyWork : WebWork
     {

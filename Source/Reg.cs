@@ -1,6 +1,6 @@
-﻿﻿using CoChain;
+﻿﻿using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// A geographic or spatial region.

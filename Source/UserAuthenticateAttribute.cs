@@ -1,9 +1,9 @@
 ﻿﻿using System;
 using System.Threading.Tasks;
-using CoChain.Nodal;
-using CoChain.Web;
+using ChainFx.Nodal;
+using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// To establish principal identity. 

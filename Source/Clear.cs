@@ -1,7 +1,7 @@
 ﻿﻿using System;
-using CoChain;
+using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class Clear : Entity, IKeyable<int>, IWorkflow
     {

@@ -1,6 +1,6 @@
-﻿﻿using CoChain;
+﻿﻿using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// The data modal for an standard category.

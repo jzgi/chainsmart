@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Web.Modal;
-using static CoChain.Nodal.Store;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class OrgWork : WebWork
     {
@@ -233,7 +233,7 @@ namespace CoBiz
             });
         }
 
-        [Ui("＋", "新建产源"), Tool(ButtonShow)]
+        [Ui("新建", "新建产源"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var prv = wc[-1].As<Org>();

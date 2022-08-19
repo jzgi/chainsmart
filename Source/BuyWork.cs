@@ -1,9 +1,9 @@
 ﻿﻿using System.Threading.Tasks;
-using CoChain.Web;
-using static CoBiz.User;
-using static CoChain.Nodal.Store;
+using ChainFx.Web;
+using static ChainMart.User;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class BuyWork : WebWork
     {

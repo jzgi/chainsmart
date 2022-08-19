@@ -1,15 +1,15 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Web.Appear;
-using static CoChain.Web.Modal;
-using static CoBiz.WeChatUtility;
-using static CoChain.Application;
-using static CoChain.Nodal.Store;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Web.Appear;
+using static ChainFx.Web.Modal;
+using static ChainMart.WeChatUtility;
+using static ChainFx.Application;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class BuyVarWork : WebWork
     {

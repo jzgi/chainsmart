@@ -1099,8 +1099,8 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-top-bar.uk-large {
-    height: 4rem;
-    min-height: 4rem;
+    height: 6rem;
+    min-height: 6rem;
 }
 
 .uk-top-placeholder {
@@ -1109,7 +1109,7 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-top-placeholder.uk-large {
-    height: 4rem;
+    height: 6rem;
     width: 100%;
 }
 

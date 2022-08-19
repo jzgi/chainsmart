@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using CoChain;
-using CoChain.Nodal;
-using CoChain.Web;
-using static CoBiz.WeChatUtility;
-using static CoChain.Nodal.Store;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
+using static ChainMart.WeChatUtility;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     [UserAuthenticate]
     public class WwwService : WebService
@@ -158,7 +158,7 @@ namespace CoBiz
                 url = f[nameof(url)];
 
                 using var dc = NewDbContext();
-                var credential = RevitalUtility.ComputeCredential(tel, password);
+                var credential = ChainBizUtility.ComputeCredential(tel, password);
                 dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))

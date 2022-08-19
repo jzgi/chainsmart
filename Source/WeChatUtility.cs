@@ -3,13 +3,13 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.CryptoUtility;
-using static CoChain.Application;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.CryptoUtility;
+using static ChainFx.Application;
 using WebUtility = System.Net.WebUtility;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.

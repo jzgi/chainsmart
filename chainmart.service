@@ -1,11 +1,11 @@
 [Unit]
-Description=Zhong Hui Nong Tong
+Description=Chain Mart System
 
 [Service]
 EnvironmentFile=/etc/environment
 Type=forking
 WorkingDirectory=/home/ubuntu
-ExecStart=sudo /usr/bin/dotnet /home/ubuntu/publish/Revital.dll deploy
+ExecStart=sudo /usr/bin/dotnet /home/ubuntu/publish/ChainMart.dll deploy
 Restart=always
 
 [Install]

@@ -1,7 +1,7 @@
 using System;
-using CoChain;
+using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// A product booking record & process.

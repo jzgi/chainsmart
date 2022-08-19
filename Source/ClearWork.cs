@@ -1,12 +1,12 @@
 ﻿﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Web.Modal;
-using static CoChain.Nodal.Store;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     [UserAuthorize(admly: User.ADMLY_)]
     [Ui("平台供应链代收结款", icon: "credit-card")]

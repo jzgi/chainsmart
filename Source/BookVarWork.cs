@@ -1,13 +1,13 @@
 ﻿﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Application;
-using static CoChain.Nodal.Store;
-using static CoChain.Web.Modal;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Application;
+using static ChainFx.Nodal.Store;
+using static ChainFx.Web.Modal;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class BookVarWork : WebWork
     {

@@ -1,6 +1,6 @@
-﻿﻿using CoChain;
+﻿﻿using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     /// <summary>
     /// An online or offline retail order

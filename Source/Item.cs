@@ -1,6 +1,6 @@
-﻿﻿using CoChain;
+﻿﻿using ChainFx;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class Item : Entity, IKeyable<int>
     {

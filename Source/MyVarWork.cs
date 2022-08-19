@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
+using ChainFx;
+using ChainFx.Web;
 using static System.String;
-using static CoChain.Web.Modal;
-using static CoChain.Nodal.Store;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     [UserAuthorize]
     [Ui("账号信息")]
@@ -74,7 +74,7 @@ namespace CoBiz
                 string credential =
                     IsNullOrEmpty(password) ? null :
                     password == PASSMASK ? prin.credential :
-                    RevitalUtility.ComputeCredential(tel, password);
+                    ChainBizUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);

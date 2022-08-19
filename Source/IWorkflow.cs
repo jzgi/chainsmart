@@ -1,4 +1,4 @@
-﻿﻿namespace CoBiz
+﻿﻿namespace ChainMart
 {
     /// <summary>
     /// To indicate an workflow data model.

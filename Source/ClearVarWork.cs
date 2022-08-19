@@ -1,7 +1,7 @@
 ﻿﻿using System.Threading.Tasks;
-using CoChain.Web;
+using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class ClearVarWork : WebWork
     {

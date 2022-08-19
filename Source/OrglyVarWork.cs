@@ -1,9 +1,9 @@
-﻿﻿using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Nodal.Store;
+﻿using System.Threading.Tasks;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -230,10 +230,10 @@ namespace CoBiz
 
             wc.GivePage(200, h =>
             {
-                h.FORM_("uk-card uk-card-default uk-card-body uk-flex");
-                if (prin.icon)
+                h.TOPBAR_(true);
+                if (org.icon)
                 {
-                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                    h.PIC("/org/", org.id, "/icon/", circle: true, css: "uk-width-medium");
                 }
                 else
                 {
@@ -244,7 +244,7 @@ namespace CoBiz
                 h.SPAN(org.tel);
                 h.SPAN(User.Typs[prin.typ]);
                 h._DIV();
-                h._FORM();
+                h._TOPBAR(true);
 
 
                 // h.FORM_("uk-card uk-card-default");

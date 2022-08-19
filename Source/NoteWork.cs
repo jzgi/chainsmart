@@ -1,9 +1,9 @@
 ﻿﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using CoChain;
-using CoChain.Web;
+using ChainFx;
+using ChainFx.Web;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class NoteWork : WebWork
     {

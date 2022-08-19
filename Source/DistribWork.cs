@@ -1,7 +1,7 @@
-using CoChain.Web;
-using static CoChain.Web.Modal;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
 
-namespace CoBiz
+namespace ChainMart
 {
     public class DistribWork : WebWork
     {

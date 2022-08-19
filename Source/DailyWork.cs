@@ -1,10 +1,10 @@
 ﻿﻿using System;
 using System.Threading.Tasks;
-using CoChain;
-using CoChain.Web;
-using static CoChain.Nodal.Store;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Store;
 
-namespace CoBiz
+namespace ChainMart
 {
     public abstract class DailyWork : WebWork
     {

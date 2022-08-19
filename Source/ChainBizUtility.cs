@@ -1,12 +1,12 @@
 using System;
 using System.Text;
-using CoChain;
-using CoChain.Web;
-using static CoChain.CryptoUtility;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.CryptoUtility;
 
-namespace CoBiz
+namespace ChainMart
 {
-    public static class RevitalUtility
+    public static class ChainBizUtility
     {
         public static double ComputeDistance(double lat1, double lng1, double lat2, double lng2)
         {
