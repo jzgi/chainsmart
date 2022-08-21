@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Application;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
 
 namespace ChainMart

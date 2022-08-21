@@ -6,7 +6,7 @@ using static ChainFx.CryptoUtility;
 
 namespace ChainMart
 {
-    public static class ChainBizUtility
+    public static class ChainMartUtility
     {
         public static double ComputeDistance(double lat1, double lng1, double lat2, double lng2)
         {

@@ -2,7 +2,7 @@
 
 namespace ChainMart
 {
-    public class FedService : ChainFx.Nodal.FedService
+    public class FedService : ChainFx.Fabric.FedService
     {
         public override void dir(WebContext wc)
         {

@@ -2,10 +2,10 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
-using ChainFx.Nodal;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainMart.WeChatUtility;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
@@ -83,7 +83,7 @@ namespace ChainMart
 
                     h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
                     h._FORM();
-                }, false, 15, title: Store.Self.Name);
+                }, false, 15, title: Nodality.Self.Name);
             }
             else if (cmd == 1) // agreement
             {
@@ -158,7 +158,7 @@ namespace ChainMart
                 url = f[nameof(url)];
 
                 using var dc = NewDbContext();
-                var credential = ChainBizUtility.ComputeCredential(tel, password);
+                var credential = ChainMartUtility.ComputeCredential(tel, password);
                 dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Nodal;
+using ChainFx.Fabric;
 using ChainFx.Web;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {

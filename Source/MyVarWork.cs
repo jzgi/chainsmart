@@ -3,7 +3,7 @@ using ChainFx;
 using ChainFx.Web;
 using static System.String;
 using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
@@ -74,7 +74,7 @@ namespace ChainMart
                 string credential =
                     IsNullOrEmpty(password) ? null :
                     password == PASSMASK ? prin.credential :
-                    ChainBizUtility.ComputeCredential(tel, password);
+                    ChainMartUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);

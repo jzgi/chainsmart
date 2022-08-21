@@ -1,6 +1,6 @@
 ﻿﻿using System;
 using System.Threading.Tasks;
-using ChainFx.Nodal;
+using ChainFx.Fabric;
 using ChainFx.Web;
 
 namespace ChainMart
@@ -61,7 +61,7 @@ namespace ChainMart
                     }
 
                     // create principal
-                    using var dc = Store.NewDbContext();
+                    using var dc = Nodality.NewDbContext();
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {

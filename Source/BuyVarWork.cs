@@ -7,7 +7,7 @@ using static ChainFx.Web.Appear;
 using static ChainFx.Web.Modal;
 using static ChainMart.WeChatUtility;
 using static ChainFx.Application;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {

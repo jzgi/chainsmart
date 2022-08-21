@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Nodal;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static System.Data.IsolationLevel;
 
 namespace ChainMart
 {
-    public class CoMartApplication : Application
+    public class ChainMartApp : Application
     {
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
@@ -26,14 +26,14 @@ namespace ChainMart
 
             if (args.Contains("proxy"))
             {
-                if (args.Contains("pub-p"))
+                if (args.Contains("www"))
                 {
-                    CreateService<ProxyService>("pub");
+                    CreateService<WebProxy>("www");
                 }
 
-                if (args.Contains("mgt-p"))
+                if (args.Contains("mgt"))
                 {
-                    CreateService<ProxyService>("mgt");
+                    CreateService<WebProxy>("mgt");
                 }
             }
             else

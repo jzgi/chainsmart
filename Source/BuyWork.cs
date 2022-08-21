@@ -1,7 +1,7 @@
 ﻿﻿using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainMart.User;
-using static ChainFx.Nodal.Store;
+using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
