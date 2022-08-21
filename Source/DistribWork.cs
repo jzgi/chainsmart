@@ -7,6 +7,15 @@ namespace ChainMart
     {
     }
 
+    public class PublyDistribWork : DistribWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublyDistribVarWork>();
+        }
+    }
+
+
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("产源批发管理")]
     public class SrclyDistribWork : DistribWork

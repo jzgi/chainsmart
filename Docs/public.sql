@@ -29,7 +29,7 @@ create type buyln_type as
 
 alter type buyln_type owner to postgres;
 
-create table entities
+create table if not exists entities
 (
     typ smallint not null,
     state smallint default 0 not null,
@@ -43,7 +43,7 @@ create table entities
 
 alter table entities owner to postgres;
 
-create table users
+create table if not exists users
 (
     id serial not null
         constraint users_pk
@@ -61,20 +61,20 @@ create table users
 
 alter table users owner to postgres;
 
-create index users_admly_idx
+create index if not exists users_admly_idx
     on users (admly)
     where (admly > 0);
 
-create unique index users_im_idx
+create unique index if not exists users_im_idx
     on users (im);
 
-create unique index users_tel_idx
+create unique index if not exists users_tel_idx
     on users (tel);
 
-create index users_orgid_idx
+create index if not exists users_orgid_idx
     on users (orgid);
 
-create table regs
+create table if not exists regs
 (
     id smallint not null
         constraint regs_pk
@@ -88,7 +88,7 @@ comment on column regs.num is 'sub resources';
 
 alter table regs owner to postgres;
 
-create table orgs
+create table if not exists orgs
 (
     id serial not null
         constraint orgs_pk
@@ -121,7 +121,7 @@ alter table users
     add constraint users_orgid_fk
         foreign key (orgid) references orgs;
 
-create table dailys
+create table if not exists dailys
 (
     orgid integer,
     dt date,
@@ -134,7 +134,7 @@ create table dailys
 
 alter table dailys owner to postgres;
 
-create table ledgers_
+create table if not exists ledgers_
 (
     seq integer,
     acct varchar(20),
@@ -148,7 +148,7 @@ create table ledgers_
 
 alter table ledgers_ owner to postgres;
 
-create table peerledgs_
+create table if not exists peerledgs_
 (
     peerid smallint
 )
@@ -156,7 +156,7 @@ create table peerledgs_
 
 alter table peerledgs_ owner to postgres;
 
-create table peers_
+create table if not exists peers_
 (
     id smallint not null
         constraint peers_pk
@@ -168,7 +168,7 @@ create table peers_
 
 alter table peers_ owner to postgres;
 
-create table accts_
+create table if not exists accts_
 (
     no varchar(20),
     v integer
@@ -177,7 +177,7 @@ create table accts_
 
 alter table accts_ owner to postgres;
 
-create table notes
+create table if not exists notes
 (
     id serial not null,
     fromid integer,
@@ -189,7 +189,7 @@ comment on table notes is 'annoucements and notices';
 
 alter table notes owner to postgres;
 
-create table buys
+create table if not exists buys
 (
     id bigserial not null
         constraint buys_pk
@@ -212,7 +212,7 @@ comment on table buys is 'customer buys';
 
 alter table buys owner to postgres;
 
-create table clears
+create table if not exists clears
 (
     id serial not null
         constraint clears_pk
@@ -230,7 +230,7 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table cats
+create table if not exists cats
 (
     idx smallint,
     num smallint,
@@ -243,7 +243,7 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table products
+create table if not exists products
 (
     id serial not null
         constraint products_pk
@@ -266,15 +266,13 @@ create table products
 )
     inherits (entities);
 
-comment on table products is 'sellable wares by sources';
-
 comment on column products.store is 'storage method';
 
 comment on column products.unitip is 'ratio to standard unit';
 
 alter table products owner to postgres;
 
-create table items
+create table if not exists items
 (
     id serial not null
         constraint items_pk
@@ -294,7 +292,7 @@ create table items
 
 alter table items owner to postgres;
 
-create table books
+create table if not exists books
 (
     id bigserial not null
         constraint books_pk
@@ -336,7 +334,7 @@ comment on column books.payre is 'pay refunded';
 
 alter table books owner to postgres;
 
-create table distribs
+create table if not exists distribs
 (
     id serial not null,
     productid integer,
@@ -363,7 +361,7 @@ create table distribs
 
 alter table distribs owner to postgres;
 
-create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
+create or replace view users_vw(typ, state, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,
        u.state,
        u.name,
@@ -385,7 +383,7 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
+create or replace view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -417,7 +415,7 @@ FROM orgs o
 
 alter table orgs_vw owner to postgres;
 
-create function first_agg(anyelement, anyelement) returns anyelement
+create or replace function first_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
     parallel safe
@@ -428,7 +426,7 @@ $$;
 
 alter function first_agg(anyelement, anyelement) owner to postgres;
 
-create function last_agg(anyelement, anyelement) returns anyelement
+create or replace function last_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
     parallel safe

@@ -40,10 +40,6 @@ namespace ChainMart
         }
     }
 
-    public class PublyProductVarWork : ProductVarWork
-    {
-    }
-
     public class SrclyProductVarWork : ProductVarWork
     {
         public async Task @default(WebContext wc)

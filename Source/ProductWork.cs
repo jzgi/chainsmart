@@ -12,14 +12,6 @@ namespace ChainMart
         public const string ERR = "table";
     }
 
-    public class PublyProductWork : ProductWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<PublyProductVarWork>();
-        }
-    }
-
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
     [Ui("产源产品设置", icon: ERR)]
     public class SrclyProductWork : ProductWork

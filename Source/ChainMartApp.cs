@@ -67,13 +67,6 @@ namespace ChainMart
                 }, 3600 * 24
             );
 
-            Cache(dc =>
-                {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items ORDER BY typ, id");
-                    return dc.Query<short, Item>();
-                }, 60 * 15
-            );
-
             CacheObject<int, Org>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");

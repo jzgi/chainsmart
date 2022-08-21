@@ -18,9 +18,7 @@ namespace ChainMart
 
             CreateWork<PublyShpWork>("shp");
 
-            // CreateWork<PublyItemWork>("item");
-
-            CreateWork<PublyProductWork>("ware");
+            CreateWork<PublyDistribWork>("distrib");
 
             CreateWork<MyWork>("my");
         }
