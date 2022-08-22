@@ -28,6 +28,7 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE srcid = @1 ORDER BY state DESC");
             var arr = await dc.QueryAsync<Product>(p => p.Set(src.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -42,8 +43,7 @@ namespace ChainMart
             });
         }
 
-
-        [Ui("新建", "新建产品"), Tool(ButtonShow)]
+        [Ui("✛", "新建产品"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -66,8 +66,6 @@ namespace ChainMart
                     h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("规格参数");
-
-                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位倍比", nameof(o.unitip), o.unitip)._LI();
 
                     h._FIELDSUL();
                     h._FORM();

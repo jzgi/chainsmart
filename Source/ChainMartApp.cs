@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +34,11 @@ namespace ChainMart
                 if (args.Contains("mgt"))
                 {
                     CreateService<WebProxy>("mgt");
+                }
+
+                if (args.Contains("fed"))
+                {
+                    CreateService<WebProxy>("fed");
                 }
             }
             else

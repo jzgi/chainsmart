@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using ChainFx;
 
 namespace ChainMart
@@ -10,18 +10,17 @@ namespace ChainMart
     {
         public static readonly Distrib Empty = new Distrib();
 
+
         public const short
-            TYP_SELL_N_MOVE = 1, // sell and move center
-            TYP_MOVE_N_SELL = 2, // move to center and sell
-            TYP_TRANSFER_MOVE = 3, // transfer and move to another source
-            TYP_DIRECT_SALE = 4; // direct
+            TYP_SALE = 1, // sell and move center
+            TYP_TRANSFER = 2, // move to center and sell
+            TYP_DIRECT = 3; // transfer and move to another source
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SELL_N_MOVE, "先售后运"},
-            {TYP_MOVE_N_SELL, "先运后售"},
-            {TYP_TRANSFER_MOVE, "转移"},
-            {TYP_DIRECT_SALE, "直售直运"},
+            {TYP_SALE, "自销（自行接单，由指定的中枢来控运）"},
+            {TYP_TRANSFER, "转销（转让给指定的中枢去接单和控运）"},
+            {TYP_DIRECT, "自通（自行接单，自达客户）"},
         };
 
 

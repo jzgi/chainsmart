@@ -1,5 +1,4 @@
-﻿﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
@@ -80,5 +79,7 @@ namespace ChainMart
         }
 
         public int Key => id;
+
+        public override string ToString() => name;
     }
 }
