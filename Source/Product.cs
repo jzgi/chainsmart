@@ -11,9 +11,9 @@ namespace ChainMart
 
         public new static readonly Map<short, string> States = new Map<short, string>
         {
-            {STA_DISABLED, "停售"},
-            {STA_ENABLED, "在售"},
-            {STA_HOT, "冲量"},
+            {STA_DISABLED, "禁用"},
+            {STA_ENABLED, "正常"},
+            {STA_HOT, "置顶"},
         };
 
 
@@ -24,12 +24,23 @@ namespace ChainMart
             {2, "冷冻"},
         };
 
-        public static readonly short[] Durations = {3, 5, 7, 10, 15, 20, 30, 45, 60, 90, 120};
+        public static readonly Map<short, string> Durations = new Map<short, string>
+        {
+            {3, "三天"},
+            {5, "五天"},
+            {7, "一周"},
+            {10, "十天"},
+            {15, "半个月"},
+            {30, "一个月"},
+            {60, "两个月"},
+            {90, "三个月"},
+            {120, "四个月"},
+            {180, "六个月"},
+        };
 
         internal int id;
 
         internal int srcid;
-        internal string ext;
         internal short store;
         internal short duration;
         internal bool agt; // agent only 
@@ -49,7 +60,6 @@ namespace ChainMart
             {
                 s.Get(nameof(srcid), ref srcid);
             }
-            s.Get(nameof(ext), ref ext);
             s.Get(nameof(store), ref store);
             s.Get(nameof(duration), ref duration);
             s.Get(nameof(agt), ref agt);
@@ -70,7 +80,6 @@ namespace ChainMart
             {
                 s.Put(nameof(srcid), srcid);
             }
-            s.Put(nameof(ext), ext);
             s.Put(nameof(store), store);
             s.Put(nameof(duration), duration);
             s.Put(nameof(agt), agt);

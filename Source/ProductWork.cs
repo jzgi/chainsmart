@@ -38,7 +38,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer uk-flex-right").TOOLGROUPVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -49,26 +49,26 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
+            
             if (wc.IsGet)
             {
                 var tomorrow = DateTime.Today.AddDays(1);
                 var o = new Product
                 {
+                    created = DateTime.Now,
                     state = Entity.STA_DISABLED,
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("基本信息");
+                    h.FORM_().FIELDSUL_("标准产品资料");
 
-                    h.LI_().SELECT("品目名", nameof(o.typ), o.typ, cats, required: true).TEXT("附加名", nameof(o.name), o.name, max: 12)._LI();
+                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("贮藏天数", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
-                    h.LI_().CHECKBOX("只供给代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Product.Stores, required: true).SELECT("保存周期", nameof(o.duration), o.duration, Product.Durations, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitip), o.unitip)._LI();
+                    h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
-                    h._FIELDSUL().FIELDSUL_("规格参数");
-
-                    h._FIELDSUL();
-                    h._FORM();
+                    h._FIELDSUL()._FORM();
                 });
             }
             else // POST

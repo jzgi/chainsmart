@@ -29,7 +29,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("目标市场");
+                h.FIELDSUL_("批发市场");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
@@ -40,7 +40,7 @@ namespace ChainMart
                 }
                 h._FIELDSUL();
 
-                h.FIELDSUL_("管理功能");
+                h.FIELDSUL_("管理模块");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);
@@ -190,7 +190,7 @@ namespace ChainMart
         /// <summary>
         /// A booking payment notification.
         /// </summary>
-        public async Task onpurch(WebContext wc)
+        public async Task onbook(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(xe, out var trade_no, out var cash))

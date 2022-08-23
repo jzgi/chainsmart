@@ -12,9 +12,9 @@ namespace ChainMart
 
 
         public const short
-            TYP_SALE = 1, // sell and move center
-            TYP_TRANSFER = 2, // move to center and sell
-            TYP_DIRECT = 3; // transfer and move to another source
+            TYP_SALE = 1,
+            TYP_TRANSFER = 2,
+            TYP_DIRECT = 3;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -22,7 +22,6 @@ namespace ChainMart
             {TYP_TRANSFER, "转销（转让给指定的中枢去接单和控运）"},
             {TYP_DIRECT, "自通（自行接单，自达客户）"},
         };
-
 
         public new static readonly Map<short, string> States = new Map<short, string>
         {

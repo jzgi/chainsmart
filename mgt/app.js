@@ -364,18 +364,18 @@ function crop(trig, appear, title) {
     var stylec;
     switch (appear) {
         case SMALL:
-            wid = 120;
-            hei = 120;
+            wid = 90;
+            hei = 90;
             stylec = ' uk-modal-large';
             break;
         case LARGE:
-            wid = 420;
-            hei = 280;
+            wid = 360;
+            hei = 240;
             stylec = ' uk-modal-large';
             break;
         case FULL:
-            wid = 420;
-            hei = 420;
+            wid = 360;
+            hei = 480;
             stylec = ' uk-modal-large';
             break;
     }
@@ -437,7 +437,7 @@ function upload(el, url) {
         {
             type: 'blob',
             size: 'viewport',
-            format: 'jpeg'
+            format: 'webp'
         }
     ).then(function (blob) {
 

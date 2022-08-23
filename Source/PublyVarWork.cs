@@ -1,4 +1,6 @@
-﻿﻿using System.Threading.Tasks;
+﻿using System;
+using System.Data;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
@@ -49,9 +51,11 @@ namespace ChainMart
         {
             int bizid = wc[0];
             var biz = GrabObject<int, Org>(bizid);
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(biz.id));
+
             wc.GivePage(200, h =>
             {
                 h.FORM_().FIELDSUL_();
@@ -74,7 +78,7 @@ namespace ChainMart
     public class PublyCtrVarWork : WebWork
     {
         /// <summary>
-        /// To display bound provisions and wares therein.
+        /// To display distribs that are targetd to the therein.
         /// </summary>
         public async Task @default(WebContext wc)
         {
@@ -82,14 +86,18 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
             var ctr = topOrgs[ctrid];
 
-            var lst = new ValueList<int>();
-            topOrgs.ForEach((k, v) => v.ctrid == ctrid, (k, v) => lst.Add(v.id));
-
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty, Entity.EXTRA, "w").T(", o.id AS prvid FROM products AS w, orgs AS o WHERE w.srcid = o.id AND o.sprid")._IN_(lst.ToArray(), true).T(" AND w.state > 0 AND o.state > 0");
-            var arr = await dc.QueryAsync<Product>();
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE ctrid = @1 AND state > 0");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(ctrid));
+
             wc.GivePage(200, h =>
             {
+                if (arr == null)
+                {
+                    h.ALERT("没有匹配的记录");
+                    return;
+                }
+
                 h.TABLE_();
                 var last = 0;
                 for (var i = 0; i < arr?.Length; i++)
@@ -111,7 +119,7 @@ namespace ChainMart
             }, title: ctr.tip);
         }
 
-        public async Task ware(WebContext wc, int wareid)
+        public async Task distrib(WebContext wc, int distribId)
         {
             int prvid = wc[0];
             var topOrgs = Grab<int, Org>();
@@ -119,8 +127,8 @@ namespace ChainMart
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Product.Empty).T(" FROM prods WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Product>(p => p.Set(wareid));
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE id = @1 AND state > 0");
+            var obj = await dc.QueryTopAsync<Distrib>(p => p.Set(distribId));
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");
@@ -131,6 +139,131 @@ namespace ChainMart
 
                 h.BOTTOMBAR_().BUTTON("付款")._BOTTOMBAR();
             });
+        }
+
+        [UserAuthorize]
+        [Ui("付款"), Tool(Modal.ButtonPickScript)]
+        public async Task book(WebContext wc, int cmd)
+        {
+            var prin = (User) wc.Principal;
+            var orgs = Grab<int, Org>();
+
+            // get pt and shop
+            short ptid = wc[0];
+            Org pt = null, shop = null;
+            if (ptid > 0)
+            {
+                pt = orgs[ptid];
+                // shop = pt.IsShop ? pt : orgs[pt.refid];
+                if (shop == null)
+                {
+                    wc.Give(400, shared: true, maxage: 60);
+                    return;
+                }
+            }
+
+            if (wc.IsGet)
+            {
+                // get focus item info
+                var q = wc.Query;
+                int orderid = q[nameof(orderid)];
+                int id = q[nameof(id)];
+                short qty = q[nameof(qty)];
+
+                using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+
+                // handling commands
+                if (orderid > 0 && id > 0)
+                {
+                    if (qty == -1) // remove a line item
+                    {
+                        dc.Sql("DELETE FROM orderlns WHERE orderid = @1 AND id = @2 AND status = 0");
+                        await dc.ExecuteAsync(p => p.Set(orderid).Set(id));
+                    }
+                    else // update qty
+                    {
+                        dc.Sql("UPDATE orderlns SET qty = @1 WHERE orderid = @2 AND id = @3 AND status = 0");
+                        await dc.ExecuteAsync(p => p.Set(qty).Set(orderid).Set(id));
+                    }
+                }
+
+                // get cart id if absent
+                if (orderid <= 0)
+                {
+                    await dc.QueryTopAsync("SELECT id FROM orders WHERE uid = @1 AND status = 0 AND shopid = @2 AND ptid = @3 LIMIT 1", p => p.Set(prin.id).Set(shop.id).Set(ptid));
+                    dc.Let(out orderid);
+                }
+
+                // display the lines
+                wc.GivePane(200, h =>
+                {
+                    // output list 
+                    h.ARTICLE_("uk-card uk-card-default");
+                    decimal amt = 0;
+                    h.UL_("uk-card-body");
+                    h._UL();
+
+                    h.FORM_("uk-card-footer", post: false);
+                    h.SPAN_("uk-width-expand uk-text-small").H4(shop.name)._SPAN();
+                    h.HIDDEN((nameof(orderid)), orderid);
+                    h.SPAN_("uk-width-1-6 uk-flex-right").CNY(amt, true)._SPAN();
+                    h._FORM();
+
+                    h._ARTICLE();
+                });
+            }
+            else // POST
+            {
+                if (cmd == 1) // clear order
+                {
+                    int orderid = (await wc.ReadAsync<Form>())[nameof(orderid)];
+                    using (var dc = NewDbContext())
+                    {
+                        dc.Sql("DELETE FROM orderlns WHERE status = 0 AND orderid = @1");
+                        await dc.ExecuteAsync(p => p.Set(orderid));
+                    }
+                    wc.GiveRedirect(nameof(book));
+                }
+                else if (cmd == 2) // to pay
+                {
+                    int orderid = wc.Query[nameof(orderid)]; // order id
+                    var u = (User) wc.Principal;
+                    using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+                    try
+                    {
+                        // update line status and compute total 
+                        await dc.QueryTopAsync("SELECT sum((itemp + staplep + plusp) * qty) AS topay FROM orderlns WHERE status = 0 AND orderid = @1", p => p.Set(orderid));
+                        dc.Let(out decimal topay);
+                        // update order master record
+                        await dc.ExecuteAsync("UPDATE orders SET topay = @1 WHERE id = @2", p => p.Set(topay).Set(orderid));
+                        // call WeChatPay to prepare order there
+                        string trade_no = (orderid + "-" + topay).Replace('.', '-');
+                        var (prepay_id, _) = await WeChatUtility.PostUnifiedOrderAsync(
+                            trade_no,
+                            topay,
+                            u.im, // the payer
+                            wc.RemoteIpAddress.ToString(),
+                            WeChatUtility.url + "/" + nameof(MgtService.onbook),
+                            WeChatUtility.url
+                        );
+                        if (prepay_id != null)
+                        {
+                            wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
+                        }
+                        else
+                        {
+                            dc.Rollback();
+                            wc.Give(500);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        dc.Rollback();
+                        Application.Err(e.Message);
+                        wc.Give(500);
+                    }
+                }
+            }
         }
     }
 }

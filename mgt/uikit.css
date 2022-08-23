@@ -1712,18 +1712,21 @@ a.uk-button-primary.uk-active {
 }
 
 button.uk-button-secondary {
-    border-radius: 4px;
+    border-radius: 50%;
     height: 32px;
+    border: 1px solid #ededed;
 }
 
 .uk-button-secondary:hover,
 .uk-button-secondary:focus {
     color: #dd4763;
+    background-color: #ededed;
 }
 
 .uk-button-secondary:active,
 .uk-button-secondary.uk-active {
     color: #f59604;
+    background-color: #ededed;
 }
 
 /*
