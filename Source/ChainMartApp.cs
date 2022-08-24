@@ -60,7 +60,7 @@ namespace ChainMart
         {
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE state > 0 ORDER BY idx");
+                    dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY idx");
                     return dc.Query<short, Cat>();
                 }, 3600 * 24
             );
@@ -88,7 +88,7 @@ namespace ChainMart
 
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND state > 0 ORDER BY state DESC");
+                    dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
                     return dc.Query<int, Product>(p => p.Set(orgid));
                 }, 60 * 15
             );

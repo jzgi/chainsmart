@@ -29,10 +29,10 @@ create type buyln_type as
 
 alter type buyln_type owner to postgres;
 
-create table if not exists entities
+create table entities
 (
     typ smallint not null,
-    state smallint default 0 not null,
+    status smallint default 0 not null,
     name varchar(12) not null,
     tip varchar(30),
     created timestamp(0),
@@ -43,7 +43,7 @@ create table if not exists entities
 
 alter table entities owner to postgres;
 
-create table if not exists users
+create table users
 (
     id serial not null
         constraint users_pk
@@ -61,20 +61,20 @@ create table if not exists users
 
 alter table users owner to postgres;
 
-create index if not exists users_admly_idx
+create index users_admly_idx
     on users (admly)
     where (admly > 0);
 
-create unique index if not exists users_im_idx
+create unique index users_im_idx
     on users (im);
 
-create unique index if not exists users_tel_idx
+create unique index users_tel_idx
     on users (tel);
 
-create index if not exists users_orgid_idx
+create index users_orgid_idx
     on users (orgid);
 
-create table if not exists regs
+create table regs
 (
     id smallint not null
         constraint regs_pk
@@ -88,7 +88,7 @@ comment on column regs.num is 'sub resources';
 
 alter table regs owner to postgres;
 
-create table if not exists orgs
+create table orgs
 (
     id serial not null
         constraint orgs_pk
@@ -121,7 +121,7 @@ alter table users
     add constraint users_orgid_fk
         foreign key (orgid) references orgs;
 
-create table if not exists dailys
+create table dailys
 (
     orgid integer,
     dt date,
@@ -134,7 +134,7 @@ create table if not exists dailys
 
 alter table dailys owner to postgres;
 
-create table if not exists ledgers_
+create table ledgers_
 (
     seq integer,
     acct varchar(20),
@@ -148,7 +148,7 @@ create table if not exists ledgers_
 
 alter table ledgers_ owner to postgres;
 
-create table if not exists peerledgs_
+create table peerledgs_
 (
     peerid smallint
 )
@@ -156,7 +156,7 @@ create table if not exists peerledgs_
 
 alter table peerledgs_ owner to postgres;
 
-create table if not exists peers_
+create table peers_
 (
     id smallint not null
         constraint peers_pk
@@ -168,7 +168,7 @@ create table if not exists peers_
 
 alter table peers_ owner to postgres;
 
-create table if not exists accts_
+create table accts_
 (
     no varchar(20),
     v integer
@@ -177,7 +177,7 @@ create table if not exists accts_
 
 alter table accts_ owner to postgres;
 
-create table if not exists notes
+create table notes
 (
     id serial not null,
     fromid integer,
@@ -189,7 +189,7 @@ comment on table notes is 'annoucements and notices';
 
 alter table notes owner to postgres;
 
-create table if not exists buys
+create table buys
 (
     id bigserial not null
         constraint buys_pk
@@ -203,8 +203,7 @@ create table if not exists buys
     uim varchar(28),
     lns buyln_type[],
     pay money,
-    payre money,
-    status smallint
+    payre money
 )
     inherits (entities);
 
@@ -212,7 +211,7 @@ comment on table buys is 'customer buys';
 
 alter table buys owner to postgres;
 
-create table if not exists clears
+create table clears
 (
     id serial not null
         constraint clears_pk
@@ -223,14 +222,13 @@ create table if not exists clears
     orders integer,
     total money,
     rate money,
-    pay integer,
-    status smallint
+    pay integer
 )
     inherits (entities);
 
 alter table clears owner to postgres;
 
-create table if not exists cats
+create table cats
 (
     idx smallint,
     num smallint,
@@ -243,56 +241,7 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table if not exists products
-(
-    id serial not null
-        constraint products_pk
-            primary key,
-    srcid integer
-        constraint products_srcid_fk
-            references orgs,
-    ext varchar(10),
-    store smallint,
-    duration smallint,
-    agt boolean,
-    unit varchar(4),
-    unitip varchar(12),
-    price money,
-    "off" money,
-    icon bytea,
-    pic bytea,
-    constraint products_typ_fk
-        foreign key (typ) references cats
-)
-    inherits (entities);
-
-comment on column products.store is 'storage method';
-
-comment on column products.unitip is 'ratio to standard unit';
-
-alter table products owner to postgres;
-
-create table if not exists items
-(
-    id serial not null
-        constraint items_pk
-            primary key,
-    shpid integer,
-    productid integer,
-    unit varchar(4),
-    unitx smallint,
-    price money,
-    min smallint,
-    max smallint,
-    step smallint,
-    icon bytea,
-    pic bytea
-)
-    inherits (entities);
-
-alter table items owner to postgres;
-
-create table if not exists books
+create table books
 (
     id bigserial not null
         constraint books_pk
@@ -304,7 +253,7 @@ create table if not exists books
     srcop varchar(12),
     srcon timestamp(0),
     prvid integer not null,
-    prvpop varchar(12),
+    prvop varchar(12),
     prvon timestamp(0),
     ctrid integer not null,
     ctrop varchar(12),
@@ -322,7 +271,7 @@ create table if not exists books
     qtyre integer,
     pay money,
     payre money,
-    status smallint
+    distribid integer
 )
     inherits (entities);
 
@@ -334,36 +283,68 @@ comment on column books.payre is 'pay refunded';
 
 alter table books owner to postgres;
 
-create table if not exists distribs
+create table distribs
 (
     id serial not null,
     productid integer,
     srcid integer,
-    srcop varchar(12),
-    srcon timestamp(0),
     prvid integer,
-    prvop varchar(12),
-    prvon timestamp(0),
     ctrid integer,
-    ctrop varchar(12),
-    ctron timestamp(0),
-    ownid integer,
     price money,
     "off" money,
     cap integer,
     remain integer,
     min integer,
     max integer,
-    step integer,
-    status smallint
+    step integer
 )
     inherits (entities);
 
 alter table distribs owner to postgres;
 
-create or replace view users_vw(typ, state, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
+create table products
+(
+    id serial not null,
+    srcid integer,
+    store smallint,
+    duration smallint,
+    agt boolean,
+    unit varchar(4),
+    unitip varchar(12),
+    unitx smallint,
+    icon bytea,
+    pic bytea,
+    mat bytea
+)
+    inherits (entities);
+
+alter table products owner to postgres;
+
+create table items
+(
+    id serial not null
+        constraint items_pk
+            primary key,
+    shpid integer,
+    productid integer,
+    unit varchar(4),
+    unitstd varchar(4),
+    unitx smallint,
+    price money,
+    "off" money,
+    min smallint,
+    max smallint,
+    step smallint,
+    icon bytea,
+    pic bytea
+)
+    inherits (entities);
+
+alter table items owner to postgres;
+
+create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,
-       u.state,
+       u.status,
        u.name,
        u.tip,
        u.created,
@@ -383,9 +364,9 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create or replace view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
 SELECT o.typ,
-       o.state,
+       o.status,
        o.name,
        o.tip,
        o.created,
@@ -415,7 +396,7 @@ FROM orgs o
 
 alter table orgs_vw owner to postgres;
 
-create or replace function first_agg(anyelement, anyelement) returns anyelement
+create function first_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
     parallel safe
@@ -426,7 +407,7 @@ $$;
 
 alter function first_agg(anyelement, anyelement) owner to postgres;
 
-create or replace function last_agg(anyelement, anyelement) returns anyelement
+create function last_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
     parallel safe

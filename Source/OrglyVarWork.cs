@@ -89,7 +89,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.status), org.status, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -99,7 +99,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, date = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.state).Set(org.id));
+                    p => p.Set(o.tip).Set(o.status).Set(org.id));
 
                 wc.GivePane(200);
             }
@@ -124,15 +124,15 @@ namespace ChainMart
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
+            CreateWork<MrtlyCustWork>("cust");
+
             // shop
 
             CreateWork<ShplyBookWork>("sbook");
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyItemWork>("stock");
-
-            CreateWork<MrtlyUserWork>("user");
+            CreateWork<ShplyItemWork>("item");
 
             // common
 
@@ -149,7 +149,7 @@ namespace ChainMart
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 // h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
-                h.FORM_("uk-card uk-card-default uk-card-body uk-flex");
+                h.TOPBAR_(true);
                 if (prin.icon)
                 {
                     h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
@@ -161,9 +161,8 @@ namespace ChainMart
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
                 h.SPAN(org.tel);
-                h.SPAN(User.Typs[prin.typ]);
                 h._DIV();
-                h._FORM();
+                h._TOPBAR(true);
 
 
                 // h.FORM_("uk-card uk-card-default");

@@ -21,21 +21,20 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
-    [Ui("商户线上采购", icon: "pull")]
+    [Ui("商户订货业务", icon: "pull")]
 #else
-    [Ui("驿站线上采购", icon: "pull")]
+    [Ui("驿站订货业务", icon: "pull")]
 #endif
     public class ShplyBookWork : BookWork
     {
-        [Ui("当前采购", group: 1), Tool(Anchor)]
+        [Ui("当前订货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
-            var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: "当前订货");
@@ -48,7 +47,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("以往", group: 2), Tool(Anchor)]
+        [Ui("⌹", "以往订货", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();

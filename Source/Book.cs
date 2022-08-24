@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// A product booking record & process.
     /// </summary>
-    public class Book : Entity, IKeyable<int>, IWorkflow
+    public class Book : Entity, IKeyable<int>
     {
         public static readonly Book Empty = new Book();
 
@@ -56,7 +56,7 @@ namespace ChainMart
         internal DateTime mrton;
 
         internal int productid;
-        internal short itemid;
+        internal short distribid;
 
         internal DateTime shipat;
         internal string unit;
@@ -75,11 +75,11 @@ namespace ChainMart
         {
             base.Read(s, msk);
 
-            if ((msk & ID) == ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((msk & BORN) == BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(shpop), ref shpop);
@@ -98,7 +98,7 @@ namespace ChainMart
                 s.Get(nameof(srcon), ref srcon);
 
                 s.Get(nameof(productid), ref productid);
-                s.Get(nameof(itemid), ref itemid);
+                s.Get(nameof(distribid), ref distribid);
 
                 s.Get(nameof(shipat), ref shipat);
                 s.Get(nameof(unit), ref unit);
@@ -108,7 +108,7 @@ namespace ChainMart
                 s.Get(nameof(qty), ref qty);
                 s.Get(nameof(pay), ref pay);
             }
-            if ((msk & LATER) == LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(qtyre), ref qtyre);
                 s.Get(nameof(payre), ref payre);
@@ -120,11 +120,11 @@ namespace ChainMart
         {
             base.Write(s, msk);
 
-            if ((msk & ID) == ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((msk & BORN) == BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(shpop), shpop);
@@ -144,7 +144,7 @@ namespace ChainMart
 
 
                 s.Put(nameof(productid), productid);
-                s.Put(nameof(itemid), itemid);
+                s.Put(nameof(distribid), distribid);
 
                 s.Put(nameof(shipat), shipat);
                 s.Put(nameof(unit), unit);
@@ -154,7 +154,7 @@ namespace ChainMart
                 s.Put(nameof(qty), qty);
                 s.Put(nameof(pay), pay);
             }
-            if ((msk & LATER) == LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(qtyre), qtyre);
                 s.Put(nameof(payre), payre);

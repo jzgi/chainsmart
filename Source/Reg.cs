@@ -31,7 +31,7 @@ namespace ChainMart
         {
             base.Read(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -43,7 +43,7 @@ namespace ChainMart
         {
             base.Write(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }

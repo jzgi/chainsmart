@@ -66,13 +66,13 @@ namespace ChainMart
         {
             base.Read(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(im), ref im);
-            if ((proj & LATER) == LATER)
+            if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
@@ -87,13 +87,13 @@ namespace ChainMart
         {
             base.Write(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(tel), tel);
             s.Put(nameof(im), im);
-            if ((proj & LATER) == LATER)
+            if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);

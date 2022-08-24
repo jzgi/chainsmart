@@ -1,4 +1,4 @@
-﻿﻿using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
@@ -22,15 +22,15 @@ namespace ChainMart
             CreateVarWork<ShplyItemVarWork>();
         }
 
-        [Ui("在售", group: 1), Tool(Modal.Anchor)]
+        [Ui("在线商品", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            var biz = wc[-1].As<Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM stocks WHERE bizid = @1 AND state  >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Item>(p => p.Set(biz.id));
+            var shp = wc[-1].As<Org>();
 
-            var items = Grab<short, Item>();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND status >= 1 ORDER BY id");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(shp.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -43,12 +43,12 @@ namespace ChainMart
             });
         }
 
-        [Ui("下架", group: 2), Tool(Modal.Anchor)]
-        public async Task off(WebContext wc, int page)
+        [Ui("⌹", "离线商品", group: 2), Tool(Modal.Anchor)]
+        public async Task offln(WebContext wc, int page)
         {
             var biz = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM stocks WHERE bizid = @1 AND state  >= 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Item>(p => p.Set(biz.id));
 
             var items = Grab<short, Item>();
@@ -86,10 +86,10 @@ namespace ChainMart
                     }
                     h._SELECT()._LI();
                     h._FIELDSUL().FIELDSUL_("上架信息");
-                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位倍比", nameof(o.unitip), o.unitip)._LI();
+                    h.LI_().TEXT("销售单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("单位倍比", nameof(o.unitx), o.unitx)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).SELECT("状态", nameof(o.status), o.status, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL();
                     h._FORM();
                 });

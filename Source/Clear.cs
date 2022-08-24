@@ -3,7 +3,7 @@ using ChainFx;
 
 namespace ChainMart
 {
-    public class Clear : Entity, IKeyable<int>, IWorkflow
+    public class Clear : Entity, IKeyable<int>
     {
         public static readonly Clear Empty = new Clear();
 
@@ -44,7 +44,7 @@ namespace ChainMart
         {
             base.Read(s, proj);
 
-            if ((proj & EXTRA) == EXTRA)
+            if ((proj & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -62,7 +62,7 @@ namespace ChainMart
         {
             base.Write(s, proj);
 
-            if ((proj & EXTRA) == EXTRA)
+            if ((proj & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Put(nameof(id), id);
             }

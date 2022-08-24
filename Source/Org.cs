@@ -1,4 +1,4 @@
-﻿﻿using ChainFx;
+﻿using ChainFx;
 using ChainFx.Web;
 
 namespace ChainMart
@@ -69,11 +69,11 @@ namespace ChainMart
         {
             base.Read(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & BORN) == BORN)
+            if ((proj & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(sprid), ref sprid);
             }
@@ -86,7 +86,7 @@ namespace ChainMart
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
             s.Get(nameof(ctrid), ref ctrid);
-            if ((proj & LATER) == LATER)
+            if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(mgrid), ref mgrid);
                 s.Get(nameof(mgrname), ref mgrname);
@@ -100,11 +100,11 @@ namespace ChainMart
         {
             base.Write(s, proj);
 
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & BORN) == BORN)
+            if ((proj & MSK_BORN) == MSK_BORN)
             {
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));
@@ -119,7 +119,7 @@ namespace ChainMart
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
             s.Put(nameof(ctrid), ctrid);
-            if ((proj & LATER) == LATER)
+            if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(mgrid), mgrid);
                 s.Put(nameof(mgrname), mgrname);
@@ -169,5 +169,7 @@ namespace ChainMart
         public override string ToString() => name;
 
         #endregion
+
+        public override string ToString(short spec) => spec == 1 ? name : tip;
     }
 }

@@ -97,7 +97,7 @@ namespace ChainMart
         }
     }
 
-    public class BizlyBuyVarWork : BuyVarWork
+    public class ShplyBuyVarWork : BuyVarWork
     {
         [Ui("☰", "☰ 明细"), Tool(ButtonOpen, Half)]
         public async Task dtl(WebContext wc)

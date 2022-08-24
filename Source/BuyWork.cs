@@ -1,4 +1,4 @@
-﻿﻿using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainMart.User;
 using static ChainFx.Fabric.Nodality;
@@ -21,7 +21,7 @@ namespace ChainMart
         {
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND state > 0  ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0  ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
             wc.GivePage(200, h =>
             {
@@ -34,24 +34,26 @@ namespace ChainMart
 
     [UserAuthorize(orgly: ORGLY_OPN)]
 #if ZHNT
-    [Ui("商户线上销售", icon: "push")]
+    [Ui("商户外卖业务", icon: "push")]
 #else
-    [Ui("驿站线上销售", icon: "push")]
+    [Ui("驿站外卖业务", icon: "push")]
 #endif
     public class ShplyBuyWork : BuyWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<BizlyBuyVarWork>();
+            CreateVarWork<ShplyBuyVarWork>();
         }
 
-        [Ui("当前订单", group: 1), Tool(Modal.Anchor)]
+        [Ui("当前外卖", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
+            var shp = wc[-1].As<Org>();
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE bizid = @1 AND status > 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status > 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -64,7 +66,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("以往", "历史订单", group: 2), Tool(Modal.Anchor)]
+        [Ui("⌹", "历史外卖", group: 2), Tool(Modal.Anchor)]
         public async Task closed(WebContext wc)
         {
             short orgid = wc[-1];

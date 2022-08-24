@@ -89,7 +89,7 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("市场客户管理", icon: "users")]
-    public class MrtlyUserWork : UserWork
+    public class MrtlyCustWork : UserWork
     {
         protected override void OnCreate()
         {

@@ -13,7 +13,7 @@ namespace ChainMart
         {
             {STA_DISABLED, "禁用"},
             {STA_ENABLED, "正常"},
-            {STA_HOT, "置顶"},
+            {STA_TOP, "置顶"},
         };
 
 
@@ -51,12 +51,12 @@ namespace ChainMart
         {
             base.Read(s, msk);
 
-            if ((msk & ID) == ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
 
-            if ((msk & BORN) == BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(srcid), ref srcid);
             }
@@ -71,12 +71,12 @@ namespace ChainMart
         {
             base.Write(s, msk);
 
-            if ((msk & ID) == ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
 
-            if ((msk & BORN) == BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(srcid), srcid);
             }

@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// An online or offline retail order
     /// </summary>
-    public class Buy : Entity, IKeyable<long>, IWorkflow
+    public class Buy : Entity, IKeyable<long>
     {
         public static readonly Buy Empty = new Buy();
 
@@ -34,7 +34,7 @@ namespace ChainMart
 
         public override void Read(ISource s, short proj = 0xff)
         {
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
@@ -53,7 +53,7 @@ namespace ChainMart
 
         public override void Write(ISink s, short proj = 0xff)
         {
-            if ((proj & ID) == ID)
+            if ((proj & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }

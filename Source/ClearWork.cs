@@ -295,7 +295,7 @@ namespace ChainMart
                     h.TD_().T(o.dt, 3, 0)._TD();
                     h.TD(Clear.Typs[o.typ]);
                     h.TD(o.total, currency: true);
-                    h.TD(Clear.Statuses[o.state]);
+                    h.TD(Clear.Statuses[((Entity) o).status]);
                 });
                 h.PAGINATION(arr?.Length == 20);
             }, false, 3);

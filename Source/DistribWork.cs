@@ -24,18 +24,23 @@ namespace ChainMart
     [Ui("产源批发管理")]
     public class SrclyDistribWork : DistribWork
     {
-        [Ui("自销", group: Distrib.TYP_SALE), Tool(Anchor)]
+        protected override void OnCreate()
+        {
+            CreateVarWork<SrclyDistribVarWork>();
+        }
+
+        [Ui("中控批", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 ORDER BY state DESC");
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Distrib.TYP_SALE);
+                h.TOOLBAR(subscript: Distrib.TYP_CTR);
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -47,23 +52,75 @@ namespace ChainMart
             });
         }
 
-        [Ui("转销", group: Distrib.TYP_TRANSFER), Tool(Anchor)]
-        public void sell(WebContext wc)
+        [Ui("⌹⌹", group: 2), Tool(Anchor)]
+        public async Task ctrpast(WebContext wc)
         {
-            wc.GivePane(200, h =>
+            var src = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
+
+            wc.GivePage(200, h =>
             {
-                //
-                h.TOOLBAR(subscript: Distrib.TYP_TRANSFER);
+                h.TOOLBAR(subscript: Distrib.TYP_CTR);
+                if (arr == null) return;
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                });
             });
         }
 
-        [Ui("自通", group: Distrib.TYP_DIRECT), Tool(Anchor)]
-        public void direct(WebContext wc)
+        [Ui("自达批", group: 4), Tool(Anchor)]
+        public async Task free(WebContext wc)
         {
-            wc.GivePane(200, h =>
+            var src = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 2 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
+
+            wc.GivePage(200, h =>
             {
-                //
-                h.TOOLBAR(subscript: Distrib.TYP_DIRECT);
+                h.TOOLBAR(subscript: Distrib.TYP_SELF);
+                if (arr == null)
+                {
+                    return;
+                }
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                });
+            });
+        }
+
+        [Ui("⌹", group: 8), Tool(Anchor)]
+        public async Task freepast(WebContext wc)
+        {
+            var src = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: Distrib.TYP_CTR);
+                if (arr == null) return;
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                });
             });
         }
 
@@ -73,49 +130,59 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var orgs = Grab<int, Org>();
+
+            var m = new Distrib
+            {
+                typ = (short) distribTyp,
+                status = Entity.STA_DISABLED,
+                srcid = org.id,
+                created = DateTime.Now,
+                creator = prin.name,
+                min = 1, max = 200, step = 1,
+            };
+
             if (wc.IsGet)
             {
+                // selection of products
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE srcid = @1 AND state > 0");
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
                 var products = await dc.QueryAsync<int, Product>(p => p.Set(org.id));
 
-                var tomorrow = DateTime.Today.AddDays(1);
-                var o = new Distrib
-                {
-                    typ = (short) distribTyp,
-                    state = Entity.STA_DISABLED,
-                };
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("新建" + Distrib.Typs[(short) distribTyp]);
 
-                    h.LI_().SELECT("产品", nameof(o.productid), o.productid, products, required: true)._LI();
-                    h.LI_().SELECT("控运中枢", nameof(o.ctrid), o.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("产品", nameof(m.productid), m.productid, products, required: true)._LI();
+                    h.LI_().SELECT(
+                        distribTyp == Distrib.TYP_CTR ? "经由中控" : "投放市场",
+                        nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true, spec: (short) distribTyp
+                    )._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step).NUMBER("现存量", nameof(o.cap), o.cap)._LI();
-                    h.LI_().NUMBER("现存量", nameof(o.cap), o.cap).NUMBER("剩余量", nameof(o.remain), o.remain)._LI();
-                    h._FIELDSUL();
-                    h._FORM();
+                    h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订量", nameof(m.min), m.min).NUMBER("限订量", nameof(m.max), m.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(m.step), m.step)._LI();
+                    h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
+
+                    h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short msk = Entity.BORN;
                 // populate 
-                var m = await wc.ReadObjectAsync(msk, new Product
-                {
-                    srcid = org.id,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                const short msk = Entity.MSK_BORN;
+                await wc.ReadObjectAsync(msk, instance: m);
 
-                // insert
+                // db insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO prods ").colset(Product.Empty, msk)._VALUES_(Product.Empty, msk);
+
+                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
+                var product = await dc.QueryTopAsync<Product>(p => p.Set(m.productid));
+                m.name = product.name;
+                m.tip = product.name;
+
+                dc.Sql("INSERT INTO distribs ").colset(Distrib.Empty, msk)._VALUES_(Distrib.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog

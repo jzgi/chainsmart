@@ -23,7 +23,7 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, state DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -34,7 +34,7 @@ namespace ChainMart
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(o.state == 1 ? null : Entity.States[o.state]);
+                    h.TD(o.status == 1 ? null : Entity.States[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -44,7 +44,7 @@ namespace ChainMart
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, state DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -55,7 +55,7 @@ namespace ChainMart
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
-                    h.TD(o.state == 1 ? null : Entity.States[o.state]);
+                    h.TD(o.status == 1 ? null : Entity.States[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -75,7 +75,7 @@ namespace ChainMart
                     typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_PRV,
                     created = DateTime.Now,
                     creator = prin.name,
-                    state = Entity.STA_ENABLED
+                    status = Entity.STA_ENABLED
                 };
 
                 m.Read(wc.Query, 0);
@@ -96,21 +96,21 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中枢", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(Entity.BORN, new Org
+                var o = await wc.ReadObjectAsync(Entity.MSK_BORN, new Org
                 {
                     typ = (short) (cmd == 1 ? Org.TYP_MRT : 0),
                     created = DateTime.Now,
                     creator = prin.name,
                 });
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, Entity.BORN)._VALUES_(Org.Empty, Entity.BORN);
-                await dc.ExecuteAsync(p => o.Write(p, Entity.BORN));
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, Entity.MSK_BORN)._VALUES_(Org.Empty, Entity.MSK_BORN);
+                await dc.ExecuteAsync(p => o.Write(p, Entity.MSK_BORN));
                 wc.GivePane(201); // created
             }
         }
@@ -119,9 +119,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场下属商户管理", icon: "thumbnails")]
+    [Ui("市场商户管理", icon: "thumbnails")]
 #else
-    [Ui("市场下属驿站管理", icon: "thumbnails")]
+    [Ui("市场驿站管理", icon: "thumbnails")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -158,7 +158,7 @@ namespace ChainMart
                 typ = Org.TYP_SHP,
                 created = DateTime.Now,
                 creator = prin.name,
-                state = Entity.STA_ENABLED,
+                status = Entity.STA_ENABLED,
                 sprid = org.id,
             };
             if (wc.IsGet)
@@ -182,7 +182,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -215,7 +215,7 @@ namespace ChainMart
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY state DESC, id LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, id LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
@@ -226,7 +226,7 @@ namespace ChainMart
                 {
                     h.TDCHECK(o.id);
                     h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/srcly/", o.id, "/", 8, false, Appear.Full).T("代办")._A()._TD();
-                    h.TD(Entity.States[o.state]);
+                    h.TD(Entity.States[o.status]);
                     h.TD_("uk-visible@l").T(o.tip)._TD();
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -246,7 +246,7 @@ namespace ChainMart
                 sprid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,
-                state = Entity.STA_ENABLED
+                status = Entity.STA_ENABLED
             };
             if (wc.IsGet)
             {
@@ -259,13 +259,13 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                const short msk = Entity.BORN;
+                const short msk = Entity.MSK_BORN;
                 var o = await wc.ReadObjectAsync(msk, instance: m);
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);

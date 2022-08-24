@@ -213,7 +213,7 @@ namespace ChainMart
                 url = f[nameof(url)];
                 var o = new User
                 {
-                    state = Entity.STA_ENABLED,
+                    status = Entity.STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
