@@ -133,9 +133,11 @@ namespace ChainMart
         public async Task @default(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
             var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -148,10 +150,14 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建"), Tool(ButtonShow)]
+#if ZHNT
+        [Ui("✛", "新建商户"), Tool(ButtonShow)]
+#else
+        [Ui("✛", "新建驿站"), Tool(ButtonShow)]
+#endif
         public async Task @new(WebContext wc)
         {
-            var org = wc[-1].As<Org>();
+            var mrt = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var m = new Org
             {
@@ -159,44 +165,40 @@ namespace ChainMart
                 created = DateTime.Now,
                 creator = prin.name,
                 status = Entity.STA_ENABLED,
-                sprid = org.id,
+                sprid = mrt.id,
+                ctrid = mrt.ctrid,
             };
+            
             if (wc.IsGet)
             {
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(
-#if ZHNT
-                        "商户属性"
-#else
-                        "驿站属性"
-#endif
-                    );
+                    h.FORM_().FIELDSUL_("基本资料");
+
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
+                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
 #if ZHNT
-                    h.LI_().TEXT("编码", nameof(m.addr), m.addr, max: 4)._LI();
+                    h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0)._LI();
+
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(0, new Org
-                {
-                    sprid = org.id,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                await wc.ReadObjectAsync(0, instance: m);
+                
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
-                await dc.ExecuteAsync(p => o.Write(p));
+                await dc.ExecuteAsync(p => { m.Write(p); });
+                
                 wc.GivePane(201); // created
             }
         }
@@ -204,22 +206,25 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_PRV, 1)]
     [Ui("版块下属产源管理", icon: "thumbnails")]
-    public class PrvnlyOrgWork : OrgWork
+    public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrvnlyOrgVarWork>();
+            CreateVarWork<PrvlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
+            
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, id LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
+            
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+                
                 if (arr == null) return;
 
                 h.TABLE(arr, o =>

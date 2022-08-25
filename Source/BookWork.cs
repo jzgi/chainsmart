@@ -10,7 +10,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场线上采购动态")]
+    [Ui("市场进货动态")]
     public class MrtlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
@@ -21,13 +21,13 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
-    [Ui("商户订货业务", icon: "pull")]
+    [Ui("商户进货业务", icon: "pull")]
 #else
-    [Ui("驿站订货业务", icon: "pull")]
+    [Ui("驿站进货业务", icon: "pull")]
 #endif
     public class ShplyBookWork : BookWork
     {
-        [Ui("当前订货", group: 1), Tool(Anchor)]
+        [Ui("当前进货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -47,7 +47,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "以往订货", group: 2), Tool(Anchor)]
+        [Ui("⌹", "历史进货", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -68,7 +68,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("&#128931;", "新增采购", group: 1), Tool(ButtonOpen)]
+        [Ui("✛", "新增进货", group: 1), Tool(ButtonOpen)]
         public void @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();

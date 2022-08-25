@@ -64,7 +64,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("&#128931;", "添加商品", group: 1), Tool(Modal.ButtonOpen)]
+        [Ui("✛", "添加商品", group: 1), Tool(Modal.ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var biz = wc[-1].As<Org>();

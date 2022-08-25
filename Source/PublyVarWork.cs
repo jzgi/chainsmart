@@ -87,7 +87,7 @@ namespace ChainMart
             var ctr = topOrgs[ctrid];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE ctrid = @1 AND state > 0");
+            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE ctrid = @1 AND status > 0");
             var arr = await dc.QueryAsync<Distrib>(p => p.Set(ctrid));
 
             wc.GivePage(200, h =>

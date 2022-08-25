@@ -25,14 +25,8 @@ namespace ChainMart
 
         internal int productid;
         internal int srcid;
-        internal string srcop;
-        internal DateTime srcon;
         internal int prvid;
-        internal string prvop;
-        internal DateTime prvon;
         internal int ctrid;
-        internal string ctrop;
-        internal DateTime ctron;
 
         // individual order relevant
 
@@ -80,14 +74,8 @@ namespace ChainMart
             if ((msk & MSK_PROCESS) == MSK_PROCESS)
             {
                 s.Get(nameof(srcid), ref srcid);
-                s.Get(nameof(srcop), ref srcop);
-                s.Get(nameof(srcon), ref srcon);
                 s.Get(nameof(prvid), ref prvid);
-                s.Get(nameof(prvop), ref prvop);
-                s.Get(nameof(prvon), ref prvon);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(ctrop), ref ctrop);
-                s.Get(nameof(ctron), ref ctron);
             }
         }
 
@@ -127,14 +115,8 @@ namespace ChainMart
             if ((msk & MSK_PROCESS) == MSK_PROCESS)
             {
                 s.Put(nameof(srcid), srcid);
-                s.Put(nameof(srcop), srcop);
-                s.Put(nameof(srcon), srcon);
                 s.Put(nameof(prvid), prvid);
-                s.Put(nameof(prvop), prvop);
-                s.Put(nameof(prvon), prvon);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(ctrop), ctrop);
-                s.Put(nameof(ctron), ctron);
             }
         }
 

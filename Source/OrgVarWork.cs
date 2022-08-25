@@ -91,7 +91,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("웃", "设置负责人", group: 7), Tool(ButtonOpen, Appear.Small)]
+        [Ui("웃", "设置管理员", group: 7), Tool(ButtonOpen, Appear.Small)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -146,14 +146,58 @@ namespace ChainMart
 
     public class MartlyOrgVarWork : OrgVarWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int id = wc[0];
+            var regs = Grab<short, Reg>();
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
+                
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("基本资料");
+
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
+                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
+#if ZHNT
+                    h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
+#else
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+#endif
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0)._LI();
+
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else
+            {
+                var m = await wc.ReadObjectAsync<Org>(0);
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
+                dc.Execute(p =>
+                {
+                    m.Write(p, 0);
+                    p.Set(id);
+                });
+                wc.GivePane(200); // close
+            }
+        }
     }
 
-    public class PrvnlyOrgVarWork : OrgVarWork
+    public class PrvlyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
+
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();

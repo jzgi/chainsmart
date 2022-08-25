@@ -87,7 +87,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场线上销售动态")]
+    [Ui("市场外卖动态")]
     public class MrtlyBuyWork : BuyWork
     {
         [Ui("当前", group: 1), Tool(Modal.Anchor)]

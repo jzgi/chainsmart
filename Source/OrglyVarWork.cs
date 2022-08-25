@@ -118,7 +118,7 @@ namespace ChainMart
         {
             // market
 
-            CreateWork<MrtlyOrgWork>("org");
+            CreateWork<MrtlyOrgWork>("morg");
 
             CreateWork<MrtlyBookWork>("mbook");
 
@@ -132,7 +132,7 @@ namespace ChainMart
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyItemWork>("item");
+            CreateWork<ShplyItemWork>("sitem");
 
             // common
 
@@ -197,7 +197,7 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateWork<PrvnlyOrgWork>("porg");
+            CreateWork<PrvlyOrgWork>("porg");
 
             CreateWork<PrvlyRptWork>("prpt");
 
