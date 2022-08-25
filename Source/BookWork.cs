@@ -77,7 +77,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源客户订单管理", icon: "sign-in")]
+    [Ui("产源客单业务", icon: "sign-in")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -85,7 +85,7 @@ namespace ChainMart
             CreateVarWork<SrclyBookVarWork>();
         }
 
-        [Ui("当前"), Tool(Anchor)]
+        [Ui("当前客单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var src = wc[-1].As<Org>();
@@ -121,13 +121,15 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史"), Tool(Anchor)]
+        [Ui("⌹", "历史客单"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Book>(p => p.Set(org.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(tip: "历史销售订货");
@@ -148,7 +150,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢供应验收管理", icon: "sign-in")]
+    [Ui("中控供应验收管理", icon: "sign-in")]
     public class CtrlyBookRcvWork : BookWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]
@@ -269,7 +271,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢供应分发管理", icon: "sign-out")]
+    [Ui("中控分发管理", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
         [Ui("待发", group: 1), Tool(Anchor)]
@@ -391,7 +393,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中枢业务报表")]
+    [Ui("中控业务报表")]
     public class CtrlyRptWork : BookWork
     {
         [Ui("待收", group: 1), Tool(Anchor)]

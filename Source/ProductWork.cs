@@ -21,7 +21,7 @@ namespace ChainMart
             CreateVarWork<SrclyProductVarWork>();
         }
 
-        [Ui("可用产品", group: 1), Tool(Anchor)]
+        [Ui("当前产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -48,8 +48,8 @@ namespace ChainMart
             });
         }
 
-        [Ui("禁用产品", group: 2), Tool(Anchor)]
-        public async Task disabled(WebContext wc)
+        [Ui("⌹", "禁用产品", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 

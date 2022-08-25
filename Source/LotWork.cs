@@ -7,40 +7,40 @@ using static ChainFx.Web.Modal;
 
 namespace ChainMart
 {
-    public class DistribWork : WebWork
+    public class LotWork : WebWork
     {
     }
 
-    public class PublyDistribWork : DistribWork
+    public class PublyLotWork : LotWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyDistribVarWork>();
+            CreateVarWork<PublyLotVarWork>();
         }
     }
 
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产源批发管理")]
-    public class SrclyDistribWork : DistribWork
+    [Ui("产源批次管理")]
+    public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyDistribVarWork>();
+            CreateVarWork<SrclyLotVarWork>();
         }
 
-        [Ui("中控批", group: 1), Tool(Anchor)]
+        [Ui("当前批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Distrib.TYP_CTR);
+                h.TOOLBAR(subscript: Lot.TYP_CTR);
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -52,18 +52,18 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹⌹", group: 2), Tool(Anchor)]
-        public async Task ctrpast(WebContext wc)
+        [Ui("⌹", "以往批次", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Distrib.TYP_CTR);
+                h.TOOLBAR(subscript: Lot.TYP_CTR);
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -75,65 +75,15 @@ namespace ChainMart
             });
         }
 
-        [Ui("自达批", group: 4), Tool(Anchor)]
-        public async Task free(WebContext wc)
-        {
-            var src = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 2 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(subscript: Distrib.TYP_SELF);
-                if (arr == null)
-                {
-                    return;
-                }
-                h.GRID(arr, o =>
-                {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
-                });
-            });
-        }
-
-        [Ui("⌹", group: 8), Tool(Anchor)]
-        public async Task freepast(WebContext wc)
-        {
-            var src = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(src.id));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR(subscript: Distrib.TYP_CTR);
-                if (arr == null) return;
-                h.GRID(arr, o =>
-                {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
-                });
-            });
-        }
-
-        [Ui("✛", "新建批发", group: 7), Tool(ButtonShow)]
-        public async Task @new(WebContext wc, int distribTyp)
+        [Ui("✛", "新建批次", group: 1), Tool(ButtonShow)]
+        public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var orgs = Grab<int, Org>();
 
-            var m = new Distrib
+            var m = new Lot
             {
-                typ = (short) distribTyp,
                 status = Entity.STA_DISABLED,
                 srcid = org.id,
                 created = DateTime.Now,
@@ -150,12 +100,12 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("新建" + Distrib.Typs[(short) distribTyp]);
+                    h.FORM_().FIELDSUL_("新建" + Lot.Typs[org.fork]);
 
                     h.LI_().SELECT("产品", nameof(m.productid), m.productid, products, required: true)._LI();
                     h.LI_().SELECT(
-                        distribTyp == Distrib.TYP_CTR ? "经由中控" : "投放市场",
-                        nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true, spec: (short) distribTyp
+                        org.fork == Lot.TYP_CTR ? "经由中控" : "投放市场",
+                        nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
                     )._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
@@ -182,7 +132,7 @@ namespace ChainMart
                 m.name = product.name;
                 m.tip = product.name;
 
-                dc.Sql("INSERT INTO distribs ").colset(Distrib.Empty, msk)._VALUES_(Distrib.Empty, msk);
+                dc.Sql("INSERT INTO distribs ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
@@ -191,11 +141,29 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中枢产品批次管理")]
-    public class CtrlyDistribWork : DistribWork
+    [Ui("中控批次验收")]
+    public class CtrlyLotWork : LotWork
     {
-        public void @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_CTR_RCV).T(" ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                if (arr == null) return;
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                });
+            });
         }
     }
 }

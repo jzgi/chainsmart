@@ -29,17 +29,17 @@ namespace ChainMart
             {TYP_SRC, "产源"},
             {TYP_MRT, "市场"},
             {TYP_PRV, "版块"},
-            {TYP_CTR, "中枢"},
+            {TYP_CTR, "中控"},
         };
 
         public const short
-            FRK_STD = 1, // standard, center-based 
+            FRK_CTR = 1, // standard, center-based 
             FRK_OWN = 2; // on own
 
         public static readonly Map<short, string> Forks = new Map<short, string>
         {
-            {FRK_STD, "标准运控"},
-            {FRK_OWN, "自行安排"},
+            {FRK_CTR, "种控"},
+            {FRK_OWN, "自达"},
         };
 
         // id

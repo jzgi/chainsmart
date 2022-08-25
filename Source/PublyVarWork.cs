@@ -87,8 +87,8 @@ namespace ChainMart
             var ctr = topOrgs[ctrid];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE ctrid = @1 AND status > 0");
-            var arr = await dc.QueryAsync<Distrib>(p => p.Set(ctrid));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE ctrid = @1 AND status > 0");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid));
 
             wc.GivePage(200, h =>
             {
@@ -127,8 +127,8 @@ namespace ChainMart
             var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Distrib>(p => p.Set(distribId));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE id = @1 AND state > 0");
+            var obj = await dc.QueryTopAsync<Lot>(p => p.Set(distribId));
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");

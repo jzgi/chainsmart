@@ -241,67 +241,6 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table books
-(
-    id bigserial not null
-        constraint books_pk
-            primary key,
-    shpid integer not null,
-    shpop varchar(12),
-    shpon timestamp(0),
-    srcid integer not null,
-    srcop varchar(12),
-    srcon timestamp(0),
-    prvid integer not null,
-    prvop varchar(12),
-    prvon timestamp(0),
-    ctrid integer not null,
-    ctrop varchar(12),
-    ctron timestamp(0),
-    mrtid integer not null,
-    mrtop varchar(12),
-    mrton timestamp(0),
-    productid integer,
-    unit varchar(4),
-    unitx smallint,
-    shipat date,
-    price money,
-    "off" money,
-    qty integer,
-    qtyre integer,
-    pay money,
-    payre money,
-    distribid integer
-)
-    inherits (entities);
-
-comment on column books.unitx is 'ratio to standard unit';
-
-comment on column books.qtyre is 'qty reduced';
-
-comment on column books.payre is 'pay refunded';
-
-alter table books owner to postgres;
-
-create table distribs
-(
-    id serial not null,
-    productid integer,
-    srcid integer,
-    prvid integer,
-    ctrid integer,
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer
-)
-    inherits (entities);
-
-alter table distribs owner to postgres;
-
 create table products
 (
     id serial not null,
@@ -341,6 +280,58 @@ create table items
     inherits (entities);
 
 alter table items owner to postgres;
+
+create table lots
+(
+    id serial not null,
+    productid integer,
+    srcid integer,
+    ctrid integer,
+    ctrop varchar(12),
+    ctron timestamp(0),
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
+
+create table books
+(
+    id bigserial not null
+        constraint books_pk
+            primary key,
+    shpid integer not null,
+    mrtid integer not null,
+    ctrid integer not null,
+    srcid integer not null,
+    prvid integer not null,
+    productid integer,
+    lotid integer,
+    unit varchar(4),
+    unitx smallint,
+    shipat date,
+    price money,
+    "off" money,
+    qty integer,
+    cut integer,
+    pay money,
+    refund money,
+    srcop varchar(12),
+    srcon timestamp(0),
+    ctrop varchar(12),
+    ctron timestamp(0),
+    shpop varchar(12),
+    shpon timestamp(0)
+)
+    inherits (entities);
+
+alter table books owner to postgres;
 
 create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,

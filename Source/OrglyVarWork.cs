@@ -177,7 +177,7 @@ namespace ChainMart
                 // if (org.ctrties != null)
                 // {
                 //     var ctr = GrabObject<int, Org>(org.ctrties[0]);
-                //     h.LI_().FIELD("关联中枢", ctr.name)._LI();
+                //     h.LI_().FIELD("关联中控", ctr.name)._LI();
                 // }
                 // if (org.IsBiz)
                 // {
@@ -192,7 +192,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产源业务操作")]
+    [Ui("供应产源操作")]
     public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
@@ -204,14 +204,14 @@ namespace ChainMart
 
             CreateWork<SrclyProductWork>("sprod");
 
-            CreateWork<SrclyDistribWork>("sdistrib");
+            CreateWork<SrclyLotWork>("slot");
 
             CreateWork<SrclyBookWork>("sbook");
 
             CreateWork<SrclyRptWork>("srpt");
 
 
-            CreateWork<CtrlyDistribWork>("cdistrib");
+            CreateWork<CtrlyLotWork>("clot");
 
             CreateWork<CtrlyBookWork>("cbook");
 
@@ -255,7 +255,7 @@ namespace ChainMart
                 // }
                 // if (org.MustTieToCtr)
                 // {
-                //     h.LI_().FIELDA("关联中枢", org.ctrties, topOrgs)._LI();
+                //     h.LI_().FIELDA("关联中控", org.ctrties, topOrgs)._LI();
                 // }
                 // h._UL();
                 // h._FORM();

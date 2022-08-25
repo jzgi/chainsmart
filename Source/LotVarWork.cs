@@ -6,19 +6,19 @@ using static ChainFx.Entity;
 
 namespace ChainMart
 {
-    public class DistribVarWork : WebWork
+    public class LotVarWork : WebWork
     {
     }
 
-    public class PublyDistribVarWork : DistribVarWork
+    public class PublyLotVarWork : LotVarWork
     {
         public async Task oid(WebContext wc, int id)
         {
             int distribid = wc[0];
             using var dc = Nodality.NewDbContext();
 
-            dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE id = @1");
-            var distrib = await dc.QueryTopAsync<Distrib>(p => p.Set(distribid));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE id = @1");
+            var distrib = await dc.QueryTopAsync<Lot>(p => p.Set(distribid));
 
             Product product = null;
             if (distrib != null)
@@ -43,7 +43,7 @@ namespace ChainMart
         }
     }
 
-    public class SrclyDistribVarWork : DistribVarWork
+    public class SrclyLotVarWork : LotVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -54,8 +54,8 @@ namespace ChainMart
             if (wc.IsGet)
             {
                 using var dc = Nodality.NewDbContext();
-                dc.Sql("SELECT ").collst(Distrib.Empty).T(" FROM distribs WHERE id = @1");
-                var m = dc.QueryTop<Distrib>(p => p.Set(distribid));
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE id = @1");
+                var m = dc.QueryTop<Lot>(p => p.Set(distribid));
 
                 wc.GivePane(200, h =>
                 {
@@ -86,7 +86,7 @@ namespace ChainMart
 
                 // update
                 using var dc = Nodality.NewDbContext();
-                dc.Sql("UPDATE products ")._SET_(Distrib.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
+                dc.Sql("UPDATE products ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
