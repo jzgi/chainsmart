@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -6,13 +6,13 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public abstract class DailyWork : WebWork
+    public abstract class RptWork : WebWork
     {
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台供应链业务日报", icon: "calendar")]
-    public class AdmlySupplyDailyWork : DailyWork
+    [Ui("平台进货业务日报", icon: "calendar")]
+    public class AdmlyBookRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
         {
@@ -21,19 +21,18 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台零售业务日报", icon: "calendar")]
-    public class AdmlyBuyDailyWork : DailyWork
+    [Ui("平台外卖业务日报", icon: "calendar")]
+    public class AdmlyBuyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
-
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
-    [Ui("版块汇总报表")]
-    public class PrvlyRptWork : DailyWork
+    [Ui("版块综合报表")]
+    public class PrvlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
         {
@@ -81,6 +80,16 @@ namespace ChainMart
                 date = f[nameof(date)];
                 wc.GivePane(200); // close dialog
             }
+        }
+    }
+
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("中控综合报表")]
+    public class CtrlyRptWork : BookWork
+    {
+        [Ui("待收", group: 1), Tool(Modal.Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
         }
     }
 }

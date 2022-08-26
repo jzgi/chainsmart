@@ -16,9 +16,9 @@ namespace ChainMart
 
             CreateWork<AdmlyOrgWork>("org");
 
-            CreateWork<AdmlySupplyDailyWork>("sdaily");
+            CreateWork<AdmlyBookRptWork>("sdaily");
 
-            CreateWork<AdmlyBuyDailyWork>("bdaily");
+            CreateWork<AdmlyBuyRptWork>("bdaily");
 
             CreateWork<AdmlySupplyClearWork>("sclear");
 

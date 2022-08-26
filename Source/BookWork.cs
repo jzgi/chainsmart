@@ -31,13 +31,15 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
+            
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: "当前订货");
+                h.TOOLBAR();
+
                 h.TABLE(arr, o =>
                 {
                     // h.TD(items[o.itemid].name);
@@ -77,7 +79,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源客单业务", icon: "sign-in")]
+    [Ui("产源销货业务", icon: "sign-in")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -85,14 +87,16 @@ namespace ChainMart
             CreateVarWork<SrclyBookVarWork>();
         }
 
-        [Ui("当前客单"), Tool(Anchor)]
+        [Ui("当前销货"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var src = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT wareid, last(name), ctrid, sum(qty - qtyre) FROM purchs WHERE srcid = @1 AND status = ").T(Book.STU_SRC_GOT).T(" GROUP BY wareid, ctrid");
+            dc.Sql("SELECT productid, last(name), ctrid, sum(qty - cut) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY productid, ctrid");
             await dc.QueryAsync(p => p.Set(src.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -121,13 +125,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史客单"), Tool(Anchor)]
+        [Ui("⌹", "历史销货"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE srcid = @1 AND status > 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
             await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -150,127 +154,6 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中控供应验收管理", icon: "sign-in")]
-    public class CtrlyBookRcvWork : BookWork
-    {
-        [Ui("待收", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            var ctr = wc[-1].As<Org>();
-            var topOrgs = Grab<int, Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_SRC_SNT).T(" GROUP BY prvid, wareid ORDER BY prvid");
-            await dc.QueryAsync(p => p.Set(ctr.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.MAIN_();
-                int last = 0;
-                while (dc.Next())
-                {
-                    dc.Let(out int prvid);
-                    dc.Let(out int wareid);
-                    dc.Let(out string name);
-                    dc.Let(out decimal qty);
-
-                    if (prvid != last)
-                    {
-                        var spr = topOrgs[prvid];
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(name);
-                    h.TD_("uk-visible@l").T(qty)._TD();
-                    h._TR();
-
-                    last = prvid;
-                }
-                h._MAIN();
-            });
-        }
-
-        [Ui("已收", group: 2), Tool(Anchor)]
-        public async Task rcvd(WebContext wc, int page)
-        {
-            var ctr = wc[-1].As<Org>();
-            var topOrgs = Grab<int, Org>();
-            using var dc = NewDbContext();
-            dc.Sql("SELECT prvid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_RCVD).T(" GROUP BY prvid, wareid ORDER BY prvid");
-            await dc.QueryAsync(p => p.Set(ctr.id));
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                h.MAIN_();
-                int last = 0;
-                while (dc.Next())
-                {
-                    dc.Let(out int prvid);
-                    dc.Let(out int wareid);
-                    dc.Let(out string name);
-                    dc.Let(out decimal qty);
-
-                    if (prvid != last)
-                    {
-                        var spr = topOrgs[prvid];
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(name);
-                    h.TD_("uk-visible@l").T(qty)._TD();
-                    h._TR();
-
-                    last = prvid;
-                }
-                h._MAIN();
-            });
-        }
-
-        [Ui("▷", "验收入库", group: 1), Tool(ButtonShow)]
-        public async Task rev(WebContext wc, int page)
-        {
-            var prin = (User) wc.Principal;
-            short orgid = wc[-1];
-            short typ = 0;
-            decimal amt = 0;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("指定统计区间");
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close dialog
-            }
-        }
-
-        [Ui("◁", "取消入库", group: 2), Tool(ButtonShow)]
-        public async Task unrcv(WebContext wc, int page)
-        {
-            var prin = (User) wc.Principal;
-            short orgid = wc[-1];
-            short typ = 0;
-            decimal amt = 0;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("指定统计区间");
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close dialog
-            }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("中控分发管理", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
@@ -281,8 +164,9 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_RCVD).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STA_DELIVERED).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -318,7 +202,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STU_CTR_SNT).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_RECEIVED).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
             wc.GivePage(200, h =>
             {
@@ -392,13 +276,4 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中控业务报表")]
-    public class CtrlyRptWork : BookWork
-    {
-        [Ui("待收", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-        }
-    }
 }

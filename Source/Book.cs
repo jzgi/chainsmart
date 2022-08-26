@@ -12,28 +12,26 @@ namespace ChainMart
 
         // states
         public const short
-            STU_SHP_ = 0, // shop
-            STU_SHP_REF = 1, // refund
-            STU_SRC_GOT = 3, // paid
-            STU_SRC_RET = 4,
-            STU_SRC_SNT = 5,
-            STU_CTR_RCVD = 6, // received
-            STU_CTR_RET = 7, // returned
-            STU_CTR_SNT = 8, // sent
-            STU_SHP_RCV = 9;
+            STA_CREATED = 0, // shop
+            STA_PAID = 1, // paid
+            STA_CANCELLED = 2, // 
+            STA_CONFIRMED = 3, // confirmed and reveal to the center
+            STA_REJECTED = 4, // center rejected
+            STA_DELIVERED = 5, // delivered by the center
+            STA_DENIED = 6, // shop returned
+            STA_RECEIVED = 7; // shop received
 
 
         public static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {0, null},
-            {STU_SHP_REF, "产源退款"},
-            {STU_SRC_GOT, "商户付款"},
-            {STU_SRC_RET, "中库退返"},
-            {STU_SRC_SNT, "产源发货"},
-            {STU_CTR_RCVD, "暂入中库"},
-            {STU_CTR_RET, "商户拒收"},
-            {STU_CTR_SNT, "中库运出"},
-            {STU_SHP_RCV, "商户确收"},
+            {STA_CREATED, null},
+            {STA_PAID, "已付款"},
+            {STA_CANCELLED, "已撤单"},
+            {STA_CONFIRMED, "已确单"},
+            {STA_REJECTED, "已回拒"},
+            {STA_DELIVERED, "已发货"},
+            {STA_DENIED, "已拒收"},
+            {STA_RECEIVED, "已收货"},
         };
 
 
