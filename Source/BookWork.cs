@@ -16,6 +16,7 @@ namespace ChainMart
         [Ui("当前", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 
@@ -31,7 +32,7 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
-            
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 0 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
@@ -157,8 +158,14 @@ namespace ChainMart
     [Ui("中控分发管理", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
-        [Ui("待发", group: 1), Tool(Anchor)]
+        [Ui("概况", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui("按批次", group: 2), Tool(Anchor)]
+        public async Task bylot(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
@@ -195,8 +202,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("已发", group: 2), Tool(Anchor)]
-        public async Task snt(WebContext wc, int page)
+        [Ui("", "按批次", group: 4), Tool(Anchor)]
+        public async Task bylotpast(WebContext wc, int page)
+        {
+        }
+
+        [Ui("按市场", group: 8), Tool(Anchor)]
+        public async Task bymrt(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
@@ -274,6 +286,4 @@ namespace ChainMart
             }
         }
     }
-
-
 }

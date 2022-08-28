@@ -205,7 +205,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("版块下属产源管理", icon: "thumbnails")]
+    [Ui("版块产源管理", icon: "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -238,7 +238,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", "新建产源"), Tool(ButtonShow)]
+        [Ui("✛", "新建产源"), Tool(ButtonShow)]
         public async Task @new(WebContext wc)
         {
             var prv = wc[-1].As<Org>();

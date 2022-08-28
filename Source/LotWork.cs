@@ -141,15 +141,39 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中控批次验收")]
+    [Ui("中控批次验证")]
     public class CtrlyLotWork : LotWork
     {
+        [Ui("未验批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_CTR_RCV).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                if (arr == null) return;
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                });
+            });
+        }
+
+        [Ui("⌹", "已验批次", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

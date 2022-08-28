@@ -1,4 +1,4 @@
-﻿﻿using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -36,6 +36,43 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET typ = @1 WHERE id = @2");
                 await dc.ExecuteAsync(p => p.Set(typ).Set(id));
+                wc.GivePane(200);
+            }
+        }
+    }
+
+    public class OrglyAccessVarWork : WebWork
+    {
+        [UserAuthorize(orgly: 3)]
+        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        public async Task rm(WebContext wc)
+        {
+            short orgid = wc[-2];
+            short id = wc[0];
+            var org = GrabObject<int, Org>(orgid);
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    if (org.mgrid != id)
+                    {
+                        h.ALERT("删除人员权限？");
+                        h.FORM_().HIDDEN(string.Empty, true)._FORM();
+                    }
+                    else
+                    {
+                        h.ALERT("不能删除主管理员权限");
+                    }
+                });
+            }
+            else
+            {
+                if (org.mgrid != id)
+                {
+                    using var dc = NewDbContext();
+                    dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+                    await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
+                }
                 wc.GivePane(200);
             }
         }

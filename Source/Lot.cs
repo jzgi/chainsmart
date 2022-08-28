@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainMart
 {
     /// <summary>
-    /// A product lot that is for transfering & selling.
+    /// A product lot that supports booking..
     /// </summary>
     public class Lot : Entity, IKeyable<int>
     {
@@ -21,16 +21,24 @@ namespace ChainMart
         };
 
         public const short
-            STA_ = 1,
-            STA_CTR_RCV = 3;
+            STA_CREATED = 0,
+            STA_OFF = 1,
+            STA_PUBLISHED = 3;
+
+        public static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STA_CREATED, "新创建"},
+            {STA_OFF, "已下线"},
+            {STA_PUBLISHED, "已发布"},
+        };
 
         internal int id;
 
         internal int productid;
         internal int srcid;
         internal int ctrid;
-        internal string ctrop;
-        internal DateTime ctron;
+        internal string verifier;
+        internal DateTime verified;
 
         // individual order relevant
 
@@ -70,8 +78,8 @@ namespace ChainMart
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
-                s.Get(nameof(ctrop), ref ctrop);
-                s.Get(nameof(ctron), ref ctron);
+                s.Get(nameof(verifier), ref verifier);
+                s.Get(nameof(verified), ref verified);
             }
         }
 
@@ -103,8 +111,8 @@ namespace ChainMart
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);
-                s.Put(nameof(ctrop), ctrop);
-                s.Put(nameof(ctron), ctron);
+                s.Put(nameof(verifier), verifier);
+                s.Put(nameof(verified), verified);
             }
         }
 

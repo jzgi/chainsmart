@@ -124,7 +124,7 @@ namespace ChainMart
 
             CreateWork<MrtlyBuyWork>("mbuy");
 
-            CreateWork<MrtlyCustWork>("cust");
+            CreateWork<MrtlyCustWork>("mcust");
 
             // shop
 
@@ -137,6 +137,8 @@ namespace ChainMart
             // common
 
             CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglyAccessWork>("access");
         }
 
         public void @default(WebContext wc)
@@ -219,6 +221,8 @@ namespace ChainMart
 
 
             CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglyAccessWork>("access");
         }
 
         public void @default(WebContext wc)
@@ -241,7 +245,6 @@ namespace ChainMart
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
                 h.SPAN(org.tel);
-                h.SPAN(User.Typs[prin.typ]);
                 h._DIV();
                 h._TOPBAR(true);
 
