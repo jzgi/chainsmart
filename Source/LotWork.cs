@@ -40,7 +40,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                h.TOOLBAR();
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -52,7 +52,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "以往批次", group: 2), Tool(Anchor)]
+        [Ui("☰", "历史批次", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -63,7 +63,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                h.TOOLBAR();
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -100,13 +100,14 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("新建" + Lot.Typs[org.fork]);
+                    h.FORM_().FIELDSUL_("填写不可更改");
 
                     h.LI_().SELECT("产品", nameof(m.productid), m.productid, products, required: true)._LI();
                     h.LI_().SELECT(
-                        org.fork == Lot.TYP_CTR ? "经由中控" : "投放市场",
+                        org.fork == 1 ? "经由中控" : "投放市场",
                         nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
                     )._LI();
+                    h.LI_().CHECKBOX("中控", nameof(m.strict), m.strict)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");
@@ -150,12 +151,12 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" AND strict = TRUE ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                h.TOOLBAR();
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
@@ -167,18 +168,18 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "已验批次", group: 2), Tool(Anchor)]
+        [Ui("☰", "已验批次", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND typ = ").T(Lot.TYP_CTR).T(" AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" AND strict = TRUE ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Lot.TYP_CTR);
+                h.TOOLBAR();
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {

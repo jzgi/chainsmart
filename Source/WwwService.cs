@@ -18,7 +18,7 @@ namespace ChainMart
 
             CreateWork<PublyShpWork>("shp");
 
-            CreateWork<PublyLotWork>("distrib");
+            CreateWork<PublyLotWork>("lot");
 
             CreateWork<MyWork>("my");
         }
@@ -59,7 +59,7 @@ namespace ChainMart
                     {
                         regid = regs.First(v => v.IsSection).id;
                     }
-                    h.LI_().SELECT(mrtid > 0 ? "其它市场" : "就近市场", nameof(regid), regid, regs, filter: (k, v) => v.IsSection, required: true, refresh: true)._LI();
+                    h.LI_().SELECT(null, nameof(regid), regid, regs, filter: (k, v) => v.IsCity, required: true, refresh: true)._LI();
                     bool exist = false;
                     for (int i = 0; i < orgs.Count; i++)
                     {
@@ -122,8 +122,7 @@ namespace ChainMart
             }
             else
             {
-                wc.Give(500, e.Message);
-                Console.Write(e.StackTrace);
+                wc.GiveText(500, e.Message, e.StackTrace);
             }
         }
 

@@ -23,13 +23,8 @@ body::-webkit-scrollbar {
     display: none; 
 }
 
-body.uk-pane {
-    background-color: #f8f8f8;
-}
-
 form {
     display: block;
-    padding: 4px; 
 }
 
 a {
@@ -103,7 +98,7 @@ ins {
 
 mark {
     color: #000;
-    background-color: #8fc321;
+    background-color: #7daa1d;
     margin: 0;
     padding: 0;
 }
@@ -217,7 +212,7 @@ h3,
     font-size: 1.125rem;
     font-weight: 700;
     margin: 2px 0;
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 h4,
@@ -225,13 +220,13 @@ h4,
     font-size: 1rem;
     font-weight: 500;
     margin: 2px 0;
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 h5,
 .uk-h5 {
     font-size: 0.875rem;
-    color: #8fc321;
+    color: #7daa1d;
     padding: 2px 0;
     margin: 2px 0;
 }
@@ -561,7 +556,7 @@ a.uk-link-reset:hover,
     display: inline-block;
     width: 100px;
     max-width: 100%;
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #ededed;
     vertical-align: top;
 }
 
@@ -605,7 +600,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider > li:nth-child(n+2) {
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #ededed;
 }
 
 /*
@@ -677,7 +672,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-description-list > dd {
-    color: #8fc321;
+    color: #7daa1d;
     font-size: 14px;
     clear: left;
     float: left;
@@ -715,7 +710,7 @@ a.uk-link-reset:hover,
     vertical-align: bottom;
     font-size: 0.875rem;
     font-weight: normal;
-    color: #8fc321;
+    color: #7daa1d;
     background-color: #f8f8f8;
     text-transform: uppercase;
 }
@@ -1104,8 +1099,8 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-top-bar.uk-large {
-    height: 4rem;
-    min-height: 4rem;
+    height: 6rem;
+    min-height: 6rem;
 }
 
 .uk-top-placeholder {
@@ -1114,7 +1109,7 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-top-placeholder.uk-large {
-    height: 4rem;
+    height: 6rem;
     width: 100%;
 }
 
@@ -1696,7 +1691,7 @@ a.uk-button-primary {
     color: #333;
     background-color: #ededed;
     padding: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
 }
@@ -1717,18 +1712,21 @@ a.uk-button-primary.uk-active {
 }
 
 button.uk-button-secondary {
-    border-radius: 4px;
+    border-radius: 50%;
     height: 32px;
+    border: 1px solid #ededed;
 }
 
 .uk-button-secondary:hover,
 .uk-button-secondary:focus {
     color: #dd4763;
+    background-color: #ededed;
 }
 
 .uk-button-secondary:active,
 .uk-button-secondary.uk-active {
     color: #f59604;
+    background-color: #ededed;
 }
 
 /*
@@ -1955,7 +1953,7 @@ button.uk-button-secondary {
 }
 
 .uk-section-primary {
-    background: #8fc321;
+    background: #7daa1d;
     color: #fff;
 }
 
@@ -2167,7 +2165,7 @@ button.uk-button-secondary {
 
 .uk-circle-label {
     border-radius: 50% !important;
-    border: 1px solid #8fc321;
+    border: 1px solid #7daa1d;
     height: 32px;
     width: 32px;
     display: flex;
@@ -2175,7 +2173,7 @@ button.uk-button-secondary {
     justify-content: center;
     text-transform: uppercase;
     white-space: nowrap;
-    color: #8fc321;
+    color: #7daa1d;
     font-size: 0.875rem;
 }
 
@@ -2348,7 +2346,6 @@ form > li,
 
 .uk-card-default {
     margin: 4px;
-    padding: 0;
     background-color: #fff;
     border-radius: 2px;
 }
@@ -2706,7 +2703,7 @@ form > li,
 }
 
 .uk-badge-success {
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 .uk-badge-warning {
@@ -2721,12 +2718,12 @@ form > li,
 .uk-label {
     text-transform: uppercase;
     white-space: nowrap;
-    color: #8fc321;
     font-size: 0.875rem;
 }
 
 label.uk-label {
     display: flex;
+    color: #7daa1d;
     margin-right: 0.25rem;
     width: 5.25rem;
     min-width: 5.25rem;
@@ -4239,7 +4236,7 @@ ul.uk-nav-sub {
 
 .uk-modal-large .uk-modal-dialog {
     position: relative;
-    border: 2px solid rgba(0,0,0,.25);
+    border: 2px solid #ccc;
     height: 100%;
     max-height: 960px;
     width: 100%;
@@ -4903,16 +4900,12 @@ ul.uk-nav-sub {
 }
 
 .uk-tooltip {
-    /* 1 */
     display: none;
-    /* 2 */
     position: absolute;
     z-index: 1030;
-    /* 3 */
     box-sizing: border-box;
-    max-width: 200px;
+    max-width: 320px;
     padding: 3px 6px;
-    /* 4 */
     background: #333;
     border-radius: 2px;
     color: #fff;
@@ -5649,29 +5642,26 @@ ul.uk-nav-sub {
 }
 /* Pixel */
 .uk-width-micro {
-    width: 32px;
+    width: 2rem;
 }
 .uk-width-tiny {
-    width: 48px;
+    width: 3rem;
 }
 .uk-width-xsmall {
-    width: 80px !important;
-    min-width: 80px !important;
+    width: 4rem !important;
+    min-width: 4rem !important;
 }
 .uk-width-small {
-    width: 90px !important;
-    min-width: 90px !important;
+    width: 5.25rem !important;
+    min-width: 5.25rem !important;
 }
 .uk-width-medium {
-    width: 120px !important;
-    min-width: 120px !important;
+    width: 7.5rem !important;
+    min-width: 7.5rem !important;
 }
 .uk-width-large {
-    width: 160px !important;
-    min-width: 160px !important;
-}
-.uk-width-xlarge {
-    width: 200px;
+    width: 10rem !important;
+    min-width: 10rem !important;
 }
 
 /* Auto */
@@ -6333,7 +6323,7 @@ iframe.uk-cover {
 }
 
 .uk-background-primary {
-    background-color: #8fc321 !important;
+    background-color: #7daa1d !important;
 }
 
 .uk-background-secondary {

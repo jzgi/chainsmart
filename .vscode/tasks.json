@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Zhnt.Supply.csproj"
+                "${workspaceFolder}/ChainMart.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

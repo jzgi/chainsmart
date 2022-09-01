@@ -10,7 +10,7 @@ html {
 body {
     margin: 0;
     background-color: #f8f8f8;
-    font-size: 0.875rem;
+    font-size: 1rem;
     -webkit-user-select: none;  
     -moz-user-select: none;    
     -ms-user-select: none;      
@@ -98,7 +98,7 @@ ins {
 
 mark {
     color: #000;
-    background-color: #8fc321;
+    background-color: #7daa1d;
     margin: 0;
     padding: 0;
 }
@@ -212,7 +212,7 @@ h3,
     font-size: 1.125rem;
     font-weight: 700;
     margin: 2px 0;
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 h4,
@@ -220,13 +220,13 @@ h4,
     font-size: 1rem;
     font-weight: 500;
     margin: 2px 0;
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 h5,
 .uk-h5 {
     font-size: 0.875rem;
-    color: #8fc321;
+    color: #7daa1d;
     padding: 2px 0;
     margin: 2px 0;
 }
@@ -672,7 +672,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-description-list > dd {
-    color: #8fc321;
+    color: #7daa1d;
     font-size: 14px;
     clear: left;
     float: left;
@@ -710,7 +710,7 @@ a.uk-link-reset:hover,
     vertical-align: bottom;
     font-size: 0.875rem;
     font-weight: normal;
-    color: #8fc321;
+    color: #7daa1d;
     background-color: #f8f8f8;
     text-transform: uppercase;
 }
@@ -1953,7 +1953,7 @@ button.uk-button-secondary {
 }
 
 .uk-section-primary {
-    background: #8fc321;
+    background: #7daa1d;
     color: #fff;
 }
 
@@ -2165,7 +2165,7 @@ button.uk-button-secondary {
 
 .uk-circle-label {
     border-radius: 50% !important;
-    border: 1px solid #8fc321;
+    border: 1px solid #7daa1d;
     height: 32px;
     width: 32px;
     display: flex;
@@ -2173,7 +2173,7 @@ button.uk-button-secondary {
     justify-content: center;
     text-transform: uppercase;
     white-space: nowrap;
-    color: #8fc321;
+    color: #7daa1d;
     font-size: 0.875rem;
 }
 
@@ -2703,7 +2703,7 @@ form > li,
 }
 
 .uk-badge-success {
-    color: #8fc321;
+    color: #7daa1d;
 }
 
 .uk-badge-warning {
@@ -2723,7 +2723,7 @@ form > li,
 
 label.uk-label {
     display: flex;
-    color: #8fc321;
+    color: #7daa1d;
     margin-right: 0.25rem;
     width: 5.25rem;
     min-width: 5.25rem;
@@ -6323,7 +6323,7 @@ iframe.uk-cover {
 }
 
 .uk-background-primary {
-    background-color: #8fc321 !important;
+    background-color: #7daa1d !important;
 }
 
 .uk-background-secondary {

@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using ChainFx;
 
 namespace ChainMart
@@ -18,36 +18,36 @@ namespace ChainMart
         public const short
             ADMLY_ = 0b000001, // common
             ADMLY_OPN = 0b000011,
-            ADMLY_SAL = 0b000101,
-            ADMLY_LOG = 0b001001,
+            ADMLY_LOG = 0b000101,
+            ADMLY_MON = 0b001001,
             ADMLY_FIN = 0b010001,
             ADMLY_MGT = 255;
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
-            {ADMLY_OPN, "运营"},
-            {ADMLY_SAL, "销售"},
+            {ADMLY_OPN, "作业"},
             {ADMLY_LOG, "物流"},
+            {ADMLY_MON, "质检"},
             {ADMLY_FIN, "财务"},
-            {ADMLY_MGT, "超级"},
+            {ADMLY_MGT, "管理"},
         };
 
         public const short
             ORGLY_ = 0b000001, // common
             ORGLY_OPN = 0b000011,
-            ORGLY_SAL = 0b000101,
-            ORGLY_LOG = 0b001001,
+            ORGLY_LOG = 0b000101,
+            ORGLY_MON = 0b001001,
             ORGLY_FIN = 0b010001,
             ORGLY_MGT = 255;
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_OPN, "运营"},
-            {ORGLY_SAL, "销售"},
+            {ORGLY_OPN, "作业"},
             {ORGLY_LOG, "物流"},
+            {ORGLY_MON, "质检"},
             {ORGLY_FIN, "财务"},
-            {ORGLY_MGT, "超管"},
+            {ORGLY_MGT, "管理"},
         };
 
         internal int id;
@@ -70,8 +70,11 @@ namespace ChainMart
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(tel), ref tel);
-            s.Get(nameof(im), ref im);
+            if ((proj & MSK_BORN) == MSK_BORN)
+            {
+                s.Get(nameof(tel), ref tel);
+                s.Get(nameof(im), ref im);
+            }
             if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(credential), ref credential);

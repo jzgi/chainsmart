@@ -61,7 +61,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✚", "新建机构", group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建机构", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -168,7 +168,7 @@ namespace ChainMart
                 sprid = mrt.id,
                 ctrid = mrt.ctrid,
             };
-            
+
             if (wc.IsGet)
             {
                 m.Read(wc.Query, 0);
@@ -194,18 +194,18 @@ namespace ChainMart
             else // POST
             {
                 await wc.ReadObjectAsync(0, instance: m);
-                
+
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => { m.Write(p); });
-                
+
                 wc.GivePane(201); // created
             }
         }
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("版块产源管理", icon: "thumbnails")]
+    [Ui("版块产源设置", icon: "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -216,25 +216,34 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
-            
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, id LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, name LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
-            
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 if (arr == null) return;
 
-                h.TABLE(arr, o =>
+                h.GRID(arr, o =>
                 {
-                    h.TDCHECK(o.id);
-                    h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/srcly/", o.id, "/", 8, false, Appear.Full).T("代办")._A()._TD();
-                    h.TD(Entity.States[o.status]);
-                    h.TD_("uk-visible@l").T(o.tip)._TD();
-                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h.P(o.tip);
+                    h._SECTION();
+                    h.FOOTER_()._FOOTER();
                 });
+
+                // h.TABLE(arr, o =>
+                // {
+                //     h.TDCHECK(o.id);
+                //     h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/srcly/", o.id, "/", 8, false, Appear.Full).T("代办")._A()._TD();
+                //     h.TD(Entity.States[o.status]);
+                //     h.TD_("uk-visible@l").T(o.tip)._TD();
+                //     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                // });
             });
         }
 

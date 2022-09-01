@@ -75,7 +75,7 @@ namespace ChainMart
             }
             else // POST
             {
-                const short msk = MSK_EDIT | MSK_PROCESS;
+                const short msk = MSK_EDIT ;
 
                 // populate 
                 var m = await wc.ReadObjectAsync(0, new Product

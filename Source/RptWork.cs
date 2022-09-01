@@ -31,7 +31,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
-    [Ui("版块综合报表")]
+    [Ui("版块报表")]
     public class PrvlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
@@ -84,8 +84,8 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中控综合报表")]
-    public class CtrlyRptWork : BookWork
+    [Ui("中控报表")]
+    public class CtrlyRptWork : RptWork
     {
         [Ui("待收", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)

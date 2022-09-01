@@ -79,8 +79,8 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源销货业务", icon: "sign-in")]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
+    [Ui("产源销售管理", icon: "sign-in")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -88,7 +88,7 @@ namespace ChainMart
             CreateVarWork<SrclyBookVarWork>();
         }
 
-        [Ui("当前销货"), Tool(Anchor)]
+        [Ui("当前订货"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var src = wc[-1].As<Org>();
@@ -126,7 +126,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史销货"), Tool(Anchor)]
+        [Ui("⌹", "历史订货"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -137,7 +137,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: "历史销售订货");
+                h.TOOLBAR(tip: Label);
                 h.TABLE_();
                 h._TABLE();
             });
@@ -145,8 +145,8 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_SAL)]
-    [Ui("产源业务报表")]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
+    [Ui("产源报表")]
     public class SrclyRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
@@ -202,7 +202,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("", "按批次", group: 4), Tool(Anchor)]
+        [Ui("⌹", "按批次历史", group: 4), Tool(Anchor)]
         public async Task bylotpast(WebContext wc, int page)
         {
         }
@@ -244,7 +244,12 @@ namespace ChainMart
             });
         }
 
-        [Ui("▷", "发出", group: 1), Tool(ButtonShow)]
+        [Ui("⌹", "以往按市场", group: 16), Tool(Anchor)]
+        public async Task bymrtpast(WebContext wc, int page)
+        {
+        }
+
+        [Ui("▷", "发出", group: 255), Tool(ButtonShow)]
         public async Task rev(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

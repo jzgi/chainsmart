@@ -5,7 +5,7 @@ Description=Chain Mart System
 EnvironmentFile=/etc/environment
 Type=forking
 WorkingDirectory=/home/ubuntu
-ExecStart=sudo /usr/bin/dotnet /home/ubuntu/publish/ChainMart.dll deploy
+ExecStart=sudo -b /usr/bin/dotnet /home/ubuntu/publish/ChainMart.dll deploy
 Restart=always
 
 [Install]

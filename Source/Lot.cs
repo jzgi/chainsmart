@@ -11,16 +11,6 @@ namespace ChainMart
         public static readonly Lot Empty = new Lot();
 
         public const short
-            TYP_CTR = 1,
-            TYP_OWN = 2;
-
-        public static readonly Map<short, string> Typs = new Map<short, string>
-        {
-            {TYP_CTR, "中控（运往指定的中控做品控分发）"},
-            {TYP_OWN, "自达（自行发货到市场商户）"},
-        };
-
-        public const short
             STA_CREATED = 0,
             STA_OFF = 1,
             STA_PUBLISHED = 3;
@@ -37,8 +27,9 @@ namespace ChainMart
         internal int productid;
         internal int srcid;
         internal int ctrid;
-        internal string verifier;
-        internal DateTime verified;
+        internal bool strict;
+        internal string prover;
+        internal DateTime proved;
 
         // individual order relevant
 
@@ -63,6 +54,7 @@ namespace ChainMart
                 s.Get(nameof(productid), ref productid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(ctrid), ref ctrid);
+                s.Get(nameof(strict), ref strict);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -78,8 +70,8 @@ namespace ChainMart
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
-                s.Get(nameof(verifier), ref verifier);
-                s.Get(nameof(verified), ref verified);
+                s.Get(nameof(prover), ref prover);
+                s.Get(nameof(proved), ref proved);
             }
         }
 
@@ -96,6 +88,7 @@ namespace ChainMart
                 s.Put(nameof(productid), productid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(ctrid), ctrid);
+                s.Put(nameof(strict), strict);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -111,8 +104,8 @@ namespace ChainMart
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);
-                s.Put(nameof(verifier), verifier);
-                s.Put(nameof(verified), verified);
+                s.Put(nameof(prover), prover);
+                s.Put(nameof(proved), proved);
             }
         }
 

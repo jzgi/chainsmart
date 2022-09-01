@@ -10,6 +10,24 @@ namespace ChainMart
 {
     public abstract class OrgVarWork : WebWork
     {
+        protected async Task icon(WebContext wc)
+        {
+            int id = wc[0];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT icon FROM orgs WHERE id = @1");
+                if (await dc.QueryTopAsync(p => p.Set(id)))
+                {
+                    dc.Let(out byte[] bytes);
+                    if (bytes == null) wc.Give(204); // no content 
+                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
+                }
+                else
+                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+            }
+        }
+
         protected async Task doimg(WebContext wc, string col)
         {
             int id = wc[0];
@@ -156,7 +174,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
                 var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
-                
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本资料");

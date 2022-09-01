@@ -195,7 +195,7 @@ namespace ChainMart
 
         public static void SetTokenCookie(this WebContext wc, User o)
         {
-            string token = AuthenticateAttribute.EncryptPrincipal(o, 0x0fff);
+            var token = AuthenticateAttribute.ToToken(o, 0x0fff);
             wc.SetCookie(nameof(token), token);
         }
 

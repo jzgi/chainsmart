@@ -10,7 +10,7 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyBizVarWork>();
+            CreateVarWork<PublyShpVarWork>();
         }
     }
 }

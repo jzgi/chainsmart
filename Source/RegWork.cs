@@ -59,7 +59,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✚", "新建区域", group: 7), Tool(ButtonShow)]
+        [Ui("🞢", "新建区域", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;

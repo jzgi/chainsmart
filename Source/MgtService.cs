@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
 using ChainFx.Web;
+using static ChainFx.Entity;
 using static ChainMart.WeChatUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -28,8 +29,9 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.FORM_();
-                h.FIELDSUL_("批发市场");
+                h.FORM_("uk-card uk-card-default");
+                h.HEADER("批发市场", css: "uk-card-header uk-flex-center");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
@@ -38,19 +40,18 @@ namespace ChainMart
                         h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip)._A()._LI();
                     }
                 }
-                h._FIELDSUL();
+                h._UL();
+                h._FORM();
 
-                h.FIELDSUL_("管理模块");
+                h.FORM_("uk-card uk-card-default");
+                h.HEADER("管理模块", css: "uk-card-header uk-flex-center");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 for (int i = 0; i < Works.Count; i++)
                 {
                     var wrk = Works.ValueAt(i);
-                    h.LI_("uk-flex");
-                    h.A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A();
-                    // h.P(wrk.Tip, "uk-padding uk-width-expand");
-                    h._LI();
+                    h.LI_("uk-flex").A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A()._LI();
                 }
-                h._FIELDSUL();
-
+                h._UL();
                 h._FORM();
             }, true, 3600, title: Self.Name + "管理");
         }
@@ -78,8 +79,7 @@ namespace ChainMart
             }
             else
             {
-                wc.Give(500, e.Message);
-                Console.Write(e.StackTrace);
+                wc.GiveText(500, e.Message, e.StackTrace);
             }
         }
 
@@ -95,14 +95,17 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_().FIELDSUL_("登录信息");
+                    h.FORM_("uk-card uk-card-body");
+
+                    h.FIELDSUL_("填写登录信息");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                     h._FIELDSUL();
+
                     h.HIDDEN(nameof(url), url);
                     h.BOTTOMBAR_().BUTTON("登录", nameof(signin))._BOTTOMBAR();
                     h._FORM();
-                }, title: "用户登录");
+                }, title: wc.Action.Label);
             }
             else // POST
             {
@@ -128,18 +131,19 @@ namespace ChainMart
             }
         }
 
-        public async Task signup(WebContext wc)
+        public async Task signup(WebContext wc, int cmd)
         {
             // must have openid
             string openid = wc.Cookies[nameof(openid)];
-            if (openid == null)
-            {
-                wc.Give(400); // bad request
-                return;
-            }
+            // if (openid == null)
+            // {
+            //     wc.Give(400); // bad request
+            //     return;
+            // }
 
             string name = null;
             string tel = null;
+            string vcode = null; // verification code
             string url;
             if (wc.IsGet) // GET
             {
@@ -148,44 +152,77 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_().FIELDSUL_("注册信息");
-                    h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true);
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h._FIELDSUL();
-                    h.HIDDEN(nameof(url), url);
+                    h.FORM_("uk-card uk-card-body");
 
-                    h.SECTION_("uk-section uk-col uk-flex-middle");
-                    h.P("如需接受消息通知清关注");
-                    h.PIC("/qrcode.jpg", css: "uk-width-medium");
-                    h._SECTION();
+                    h.FIELDSUL_("填写新账号信息");
+                    h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
+                    h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("获取验证码", onclick: "", css: "uk-button-small")._LI();
+                    h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4, required: true)._LI();
+                    h._FIELDSUL();
+
+                    h.HIDDEN(nameof(url), url);
 
                     h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
                     h._FORM();
-                }, title: "用户注册");
+                }, title: "注册新用户");
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 url = f[nameof(url)];
-                var o = new User
+                vcode = f[nameof(vcode)];
+                var m = new User
                 {
-                    status = Entity.STA_ENABLED,
+                    typ = 0,
+                    status = STA_ENABLED,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
                     created = DateTime.Now,
+                    creator = f[nameof(name)]
                 };
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO users ").colset(o, 0)._VALUES_(o, 0).T(" RETURNING ").collst(User.Empty);
-                o = await dc.QueryTopAsync<User>(p => o.Write(p));
 
-                // refresh cookie
-                wc.Principal = o;
-                wc.SetTokenCookie(o);
-                wc.GiveRedirect(url);
+                // check
+                if (vcode != CryptoUtility.GetVCode(m.tel, Application.Secret))
+                {
+                    wc.GivePage(200, h =>
+                    {
+                        url = wc.Query[nameof(url)];
+                        url = HttpUtility.UrlDecode(url);
+
+                        h.FORM_("uk-card uk-card-body");
+
+                        h.FIELDSUL_("填写新账号信息");
+                        h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
+                        h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("获取验证码", onclick: "", css: "uk-button-small")._LI();
+                        h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4, required: true)._LI();
+                        h._FIELDSUL();
+
+                        h.HIDDEN(nameof(url), url);
+
+                        h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
+                        h._FORM();
+                    }, title: "注册新用户");
+                }
+                else
+                {
+                    // insert or update
+                    using var dc = NewDbContext();
+                    const short msk = MSK_BORN | MSK_EDIT;
+                    dc.Sql("INSERT INTO users ").colset(m, msk)._VALUES_(m, msk).T(" ON CONFLICT (tel) DO UPDATE SET im = @1 RETURNING ").collst(User.Empty);
+                    m = await dc.QueryTopAsync<User>(p =>
+                    {
+                        m.Write(p);
+                        p.Set(openid);
+                    });
+
+                    // refresh cookie
+                    wc.Principal = m;
+                    wc.SetTokenCookie(m);
+                    wc.GiveRedirect(url);
+                }
             }
         }
-
 
         /// <summary>
         /// A booking payment notification.
@@ -206,7 +243,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(Entity.STA_DISABLED);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STA_DISABLED);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {

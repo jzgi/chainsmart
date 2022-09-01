@@ -12,7 +12,7 @@ namespace ChainMart
     public class ChainMartApp : Application
     {
         // periodic polling and concluding ended lots 
-        static readonly Thread cycler = new Thread(Cycle);
+        // static readonly Thread cycler = new Thread(Cycle);
 
         /// <summary>
         /// The entry point of the application.

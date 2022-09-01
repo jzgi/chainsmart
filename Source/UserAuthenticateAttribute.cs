@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Threading.Tasks;
 using ChainFx.Fabric;
 using ChainFx.Web;
@@ -25,7 +25,7 @@ namespace ChainMart
             string token;
             if (wc.Cookies.TryGetValue(nameof(token), out token))
             {
-                var o = DecryptPrincipal<User>(token);
+                var o = FromToken<User>(token);
                 if (o != null)
                 {
                     wc.Principal = o;
@@ -37,12 +37,14 @@ namespace ChainMart
                 string openid;
                 if (wc.Cookies.TryGetValue(nameof(openid), out openid))
                 {
-                    if (openid != null) return true;
+                    if (openid != null)
+                    {
+                        return true;
+                    }
                 }
             }
 
             // wechat authenticate
-            User prin;
             if (wc.IsWeChat) // weixin
             {
                 string state = wc.Query[nameof(state)];
@@ -65,7 +67,7 @@ namespace ChainMart
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
-                        prin = dc.ToObject<User>();
+                        var prin = dc.ToObject<User>();
                         wc.Principal = prin; // set principal for afterwrads
                         wc.SetTokenCookie(prin);
                     }

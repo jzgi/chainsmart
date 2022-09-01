@@ -25,16 +25,16 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND regid = @2 AND state > 0 ORDER BY addr");
-            var bizs = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
+            var shps = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
             if (sec == 0) // when default sect
             {
                 wc.Subscript = sec = 99;
-                bizs = bizs.AddOf(mrt); // append the supervising market
+                shps = shps.AddOf(mrt); // append the supervising market
             }
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.typ == Reg.TYP_SECTION)._TOPBAR();
-                h.GRID(bizs, o =>
+                h.GRID(shps, o =>
                 {
                     h.SECTION_("uk-flex uk-card-body");
                     h.SPAN(o.ShopLabel, "uk-circle-label").SP();
@@ -45,7 +45,7 @@ namespace ChainMart
         }
     }
 
-    public class PublyBizVarWork : PublyVarWork
+    public class PublyShpVarWork : PublyVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -78,25 +78,28 @@ namespace ChainMart
     public class PublyCtrVarWork : WebWork
     {
         /// <summary>
-        /// To display distribs that are targetd to the therein.
+        /// To display territories marked by centers.
         /// </summary>
         public async Task @default(WebContext wc)
         {
             int ctrid = wc[0];
             var topOrgs = Grab<int, Org>();
             var ctr = topOrgs[ctrid];
+            var cats = Grab<short, Cat>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE ctrid = @1 AND status > 0");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid));
 
             wc.GivePage(200, h =>
             {
                 if (arr == null)
                 {
-                    h.ALERT("没有匹配的记录");
+                    h.ALERT("没有在批发的产品");
                     return;
                 }
+
+                h.SUBNAV(cats, "", 0);
 
                 h.TABLE_();
                 var last = 0;
@@ -119,16 +122,16 @@ namespace ChainMart
             }, title: ctr.tip);
         }
 
-        public async Task distrib(WebContext wc, int distribId)
+        public async Task lot(WebContext wc, int lotid)
         {
             int prvid = wc[0];
             var topOrgs = Grab<int, Org>();
             var prv = topOrgs[prvid];
-            var items = Grab<short, Item>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE id = @1 AND state > 0");
-            var obj = await dc.QueryTopAsync<Lot>(p => p.Set(distribId));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND status > 0");
+            var obj = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
             wc.GivePage(200, h =>
             {
                 h.PIC("/prod/", obj.id, "/icon");
@@ -138,7 +141,7 @@ namespace ChainMart
                 h._SECTION();
 
                 h.BOTTOMBAR_().BUTTON("付款")._BOTTOMBAR();
-            });
+            }, title: prv.tip);
         }
 
         [UserAuthorize]
