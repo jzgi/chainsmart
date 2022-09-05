@@ -13,7 +13,7 @@ namespace ChainMart
     [Ui("市场进货动态")]
     public class MrtlyBookWork : BookWork
     {
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("当前", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
@@ -28,7 +28,7 @@ namespace ChainMart
 #endif
     public class ShplyBookWork : BookWork
     {
-        [Ui("当前进货", group: 1), Tool(Anchor)]
+        [Ui("当前进货", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -50,7 +50,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史进货", group: 2), Tool(Anchor)]
+        [Ui("⌹", "历史进货", @group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -71,7 +71,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新增进货", group: 1), Tool(ButtonOpen)]
+        [Ui("✛", "新增进货", @group: 1), Tool(ButtonOpen)]
         public void @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -158,13 +158,13 @@ namespace ChainMart
     [Ui("中控分发管理", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
-        [Ui("概况", group: 1), Tool(Anchor)]
+        [Ui("概况", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
 
-        [Ui("按批次", group: 2), Tool(Anchor)]
+        [Ui("按批次", @group: 2), Tool(Anchor)]
         public async Task bylot(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
@@ -202,12 +202,12 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "按批次历史", group: 4), Tool(Anchor)]
+        [Ui("⌹", "按批次历史", @group: 4), Tool(Anchor)]
         public async Task bylotpast(WebContext wc, int page)
         {
         }
 
-        [Ui("按市场", group: 8), Tool(Anchor)]
+        [Ui("按市场", @group: 8), Tool(Anchor)]
         public async Task bymrt(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
@@ -244,12 +244,12 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "以往按市场", group: 16), Tool(Anchor)]
+        [Ui("⌹", "以往按市场", @group: 16), Tool(Anchor)]
         public async Task bymrtpast(WebContext wc, int page)
         {
         }
 
-        [Ui("▷", "发出", group: 255), Tool(ButtonShow)]
+        [Ui("▷", "发出", @group: 255), Tool(ButtonShow)]
         public async Task rev(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -270,7 +270,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("◁", "取消发出", group: 2), Tool(ButtonShow)]
+        [Ui("◁", "取消发出", @group: 2), Tool(ButtonShow)]
         public async Task unrcv(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

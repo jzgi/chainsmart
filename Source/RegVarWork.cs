@@ -12,7 +12,7 @@ namespace ChainMart
 
     public class AdmlyRegVarWork : RegVarWork
     {
-        [Ui(group: 7), Tool(ButtonShow)]
+        [Ui(@group: 7), Tool(ButtonShow)]
         public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
@@ -46,7 +46,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("✕", "删除", group: 7), Tool(ButtonShow, Appear.Small)]
+        [Ui("✕", "删除", @group: 7), Tool(ButtonShow, Appear.Small)]
         public async Task rm(WebContext wc)
         {
             short id = wc[0];

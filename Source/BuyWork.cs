@@ -25,7 +25,9 @@ namespace ChainMart
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
             wc.GivePage(200, h =>
             {
+                
                 h.GRID(arr, o => { h.T(o.name); });
+                
                 h.PAGINATION(arr?.Length > 10);
             });
         }
@@ -45,7 +47,7 @@ namespace ChainMart
             CreateVarWork<ShplyBuyVarWork>();
         }
 
-        [Ui("当前外卖", group: 1), Tool(Modal.Anchor)]
+        [Ui("当前外卖", @group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -66,7 +68,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史外卖", group: 2), Tool(Modal.Anchor)]
+        [Ui("⌹", "历史外卖", @group: 2), Tool(Modal.Anchor)]
         public async Task closed(WebContext wc)
         {
             short orgid = wc[-1];
@@ -90,7 +92,7 @@ namespace ChainMart
     [Ui("市场外卖动态")]
     public class MrtlyBuyWork : BuyWork
     {
-        [Ui("当前", group: 1), Tool(Modal.Anchor)]
+        [Ui("当前", @group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });

@@ -21,7 +21,7 @@ namespace ChainMart
             CreateVarWork<AdmlyRegVarWork>();
         }
 
-        [Ui("省份", group: 1), Tool(Anchor)]
+        [Ui("省份", @group: 1), Tool(Anchor)]
         public void @default(WebContext wc)
         {
             wc.GivePage(200, h =>
@@ -40,7 +40,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("市场区划", group: 2), Tool(Anchor)]
+        [Ui("市场区划", @group: 2), Tool(Anchor)]
         public void mrtdiv(WebContext wc)
         {
             wc.GivePage(200, h =>
@@ -59,7 +59,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("🞢", "新建区域", group: 7), Tool(ButtonShow)]
+        [Ui("🞢", "新建区域", @group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;

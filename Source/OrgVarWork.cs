@@ -79,10 +79,6 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_(m.IsMarket ? "市场属性" : "供应版块属性");
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.HasProvision)
-                    {
-                        h.LI_().SELECT("物流方式", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
-                    }
                     h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsProvision)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -109,7 +105,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("웃", "设置管理员", group: 7), Tool(ButtonOpen, Appear.Small)]
+        [Ui("웃", "设置管理员", @group: 7), Tool(ButtonOpen, Appear.Small)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -148,13 +144,13 @@ namespace ChainMart
             }
         }
 
-        [Ui("◑", "机构图标", group: 7), Tool(ButtonCrop, Appear.Small)]
+        [Ui("◑", "机构图标", @group: 7), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon));
         }
 
-        [Ui("▤", "营业执照", group: 7), Tool(ButtonCrop, Appear.Large)]
+        [Ui("▤", "营业执照", @group: 7), Tool(ButtonCrop, Appear.Large)]
         public async Task cert(WebContext wc)
         {
             await doimg(wc, nameof(cert));

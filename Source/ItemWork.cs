@@ -22,7 +22,7 @@ namespace ChainMart
             CreateVarWork<ShplyItemVarWork>();
         }
 
-        [Ui("在线商品", group: 1), Tool(Modal.Anchor)]
+        [Ui("在线商品", @group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var shp = wc[-1].As<Org>();
@@ -43,7 +43,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "离线商品", group: 2), Tool(Modal.Anchor)]
+        [Ui("⌹", "离线商品", @group: 2), Tool(Modal.Anchor)]
         public async Task offln(WebContext wc, int page)
         {
             var biz = wc[-1].As<Org>();
@@ -64,7 +64,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "添加商品", group: 1), Tool(Modal.ButtonOpen)]
+        [Ui("✛", "添加商品", @group: 1), Tool(Modal.ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var biz = wc[-1].As<Org>();

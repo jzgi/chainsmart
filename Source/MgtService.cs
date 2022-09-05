@@ -46,9 +46,9 @@ namespace ChainMart
                 h.FORM_("uk-card uk-card-default");
                 h.HEADER("管理模块", css: "uk-card-header uk-flex-center");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                for (int i = 0; i < Works.Count; i++)
+                for (int i = 0; i < SubWorks.Count; i++)
                 {
-                    var wrk = Works.ValueAt(i);
+                    var wrk = SubWorks.ValueAt(i);
                     h.LI_("uk-flex").A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A()._LI();
                 }
                 h._UL();
@@ -79,7 +79,7 @@ namespace ChainMart
             }
             else
             {
-                wc.GiveText(500, e.Message, e.StackTrace);
+                wc.GiveMsg(500, e.Message, e.StackTrace);
             }
         }
 

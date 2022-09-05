@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Fabric;
-using ChainFx.Web;
 using static System.Data.IsolationLevel;
 
 namespace ChainMart
@@ -24,33 +23,15 @@ namespace ChainMart
 
             AddComposite<BuyLn>();
 
-            if (args.Contains("proxy"))
-            {
-                if (args.Contains("www"))
-                {
-                    CreateService<WebProxy>("www");
-                }
+            CacheUp();
 
-                if (args.Contains("mgt"))
-                {
-                    CreateService<WebProxy>("mgt");
-                }
+            const string STATIC_ROOT = "static";
 
-                if (args.Contains("fed"))
-                {
-                    CreateService<WebProxy>("fed");
-                }
-            }
-            else
-            {
-                CacheUp();
+            CreateService<WwwService>("www", STATIC_ROOT);
 
-                CreateService<WwwService>("www");
+            CreateService<MgtService>("mgt", STATIC_ROOT);
 
-                CreateService<MgtService>("mgt");
-
-                CreateService<FedService>("fed");
-            }
+            CreateService<FedService>("fed", STATIC_ROOT);
 
             await StartAsync();
         }

@@ -1,12 +1,11 @@
 ﻿using ChainFx;
-using ChainFx.Web;
 
 namespace ChainMart
 {
     /// <summary>
     /// An organizational unit.
     /// </summary>
-    public class Org : Entity, IKeyable<int>, IForkable
+    public class Org : Entity, IKeyable<int>
     {
         public static readonly Org Empty = new Org();
 
@@ -48,7 +47,6 @@ namespace ChainMart
         // super id
         internal int sprid;
 
-        internal short fork;
         internal string license;
         internal short regid;
         internal string addr;
@@ -77,7 +75,6 @@ namespace ChainMart
             {
                 s.Get(nameof(sprid), ref sprid);
             }
-            s.Get(nameof(fork), ref fork);
             s.Get(nameof(license), ref license);
             s.Get(nameof(regid), ref regid);
             s.Get(nameof(addr), ref addr);
@@ -109,7 +106,6 @@ namespace ChainMart
                 if (sprid > 0) s.Put(nameof(sprid), sprid);
                 else s.PutNull(nameof(sprid));
             }
-            s.Put(nameof(fork), fork);
             s.Put(nameof(license), license);
             if (regid > 0) s.Put(nameof(regid), regid);
             else s.PutNull(nameof(regid));
@@ -132,8 +128,6 @@ namespace ChainMart
         #region Properties
 
         public int Key => id;
-
-        public short Fork => fork;
 
         public string Tel => tel;
 

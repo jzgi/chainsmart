@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
-using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainMart.WeChatUtility;
 using static ChainFx.Fabric.Nodality;
@@ -23,80 +22,57 @@ namespace ChainMart
             CreateWork<MyWork>("my");
         }
 
-        public void @default(WebContext wc, int cmd)
+
+        /// <summary>
+        /// To display all markets in single page, let the client side locate the present market.
+        /// </summary>
+        public void @default(WebContext wc)
         {
-            var orgs = Grab<int, Org>();
+            var topOrgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();
 
-            short regid = wc.Query[nameof(regid)];
-            int mrtid = wc.Query[nameof(mrtid)];
-
-            if (cmd == 0)
+            wc.GivePane(200, h =>
             {
-                if (mrtid == 0)
+                h.FORM_();
+
+                bool exist = false;
+                var last = 0;
+
+                for (int i = 0; i < topOrgs.Count; i++)
                 {
-                    mrtid = wc.Cookies[nameof(mrtid)].ToInt();
-                }
-
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_();
-
-                    // show last-time selected
-                    //
-                    h.TOPBAR_();
-                    if (mrtid > 0)
+                    var o = topOrgs.ValueAt(i);
+                    if (!o.IsMarket)
                     {
-                        var o = orgs[mrtid];
-                        PutMrt(h, o, true);
+                        continue;
                     }
-                    h._TOPBAR();
 
-                    // output for selection
-                    //
-                    h.FIELDSUL_();
-                    if (regid == 0)
+                    if (o.regid != last)
                     {
-                        regid = regs.First(v => v.IsSection).id;
-                    }
-                    h.LI_().SELECT(null, nameof(regid), regid, regs, filter: (k, v) => v.IsCity, required: true, refresh: true)._LI();
-                    bool exist = false;
-                    for (int i = 0; i < orgs.Count; i++)
-                    {
-                        var o = orgs.ValueAt(i);
-                        if (!o.IsMarket || o.regid != regid)
-                        {
-                            continue;
-                        }
-                        h.LI_("uk-flex");
-                        PutMrt(h, o);
                         h._LI();
-                        exist = true;
+                        if (last != 0)
+                        {
+                            h._FIELDSUL();
+                        }
+                        h.FIELDSUL_(regs[o.regid]?.name);
                     }
-                    if (!exist)
-                    {
-                        h.LI_().T("（暂无市场）")._LI();
-                    }
-                    h._FIELDSUL();
 
-                    h.BOTTOMBAR_().BUTTON("确定", string.Empty, subscript: 1, post: false)._BOTTOMBAR();
-                    h._FORM();
-                }, false, 15, title: Nodality.Self.Name);
-            }
-            else if (cmd == 1) // agreement
-            {
-                wc.SetCookie(nameof(mrtid), mrtid.ToString(), maxage: 3600 * 300);
+                    h.LI_("uk-flex");
+                    h.SPAN_("uk-width-expand").RADIO(nameof(o.id), o.id, o.name, required: true)._SPAN();
+                    h.SPAN_("uk-margin-auto-left");
+                    h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
+                    h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
+                    h._LI();
 
-                wc.GiveRedirect(mrtid + "/");
-            }
-
-            void PutMrt(HtmlContent h, Org o, bool selected = false)
-            {
-                h.SPAN_("uk-width-expand").RADIO(nameof(mrtid), o.id, o.name, selected, required: true)._SPAN();
-                h.SPAN_("uk-margin-auto-left");
-                h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
-                h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
-            }
+                    exist = true;
+                    last = o.regid;
+                }
+                h._FIELDSUL();
+                if (!exist)
+                {
+                    h.LI_().T("（暂无市场）")._LI();
+                }
+                h._FORM();
+            }, false, 15, title: Self.Name);
         }
 
         public void @catch(WebContext wc)
@@ -122,7 +98,7 @@ namespace ChainMart
             }
             else
             {
-                wc.GiveText(500, e.Message, e.StackTrace);
+                wc.GiveMsg(500, e.Message, e.StackTrace);
             }
         }
 

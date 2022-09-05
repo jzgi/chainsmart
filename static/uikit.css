@@ -9,7 +9,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     font-size: 1rem;
     -webkit-user-select: none;  
     -moz-user-select: none;    
@@ -319,7 +319,7 @@ pre {
     tab-size: 4;
     overflow: auto;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 3px;
     background: #fff;
 }
@@ -462,7 +462,7 @@ a.uk-link-reset:hover,
 
 .uk-heading-divider {
     padding-bottom: 10px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-heading-bullet {
@@ -477,7 +477,7 @@ a.uk-link-reset:hover,
     vertical-align: middle;
     height: 0.9em;
     margin-right: 10px;
-    border-left: 5px solid #ccc;
+    border-left: 5px solid #ddd;
 }
 
 .uk-heading-line {
@@ -498,7 +498,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: calc(50% - (1px / 2));
     width: 2000px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-heading-line > ::before {
@@ -534,7 +534,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: 50%;
     max-width: calc(50% - (50px / 2));
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-divider-icon::before {
@@ -895,7 +895,7 @@ button.uk-icon:not(:disabled) {
 
 .uk-icon-link:disabled,
 .uk-icon-link.uk-inactive {
-    color: #ccc;
+    color: #ddd;
 }
 
 .uk-icon-button {
@@ -1007,7 +1007,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Firefox */
@@ -1019,7 +1019,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Edge */
@@ -1037,7 +1037,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Edge + IE11 */
@@ -1095,7 +1095,7 @@ button.uk-icon:not(:disabled) {
     align-items: center;
     justify-content: space-between;
     padding: 0 4px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-top-bar.uk-large {
@@ -1125,13 +1125,13 @@ button.uk-icon:not(:disabled) {
     width: 100%;
     bottom: 0;
     left: 0;
-    font-size: 0.875rem;
+    font-size: 1rem;
     color: #666;
     display: flex;
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     padding: 0;
 }
 
@@ -1154,7 +1154,7 @@ form legend {
     min-height: 2.5rem;
     display: flex;
     align-items: center;
-    font-size: 0.875rem;
+    font-size: 1rem;
     box-sizing: border-box;
 }
 
@@ -1235,7 +1235,6 @@ form legend {
     -webkit-appearance: none;
 }
 
-.uk-static,
 .uk-output,
 .uk-input,
 .uk-select,
@@ -1246,13 +1245,23 @@ form legend {
     padding: 4px;
     color: #333;
     border: 0;
+    background-color: #fff;
     font-size: inherit;
     transition: 0.2s ease-in-out;
     transition-property: color, background-color, border;
 }
 
 .uk-static {
+    box-sizing: border-box;
+    max-width: 100%;
+    width: 100%;
+    padding: 4px;
+    color: #777;
+    border: 0;
     background-color: #fff;
+    font-size: inherit;
+    transition: 0.2s ease-in-out;
+    transition-property: color, background-color, border;
 }
 
 .uk-input,
@@ -1438,26 +1447,26 @@ select.uk-form-width-xsmall {
 }
 
 .uk-radio:disabled {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
 .uk-checkbox:disabled {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
 
 .uk-radio:disabled:checked {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Ccircle%20fill%3D%22%23999%22%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
 .uk-checkbox:disabled:checked {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23999%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
 }
 
 .uk-checkbox:disabled:indeterminate {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23999%22%20x%3D%223%22%20y%3D%228%22%20width%3D%2210%22%20height%3D%221%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
@@ -1674,7 +1683,7 @@ button.uk-button.uk-button-default {
 }
 
 button.uk-button-primary {
-    color: #f59604;
+    color: #000;
     background-color: #fff;
     padding: 6px 8px;
     border: 1px solid #ddd;
@@ -1684,14 +1693,14 @@ button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    border-color: #f59604;
+    background-color: #ddd;
 }
 
 a.uk-button-primary {
-    color: #333;
+    color: #000;
     background-color: #ededed;
     padding: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
 }
@@ -1700,12 +1709,12 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     background-color: #f8f8f8;
 }
 
 .uk-button-secondary {
-    color: #f59604;
+    color: #333;
     border: 0;
     background-color: transparent;
     padding: 0 8px;
@@ -1764,7 +1773,7 @@ button.uk-button-secondary {
 
 .uk-button-secondary:disabled, .uk-button-secondary.disabled {
     background-color: transparent;
-    color: #ccc;
+    color: #ddd;
     border-color: #ededed;
 }
 
@@ -4236,7 +4245,7 @@ ul.uk-nav-sub {
 
 .uk-modal-large .uk-modal-dialog {
     position: relative;
-    border: 2px solid #ccc;
+    border: 2px solid #ddd;
     height: 100%;
     max-height: 960px;
     width: 100%;
@@ -4297,7 +4306,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 .uk-modal-footer {
@@ -4307,7 +4316,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     margin: 0;
     border: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 /*

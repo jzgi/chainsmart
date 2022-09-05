@@ -19,7 +19,7 @@ namespace ChainMart
             CreateVarWork<AdmlyOrgVarWork>();
         }
 
-        [Ui("市场", group: 1), Tool(Anchor)]
+        [Ui("市场", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -40,7 +40,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("供应版块", group: 2), Tool(Anchor)]
+        [Ui("供应版块", @group: 2), Tool(Anchor)]
         public async Task prv(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -61,7 +61,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建机构", group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建机构", @group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -88,10 +88,6 @@ namespace ChainMart
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    if (m.HasProvision)
-                    {
-                        h.LI_().SELECT("物流方式", nameof(m.fork), m.fork, Org.Forks, required: true)._LI();
-                    }
                     h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsProvision)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -256,7 +252,6 @@ namespace ChainMart
             var m = new Org
             {
                 typ = Org.TYP_SRC,
-                fork = prv.fork,
                 sprid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,

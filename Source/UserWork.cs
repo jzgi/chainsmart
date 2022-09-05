@@ -20,7 +20,7 @@ namespace ChainMart
             CreateVarWork<AdmlyUserVarWork>();
         }
 
-        [Ui("浏览", group: 1), Tool(Anchor)]
+        [Ui("浏览", @group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -170,7 +170,7 @@ namespace ChainMart
             CreateVarWork<MrtlyUserVarWork>();
         }
 
-        [Ui("浏览", group: 1), Tool(Anchor)]
+        [Ui("浏览", @group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
