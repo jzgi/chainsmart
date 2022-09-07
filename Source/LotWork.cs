@@ -21,7 +21,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产源批次管理")]
+    [Ui("批次管理", "产源")]
     public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -207,7 +207,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("中控批次验证")]
+    [Ui("批次验证", "中控")]
     public class CtrlyLotWork : LotWork
     {
         [Ui("未验批次", @group: 1), Tool(Anchor)]

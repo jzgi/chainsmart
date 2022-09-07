@@ -13,7 +13,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台地理区域设置", icon: "world")]
+    [Ui("地理区域设置", "业务", icon: "world")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnCreate()
@@ -28,7 +28,7 @@ namespace ChainMart
             {
                 h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, state DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
                 h.TABLE(arr, o =>
                     {
@@ -47,7 +47,7 @@ namespace ChainMart
             {
                 h.TOOLBAR(subscript: Reg.TYP_SECTION);
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, state DESC");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
                 h.TABLE(arr, o =>
                     {
@@ -59,7 +59,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("🞢", "新建区域", @group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建区域", @group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;

@@ -16,17 +16,17 @@ namespace ChainMart
 
             CreateWork<AdmlyOrgWork>("org");
 
-            CreateWork<AdmlyBookRptWork>("sdaily");
+            CreateWork<AdmlyPrvRptWork>("prpt");
 
-            CreateWork<AdmlyBuyRptWork>("bdaily");
+            CreateWork<AdmlyBuyRptWork>("brpt");
 
-            CreateWork<AdmlySupplyClearWork>("sclear");
+            CreateWork<AdmlyPrvClearWork>("pclr");
 
-            CreateWork<AdmlyBuyClearWork>("bclear");
+            CreateWork<AdmlyBuyClearWork>("bclr");
 
             CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<AdmlyNoteWork>("note");
+            CreateWork<AdmlyEventWork>("evt");
 
             CreateWork<FedMgtWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
         }
@@ -37,17 +37,10 @@ namespace ChainMart
             var o = Self;
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: prin.name + "（" + wc.Role + "）");
-
-                h.FORM_("uk-card uk-card-default");
-                h.UL_("uk-card-body uk-list uk-list-divider");
-                if (o != null)
-                {
-                    h.LI_().FIELD("平台名称", o.Name)._LI();
-                    h.LI_().FIELD("描述", o.Tip)._LI();
-                }
-                h._UL();
-                h._FORM();
+                h.TOPBAR_(true);
+                h.H2(Self.name);
+                h._DIV();
+                h._TOPBAR(true);
 
                 h.TASKLIST();
             });

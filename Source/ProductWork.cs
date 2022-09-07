@@ -13,7 +13,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产源产品设置", icon: ERR)]
+    [Ui("产品设置", "产源", icon: ERR)]
     public class SrclyProductWork : ProductWork
     {
         protected override void OnCreate()

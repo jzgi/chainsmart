@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
@@ -9,8 +9,8 @@ using static ChainFx.Fabric.Nodality;
 namespace ChainMart
 {
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台供应链代收结款", icon: "credit-card")]
-    public class AdmlySupplyClearWork : WebWork
+    [Ui("供应结款", "财务", icon: "credit-card")]
+    public class AdmlyPrvClearWork : WebWork
     {
         protected override void OnCreate()
         {
@@ -141,7 +141,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台零售代收结款", icon: "credit-card")]
+    [Ui("零售结款", "财务", icon: "credit-card")]
     public class AdmlyBuyClearWork : WebWork
     {
         protected override void OnCreate()
@@ -272,7 +272,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("账户款项结算", icon: "credit-card")]
+    [Ui("账户款项结算", "", icon: "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnCreate()

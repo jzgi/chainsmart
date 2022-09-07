@@ -12,7 +12,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("平台用户管理", icon: "users")]
+    [Ui("用户管理", "系统", icon: "users")]
     public class AdmlyUserWork : UserWork
     {
         protected override void OnCreate()
@@ -89,7 +89,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("人员权限", "users")]
+    [Ui("人员权限", "", "users")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnCreate()

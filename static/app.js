@@ -1,7 +1,7 @@
 
 // Registering Service Worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', {scope: '/'});
+    navigator.serviceWorker.register('/sw.js', { scope: '/' });
 }
 
 var WCPay = function (data, lot) {
@@ -113,7 +113,7 @@ function childOf(el, name) {
 }
 
 function subscriptUri(uri, num) {
-    var a = uri.split('?'); 
+    var a = uri.split('?');
     var p = a[0].length - 1;
     var dash;
     while (p > 0) {
@@ -224,16 +224,18 @@ const
     OPEN = 8;
 const
     HALF = 1,
-    SMALL = 2,
-    LARGE = 3,
-    FULL = 4;
+    HIGH = 2,
+    SMALL = 3,
+    LARGE = 4,
+    FULL = 5;
 
 function dialog(trig, mode, pick, appear, title) {
     var stylec =
         appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
-            appear == SMALL ? ' uk-modal-small' :
-                appear == LARGE ? ' uk-modal-large' :
-                    ' uk-modal-full uk-animation-slide-right';
+            appear == HIGH ? ' uk-modal-high uk-animation-slide-bottom' :
+                appear == SMALL ? ' uk-modal-small' :
+                    appear == LARGE ? ' uk-modal-large' :
+                        ' uk-modal-full uk-animation-slide-right';
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
     var tag = trig.tagName;
@@ -457,9 +459,13 @@ function upload(el, url) {
     })
 }
 
-function closeUp(reload) {
+function closeUp(reload, slide) {
     var ifr = window.frameElement;
     var div = ancestorOf(ifr, 'uk-modal');
+
+    if (slide) {
+        div.classList.add('uk-animation-reverse');
+    }
     if (reload) {
         parent.location.reload(false);
     } else {

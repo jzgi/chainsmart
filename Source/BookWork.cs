@@ -80,7 +80,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("产源销售管理", icon: "sign-in")]
+    [Ui("销售管理", "产源", icon: "sign-in")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -146,7 +146,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("产源报表")]
+    [Ui("业务报表", "产源")]
     public class SrclyRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
@@ -155,17 +155,11 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中控分发管理", icon: "sign-out")]
+    [Ui("分拣管理", "中控", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
-        [Ui("概况", @group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
-        }
-
         [Ui("按批次", @group: 2), Tool(Anchor)]
-        public async Task bylot(WebContext wc, int page)
+        public async Task @default(WebContext wc, int page)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
@@ -216,6 +210,7 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_RECEIVED).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
             await dc.QueryAsync(p => p.Set(ctr.id));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -289,6 +284,17 @@ namespace ChainMart
             {
                 wc.GivePane(200); // close dialog
             }
+        }
+    }
+
+    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
+    [Ui("派运管理", "中控", icon: "sign-out")]
+    public class CtrlyDistribWork : BookWork
+    {
+        [Ui("按批次", @group: 2), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 }

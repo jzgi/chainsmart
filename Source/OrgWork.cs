@@ -11,7 +11,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("平台入驻机构设置", icon: "thumbnails")]
+    [Ui("入驻机构设置", "业务", icon: "thumbnails")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -201,7 +201,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("版块产源设置", icon: "thumbnails")]
+    [Ui("产源设置", "版块", icon: "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()

@@ -135,11 +135,11 @@ namespace ChainMart
         {
             // must have openid
             string openid = wc.Cookies[nameof(openid)];
-            // if (openid == null)
-            // {
-            //     wc.Give(400); // bad request
-            //     return;
-            // }
+            if (openid == null)
+            {
+                wc.Give(400); // bad request
+                return;
+            }
 
             string name = null;
             string tel = null;

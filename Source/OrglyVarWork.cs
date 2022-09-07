@@ -217,6 +217,8 @@ namespace ChainMart
 
             CreateWork<CtrlyBookWork>("cbook");
 
+            CreateWork<CtrlyDistribWork>("cdistrib");
+
             CreateWork<CtrlyRptWork>("crpt");
 
 
@@ -243,25 +245,10 @@ namespace ChainMart
                     h.PIC("/org.png", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
+                h.H2(org.name);
                 h.SPAN(org.tel);
                 h._DIV();
                 h._TOPBAR(true);
-
-
-                // h.FORM_("uk-card uk-card-default");
-                // h.UL_("uk-card-body uk-list uk-list-divider");
-                // h.LI_().FIELD2("机构名称", org.name, Org.Typs[org.typ], true)._LI();
-                // if (org.addr != null)
-                // {
-                //     h.LI_().FIELD("地址", org.addr)._LI();
-                // }
-                // if (org.MustTieToCtr)
-                // {
-                //     h.LI_().FIELDA("关联中控", org.ctrties, topOrgs)._LI();
-                // }
-                // h._UL();
-                // h._FORM();
 
                 h.TASKLIST();
             }, false, 3);

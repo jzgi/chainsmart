@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using ChainFx;
 using ChainFx.Web;
@@ -7,11 +7,10 @@ namespace ChainMart
 {
     public abstract class NoteWork : WebWork
     {
-        
     }
 
-    [Ui("平台通告管理", icon: "file-text")]
-    public class AdmlyNoteWork : NoteWork
+    [Ui("事件管理", "系统", icon: "file-text")]
+    public class AdmlyEventWork : NoteWork
     {
         protected override void OnCreate()
         {

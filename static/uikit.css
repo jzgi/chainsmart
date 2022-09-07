@@ -1086,7 +1086,6 @@ button.uk-icon:not(:disabled) {
     min-height: 3rem;
     width: 100%;
     top: 0;
-    font-size: 0.875rem;
     background-color: #ededed;
     color:#333;
     z-index: 9;
@@ -1125,7 +1124,6 @@ button.uk-icon:not(:disabled) {
     width: 100%;
     bottom: 0;
     left: 0;
-    font-size: 1rem;
     color: #666;
     display: flex;
     box-sizing: border-box;
@@ -1623,7 +1621,6 @@ select.uk-form-width-xsmall {
     text-overflow: ellipsis;
     position: relative;
     overflow: hidden;
-    font-size: 0.875rem;
     font-family: inherit;
     cursor: pointer;
     outline: 0;
@@ -1841,7 +1838,6 @@ button.uk-button-secondary {
     display: flex;
     justify-content: start;
     align-items: center;
-    font-size: 0.875rem;
     font-weight: normal;
     align-items: center;
     min-height: 2rem;
@@ -2727,7 +2723,9 @@ form > li,
 .uk-label {
     text-transform: uppercase;
     white-space: nowrap;
-    font-size: 0.875rem;
+    color: #7daa1d;
+    display: flex;
+    align-items: center;
 }
 
 label.uk-label {
@@ -4286,6 +4284,35 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-half .uk-modal-body {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    transform: translateY(0);
+    flex: 1;
+}
+
+.uk-modal-high {
+    padding: 0;
+    background: none;
+}
+
+/* 2 */
+.uk-modal-high .uk-modal-dialog {
+    position: fixed;
+    bottom: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 80%;
+    min-height: 480px;
+    transform: translateY(0);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -1px 4px 0 #777;
+}
+
+.uk-modal-high .uk-modal-body {
     margin: 0;
     width: 100%;
     max-width: 100%;

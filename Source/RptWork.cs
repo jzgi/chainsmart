@@ -11,8 +11,8 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台进货业务日报", icon: "calendar")]
-    public class AdmlyBookRptWork : RptWork
+    [Ui("供应业务日报", "业务", icon: "calendar")]
+    public class AdmlyPrvRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
         {
@@ -21,7 +21,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("平台外卖业务日报", icon: "calendar")]
+    [Ui("外卖业务日报", "业务", icon: "calendar")]
     public class AdmlyBuyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
@@ -31,7 +31,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_PRV, User.ORGLY_)]
-    [Ui("版块报表")]
+    [Ui("综合报表", "版块")]
     public class PrvlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
@@ -84,7 +84,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("中控报表")]
+    [Ui("业务报表", "中控")]
     public class CtrlyRptWork : RptWork
     {
         [Ui("待收", @group: 1), Tool(Modal.Anchor)]
