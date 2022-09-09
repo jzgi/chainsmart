@@ -242,7 +242,7 @@ namespace ChainMart
                 }
                 else
                 {
-                    h.PIC("/org.png", circle: true, css: "uk-width-small");
+                    h.PIC("/org.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.H2(org.name);

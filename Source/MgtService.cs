@@ -31,7 +31,7 @@ namespace ChainMart
             {
                 h.FORM_("uk-card uk-card-default");
                 h.HEADER("批发市场", css: "uk-card-header uk-flex-center");
-                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.UL_("uk-card-body uk-list uk-child-width-1-2");
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);

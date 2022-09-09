@@ -80,7 +80,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("销售管理", "产源", icon: "sign-in")]
+    [Ui("客户订货管理", "产源", icon: "sign-in")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -155,7 +155,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("分拣管理", "中控", icon: "sign-out")]
+    [Ui("订货分拣管理", "中控", icon: "sign-out")]
     public class CtrlyBookWork : BookWork
     {
         [Ui("按批次", @group: 2), Tool(Anchor)]
@@ -288,7 +288,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("派运管理", "中控", icon: "sign-out")]
+    [Ui("订货派运管理", "中控", icon: "sign-out")]
     public class CtrlyDistribWork : BookWork
     {
         [Ui("按批次", @group: 2), Tool(Anchor)]

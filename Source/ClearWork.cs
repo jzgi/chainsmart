@@ -272,7 +272,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("账户款项结算", "", icon: "credit-card")]
+    [Ui("账户款项结算", "基础", icon: "credit-card")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnCreate()

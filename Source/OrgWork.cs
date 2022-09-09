@@ -201,7 +201,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_PRV, 1)]
-    [Ui("产源设置", "版块", icon: "thumbnails")]
+    [Ui("下属产源设置", "版块", icon: "thumbnails")]
     public class PrvlyOrgWork : OrgWork
     {
         protected override void OnCreate()

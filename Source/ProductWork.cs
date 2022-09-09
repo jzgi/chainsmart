@@ -21,7 +21,7 @@ namespace ChainMart
             CreateVarWork<SrclyProductVarWork>();
         }
 
-        [Ui("在线产品", @group: 1), Tool(Anchor)]
+        [Ui("在线", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -48,7 +48,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("☰", "下线产品", @group: 2), Tool(Anchor)]
+        [Ui("下线", "下线产品", @group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -75,7 +75,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建产品", @group: 7), Tool(ButtonShow)]
+        [Ui("新建", "新建产品", "plus", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();

@@ -89,7 +89,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("人员权限", "", "users")]
+    [Ui("人员权限", "基础", "users")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnCreate()
