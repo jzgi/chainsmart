@@ -13,7 +13,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("地理区域设置", "业务", icon: "world")]
+    [Ui("区域设置", "业务")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnCreate()

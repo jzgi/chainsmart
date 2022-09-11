@@ -1094,7 +1094,7 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     align-items: center;
     justify-content: space-between;
-    padding: 0 4px;
+    padding: 0 6px;
 }
 
 .uk-top-bar.uk-large {
@@ -3538,7 +3538,6 @@ ul.uk-nav-sub {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    font-size: 0.875rem;
     font-weight: bold;
     list-style: none;
 }
@@ -4334,7 +4333,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #ededed;
+    background-color: #f6f6f6;
 }
 
 .uk-modal-footer {
@@ -4344,7 +4343,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     margin: 0;
     border: 0;
-    background-color: #ededed;
+    background-color: #f6f6f6;
 }
 
 /*

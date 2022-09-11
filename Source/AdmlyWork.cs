@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
@@ -16,19 +15,25 @@ namespace ChainMart
 
             CreateWork<AdmlyOrgWork>("org");
 
+            CreateWork<AdmlyUserWork>("user");
+
+            CreateWork<AdmlyEventWork>("evt");
+
             CreateWork<AdmlyPrvRptWork>("prpt");
 
             CreateWork<AdmlyBuyRptWork>("brpt");
+
 
             CreateWork<AdmlyPrvClearWork>("pclr");
 
             CreateWork<AdmlyBuyClearWork>("bclr");
 
-            CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<AdmlyEventWork>("evt");
+            CreateWork<AdmlyAccessWork>("access");
 
-            CreateWork<FedMgtWork>("fed", authorize: new UserAuthorizeAttribute(admly: User.ADMLY_MGT));
+            CreateWork<AdmlyDatWork>("dat");
+
+            CreateWork<AdmlyFedWork>("fed");
         }
 
         public void @default(WebContext wc)

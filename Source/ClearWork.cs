@@ -9,7 +9,7 @@ using static ChainFx.Fabric.Nodality;
 namespace ChainMart
 {
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("供应结款", "财务", icon: "credit-card")]
+    [Ui("供应业务结款", "财务")]
     public class AdmlyPrvClearWork : WebWork
     {
         protected override void OnCreate()
@@ -141,7 +141,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("零售结款", "财务", icon: "credit-card")]
+    [Ui("外卖业务结款", "财务")]
     public class AdmlyBuyClearWork : WebWork
     {
         protected override void OnCreate()

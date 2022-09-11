@@ -9,7 +9,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("事件管理", "系统", icon: "file-text")]
+    [Ui("事件管理", "业务")]
     public class AdmlyEventWork : NoteWork
     {
         protected override void OnCreate()

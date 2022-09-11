@@ -11,8 +11,81 @@ namespace ChainMart
     {
     }
 
+    [Ui("人员权限", "系统")]
+    public class AdmlyAccessWork : WebWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<OrglyAccessVarWork>();
+        }
+
+        public void @default(WebContext wc)
+        {
+            short orgid = wc[-1];
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+            var arr = dc.Query<User>(p => p.Set(orgid));
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                    {
+                        h.TDCHECK(o.id);
+                        h.TD_().T(o.name).SP().SUB(o.tel)._TD();
+                        h.TD(Orgly[o.orgly]);
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                    }
+                );
+            }, false, 3);
+        }
+
+        [UserAuthorize(orgly: 3)]
+        [Ui("添加", "添加人员权限"), Tool(ButtonOpen, Appear.Small)]
+        public async Task add(WebContext wc, int cmd)
+        {
+            short orgly = 0;
+            if (wc.IsGet)
+            {
+                string tel = wc.Query[nameof(tel)];
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("授权给指定用户");
+                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false)._LI();
+                    h._FIELDSUL();
+                    if (cmd == 1) // search user
+                    {
+                        using var dc = NewDbContext();
+                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
+                        if (o != null)
+                        {
+                            h.FIELDSUL_();
+                            h.HIDDEN(nameof(o.id), o.id);
+                            h.LI_().FIELD("用户姓名", o.name)._LI();
+                            h.LI_().SELECT("权限", nameof(orgly), orgly, Orgly, filter: (k, v) => k > 0)._LI();
+                            h._FIELDSUL();
+                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                        }
+                    }
+                    h._FORM();
+                });
+            }
+            else // POST
+            {
+                short orgid = wc[-1];
+                var f = await wc.ReadAsync<Form>();
+                int id = f[nameof(id)];
+                orgly = f[nameof(orgly)];
+                using var dc = NewDbContext();
+                dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(orgid).Set(orgly).Set(id));
+                wc.GivePane(200); // ok
+            }
+        }
+    }
+
+
     [UserAuthorize(admly: ADMLY_MGT)]
-    [Ui("用户管理", "系统", icon: "users")]
+    [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork
     {
         protected override void OnCreate()

@@ -30,26 +30,26 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.FORM_("uk-card uk-card-default");
-                h.HEADER("批发市场", css: "uk-card-header uk-flex-center");
-                h.UL_("uk-card-body uk-list uk-child-width-1-2");
+                h.H4("批发市场", css: "uk-card-header");
+                h.UL_("uk-card-body uk-child-width-1-2", grid: true);
                 for (int i = 0; i < orgs.Count; i++)
                 {
                     var org = orgs.ValueAt(i);
                     if (org.IsCenter)
                     {
-                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link uk-flex-left").T(org.tip)._A()._LI();
+                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link").SPAN(org.tip).ICON("triangle-right")._A()._LI();
                     }
                 }
                 h._UL();
                 h._FORM();
 
                 h.FORM_("uk-card uk-card-default");
-                h.HEADER("管理模块", css: "uk-card-header uk-flex-center");
-                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.H4("管理模块", css: "uk-card-header");
+                h.UL_("uk-card-body uk-child-width-1-2", grid: true);
                 for (int i = 0; i < SubWorks.Count; i++)
                 {
                     var wrk = SubWorks.ValueAt(i);
-                    h.LI_("uk-flex").A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link uk-flex-left").T(wrk.Label)._A()._LI();
+                    h.LI_("uk-flex").A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link").SPAN(wrk.Label).ICON("triangle-right")._A()._LI();
                 }
                 h._UL();
                 h._FORM();

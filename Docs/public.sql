@@ -185,9 +185,9 @@ create table notes
 )
     inherits (entities);
 
-comment on table notes is 'annoucements and notices';
+comment on table events is 'annoucements and notices';
 
-alter table notes owner to postgres;
+alter table events owner to postgres;
 
 create table buys
 (

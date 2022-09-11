@@ -11,7 +11,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("入驻机构设置", "业务", icon: "thumbnails")]
+    [Ui("机构设置", "业务")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnCreate()

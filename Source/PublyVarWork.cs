@@ -23,17 +23,17 @@ namespace ChainMart
             var mrt = GrabObject<int, Org>(mrtid);
             var regs = Grab<short, Reg>();
 
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 AND regid = @2 AND state > 0 ORDER BY addr");
-            var shps = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
             if (sec == 0) // when default sect
             {
-                wc.Subscript = sec = 99;
-                shps = shps.AddOf(mrt); // append the supervising market
+                wc.Subscript = sec = regs.First(v => v.IsSection).id;
             }
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (sprid = @1 OR id = @1) AND regid = @2 AND status > 0 ORDER BY addr");
+            var shps = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.typ == Reg.TYP_SECTION)._TOPBAR();
+                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.IsSection)._TOPBAR();
                 h.GRID(shps, o =>
                 {
                     h.SECTION_("uk-flex uk-card-body");
