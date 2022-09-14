@@ -235,7 +235,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("客户管理", "市场")]
+    [Ui("消费者管理", "市场")]
     public class MrtlyCustWork : UserWork
     {
         protected override void OnCreate()

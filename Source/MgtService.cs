@@ -18,7 +18,7 @@ namespace ChainMart
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<PrvlyWork>("prvly"); // for provision sector / source / center
+            CreateWork<SrclyWork>("srcly"); // for source / producer / center
 
             CreateWork<MrtlyWork>("mrtly"); // for markets and shops
         }
@@ -28,7 +28,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_()._TOPBAR();
-                
+
                 h.FORM_("uk-card uk-card-default");
                 h.H4("管理模块", css: "uk-card-header");
                 h.UL_("uk-card-body uk-child-width-1-2", grid: true);

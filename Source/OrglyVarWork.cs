@@ -108,9 +108,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
-    [Ui("市场业务操作")]
+    [Ui("市场／商户操作")]
 #else
-    [Ui("驿站业务操作")]
+    [Ui("驿站／商户操作")]
 #endif
     public class MrtlyVarWork : OrglyVarWork
     {
@@ -118,11 +118,11 @@ namespace ChainMart
         {
             CreateWork<MrtlyOrgWork>("morg");
 
+            CreateWork<MrtlyCustWork>("mcust");
+
             CreateWork<MrtlyBookWork>("mbook");
 
             CreateWork<MrtlyBuyWork>("mbuy");
-
-            CreateWork<MrtlyCustWork>("mcust");
 
 
             CreateWork<ShplyBookWork>("sbook");
@@ -154,10 +154,10 @@ namespace ChainMart
                 }
                 else
                 {
-                    h.PIC("/org.webp", circle: true, css: "uk-width-small");
+                    h.PIC("/mrt.png", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.SPAN_().T(org.name)._SPAN();
+                h.H2(org.name);
                 h.SPAN(org.tel);
                 h._DIV();
                 h._TOPBARXL();
@@ -191,7 +191,7 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_PRD, 1)]
     [Ui("供应产源操作")]
-    public class PrvlyVarWork : OrglyVarWork
+    public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {

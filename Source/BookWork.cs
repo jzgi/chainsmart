@@ -10,7 +10,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场进货动态", "市场")]
+    [Ui("进货汇总", "市场")]
     public class MrtlyBookWork : BookWork
     {
         [Ui("当前", @group: 1), Tool(Anchor)]

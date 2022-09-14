@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainMart
 {
@@ -56,6 +57,11 @@ namespace ChainMart
         internal int rvrid; // reviewer id 
         internal bool icon;
 
+        // lifetime control
+        internal DateTime starton;
+        internal DateTime endon;
+        internal bool ok;
+
         public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
@@ -69,13 +75,16 @@ namespace ChainMart
                 s.Get(nameof(prtid), ref prtid);
                 s.Get(nameof(ctrid), ref ctrid);
             }
-            s.Get(nameof(license), ref license);
-            s.Get(nameof(regid), ref regid);
-            s.Get(nameof(addr), ref addr);
-            s.Get(nameof(x), ref x);
-            s.Get(nameof(y), ref y);
-            s.Get(nameof(tel), ref tel);
-            s.Get(nameof(trust), ref trust);
+            if ((proj & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Get(nameof(license), ref license);
+                s.Get(nameof(regid), ref regid);
+                s.Get(nameof(addr), ref addr);
+                s.Get(nameof(x), ref x);
+                s.Get(nameof(y), ref y);
+                s.Get(nameof(tel), ref tel);
+                s.Get(nameof(trust), ref trust);
+            }
             if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(sprid), ref sprid);
@@ -84,6 +93,10 @@ namespace ChainMart
                 s.Get(nameof(sprim), ref sprim);
                 s.Get(nameof(rvrid), ref rvrid);
                 s.Get(nameof(icon), ref icon);
+
+                s.Get(nameof(starton), ref starton);
+                s.Get(nameof(endon), ref endon);
+                s.Get(nameof(ok), ref ok);
             }
         }
 
@@ -103,14 +116,17 @@ namespace ChainMart
                 if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
                 else s.PutNull(nameof(ctrid));
             }
-            s.Put(nameof(license), license);
-            if (regid > 0) s.Put(nameof(regid), regid);
-            else s.PutNull(nameof(regid));
-            s.Put(nameof(addr), addr);
-            s.Put(nameof(x), x);
-            s.Put(nameof(y), y);
-            s.Put(nameof(tel), tel);
-            s.Put(nameof(trust), trust);
+            if ((proj & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Put(nameof(license), license);
+                if (regid > 0) s.Put(nameof(regid), regid);
+                else s.PutNull(nameof(regid));
+                s.Put(nameof(addr), addr);
+                s.Put(nameof(x), x);
+                s.Put(nameof(y), y);
+                s.Put(nameof(tel), tel);
+                s.Put(nameof(trust), trust);
+            }
             if ((proj & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(sprid), sprid);
@@ -119,6 +135,10 @@ namespace ChainMart
                 s.Put(nameof(sprim), sprim);
                 s.Put(nameof(rvrid), rvrid);
                 s.Put(nameof(icon), icon);
+
+                s.Put(nameof(starton), starton);
+                s.Put(nameof(endon), endon);
+                s.Put(nameof(ok), ok);
             }
         }
 

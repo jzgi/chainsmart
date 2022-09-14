@@ -36,9 +36,9 @@ namespace ChainMart
 
     [UserAuthorize(orgly: ORGLY_OPN)]
 #if ZHNT
-    [Ui("外卖管理", "商户")]
+    [Ui("售货管理", "商户")]
 #else
-    [Ui("外卖管理", "商户")]
+    [Ui("售货管理", "商户")]
 #endif
     public class ShplyBuyWork : BuyWork
     {
@@ -47,7 +47,7 @@ namespace ChainMart
             CreateVarWork<ShplyBuyVarWork>();
         }
 
-        [Ui("当前外卖", @group: 1), Tool(Modal.Anchor)]
+        [Ui("当前外卖", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -89,7 +89,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("外卖动态", "市场")]
+    [Ui("售货汇总", "市场")]
     public class MrtlyBuyWork : BuyWork
     {
         [Ui("当前", @group: 1), Tool(Modal.Anchor)]
