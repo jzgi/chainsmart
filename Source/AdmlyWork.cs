@@ -33,7 +33,7 @@ namespace ChainMart
 
             CreateWork<AdmlyDatWork>("dat");
 
-            CreateWork<AdmlyNetWork>("net");
+            CreateWork<AdmlyChainWork>("chain");
         }
 
         public void @default(WebContext wc)

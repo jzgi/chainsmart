@@ -21,7 +21,7 @@ namespace ChainMart
             CreateVarWork<AdmlyRegVarWork>();
         }
 
-        [Ui("省份", @group: 1), Tool(Anchor)]
+        [Ui("省份", group: 1), Tool(Anchor)]
         public void @default(WebContext wc)
         {
             wc.GivePage(200, h =>
@@ -40,12 +40,32 @@ namespace ChainMart
             });
         }
 
-        [Ui("市场区划", @group: 2), Tool(Anchor)]
+        [Ui("地市", group: 2), Tool(Anchor)]
+        public void city(WebContext wc)
+        {
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: Reg.TYP_CITY);
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_CITY).T(" ORDER BY id, status DESC");
+                var arr = dc.Query<Reg>();
+                h.TABLE(arr, o =>
+                    {
+                        h.TDCHECK(o.Key);
+                        h.TDAVAR(o.Key, o.name);
+                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROVINCE));
+                    }
+                );
+            });
+        }
+
+        [Ui("场区", group: 4), Tool(Anchor)]
         public void mrtdiv(WebContext wc)
         {
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: Reg.TYP_SECTION);
+
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<Reg>();
@@ -59,7 +79,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建区域", @group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建区域", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
@@ -87,7 +107,7 @@ namespace ChainMart
             {
                 o = await wc.ReadObjectAsync(instance: o);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Item.Empty);
+                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Ware.Empty);
                 await dc.ExecuteAsync(p => o.Write(p));
 
                 wc.GivePane(200); // close dialog

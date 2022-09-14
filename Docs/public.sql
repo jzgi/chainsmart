@@ -257,7 +257,7 @@ create table products
 )
     inherits (entities);
 
-alter table products owner to postgres;
+alter table items owner to postgres;
 
 create table items
 (
@@ -279,7 +279,7 @@ create table items
 )
     inherits (entities);
 
-alter table items owner to postgres;
+alter table wares owner to postgres;
 
 create table lots
 (

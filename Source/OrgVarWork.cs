@@ -79,7 +79,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_(m.IsMarket ? "市场属性" : "供应版块属性");
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsProvision)._LI();
+                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsSource)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
@@ -205,7 +205,7 @@ namespace ChainMart
         }
     }
 
-    public class PrvlyOrgVarWork : OrgVarWork
+    public class SrclyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -260,7 +260,7 @@ namespace ChainMart
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
+                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_PRD);
                 await dc.ExecuteAsync(p => p.Set(id));
 
                 wc.GivePane(200);

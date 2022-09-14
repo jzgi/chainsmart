@@ -12,33 +12,23 @@ namespace ChainMart
         public const short
             TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
-            TYP_SRC = 0b00010, // source
+            TYP_PRD = 0b00010, // producer
             TYP_DST = 0b00100, // distributor
             TYP_MRT = TYP_PRT | TYP_SHP, // market
-            TYP_PRV = TYP_PRT | TYP_SRC, // provision sector
-            TYP_CTR = TYP_PRT | TYP_SRC | TYP_DST; // provision center
+            TYP_SRC = TYP_PRT | TYP_PRD, // source
+            TYP_CTR = TYP_PRT | TYP_PRD | TYP_DST; // center
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-#if ZHNT
             {TYP_SHP, "商户"},
+            {TYP_PRD, "生产户"},
+#if ZHNT
+            {TYP_MRT, "市场"},
 #else
             {TYP_SHP, "驿站"},
 #endif
-            {TYP_SRC, "产源"},
-            {TYP_MRT, "市场"},
-            {TYP_PRV, "版块"},
+            {TYP_SRC, "供源"},
             {TYP_CTR, "中控"},
-        };
-
-        public const short
-            FRK_CTR = 1, // standard, center-based 
-            FRK_OWN = 2; // on own
-
-        public static readonly Map<short, string> Forks = new Map<short, string>
-        {
-            {FRK_CTR, "种控"},
-            {FRK_OWN, "自达"},
         };
 
         // id
@@ -140,28 +130,27 @@ namespace ChainMart
 
         public string Im => sprim;
 
-        public bool CanBeParent => (typ & TYP_PRT) == TYP_PRT;
-
-        public bool IsProvision => typ == TYP_PRV;
-
-        public bool CanBeProvision => (typ & TYP_PRV) == TYP_PRV;
-
+        public bool IsParentAble => (typ & TYP_PRT) == TYP_PRT;
 
         public bool IsSource => typ == TYP_SRC;
 
-        public bool CanBeSource => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsSourceAble => (typ & TYP_SRC) == TYP_SRC;
+
+        public bool IsProducer => typ == TYP_PRD;
+
+        public bool IsProducerAble => (typ & TYP_PRD) == TYP_PRD;
 
         public bool IsShop => typ == TYP_SHP;
 
-        public bool CanBeShop => (typ & TYP_SHP) == TYP_SHP;
+        public bool IsShopAble => (typ & TYP_SHP) == TYP_SHP;
 
         public bool IsMarket => typ == TYP_MRT;
 
         public bool IsCenter => typ == TYP_CTR;
 
-        public bool HasXy => IsMarket || IsSource || IsCenter;
+        public bool HasXy => IsMarket || IsProducer || IsCenter;
 
-        public bool HasCtr => CanBeShop;
+        public bool HasCtr => IsShopAble;
 
         public string ShopName => IsMarket ? tip : name;
 

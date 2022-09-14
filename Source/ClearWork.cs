@@ -62,7 +62,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("按供应版块");
-                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.IsProvision, required: true);
+                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.IsSource, required: true);
                     h._FIELDSUL()._FORM();
                 });
             }

@@ -19,7 +19,11 @@ namespace ChainMart
             CreateVarWork<AdmlyOrgVarWork>();
         }
 
-        [Ui("市场", @group: 1), Tool(Anchor)]
+#if ZHNT
+        [Ui("市场", group: 1), Tool(Anchor)]
+#else
+        [Ui("驿站", group: 1), Tool(Anchor)]
+#endif
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -40,11 +44,11 @@ namespace ChainMart
             });
         }
 
-        [Ui("供应版块", @group: 2), Tool(Anchor)]
-        public async Task prv(WebContext wc, int page)
+        [Ui("供源", group: 2), Tool(Anchor)]
+        public async Task src(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_PRV).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_SRC).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -61,7 +65,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建机构", @group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建机构", group: 7), Tool(ButtonShow)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -72,7 +76,7 @@ namespace ChainMart
             {
                 var m = new Org
                 {
-                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_PRV,
+                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_SRC,
                     created = DateTime.Now,
                     creator = prin.name,
                     status = Entity.STA_ENABLED
@@ -81,14 +85,14 @@ namespace ChainMart
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供应版块属性");
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供源属性");
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsProvision)._LI();
+                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsSource)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
@@ -146,11 +150,7 @@ namespace ChainMart
             });
         }
 
-#if ZHNT
         [Ui("✛", "新建商户"), Tool(ButtonShow)]
-#else
-        [Ui("✛", "新建驿站"), Tool(ButtonShow)]
-#endif
         public async Task @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -200,13 +200,13 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_PRV, 1)]
+    [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("下属产源设置", "版块", icon: "thumbnails")]
-    public class PrvlyOrgWork : OrgWork
+    public class SrclyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrvlyOrgVarWork>();
+            CreateVarWork<SrclyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -251,7 +251,7 @@ namespace ChainMart
             var regs = Grab<short, Reg>();
             var m = new Org
             {
-                typ = Org.TYP_SRC,
+                typ = Org.TYP_PRD,
                 prtid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,

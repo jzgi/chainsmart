@@ -1,4 +1,4 @@
-﻿﻿using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
@@ -18,7 +18,7 @@ namespace ChainMart
         {
             {TYP_PROVINCE, "省份"},
             {TYP_CITY, "地市"},
-            {TYP_SECTION, "分区"},
+            {TYP_SECTION, "场区"},
         };
 
         internal short id;

@@ -25,7 +25,7 @@ namespace ChainMart
         internal int id;
 
         internal int productid;
-        internal int srcid;
+        internal int prdid;
         internal int ctrid;
         internal bool strict;
         internal string prover;
@@ -52,7 +52,7 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(productid), ref productid);
-                s.Get(nameof(srcid), ref srcid);
+                s.Get(nameof(prdid), ref prdid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(strict), ref strict);
             }
@@ -86,7 +86,7 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(productid), productid);
-                s.Put(nameof(srcid), srcid);
+                s.Put(nameof(prdid), prdid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(strict), strict);
             }

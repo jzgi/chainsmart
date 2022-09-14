@@ -20,30 +20,30 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM distribs WHERE id = @1");
             var distrib = await dc.QueryTopAsync<Lot>(p => p.Set(distribid));
 
-            Product product = null;
+            Item item = null;
             if (distrib != null)
             {
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
-                product = await dc.QueryTopAsync<Product>(p => p.Set(distrib.productid));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
+                item = await dc.QueryTopAsync<Item>(p => p.Set(distrib.productid));
             }
 
             wc.GivePage(200, h =>
             {
-                if (distrib == null || product == null)
+                if (distrib == null || item == null)
                 {
                     h.ALERT("没有找到");
                     return;
                 }
                 h.DIV_();
                 h.UL_();
-                h.LI_().STATIC("品名", product.name)._LI();
+                h.LI_().STATIC("品名", item.name)._LI();
                 h._UL();
                 h._DIV();
             });
         }
     }
 
-    public class SrclyLotVarWork : LotVarWork
+    public class PrdlyLotVarWork : LotVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -78,7 +78,7 @@ namespace ChainMart
                 const short msk = MSK_EDIT ;
 
                 // populate 
-                var m = await wc.ReadObjectAsync(0, new Product
+                var m = await wc.ReadObjectAsync(0, new Item
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,

@@ -129,7 +129,7 @@ namespace ChainMart
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyItemWork>("sitem");
+            CreateWork<ShplyWareWork>("sware");
 
 
             CreateWork<OrglyClearWork>("clear");
@@ -189,24 +189,24 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_PRD, 1)]
     [Ui("供应产源操作")]
     public class PrvlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
-            CreateWork<PrvlyOrgWork>("porg");
-
-            CreateWork<PrvlyRptWork>("prpt");
-
-
-            CreateWork<SrclyProductWork>("sprod");
-
-            CreateWork<SrclyLotWork>("slot");
-
-            CreateWork<SrclyBookWork>("sbook");
+            CreateWork<SrclyOrgWork>("sorg");
 
             CreateWork<SrclyRptWork>("srpt");
+
+
+            CreateWork<PrdlyItemWork>("pprod");
+
+            CreateWork<PrdlyLotWork>("plot");
+
+            CreateWork<PrdlyBookWork>("pbook");
+
+            CreateWork<PrdlyRptWork>("prpt");
 
 
             CreateWork<CtrlyLotWork>("clot");

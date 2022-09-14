@@ -115,13 +115,13 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
+    [UserAuthorize(Org.TYP_PRD, User.ORGLY_LOG)]
     [Ui("客户订货管理", "产源", icon: "sign-in")]
-    public class SrclyBookWork : BookWork
+    public class PrdlyBookWork : BookWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyBookVarWork>();
+            CreateVarWork<PrdlyBookVarWork>();
         }
 
         [Ui("当前订货"), Tool(Anchor)]
@@ -181,9 +181,9 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
+    [UserAuthorize(Org.TYP_PRD, User.ORGLY_LOG)]
     [Ui("业务报表", "产源")]
-    public class SrclyRptWork : BookWork
+    public class PrdlyRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
         {

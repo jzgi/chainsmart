@@ -22,11 +22,11 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("货品批次管理", "产源")]
-    public class SrclyLotWork : LotWork
+    public class PrdlyLotWork : LotWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyLotVarWork>();
+            CreateVarWork<PrdlyLotVarWork>();
         }
 
         [Ui("当前", "当前批次", group: 1), Tool(Anchor)]
@@ -85,7 +85,7 @@ namespace ChainMart
             var m = new Lot
             {
                 status = Entity.STA_DISABLED,
-                srcid = org.id,
+                prdid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -95,8 +95,8 @@ namespace ChainMart
             {
                 // selection of products
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
-                var products = await dc.QueryAsync<int, Product>(p => p.Set(org.id));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
+                var products = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
 
                 wc.GivePane(200, h =>
                 {
@@ -128,8 +128,8 @@ namespace ChainMart
                 // db insert
                 using var dc = NewDbContext();
 
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Product>(p => p.Set(m.productid));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
+                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.productid));
                 m.name = product.name;
                 m.tip = product.name;
 
@@ -150,7 +150,7 @@ namespace ChainMart
             var m = new Lot
             {
                 status = Entity.STA_DISABLED,
-                srcid = org.id,
+                prdid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -160,8 +160,8 @@ namespace ChainMart
             {
                 // selection of products
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
-                var products = await dc.QueryAsync<int, Product>(p => p.Set(org.id));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
+                var products = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
 
                 wc.GivePane(200, h =>
                 {
@@ -193,8 +193,8 @@ namespace ChainMart
                 // db insert
                 using var dc = NewDbContext();
 
-                dc.Sql("SELECT ").collst(Product.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Product>(p => p.Set(m.productid));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
+                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.productid));
                 m.name = product.name;
                 m.tip = product.name;
 
