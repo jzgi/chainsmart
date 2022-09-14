@@ -96,7 +96,7 @@ create table orgs
     fork smallint,
     sprid integer
         constraint orgs_sprid_fk
-            references orgs,
+            references orgs_old,
     license varchar(20),
     trust boolean,
     regid smallint
@@ -115,11 +115,11 @@ create table orgs
 )
     inherits (entities);
 
-alter table orgs owner to postgres;
+alter table orgs_old owner to postgres;
 
 alter table users
     add constraint users_orgid_fk
-        foreign key (orgid) references orgs;
+        foreign key (orgid) references orgs_old;
 
 create table dailys
 (
@@ -380,7 +380,7 @@ SELECT o.typ,
        m.tel              AS mgrtel,
        m.im               AS mgrim,
        o.icon IS NOT NULL AS icon
-FROM orgs o
+FROM orgs_old o
          LEFT JOIN users m
                    ON o.mgrid =
                       m.id;

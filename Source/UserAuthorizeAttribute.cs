@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using ChainFx.Web;
 
 namespace ChainMart
@@ -46,13 +46,12 @@ namespace ChainMart
             // check access to org
             var org = wc[typeof(OrglyVarWork)].As<Org>();
 
-            // is the manager of the org
-            if (org.mgrid == prin.id)
+            // is the supervisor of the org
+            if (org.sprid == prin.id)
             {
                 if (!mock)
                 {
-                    wc.Party = org.name;
-                    wc.Role = "管理员";
+                    wc.Role = User.ORGLY_SPR;
                 }
                 return true;
             }
@@ -62,19 +61,17 @@ namespace ChainMart
             {
                 if (!mock)
                 {
-                    wc.Party = org.name;
-                    wc.Role = User.Orgly[prin.orgly];
+                    wc.Role = prin.orgly;
                 }
                 return true;
             }
 
             // is trusted for the org
-            if (org.trust && org.sprid == prin.orgid)
+            if (org.trust && org.prtid == prin.orgid && prin.IsDelegateOf(org.id))
             {
                 if (!mock)
                 {
-                    wc.Party = org.name;
-                    wc.Role = "代办";
+                    wc.Role = User.ORGLY_DGT;
                 }
                 return true;
             }

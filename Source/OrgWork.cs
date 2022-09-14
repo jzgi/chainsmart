@@ -33,7 +33,7 @@ namespace ChainMart
                     h.TDCHECK(o.id);
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
-                    h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
+                    h.TD_().A_TEL(o.sprname, o.Tel)._TD();
                     h.TD(o.status == 1 ? null : Entity.States[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -54,7 +54,7 @@ namespace ChainMart
                     h.TDCHECK(o.id);
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
-                    h.TD_().A_TEL(o.mgrname, o.Tel)._TD();
+                    h.TD_().A_TEL(o.sprname, o.Tel)._TD();
                     h.TD(o.status == 1 ? null : Entity.States[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
@@ -115,9 +115,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
 #if ZHNT
-    [Ui("市场商户管理", icon: "thumbnails")]
+    [Ui("商户管理", "市场")]
 #else
-    [Ui("市场驿站管理", icon: "thumbnails")]
+    [Ui("商户管理", "驿站")]
 #endif
     public class MrtlyOrgWork : OrgWork
     {
@@ -161,7 +161,7 @@ namespace ChainMart
                 created = DateTime.Now,
                 creator = prin.name,
                 status = Entity.STA_ENABLED,
-                sprid = mrt.id,
+                prtid = mrt.id,
                 ctrid = mrt.ctrid,
             };
 
@@ -252,7 +252,7 @@ namespace ChainMart
             var m = new Org
             {
                 typ = Org.TYP_SRC,
-                sprid = prv.id,
+                prtid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 status = Entity.STA_ENABLED

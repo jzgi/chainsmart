@@ -10,13 +10,13 @@ namespace ChainMart
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_SPR = 0b01000, // supervisor
+            TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
             TYP_DST = 0b00100, // distributor
-            TYP_MRT = TYP_SPR | TYP_SHP, // market
-            TYP_PRV = TYP_SPR | TYP_SRC, // provision sector
-            TYP_CTR = TYP_SPR | TYP_SRC | TYP_DST; // provision center
+            TYP_MRT = TYP_PRT | TYP_SHP, // market
+            TYP_PRV = TYP_PRT | TYP_SRC, // provision sector
+            TYP_CTR = TYP_PRT | TYP_SRC | TYP_DST; // provision center
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
@@ -44,8 +44,11 @@ namespace ChainMart
         // id
         internal int id;
 
-        // super id
-        internal int sprid;
+        // parent id, only if shop or source
+        internal int prtid;
+
+        // center id, only if market or shop
+        internal int ctrid;
 
         internal string license;
         internal short regid;
@@ -56,11 +59,11 @@ namespace ChainMart
         internal string tel;
         internal bool trust;
 
-        internal int mgrid;
-        internal string mgrname;
-        internal string mgrtel;
-        internal string mgrim;
-        internal int ctrid; // tied center, can be null 
+        internal int sprid; // supervisor id
+        internal string sprname;
+        internal string sprtel;
+        internal string sprim;
+        internal int rvrid; // reviewer id 
         internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -73,7 +76,8 @@ namespace ChainMart
             }
             if ((proj & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(sprid), ref sprid);
+                s.Get(nameof(prtid), ref prtid);
+                s.Get(nameof(ctrid), ref ctrid);
             }
             s.Get(nameof(license), ref license);
             s.Get(nameof(regid), ref regid);
@@ -82,13 +86,13 @@ namespace ChainMart
             s.Get(nameof(y), ref y);
             s.Get(nameof(tel), ref tel);
             s.Get(nameof(trust), ref trust);
-            s.Get(nameof(ctrid), ref ctrid);
             if ((proj & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(mgrid), ref mgrid);
-                s.Get(nameof(mgrname), ref mgrname);
-                s.Get(nameof(mgrtel), ref mgrtel);
-                s.Get(nameof(mgrim), ref mgrim);
+                s.Get(nameof(sprid), ref sprid);
+                s.Get(nameof(sprname), ref sprname);
+                s.Get(nameof(sprtel), ref sprtel);
+                s.Get(nameof(sprim), ref sprim);
+                s.Get(nameof(rvrid), ref rvrid);
                 s.Get(nameof(icon), ref icon);
             }
         }
@@ -103,8 +107,11 @@ namespace ChainMart
             }
             if ((proj & MSK_BORN) == MSK_BORN)
             {
-                if (sprid > 0) s.Put(nameof(sprid), sprid);
-                else s.PutNull(nameof(sprid));
+                if (prtid > 0) s.Put(nameof(prtid), prtid);
+                else s.PutNull(nameof(prtid));
+
+                if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
+                else s.PutNull(nameof(ctrid));
             }
             s.Put(nameof(license), license);
             if (regid > 0) s.Put(nameof(regid), regid);
@@ -114,13 +121,13 @@ namespace ChainMart
             s.Put(nameof(y), y);
             s.Put(nameof(tel), tel);
             s.Put(nameof(trust), trust);
-            s.Put(nameof(ctrid), ctrid);
             if ((proj & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(mgrid), mgrid);
-                s.Put(nameof(mgrname), mgrname);
-                s.Put(nameof(mgrtel), mgrtel);
-                s.Put(nameof(mgrim), mgrim);
+                s.Put(nameof(sprid), sprid);
+                s.Put(nameof(sprname), sprname);
+                s.Put(nameof(sprtel), sprtel);
+                s.Put(nameof(sprim), sprim);
+                s.Put(nameof(rvrid), rvrid);
                 s.Put(nameof(icon), icon);
             }
         }
@@ -131,22 +138,22 @@ namespace ChainMart
 
         public string Tel => tel;
 
-        public string Im => mgrim;
+        public string Im => sprim;
 
-        public bool HasSuper => (typ & TYP_SPR) == TYP_SPR;
+        public bool CanBeParent => (typ & TYP_PRT) == TYP_PRT;
 
         public bool IsProvision => typ == TYP_PRV;
 
-        public bool HasProvision => (typ & TYP_PRV) == TYP_PRV;
+        public bool CanBeProvision => (typ & TYP_PRV) == TYP_PRV;
 
 
         public bool IsSource => typ == TYP_SRC;
 
-        public bool HasSource => (typ & TYP_SRC) == TYP_SRC;
+        public bool CanBeSource => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsShop => typ == TYP_SHP;
 
-        public bool HasShop => (typ & TYP_SHP) == TYP_SHP;
+        public bool CanBeShop => (typ & TYP_SHP) == TYP_SHP;
 
         public bool IsMarket => typ == TYP_MRT;
 
@@ -154,7 +161,7 @@ namespace ChainMart
 
         public bool HasXy => IsMarket || IsSource || IsCenter;
 
-        public bool MustTieToCtr => HasSuper && !IsCenter;
+        public bool HasCtr => CanBeShop;
 
         public string ShopName => IsMarket ? tip : name;
 

@@ -5,12 +5,12 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public class BookWork : WebWork
+    public abstract class BookWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场进货动态")]
+    [Ui("市场进货动态", "市场")]
     public class MrtlyBookWork : BookWork
     {
         [Ui("当前", @group: 1), Tool(Anchor)]
@@ -22,13 +22,13 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
-    [Ui("商户进货业务", icon: "pull")]
+    [Ui("进货管理", "商户")]
 #else
-    [Ui("驿站进货业务", icon: "pull")]
+    [Ui("进货管理", "商户")]
 #endif
     public class ShplyBookWork : BookWork
     {
-        [Ui("当前进货", @group: 1), Tool(Anchor)]
+        [Ui("当前", "当前进货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -50,18 +50,17 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史进货", @group: 2), Tool(Anchor)]
+        [Ui("历史", "历史进货", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status >= 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status >= 1 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
-            var items = Grab<short, Item>();
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: "历史订货");
+                h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
                     // h.TD(items[o.itemid].name);
@@ -71,11 +70,48 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新增进货", @group: 1), Tool(ButtonOpen)]
-        public void @new(WebContext wc)
+        [Ui("新增", "新增进货", "plus", group: 1), Tool(ButtonOpen)]
+        public async Task @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
-            wc.GiveRedirect("/" + mrt.ctrid + "/");
+            int ctrid = mrt.ctrid;
+            var topOrgs = Grab<int, Org>();
+            var ctr = topOrgs[ctrid];
+            var cats = Grab<short, Cat>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid));
+
+            wc.GivePage(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("没有在批发的产品");
+                    return;
+                }
+
+                h.SUBNAV(cats, "", 0);
+
+                h.TABLE_();
+                var last = 0;
+                for (var i = 0; i < arr?.Length; i++)
+                {
+                    var o = arr[i];
+                    // if (o.prvid != last)
+                    // {
+                    //     var spr = topOrgs[o.prvid];
+                    //     h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    // }
+                    h.TR_();
+                    h.TD(o.name);
+                    // h.TD(o.price, true);
+                    h._TR();
+
+                    // last = o.prvid;
+                }
+                h._TABLE();
+            }, title: ctr.tip);
         }
     }
 

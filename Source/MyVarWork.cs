@@ -22,7 +22,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_(true);
+                h.TOPBARXL_();
                 if (prin.icon)
                 {
                     h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
@@ -36,7 +36,7 @@ namespace ChainMart
                 h.SPAN(prin.tel);
                 h.SPAN(User.Typs[prin.typ]);
                 h._DIV();
-                h._TOPBAR(true);
+                h._TOPBARXL();
 
                 h.TASKLIST();
             }, false, 3, title: "我的账户");

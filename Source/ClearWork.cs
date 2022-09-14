@@ -9,7 +9,7 @@ using static ChainFx.Fabric.Nodality;
 namespace ChainMart
 {
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("供应业务结款", "财务")]
+    [Ui("供给业务结款", "财务")]
     public class AdmlyPrvClearWork : WebWork
     {
         protected override void OnCreate()
@@ -141,7 +141,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("外卖业务结款", "财务")]
+    [Ui("消费业务结款", "财务")]
     public class AdmlyBuyClearWork : WebWork
     {
         protected override void OnCreate()
@@ -183,7 +183,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [Ui("⌹", "浏览结算历史", @group: 2), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("历史", "浏览结算历史", @group: 2), Tool(AnchorPrompt, Appear.Small)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();
@@ -233,7 +233,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(admly: 1)]
-        [Ui("∑", "结算零售代收款项", @group: 1), Tool(ButtonOpen, Appear.Small)]
+        [Ui("∑", "结算代收款项", @group: 1), Tool(ButtonOpen, Appear.Small)]
         public async Task calcrtl(WebContext wc)
         {
             if (wc.IsGet)
@@ -272,7 +272,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("账户款项结算", "基础", icon: "credit-card")]
+    [Ui("账户款项结算", "基础")]
     public class OrglyClearWork : WebWork
     {
         protected override void OnCreate()

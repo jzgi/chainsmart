@@ -744,7 +744,7 @@ a.uk-link-reset:hover,
 .uk-table-divider>tr:not(:first-child),
 /* .uk-table-divider > :not(:first-child) > tr, */
 .uk-table-divider> :first-child>tr:not(:first-child) {
-    border-top: 1px solid #ededed;
+    border-top: 1px solid #f6f6f6;
 }
 
 .uk-table-middle,

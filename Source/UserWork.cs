@@ -16,7 +16,7 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<OrglyAccessVarWork>();
+            CreateVarWork<AdmlyAccessVarWork>();
         }
 
         public void @default(WebContext wc)
@@ -235,7 +235,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场客户管理", icon: "users")]
+    [Ui("客户管理", "市场")]
     public class MrtlyCustWork : UserWork
     {
         protected override void OnCreate()

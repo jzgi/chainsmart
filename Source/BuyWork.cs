@@ -36,9 +36,9 @@ namespace ChainMart
 
     [UserAuthorize(orgly: ORGLY_OPN)]
 #if ZHNT
-    [Ui("商户外卖业务", icon: "push")]
+    [Ui("外卖管理", "商户")]
 #else
-    [Ui("驿站外卖业务", icon: "push")]
+    [Ui("外卖管理", "商户")]
 #endif
     public class ShplyBuyWork : BuyWork
     {
@@ -89,7 +89,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("市场外卖动态")]
+    [Ui("外卖动态", "市场")]
     public class MrtlyBuyWork : BuyWork
     {
         [Ui("当前", @group: 1), Tool(Modal.Anchor)]

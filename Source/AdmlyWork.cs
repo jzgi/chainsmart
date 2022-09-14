@@ -33,7 +33,7 @@ namespace ChainMart
 
             CreateWork<AdmlyDatWork>("dat");
 
-            CreateWork<AdmlyFedWork>("fed");
+            CreateWork<AdmlyNetWork>("net");
         }
 
         public void @default(WebContext wc)
@@ -42,10 +42,7 @@ namespace ChainMart
             var o = Self;
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_(true);
-                h.H2(Self.name);
-                h._DIV();
-                h._TOPBAR(true);
+                h.TOPBARXL_().H2(Self.name)._TOPBARXL();
 
                 h.TASKLIST();
             });

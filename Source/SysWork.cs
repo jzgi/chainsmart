@@ -14,8 +14,8 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("联盟链管理", "系统")]
-    public class AdmlyFedWork : FedWork
+    [Ui("联盟网络", "系统")]
+    public class AdmlyNetWork : FedWork
     {
     }
 }

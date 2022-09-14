@@ -10,11 +10,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-#if ZHNT
-    [Ui("商户商品设置", icon: "table")]
-#else
-    [Ui("驿站商品设置", icon: "table")]
-#endif
+    [Ui("商品设置", "商户")]
     public class ShplyItemWork : ItemWork
     {
         protected override void OnCreate()

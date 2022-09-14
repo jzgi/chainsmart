@@ -19,13 +19,13 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("SELECT name,tel,orgly FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<Aclet>(p => p.Set(org.id));
-            if (org.mgrid > 0) // append the org mgr
+            if (org.sprid > 0) // append the org mgr
             {
                 arr.AddOf(new Aclet
                 {
-                    id = org.mgrid,
-                    name = org.mgrname,
-                    tel = org.mgrtel,
+                    id = org.sprid,
+                    name = org.sprname,
+                    tel = org.sprtel,
                     orgly = 255
                 });
             }
@@ -116,8 +116,6 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            // market
-
             CreateWork<MrtlyOrgWork>("morg");
 
             CreateWork<MrtlyBookWork>("mbook");
@@ -126,7 +124,6 @@ namespace ChainMart
 
             CreateWork<MrtlyCustWork>("mcust");
 
-            // shop
 
             CreateWork<ShplyBookWork>("sbook");
 
@@ -134,7 +131,6 @@ namespace ChainMart
 
             CreateWork<ShplyItemWork>("sitem");
 
-            // common
 
             CreateWork<OrglyClearWork>("clear");
 
@@ -151,7 +147,7 @@ namespace ChainMart
                 var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
                 // h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
-                h.TOPBAR_(true);
+                h.TOPBARXL_();
                 if (prin.icon)
                 {
                     h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
@@ -161,10 +157,10 @@ namespace ChainMart
                     h.PIC("/org.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.SPAN_().T(org.name).SP().SUB(Org.Typs[org.typ])._SPAN();
+                h.SPAN_().T(org.name)._SPAN();
                 h.SPAN(org.tel);
                 h._DIV();
-                h._TOPBAR(true);
+                h._TOPBARXL();
 
 
                 // h.FORM_("uk-card uk-card-default");
@@ -235,7 +231,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_(true);
+                h.TOPBARXL_();
                 if (org.icon)
                 {
                     h.PIC("/org/", org.id, "/icon/", circle: true, css: "uk-width-medium");
@@ -248,7 +244,7 @@ namespace ChainMart
                 h.H2(org.name);
                 h.SPAN(org.tel);
                 h._DIV();
-                h._TOPBAR(true);
+                h._TOPBARXL();
 
                 h.TASKLIST();
             }, false, 3);

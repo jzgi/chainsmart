@@ -25,24 +25,10 @@ namespace ChainMart
 
         public void @default(WebContext wc, int cmd)
         {
-            var orgs = Grab<int, Org>();
-
             wc.GivePage(200, h =>
             {
-                h.FORM_("uk-card uk-card-default");
-                h.H4("批发市场", css: "uk-card-header");
-                h.UL_("uk-card-body uk-child-width-1-2", grid: true);
-                for (int i = 0; i < orgs.Count; i++)
-                {
-                    var org = orgs.ValueAt(i);
-                    if (org.IsCenter)
-                    {
-                        h.LI_("uk-flex").A_(org.Key, "/", css: "uk-button-link").SPAN(org.tip).ICON("triangle-right")._A()._LI();
-                    }
-                }
-                h._UL();
-                h._FORM();
-
+                h.TOPBAR_()._TOPBAR();
+                
                 h.FORM_("uk-card uk-card-default");
                 h.H4("管理模块", css: "uk-card-header");
                 h.UL_("uk-card-body uk-child-width-1-2", grid: true);
