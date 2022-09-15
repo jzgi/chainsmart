@@ -16,7 +16,7 @@ namespace ChainMart
 #else
     [Ui("驿站商户操作")]
 #endif
-    public class MrtlyWork : OrglyWork
+    public class MktlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
@@ -31,15 +31,15 @@ namespace ChainMart
     }
 
     /// <summary>
-    /// Works for sources and producers.
+    /// Works for zones and sources.
     /// </summary>
-    [Ui("供源／生产户操作")]
-    public class SrclyWork : OrglyWork
+    [Ui("供区／产源操作")]
+    public class ZonlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<SrclyVarWork>((prin, key) =>
+            CreateVarWork<ZonlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);

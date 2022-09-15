@@ -42,7 +42,7 @@ namespace ChainMart
             }, false, 3, title: "我的账户");
         }
 
-        [Ui("设置"), Tool(ButtonShow)]
+        [Ui("设置"), Tool(ButtonOpen)]
         public async Task setg(WebContext wc)
         {
             const string PASSMASK = "t#0^0z4R4pX7";

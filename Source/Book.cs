@@ -22,7 +22,7 @@ namespace ChainMart
             STA_RECEIVED = 7; // shop received
 
 
-        public static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STA_CREATED, null},
             {STA_PAID, "已付款"},

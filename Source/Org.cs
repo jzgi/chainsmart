@@ -13,22 +13,22 @@ namespace ChainMart
         public const short
             TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
-            TYP_PRD = 0b00010, // producer
+            TYP_SRC = 0b00010, // source
             TYP_DST = 0b00100, // distributor
             TYP_MRT = TYP_PRT | TYP_SHP, // market
-            TYP_SRC = TYP_PRT | TYP_PRD, // source
-            TYP_CTR = TYP_PRT | TYP_PRD | TYP_DST; // center
+            TYP_ZON = TYP_PRT | TYP_SRC, // zone
+            TYP_CTR = TYP_PRT | TYP_SRC | TYP_DST; // center
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {TYP_SHP, "商户"},
-            {TYP_PRD, "生产户"},
+            {TYP_SRC, "产源"},
 #if ZHNT
             {TYP_MRT, "市场"},
 #else
             {TYP_SHP, "驿站"},
 #endif
-            {TYP_SRC, "供源"},
+            {TYP_ZON, "供区"},
             {TYP_CTR, "中控"},
         };
 
@@ -150,27 +150,27 @@ namespace ChainMart
 
         public string Im => sprim;
 
-        public bool IsParentAble => (typ & TYP_PRT) == TYP_PRT;
+        public bool IsParentCapable => (typ & TYP_PRT) == TYP_PRT;
+
+        public bool IsZone => typ == TYP_ZON;
+
+        public bool IsOfZone => (typ & TYP_ZON) == TYP_ZON;
 
         public bool IsSource => typ == TYP_SRC;
 
-        public bool IsSourceAble => (typ & TYP_SRC) == TYP_SRC;
-
-        public bool IsProducer => typ == TYP_PRD;
-
-        public bool IsProducerAble => (typ & TYP_PRD) == TYP_PRD;
+        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
 
         public bool IsShop => typ == TYP_SHP;
 
-        public bool IsShopAble => (typ & TYP_SHP) == TYP_SHP;
+        public bool IsOfShop => (typ & TYP_SHP) == TYP_SHP;
 
         public bool IsMarket => typ == TYP_MRT;
 
         public bool IsCenter => typ == TYP_CTR;
 
-        public bool HasXy => IsMarket || IsProducer || IsCenter;
+        public bool HasXy => IsMarket || IsSource || IsCenter;
 
-        public bool HasCtr => IsShopAble;
+        public bool HasCtr => IsOfShop;
 
         public string ShopName => IsMarket ? tip : name;
 

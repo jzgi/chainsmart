@@ -27,14 +27,16 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
+
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<Reg>();
-                h.TABLE(arr, o =>
+                var arr = dc.Query<short, Reg>();
+
+                h.GRIDVAR(arr, o =>
                     {
-                        h.TDCHECK(o.Key);
-                        h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROVINCE));
+                        h.DIV_("uk-card-body");
+                        h.T(o.name);
+                        h._DIV();
                     }
                 );
             });
@@ -48,12 +50,13 @@ namespace ChainMart
                 h.TOOLBAR(subscript: Reg.TYP_CITY);
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_CITY).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<Reg>();
-                h.TABLE(arr, o =>
+                var arr = dc.Query<short, Reg>();
+
+                h.GRIDVAR(arr, o =>
                     {
-                        h.TDCHECK(o.Key);
-                        h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_PROVINCE));
+                        h.DIV_("uk-card-body");
+                        h.T(o.name);
+                        h._DIV();
                     }
                 );
             });
@@ -68,18 +71,19 @@ namespace ChainMart
 
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<Reg>();
-                h.TABLE(arr, o =>
+                var arr = dc.Query<short, Reg>();
+
+                h.GRIDVAR(arr, o =>
                     {
-                        h.TDCHECK(o.Key);
-                        h.TDAVAR(o.Key, o.name);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key, subscript: Reg.TYP_SECTION));
+                        h.DIV_("uk-card-body");
+                        h.T(o.name);
+                        h._DIV();
                     }
                 );
             });
         }
 
-        [Ui("✛", "新建区域", group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建区域", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;
@@ -99,7 +103,7 @@ namespace ChainMart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                     h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.States)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

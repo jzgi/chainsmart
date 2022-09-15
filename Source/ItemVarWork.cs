@@ -41,7 +41,7 @@ namespace ChainMart
         }
     }
 
-    public class PrdlyItemVarWork : ItemVarWork
+    public class SrclyItemVarWork : ItemVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -63,7 +63,7 @@ namespace ChainMart
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).SELECT("保存周期", nameof(o.duration), o.duration, Item.Durations, required: true)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitip), o.unitip)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, States, filter: (k, v) => k >= STA_DISABLED, required: true)._LI();
+                    h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STA_DISABLED, required: true)._LI();
 
                     h._FIELDSUL()._FORM();
                 });
@@ -108,7 +108,7 @@ namespace ChainMart
             await doimg(wc, nameof(mat));
         }
 
-        [Ui("✕", "删除"), Tool(ButtonShow)]
+        [Ui("✕", "删除"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];

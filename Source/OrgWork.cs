@@ -38,7 +38,7 @@ namespace ChainMart
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.sprname, o.Tel)._TD();
-                    h.TD(o.status == 1 ? null : Entity.States[o.status]);
+                    h.TD(o.status == 1 ? null : Entity.Statuses[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
@@ -48,7 +48,7 @@ namespace ChainMart
         public async Task src(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_SRC).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
@@ -59,13 +59,13 @@ namespace ChainMart
                     h.TD_().AVAR(o.Key, o.name)._TD();
                     h.TD_("uk-visible@s").T(o.addr)._TD();
                     h.TD_().A_TEL(o.sprname, o.Tel)._TD();
-                    h.TD(o.status == 1 ? null : Entity.States[o.status]);
+                    h.TD(o.status == 1 ? null : Entity.Statuses[o.status]);
                     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
                 });
             });
         }
 
-        [Ui("✛", "新建机构", group: 7), Tool(ButtonShow)]
+        [Ui("✛", "新建机构", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -76,7 +76,7 @@ namespace ChainMart
             {
                 var m = new Org
                 {
-                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_SRC,
+                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_ZON,
                     created = DateTime.Now,
                     creator = prin.name,
                     status = Entity.STA_ENABLED
@@ -92,11 +92,11 @@ namespace ChainMart
                     }
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsSource)._LI();
+                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -130,6 +130,7 @@ namespace ChainMart
             CreateVarWork<MartlyOrgVarWork>();
         }
 
+        [Ui("在用", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -150,7 +151,28 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建商户"), Tool(ButtonShow)]
+        [Ui("禁用", group: 2), Tool(Anchor)]
+        public async Task disabled(WebContext wc)
+        {
+            var mrt = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE(arr, o =>
+                {
+                    h.TDCHECK(o.Key);
+                    h.TD_().ADIALOG_("/mrtly/", o.Key, "/", 8, false, Appear.Full).T(o.name)._A()._TD();
+                    h.TDFORM(() => { });
+                });
+            });
+        }
+
+        [Ui("✛", "新建商户", group: 2), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -182,7 +204,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
                     h._FIELDSUL()._FORM();
                 });
@@ -200,13 +222,13 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [UserAuthorize(Org.TYP_ZON, 1)]
     [Ui("下属产源设置", "版块", icon: "thumbnails")]
-    public class SrclyOrgWork : OrgWork
+    public class ZonlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<SrclyOrgVarWork>();
+            CreateVarWork<ZonlyOrgVarWork>();
         }
 
         public async Task @default(WebContext wc, int page)
@@ -243,7 +265,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建产源"), Tool(ButtonShow)]
+        [Ui("✛", "新建产源"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var prv = wc[-1].As<Org>();
@@ -251,7 +273,7 @@ namespace ChainMart
             var regs = Grab<short, Reg>();
             var m = new Org
             {
-                typ = Org.TYP_PRD,
+                typ = Org.TYP_SRC,
                 prtid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,
@@ -268,7 +290,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

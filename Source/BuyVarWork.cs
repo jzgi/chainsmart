@@ -17,7 +17,7 @@ namespace ChainMart
 
     public class MyBuyVarWork : BuyVarWork
     {
-        [Ui("✎", "✎ 填写日志"), Tool(ButtonShow)]
+        [Ui("✎", "✎ 填写日志"), Tool(ButtonOpen)]
         public async Task log(WebContext wc, int dt)
         {
             int orderid = wc[0];
@@ -30,7 +30,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("标签", @group: 1), Tool(ButtonShow)]
+        [Ui("标签", @group: 1), Tool(ButtonOpen)]
         public async Task tag(WebContext wc)
         {
             int orderid = wc[0];
@@ -73,7 +73,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("申诉", @group: 2), Tool(ButtonShow)]
+        [Ui("申诉", @group: 2), Tool(ButtonOpen)]
         public async Task compl(WebContext wc)
         {
             int orderid = wc[0];

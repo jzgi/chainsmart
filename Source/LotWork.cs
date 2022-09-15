@@ -22,11 +22,11 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("货品批次管理", "产源")]
-    public class PrdlyLotWork : LotWork
+    public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrdlyLotVarWork>();
+            CreateVarWork<SrclyLotVarWork>();
         }
 
         [Ui("当前", "当前批次", group: 1), Tool(Anchor)]
@@ -75,7 +75,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建批次", @group: 1), Tool(ButtonShow)]
+        [Ui("✛", "新建批次", @group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -108,7 +108,7 @@ namespace ChainMart
                     //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
                     // )._LI();
                     h.LI_().CHECKBOX("中控", nameof(m.strict), m.strict)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");
                     h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
@@ -140,7 +140,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("⨧", "新建批次", @group: 1), Tool(ButtonShow)]
+        [Ui("⨧", "新建批次", @group: 1), Tool(ButtonOpen)]
         public async Task @new2(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -173,7 +173,7 @@ namespace ChainMart
                     //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
                     // )._LI();
                     h.LI_().CHECKBOX("中控", nameof(m.strict), m.strict)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");
                     h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();

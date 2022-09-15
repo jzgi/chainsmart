@@ -1,4 +1,4 @@
-﻿﻿using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -12,7 +12,6 @@ namespace ChainMart
 
     public class AdmlyRegVarWork : RegVarWork
     {
-        [Ui(@group: 7), Tool(ButtonShow)]
         public async Task @default(WebContext wc, int typ)
         {
             short id = wc[0];
@@ -28,7 +27,43 @@ namespace ChainMart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                     h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
-                    h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.States)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.Statuses)._LI();
+                    h._FIELDSUL()._FORM();
+
+                    h.TOOLBAR(top: false);
+                });
+            }
+            else
+            {
+                var o = await wc.ReadObjectAsync<Reg>();
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE regs")._SET_(o).T(" WHERE id = @1");
+                await dc.ExecuteAsync(p =>
+                {
+                    o.Write(p);
+                    p.Set(id);
+                });
+                wc.GivePane(200);
+            }
+        }
+
+        [Ui("修改", icon: "edit"), Tool(Anchor)]
+        public async Task edit(WebContext wc)
+        {
+            short id = wc[0];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE id = @1");
+                var o = await dc.QueryTopAsync<Reg>(p => p.Set(id));
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("区域属性");
+                    h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
+                    h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
+                    h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
+                    h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.Statuses)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -46,7 +81,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("✕", "删除", @group: 7), Tool(ButtonShow, Appear.Small)]
+        [Ui("删除", icon: "close"), Tool(ButtonOpen, Appear.Small)]
         public async Task rm(WebContext wc)
         {
             short id = wc[0];

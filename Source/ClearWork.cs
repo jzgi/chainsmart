@@ -62,7 +62,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("按供应版块");
-                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.IsSource, required: true);
+                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.IsZone, required: true);
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -302,7 +302,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(orgly: 1)]
-        [Ui("统计", "时段统计"), Tool(ButtonShow)]
+        [Ui("统计", "时段统计"), Tool(ButtonOpen)]
         public async Task sum(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

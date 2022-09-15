@@ -18,7 +18,7 @@ namespace ChainMart
     }
 
 
-    public class PrdlyBookVarWork : BookVarWork
+    public class SrclyBookVarWork : BookVarWork
     {
         [Ui, Tool(ButtonOpen)]
         public async Task act(WebContext wc, int cmd)
@@ -127,10 +127,10 @@ namespace ChainMart
             }
         }
 
-        // [Ui("核实"), Tool(Modal.ButtonShow)]
+        // [Ui("核实"), Tool(Modal.ButtonOpen)]
     }
 
-    public class SrclyCustomBookVarWork : PrdlyBookVarWork
+    public class SrclyCustomBookVarWork : SrclyBookVarWork
     {
     }
 

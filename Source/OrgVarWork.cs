@@ -79,11 +79,11 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_(m.IsMarket ? "市场属性" : "供应版块属性");
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsSource)._LI();
+                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -185,7 +185,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
                     h._FIELDSUL()._FORM();
                 });
@@ -205,7 +205,7 @@ namespace ChainMart
         }
     }
 
-    public class SrclyOrgVarWork : OrgVarWork
+    public class ZonlyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {
@@ -226,7 +226,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -244,7 +244,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("✕", "删除"), Tool(ButtonShow, Appear.Small)]
+        [Ui("✕", "删除"), Tool(ButtonOpen, Appear.Small)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];
@@ -260,7 +260,7 @@ namespace ChainMart
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_PRD);
+                dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
                 await dc.ExecuteAsync(p => p.Set(id));
 
                 wc.GivePane(200);

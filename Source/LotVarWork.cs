@@ -43,7 +43,7 @@ namespace ChainMart
         }
     }
 
-    public class PrdlyLotVarWork : LotVarWork
+    public class SrclyLotVarWork : LotVarWork
     {
         public async Task @default(WebContext wc)
         {

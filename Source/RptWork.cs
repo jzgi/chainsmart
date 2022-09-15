@@ -30,9 +30,9 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_)]
+    [UserAuthorize(Org.TYP_ZON, User.ORGLY_)]
     [Ui("综合报表", "供给")]
-    public class SrclyRptWork : RptWork
+    public class ZonlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
         {
@@ -54,8 +54,8 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ORGLY_FIN)]
-        [Ui("生成"), Tool(Modal.ButtonShow)]
+        [UserAuthorize(Org.TYP_ZON, User.ORGLY_FIN)]
+        [Ui("生成"), Tool(Modal.ButtonOpen)]
         public async Task gen(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

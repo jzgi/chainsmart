@@ -18,9 +18,9 @@ namespace ChainMart
 
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<SrclyWork>("srcly"); // for source / producer / center
+            CreateWork<ZonlyWork>("zonly"); // for zone / source / center
 
-            CreateWork<MrtlyWork>("mrtly"); // for markets and shops
+            CreateWork<MktlyWork>("mktly"); // for markets and shops
         }
 
         public void @default(WebContext wc, int cmd)

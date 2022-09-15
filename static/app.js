@@ -220,8 +220,7 @@ function appendTo(parent, html) {
 const
     CONFIRM = 1,
     PROMPT = 2,
-    SHOW = 4,
-    OPEN = 8;
+    OPEN = 4;
 const
     HALF = 1,
     HIGH = 2,
@@ -276,9 +275,6 @@ function dialog(trig, mode, pick, appear, title) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
-    if (mode != OPEN) {
-        div += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
-    }
     div += '</section></div>';
 
     var e = appendTo(document.body, div);
@@ -345,12 +341,6 @@ function ok(okbtn, mode, formid, tag, action, method) {
                 mform.setAttribute('method', method);
                 mform.submit();
             }
-        }
-    } else if (mode == SHOW) {
-        if (form) {
-            if (!form.reportValidity()) return;
-            okbtn.disabled = true;
-            form.submit();
         }
     }
 }

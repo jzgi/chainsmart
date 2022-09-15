@@ -115,13 +115,13 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_PRD, User.ORGLY_LOG)]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
     [Ui("客户订货管理", "产源", icon: "sign-in")]
-    public class PrdlyBookWork : BookWork
+    public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PrdlyBookVarWork>();
+            CreateVarWork<SrclyBookVarWork>();
         }
 
         [Ui("当前订货"), Tool(Anchor)]
@@ -181,9 +181,9 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_PRD, User.ORGLY_LOG)]
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
     [Ui("业务报表", "产源")]
-    public class PrdlyRptWork : BookWork
+    public class SrclyRptWork : BookWork
     {
         public async Task @default(WebContext wc, int page)
         {
@@ -280,7 +280,7 @@ namespace ChainMart
         {
         }
 
-        [Ui("▷", "发出", @group: 255), Tool(ButtonShow)]
+        [Ui("▷", "发出", @group: 255), Tool(ButtonOpen)]
         public async Task rev(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -301,7 +301,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("◁", "取消发出", @group: 2), Tool(ButtonShow)]
+        [Ui("◁", "取消发出", @group: 2), Tool(ButtonOpen)]
         public async Task unrcv(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -325,7 +325,7 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
     [Ui("订货派运管理", "中控", icon: "sign-out")]
-    public class CtrlyDistribWork : BookWork
+    public class CtrlyDistrWork : BookWork
     {
         [Ui("按批次", @group: 2), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
