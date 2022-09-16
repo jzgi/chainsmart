@@ -28,44 +28,41 @@ namespace ChainMart
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, status DESC");
-            var arr = await dc.QueryAsync<Org>();
+            var map = await dc.QueryAsync<int, Org>();
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 1);
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD_().AVAR(o.Key, o.name)._TD();
-                    h.TD_("uk-visible@s").T(o.addr)._TD();
-                    h.TD_().A_TEL(o.sprname, o.Tel)._TD();
-                    h.TD(o.status == 1 ? null : Entity.Statuses[o.status]);
-                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
-                });
+                h.GRIDVAR(map, o =>
+                    {
+                        h.DIV_("uk-card-body");
+                        h.T(o.name);
+                        h._DIV();
+                    }
+                );
             });
         }
 
-        [Ui("供源", group: 2), Tool(Anchor)]
+        [Ui("供区", group: 2), Tool(Anchor)]
         public async Task src(WebContext wc, int page)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
-            var arr = await dc.QueryAsync<Org>();
+            var map = await dc.QueryAsync<int, Org>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 2);
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD_().AVAR(o.Key, o.name)._TD();
-                    h.TD_("uk-visible@s").T(o.addr)._TD();
-                    h.TD_().A_TEL(o.sprname, o.Tel)._TD();
-                    h.TD(o.status == 1 ? null : Entity.Statuses[o.status]);
-                    h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
-                });
+                h.GRIDVAR(map, o =>
+                    {
+                        h.DIV_("uk-card-body");
+                        h.T(o.name);
+                        h._DIV();
+                    }
+                );
             });
         }
 
-        [Ui("✛", "新建机构", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", "新建机构", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -85,7 +82,7 @@ namespace ChainMart
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供源属性");
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供区属性");
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();

@@ -49,14 +49,14 @@ a:hover {
 
 a,
 .uk-link {
-    color: #f59604;
+    color: #666;
     text-decoration: none;
     cursor: pointer;
 }
 
 a:hover,
 .uk-link:hover {
-    color: #da4016;
+    background-color: rgb(143 195 33 / 10%);
 }
 
 abbr[title] {
@@ -1646,11 +1646,8 @@ select.uk-form-width-xsmall {
 }
 
 .uk-button-default {
-    background-color: #f59604;
-    border: 1px solid #f59604;
-    border-radius: 14px;
-    color: #fff;
-    padding: 6px 16px;
+    border: 0;
+    color: #333;
 }
 
 button.uk-button.uk-button-default {
@@ -1660,59 +1657,47 @@ button.uk-button.uk-button-default {
 /* Hover + Focus */
 .uk-button-default:hover,
 .uk-button-default:focus {
-    background-color: #f59604;
-    border: 1px solid #f59604;
-    color: #fff;
-    padding: 6px 16px;
+    color: #f59604;
 }
 
 /* OnClick + Active */
 .uk-button-default:active,
 .uk-button-default.uk-active {
-    background-color: #f59604;
-    border: 1px solid #f59604;
-    color: #fff;
-    padding: 6px 16px;
+    color: #f59604;
 }
 
 button.uk-button-primary {
     color: #000;
-    background-color: #ddd;
-    padding: 8px;
-    border-radius: 2px;
-    border: 1px solid #ddd;
+    background-color: #f6f6f6;
+    padding: 6px;
+    border: 0;
 }
 
 button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    background-color: #f6f6f6;
+    background-color: #fff;
 }
 
 a.uk-button-primary {
-    color: #000;
+    color: #333;
     padding: 12px;
-    border: 1px solid #ededed;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border: 2px solid #ededed;
 }
 
 a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    border: 1px solid #ddd;
-    background-color: #f6f6f6;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border-bottom: 2px solid #f59604;
 }
 
 .uk-button-secondary {
     color: #333;
     border: 0;
     background-color: transparent;
-    padding: 0 8px;
+    padding: 4px 8px;
 }
 
 button.uk-button-secondary {

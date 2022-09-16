@@ -417,6 +417,7 @@ function bind(el, url, wid, hei) {
             width: wid,
             height: hei
         },
+        enableResize: true,
         enforceBoundary: true,
         showZoomer: false
     });
@@ -435,7 +436,7 @@ function upload(el, url) {
 
         // build form data
         var dat = new FormData();
-        dat.append('img', blob, 'img.jpg');
+        dat.append('img', blob, 'img.webp');
         // post
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, false);

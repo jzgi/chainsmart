@@ -47,7 +47,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -70,7 +70,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -228,7 +228,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -251,7 +251,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }

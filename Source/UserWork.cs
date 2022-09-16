@@ -23,24 +23,24 @@ namespace ChainMart
         {
             short orgid = wc[-1];
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(orgid));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                     {
-                        h.TDCHECK(o.id);
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
-                        h.TD(Orgly[o.orgly]);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                        h.TD_("uk-width-auto").T(Orgly[o.orgly])._TD();
+                        h.TDFORM(() => h.TOOLSVAR(o.Key));
                     }
                 );
             }, false, 3);
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", "添加人员权限"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("添加", "添加人员权限", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -184,7 +184,7 @@ namespace ChainMart
                         h.TDCHECK(o.id);
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
                         h.TD(Orgly[o.orgly]);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                        h.TDFORM(() => h.TOOLSVAR(o.Key));
                     }
                 );
             }, false, 3);
@@ -306,7 +306,7 @@ namespace ChainMart
                         }
                         h._TD();
                         h.TD("⊘", @if: o.IsDisabled);
-                        h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
+                        h.TDFORM(() => h.TOOLSVAR(o.Key));
                     });
                 }, false, 3);
             }

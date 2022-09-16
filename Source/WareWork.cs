@@ -43,7 +43,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer uk-flex-right").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer uk-flex-right").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -70,7 +70,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer uk-flex-right").TOOLGROUPVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer uk-flex-right").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
