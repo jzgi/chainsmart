@@ -7,10 +7,9 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public class PublyVarWork : WebWork
+    public abstract class PublyVarWork : WebWork
     {
     }
-
 
     /// <summary>
     /// The market home page.

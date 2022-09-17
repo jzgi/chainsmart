@@ -5,19 +5,19 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
-    public abstract class NoteWork : WebWork
+    public abstract class EventWork : WebWork
     {
     }
 
     [Ui("事件管理", "业务")]
-    public class AdmlyEventWork : NoteWork
+    public class AdmlyEventWork : EventWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<AdmlyNoteVarWork>();
+            CreateVarWork<AdmlyEventVarWork>();
         }
 
-        static readonly ConcurrentDictionary<int, Queue<Note>> queues = new ConcurrentDictionary<int, Queue<Note>>();
+        static readonly ConcurrentDictionary<int, Queue<Event>> queues = new ConcurrentDictionary<int, Queue<Event>>();
 
         public void @default(WebContext wc, int page)
         {
@@ -28,7 +28,7 @@ namespace ChainMart
                 var jc = new JsonContent(true, 16);
                 lock (q)
                 {
-                    Note o;
+                    Event o;
                     jc.ARR_();
                     while ((o = q.Dequeue()) != null)
                     {
@@ -44,20 +44,20 @@ namespace ChainMart
             }
         }
 
-        public static void Append(int orgid, Note note)
+        public static void Append(int orgid, Event @event)
         {
             var q = queues[orgid];
             if (q == null)
             {
-                q = new Queue<Note>();
-                q.Enqueue(note);
+                q = new Queue<Event>();
+                q.Enqueue(@event);
                 queues.TryAdd(orgid, q);
             }
             else
             {
                 lock (q)
                 {
-                    q.Enqueue(note);
+                    q.Enqueue(@event);
                 }
             }
         }

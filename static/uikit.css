@@ -1682,7 +1682,7 @@ button.uk-button-primary.uk-active {
 
 a.uk-button-primary {
     color: #333;
-    padding: 12px;
+    padding: 10px;
     border: 2px solid #ededed;
 }
 
@@ -1690,6 +1690,7 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
+    background-color: #ededed;
     border-bottom: 2px solid #f59604;
 }
 
@@ -2014,8 +2015,13 @@ button.uk-button-secondary {
     display: flex;
     flex-wrap: wrap;
     margin: 0;
-    padding: 2px;
+    padding: 0 2px;
     list-style: none;
+}
+
+ul.uk-grid > li {
+    padding: 0 4px;
+    margin: 6px 0;
 }
 
 .uk-grid+.uk-grid,
@@ -2283,7 +2289,9 @@ button.uk-button-secondary {
 }
 
 .uk-card-body {
+
     padding: 4px;
+    background-color: inherit;
 }
 
 .uk-card-header {
@@ -2328,7 +2336,6 @@ button.uk-button-secondary {
 }
 
 .uk-card-default {
-    margin: 6px;
     background-color: #fff;
     border-radius: 6px;
 }

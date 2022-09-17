@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// The data modal for an standard category.
     /// </summary>
-    public class Cat : Entity, IKeyable<short>, IDirectory
+    public class Cat : Entity, IKeyable<short>, IDir
     {
         public static readonly Cat Empty = new Cat();
 
@@ -35,8 +35,8 @@ namespace ChainMart
 
         public override string ToString() => name;
 
-        public short Idx => idx;
+        public short Index => idx;
 
-        public short Num => num;
+        public short Size => num;
     }
 }

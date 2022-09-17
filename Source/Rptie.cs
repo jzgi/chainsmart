@@ -6,9 +6,9 @@ namespace ChainMart
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Daily : Entity
+    public class Rptie : Entity
     {
-        public static readonly Daily Empty = new Daily();
+        public static readonly Rptie Empty = new Rptie();
 
         public const short
             TYP_MRT = 1,

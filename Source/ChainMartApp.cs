@@ -31,7 +31,7 @@ namespace ChainMart
 
             CreateService<MgtService>("mgt", STATIC_ROOT);
 
-            CreateService<FedService>("fed", STATIC_ROOT);
+            CreateService<NodService>("nod", STATIC_ROOT);
 
             await StartAsync();
         }

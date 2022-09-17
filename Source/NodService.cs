@@ -1,8 +1,9 @@
-﻿﻿using ChainFx.Web;
+﻿using ChainFx.Fabric;
+using ChainFx.Web;
 
 namespace ChainMart
 {
-    public class FedService : ChainFx.Fabric.FedService
+    public class NodService : FedService
     {
         public override void dir(WebContext wc)
         {

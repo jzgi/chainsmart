@@ -5,9 +5,9 @@ namespace ChainMart
     /// <summary>
     /// A reportive record of daily transaction for goods.
     /// </summary>
-    public class Note : Entity
+    public class Event : Entity
     {
-        public static readonly Note Empty = new Note();
+        public static readonly Event Empty = new Event();
 
         public const short
             TYP_MRT = 1,

@@ -39,13 +39,13 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
             dc.Sql("SELECT * FROM dailys WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
-            var arr = dc.Query<Daily>(p => p.Set(org.id).Set(page));
+            var arr = dc.Query<Rptie>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 h.TABLE(arr, o =>
                 {
-                    h.TD(Daily.Typs[o.typ]);
+                    h.TD(Rptie.Typs[o.typ]);
                     h.TD_().T(o.dt, 3, 0)._TD();
                     h.TD_().T(o.count).SP().T('笔')._TD();
                     h.TD(o.amt, currency: true);

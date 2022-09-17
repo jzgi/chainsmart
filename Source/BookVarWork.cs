@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
@@ -9,14 +9,13 @@ using static ChainFx.Web.Modal;
 
 namespace ChainMart
 {
-    public class BookVarWork : WebWork
+    public abstract class BookVarWork : WebWork
     {
     }
 
-    public class PrvlyBookVarWork : BookVarWork
+    public class ZonlyBookVarWork : BookVarWork
     {
     }
-
 
     public class SrclyBookVarWork : BookVarWork
     {

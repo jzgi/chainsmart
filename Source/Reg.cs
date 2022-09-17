@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// A geographic or spatial region.
     /// </summary>
-    public class Reg : Entity, IKeyable<short>, IDirectory
+    public class Reg : Entity, IKeyable<short>, IDir
     {
         public static readonly Reg Empty = new Reg();
 
@@ -53,9 +53,9 @@ namespace ChainMart
 
         public short Key => id;
 
-        public short Idx => idx;
+        public short Index => idx;
 
-        public short Num => num;
+        public short Size => num;
 
         public bool IsProvince => typ == TYP_PROVINCE;
 
