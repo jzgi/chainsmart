@@ -11,15 +11,6 @@ namespace ChainMart
     {
     }
 
-    public class PublyLotWork : LotWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<PublyLotVarWork>();
-        }
-    }
-
-
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("货品批次管理", "产源")]
     public class SrclyLotWork : LotWork

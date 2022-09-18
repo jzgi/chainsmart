@@ -7,15 +7,13 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public abstract class PublyVarWork : WebWork
+    public class PublyVarWork : WebWork
     {
-    }
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublyVarVarWork>();
+        }
 
-    /// <summary>
-    /// The market home page.
-    /// </summary>
-    public class PublyMrtVarWork : PublyVarWork
-    {
         public async Task @default(WebContext wc, int sec)
         {
             int mrtid = wc[0];
@@ -28,23 +26,23 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (sprid = @1 OR id = @1) AND regid = @2 AND status > 0 ORDER BY addr");
-            var shps = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (prtid = @1 OR id = @1) AND regid = @2 AND status > 0 ORDER BY addr");
+            var map = await dc.QueryAsync<int, Org>(p => p.Set(mrtid).Set(sec));
+
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.IsSection)._TOPBAR();
-                h.GRID(shps, o =>
+                h.GRIDVAR(map, o =>
                 {
-                    h.SECTION_("uk-flex uk-card-body");
-                    h.SPAN(o.ShopLabel, "uk-circle-label").SP();
-                    h.A_("/biz/", o.id, "/", css: "uk-button-link").T(o.ShopName).T(o.name)._A();
-                    h._SECTION();
+                    h.DIV_("uk-card-body");
+                    h.T(o.name);
+                    h._DIV();
                 }, min: 2);
             }, title: mrt.name);
         }
     }
 
-    public class PublyShpVarWork : PublyVarWork
+    public class PublyVarVarWork : WebWork
     {
         public async Task @default(WebContext wc)
         {
@@ -52,12 +50,17 @@ namespace ChainMart
             var biz = GrabObject<int, Org>(bizid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM purchs WHERE bizid = @1 AND status > 0 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(biz.id));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(biz.id));
 
             wc.GivePage(200, h =>
             {
                 h.FORM_().FIELDSUL_();
+                if (arr == null)
+                {
+                    return;
+                }
+
                 foreach (var o in arr)
                 {
                     h.LI_("uk-card uk-card-default");
@@ -73,6 +76,7 @@ namespace ChainMart
             }, title: biz.name);
         }
     }
+
 
     public class PublyCtrVarWork : WebWork
     {

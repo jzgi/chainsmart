@@ -71,8 +71,9 @@ create unique index users_im_idx
 create unique index users_tel_idx
     on users (tel);
 
-create index users_orgid_idx
-    on users (orgid);
+create index users_orgidorgly_idx
+    on users (orgid, orgly)
+    where (orgly > 0);
 
 create table regs
 (
@@ -87,39 +88,6 @@ create table regs
 comment on column regs.num is 'sub resources';
 
 alter table regs owner to postgres;
-
-create table orgs
-(
-    id serial not null
-        constraint orgs_pk
-            primary key,
-    fork smallint,
-    sprid integer
-        constraint orgs_sprid_fk
-            references orgs_old,
-    license varchar(20),
-    trust boolean,
-    regid smallint
-        constraint orgs_regid_fk
-            references regs
-            on update cascade,
-    addr varchar(30),
-    x double precision,
-    y double precision,
-    tel varchar(11),
-    mgrid integer
-        constraint orgs_mgrid_fk
-            references users,
-    ctrid integer,
-    icon bytea
-)
-    inherits (entities);
-
-alter table orgs_old owner to postgres;
-
-alter table users
-    add constraint users_orgid_fk
-        foreign key (orgid) references orgs_old;
 
 create table dailys
 (
@@ -177,7 +145,7 @@ create table accts_
 
 alter table accts_ owner to postgres;
 
-create table notes
+create table events
 (
     id serial not null,
     fromid integer,
@@ -241,10 +209,10 @@ comment on column cats.num is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table products
+create table items
 (
     id serial not null,
-    srcid integer,
+    prdid integer,
     store smallint,
     duration smallint,
     agt boolean,
@@ -259,7 +227,7 @@ create table products
 
 alter table items owner to postgres;
 
-create table items
+create table wares
 (
     id serial not null
         constraint items_pk
@@ -281,26 +249,6 @@ create table items
 
 alter table wares owner to postgres;
 
-create table lots
-(
-    id serial not null,
-    productid integer,
-    srcid integer,
-    ctrid integer,
-    ctrop varchar(12),
-    ctron timestamp(0),
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer
-)
-    inherits (entities);
-
-alter table lots owner to postgres;
-
 create table books
 (
     id bigserial not null
@@ -315,7 +263,7 @@ create table books
     lotid integer,
     unit varchar(4),
     unitx smallint,
-    shipat date,
+    unitstd varchar(4),
     price money,
     "off" money,
     qty integer,
@@ -332,6 +280,67 @@ create table books
     inherits (entities);
 
 alter table books owner to postgres;
+
+create table lots
+(
+    id serial not null,
+    itemid integer,
+    prdid integer,
+    ctrid integer,
+    strict boolean,
+    prover varchar(12),
+    proved timestamp(0),
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
+
+create table orgs
+(
+    id serial not null
+        constraint orgs_pk
+            primary key,
+    prtid integer,
+    ctrid integer,
+    license varchar(20),
+    trust boolean,
+    regid smallint
+        constraint orgs_regid_fk
+            references regs
+            on update cascade,
+    addr varchar(30),
+    x double precision,
+    y double precision,
+    tel varchar(11),
+    sprid integer
+        constraint orgs_mgrid_fk
+            references users,
+    rvrid integer,
+    icon bytea,
+    starton date,
+    endon date,
+    ok boolean
+)
+    inherits (entities);
+
+alter table orgs owner to postgres;
+
+create table itemimgs
+(
+    id serial not null,
+    itemid integer,
+    idx smallint,
+    img bytea
+);
+
+alter table itemimgs owner to postgres;
 
 create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,
@@ -355,7 +364,7 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, fork, sprid, license, trust, regid, addr, x, y, tel, ctrid, mgrid, mgrname, mgrtel, mgrim, icon) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, sprid, sprname, sprtel, sprim, rvrid, icon, starton, endon, ok) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -365,8 +374,8 @@ SELECT o.typ,
        o.adapted,
        o.adapter,
        o.id,
-       o.fork,
-       o.sprid,
+       o.prtid,
+       o.ctrid,
        o.license,
        o.trust,
        o.regid,
@@ -374,15 +383,18 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
-       o.ctrid,
-       o.mgrid,
-       m.name             AS mgrname,
-       m.tel              AS mgrtel,
-       m.im               AS mgrim,
-       o.icon IS NOT NULL AS icon
-FROM orgs_old o
+       o.sprid,
+       m.name             AS sprname,
+       m.tel              AS sprtel,
+       m.im               AS sprim,
+       o.rvrid,
+       o.icon IS NOT NULL AS icon,
+       o.starton,
+       o.endon,
+       o.ok
+FROM orgs o
          LEFT JOIN users m
-                   ON o.mgrid =
+                   ON o.sprid =
                       m.id;
 
 alter table orgs_vw owner to postgres;

@@ -49,6 +49,8 @@ a:hover {
 
 a,
 .uk-link {
+    display: flex;
+    align-items: center;
     color: #666;
     text-decoration: none;
     cursor: pointer;
@@ -3528,10 +3530,10 @@ ul.uk-nav-sub {
     list-style: none;
 }
 
-.uk-subnav>* {
+.uk-subnav > * {
     flex: none;
-    padding: 2px 0;
-    margin: 0 6px;
+    padding: 8px;
+    margin: 0 4px;
     position: relative;
     border: 2px solid transparent;
 }

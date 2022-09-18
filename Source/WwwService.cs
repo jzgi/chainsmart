@@ -14,18 +14,16 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyMrtVarWork>(); // market's home page
+            CreateVarWork<PublyVarWork>(); // home for market
 
-            CreateWork<PublyShpWork>("shp");
-
-            CreateWork<PublyLotWork>("lot");
+            CreateWork<PublyTraceWork>("trace");
 
             CreateWork<MyWork>("my");
         }
 
 
         /// <summary>
-        /// To display all markets in single page, let the client side locate the present market.
+        /// To show the market list.
         /// </summary>
         public void @default(WebContext wc)
         {
@@ -58,7 +56,7 @@ namespace ChainMart
                     }
 
                     h.LI_("uk-flex");
-                    h.SPAN_("uk-width-expand").RADIO(nameof(o.id), o.id, o.name, required: true)._SPAN();
+                    h.A_(o.id,"/", css: "uk-width-expand").T(o.name)._A();
                     h.SPAN_("uk-margin-auto-left");
                     h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
                     h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
