@@ -15,7 +15,7 @@ namespace ChainMart
             STA_OFF = 1,
             STA_PUBLISHED = 3;
 
-        public static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STA_CREATED, "新创建"},
             {STA_OFF, "已下线"},
@@ -24,8 +24,8 @@ namespace ChainMart
 
         internal int id;
 
-        internal int productid;
-        internal int prdid;
+        internal int itemid;
+        internal int srcid;
         internal int ctrid;
         internal bool strict;
         internal string prover;
@@ -51,8 +51,8 @@ namespace ChainMart
             }
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(productid), ref productid);
-                s.Get(nameof(prdid), ref prdid);
+                s.Get(nameof(itemid), ref itemid);
+                s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(strict), ref strict);
             }
@@ -85,8 +85,8 @@ namespace ChainMart
             }
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Put(nameof(productid), productid);
-                s.Put(nameof(prdid), prdid);
+                s.Put(nameof(itemid), itemid);
+                s.Put(nameof(srcid), srcid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(strict), strict);
             }

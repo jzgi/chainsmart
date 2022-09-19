@@ -11,7 +11,7 @@ namespace ChainMart
 
         internal short idx;
 
-        internal short num; // number of items
+        internal short size; // number of items
 
         // must have an icon
 
@@ -20,7 +20,7 @@ namespace ChainMart
             base.Read(s, proj);
 
             s.Get(nameof(idx), ref idx);
-            s.Get(nameof(num), ref num);
+            s.Get(nameof(size), ref size);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -28,7 +28,7 @@ namespace ChainMart
             base.Write(s, proj);
 
             s.Put(nameof(idx), idx);
-            s.Put(nameof(num), num);
+            s.Put(nameof(size), size);
         }
 
         public short Key => typ;
@@ -37,6 +37,6 @@ namespace ChainMart
 
         public short Index => idx;
 
-        public short Size => num;
+        public short Size => size;
     }
 }

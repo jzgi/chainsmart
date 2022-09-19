@@ -21,14 +21,10 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-#if ZHNT
     [Ui("进货管理", "商户")]
-#else
-    [Ui("进货管理", "商户")]
-#endif
     public class ShplyBookWork : BookWork
     {
-        [Ui("当前", "当前进货", group: 1), Tool(Anchor)]
+        [Ui("当前进货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -50,7 +46,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("历史", "历史进货", group: 2), Tool(Anchor)]
+        [Ui("历史进货", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -71,7 +67,7 @@ namespace ChainMart
         }
 
         [Ui("新增", "新增进货", "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc)
+        public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();
             int ctrid = mrt.ctrid;
@@ -79,38 +75,32 @@ namespace ChainMart
             var ctr = topOrgs[ctrid];
             var cats = Grab<short, Cat>();
 
+            if (typ == 0)
+            {
+                wc.Subscript = typ = cats.KeyAt(0);
+            }
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0 AND typ = @2");
+            var map = await dc.QueryAsync<int, Lot>(p => p.Set(ctrid).Set(typ));
 
             wc.GivePage(200, h =>
             {
-                if (arr == null)
+                h.TOPBAR_().SUBNAV(cats, nameof(@new), typ)._TOPBAR();
+
+                if (map == null)
                 {
-                    h.ALERT("没有在批发的产品");
+                    h.ALERT("没有批次");
                     return;
                 }
 
-                h.SUBNAV(cats, "", 0);
-
-                h.TABLE_();
-                var last = 0;
-                for (var i = 0; i < arr?.Length; i++)
+                h.GRIDVAR(map, o =>
                 {
-                    var o = arr[i];
-                    // if (o.prvid != last)
-                    // {
-                    //     var spr = topOrgs[o.prvid];
-                    //     h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                    // }
-                    h.TR_();
-                    h.TD(o.name);
-                    // h.TD(o.price, true);
-                    h._TR();
-
-                    // last = o.prvid;
-                }
-                h._TABLE();
+                    h.DIV_("uk-card-body");
+                    h.PIC_()._PIC();
+                    h.T(o.name);
+                    h._DIV();
+                });
             }, title: ctr.tip);
         }
     }

@@ -76,7 +76,7 @@ namespace ChainMart
             var m = new Lot
             {
                 status = Entity.STA_DISABLED,
-                prdid = org.id,
+                srcid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -93,7 +93,7 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("填写不可更改");
 
-                    h.LI_().SELECT("产品", nameof(m.productid), m.productid, products, required: true)._LI();
+                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
                     // h.LI_().SELECT(
                     //     org.fork == 1 ? "经由中控" : "投放市场",
                     //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
@@ -120,7 +120,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
 
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.productid));
+                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.itemid));
                 m.name = product.name;
                 m.tip = product.name;
 
@@ -141,7 +141,7 @@ namespace ChainMart
             var m = new Lot
             {
                 status = Entity.STA_DISABLED,
-                prdid = org.id,
+                srcid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -158,7 +158,7 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("填写不可更改");
 
-                    h.LI_().SELECT("产品", nameof(m.productid), m.productid, products, required: true)._LI();
+                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
                     // h.LI_().SELECT(
                     //     org.fork == 1 ? "经由中控" : "投放市场",
                     //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
@@ -185,7 +185,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
 
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.productid));
+                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.itemid));
                 m.name = product.name;
                 m.tip = product.name;
 

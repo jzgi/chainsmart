@@ -1680,20 +1680,22 @@ button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
     background-color: #fff;
+    color: #f59604;
 }
 
 a.uk-button-primary {
     color: #333;
-    padding: 10px;
-    border: 2px solid #ededed;
+    height: 3rem;
+    padding: 0 12px;
+    border-top: 2px solid transparent;
 }
 
 a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    background-color: #ededed;
-    border-bottom: 2px solid #f59604;
+    background-color: #f6f6f6;
+    border-top: 2px solid #f59604;
 }
 
 .uk-button-secondary {
@@ -2600,14 +2602,10 @@ ul.uk-grid > li {
 
 .uk-alert {
     position: relative;
-    margin: 8px 0;
+    margin: 6px;
     padding: 16px;
     background: #fff;
     color: #333;
-}
-
-*+.uk-alert {
-    margin-top: 20px;
 }
 
 .uk-alert> :last-child {
@@ -3523,17 +3521,19 @@ ul.uk-nav-sub {
 
 .uk-subnav {
     display: flex;
-    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
     font-weight: bold;
+    overflow-x: scroll;
     list-style: none;
+}
+
+.uk-subnav::-webkit-scrollbar {
+    display: none;
 }
 
 .uk-subnav > * {
     flex: none;
     padding: 8px;
-    margin: 0 4px;
     position: relative;
     border: 2px solid transparent;
 }
@@ -4232,9 +4232,9 @@ ul.uk-nav-sub {
 .uk-modal-large .uk-modal-dialog {
     position: relative;
     margin: 4rem auto;
-    height: 90%;
+    height: 100%;
     max-height: 800px;
-    width: 90%;
+    width: 100%;
     max-width: 600px;
     transform: translateY(0);
     display: flex;

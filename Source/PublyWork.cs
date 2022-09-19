@@ -9,7 +9,7 @@ namespace ChainMart
     }
 
 
-    public class PublyTraceWork : PublyWork
+    public class PublyTagWork : PublyWork
     {
         public async Task oid(WebContext wc, int id)
         {
@@ -23,7 +23,7 @@ namespace ChainMart
             if (distrib != null)
             {
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
-                item = await dc.QueryTopAsync<Item>(p => p.Set(distrib.productid));
+                item = await dc.QueryTopAsync<Item>(p => p.Set(distrib.itemid));
             }
 
             wc.GivePage(200, h =>

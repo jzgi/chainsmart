@@ -199,20 +199,22 @@ alter table clears owner to postgres;
 create table cats
 (
     idx smallint,
-    num smallint,
+    size smallint,
     constraint cats_pk
         primary key (typ)
 )
     inherits (entities);
 
-comment on column cats.num is 'sub resources';
+comment on column cats.size is 'sub resources';
 
 alter table cats owner to postgres;
 
 create table items
 (
-    id serial not null,
-    prdid integer,
+    id serial not null
+        constraint items_pk
+            primary key,
+    srcid integer,
     store smallint,
     duration smallint,
     agt boolean,
@@ -230,7 +232,7 @@ alter table items owner to postgres;
 create table wares
 (
     id serial not null
-        constraint items_pk
+        constraint wares_pk
             primary key,
     shpid integer,
     productid integer,
@@ -281,27 +283,6 @@ create table books
 
 alter table books owner to postgres;
 
-create table lots
-(
-    id serial not null,
-    itemid integer,
-    prdid integer,
-    ctrid integer,
-    strict boolean,
-    prover varchar(12),
-    proved timestamp(0),
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer
-)
-    inherits (entities);
-
-alter table lots owner to postgres;
-
 create table orgs
 (
     id serial not null
@@ -331,6 +312,35 @@ create table orgs
     inherits (entities);
 
 alter table orgs owner to postgres;
+
+create table lots
+(
+    id serial not null,
+    itemid integer
+        constraint lots_items_fk
+            references items,
+    srcid integer
+        constraint lots_srcid_fk
+            references orgs,
+    ctrid integer
+        constraint lots_ctrid_fk
+            references orgs,
+    strict boolean,
+    prover varchar(12),
+    proved timestamp(0),
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    constraint lots_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
 
 create table itemimgs
 (

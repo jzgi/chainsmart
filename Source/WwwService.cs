@@ -16,7 +16,7 @@ namespace ChainMart
         {
             CreateVarWork<PublyVarWork>(); // home for market
 
-            CreateWork<PublyTraceWork>("trace");
+            CreateWork<PublyTagWork>("tag");
 
             CreateWork<MyWork>("my");
         }
