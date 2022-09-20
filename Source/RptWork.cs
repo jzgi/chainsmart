@@ -31,7 +31,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_ZON, User.ORGLY_)]
-    [Ui("综合报表", "供给")]
+    [Ui("综合报表", "供区")]
     public class ZonlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
@@ -80,6 +80,16 @@ namespace ChainMart
                 date = f[nameof(date)];
                 wc.GivePane(200); // close dialog
             }
+        }
+    }
+
+
+    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
+    [Ui("业务报表", "产源")]
+    public class SrclyRptWork : BookWork
+    {
+        public async Task @default(WebContext wc, int page)
+        {
         }
     }
 

@@ -110,5 +110,7 @@ namespace ChainMart
         }
 
         public int Key => id;
+
+        public override string ToString() => name;
     }
 }

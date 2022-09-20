@@ -90,7 +90,7 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("售货汇总", "市场")]
-    public class MrtlyBuyWork : BuyWork
+    public class MktlyBuyWork : BuyWork
     {
         [Ui("当前", @group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)

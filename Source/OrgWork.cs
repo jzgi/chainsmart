@@ -11,7 +11,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("机构设置", "业务")]
+    [Ui("设置入驻机构", "业务")]
     public class AdmlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -33,7 +33,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 1);
-                h.GRIDVAR(map, o =>
+                h.GRIDA(map, o =>
                     {
                         h.DIV_("uk-card-body");
                         h.T(o.name);
@@ -52,7 +52,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 2);
-                h.GRIDVAR(map, o =>
+                h.GRIDA(map, o =>
                     {
                         h.DIV_("uk-card-body");
                         h.T(o.name);
@@ -76,13 +76,13 @@ namespace ChainMart
                     typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_ZON,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Entity.STA_ENABLED
+                    status = Entity.STA_NORMAL
                 };
 
                 m.Read(wc.Query, 0);
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场属性" : "供区属性");
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场资料" : "供区资料");
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
@@ -113,21 +113,96 @@ namespace ChainMart
         }
     }
 
-
-    [UserAuthorize(Org.TYP_MRT, 1)]
-#if ZHNT
-    [Ui("商户管理", "市场")]
-#else
-    [Ui("商户管理", "驿站")]
-#endif
-    public class MrtlyOrgWork : OrgWork
+    [UserAuthorize(Org.TYP_ZON, 1)]
+    [Ui("管理下属产源", "供区")]
+    public class ZonlyOrgWork : OrgWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MartlyOrgVarWork>();
+            CreateVarWork<ZonlyOrgVarWork>();
         }
 
-        [Ui("在用", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, name LIMIT 30 OFFSET 30 * @2");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null) return;
+
+                h.GRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h.P(o.tip);
+                    h._SECTION();
+                    h.FOOTER_()._FOOTER();
+                });
+            });
+        }
+
+        [Ui("新建", icon: "plus"), Tool(ButtonOpen)]
+        public async Task @new(WebContext wc)
+        {
+            var prv = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
+            var regs = Grab<short, Reg>();
+            var m = new Org
+            {
+                typ = Org.TYP_SRC,
+                prtid = prv.id,
+                created = DateTime.Now,
+                creator = prin.name,
+                status = Entity.STA_NORMAL
+            };
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("产源属性");
+                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // POST
+            {
+                const short msk = Entity.MSK_BORN;
+                var o = await wc.ReadObjectAsync(msk, instance: m);
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
+                await dc.ExecuteAsync(p => o.Write(p, msk));
+
+                wc.GivePane(201); // created
+            }
+        }
+    }
+
+    [UserAuthorize(Org.TYP_MRT, 1)]
+#if ZHNT
+    [Ui("管理下属商户", "市场")]
+#else
+    [Ui("管理下属商户", "驿站")]
+#endif
+    public class MktlyOrgWork : OrgWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<MktlyOrgVarWork>();
+        }
+
+        [Ui("在线商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -148,14 +223,14 @@ namespace ChainMart
             });
         }
 
-        [Ui("禁用", group: 2), Tool(Anchor)]
+        [Ui(icon: "history", group: 2), Tool(Anchor)]
         public async Task disabled(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND NOT (@2 BETWEEN starton AND endon AND ok = TRUE) ORDER BY id");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id).Set(DateTime.Today));
 
             wc.GivePage(200, h =>
             {
@@ -169,7 +244,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("✛", "新建商户", group: 2), Tool(ButtonOpen)]
+        [Ui("新建", icon: "plus", group: 2), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
@@ -179,7 +254,7 @@ namespace ChainMart
                 typ = Org.TYP_SHP,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Entity.STA_ENABLED,
+                status = Entity.STA_NORMAL,
                 prtid = mrt.id,
                 ctrid = mrt.ctrid,
             };
@@ -213,91 +288,6 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
                 await dc.ExecuteAsync(p => { m.Write(p); });
-
-                wc.GivePane(201); // created
-            }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("下属产源设置", "版块", icon: "thumbnails")]
-    public class ZonlyOrgWork : OrgWork
-    {
-        protected override void OnCreate()
-        {
-            CreateVarWork<ZonlyOrgVarWork>();
-        }
-
-        public async Task @default(WebContext wc, int page)
-        {
-            var org = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, name LIMIT 30 OFFSET 30 * @2");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                if (arr == null) return;
-
-                h.GRID(arr, o =>
-                {
-                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h.P(o.tip);
-                    h._SECTION();
-                    h.FOOTER_()._FOOTER();
-                });
-
-                // h.TABLE(arr, o =>
-                // {
-                //     h.TDCHECK(o.id);
-                //     h.TD_().AVAR(o.Key, o.name).SP().ADIALOG_("/srcly/", o.id, "/", 8, false, Appear.Full).T("代办")._A()._TD();
-                //     h.TD(Entity.States[o.status]);
-                //     h.TD_("uk-visible@l").T(o.tip)._TD();
-                //     h.TDFORM(() => h.TOOLGROUPVAR(o.Key));
-                // });
-            });
-        }
-
-        [Ui("✛", "新建产源"), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc)
-        {
-            var prv = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
-            var regs = Grab<short, Reg>();
-            var m = new Org
-            {
-                typ = Org.TYP_SRC,
-                prtid = prv.id,
-                created = DateTime.Now,
-                creator = prin.name,
-                status = Entity.STA_ENABLED
-            };
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("产源属性");
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
-                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                const short msk = Entity.MSK_BORN;
-                var o = await wc.ReadObjectAsync(msk, instance: m);
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
-                await dc.ExecuteAsync(p => o.Write(p, msk));
 
                 wc.GivePane(201); // created
             }

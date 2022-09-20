@@ -233,7 +233,7 @@ function dialog(trig, mode, pick, appear, title) {
         appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
             appear == HIGH ? ' uk-modal-high uk-animation-slide-bottom' :
                 appear == SMALL ? ' uk-modal-small' :
-                    appear == LARGE ? ' uk-modal-large' :
+                    appear == LARGE ? ' uk-modal-large uk-animation-scale-up' :
                         ' uk-modal-full uk-animation-slide-right';
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
@@ -267,7 +267,7 @@ function dialog(trig, mode, pick, appear, title) {
         trigc = ' anchor-trig';
     }
 
-    title = title || trig.innerHTML;
+    title = title || '';
 
     var div = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical">';

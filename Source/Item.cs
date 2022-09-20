@@ -3,19 +3,18 @@
 namespace ChainMart
 {
     /// <summary>
-    /// A bookable product from certain source. It can be upgraded to the group-book mode and then back.
+    /// A product by certain source.
     /// </summary>
     public class Item : Entity, IKeyable<int>
     {
         public static readonly Item Empty = new Item();
 
-        public new static readonly Map<short, string> States = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STA_DISABLED, "禁用"},
-            {STA_ENABLED, "正常"},
+            {STA_VOID, "禁用"},
+            {STA_NORMAL, "正常"},
             {STA_TOP, "置顶"},
         };
-
 
         public static readonly Map<short, string> Stores = new Map<short, string>
         {
@@ -40,12 +39,13 @@ namespace ChainMart
 
         internal int id;
 
-        internal int prdid;
+        internal int srcid;
         internal short store;
         internal short duration;
         internal bool agt; // agent only 
         internal string unit;
-        internal string unitip;
+        internal string unitstd;
+        internal short unitx;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -58,13 +58,17 @@ namespace ChainMart
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(prdid), ref prdid);
+                s.Get(nameof(srcid), ref srcid);
             }
-            s.Get(nameof(store), ref store);
-            s.Get(nameof(duration), ref duration);
-            s.Get(nameof(agt), ref agt);
-            s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitip), ref unitip);
+            if ((msk & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Get(nameof(store), ref store);
+                s.Get(nameof(duration), ref duration);
+                s.Get(nameof(agt), ref agt);
+                s.Get(nameof(unit), ref unit);
+                s.Get(nameof(unitstd), ref unitstd);
+                s.Get(nameof(unitx), ref unitx);
+            }
         }
 
         public override void Write(ISink s, short msk = 0xff)
@@ -78,13 +82,17 @@ namespace ChainMart
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Put(nameof(prdid), prdid);
+                s.Put(nameof(srcid), srcid);
             }
-            s.Put(nameof(store), store);
-            s.Put(nameof(duration), duration);
-            s.Put(nameof(agt), agt);
-            s.Put(nameof(unit), unit);
-            s.Put(nameof(unitip), unitip);
+            if ((msk & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Put(nameof(store), store);
+                s.Put(nameof(duration), duration);
+                s.Put(nameof(agt), agt);
+                s.Put(nameof(unit), unit);
+                s.Put(nameof(unitstd), unitstd);
+                s.Put(nameof(unitx), unitx);
+            }
         }
 
         public int Key => id;

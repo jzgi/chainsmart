@@ -2,9 +2,9 @@
 
 namespace ChainMart
 {
-    public class Ware : Entity, IKeyable<int>
+    public class Stock : Entity, IKeyable<int>
     {
-        public static readonly Ware Empty = new Ware();
+        public static readonly Stock Empty = new Stock();
 
         internal int id;
         internal int shpid;

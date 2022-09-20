@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ChainFx;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
@@ -33,7 +34,7 @@ namespace ChainMart
 
             CreateWork<AdmlyDatWork>("dat");
 
-            CreateWork<AdmlyChainWork>("chain");
+            CreateWork<AdmlyNodWork>("chain");
         }
 
         public void @default(WebContext wc)
@@ -129,5 +130,17 @@ namespace ChainMart
                 wc.GiveRedirect(nameof(acl));
             }
         }
+    }
+
+    [UserAuthorize(admly: User.ADMLY_)]
+    [Ui("数据维护", "系统")]
+    public class AdmlyDatWork : WebWork
+    {
+    }
+
+    [UserAuthorize(admly: User.ADMLY_)]
+    [Ui("联盟链网络", "系统")]
+    public class AdmlyNodWork : FedWork
+    {
     }
 }

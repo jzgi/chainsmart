@@ -12,7 +12,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("货品批次管理", "产源")]
+    [Ui("设置产品批次", "产源")]
     public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -20,7 +20,7 @@ namespace ChainMart
             CreateVarWork<SrclyLotVarWork>();
         }
 
-        [Ui("当前", "当前批次", group: 1), Tool(Anchor)]
+        [Ui("当前批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -32,18 +32,20 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+
                 if (arr == null) return;
+
                 h.GRID(arr, o =>
                 {
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
                 });
             });
         }
 
-        [Ui("历史", "历史批次", @group: 2), Tool(Anchor)]
+        [Ui("历史批次", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -61,12 +63,12 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
                 });
             });
         }
 
-        [Ui("✛", "新建批次", @group: 1), Tool(ButtonOpen)]
+        [Ui("新建批次", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -75,7 +77,7 @@ namespace ChainMart
 
             var m = new Lot
             {
-                status = Entity.STA_DISABLED,
+                status = Entity.STA_VOID,
                 srcid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
@@ -140,7 +142,7 @@ namespace ChainMart
 
             var m = new Lot
             {
-                status = Entity.STA_DISABLED,
+                status = Entity.STA_VOID,
                 srcid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
@@ -198,7 +200,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("货品批次验证", "中控")]
+    [Ui("验证产品批次", "中控")]
     public class CtrlyLotWork : LotWork
     {
         [Ui("未验批次", @group: 1), Tool(Anchor)]
@@ -216,15 +218,15 @@ namespace ChainMart
                 if (arr == null) return;
                 h.GRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
+                    h.HEADER_("uk-card-header").T(o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
+                    // h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
 
-        [Ui("☰", "已验批次", @group: 2), Tool(Anchor)]
+        [Ui("已验批次", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -242,7 +244,7 @@ namespace ChainMart
                     h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
+                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
                 });
             });
         }

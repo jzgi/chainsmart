@@ -21,7 +21,7 @@ namespace ChainMart
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<MrtlyVarWork>((prin, key) =>
+            CreateVarWork<MktlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);

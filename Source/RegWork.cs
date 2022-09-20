@@ -32,7 +32,7 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<short, Reg>();
 
-                h.GRIDVAR(arr, o =>
+                h.GRIDA(arr, o =>
                     {
                         h.DIV_("uk-card-body");
                         h.T(o.name);
@@ -52,7 +52,7 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_CITY).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<short, Reg>();
 
-                h.GRIDVAR(arr, o =>
+                h.GRIDA(arr, o =>
                     {
                         h.DIV_("uk-card-body");
                         h.T(o.name);
@@ -73,7 +73,7 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
                 var arr = dc.Query<short, Reg>();
 
-                h.GRIDVAR(arr, o =>
+                h.GRIDA(arr, o =>
                     {
                         h.DIV_("uk-card-body");
                         h.T(o.name);
@@ -90,7 +90,7 @@ namespace ChainMart
             var o = new Reg
             {
                 typ = (short) typ,
-                status = Entity.STA_ENABLED,
+                status = Entity.STA_NORMAL,
                 created = DateTime.Now,
                 creator = prin.name,
             };
@@ -111,7 +111,7 @@ namespace ChainMart
             {
                 o = await wc.ReadObjectAsync(instance: o);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Ware.Empty);
+                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Stock.Empty);
                 await dc.ExecuteAsync(p => o.Write(p));
 
                 wc.GivePane(200); // close dialog

@@ -32,7 +32,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.IsSection)._TOPBAR();
-                h.GRIDVAR(map, o =>
+                h.GRIDA(map, o =>
                 {
                     h.DIV_("uk-card-body");
                     h.T(o.name);
@@ -50,8 +50,8 @@ namespace ChainMart
             var biz = GrabObject<int, Org>(bizid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Ware>(p => p.Set(biz.id));
+            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Stock>(p => p.Set(biz.id));
 
             wc.GivePage(200, h =>
             {

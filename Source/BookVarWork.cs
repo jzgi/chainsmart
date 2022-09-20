@@ -13,8 +13,24 @@ namespace ChainMart
     {
     }
 
-    public class ZonlyBookVarWork : BookVarWork
+    public class ShplyBookVarWork : BookVarWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int lotid = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
+            wc.GivePane(200, h =>
+            {
+                h.PIC_()._PIC();
+                h.DIV_("uk-card uk-card-default");
+
+                h._DIV();
+            });
+        }
     }
 
     public class SrclyBookVarWork : BookVarWork
@@ -127,10 +143,6 @@ namespace ChainMart
         }
 
         // [Ui("核实"), Tool(Modal.ButtonOpen)]
-    }
-
-    public class SrclyCustomBookVarWork : SrclyBookVarWork
-    {
     }
 
     public class CtrlyBookVarWork : BookVarWork

@@ -9,21 +9,15 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("进货汇总", "市场")]
-    public class MrtlyBookWork : BookWork
-    {
-        [Ui("当前", @group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
-        }
-    }
-
     [UserAuthorize(Org.TYP_SHP, 1)]
     [Ui("进货管理", "商户")]
     public class ShplyBookWork : BookWork
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<ShplyBookVarWork>();
+        }
+
         [Ui("当前进货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
@@ -94,19 +88,22 @@ namespace ChainMart
                     return;
                 }
 
-                h.GRIDVAR(map, o =>
-                {
-                    h.DIV_("uk-card-body");
-                    h.PIC_()._PIC();
-                    h.T(o.name);
-                    h._DIV();
-                });
+                h.GRIDA(map,
+                    o =>
+                    {
+                        h.DIV_("uk-card-body");
+                        h.PIC_()._PIC();
+                        h.T(o.name);
+                        h._DIV();
+                    },
+                    min: 2,
+                    appear: Appear.Large);
             }, title: ctr.tip);
         }
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("客户订货管理", "产源", icon: "sign-in")]
+    [Ui("处理客户订货", "产源")]
     public class SrclyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -152,7 +149,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史订货"), Tool(Anchor)]
+        [Ui("历史订货", icon: "history"), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -171,12 +168,14 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("业务报表", "产源")]
-    public class SrclyRptWork : BookWork
+    [UserAuthorize(Org.TYP_MRT, 1)]
+    [Ui("进货汇总", "市场")]
+    public class MktlyBookWork : BookWork
     {
+        [Ui("当前", @group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 
@@ -265,12 +264,12 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "以往按市场", @group: 16), Tool(Anchor)]
+        [Ui("以往按市场", @group: 16), Tool(Anchor)]
         public async Task bymrtpast(WebContext wc, int page)
         {
         }
 
-        [Ui("▷", "发出", @group: 255), Tool(ButtonOpen)]
+        [Ui("发出", @group: 255), Tool(ButtonOpen)]
         public async Task rev(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -291,7 +290,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("◁", "取消发出", @group: 2), Tool(ButtonOpen)]
+        [Ui("取消发出", @group: 2), Tool(ButtonOpen)]
         public async Task unrcv(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

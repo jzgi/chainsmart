@@ -4,19 +4,6 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create type purchop_type as
-(
-    state smallint,
-    label varchar(12),
-    orgid integer,
-    uid integer,
-    uname varchar(12),
-    utel varchar(11),
-    stamp timestamp(0)
-);
-
-alter type purchop_type owner to postgres;
-
 create type buyln_type as
 (
     stockid integer,
@@ -153,31 +140,7 @@ create table events
 )
     inherits (entities);
 
-comment on table events is 'annoucements and notices';
-
 alter table events owner to postgres;
-
-create table buys
-(
-    id bigserial not null
-        constraint buys_pk
-            primary key,
-    shpid integer not null,
-    mrtid integer not null,
-    uid integer not null,
-    uname varchar(10),
-    utel varchar(11),
-    uaddr varchar(20),
-    uim varchar(28),
-    lns buyln_type[],
-    pay money,
-    payre money
-)
-    inherits (entities);
-
-comment on table buys is 'customer buys';
-
-alter table buys owner to postgres;
 
 create table clears
 (
@@ -219,7 +182,7 @@ create table items
     duration smallint,
     agt boolean,
     unit varchar(4),
-    unitip varchar(12),
+    unitstd varchar(4),
     unitx smallint,
     icon bytea,
     pic bytea,
@@ -228,28 +191,6 @@ create table items
     inherits (entities);
 
 alter table items owner to postgres;
-
-create table wares
-(
-    id serial not null
-        constraint wares_pk
-            primary key,
-    shpid integer,
-    productid integer,
-    unit varchar(4),
-    unitstd varchar(4),
-    unitx smallint,
-    price money,
-    "off" money,
-    min smallint,
-    max smallint,
-    step smallint,
-    icon bytea,
-    pic bytea
-)
-    inherits (entities);
-
-alter table wares owner to postgres;
 
 create table books
 (
@@ -350,7 +291,49 @@ create table itemimgs
     img bytea
 );
 
-alter table itemimgs owner to postgres;
+alter table itemmxs owner to postgres;
+
+create table wares
+(
+    id serial not null
+        constraint wares_pk
+            primary key,
+    shpid integer,
+    itemid integer,
+    unit varchar(4),
+    unitstd varchar(4),
+    unitx money,
+    price money,
+    "off" money,
+    min smallint,
+    max smallint,
+    step smallint,
+    icon bytea,
+    pic bytea
+)
+    inherits (entities);
+
+alter table stocks owner to postgres;
+
+create table buys
+(
+    id bigserial not null
+        constraint buys_pk
+            primary key,
+    shpid integer not null,
+    mrtid integer not null,
+    uid integer not null,
+    uname varchar(10),
+    utel varchar(11),
+    uaddr varchar(20),
+    uim varchar(28),
+    lines buyln_type[],
+    pay money,
+    refund money
+)
+    inherits (entities);
+
+alter table buys owner to postgres;
 
 create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,

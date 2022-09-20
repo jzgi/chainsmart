@@ -35,69 +35,9 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SHP, 1)]
-#if ZHNT
-    [Ui("市场／商户操作")]
-#else
-    [Ui("驿站／商户操作")]
-#endif
-    public class MrtlyVarWork : OrglyVarWork
-    {
-        protected override void OnCreate()
-        {
-            CreateWork<MrtlyOrgWork>("morg");
-
-            CreateWork<MrtlyCustWork>("mcust");
-
-            CreateWork<MrtlyBookWork>("mbook");
-
-            CreateWork<MrtlyBuyWork>("mbuy");
-
-
-            CreateWork<ShplyBookWork>("sbook");
-
-            CreateWork<ShplyBuyWork>("sbuy");
-
-            CreateWork<ShplyWareWork>("sware");
-
-
-            CreateWork<OrglyClearWork>("clear");
-
-            CreateWork<OrglyAccessWork>("access");
-        }
-
-        public void @default(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            var prin = (User) wc.Principal;
-            using var dc = NewDbContext();
-            wc.GivePage(200, h =>
-            {
-                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
-                // h.TOOLBAR(tip: prin.name + "（" + role + "）");
-
-                h.TOPBARXL_();
-                if (prin.icon)
-                {
-                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
-                }
-                else
-                {
-                    h.PIC("/mrt.png", circle: true, css: "uk-width-small");
-                }
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name);
-                h.SPAN(org.tel);
-                h._DIV();
-                h._TOPBARXL();
-
-                h.TASKLIST();
-            }, false, 3);
-        }
-    }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供区／产源操作")]
+    [Ui("供区产源操作")]
     public class ZonlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
@@ -147,6 +87,70 @@ namespace ChainMart
                 {
                     h.PIC("/org.webp", circle: true, css: "uk-width-small");
                 }
+                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
+                h.H2(org.name);
+                h.SPAN(org.tel);
+                h._DIV();
+                h._TOPBARXL();
+
+                h.TASKLIST();
+            }, false, 3);
+        }
+    }
+
+
+    [UserAuthorize(Org.TYP_SHP, 1)]
+#if ZHNT
+    [Ui("市场商户操作")]
+#else
+    [Ui("驿站商户操作")]
+#endif
+    public class MktlyVarWork : OrglyVarWork
+    {
+        protected override void OnCreate()
+        {
+            CreateWork<MktlyOrgWork>("morg");
+
+            CreateWork<MktlyCustWork>("mcust");
+
+            CreateWork<MktlyBookWork>("mbook");
+
+            CreateWork<MktlyBuyWork>("mbuy");
+
+
+            CreateWork<ShplyBookWork>("sbook");
+
+            CreateWork<ShplyBuyWork>("sbuy");
+
+            CreateWork<ShplyStockWork>("sware");
+
+
+            CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglyAccessWork>("access");
+        }
+
+        public void @default(WebContext wc)
+        {
+            var org = wc[0].As<Org>();
+            var prin = (User) wc.Principal;
+            using var dc = NewDbContext();
+
+            wc.GivePage(200, h =>
+            {
+                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
+                // h.TOOLBAR(tip: prin.name + "（" + role + "）");
+
+                h.TOPBARXL_();
+                if (prin.icon)
+                {
+                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                }
+                else
+                {
+                    h.PIC("/mrt.png", circle: true, css: "uk-width-small");
+                }
+
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.H2(org.name);
                 h.SPAN(org.tel);

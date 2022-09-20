@@ -158,7 +158,7 @@ namespace ChainMart
     }
 
 
-    public class MartlyOrgVarWork : OrgVarWork
+    public class MktlyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
         {

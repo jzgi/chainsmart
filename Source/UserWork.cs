@@ -33,14 +33,14 @@ namespace ChainMart
                     {
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
                         h.TD_().T(Orgly[o.orgly])._TD();
-                        h.TDFORM(() => h.TOOLSVAR(o.Key));
+                        h.TDFORM(() => h.VARTOOLSET(o.Key));
                     }
                 );
             }, false, 3);
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", "添加人员权限", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("添加", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -162,7 +162,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("人员权限", "基础", "users")]
+    [Ui("人员权限", "基础")]
     public class OrglyAccessWork : WebWork
     {
         protected override void OnCreate()
@@ -185,14 +185,14 @@ namespace ChainMart
                     {
                         h.TD_().T(o.name).SP().SUB(o.tel)._TD();
                         h.TD_().T(Orgly[o.orgly])._TD();
-                        h.TDFORM(() => h.TOOLSVAR(o.Key));
+                        h.TDFORM(() => h.VARTOOLSET(o.Key));
                     }
                 );
             }, false, 3);
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", "添加人员权限", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("添加", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -230,7 +230,7 @@ namespace ChainMart
                 orgly = f[nameof(orgly)];
                 using var dc = NewDbContext();
                 dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(orgid).Set(orgly).Set(id));
-                
+
                 wc.GivePane(200); // ok
             }
         }
@@ -238,11 +238,11 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("消费者管理", "市场")]
-    public class MrtlyCustWork : UserWork
+    public class MktlyCustWork : UserWork
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MrtlyUserVarWork>();
+            CreateVarWork<MktlyUserVarWork>();
         }
 
         [Ui("浏览", @group: 1), Tool(Anchor)]
@@ -308,7 +308,7 @@ namespace ChainMart
                         }
                         h._TD();
                         h.TD("⊘", @if: o.IsDisabled);
-                        h.TDFORM(() => h.TOOLSVAR(o.Key));
+                        h.TDFORM(() => h.VARTOOLSET(o.Key));
                     });
                 }, false, 3);
             }

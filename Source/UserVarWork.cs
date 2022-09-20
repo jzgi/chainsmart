@@ -115,7 +115,7 @@ namespace ChainMart
         }
     }
 
-    public class MrtlyUserVarWork : UserVarWork
+    public class MktlyUserVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
