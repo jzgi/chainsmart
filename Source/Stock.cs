@@ -8,7 +8,7 @@ namespace ChainMart
 
         internal int id;
         internal int shpid;
-        internal int productid;
+        internal int itemid;
         internal string unit;
         internal string unitstd;
         internal short unitx;
@@ -29,7 +29,7 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
-                s.Get(nameof(productid), ref productid);
+                s.Get(nameof(itemid), ref itemid);
             }
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitstd), ref unitstd);
@@ -52,7 +52,7 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
-                s.Put(nameof(productid), productid);
+                s.Put(nameof(itemid), itemid);
             }
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitstd), unitstd);

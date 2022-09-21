@@ -185,8 +185,7 @@ create table items
     unitstd varchar(4),
     unitx smallint,
     icon bytea,
-    pic bytea,
-    mat bytea
+    pic bytea
 )
     inherits (entities);
 
@@ -201,8 +200,8 @@ create table books
     mrtid integer not null,
     ctrid integer not null,
     srcid integer not null,
-    prvid integer not null,
-    productid integer,
+    zonid integer not null,
+    itemid integer,
     lotid integer,
     unit varchar(4),
     unitx smallint,
@@ -254,36 +253,7 @@ create table orgs
 
 alter table orgs owner to postgres;
 
-create table lots
-(
-    id serial not null,
-    itemid integer
-        constraint lots_items_fk
-            references items,
-    srcid integer
-        constraint lots_srcid_fk
-            references orgs,
-    ctrid integer
-        constraint lots_ctrid_fk
-            references orgs,
-    strict boolean,
-    prover varchar(12),
-    proved timestamp(0),
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer,
-    constraint lots_typ_fk
-        foreign key (typ) references cats
-)
-    inherits (entities);
-
-alter table lots owner to postgres;
-
-create table itemimgs
+create table itemmxs
 (
     id serial not null,
     itemid integer,
@@ -293,10 +263,10 @@ create table itemimgs
 
 alter table itemmxs owner to postgres;
 
-create table wares
+create table stocks
 (
     id serial not null
-        constraint wares_pk
+        constraint stocks_pk
             primary key,
     shpid integer,
     itemid integer,
@@ -334,6 +304,38 @@ create table buys
     inherits (entities);
 
 alter table buys owner to postgres;
+
+create table lots
+(
+    id serial not null,
+    itemid integer
+        constraint lots_items_fk
+            references items,
+    srcid integer
+        constraint lots_srcid_fk
+            references orgs,
+    ctrid integer
+        constraint lots_ctrid_fk
+            references orgs,
+    ctrg boolean,
+    starton date,
+    endon date,
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    ok boolean,
+    oker varchar(12),
+    oked timestamp(0),
+    constraint lots_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
 
 create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,

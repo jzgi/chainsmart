@@ -23,20 +23,6 @@ namespace ChainMart
             {2, "冷冻"},
         };
 
-        public static readonly Map<short, string> Durations = new Map<short, string>
-        {
-            {3, "三天"},
-            {5, "五天"},
-            {7, "一周"},
-            {10, "十天"},
-            {15, "半个月"},
-            {30, "一个月"},
-            {60, "两个月"},
-            {90, "三个月"},
-            {120, "四个月"},
-            {180, "六个月"},
-        };
-
         internal int id;
 
         internal int srcid;

@@ -88,7 +88,7 @@ namespace ChainMart
             {
                 // selection of products
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0");
                 var products = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
 
                 wc.GivePane(200, h =>
@@ -96,11 +96,9 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("填写不可更改");
 
                     h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
-                    // h.LI_().SELECT(
-                    //     org.fork == 1 ? "经由中控" : "投放市场",
-                    //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
-                    // )._LI();
-                    h.LI_().CHECKBOX("中控", nameof(m.strict), m.strict)._LI();
+                    h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().CHECKBOX("中控", nameof(m.ctrg), m.ctrg)._LI();
+                    h.LI_().DATE("起始", nameof(m.starton), m.starton).DATE("截至", nameof(m.endon), m.endon)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");

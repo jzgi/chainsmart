@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainMart
 {
     /// <summary>
-    /// A product lot that supports booking..
+    /// A product lot for booking.
     /// </summary>
     public class Lot : Entity, IKeyable<int>
     {
@@ -23,16 +23,14 @@ namespace ChainMart
         };
 
         internal int id;
-
         internal int itemid;
         internal int srcid;
         internal int ctrid;
-        internal bool strict;
-        internal string prover;
-        internal DateTime proved;
+        internal bool ctrg; // required centering
+        internal DateTime starton;
+        internal DateTime endon;
 
         // individual order relevant
-
         internal decimal price;
         internal decimal off;
         internal int cap;
@@ -40,6 +38,10 @@ namespace ChainMart
         internal short min;
         internal short max;
         internal short step;
+
+        internal bool ok;
+        internal string oker;
+        internal DateTime oked;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -54,7 +56,9 @@ namespace ChainMart
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(strict), ref strict);
+                s.Get(nameof(ctrg), ref ctrg);
+                s.Get(nameof(starton), ref starton);
+                s.Get(nameof(endon), ref endon);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -70,8 +74,9 @@ namespace ChainMart
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
-                s.Get(nameof(prover), ref prover);
-                s.Get(nameof(proved), ref proved);
+                s.Get(nameof(ok), ref ok);
+                s.Get(nameof(oker), ref oker);
+                s.Get(nameof(oked), ref oked);
             }
         }
 
@@ -88,7 +93,9 @@ namespace ChainMart
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(strict), strict);
+                s.Put(nameof(ctrg), ctrg);
+                s.Put(nameof(starton), starton);
+                s.Put(nameof(endon), endon);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -104,8 +111,9 @@ namespace ChainMart
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);
-                s.Put(nameof(prover), prover);
-                s.Put(nameof(proved), proved);
+                s.Put(nameof(ok), ok);
+                s.Put(nameof(oker), oker);
+                s.Put(nameof(oked), oked);
             }
         }
 

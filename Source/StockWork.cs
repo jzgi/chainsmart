@@ -11,8 +11,8 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产品设置", "产源")]
+    [UserAuthorize(Org.TYP_SHP, 1)]
+    [Ui("设置货品", "商户")]
     public class ShplyStockWork : StockWork
     {
         protected override void OnCreate()
@@ -20,14 +20,14 @@ namespace ChainMart
             CreateVarWork<SrclyItemVarWork>();
         }
 
-        [Ui("在线", @group: 1), Tool(Anchor)]
+        [Ui("在线货品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares WHERE srcid = @1 AND status >= 1 ORDER BY created DESC");
-            var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM stocks WHERE shpid = @1 AND status >= 1 ORDER BY created DESC");
+            var arr = await dc.QueryAsync<Stock>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
@@ -47,7 +47,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("下线", "下线产品", @group: 2), Tool(Anchor)]
+        [Ui("下线货品", icon: "ban", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -74,16 +74,17 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", "新建产品", "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
+
             var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
             {
-                var o = new Item
+                var o = new Stock
                 {
                     created = DateTime.Now,
                     status = (short) state,
@@ -94,9 +95,7 @@ namespace ChainMart
 
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).SELECT("保存周期", nameof(o.duration), o.duration, Item.Durations, required: true)._LI();
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitstd), o.unitstd)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STA_VOID, required: true)._LI();
 
                     h._FIELDSUL()._FORM();
                 });
