@@ -56,7 +56,7 @@ namespace ChainMart
                     }
 
                     h.LI_("uk-flex");
-                    h.A_(o.id,"/", css: "uk-width-expand").T(o.name)._A();
+                    h.A_(o.id, "/", css: "uk-width-expand").T(o.name)._A();
                     h.SPAN_("uk-margin-auto-left");
                     h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
                     h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
@@ -146,7 +146,7 @@ namespace ChainMart
             }
         }
 
-        public async Task signup(WebContext wc, int cmd)
+        public async Task signup(WebContext wc)
         {
             // must have openid
             string openid = wc.Cookies[nameof(openid)];
@@ -283,10 +283,8 @@ namespace ChainMart
             }
         }
 
-        /// <summary>
-        /// A buying payment notification.
-        /// </summary>
-        public async Task onbuy(WebContext wc)
+
+        public async Task onpay(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(xe, out var trade_no, out var cash))

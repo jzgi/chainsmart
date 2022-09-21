@@ -140,7 +140,7 @@ namespace ChainMart
 
     [UserAuthorize(admly: User.ADMLY_)]
     [Ui("联盟链网络", "系统")]
-    public class AdmlyNodWork : FedWork
+    public class AdmlyNodWork : NodeWork
     {
     }
 }

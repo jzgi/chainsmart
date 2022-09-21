@@ -19,7 +19,7 @@ namespace ChainMart
         }
 
         [Ui("当前进货", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -41,7 +41,7 @@ namespace ChainMart
         }
 
         [Ui("历史进货", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
+        public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
@@ -112,13 +112,13 @@ namespace ChainMart
         }
 
         [Ui("当前订货"), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT productid, last(name), ctrid, sum(qty - cut) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY productid, ctrid");
+            dc.Sql("SELECT itemid, last(name), ctrid, sum(qty - cut) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY itemid, ctrid");
             await dc.QueryAsync(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -149,8 +149,8 @@ namespace ChainMart
             });
         }
 
-        [Ui("历史订货", icon: "history"), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
+        [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
+        public async Task history(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -160,7 +160,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: Label);
+                h.TOOLBAR();
                 h.TABLE_();
                 h._TABLE();
             });
@@ -172,8 +172,8 @@ namespace ChainMart
     [Ui("进货汇总", "市场")]
     public class MktlyBookWork : BookWork
     {
-        [Ui("当前", @group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
+        [Ui("当前", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }
@@ -184,7 +184,7 @@ namespace ChainMart
     public class CtrlyBookWork : BookWork
     {
         [Ui("按批次", @group: 2), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
@@ -221,13 +221,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "按批次历史", @group: 4), Tool(Anchor)]
-        public async Task bylotpast(WebContext wc, int page)
+        [Ui("⌹", "按批次历史", group: 4), Tool(Anchor)]
+        public async Task bylotpast(WebContext wc)
         {
         }
 
         [Ui("按市场", @group: 8), Tool(Anchor)]
-        public async Task bymrt(WebContext wc, int page)
+        public async Task bymrt(WebContext wc)
         {
             var ctr = wc[-1].As<Org>();
             var topOrgs = Grab<int, Org>();
@@ -264,13 +264,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("以往按市场", @group: 16), Tool(Anchor)]
-        public async Task bymrtpast(WebContext wc, int page)
+        [Ui("以往按市场", group: 16), Tool(Anchor)]
+        public async Task bymrtpast(WebContext wc)
         {
         }
 
         [Ui("发出", @group: 255), Tool(ButtonOpen)]
-        public async Task rev(WebContext wc, int page)
+        public async Task rev(WebContext wc)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
@@ -291,7 +291,7 @@ namespace ChainMart
         }
 
         [Ui("取消发出", @group: 2), Tool(ButtonOpen)]
-        public async Task unrcv(WebContext wc, int page)
+        public async Task unrcv(WebContext wc)
         {
             var prin = (User) wc.Principal;
             short orgid = wc[-1];
@@ -317,7 +317,7 @@ namespace ChainMart
     public class CtrlyDistrWork : BookWork
     {
         [Ui("按批次", @group: 2), Tool(Anchor)]
-        public async Task @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }

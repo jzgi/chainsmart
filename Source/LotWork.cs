@@ -45,8 +45,8 @@ namespace ChainMart
             });
         }
 
-        [Ui("历史批次", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
+        public async Task history(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
@@ -68,73 +68,8 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
-            var orgs = Grab<int, Org>();
-
-            var m = new Lot
-            {
-                status = Entity.STA_VOID,
-                srcid = org.id,
-                created = DateTime.Now,
-                creator = prin.name,
-                min = 1, max = 200, step = 1,
-            };
-
-            if (wc.IsGet)
-            {
-                // selection of products
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE srcid = @1 AND status > 0");
-                var products = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
-
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("填写不可更改");
-
-                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
-                    // h.LI_().SELECT(
-                    //     org.fork == 1 ? "经由中控" : "投放市场",
-                    //     nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, spec: org.fork, required: true
-                    // )._LI();
-                    h.LI_().CHECKBOX("中控", nameof(m.strict), m.strict)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
-
-                    h._FIELDSUL().FIELDSUL_("订货参数");
-                    h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(m.min), m.min).NUMBER("限订量", nameof(m.max), m.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(m.step), m.step)._LI();
-                    h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
-
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                // populate 
-                const short msk = Entity.MSK_BORN;
-                await wc.ReadObjectAsync(msk, instance: m);
-
-                // db insert
-                using var dc = NewDbContext();
-
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.itemid));
-                m.name = product.name;
-                m.tip = product.name;
-
-                dc.Sql("INSERT INTO distribs ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
-                await dc.ExecuteAsync(p => m.Write(p, msk));
-
-                wc.GivePane(200); // close dialog
-            }
-        }
-
-        [Ui("⨧", "新建批次", @group: 1), Tool(ButtonOpen)]
-        public async Task @new2(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
@@ -203,7 +138,7 @@ namespace ChainMart
     [Ui("验证产品批次", "中控")]
     public class CtrlyLotWork : LotWork
     {
-        [Ui("未验批次", @group: 1), Tool(Anchor)]
+        [Ui("待验批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -226,8 +161,8 @@ namespace ChainMart
             });
         }
 
-        [Ui("已验批次", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
+        public async Task history(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 

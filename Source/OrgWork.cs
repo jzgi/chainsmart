@@ -24,7 +24,7 @@ namespace ChainMart
 #else
         [Ui("驿站", group: 1), Tool(Anchor)]
 #endif
-        public async Task @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, status DESC");
@@ -44,7 +44,7 @@ namespace ChainMart
         }
 
         [Ui("供区", group: 2), Tool(Anchor)]
-        public async Task src(WebContext wc, int page)
+        public async Task src(WebContext wc)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
@@ -122,21 +122,48 @@ namespace ChainMart
             CreateVarWork<ZonlyOrgVarWork>();
         }
 
-        public async Task @default(WebContext wc, int page)
+        [Ui("有效产源", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY status DESC, name LIMIT 30 OFFSET 30 * @2");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
+            var map = await dc.QueryAsync<int, Org>(p => p.Set(org.id));
 
-            wc.GivePage(200, h =>
+            wc.GivePane(200, h =>
             {
                 h.TOOLBAR();
 
-                if (arr == null) return;
+                if (map == null) return;
 
-                h.GRID(arr, o =>
+                h.GRIDA(map, o =>
+                {
+                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
+                    h.SECTION_("uk-card-body");
+                    h.P(o.tip);
+                    h._SECTION();
+                    h.FOOTER_()._FOOTER();
+                });
+            });
+        }
+
+        [Ui(icon: "ban", group: 2), Tool(Anchor)]
+        public async Task ban(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
+            var map = await dc.QueryAsync<int, Org>(p => p.Set(org.id));
+
+            wc.GivePane(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (map == null) return;
+
+                h.GRIDA(map, o =>
                 {
                     h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
                     h.SECTION_("uk-card-body");

@@ -210,10 +210,8 @@ namespace ChainMart
             }
         }
 
-        /// <summary>
-        /// A booking payment notification.
-        /// </summary>
-        public async Task onbook(WebContext wc)
+
+        public async Task onpay(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(xe, out var trade_no, out var cash))

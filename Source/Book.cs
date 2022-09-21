@@ -39,11 +39,11 @@ namespace ChainMart
 
         internal int shpid; // shop
         internal int mrtid; // market
-        internal int srcid; // source
-        internal int prvid; // provision
         internal int ctrid; // center
+        internal int srcid; // source
+        internal int zonid; // provision
 
-        internal int productid;
+        internal int itemid;
         internal short lotid;
 
         internal string unit;
@@ -77,10 +77,10 @@ namespace ChainMart
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(mrtid), ref mrtid);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(prvid), ref prvid);
+                s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(srcid), ref srcid);
 
-                s.Get(nameof(productid), ref productid);
+                s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(lotid), ref lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
@@ -120,10 +120,10 @@ namespace ChainMart
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(mrtid), mrtid);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(prvid), prvid);
+                s.Put(nameof(zonid), zonid);
                 s.Put(nameof(srcid), srcid);
 
-                s.Put(nameof(productid), productid);
+                s.Put(nameof(itemid), itemid);
                 s.Put(nameof(lotid), lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)

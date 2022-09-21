@@ -9,19 +9,15 @@ namespace ChainMart
     }
 
     /// <summary>
-    /// Works for markets and shops.
+    /// Works for zones and sources.
     /// </summary>
-#if ZHNT
-    [Ui("市场／商户操作")]
-#else
-    [Ui("驿站商户操作")]
-#endif
-    public class MktlyWork : OrglyWork
+    [Ui("供区产源操作")]
+    public class ZonlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<MktlyVarWork>((prin, key) =>
+            CreateVarWork<ZonlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);
@@ -31,15 +27,19 @@ namespace ChainMart
     }
 
     /// <summary>
-    /// Works for zones and sources.
+    /// Works for markets and shops.
     /// </summary>
-    [Ui("供区／产源操作")]
-    public class ZonlyWork : OrglyWork
+#if ZHNT
+    [Ui("市场商户操作")]
+#else
+    [Ui("驿站商户操作")]
+#endif
+    public class MktlyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<ZonlyVarWork>((prin, key) =>
+            CreateVarWork<MktlyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).orgid;
                     return GrabObject<int, Org>(orgid);

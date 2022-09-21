@@ -3,7 +3,7 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
-    public class NodService : FedService
+    public class FedService : NodeService
     {
         public override void dir(WebContext wc)
         {

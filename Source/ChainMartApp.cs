@@ -11,7 +11,7 @@ namespace ChainMart
     public class ChainMartApp : Application
     {
         // periodic polling and concluding ended lots 
-        // static readonly Thread cycler = new Thread(Cycle);
+        static readonly Thread cycler = new Thread(Cycle);
 
         /// <summary>
         /// The entry point of the application.
@@ -19,7 +19,7 @@ namespace ChainMart
         public static async Task Main(string[] args)
         {
             // start the concluder thead
-            // cycler.Start();
+            cycler.Start();
 
             AddComposite<BuyLn>();
 
@@ -31,7 +31,7 @@ namespace ChainMart
 
             CreateService<MgtService>("mgt", STATIC_ROOT);
 
-            CreateService<NodService>("nod", STATIC_ROOT);
+            CreateService<FedService>("fed", STATIC_ROOT);
 
             await StartAsync();
         }
@@ -82,7 +82,7 @@ namespace ChainMart
             {
                 Thread.Sleep(60 * 1000);
 
-                var today = DateTime.Today;
+                var now = DateTime.Now;
                 // WAR("cycle: " + today);
 
                 // to succeed
@@ -91,33 +91,8 @@ namespace ChainMart
                 {
                     using (var dc = NewDbContext())
                     {
-                        // dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys >= min");
-                        await dc.QueryAsync(p => p.Set(today));
-                        while (dc.Next())
-                        {
-                            dc.Let(out int id);
-                            lst.Add(id);
-                        }
-                    }
-                    foreach (var lotid in lst)
-                    {
-                        using var dc = NewDbContext(ReadCommitted);
-                        try
-                        {
-                        }
-                        catch (Exception e)
-                        {
-                            dc.Rollback();
-                            Err(e.Message);
-                        }
-                    }
-
-                    // to abort
-                    lst.Clear();
-                    using (var dc = NewDbContext())
-                    {
-                        // dc.Sql("SELECT id FROM lots WHERE status = ").T(Flow_.STATUS_CREATED).T(" AND ended < @1 AND qtys < min");
-                        await dc.QueryAsync(p => p.Set(today));
+                        dc.Sql("SELECT first(id), count(id) FROM buys WHERE status = 1 AND adapted < @1 GROUP BY shpid");
+                        await dc.QueryAsync(p => p.Set(now));
                         while (dc.Next())
                         {
                             dc.Let(out int id);
@@ -141,6 +116,9 @@ namespace ChainMart
                 {
                     Err(nameof(Cycle) + ": " + e.Message);
                 }
+                
+                // send short messages
+                
             }
         }
     }

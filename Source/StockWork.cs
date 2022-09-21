@@ -9,11 +9,10 @@ namespace ChainMart
 {
     public abstract class StockWork : WebWork
     {
-        public const string ERR = "table";
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_OPN)]
-    [Ui("产品设置", "产源", icon: ERR)]
+    [Ui("产品设置", "产源")]
     public class ShplyStockWork : StockWork
     {
         protected override void OnCreate()

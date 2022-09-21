@@ -249,7 +249,7 @@ namespace ChainMart
                             topay,
                             u.im, // the payer
                             wc.RemoteIpAddress.ToString(),
-                            WeChatUtility.url + "/" + nameof(MgtService.onbook),
+                            WeChatUtility.url + "/" + nameof(MgtService.onpay),
                             WeChatUtility.url
                         );
                         if (prepay_id != null)
