@@ -223,7 +223,7 @@ const
     OPEN = 4;
 const
     HALF = 1,
-    HIGH = 2,
+    TALL = 2,
     SMALL = 3,
     LARGE = 4,
     FULL = 5;
@@ -231,9 +231,9 @@ const
 function dialog(trig, mode, pick, appear, title) {
     var stylec =
         appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
-            appear == HIGH ? ' uk-modal-high uk-animation-slide-bottom' :
+            appear == TALL ? ' uk-modal-high uk-animation-slide-bottom' :
                 appear == SMALL ? ' uk-modal-small' :
-                    appear == LARGE ? ' uk-modal-large uk-animation-scale-up' :
+                    appear == LARGE ? ' uk-modal-large uk-animation-fade' :
                         ' uk-modal-full uk-animation-slide-right';
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
@@ -350,36 +350,32 @@ function crop(trig, appear, title) {
     var wid,
         hei,
         sizg;
-    var trigc = trig.tagName == 'BUTTON' ? ' button-trig' : ' anchor-trig';
+    var trigc = trig.tagName == 'BUTTON' ? 'button-trig' : 'anchor-trig';
     title = title || trig.innerHTML;
     var action = trig.href || trig.formAction;
-    var stylec;
     switch (appear) {
         case SMALL:
             wid = 90;
             hei = 90;
-            stylec = ' uk-modal-large';
             break;
         case LARGE:
-            wid = 360;
-            hei = 240;
-            stylec = ' uk-modal-large';
+            wid = 400;
+            hei = 200;
             break;
         case FULL:
-            wid = 360;
-            hei = 480;
-            stylec = ' uk-modal-large';
+            wid = 1200;
+            hei = 800;
             break;
     }
-    var html = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
+    var html = '<div id="dialog" class="uk-modal-large uk-animation-fade' + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     html += '<header class="uk-modal-header">';
 
-    html += '<nav class="uk-button-group">';
+    html += '<div class="uk-button-group">';
     html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
-    html += '<button class="uk-button uk-button-primary" onclick="$(\'#imginp\').click()">选择</button>';
-    html += '<button class="uk-button uk-button-primary" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
-    html += '</nav>'; // control group
+    html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
+    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
+    html += '</div>'; // control group
 
     html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
     html += '</header>'; // header
@@ -417,7 +413,6 @@ function bind(el, url, wid, hei) {
             width: wid,
             height: hei
         },
-        enableResize: true,
         enforceBoundary: true,
         showZoomer: false
     });

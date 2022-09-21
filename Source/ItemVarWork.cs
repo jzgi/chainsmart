@@ -16,7 +16,7 @@ namespace ChainMart
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").T(col).T(" FROM products WHERE id = @1");
+                dc.Sql("SELECT ").T(col).T(" FROM items WHERE id = @1");
                 if (dc.QueryTop(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
@@ -31,7 +31,7 @@ namespace ChainMart
                 var f = await wc.ReadAsync<Form>();
                 ArraySegment<byte> img = f[nameof(img)];
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE products SET ").T(col).T(" = @1 WHERE id = @2");
+                dc.Sql("UPDATE items SET ").T(col).T(" = @1 WHERE id = @2");
                 if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
                 {
                     wc.Give(200); // ok
@@ -41,37 +41,43 @@ namespace ChainMart
         }
     }
 
+    public class PublyItemVarWork : ItemVarWork
+    {
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon));
+        }
+    }
+
     public class SrclyItemVarWork : ItemVarWork
     {
         public async Task @default(WebContext wc)
         {
             int itemid = wc[0];
             var src = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
-            var o = dc.QueryTop<Item>(p => p.Set(itemid));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
+            var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("标准产品资料");
+                h.TITLEBAR(o.name);
 
-                h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitstd), o.unitstd)._LI();
-                h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STA_VOID, required: true)._LI();
-
-                h._FIELDSUL();
-                h._FORM();
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名称", o.name).FIELD("类别", o.typ, cats)._LI();
+                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("贮藏方法", o.store, Item.Stores).FIELD2("保存周期", o.duration, "天")._LI();
+                h.LI_().FIELD("单位", o.unit).FIELD("单位提示", o.unitstd)._LI();
+                h.LI_().FIELD("只供代理", o.agt).FIELD("状态", o.status, Statuses)._LI();
+                h._UL();
 
                 h.TOOLBAR(top: false);
             });
         }
 
-        [Ui("修改", icon: "edit"), Tool(ButtonOpen)]
+        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen, Appear.Large)]
         public async Task edit(WebContext wc)
         {
             int itemid = wc[0];
@@ -119,22 +125,16 @@ namespace ChainMart
             }
         }
 
-        [Ui("产品图标"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon));
         }
 
-        [Ui("产品照片"), Tool(ButtonCrop, Appear.Large)]
+        [Ui("照片"), Tool(ButtonCrop, Appear.Large)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic));
-        }
-
-        [Ui("证明材料"), Tool(ButtonCrop, Appear.Full)]
-        public async Task mat(WebContext wc)
-        {
-            await doimg(wc, nameof(mat));
         }
 
         [Ui("删除", icon: "trash"), Tool(ButtonOpen)]

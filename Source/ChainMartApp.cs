@@ -10,6 +10,10 @@ namespace ChainMart
 {
     public class ChainMartApp : Application
     {
+        public static string WwwUrl;
+
+        public static string MgtUrl;
+
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
 
@@ -27,9 +31,9 @@ namespace ChainMart
 
             const string STATIC_ROOT = "static";
 
-            CreateService<WwwService>("www", STATIC_ROOT);
+            WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
 
-            CreateService<MgtService>("mgt", STATIC_ROOT);
+            MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
 
             CreateService<FedService>("fed", STATIC_ROOT);
 
@@ -116,9 +120,8 @@ namespace ChainMart
                 {
                     Err(nameof(Cycle) + ": " + e.Message);
                 }
-                
+
                 // send short messages
-                
             }
         }
     }

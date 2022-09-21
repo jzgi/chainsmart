@@ -600,7 +600,8 @@ a.uk-link-reset:hover,
 }
 
 .uk-list>li {
-    min-height: 32px;
+    min-height: 40px;
+    align-items: center;
 }
 
 .uk-list-divider>li:nth-child(n+2) {
@@ -1126,7 +1127,7 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     padding: 0 6px;
 }
 
@@ -1641,19 +1642,20 @@ select.uk-form-width-xsmall {
 }
 
 .uk-button-default {
-    padding: 8px 30px;
-    border: 0;
+    padding: 4px 16px;
+    margin: 4px;
+    border: 1px solid #666;
 }
 
 button.uk-button-default {
-    background-color: #7daa1d;
-    color: #fff;
+    background-color: #f8f8f8;
+    color: #333;
 }
 
 /* Hover + Focus */
 .uk-button-default:hover,
 .uk-button-default:focus {
-    background-color: #79a41b;
+    background-color: #ededed;
 }
 
 /* OnClick + Active */

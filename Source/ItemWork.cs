@@ -11,6 +11,14 @@ namespace ChainMart
     {
     }
 
+    public class PublyItemWork : ItemWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublyItemVarWork>();
+        }
+    }
+
     [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("设置产品", "产源")]
     public class SrclyItemWork : ItemWork
@@ -39,7 +47,7 @@ namespace ChainMart
                 }
                 h.GRIDA(map, o =>
                 {
-                    h.PIC("", o.id, css: "uk-width-1-5");
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.SECTION_("uk-width-4-5");
                     h.T(o.name);
                     h._SECTION();

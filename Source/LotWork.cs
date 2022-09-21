@@ -11,7 +11,7 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(Org.TYP_CTR, 1)]
+    [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("设置产品批次", "产源")]
     public class SrclyLotWork : LotWork
     {
@@ -68,19 +68,24 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建批次", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var orgs = Grab<int, Org>();
 
+            var now = DateTime.Now;
+            var today = DateTime.Today;
+
             var m = new Lot
             {
                 status = Entity.STA_VOID,
                 srcid = org.id,
-                created = DateTime.Now,
+                created = now,
                 creator = prin.name,
+                starton = today,
+                endon = today.AddMonths(1),
                 min = 1, max = 200, step = 1,
             };
 
