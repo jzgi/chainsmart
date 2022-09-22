@@ -191,7 +191,7 @@ namespace ChainMart
                 var m = new User
                 {
                     typ = 0,
-                    status = STA_NORMAL,
+                    status = STU_NORMAL,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,
@@ -260,7 +260,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STA_VOID);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STU_VOID);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {
@@ -302,7 +302,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
                 var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STA_VOID);
+                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STU_VOID);
                 var price = (decimal) dc.Scalar(p => p.Set(orderid));
                 if (price == cash) // update order status and line states
                 {

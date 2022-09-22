@@ -11,9 +11,9 @@ namespace ChainMart
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STA_VOID, "禁用"},
-            {STA_NORMAL, "正常"},
-            {STA_TOP, "置顶"},
+            {STU_VOID, "禁用"},
+            {STU_NORMAL, "正常"},
+            {STU_TOP, "置顶"},
         };
 
         public static readonly Map<short, string> Stores = new Map<short, string>

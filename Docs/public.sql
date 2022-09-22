@@ -245,9 +245,9 @@ create table orgs
             references users,
     rvrid integer,
     icon bytea,
-    starton date,
-    endon date,
-    ok boolean
+    oker varchar(12),
+    oked timestamp(0),
+    state smallint
 )
     inherits (entities);
 
@@ -359,7 +359,7 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, sprid, sprname, sprtel, sprim, rvrid, icon, starton, endon, ok) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, sprid, sprname, sprtel, sprim, rvrid, icon, oker, oked, state) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -384,9 +384,9 @@ SELECT o.typ,
        m.im               AS sprim,
        o.rvrid,
        o.icon IS NOT NULL AS icon,
-       o.starton,
-       o.endon,
-       o.ok
+       o.oker,
+       o.oked,
+       o.state
 FROM orgs o
          LEFT JOIN users m
                    ON o.sprid =

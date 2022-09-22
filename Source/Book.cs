@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// A product booking record & process.
     /// </summary>
-    public class Book : Entity, IKeyable<int>
+    public class Book : Entity, IKeyable<int>, IFlowable
     {
         public static readonly Book Empty = new Book();
 
@@ -38,10 +38,10 @@ namespace ChainMart
         internal int id;
 
         internal int shpid; // shop
-        internal int mrtid; // market
+        internal int mktid; // market
         internal int ctrid; // center
         internal int srcid; // source
-        internal int zonid; // provision
+        internal int zonid; // zone
 
         internal int itemid;
         internal short lotid;
@@ -56,12 +56,9 @@ namespace ChainMart
         internal decimal pay;
         internal decimal refund; // pay refunded
 
-        internal string srcop;
-        internal DateTime srcon;
-        internal string ctrop;
-        internal DateTime ctron;
-        internal string shpop;
-        internal DateTime shpon;
+        internal string oker;
+        internal DateTime oked;
+        internal short state;
 
 
         public override void Read(ISource s, short msk = 0xff)
@@ -75,11 +72,10 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
-                s.Get(nameof(mrtid), ref mrtid);
+                s.Get(nameof(mktid), ref mktid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(srcid), ref srcid);
-
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(lotid), ref lotid);
             }
@@ -95,12 +91,9 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(shpop), ref shpop);
-                s.Get(nameof(shpon), ref shpon);
-                s.Get(nameof(ctrop), ref ctrop);
-                s.Get(nameof(ctron), ref ctron);
-                s.Get(nameof(srcop), ref srcop);
-                s.Get(nameof(srcon), ref srcon);
+                s.Get(nameof(oker), ref oker);
+                s.Get(nameof(oked), ref oked);
+                s.Get(nameof(state), ref state);
 
                 s.Get(nameof(cut), ref cut);
                 s.Get(nameof(refund), ref refund);
@@ -118,7 +111,7 @@ namespace ChainMart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
-                s.Put(nameof(mrtid), mrtid);
+                s.Put(nameof(mktid), mktid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(zonid), zonid);
                 s.Put(nameof(srcid), srcid);
@@ -138,12 +131,9 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(shpop), shpop);
-                s.Put(nameof(shpon), shpon);
-                s.Put(nameof(ctrop), ctrop);
-                s.Put(nameof(ctron), ctron);
-                s.Put(nameof(srcop), srcop);
-                s.Put(nameof(srcon), srcon);
+                s.Put(nameof(oker), oker);
+                s.Put(nameof(oked), oked);
+                s.Put(nameof(state), state);
 
                 s.Put(nameof(cut), cut);
                 s.Put(nameof(refund), refund);
@@ -155,5 +145,12 @@ namespace ChainMart
         public bool IsOver(DateTime now) => false;
 
         public short Status => status;
+
+
+        public string Oker => oker;
+
+        public DateTime Oked => oked;
+
+        public short State => state;
     }
 }

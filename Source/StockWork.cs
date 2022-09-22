@@ -31,7 +31,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_NORMAL);
+                h.TOOLBAR(subscript: STU_NORMAL);
 
                 if (arr == null)
                 {
@@ -58,7 +58,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_VOID);
+                h.TOOLBAR(subscript: STU_VOID);
 
                 if (arr == null)
                 {

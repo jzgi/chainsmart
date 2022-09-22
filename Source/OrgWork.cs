@@ -76,7 +76,7 @@ namespace ChainMart
                     typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_ZON,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Entity.STA_NORMAL
+                    status = Entity.STU_NORMAL
                 };
 
                 m.Read(wc.Query, 0);
@@ -186,7 +186,7 @@ namespace ChainMart
                 prtid = prv.id,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Entity.STA_NORMAL
+                status = Entity.STU_NORMAL
             };
             if (wc.IsGet)
             {
@@ -281,7 +281,7 @@ namespace ChainMart
                 typ = Org.TYP_SHP,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Entity.STA_NORMAL,
+                status = Entity.STU_NORMAL,
                 prtid = mrt.id,
                 ctrid = mrt.ctrid,
             };

@@ -90,7 +90,7 @@ namespace ChainMart
             var o = new Reg
             {
                 typ = (short) typ,
-                status = Entity.STA_NORMAL,
+                status = Entity.STU_NORMAL,
                 created = DateTime.Now,
                 creator = prin.name,
             };

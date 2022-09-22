@@ -80,7 +80,7 @@ namespace ChainMart
 
             var m = new Lot
             {
-                status = Entity.STA_VOID,
+                status = Entity.STU_VOID,
                 srcid = org.id,
                 created = now,
                 creator = prin.name,
@@ -147,7 +147,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" AND strict = TRUE ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND NOT ok ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// A product lot for booking.
     /// </summary>
-    public class Lot : Entity, IKeyable<int>
+    public class Lot : Entity, IKeyable<int>, IFlowable
     {
         public static readonly Lot Empty = new Lot();
 
@@ -39,9 +39,9 @@ namespace ChainMart
         internal short max;
         internal short step;
 
-        internal bool ok;
         internal string oker;
         internal DateTime oked;
+        internal short state;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -74,9 +74,9 @@ namespace ChainMart
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
-                s.Get(nameof(ok), ref ok);
                 s.Get(nameof(oker), ref oker);
                 s.Get(nameof(oked), ref oked);
+                s.Get(nameof(state), ref state);
             }
         }
 
@@ -111,14 +111,20 @@ namespace ChainMart
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);
-                s.Put(nameof(ok), ok);
                 s.Put(nameof(oker), oker);
                 s.Put(nameof(oked), oked);
+                s.Put(nameof(state), state);
             }
         }
 
         public int Key => id;
 
         public override string ToString() => name;
+
+        public string Oker => oker;
+
+        public DateTime Oked => oked;
+
+        public short State => state;
     }
 }

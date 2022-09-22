@@ -1,11 +1,12 @@
-﻿﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainMart
 {
     /// <summary>
-    /// An online or offline retail order
+    /// An online retail order.
     /// </summary>
-    public class Buy : Entity, IKeyable<long>
+    public class Buy : Entity, IKeyable<long>, IFlowable
     {
         public static readonly Buy Empty = new Buy();
 
@@ -21,57 +22,85 @@ namespace ChainMart
 
         internal long id;
         internal int shpid;
-        internal int mrtid;
+        internal int mktid;
         internal int uid;
         internal string uname;
         internal string utel;
         internal string uaddr;
         internal string uim;
-        internal BuyLn[] lns;
+        internal BuyLn[] lines;
         internal decimal pay;
-        internal decimal payre; // pay refunded
-        internal short status;
+        internal decimal refund;
 
-        public override void Read(ISource s, short proj = 0xff)
+        internal string oker;
+        internal DateTime oked;
+        internal short state;
+
+        public override void Read(ISource s, short msk = 0xff)
         {
-            if ((proj & MSK_ID) == MSK_ID)
+            base.Read(s, msk);
+
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(shpid), ref shpid);
-            s.Get(nameof(mrtid), ref mrtid);
-            s.Get(nameof(uid), ref uid);
-            s.Get(nameof(uname), ref uname);
-            s.Get(nameof(utel), ref utel);
-            s.Get(nameof(uaddr), ref uaddr);
-            s.Get(nameof(uim), ref uim);
-            s.Get(nameof(lns), ref lns);
-            s.Get(nameof(pay), ref pay);
-            s.Get(nameof(payre), ref payre);
-            s.Get(nameof(status), ref status);
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                s.Get(nameof(shpid), ref shpid);
+                s.Get(nameof(mktid), ref mktid);
+                s.Get(nameof(uid), ref uid);
+                s.Get(nameof(uname), ref uname);
+                s.Get(nameof(utel), ref utel);
+                s.Get(nameof(uaddr), ref uaddr);
+                s.Get(nameof(uim), ref uim);
+                s.Get(nameof(lines), ref lines);
+            }
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                s.Get(nameof(pay), ref pay);
+                s.Get(nameof(refund), ref refund);
+                s.Get(nameof(oker), ref oker);
+                s.Get(nameof(oked), ref oked);
+                s.Get(nameof(state), ref state);
+            }
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 0xff)
         {
-            if ((proj & MSK_ID) == MSK_ID)
+            base.Write(s, msk);
+
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(shpid), shpid);
-            s.Put(nameof(mrtid), mrtid);
-            s.Put(nameof(uid), uid);
-            s.Put(nameof(uname), uname);
-            s.Put(nameof(utel), utel);
-            s.Put(nameof(uaddr), uaddr);
-            s.Put(nameof(uim), uim);
-            s.Put(nameof(lns), lns);
-            s.Put(nameof(pay), pay);
-            s.Put(nameof(payre), payre);
-            s.Put(nameof(status), status);
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                s.Put(nameof(shpid), shpid);
+                s.Put(nameof(mktid), mktid);
+                s.Put(nameof(uid), uid);
+                s.Put(nameof(uname), uname);
+                s.Put(nameof(utel), utel);
+                s.Put(nameof(uaddr), uaddr);
+                s.Put(nameof(uim), uim);
+                s.Put(nameof(lines), lines);
+            }
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                s.Put(nameof(pay), pay);
+                s.Put(nameof(refund), refund);
+                s.Put(nameof(oker), oker);
+                s.Put(nameof(oked), oked);
+                s.Put(nameof(state), state);
+            }
         }
 
         public long Key => id;
 
-        public short Status => status;
+
+        public string Oker => oker;
+
+        public DateTime Oked => oked;
+
+        public short State => state;
     }
 }

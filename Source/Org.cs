@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// An organizational unit.
     /// </summary>
-    public class Org : Entity, IKeyable<int>
+    public class Org : Entity, IKeyable<int>, IFlowable
     {
         public static readonly Org Empty = new Org();
 
@@ -57,10 +57,9 @@ namespace ChainMart
         internal int rvrid; // reviewer id 
         internal bool icon;
 
-        // lifetime control
-        internal DateTime starton;
-        internal DateTime endon;
-        internal bool ok;
+        internal string oker;
+        internal DateTime oked;
+        internal short state;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -94,9 +93,9 @@ namespace ChainMart
                 s.Get(nameof(rvrid), ref rvrid);
                 s.Get(nameof(icon), ref icon);
 
-                s.Get(nameof(starton), ref starton);
-                s.Get(nameof(endon), ref endon);
-                s.Get(nameof(ok), ref ok);
+                s.Get(nameof(oker), ref oker);
+                s.Get(nameof(oked), ref oked);
+                s.Get(nameof(state), ref state);
             }
         }
 
@@ -136,13 +135,12 @@ namespace ChainMart
                 s.Put(nameof(rvrid), rvrid);
                 s.Put(nameof(icon), icon);
 
-                s.Put(nameof(starton), starton);
-                s.Put(nameof(endon), endon);
-                s.Put(nameof(ok), ok);
+                s.Put(nameof(oker), oker);
+                s.Put(nameof(oked), oked);
+                s.Put(nameof(state), state);
             }
         }
 
-        #region Properties
 
         public int Key => id;
 
@@ -178,8 +176,13 @@ namespace ChainMart
 
         public override string ToString() => name;
 
-        #endregion
 
         public override string ToString(short spec) => spec == 1 ? name : tip;
+
+        public string Oker => oker;
+
+        public DateTime Oked => oked;
+
+        public short State => state;
     }
 }
