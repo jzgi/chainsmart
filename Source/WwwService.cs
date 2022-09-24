@@ -18,6 +18,8 @@ namespace ChainMart
 
             CreateWork<PublyTagWork>("tag");
 
+            CreateWork<PublyOrgWork>("org");
+
             CreateWork<PublyItemWork>("item");
 
             CreateWork<MyWork>("my");

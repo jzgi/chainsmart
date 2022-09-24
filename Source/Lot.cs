@@ -26,9 +26,7 @@ namespace ChainMart
         internal int itemid;
         internal int srcid;
         internal int ctrid;
-        internal bool ctrg; // required centering
-        internal DateTime starton;
-        internal DateTime endon;
+        internal bool ctring; // required centering
 
         // individual order relevant
         internal decimal price;
@@ -56,9 +54,7 @@ namespace ChainMart
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(ctrg), ref ctrg);
-                s.Get(nameof(starton), ref starton);
-                s.Get(nameof(endon), ref endon);
+                s.Get(nameof(ctring), ref ctring);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -93,9 +89,7 @@ namespace ChainMart
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(ctrg), ctrg);
-                s.Put(nameof(starton), starton);
-                s.Put(nameof(endon), endon);
+                s.Put(nameof(ctring), ctring);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {

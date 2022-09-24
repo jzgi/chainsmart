@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// The data modal for an standard category.
     /// </summary>
-    public class Cat : Entity, IKeyable<short>, IFolerdable
+    public class Cat : Entity, IKeyable<short>, IFolderable
     {
         public static readonly Cat Empty = new Cat();
 

@@ -148,6 +148,10 @@ namespace ChainMart
             }
         }
 
+        public bool IsAdmly => admly > 0;
+
+        public bool IsOrgly => orgly > 0 && orgid > 0;
+
         public bool IsCertified => !string.IsNullOrEmpty(idcard);
 
         public override string ToString() => name;

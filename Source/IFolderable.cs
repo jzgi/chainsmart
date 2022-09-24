@@ -1,6 +1,6 @@
 ﻿namespace ChainMart
 {
-    public interface IFolerdable
+    public interface IFolderable
     {
         short Index { get; }
 

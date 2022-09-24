@@ -9,7 +9,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("我的购买", icon: "tag")]
+    [Ui("我的消费订单", "账号功能")]
     public class MyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -20,11 +20,19 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0  ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
+
             wc.GivePage(200, h =>
             {
+                if (arr == null)
+                {
+                    h.ALERT("尚无消费订单");
+                    return;
+                }
+
                 h.GRID(arr, o => { h.T(o.name); });
 
                 h.PAGINATION(arr?.Length > 10);

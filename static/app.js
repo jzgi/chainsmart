@@ -233,7 +233,7 @@ function dialog(trig, mode, pick, appear, title) {
         appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
             appear == TALL ? ' uk-modal-high uk-animation-slide-bottom' :
                 appear == SMALL ? ' uk-modal-small' :
-                    appear == LARGE ? ' uk-modal-large uk-animation-fade' :
+                    appear == LARGE ? ' uk-modal-large uk-animation-slide-left' :
                         ' uk-modal-full uk-animation-slide-right';
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
@@ -275,6 +275,9 @@ function dialog(trig, mode, pick, appear, title) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
+    if (mode == PROMPT) {
+        div += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
+    }
     div += '</section></div>';
 
     var e = appendTo(document.body, div);
@@ -355,19 +358,19 @@ function crop(trig, appear, title) {
     var action = trig.href || trig.formAction;
     switch (appear) {
         case SMALL:
-            wid = 90;
-            hei = 90;
+            wid = 120;
+            hei = 120;
             break;
         case LARGE:
             wid = 400;
-            hei = 200;
+            hei = 240;
             break;
         case FULL:
-            wid = 1200;
-            hei = 800;
+            wid = 800;
+            hei = 640;
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-large uk-animation-fade' + trigc + '" uk-modal>';
+    var html = '<div id="dialog" class="uk-modal-large uk-animation-slide-left ' + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     html += '<header class="uk-modal-header">';
 

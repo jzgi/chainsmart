@@ -10,25 +10,7 @@ namespace ChainMart
 {
     public abstract class OrgVarWork : WebWork
     {
-        protected async Task icon(WebContext wc)
-        {
-            int id = wc[0];
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT icon FROM orgs WHERE id = @1");
-                if (await dc.QueryTopAsync(p => p.Set(id)))
-                {
-                    dc.Let(out byte[] bytes);
-                    if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
-                }
-                else
-                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
-            }
-        }
-
-        protected async Task doimg(WebContext wc, string col)
+        protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
         {
             int id = wc[0];
             if (wc.IsGet)
@@ -39,10 +21,10 @@ namespace ChainMart
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
+                    else wc.Give(200, new StaticContent(bytes), shared, maxage);
                 }
                 else
-                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+                    wc.Give(404, null, shared, maxage); // not found
             }
             else // POST
             {
@@ -57,6 +39,18 @@ namespace ChainMart
                 else
                     wc.Give(500); // internal server error
             }
+        }
+    }
+
+    public class PublyOrgVarWork : OrgVarWork
+    {
+        public async Task @default(WebContext wc)
+        {
+        }
+
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), true, 3600);
         }
     }
 
@@ -144,16 +138,10 @@ namespace ChainMart
             }
         }
 
-        [Ui("◑", "机构图标", @group: 7), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon));
-        }
-
-        [Ui("▤", "营业执照", @group: 7), Tool(ButtonCrop, Appear.Large)]
-        public async Task cert(WebContext wc)
-        {
-            await doimg(wc, nameof(cert));
+            await doimg(wc, nameof(icon), false, 3);
         }
     }
 
@@ -161,6 +149,32 @@ namespace ChainMart
     public class MktlyOrgVarWork : OrgVarWork
     {
         public async Task @default(WebContext wc)
+        {
+            int id = wc[0];
+            var topOrgs = Grab<int, Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
+
+            wc.GivePane(200, h =>
+            {
+                h.TITLEBAR(o.name);
+
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("商户名称", o.name)._LI();
+                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name).FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
+                h.LI_().FIELD("信用编号", o.license).FIELD("单位提示", o.regid)._LI();
+                h.LI_().FIELD("只供代理", o.trust).FIELD("状态", o.status, Entity.Statuses)._LI();
+                h._UL();
+
+                h.TOOLBAR(top: false);
+            });
+        }
+
+        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonOpen, Appear.Large)]
+        public async Task edit(WebContext wc)
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
@@ -202,6 +216,12 @@ namespace ChainMart
                 });
                 wc.GivePane(200); // close
             }
+        }
+
+        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), false, 3);
         }
     }
 
@@ -265,6 +285,12 @@ namespace ChainMart
 
                 wc.GivePane(200);
             }
+        }
+
+        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), false, 3);
         }
     }
 }

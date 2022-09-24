@@ -101,48 +101,6 @@ namespace ChainMart
                 wc.GivePane(201);
             }
         }
-
-        [Ui("图标", @group: 1), Tool(ButtonCrop, Appear.Small)]
-        public async Task icon(WebContext wc)
-        {
-            int id = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                ArraySegment<byte> img = f[nameof(img)];
-                using var dc = NewDbContext();
-                if (await dc.ExecuteAsync("UPDATE lots SET icon = @1 WHERE id = @2", p => p.Set(img).Set(id)) > 0)
-                {
-                    wc.Give(200); // ok
-                }
-                else wc.Give(500); // internal server error
-            }
-        }
-
-        [Ui("图片", @group: 1), Tool(ButtonCrop, Appear.Small)]
-        public async Task img(WebContext wc)
-        {
-            int id = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                ArraySegment<byte> img = f[nameof(img)];
-                using var dc = NewDbContext();
-                if (await dc.ExecuteAsync("UPDATE lots SET img = @1 WHERE id = @2", p => p.Set(img).Set(id)) > 0)
-                {
-                    wc.Give(200); // ok
-                }
-                else wc.Give(500); // internal server error
-            }
-        }
-
-        // [Ui("核实"), Tool(Modal.ButtonOpen)]
     }
 
     public class CtrlyBookVarWork : BookVarWork

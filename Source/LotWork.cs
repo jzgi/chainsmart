@@ -76,7 +76,6 @@ namespace ChainMart
             var orgs = Grab<int, Org>();
 
             var now = DateTime.Now;
-            var today = DateTime.Today;
 
             var m = new Lot
             {
@@ -84,8 +83,6 @@ namespace ChainMart
                 srcid = org.id,
                 created = now,
                 creator = prin.name,
-                starton = today,
-                endon = today.AddMonths(1),
                 min = 1, max = 200, step = 1,
             };
 
@@ -102,8 +99,7 @@ namespace ChainMart
 
                     h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
                     h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().CHECKBOX("中控", nameof(m.ctrg), m.ctrg)._LI();
-                    h.LI_().DATE("起始", nameof(m.starton), m.starton).DATE("截至", nameof(m.endon), m.endon)._LI();
+                    h.LI_().CHECKBOX("中控", nameof(m.ctring), m.ctring)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("订货参数");
@@ -147,7 +143,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND NOT ok ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -164,13 +160,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
-        public async Task history(WebContext wc)
+        [Ui(icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" AND strict = TRUE ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

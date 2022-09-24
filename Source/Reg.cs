@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// A geographic or spatial region.
     /// </summary>
-    public class Reg : Entity, IKeyable<short>, IFolerdable
+    public class Reg : Entity, IKeyable<short>, IFolderable
     {
         public static readonly Reg Empty = new Reg();
 

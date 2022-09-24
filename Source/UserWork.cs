@@ -11,6 +11,33 @@ namespace ChainMart
     {
     }
 
+    [Ui("我的操作权限", "账号功能")]
+    public class MyAccessWork : WebWork
+    {
+        public async Task @default(WebContext wc)
+        {
+            int uid = wc[-1];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+            var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                // admly & orgly
+
+                if (o.IsOrgly)
+                {
+                    var org = GrabObject<int, Org>(o.orgid);
+                }
+
+                // spr and rvr
+            }, false, 3);
+        }
+    }
+
     [Ui("人员权限", "系统")]
     public class AdmlyAccessWork : WebWork
     {
@@ -22,6 +49,7 @@ namespace ChainMart
         public void @default(WebContext wc)
         {
             short orgid = wc[-1];
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(orgid));

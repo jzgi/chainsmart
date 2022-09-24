@@ -11,6 +11,14 @@ namespace ChainMart
     {
     }
 
+    public class PublyOrgWork : OrgWork
+    {
+        protected override void OnCreate()
+        {
+            CreateVarWork<PublyOrgVarWork>();
+        }
+    }
+
     [Ui("设置入驻机构", "业务")]
     public class AdmlyOrgWork : OrgWork
     {
@@ -229,46 +237,62 @@ namespace ChainMart
             CreateVarWork<MktlyOrgVarWork>();
         }
 
-        [Ui("在线商户", group: 1), Tool(Anchor)]
+        [Ui("全部商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 ORDER BY id");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id");
+            var arr = await dc.QueryAsync<int, Org>(p => p.Set(mrt.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
+                h.GRIDA(arr, o =>
                 {
-                    h.TDCHECK(o.Key);
-                    h.TD_().ADIALOG_("/mrtly/", o.Key, "/", 8, false, Appear.Full).T(o.name)._A()._TD();
-                    h.TDFORM(() => { });
+                    h.DIV_();
+                    h.T(o.name);
+                    h._DIV();
                 });
             });
         }
 
-        [Ui(icon: "history", group: 2), Tool(Anchor)]
-        public async Task disabled(WebContext wc)
+        [Ui(icon: "search"), Tool(AnchorPrompt, Appear.Small)]
+        public async Task search(WebContext wc)
         {
-            var mrt = wc[-1].As<Org>();
+            var regs = Grab<short, Reg>();
 
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND NOT (@2 BETWEEN starton AND endon AND ok = TRUE) ORDER BY id");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id).Set(DateTime.Today));
-
-            wc.GivePage(200, h =>
+            bool inner = wc.Query[nameof(inner)];
+            short regid = 0;
+            if (inner)
             {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
+                wc.GivePane(200, h =>
                 {
-                    h.TDCHECK(o.Key);
-                    h.TD_().ADIALOG_("/mrtly/", o.Key, "/", 8, false, Appear.Full).T(o.name)._A()._TD();
-                    h.TDFORM(() => { });
+                    h.FORM_();
+                    h.RADIOSET<short, Reg>(nameof(regid), regid, regs, filter: v => v.IsSection);
+                    h._FORM();
                 });
-            });
+            }
+            else // OUTER
+            {
+                regid = wc.Query[nameof(regid)];
+
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE regid = @1");
+                var map = await dc.QueryAsync<int, Org>(p => p.Set(regid));
+
+                wc.GivePage(200, h =>
+                {
+                    h.TOOLBAR();
+                    h.GRIDA(map, o =>
+                    {
+                        h.DIV_();
+                        h.T(o.name);
+                        h._DIV();
+                    });
+                }, false, 3);
+            }
         }
 
         [Ui("新建", icon: "plus", group: 2), Tool(ButtonOpen)]

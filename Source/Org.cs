@@ -172,10 +172,7 @@ namespace ChainMart
 
         public string ShopName => IsMarket ? tip : name;
 
-        public string ShopLabel => IsMarket ? "体验" : addr;
-
         public override string ToString() => name;
-
 
         public override string ToString(short spec) => spec == 1 ? name : tip;
 

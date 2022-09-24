@@ -14,6 +14,10 @@ namespace ChainMart
         protected override void OnCreate()
         {
             CreateWork<MyBuyWork>("buy");
+
+            CreateWork<MyAccessWork>("role");
+
+            CreateWork<MyCreditWork>("credit");
         }
 
         [UserAuthorize]
@@ -29,7 +33,7 @@ namespace ChainMart
                 }
                 else
                 {
-                    h.PIC("/user.png", circle: true, css: "uk-width-small");
+                    h.PIC("/my.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.SPAN(prin.name);
