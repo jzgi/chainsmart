@@ -10,7 +10,7 @@ namespace ChainMart
 {
     public abstract class ItemVarWork : WebWork
     {
-        protected async Task doimg(WebContext wc, string col)
+        protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
         {
             int id = wc[0];
             if (wc.IsGet)
@@ -21,10 +21,10 @@ namespace ChainMart
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared: false, 60);
+                    else wc.Give(200, new StaticContent(bytes), shared, 60);
                 }
                 else
-                    wc.Give(404, shared: true, maxage: 3600 * 24); // not found
+                    wc.Give(404, null, shared, maxage); // not found
             }
             else // POST
             {
@@ -45,7 +45,7 @@ namespace ChainMart
     {
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon));
+            await doimg(wc, nameof(icon), true, 3600 * 6);
         }
     }
 
@@ -56,8 +56,8 @@ namespace ChainMart
             int itemid = wc[0];
             var src = wc[-2].As<Org>();
             var cats = Grab<short, Cat>();
-            using var dc = NewDbContext();
 
+            using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
             var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
 
@@ -128,13 +128,19 @@ namespace ChainMart
         [Ui("图标"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon));
+            await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("照片"), Tool(ButtonCrop, Appear.Large)]
+        [Ui("照片"), Tool(ButtonCrop, Appear.Half)]
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic));
+            await doimg(wc, nameof(pic), false, 3);
+        }
+
+        [Ui("材料"), Tool(ButtonCrop, Appear.Large, subs: 4)]
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, "m" + sub, false, 3);
         }
 
         [Ui("删除", icon: "trash"), Tool(ButtonOpen)]

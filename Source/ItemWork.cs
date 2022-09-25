@@ -43,8 +43,10 @@ namespace ChainMart
 
                 if (map == null)
                 {
+                    h.ALERT("尚无产品");
                     return;
                 }
+                
                 h.GRIDA(map, o =>
                 {
                     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();

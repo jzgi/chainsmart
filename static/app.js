@@ -222,9 +222,9 @@ const
     PROMPT = 2,
     OPEN = 4;
 const
-    HALF = 1,
-    TALL = 2,
-    SMALL = 3,
+    SMALL = 1,
+    HALF = 2,
+    TALL = 3,
     LARGE = 4,
     FULL = 5;
 
@@ -349,7 +349,7 @@ function ok(okbtn, mode, formid, tag, action, method) {
 }
 
 
-function crop(trig, appear, title) {
+function crop(trig, appear, title, subs) {
     var wid,
         hei,
         sizg;
@@ -361,11 +361,11 @@ function crop(trig, appear, title) {
             wid = 120;
             hei = 120;
             break;
-        case LARGE:
+        case HALF:
             wid = 400;
             hei = 240;
             break;
-        case FULL:
+        case LARGE:
             wid = 800;
             hei = 640;
             break;
@@ -375,9 +375,17 @@ function crop(trig, appear, title) {
     html += '<header class="uk-modal-header">';
 
     html += '<div class="uk-button-group">';
-    html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
+    if (subs > 0) {
+        html += '<select id="imgsub" class="uk-select uk-width-auto" style="position: absolute; left: 4px" onchange="bind($(\'#imgbnd\'),\'' + action + '-\' + this.value,' + wid + ',' + hei + ');">';
+        for (var i = 1; i <= subs; i++) {
+            html += '<option value="' + i + '">' + title + ' ' + i + '</option>';
+        }
+        html += '</select>';
+    } else {
+        html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
+    }
     html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
-    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'), \'' + action + '\', true);">确定</button>';
+    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action +  '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">确定</button>';
     html += '</div>'; // control group
 
     html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
@@ -390,7 +398,7 @@ function crop(trig, appear, title) {
 
     var e = appendTo(document.body, html);
     UIkit.modal(e).show();
-    bind($('#imgbnd'), action, wid, hei);
+    bind($('#imgbnd'), subs == 0 ? action : action + '-1' , wid, hei);
     e.addEventListener('hidden', function () {
         var dlg = $('#dialog');
         if (dlg) {
@@ -422,7 +430,7 @@ function bind(el, url, wid, hei) {
     croppie.setZoom(1);
 }
 
-function upload(el, url) {
+function upload(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
@@ -439,7 +447,7 @@ function upload(el, url) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, false);
         xhr.onload = function (e) {
-            if (xhr.status == 200) {
+            if (xhr.status == 200 && close) {
                 var div = ancestorOf(el, 'uk-modal');
                 UIkit.modal(div).hide();
             }
