@@ -24,43 +24,47 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 0 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state = 0 ORDER BY id");
+            var map = await dc.QueryAsync<int, Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
-                h.TABLE(arr, o =>
+                if (map == null) return;
+                h.GRIDA(map, o =>
                 {
-                    // h.TD(items[o.itemid].name);
-                    h.TD(o.ctrid);
-                    h.TDFORM(() => { });
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.SECTION_("uk-width-4-5");
+                    h.T(o.name);
+                    h._SECTION();
                 });
             });
         }
 
-        [Ui("历史进货", icon: "history", group: 2), Tool(Anchor)]
+        [Ui(icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status >= 1 ORDER BY id");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state >= 1 ORDER BY id");
+            var map = await dc.QueryAsync<int, Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
+                if (map == null) return;
+                h.GRIDA(map, o =>
                 {
-                    // h.TD(items[o.itemid].name);
-                    h.TD(o.ctrid);
-                    h.TDFORM(() => { });
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.SECTION_("uk-width-4-5");
+                    h.T(o.name);
+                    h._SECTION();
                 });
             });
         }
 
-        [Ui("新增", "新增进货", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新增进货", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();
@@ -88,16 +92,13 @@ namespace ChainMart
                     return;
                 }
 
-                h.GRIDA(map,
-                    o =>
-                    {
-                        h.DIV_("uk-card-body");
-                        h.PIC_()._PIC();
-                        h.T(o.name);
-                        h._DIV();
-                    },
-                    min: 2,
-                    appear: Appear.Large);
+                h.GRIDA(map, o =>
+                {
+                    h.DIV_("uk-card-body");
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.T(o.name);
+                    h._DIV();
+                }, min: 2, appear: Appear.Large);
             }, title: ctr.tip);
         }
     }

@@ -95,7 +95,7 @@ namespace ChainMart
         [Ui("删除", icon: "trash"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
-            int id = wc[0];
+            int lotid = wc[0];
             var org = wc[-2].As<Org>();
 
             if (wc.IsGet)
@@ -110,7 +110,7 @@ namespace ChainMart
             {
                 using var dc = NewDbContext();
                 dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+                await dc.ExecuteAsync(p => p.Set(lotid).Set(org.id));
 
                 wc.GivePane(200);
             }
@@ -119,7 +119,36 @@ namespace ChainMart
 
     public class CtrlyLotVarWork : LotVarWork
     {
-        [Ui("验证", icon: "check"), Tool(ButtonOpen)]
+        [Ui("贴标", "贴标", icon: "bookmark"), Tool(ButtonOpen, Appear.Large)]
+        public async Task label(WebContext wc)
+        {
+            int lotid = wc[0];
+            var ctr = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
+            var m = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
+
+            var src = GrabObject<int, Org>(m.srcid);
+
+            wc.GivePane(200, h =>
+            {
+                int count = m.remain;
+                h.UL_(grid: true, css: "uk-child-width-1-2@s");
+                for (int i = 0; i < count; i++)
+                {
+                    h.LI_();
+                    h.DIV_("uk-card uk-card-default uk-flex");
+                    h.QRCODE(ChainMartApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i+1)._DIV();
+                    h._DIV();
+                    h._LI();
+                }
+                h._UL();
+            });
+        }
+
+        [Ui("验证", icon: "check"), Tool(ButtonOpen, Appear.Large)]
         public async Task ok(WebContext wc)
         {
         }

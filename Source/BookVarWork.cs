@@ -25,10 +25,15 @@ namespace ChainMart
 
             wc.GivePane(200, h =>
             {
-                h.PIC_()._PIC();
+                h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(m.id).T("/pic")._PIC();
                 h.DIV_("uk-card uk-card-default");
 
                 h._DIV();
+
+                h.BOTTOMBAR_();
+
+                h.BUTTON("付款", css: "uk-button-wanring");
+                h._BOTTOMBAR();
             });
         }
     }

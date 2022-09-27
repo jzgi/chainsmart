@@ -185,7 +185,11 @@ create table items
     unitstd varchar(4),
     unitx smallint,
     icon bytea,
-    pic bytea
+    pic bytea,
+    m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea
 )
     inherits (entities);
 
@@ -197,7 +201,7 @@ create table books
         constraint books_pk
             primary key,
     shpid integer not null,
-    mrtid integer not null,
+    mktid integer not null,
     ctrid integer not null,
     srcid integer not null,
     zonid integer not null,
@@ -212,12 +216,9 @@ create table books
     cut integer,
     pay money,
     refund money,
-    srcop varchar(12),
-    srcon timestamp(0),
-    ctrop varchar(12),
-    ctron timestamp(0),
-    shpop varchar(12),
-    shpon timestamp(0)
+    oker varchar(12),
+    oked timestamp(0),
+    state smallint
 )
     inherits (entities);
 
@@ -253,16 +254,6 @@ create table orgs
 
 alter table orgs owner to postgres;
 
-create table itemmxs
-(
-    id serial not null,
-    itemid integer,
-    idx smallint,
-    img bytea
-);
-
-alter table itemmxs owner to postgres;
-
 create table stocks
 (
     id serial not null
@@ -291,7 +282,7 @@ create table buys
         constraint buys_pk
             primary key,
     shpid integer not null,
-    mrtid integer not null,
+    mktid integer not null,
     uid integer not null,
     uname varchar(10),
     utel varchar(11),
@@ -299,7 +290,10 @@ create table buys
     uim varchar(28),
     lines buyln_type[],
     pay money,
-    refund money
+    refund money,
+    oker varchar(12),
+    oked timestamp(0),
+    state smallint
 )
     inherits (entities);
 
@@ -317,9 +311,7 @@ create table lots
     ctrid integer
         constraint lots_ctrid_fk
             references orgs,
-    ctrg boolean,
-    starton date,
-    endon date,
+    ctring boolean,
     price money,
     "off" money,
     cap integer,
@@ -327,9 +319,9 @@ create table lots
     min integer,
     max integer,
     step integer,
-    ok boolean,
     oker varchar(12),
     oked timestamp(0),
+    state smallint,
     constraint lots_typ_fk
         foreign key (typ) references cats
 )
