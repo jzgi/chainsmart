@@ -385,7 +385,7 @@ function crop(trig, appear, title, subs) {
         html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
     html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
-    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action +  '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">确定</button>';
+    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">确定</button>';
     html += '</div>'; // control group
 
     html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
@@ -398,7 +398,7 @@ function crop(trig, appear, title, subs) {
 
     var e = appendTo(document.body, html);
     UIkit.modal(e).show();
-    bind($('#imgbnd'), subs == 0 ? action : action + '-1' , wid, hei);
+    bind($('#imgbnd'), subs == 0 ? action : action + '-1', wid, hei);
     e.addEventListener('hidden', function () {
         var dlg = $('#dialog');
         if (dlg) {
@@ -434,9 +434,7 @@ function upload(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob',
-            size: 'viewport',
-            format: 'webp'
+            type: 'blob', size: 'viewport', format: 'webp', quality: 0.875
         }
     ).then(function (blob) {
 

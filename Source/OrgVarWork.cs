@@ -169,7 +169,7 @@ namespace ChainMart
                 h.LI_().FIELD("只供代理", o.trust).FIELD("状态", o.status, Entity.Statuses)._LI();
                 h._UL();
 
-                h.TOOLBAR(top: false);
+                h.TOOLBAR(bottom: true);
             });
         }
 

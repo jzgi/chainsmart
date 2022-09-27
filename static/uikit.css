@@ -1235,7 +1235,7 @@ form legend {
     padding: 4px;
     color: #333;
     border: 0;
-    background-color: #fff;
+    background-color: rgb(245 150 4 / 10%);
     font-size: inherit;
     transition: 0.2s ease-in-out;
     transition-property: color, background-color, border;
@@ -1642,33 +1642,30 @@ select.uk-form-width-xsmall {
 }
 
 .uk-button-default {
-    padding: 4px 16px;
+    padding: 6px 16px;
     margin: 4px;
-    border: 1px solid #666;
 }
 
 button.uk-button-default {
-    background-color: #f8f8f8;
-    color: #333;
+    background-color: #666;
+    color: #fff;
+    border-radius: 12px;
+    border: 0;
 }
 
 /* Hover + Focus */
 .uk-button-default:hover,
-.uk-button-default:focus {
-    background-color: #ededed;
-}
-
-/* OnClick + Active */
+.uk-button-default:focus,
 .uk-button-default:active,
 .uk-button-default.uk-active {
-    color: #f59604;
+    background-color: #555;
 }
 
 button.uk-button-primary {
     color: #000;
     padding: 6px;
     margin: 6px;
-    border: 0;
+    border: 1px solid transparent;
 }
 
 .uk-top-bar button.uk-button-primary:first-of-type {
@@ -1680,8 +1677,9 @@ button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    background-color: #fff;
+    background-color: #f8f8f8;
     color: #f59604;
+    border: 1px solid #f59604;
 }
 
 a.uk-button-primary {
@@ -1781,8 +1779,11 @@ button.uk-button-secondary {
 }
 
 .uk-button-large {
-    padding: 8px 32px;
-    font-size: 1rem;
+    padding: 6px 32px;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    background-color: #f59604;
 }
 
 .uk-button-text {

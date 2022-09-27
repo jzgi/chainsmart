@@ -73,7 +73,7 @@ namespace ChainMart
 
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE orgid = @1 AND status > 0 ORDER BY status DESC");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0 ORDER BY status DESC");
                     return dc.Query<int, Item>(p => p.Set(orgid));
                 }, 60 * 15
             );

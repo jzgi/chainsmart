@@ -12,14 +12,14 @@ namespace ChainMart
 
         public const short
             STA_CREATED = 0,
-            STA_OFF = 1,
-            STA_PUBLISHED = 3;
+            STA_SUBMITTED = 1,
+            STU_OKED = 3;
 
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_CREATED, "新创建"},
-            {STA_OFF, "已下线"},
-            {STA_PUBLISHED, "已发布"},
+            {STA_SUBMITTED, "已提交"},
+            {STU_OKED, "已验证"},
         };
 
         internal int id;

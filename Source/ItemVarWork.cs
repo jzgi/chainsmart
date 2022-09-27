@@ -47,6 +47,16 @@ namespace ChainMart
         {
             await doimg(wc, nameof(icon), true, 3600 * 6);
         }
+
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), true, 3600 * 6);
+        }
+
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, nameof(m) + sub, true, 3600 * 6);
+        }
     }
 
     public class SrclyItemVarWork : ItemVarWork
@@ -73,7 +83,7 @@ namespace ChainMart
                 h.LI_().FIELD("只供代理", o.agt).FIELD("状态", o.status, Statuses)._LI();
                 h._UL();
 
-                h.TOOLBAR(top: false);
+                h.TOOLBAR(bottom: true);
             });
         }
 
@@ -125,19 +135,19 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "happy"), Tool(ButtonCrop, Appear.Small)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("照片"), Tool(ButtonCrop, Appear.Half)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, Appear.Half)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [Ui("材料"), Tool(ButtonCrop, Appear.Large, subs: 4)]
+        [Ui("多图", icon: "album"), Tool(ButtonCrop, Appear.Large, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);

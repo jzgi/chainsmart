@@ -174,8 +174,6 @@ namespace ChainMart
 
         public override string ToString() => name;
 
-        public override string ToString(short spec) => spec == 1 ? name : tip;
-
         public string Oker => oker;
 
         public DateTime Oked => oked;

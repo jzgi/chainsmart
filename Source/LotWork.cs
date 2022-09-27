@@ -26,32 +26,30 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 1 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status >= 1 ORDER BY status DESC, id DESC");
+            var map = await dc.QueryAsync<int, Lot>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
-                if (arr == null) return;
-
-                h.GRID(arr, o =>
+                if (map == null) return;
+                h.GRIDA(map, o =>
                 {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
                     h.SECTION_("uk-card-body");
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.T(o.name);
                     h._SECTION();
-                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
                 });
             });
         }
 
-        [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
-        public async Task history(WebContext wc)
+        [Ui(icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND typ = 1 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status <= 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -68,12 +66,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", "新建批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建批次", icon: "plus", group: 3), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var orgs = Grab<int, Org>();
+            var toporgs = Grab<int, Org>();
+            var items = GrabMap<int, int, Item>(org.id);
 
             var now = DateTime.Now;
 
@@ -81,6 +80,7 @@ namespace ChainMart
             {
                 status = Entity.STU_VOID,
                 srcid = org.id,
+                ctring = true,
                 created = now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -89,43 +89,45 @@ namespace ChainMart
             if (wc.IsGet)
             {
                 // selection of products
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0");
-                var products = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
+                // using var dc = NewDbContext();
+                // dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0");
+                // var items = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("填写不可更改");
+                    h.FORM_().FIELDSUL_("基本资料");
 
-                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, products, required: true)._LI();
-                    h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().CHECKBOX("中控", nameof(m.ctring), m.ctring)._LI();
+                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, items, required: true)._LI();
+                    h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
+                    h.LI_().CHECKBOX("物流经中控", nameof(m.ctring), m.ctring, check: m.ctring)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
-                    h._FIELDSUL().FIELDSUL_("订货参数");
+                    h._FIELDSUL().FIELDSUL_("销货参数");
                     h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(m.min), m.min).NUMBER("限订量", nameof(m.max), m.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(m.step), m.step)._LI();
                     h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
 
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL();
+
+                    h.BOTTOM_BUTTON("确认", nameof(@new));
+
+                    h._FORM();
                 });
             }
             else // POST
             {
                 // populate 
-                const short msk = Entity.MSK_BORN;
+                const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
                 await wc.ReadObjectAsync(msk, instance: m);
+
+                var item = items[m.itemid];
+                m.name = item.name;
+                m.typ = item.typ;
 
                 // db insert
                 using var dc = NewDbContext();
-
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM products WHERE id = @1");
-                var product = await dc.QueryTopAsync<Item>(p => p.Set(m.itemid));
-                m.name = product.name;
-                m.tip = product.name;
-
-                dc.Sql("INSERT INTO distribs ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
+                dc.Sql("INSERT INTO lots ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
@@ -137,6 +139,11 @@ namespace ChainMart
     [Ui("验证产品批次", "中控")]
     public class CtrlyLotWork : LotWork
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<CtrlyLotVarWork>();
+        }
+
         [Ui("待验批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -144,18 +151,18 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
+            var map = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (arr == null) return;
-                h.GRID(arr, o =>
+                if (map == null) return;
+                h.GRIDA(map, o =>
                 {
-                    h.HEADER_("uk-card-header").T(o.name)._HEADER();
                     h.SECTION_("uk-card-body");
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.T(o.name);
                     h._SECTION();
-                    // h.FOOTER_("uk-card-footer").TOOLSVAR(o.Key)._FOOTER();
                 });
             });
         }
@@ -166,7 +173,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STA_PUBLISHED).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STU_OKED).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

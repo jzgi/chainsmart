@@ -30,7 +30,7 @@ namespace ChainMart
                     h.LI_().SELECT("状态", nameof(o.status), o.status, Entity.Statuses)._LI();
                     h._FIELDSUL()._FORM();
 
-                    h.TOOLBAR(top: false);
+                    h.TOOLBAR(bottom: true);
                 });
             }
             else
