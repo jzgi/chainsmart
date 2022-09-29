@@ -46,7 +46,7 @@ namespace ChainMart
                     h.ALERT("尚无产品");
                     return;
                 }
-                
+
                 h.GRIDA(map, o =>
                 {
                     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
@@ -105,7 +105,8 @@ namespace ChainMart
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("单位提示", nameof(o.unitstd), o.unitstd)._LI();
+                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
+                    h.LI_().TEXT("包装单位", nameof(o.unitpkg), o.unitpkg).TEXT("包装含量", nameof(o.unitx), o.unitx, tip: "多个值则用空格分开", required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STU_VOID, required: true)._LI();
 
                     h._FIELDSUL()._FORM();

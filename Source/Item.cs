@@ -30,8 +30,8 @@ namespace ChainMart
         internal short duration;
         internal bool agt; // agent only 
         internal string unit;
-        internal string unitstd;
-        internal short unitx;
+        internal string unitpkg;
+        internal short[] unitx;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -52,7 +52,7 @@ namespace ChainMart
                 s.Get(nameof(duration), ref duration);
                 s.Get(nameof(agt), ref agt);
                 s.Get(nameof(unit), ref unit);
-                s.Get(nameof(unitstd), ref unitstd);
+                s.Get(nameof(unitpkg), ref unitpkg);
                 s.Get(nameof(unitx), ref unitx);
             }
         }
@@ -76,7 +76,7 @@ namespace ChainMart
                 s.Put(nameof(duration), duration);
                 s.Put(nameof(agt), agt);
                 s.Put(nameof(unit), unit);
-                s.Put(nameof(unitstd), unitstd);
+                s.Put(nameof(unitpkg), unitpkg);
                 s.Put(nameof(unitx), unitx);
             }
         }

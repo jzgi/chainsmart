@@ -21,20 +21,46 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
-            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
+            var items = GrabMap<int, int, Item>(lot.srcid);
+            var item = items[lot.itemid];
+
+            short qty;
+            short unitx;
             wc.GivePane(200, h =>
             {
-                h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(m.id).T("/pic")._PIC();
+                h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(lot.id).T("/pic")._PIC();
                 h.DIV_("uk-card uk-card-default");
 
                 h._DIV();
 
                 h.BOTTOMBAR_();
 
-                h.BUTTON("付款", css: "uk-button-wanring");
+                // unitx selection 
+                h.SELECT_(null, nameof(unitx));
+                for (int i = 0; i < item.unitx?.Length; i++)
+                {
+                    h.OPTION_(i).T("每").T(item.unitpkg).SP().T(item.unitx[i]).SP().T(item.unit)._OPTION();
+                }
+                h._SELECT();
+
+                // qty selection
+                h.SELECT_(null, nameof(qty));
+                for (int i = lot.min; i < lot.max; i += lot.step)
+                {
+                    h.OPTION_(i).T(i).SP().T(item.unitpkg)._OPTION();
+                }
+                h._SELECT();
+
+                h.BUTTON_(nameof(place), css: "uk-button-danger uk-width-medium").T("付款").OUTPUT_CNY("付款", "", 0)._BUTTON();
+
                 h._BOTTOMBAR();
             });
+        }
+
+        public async Task place(WebContext wc)
+        {
         }
     }
 

@@ -31,7 +31,8 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().SUBNAV(regs, string.Empty, sec, filter: (k, v) => v.IsSection)._TOPBAR();
+                h.NAVBAR(regs, string.Empty, sec, filter: (k, v) => v.IsSection);
+                
                 h.GRIDA(map, o =>
                 {
                     h.DIV_("uk-card-body");
@@ -103,7 +104,7 @@ namespace ChainMart
                     return;
                 }
 
-                h.SUBNAV(cats, "", 0);
+                h.NAVBAR(cats, "", 0);
 
                 h.TABLE_();
                 var last = 0;

@@ -85,7 +85,7 @@ namespace ChainMart
                 }
                 else
                 {
-                    h.PIC("/org.webp", circle: true, css: "uk-width-small");
+                    h.PIC("/zon.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.H2(org.name);
@@ -144,11 +144,11 @@ namespace ChainMart
                 h.TOPBARXL_();
                 if (prin.icon)
                 {
-                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                    h.PIC("/org/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
                 }
                 else
                 {
-                    h.PIC("/mrt.png", circle: true, css: "uk-width-small");
+                    h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
                 }
 
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
