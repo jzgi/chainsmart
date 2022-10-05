@@ -81,7 +81,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("删除", icon: "close"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("删除", icon: "close"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
             short id = wc[0];

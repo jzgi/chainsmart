@@ -99,7 +99,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("웃", "设置管理员", @group: 7), Tool(ButtonOpen, Appear.Small)]
+        [Ui("웃", "设置管理员", @group: 7), Tool(ButtonOpen)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -138,7 +138,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
@@ -173,7 +173,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonOpen, Appear.Large)]
+        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonOpen)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -218,10 +218,15 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
+        }
+
+        [Ui("事件", icon: "table"), Tool(ButtonOpen)]
+        public async Task log(WebContext wc)
+        {
         }
     }
 
@@ -264,7 +269,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("✕", "删除"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("✕", "删除"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];
@@ -287,7 +292,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);

@@ -18,8 +18,6 @@ namespace ChainMart
 
             CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<AdmlyEventWork>("evt");
-
             CreateWork<AdmlyPrvRptWork>("prpt");
 
             CreateWork<AdmlyBuyRptWork>("brpt");

@@ -3,7 +3,6 @@ using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Web.Appear;
 using static ChainFx.Web.Modal;
 using static ChainMart.WeChatUtility;
 using static ChainFx.Application;
@@ -99,7 +98,7 @@ namespace ChainMart
 
     public class ShplyBuyVarWork : BuyVarWork
     {
-        [Ui("☰", "☰ 明细"), Tool(ButtonOpen, Half)]
+        [Ui("☰", "☰ 明细"), Tool(ButtonOpen)]
         public async Task dtl(WebContext wc)
         {
             short orgid = wc[-2];
@@ -114,7 +113,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⥻", "⥻ 退款"), Tool(ButtonOpen, Small)]
+        [Ui("⥻", "⥻ 退款"), Tool(ButtonOpen)]
         public async Task refund(WebContext wc)
         {
             short orgid = wc[-2];

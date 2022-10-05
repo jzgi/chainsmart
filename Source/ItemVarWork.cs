@@ -88,7 +88,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen, Appear.Large)]
+        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen)]
         public async Task edit(WebContext wc)
         {
             int itemid = wc[0];
@@ -136,19 +136,19 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "happy"), Tool(ButtonCrop, Appear.Small)]
+        [Ui("图标", icon: "happy"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, Appear.Half)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [Ui("多图", icon: "album"), Tool(ButtonCrop, Appear.Large, subs: 4)]
+        [Ui("多图", icon: "album"), Tool(ButtonCrop, siz: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);

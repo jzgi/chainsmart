@@ -51,7 +51,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [Ui("浏览结算历史", group: 2), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("浏览结算历史", group: 2), Tool(AnchorPrompt)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();
@@ -101,7 +101,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(admly: 1)]
-        [Ui("结算零售代收款项", group: 1), Tool(ButtonOpen, Appear.Small)]
+        [Ui("结算零售代收款项", group: 1), Tool(ButtonOpen)]
         public async Task calcrtl(WebContext wc)
         {
             if (wc.IsGet)
@@ -183,7 +183,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [Ui("历史", "浏览结算历史", @group: 2), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("历史", "浏览结算历史", @group: 2), Tool(AnchorPrompt)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();
@@ -233,7 +233,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(admly: 1)]
-        [Ui("结算代收款项", group: 1), Tool(ButtonOpen, Appear.Small)]
+        [Ui("结算代收款项", group: 1), Tool(ButtonOpen)]
         public async Task calcrtl(WebContext wc)
         {
             if (wc.IsGet)

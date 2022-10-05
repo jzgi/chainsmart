@@ -258,7 +258,7 @@ namespace ChainMart
             });
         }
 
-        [Ui(icon: "search"), Tool(AnchorPrompt, Appear.Small)]
+        [Ui(icon: "search"), Tool(AnchorPrompt)]
         public async Task search(WebContext wc)
         {
             var regs = Grab<short, Reg>();

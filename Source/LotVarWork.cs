@@ -37,7 +37,7 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen, Appear.Large)]
+        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
@@ -119,7 +119,7 @@ namespace ChainMart
 
     public class CtrlyLotVarWork : LotVarWork
     {
-        [Ui("贴标", "贴标", icon: "bookmark"), Tool(ButtonOpen, Appear.Large)]
+        [Ui("贴标", "贴标", icon: "bookmark"), Tool(ButtonOpen)]
         public async Task label(WebContext wc)
         {
             int lotid = wc[0];
@@ -140,7 +140,7 @@ namespace ChainMart
                     h.LI_();
                     h.DIV_("uk-card uk-card-default uk-flex");
                     h.QRCODE(ChainMartApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
-                    h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i+1)._DIV();
+                    h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i + 1)._DIV();
                     h._DIV();
                     h._LI();
                 }
@@ -148,7 +148,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("验证", icon: "check"), Tool(ButtonOpen, Appear.Large)]
+        [Ui("验证", icon: "check"), Tool(ButtonOpen)]
         public async Task ok(WebContext wc)
         {
         }

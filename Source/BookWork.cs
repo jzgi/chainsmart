@@ -98,7 +98,7 @@ namespace ChainMart
                     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.T(o.name);
                     h._DIV();
-                }, min: 2, appear: Appear.Large);
+                }, min: 2);
             }, title: ctr.tip);
         }
     }

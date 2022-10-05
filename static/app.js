@@ -218,23 +218,14 @@ function appendTo(parent, html) {
 
 // mode
 const
-    CONFIRM = 1,
-    PROMPT = 2,
-    OPEN = 4;
-const
-    SMALL = 1,
-    HALF = 2,
-    TALL = 3,
-    LARGE = 4,
-    FULL = 5;
+    CONFIRM = 1, PROMPT = 2, OPEN = 4, TELL = 8, ASTACK = 16, CROP = 32, SCRIPT = 64;
 
-function dialog(trig, mode, pick, appear, title) {
+function dialog(trig, mode, pick, title) {
     var stylec =
-        appear == HALF ? ' uk-modal-half uk-animation-slide-bottom' :
-            appear == TALL ? ' uk-modal-high uk-animation-slide-bottom' :
-                appear == SMALL ? ' uk-modal-small' :
-                    appear == LARGE ? ' uk-modal-large uk-animation-slide-left' :
-                        ' uk-modal-full uk-animation-slide-right';
+        mode == PROMPT ? ' uk-modal-small' :
+            mode == OPEN || mode == CROP ? ' uk-modal-large' :
+                mode == TELL ? ' uk-modal-tall uk-animation-slide-bottom' :
+                    mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
     var tag = trig.tagName;
@@ -260,7 +251,7 @@ function dialog(trig, mode, pick, appear, title) {
     } else if (tag == 'A') {
         src = action = trig.href;
         method = 'get';
-        if (mode == OPEN && appear == FULL) {
+        if (mode == ASTACK) {
             src += src.indexOf('?') == -1 ? '?astack=true' : '&astack=true';
         }
         src += src.indexOf('?') == -1 ? '?inner=true' : '&inner=true';
@@ -271,7 +262,7 @@ function dialog(trig, mode, pick, appear, title) {
 
     var div = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
-    if (appear == LARGE || appear == SMALL) {
+    if (mode == PROMPT || mode == OPEN || mode == CROP) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
@@ -349,28 +340,24 @@ function ok(okbtn, mode, formid, tag, action, method) {
 }
 
 
-function crop(trig, appear, title, subs) {
+function crop(trig, siz, title, subs) {
     var wid,
         hei,
         sizg;
     var trigc = trig.tagName == 'BUTTON' ? 'button-trig' : 'anchor-trig';
-    title = title || trig.innerHTML;
     var action = trig.href || trig.formAction;
-    switch (appear) {
-        case SMALL:
-            wid = 120;
-            hei = 120;
+    switch (siz) {
+        case 1:
+            wid = 120; hei = 120;
             break;
-        case HALF:
-            wid = 400;
-            hei = 240;
+        case 2:
+            wid = 400; hei = 240;
             break;
-        case LARGE:
-            wid = 800;
-            hei = 640;
+        case 3:
+            wid = 800; hei = 640;
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-large uk-animation-slide-left ' + trigc + '" uk-modal>';
+    var html = '<div id="dialog" class="uk-modal-full uk-animation-slide-left ' + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     html += '<header class="uk-modal-header">';
 

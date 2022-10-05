@@ -118,11 +118,11 @@ namespace ChainMart
             CreateWork<MktlyBuyWork>("mbuy");
 
 
-            CreateWork<ShplyBookWork>("sbook");
+            CreateWork<ShplyStockWork>("sstock");
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyStockWork>("sware");
+            CreateWork<ShplyBookWork>("sbook");
 
 
             CreateWork<OrglyClearWork>("clear");

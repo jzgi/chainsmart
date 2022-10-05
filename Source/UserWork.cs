@@ -19,7 +19,7 @@ namespace ChainMart
             int uid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE id = @1");
             var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
             wc.GivePage(200, h =>
@@ -51,7 +51,7 @@ namespace ChainMart
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
+            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
             var arr = dc.Query<User>(p => p.Set(orgid));
 
             wc.GivePage(200, h =>
@@ -68,7 +68,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -148,7 +148,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("查询"), Tool(AnchorPrompt, Appear.Small)]
+        [Ui("查询"), Tool(AnchorPrompt)]
         public void search(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
@@ -220,7 +220,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", icon: "plus"), Tool(ButtonOpen, Appear.Small)]
+        [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
