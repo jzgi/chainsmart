@@ -148,7 +148,7 @@ namespace ChainMart
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [Ui("多图", icon: "album"), Tool(ButtonCrop, siz: 3, subs: 4)]
+        [Ui("多图", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);

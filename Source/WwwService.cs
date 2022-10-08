@@ -34,7 +34,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();
 
-            wc.GivePane(200, h =>
+            wc.GivePage(200, h =>
             {
                 h.FORM_();
 

@@ -64,7 +64,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", "新增进货", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "选择批次下单进货", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();

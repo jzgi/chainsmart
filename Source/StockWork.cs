@@ -121,7 +121,7 @@ namespace ChainMart
         }
 
         [Ui("引入", "从平台引入货品", icon: "reply", group: 7), Tool(ButtonOpen)]
-        public async Task @ref(WebContext wc, int state)
+        public async Task use(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
 

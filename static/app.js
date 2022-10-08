@@ -213,18 +213,37 @@ function appendTo(parent, html) {
     return parent.appendChild(e.firstChild)
 }
 
+// indicator of updates
+var stale;
+
+function closeUp(reload) {
+    // set flags on parents
+    if (reload) {
+        var win = window;
+        while (win != win.parent) {
+            win.stale = true;
+            win = win.parent;
+        };
+    }
+
+    // close this windows
+    var ifr = window.frameElement;
+    var div = ancestorOf(ifr, 'uk-modal');
+    UIkit.modal(div).hide();
+}
+
 // build and open a reveal dialog
 // trig - a button, input_button or anchor element
 
-// mode
+// modes
 const
-    CONFIRM = 1, PROMPT = 2, OPEN = 4, TELL = 8, ASTACK = 16, CROP = 32, SCRIPT = 64;
+    SCRIPT = 1, CONFIRM = 2, CROP = 4, PROMPT = 8, SHOW = 16, OPEN = 32, ASTACK = 64;
 
 function dialog(trig, mode, pick, title) {
     var stylec =
         mode == PROMPT ? ' uk-modal-small' :
-            mode == OPEN || mode == CROP ? ' uk-modal-large' :
-                mode == TELL ? ' uk-modal-tall uk-animation-slide-bottom' :
+            mode == SHOW ? ' uk-modal-tall uk-animation-slide-bottom' :
+                mode == OPEN || mode == CROP ? ' uk-modal-large' :
                     mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
@@ -278,13 +297,9 @@ function dialog(trig, mode, pick, title) {
 
         var dlg = $('#dialog');
         if (dlg) {
-            if (dlg.classList.contains('button-trig')) {
-                document.body.removeChild(dlg);
-                if (dlg.classList.contains('uk-modal-full')) {
-                    location.reload(false);
-                }
-            } else {
-                document.body.removeChild(dlg);
+            document.body.removeChild(dlg);
+            if (stale) {
+                location.reload(false);
             }
         }
     }, false);
@@ -441,19 +456,6 @@ function upload(el, url, close) {
     })
 }
 
-function closeUp(reload, slide) {
-    var ifr = window.frameElement;
-    var div = ancestorOf(ifr, 'uk-modal');
-
-    if (slide) {
-        div.classList.add('uk-animation-reverse');
-    }
-    if (reload) {
-        parent.location.reload(false);
-    } else {
-        UIkit.modal(div).hide();
-    }
-}
 
 function toggleAll(trig) {
     var frm = trig.form;

@@ -251,7 +251,8 @@ namespace ChainMart
                 h.TOOLBAR();
                 h.GRIDA(arr, o =>
                 {
-                    h.DIV_();
+                    h.DIV_("uk-card-body");
+                    h.PIC_().T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     h.T(o.name);
                     h._DIV();
                 });
