@@ -102,4 +102,14 @@ namespace ChainMart
         {
         }
     }
+
+    [UserAuthorize(Org.TYP_SHP, User.ORGLY_)]
+    [Ui("线上业务报表", "商户")]
+    public class ShplyRptWork : RptWork
+    {
+        [Ui("待收", group: 1), Tool(Modal.Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+        }
+    }
 }

@@ -266,19 +266,22 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MRT, 1)]
     [Ui("消费者管理", "市场")]
-    public class MktlyCustWork : UserWork
+    public class MktlyBuyerWork : UserWork
     {
         protected override void OnCreate()
         {
             CreateVarWork<MktlyUserVarWork>();
         }
 
-        [Ui("浏览", group: 1), Tool(Anchor)]
+        [Ui("全部消费者", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
+            int mrtid = wc[0];
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY id DESC WHERE LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User>(p => p.Set(page));
+            dc.Sql("SELECT DISTINCT ON (id) ").collst(User.Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND state > 2 LIMIT 30 OFFSET 30 * @2");
+            var arr = dc.Query<User>(p => p.Set(mrtid).Set(page));
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -300,7 +303,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("查询"), Tool(AnchorPrompt)]
+        [Ui(tip: "查询", icon: "search"), Tool(AnchorPrompt)]
         public void search(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
@@ -309,7 +312,7 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("查找用户");
+                    h.FORM_().FIELDSUL_("在本市场消费过的用户");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h._FIELDSUL()._FORM();
                 });

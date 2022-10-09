@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainMart
 {
     /// <summary>
-    /// An online retail order.
+    /// An online retail buy order.
     /// </summary>
     public class Buy : Entity, IKeyable<long>, IFlowable
     {
@@ -29,6 +29,7 @@ namespace ChainMart
         internal string uaddr;
         internal string uim;
         internal BuyLn[] lines;
+        internal decimal fee; // delivery fee
         internal decimal pay;
         internal decimal refund;
 
@@ -55,8 +56,9 @@ namespace ChainMart
                 s.Get(nameof(uim), ref uim);
                 s.Get(nameof(lines), ref lines);
             }
-            if ((msk & MSK_BORN) == MSK_BORN)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(fee), ref fee);
                 s.Get(nameof(pay), ref pay);
                 s.Get(nameof(refund), ref refund);
                 s.Get(nameof(oker), ref oker);
@@ -84,8 +86,9 @@ namespace ChainMart
                 s.Put(nameof(uim), uim);
                 s.Put(nameof(lines), lines);
             }
-            if ((msk & MSK_BORN) == MSK_BORN)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(fee), fee);
                 s.Put(nameof(pay), pay);
                 s.Put(nameof(refund), refund);
                 s.Put(nameof(oker), oker);
@@ -95,7 +98,6 @@ namespace ChainMart
         }
 
         public long Key => id;
-
 
         public string Oker => oker;
 

@@ -32,7 +32,6 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.NAVBAR(regs, string.Empty, sec, filter: (k, v) => v.IsSection);
-                
                 h.GRIDA(map, o =>
                 {
                     h.DIV_("uk-card-body");

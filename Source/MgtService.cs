@@ -23,25 +23,6 @@ namespace ChainMart
             CreateWork<MktlyWork>("mktly"); // for markets and shops
         }
 
-        public void @default(WebContext wc, int cmd)
-        {
-            wc.GivePage(200, h =>
-            {
-                h.TOPBAR_()._TOPBAR();
-
-                h.FORM_("uk-card uk-card-default");
-                h.H4("管理模块", css: "uk-card-header");
-                h.UL_("uk-card-body uk-child-width-1-2", grid: true);
-                for (int i = 0; i < SubWorks.Count; i++)
-                {
-                    var wrk = SubWorks.ValueAt(i);
-                    h.LI_("uk-flex").A_(wrk.Key, wrk.HasVarWork ? "//" : "/", css: "uk-button uk-button-link").SPAN(wrk.Label).ICON("triangle-right")._A()._LI();
-                }
-                h._UL();
-                h._FORM();
-            }, true, 3600, title: Self.Name + "管理");
-        }
-
         public void @catch(WebContext wc)
         {
             var e = wc.Exception;
@@ -81,9 +62,9 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_("uk-card uk-card-body");
+                    h.FORM_();
 
-                    h.FIELDSUL_("填写登录信息");
+                    h.FIELDSUL_("通过预留密码登录");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                     h._FIELDSUL();

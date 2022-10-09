@@ -30,38 +30,6 @@ create table entities
 
 alter table entities owner to postgres;
 
-create table users
-(
-    id serial not null
-        constraint users_pk
-            primary key,
-    tel varchar(11) not null,
-    im varchar(28),
-    credential varchar(32),
-    admly smallint default 0 not null,
-    orgid smallint,
-    orgly smallint default 0 not null,
-    idcard varchar(18),
-    icon bytea
-)
-    inherits (entities);
-
-alter table users owner to postgres;
-
-create index users_admly_idx
-    on users (admly)
-    where (admly > 0);
-
-create unique index users_im_idx
-    on users (im);
-
-create unique index users_tel_idx
-    on users (tel);
-
-create index users_orgidorgly_idx
-    on users (orgid, orgly)
-    where (orgly > 0);
-
 create table regs
 (
     id smallint not null
@@ -132,16 +100,6 @@ create table accts_
 
 alter table accts_ owner to postgres;
 
-create table events
-(
-    id serial not null,
-    fromid integer,
-    toid integer
-)
-    inherits (entities);
-
-alter table events owner to postgres;
-
 create table clears
 (
     id serial not null
@@ -172,88 +130,6 @@ comment on column cats.size is 'sub resources';
 
 alter table cats owner to postgres;
 
-create table items
-(
-    id serial not null
-        constraint items_pk
-            primary key,
-    srcid integer,
-    store smallint,
-    duration smallint,
-    agt boolean,
-    unit varchar(4),
-    unitstd varchar(4),
-    unitx smallint,
-    icon bytea,
-    pic bytea,
-    m1 bytea,
-    m2 bytea,
-    m3 bytea,
-    m4 bytea
-)
-    inherits (entities);
-
-alter table items owner to postgres;
-
-create table books
-(
-    id bigserial not null
-        constraint books_pk
-            primary key,
-    shpid integer not null,
-    mktid integer not null,
-    ctrid integer not null,
-    srcid integer not null,
-    zonid integer not null,
-    itemid integer,
-    lotid integer,
-    unit varchar(4),
-    unitx smallint,
-    unitstd varchar(4),
-    price money,
-    "off" money,
-    qty integer,
-    cut integer,
-    pay money,
-    refund money,
-    oker varchar(12),
-    oked timestamp(0),
-    state smallint
-)
-    inherits (entities);
-
-alter table books owner to postgres;
-
-create table orgs
-(
-    id serial not null
-        constraint orgs_pk
-            primary key,
-    prtid integer,
-    ctrid integer,
-    license varchar(20),
-    trust boolean,
-    regid smallint
-        constraint orgs_regid_fk
-            references regs
-            on update cascade,
-    addr varchar(30),
-    x double precision,
-    y double precision,
-    tel varchar(11),
-    sprid integer
-        constraint orgs_mgrid_fk
-            references users,
-    rvrid integer,
-    icon bytea,
-    oker varchar(12),
-    oked timestamp(0),
-    state smallint
-)
-    inherits (entities);
-
-alter table orgs owner to postgres;
-
 create table stocks
 (
     id serial not null
@@ -276,6 +152,42 @@ create table stocks
 
 alter table stocks owner to postgres;
 
+create table items
+(
+    id serial not null
+        constraint items_pk
+            primary key,
+    srcid integer,
+    store smallint,
+    duration smallint,
+    agt boolean,
+    unit varchar(4),
+    unitpkg varchar(4),
+    unitx smallint[],
+    icon bytea,
+    pic bytea,
+    m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea
+)
+    inherits (entities);
+
+alter table items owner to postgres;
+
+create table rules
+(
+    id serial not null
+        constraint rules_pk
+            primary key,
+    oker varchar(12),
+    oked timestamp(0),
+    state smallint
+)
+    inherits (entities);
+
+alter table rules owner to postgres;
+
 create table buys
 (
     id bigserial not null
@@ -289,9 +201,10 @@ create table buys
     uaddr varchar(20),
     uim varchar(28),
     lines buyln_type[],
+    fee money,
     pay money,
     refund money,
-    oker varchar(12),
+    oker varchar(10),
     oked timestamp(0),
     state smallint
 )
@@ -299,9 +212,83 @@ create table buys
 
 alter table buys owner to postgres;
 
+create index buys_orgs_state_idx
+    on buys (mktid, shpid, state);
+
+create table users
+(
+    id serial not null
+        constraint users_pk
+            primary key,
+    tel varchar(11) not null,
+    addr varchar(50),
+    im varchar(28),
+    credential varchar(32),
+    admly smallint default 0 not null,
+    orgid smallint,
+    orgly smallint default 0 not null,
+    idcard varchar(18),
+    icon bytea
+)
+    inherits (entities);
+
+alter table users owner to postgres;
+
+create table orgs
+(
+    id serial not null
+        constraint orgs_pk
+            primary key,
+    prtid integer
+        constraint orgs_prtid_fk
+            references orgs,
+    ctrid integer
+        constraint orgs_ctrid_fk
+            references orgs,
+    license varchar(20),
+    trust boolean,
+    regid smallint
+        constraint orgs_regid_fk
+            references regs
+            on update cascade,
+    addr varchar(30),
+    x double precision,
+    y double precision,
+    tel varchar(11),
+    sprid integer
+        constraint orgs_sprid_fk
+            references users,
+    rvrid integer
+        constraint orgs_rvrid_fk
+            references users,
+    icon bytea,
+    oker varchar(10),
+    oked timestamp(0),
+    state smallint
+)
+    inherits (entities);
+
+alter table orgs owner to postgres;
+
+create table events
+(
+    id serial not null
+        constraint events_pk
+            primary key,
+    orgid integer
+        constraint events_forid_fk
+            references orgs,
+    credit integer
+)
+    inherits (entities);
+
+alter table events owner to postgres;
+
 create table lots
 (
-    id serial not null,
+    id serial not null
+        constraint lots_pk
+            primary key,
     itemid integer
         constraint lots_items_fk
             references items,
@@ -319,7 +306,7 @@ create table lots
     min integer,
     max integer,
     step integer,
-    oker varchar(12),
+    oker varchar(10),
     oked timestamp(0),
     state smallint,
     constraint lots_typ_fk
@@ -329,7 +316,54 @@ create table lots
 
 alter table lots owner to postgres;
 
-create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, im, credential, admly, orgid, orgly, idcard, icon) as
+create table books
+(
+    id bigserial not null
+        constraint books_pk
+            primary key,
+    shpid integer not null,
+    mktid integer not null,
+    ctrid integer not null,
+    srcid integer not null,
+    zonid integer not null,
+    itemid integer
+        constraint books_itemid_fk
+            references items,
+    lotid integer
+        constraint books_lotid_fk
+            references lots,
+    unit varchar(4),
+    unitx smallint,
+    unitstd varchar(4),
+    price money,
+    "off" money,
+    qty integer,
+    cut integer,
+    pay money,
+    refund money,
+    oker varchar(10),
+    oked timestamp(0),
+    state smallint
+)
+    inherits (entities);
+
+alter table books owner to postgres;
+
+create index users_admly_idx
+    on users (admly)
+    where (admly > 0);
+
+create unique index users_im_idx
+    on users (im);
+
+create unique index users_tel_idx
+    on users (tel);
+
+create index users_orgidorgly_idx
+    on users (orgid, orgly)
+    where (orgly > 0);
+
+create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, addr, im, credential, admly, orgid, orgly, idcard, icon) as
 SELECT u.typ,
        u.status,
        u.name,
@@ -340,6 +374,7 @@ SELECT u.typ,
        u.adapter,
        u.id,
        u.tel,
+       u.addr,
        u.im,
        u.credential,
        u.admly,

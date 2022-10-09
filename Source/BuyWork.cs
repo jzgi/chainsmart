@@ -42,11 +42,7 @@ namespace ChainMart
 
 
     [UserAuthorize(orgly: ORGLY_OPN)]
-#if ZHNT
-    [Ui("售货管理", "商户")]
-#else
-    [Ui("售货管理", "商户")]
-#endif
+    [Ui("线上销售", "商户")]
     public class ShplyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -96,7 +92,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("售货汇总", "市场")]
+    [Ui("线上销售送货", "市场")]
     public class MktlyBuyWork : BuyWork
     {
         [Ui("当前", @group: 1), Tool(Modal.Anchor)]

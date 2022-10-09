@@ -12,7 +12,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("设置货架", "商户")]
+    [Ui("设置线上货架", "商户")]
     public class ShplyStockWork : StockWork
     {
         protected override void OnCreate()

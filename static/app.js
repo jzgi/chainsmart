@@ -242,8 +242,8 @@ const
 function dialog(trig, mode, pick, title) {
     var stylec =
         mode == PROMPT ? ' uk-modal-small' :
-            mode == SHOW ? ' uk-modal-tall uk-animation-slide-bottom' :
-                mode == OPEN || mode == CROP ? ' uk-modal-large' :
+            mode == OPEN ? ' uk-modal-large uk-animation-scale-up' :
+                mode == SHOW || mode == CROP ? ' uk-modal-tall uk-animation-slide-bottom' :
                     mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
@@ -372,10 +372,14 @@ function crop(trig, siz, title, subs) {
             wid = 800; hei = 640;
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-full uk-animation-slide-left ' + trigc + '" uk-modal>';
+    var html = '<div id="dialog" class="uk-modal-tall uk-animation-slide-bottom ' + trigc + '" uk-modal>';
     html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
-    html += '<header class="uk-modal-header">';
 
+    html += '<main id="imgbnd" class="uk-modal-body uk-padding-remove">'; // body
+    html += '<input type="file" id="imginp" style="display: none;" onchange="bind(this.parentNode, window.URL.createObjectURL(this.files[0]),' + wid + ',' + hei + ');">';
+    html += '</main>';
+
+    html += '<footer class="uk-modal-footer">';
     html += '<div class="uk-button-group">';
     if (subs > 0) {
         html += '<select id="imgsub" class="uk-select uk-width-auto" style="position: absolute; left: 4px" onchange="bind($(\'#imgbnd\'),\'' + action + '-\' + this.value,' + wid + ',' + hei + ');">';
@@ -389,12 +393,9 @@ function crop(trig, siz, title, subs) {
     html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
     html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">确定</button>';
     html += '</div>'; // control group
+    // html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
+    html += '</footer>'; // header
 
-    html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
-    html += '</header>'; // header
-    html += '<main id="imgbnd" class="uk-modal-body uk-padding-remove">'; // body
-    html += '<input type="file" id="imginp" style="display: none;" onchange="bind(this.parentNode, window.URL.createObjectURL(this.files[0]),' + wid + ',' + hei + ');">';
-    html += '</main>';
     html += '</section>'; // dialog
     html += '</div>'; // modal
 

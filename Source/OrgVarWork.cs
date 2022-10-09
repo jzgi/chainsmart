@@ -159,21 +159,22 @@ namespace ChainMart
 
             wc.GivePane(200, h =>
             {
-                h.TITLEBAR(o.name);
-
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名称", o.name)._LI();
                 h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name).FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
-                h.LI_().FIELD("信用编号", o.license).FIELD("单位提示", o.regid)._LI();
-                h.LI_().FIELD("只供代理", o.trust).FIELD("状态", o.status, Entity.Statuses)._LI();
+                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name)._LI();
+                h.LI_().FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
+                h.LI_().FIELD("信用编号", o.license)._LI();
+                h.LI_().FIELD("单位提示", o.regid)._LI();
+                h.LI_().FIELD("只供代理", o.trust)._LI();
+                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
             });
         }
 
-        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonOpen)]
+        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -187,7 +188,7 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("基本资料");
+                    h.FORM_().FIELDSUL_();
 
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
@@ -224,7 +225,7 @@ namespace ChainMart
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("事件", icon: "table"), Tool(ButtonOpen)]
+        [Ui("事件", icon: "table"), Tool(ButtonShow)]
         public async Task log(WebContext wc)
         {
         }

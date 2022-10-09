@@ -117,10 +117,13 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_().FIELDSUL_("登录信息");
+                    h.FORM_();
+
+                    h.FIELDSUL_("通过预留密码登录");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                     h._FIELDSUL();
+
                     h.HIDDEN(nameof(url), url);
                     h.BOTTOMBAR_().BUTTON("登录", nameof(signin))._BOTTOMBAR();
                     h._FORM();

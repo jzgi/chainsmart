@@ -58,6 +58,7 @@ namespace ChainMart
 
         internal int id;
         internal string tel;
+        internal string addr;
         internal string im;
 
         // later
@@ -83,6 +84,7 @@ namespace ChainMart
             }
             if ((proj & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(addr), ref addr);
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
@@ -104,6 +106,7 @@ namespace ChainMart
             s.Put(nameof(im), im);
             if ((proj & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(addr), addr);
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);

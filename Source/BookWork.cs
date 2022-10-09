@@ -10,7 +10,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("进货管理", "商户")]
+    [Ui("线上采购", "商户")]
     public class ShplyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -170,7 +170,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_MRT, 1)]
-    [Ui("进货汇总", "市场")]
+    [Ui("线上采购收货", "市场")]
     public class MktlyBookWork : BookWork
     {
         [Ui("当前", group: 1), Tool(Anchor)]
