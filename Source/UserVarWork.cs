@@ -12,7 +12,7 @@ namespace ChainMart
 
     public class AdmlyUserVarWork : UserVarWork
     {
-        [Ui("✎", "修改"), Tool(ButtonOpen)]
+        [Ui("修改", icon: "pencil"), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             short typ;
@@ -44,7 +44,7 @@ namespace ChainMart
     public class AdmlyAccessVarWork : WebWork
     {
         [UserAuthorize(orgly: 3)]
-        [Ui("删除", icon: "close"), Tool(ButtonOpen)]
+        [Ui("删除", icon: "transh"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
             short orgid = wc[-2];
@@ -115,7 +115,7 @@ namespace ChainMart
         }
     }
 
-    public class MktlyUserVarWork : UserVarWork
+    public class MktlyCustVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)

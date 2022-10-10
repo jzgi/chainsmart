@@ -15,7 +15,7 @@ namespace ChainMart
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
             TYP_DST = 0b00100, // distributor
-            TYP_MRT = TYP_PRT | TYP_SHP, // market
+            TYP_MKT = TYP_PRT | TYP_SHP, // market
             TYP_ZON = TYP_PRT | TYP_SRC, // zone
             TYP_CTR = TYP_PRT | TYP_SRC | TYP_DST; // center
 
@@ -24,7 +24,7 @@ namespace ChainMart
             {TYP_SHP, "商户"},
             {TYP_SRC, "产源"},
 #if ZHNT
-            {TYP_MRT, "市场"},
+            {TYP_MKT, "市场"},
 #else
             {TYP_SHP, "驿站"},
 #endif
@@ -162,7 +162,7 @@ namespace ChainMart
 
         public bool IsOfShop => (typ & TYP_SHP) == TYP_SHP;
 
-        public bool IsMarket => typ == TYP_MRT;
+        public bool IsMarket => typ == TYP_MKT;
 
         public bool IsCenter => typ == TYP_CTR;
 

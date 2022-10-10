@@ -2,6 +2,7 @@
 using ChainFx.Web;
 using static ChainMart.User;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.Modal;
 
 namespace ChainMart
 {
@@ -9,7 +10,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("我的消费订单", "账号功能")]
+    [Ui("消费订单", "功能")]
     public class MyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -17,6 +18,7 @@ namespace ChainMart
             CreateVarWork<MyBuyVarWork>();
         }
 
+        [Ui("消费订单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -27,6 +29,8 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
+                h.TOOLBAR();
+                
                 if (arr == null)
                 {
                     h.ALERT("尚无消费订单");
@@ -50,7 +54,7 @@ namespace ChainMart
             CreateVarWork<ShplyBuyVarWork>();
         }
 
-        [Ui("当前外卖", group: 1), Tool(Modal.Anchor)]
+        [Ui("销售订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -71,13 +75,15 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "历史外卖", group: 2), Tool(Modal.Anchor)]
-        public async Task closed(WebContext wc)
+        [Ui(tip: "历史外卖", icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
-            short orgid = wc[-1];
+            var shp = wc[-1].As<Org>();
+            
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE toid = @1 AND status > 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orgid));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status > 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
+            
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -91,12 +97,22 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_MRT, 1)]
+    [UserAuthorize(Org.TYP_MKT, 1)]
+#if ZHNT
     [Ui("线上销售送货", "市场")]
+#else
+    [Ui("线上销售送货", "驿站")]
+#endif
     public class MktlyBuyWork : BuyWork
     {
-        [Ui("当前", @group: 1), Tool(Modal.Anchor)]
+        [Ui("销售订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui(tip: "历史订单", icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
         {
             wc.GivePage(200, h => { h.TOOLBAR(); });
         }

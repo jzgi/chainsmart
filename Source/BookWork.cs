@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -18,7 +19,7 @@ namespace ChainMart
             CreateVarWork<ShplyBookVarWork>();
         }
 
-        [Ui("当前进货", group: 1), Tool(Anchor)]
+        [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -98,7 +99,7 @@ namespace ChainMart
                     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.T(o.name);
                     h._DIV();
-                }, min: 2);
+                }, min: 2, mode: MOD_SHOW);
             }, title: ctr.tip);
         }
     }
@@ -151,7 +152,7 @@ namespace ChainMart
         }
 
         [Ui("历史", icon: "history", group: 2), Tool(Anchor)]
-        public async Task history(WebContext wc)
+        public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -169,14 +170,46 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_MRT, 1)]
+    [UserAuthorize(Org.TYP_MKT, 1)]
+#if ZHNT
     [Ui("线上采购收货", "市场")]
+#else
+    [Ui("线上采购收货", "驿站")]
+#endif
     public class MktlyBookWork : BookWork
     {
-        [Ui("当前", group: 1), Tool(Anchor)]
+        [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE_();
+                h._TABLE();
+            });
+        }
+
+        [Ui(tip: "历史", icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
+            await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                h.TABLE_();
+                h._TABLE();
+            });
         }
     }
 

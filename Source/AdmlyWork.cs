@@ -43,7 +43,7 @@ namespace ChainMart
             {
                 h.TOPBARXL_().H2(Self.name)._TOPBARXL();
 
-                h.TASKLIST();
+                h.TASKBOARD();
             });
         }
 

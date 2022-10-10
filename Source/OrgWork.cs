@@ -35,7 +35,7 @@ namespace ChainMart
         public async Task @default(WebContext wc)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MRT).T(" ORDER BY regid, status DESC");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MKT).T(" ORDER BY regid, status DESC");
             var map = await dc.QueryAsync<int, Org>();
 
             wc.GivePage(200, h =>
@@ -81,7 +81,7 @@ namespace ChainMart
             {
                 var m = new Org
                 {
-                    typ = cmd == 1 ? Org.TYP_MRT : Org.TYP_ZON,
+                    typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_ZON,
                     created = DateTime.Now,
                     creator = prin.name,
                     status = Entity.STU_NORMAL
@@ -109,7 +109,7 @@ namespace ChainMart
             {
                 var o = await wc.ReadObjectAsync(Entity.MSK_BORN, new Org
                 {
-                    typ = (short) (cmd == 1 ? Org.TYP_MRT : 0),
+                    typ = (short) (cmd == 1 ? Org.TYP_MKT : 0),
                     created = DateTime.Now,
                     creator = prin.name,
                 });
@@ -224,7 +224,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_MRT, 1)]
+    [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
     [Ui("商户管理", "市场")]
 #else

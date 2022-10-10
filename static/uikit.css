@@ -1104,7 +1104,7 @@ button.uk-icon:not(:disabled) {
     min-height: 6rem;
     padding: 6px;
     background-color: inherit;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-top-bar.uk-modal-title {
@@ -1687,7 +1687,7 @@ button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    background-color: #f8f8f8;
+    background-color: #fff;
     color: #f59604;
     border: 1px solid #f59604;
 }
@@ -1697,7 +1697,7 @@ a.uk-button-primary {
     height: 3rem;
     padding: 0 12px;
     margin: 0 6px;
-    border-top: 2px solid #ededed;
+    border-top: 2px solid transparent;
     border-bottom: 2px solid transparent;
 }
 
@@ -1706,7 +1706,7 @@ a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
     background-color: #ededed;
-    border-bottom: 2px solid #f59604;
+    border-top: 2px solid #f59604;
 }
 
 .uk-button-secondary {

@@ -103,8 +103,29 @@ namespace ChainMart
         }
     }
 
+    [UserAuthorize(Org.TYP_MKT, User.ORGLY_)]
+#if ZHNT
+    [Ui("业务汇总", "市场")]
+#else
+    [Ui("业务汇总", "驿站")]
+#endif
+    public class MktlyRptWork : RptWork
+    {
+        [Ui("销售业务", group: 1), Tool(Modal.Anchor)]
+        public async Task @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+
+        [Ui("采购业务", group: 2), Tool(Modal.Anchor)]
+        public async Task book(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+    }
+
     [UserAuthorize(Org.TYP_SHP, User.ORGLY_)]
-    [Ui("线上业务报表", "商户")]
+    [Ui("业务报表", "商户")]
     public class ShplyRptWork : RptWork
     {
         [Ui("待收", group: 1), Tool(Modal.Anchor)]

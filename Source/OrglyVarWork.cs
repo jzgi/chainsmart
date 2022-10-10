@@ -93,7 +93,7 @@ namespace ChainMart
                 h._DIV();
                 h._TOPBARXL();
 
-                h.TASKLIST();
+                h.TASKBOARD();
             }, false, 3);
         }
     }
@@ -111,16 +111,18 @@ namespace ChainMart
         {
             CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<MktlyBuyerWork>("mcust");
-
-            CreateWork<MktlyBookWork>("mbook");
+            CreateWork<MktlyCustWork>("mcust");
 
             CreateWork<MktlyBuyWork>("mbuy");
 
+            CreateWork<MktlyBookWork>("mbook");
+
+            CreateWork<MktlyRptWork>("mrpt");
+
+            
+            CreateWork<ShplyBuyWork>("sbuy");
 
             CreateWork<ShplyBookWork>("sbook");
-
-            CreateWork<ShplyBuyWork>("sbuy");
 
             CreateWork<ShplyStockWork>("sstock");
 
@@ -152,14 +154,13 @@ namespace ChainMart
                 {
                     h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
                 }
-
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.H2(org.name);
                 h.SPAN(org.tel);
                 h._DIV();
                 h._TOPBARXL();
 
-                h.TASKLIST();
+                h.TASKBOARD();
             }, false, 3);
         }
     }
