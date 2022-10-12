@@ -309,6 +309,8 @@ create table lots
     oker varchar(10),
     oked timestamp(0),
     state smallint,
+    nstart integer,
+    nend integer,
     constraint lots_typ_fk
         foreign key (typ) references cats
 )
@@ -348,6 +350,9 @@ create table books
     inherits (entities);
 
 alter table books owner to postgres;
+
+create index lots_nstart_nend_idx
+    on lots (nstart, nend);
 
 create index users_admly_idx
     on users (admly)

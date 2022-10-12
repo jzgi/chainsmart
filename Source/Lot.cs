@@ -41,6 +41,9 @@ namespace ChainMart
         internal DateTime oked;
         internal short state;
 
+        internal int nstart;
+        internal int nend;
+
         public override void Read(ISource s, short msk = 0xff)
         {
             base.Read(s, msk);
@@ -73,6 +76,8 @@ namespace ChainMart
                 s.Get(nameof(oker), ref oker);
                 s.Get(nameof(oked), ref oked);
                 s.Get(nameof(state), ref state);
+                s.Get(nameof(nstart), ref nstart);
+                s.Get(nameof(nend), ref nend);
             }
         }
 
@@ -108,6 +113,8 @@ namespace ChainMart
                 s.Put(nameof(oker), oker);
                 s.Put(nameof(oked), oked);
                 s.Put(nameof(state), state);
+                s.Put(nameof(nstart), nstart);
+                s.Put(nameof(nend), nend);
             }
         }
 

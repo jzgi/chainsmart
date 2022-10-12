@@ -81,7 +81,7 @@ namespace ChainMart
     public class OrglyAccessVarWork : WebWork
     {
         [UserAuthorize(orgly: 3)]
-        [Ui("✕", "删除"), Tool(ButtonOpen)]
+        [Ui(tip: "删除", icon: "close"), Tool(ButtonOpen)]
         public async Task rm(WebContext wc)
         {
             short orgid = wc[-2];

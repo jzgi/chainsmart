@@ -57,6 +57,7 @@ namespace ChainMart
                 }, 3600 * 24
             );
 
+            // each of the orgs
             CacheObject<int, Org>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
@@ -64,6 +65,7 @@ namespace ChainMart
                 }, 60 * 15
             );
 
+            // top orgs
             Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_DST);
@@ -71,6 +73,7 @@ namespace ChainMart
                 }, 60 * 15
             );
 
+            // items for each source org
             CacheMap((DbContext dc, int orgid) =>
                 {
                     dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0 ORDER BY status DESC");

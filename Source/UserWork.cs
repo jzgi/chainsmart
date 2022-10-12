@@ -260,13 +260,14 @@ namespace ChainMart
             CreateVarWork<OrglyAccessVarWork>();
         }
 
+        [Ui("人员权限"), Tool(Anchor)]
         public void @default(WebContext wc)
         {
-            short orgid = wc[-1];
+            var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE orgid = @1 AND orgly > 0");
-            var arr = dc.Query<User>(p => p.Set(orgid));
+            var arr = dc.Query<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -282,7 +283,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(orgly: 3)]
-        [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
             short orgly = 0;
@@ -291,8 +292,8 @@ namespace ChainMart
                 string tel = wc.Query[nameof(tel)];
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("授权给指定用户");
-                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false)._LI();
+                    h.FORM_().FIELDSUL_("指定用户");
+                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
                     if (cmd == 1) // search user
                     {
@@ -339,7 +340,7 @@ namespace ChainMart
             CreateVarWork<MktlyCustVarWork>();
         }
 
-        [Ui("全部消费者", group: 1), Tool(Anchor)]
+        [Ui("本埠消费者", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             int mrtid = wc[0];
