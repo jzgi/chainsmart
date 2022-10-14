@@ -64,7 +64,7 @@ namespace ChainMart
 
                     // create principal
                     using var dc = Nodality.NewDbContext();
-                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE im = @1");
+                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE im = @1");
                     if (dc.QueryTop(p => p.Set(openid)))
                     {
                         var prin = dc.ToObject<User>();

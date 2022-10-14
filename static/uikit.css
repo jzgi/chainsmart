@@ -1245,6 +1245,7 @@ form legend {
     width: 100%;
     padding: 4px;
     color: #333;
+    background-color: #fff;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;
@@ -1657,7 +1658,7 @@ select.uk-form-width-xsmall {
 }
 
 button.uk-button-default {
-    background-color: #f59604;
+    background-color: #999;
     color: #fff;
     border-radius: 12px;
     border: 0;
@@ -2265,7 +2266,6 @@ main.uk-grid > li {
 
 .uk-close {
     color: #fff;
-    background-color: #f59604;
     padding: 4px;
     transition: 0.1s ease-in-out;
     transition-property: color, opacity;
@@ -3739,7 +3739,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #ededed;
+    background-color: #999;
 }
 
 .uk-modal-footer {
@@ -3781,7 +3781,7 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #7daa1d;
+    color: #fff;
     font-size: 1rem;
 }
 

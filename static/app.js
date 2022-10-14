@@ -213,8 +213,16 @@ function appendTo(parent, html) {
     return parent.appendChild(e.firstChild)
 }
 
+// anchor without adding history
+function goto(e, evt) {
+    evt.preventDefault(); 
+    location.replace(e.href); 
+    return false;
+}
+
 // indicator of updates
 var stale;
+var popstate;
 
 function closeUp(reload) {
     // set flags on parents
@@ -293,16 +301,33 @@ function dialog(trig, mode, pick, title) {
     var e = appendTo(document.body, div);
 
     // destroy in DOM on close
-    e.addEventListener('hidden', function (e) {
+    e.addEventListener('hidden', function (evt) {
 
         var dlg = $('#dialog');
         if (dlg) {
+
+            if (!popstate) {
+                history.back();
+                popstate = false;
+            }
+
             document.body.removeChild(dlg);
             if (stale) {
                 location.reload(false);
             }
         }
+
     }, false);
+
+    // history
+    window.addEventListener('popstate', (evt) => {
+        var dlg = $('#dialog');
+        if (dlg) {
+            popstate = true; // triggered by back
+            UIkit.modal(dlg).hide();
+        }
+    });
+    history.pushState('dlg', null, action);
 
     // display the modal
     UIkit.modal(e).show();

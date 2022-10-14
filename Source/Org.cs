@@ -48,6 +48,7 @@ namespace ChainMart
         internal double y;
 
         internal string tel;
+        internal string link;
         internal bool trust;
 
         internal int sprid; // supervisor id
@@ -82,6 +83,7 @@ namespace ChainMart
                 s.Get(nameof(x), ref x);
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(tel), ref tel);
+                s.Get(nameof(link), ref link);
                 s.Get(nameof(trust), ref trust);
             }
             if ((proj & MSK_LATER) == MSK_LATER)
@@ -124,6 +126,7 @@ namespace ChainMart
                 s.Put(nameof(x), x);
                 s.Put(nameof(y), y);
                 s.Put(nameof(tel), tel);
+                s.Put(nameof(link), link);
                 s.Put(nameof(trust), trust);
             }
             if ((proj & MSK_LATER) == MSK_LATER)
