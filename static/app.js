@@ -250,7 +250,7 @@ const
 function dialog(trig, mode, pick, title) {
     var stylec =
         mode == PROMPT ? ' uk-modal-small' :
-            mode == OPEN ? ' uk-modal-large uk-animation-scale-up' :
+            mode == OPEN ? ' uk-modal-large' :
                 mode == SHOW || mode == CROP ? ' uk-modal-tall uk-animation-slide-bottom' :
                     mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
     // keep the trigger info
@@ -294,7 +294,7 @@ function dialog(trig, mode, pick, title) {
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
     if (mode == PROMPT) {
-        div += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
+        div += '<footer class="uk-modal-footer uk-text-center"><button id="okbtn" class="uk-button uk-button-default" type="button" onclick="event.preventDefault(); return ok(this,' + mode + ',\'' + formid + '\',\'' + tag + '\',\'' + action + '\',\'' + method + '\');" disabled>确定</button></footer>'
     }
     div += '</section></div>';
 
@@ -346,7 +346,8 @@ function ok(okbtn, mode, formid, tag, action, method) {
             qstr = serialize(form);
             if (qstr) {
                 uri = action.indexOf('?') == -1 ? action + '?' + qstr : action + '&' + qstr;
-                location.href = uri;
+                history.back();
+                location.replace(uri);
             }
         } else if (tag == 'BUTTON') { // merge to the parent and submit
             if (method == 'get') {
@@ -356,7 +357,8 @@ function ok(okbtn, mode, formid, tag, action, method) {
                     UIkit.modal(div).hide();
                     UIkit.remove(div);
                     // load page
-                    location.href = action.split("?")[0] + '?' + qstr;
+                    history.back();
+                    location.replace(action.split("?")[0] + '?' + qstr);
                 }
             } else if (method == 'post') {
                 var mform = $('#' + formid);
@@ -377,6 +379,7 @@ function ok(okbtn, mode, formid, tag, action, method) {
             }
         }
     }
+    return false;
 }
 
 

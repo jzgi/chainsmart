@@ -39,7 +39,7 @@ namespace ChainMart
                     h.T(o.name);
                     h._DIV();
                 }, min: 2);
-            }, title: mrt.name);
+            }, shared: true, maxage: 900, title: mrt.name);
         }
     }
 

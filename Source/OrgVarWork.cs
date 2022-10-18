@@ -21,10 +21,12 @@ namespace ChainMart
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
-                    else wc.Give(200, new StaticContent(bytes), shared, maxage);
+                    else wc.Give(200, new WebStaticContent(bytes), shared, maxage);
                 }
                 else
+                {
                     wc.Give(404, null, shared, maxage); // not found
+                }
             }
             else // POST
             {

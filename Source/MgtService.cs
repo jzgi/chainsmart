@@ -25,7 +25,7 @@ namespace ChainMart
 
         public void @catch(WebContext wc)
         {
-            var e = wc.Exception;
+            var e = wc.Error;
             if (e is WebException we)
             {
                 if (we.Code == 401)
@@ -223,7 +223,7 @@ namespace ChainMart
             finally
             {
                 // return xml to WCPay server
-                var x = new XmlContent(true, 1024);
+                var x = new XmlBuilder(true, 1024);
                 x.ELEM("xml", null, () =>
                 {
                     x.ELEM("return_code", "SUCCESS");

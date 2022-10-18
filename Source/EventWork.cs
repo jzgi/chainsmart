@@ -25,7 +25,7 @@ namespace ChainMart
             var q = queues[org.id];
             if (q != null)
             {
-                var jc = new JsonContent(true, 16);
+                var jc = new JsonBuilder(true, 16);
                 lock (q)
                 {
                     Event o;

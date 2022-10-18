@@ -40,7 +40,7 @@ namespace ChainMart
         }
 
 
-        public static HtmlContent A_POI(this HtmlContent h, double x, double y, string title, string addr, string tel = null, bool active = true)
+        public static HtmlBuilder A_POI(this HtmlBuilder h, double x, double y, string title, string addr, string tel = null, bool active = true)
         {
             if (active)
             {
@@ -59,7 +59,7 @@ namespace ChainMart
         }
 
 
-        public static HtmlContent SELECT_ITEM(this HtmlContent h, string label, string name, short v, Map<short, Stock> opts, Map<short, Cat> cats, Func<Stock, bool> filter = null, bool required = false)
+        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Stock> opts, Map<short, Cat> cats, Func<Stock, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)
@@ -91,7 +91,7 @@ namespace ChainMart
         }
 
 
-        public static HtmlContent SELECT_ORG(this HtmlContent h, string label, string name, int v, Map<int, Org> opts, Map<short, Reg> regs, Func<Org, bool> filter = null, bool required = false)
+        public static HtmlBuilder SELECT_ORG(this HtmlBuilder h, string label, string name, int v, Map<int, Org> opts, Map<short, Reg> regs, Func<Org, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)
@@ -122,19 +122,19 @@ namespace ChainMart
             return h;
         }
 
-        public static HtmlContent RECEIVER(this HtmlContent h, string tel)
+        public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
         {
             h.T("<a class=\"uk-icon-button uk-light\" href=\"tel:").T(tel).T("\" uk-icon=\"icon: receiver\"></a>");
             return h;
         }
 
-        public static HtmlContent A_ICON(this HtmlContent h, string url, string icon)
+        public static HtmlBuilder A_ICON(this HtmlBuilder h, string url, string icon)
         {
             h.T("<a class=\"uk-icon-button uk-light\" href=\"").T(url).T("\" uk-icon=\"icon: \"").T(icon).T("\"></a>");
             return h;
         }
 
-        public static HtmlContent A_TEL(this HtmlContent h, string name, string tel, string css = null)
+        public static HtmlBuilder A_TEL(this HtmlBuilder h, string name, string tel, string css = null)
         {
             h.T("<a ");
             if (css != null)
@@ -145,13 +145,13 @@ namespace ChainMart
             return h;
         }
 
-        public static HtmlContent A_TEL_ICON(this HtmlContent h, string name, string tel = null)
+        public static HtmlBuilder A_TEL_ICON(this HtmlBuilder h, string name, string tel = null)
         {
             h.T("<a class=\"uk-icon-link\" uk-icon=\"receiver\" href=\"tel:").T(tel).T("\"></a>");
             return h;
         }
 
-        public static HtmlContent POI_(this HtmlContent h, double x, double y, string title, string addr, string tel = null)
+        public static HtmlBuilder POI_(this HtmlBuilder h, double x, double y, string title, string addr, string tel = null)
         {
             h.T("<a class=\"\" href=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:").T(y).T(',').T(x).T(";title:").T(title).T(";addr:").T(addr);
             if (tel != null)
@@ -163,13 +163,13 @@ namespace ChainMart
             return h;
         }
 
-        public static HtmlContent _POI(this HtmlContent h)
+        public static HtmlBuilder _POI(this HtmlBuilder h)
         {
             h.T("</a>");
             return h;
         }
 
-        public static HtmlContent MASKNAME(this HtmlContent h, string name)
+        public static HtmlBuilder MASKNAME(this HtmlBuilder h, string name)
         {
             for (int i = 0; i < name?.Length; i++)
             {
@@ -199,7 +199,7 @@ namespace ChainMart
             wc.SetCookie(nameof(token), token);
         }
 
-        public static void ViewAgrmt(this HtmlContent h, JObj jo)
+        public static void ViewAgrmt(this HtmlBuilder h, JObj jo)
         {
             string title = null;
             string a = null, b = null;
