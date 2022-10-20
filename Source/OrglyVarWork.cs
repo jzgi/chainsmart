@@ -42,20 +42,6 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateWork<ZonlyOrgWork>("zorg");
-
-            CreateWork<ZonlyRptWork>("zrpt");
-
-
-            CreateWork<SrclyItemWork>("sitem");
-
-            CreateWork<SrclyLotWork>("slot");
-
-            CreateWork<SrclyBookWork>("sbook");
-
-            CreateWork<SrclyRptWork>("srpt");
-
-
             CreateWork<CtrlyLotWork>("clot");
 
             CreateWork<CtrlyBookWork>("cbook");
@@ -63,6 +49,20 @@ namespace ChainMart
             CreateWork<CtrlyDistrWork>("cdistr");
 
             CreateWork<CtrlyRptWork>("crpt");
+
+
+            CreateWork<ZonlyOrgWork>("zorg");
+
+            CreateWork<ZonlyRptWork>("zrpt");
+
+
+            CreateWork<SrclyLotWork>("slot");
+
+            CreateWork<SrclyItemWork>("sitem");
+
+            CreateWork<SrclyBookWork>("sbook");
+
+            CreateWork<SrclyRptWork>("srpt");
 
 
             CreateWork<OrglyClearWork>("clear");
@@ -119,7 +119,7 @@ namespace ChainMart
 
             CreateWork<MktlyRptWork>("mrpt");
 
-            
+
             CreateWork<ShplyBuyWork>("sbuy");
 
             CreateWork<ShplyBookWork>("sbook");
@@ -128,7 +128,7 @@ namespace ChainMart
 
             CreateWork<ShplyRptWork>("srpt");
 
-            
+
             CreateWork<OrglyClearWork>("clear");
 
             CreateWork<OrglyAccessWork>("access");

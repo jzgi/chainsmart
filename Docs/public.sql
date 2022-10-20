@@ -40,9 +40,9 @@ create table regs
 )
     inherits (entities);
 
-comment on column regs.num is 'sub resources';
+comment on column regs_old.num is 'sub resources';
 
-alter table regs owner to postgres;
+alter table regs_old owner to postgres;
 
 create table dailys
 (
@@ -126,9 +126,9 @@ create table cats
 )
     inherits (entities);
 
-comment on column cats.size is 'sub resources';
+comment on column cats_old.size is 'sub resources';
 
-alter table cats owner to postgres;
+alter table cats_old owner to postgres;
 
 create table stocks
 (
@@ -173,7 +173,7 @@ create table items
 )
     inherits (entities);
 
-alter table items owner to postgres;
+alter table items_old owner to postgres;
 
 create table rules
 (
@@ -186,7 +186,7 @@ create table rules
 )
     inherits (entities);
 
-alter table rules owner to postgres;
+alter table marks owner to postgres;
 
 create table buys
 (
@@ -232,7 +232,7 @@ create table users
 )
     inherits (entities);
 
-alter table users owner to postgres;
+alter table users_old owner to postgres;
 
 create table orgs
 (
@@ -241,15 +241,15 @@ create table orgs
             primary key,
     prtid integer
         constraint orgs_prtid_fk
-            references orgs,
+            references orgs_old,
     ctrid integer
         constraint orgs_ctrid_fk
-            references orgs,
+            references orgs_old,
     license varchar(20),
     trust boolean,
     regid smallint
         constraint orgs_regid_fk
-            references regs
+            references regs_old
             on update cascade,
     addr varchar(30),
     x double precision,
@@ -257,10 +257,10 @@ create table orgs
     tel varchar(11),
     sprid integer
         constraint orgs_sprid_fk
-            references users,
+            references users_old,
     rvrid integer
         constraint orgs_rvrid_fk
-            references users,
+            references users_old,
     icon bytea,
     oker varchar(10),
     oked timestamp(0),
@@ -268,7 +268,7 @@ create table orgs
 )
     inherits (entities);
 
-alter table orgs owner to postgres;
+alter table orgs_old owner to postgres;
 
 create table events
 (
@@ -277,12 +277,12 @@ create table events
             primary key,
     orgid integer
         constraint events_forid_fk
-            references orgs,
+            references orgs_old,
     credit integer
 )
     inherits (entities);
 
-alter table events owner to postgres;
+alter table tests owner to postgres;
 
 create table lots
 (
@@ -291,13 +291,13 @@ create table lots
             primary key,
     itemid integer
         constraint lots_items_fk
-            references items,
+            references items_old,
     srcid integer
         constraint lots_srcid_fk
-            references orgs,
+            references orgs_old,
     ctrid integer
         constraint lots_ctrid_fk
-            references orgs,
+            references orgs_old,
     ctring boolean,
     price money,
     "off" money,
@@ -312,11 +312,11 @@ create table lots
     nstart integer,
     nend integer,
     constraint lots_typ_fk
-        foreign key (typ) references cats
+        foreign key (typ) references cats_old
 )
     inherits (entities);
 
-alter table lots owner to postgres;
+alter table lots_old owner to postgres;
 
 create table books
 (
@@ -330,10 +330,10 @@ create table books
     zonid integer not null,
     itemid integer
         constraint books_itemid_fk
-            references items,
+            references items_old,
     lotid integer
         constraint books_lotid_fk
-            references lots,
+            references lots_old,
     unit varchar(4),
     unitx smallint,
     unitstd varchar(4),
@@ -352,20 +352,20 @@ create table books
 alter table books owner to postgres;
 
 create index lots_nstart_nend_idx
-    on lots (nstart, nend);
+    on lots_old (nstart, nend);
 
 create index users_admly_idx
-    on users (admly)
+    on users_old (admly)
     where (admly > 0);
 
 create unique index users_im_idx
-    on users (im);
+    on users_old (im);
 
 create unique index users_tel_idx
-    on users (tel);
+    on users_old (tel);
 
 create index users_orgidorgly_idx
-    on users (orgid, orgly)
+    on users_old (orgid, orgly)
     where (orgly > 0);
 
 create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, addr, im, credential, admly, orgid, orgly, idcard, icon) as
@@ -387,7 +387,7 @@ SELECT u.typ,
        u.orgly,
        u.idcard,
        u.icon IS NOT NULL AS icon
-FROM users u;
+FROM users_old u;
 
 alter table users_vw owner to postgres;
 
@@ -419,8 +419,8 @@ SELECT o.typ,
        o.oker,
        o.oked,
        o.state
-FROM orgs o
-         LEFT JOIN users m
+FROM orgs_old o
+         LEFT JOIN users_old m
                    ON o.sprid =
                       m.id;
 

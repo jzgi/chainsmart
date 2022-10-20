@@ -149,7 +149,7 @@ namespace ChainMart
             CreateVarWork<AdmlyBuyClearVarWork>();
         }
 
-        [Ui("当前结算", @group: 1), Tool(Anchor)]
+        [Ui("当前结算", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -183,7 +183,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [Ui("历史", "浏览结算历史", @group: 2), Tool(AnchorPrompt)]
+        [Ui("历史", "浏览结算历史", group: 2), Tool(AnchorPrompt)]
         public async Task past(WebContext wc, int page)
         {
             var topOrgs = Grab<int, Org>();

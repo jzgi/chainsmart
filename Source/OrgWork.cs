@@ -130,7 +130,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("管理产源", "供区")]
+    [Ui("下属产源", "供区")]
     public class ZonlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -138,7 +138,7 @@ namespace ChainMart
             CreateVarWork<ZonlyOrgVarWork>();
         }
 
-        [Ui("有效产源", group: 1), Tool(Anchor)]
+        [Ui("下属产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -155,51 +155,31 @@ namespace ChainMart
 
                 h.GRIDA(map, o =>
                 {
-                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h.P(o.tip);
+                    if (o.icon)
+                    {
+                        h.PIC_().T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
+                    else
+                    {
+                        h.PIC("/void.webp");
+                    }
+                    h.SECTION_("uk-width-4-5");
+                    h.T(o.name);
                     h._SECTION();
-                    h.FOOTER_()._FOOTER();
                 });
             });
         }
 
-        [Ui(icon: "ban", group: 2), Tool(Anchor)]
-        public async Task ban(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
-            var map = await dc.QueryAsync<int, Org>(p => p.Set(org.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.TOOLBAR();
-
-                if (map == null) return;
-
-                h.GRIDA(map, o =>
-                {
-                    h.HEADER_("uk-card-header").PIC(o.id, "/icon").SP().H5(o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h.P(o.tip);
-                    h._SECTION();
-                    h.FOOTER_()._FOOTER();
-                });
-            });
-        }
-
-        [Ui("新建", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
-            var prv = wc[-1].As<Org>();
+            var zon = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
             var m = new Org
             {
                 typ = Org.TYP_SRC,
-                prtid = prv.id,
+                prtid = zon.id,
                 created = DateTime.Now,
                 creator = prin.name,
                 status = Entity.STU_NORMAL
@@ -208,7 +188,7 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产源属性");
+                    h.FORM_().FIELDSUL_("填写产源属性");
                     h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
@@ -216,7 +196,9 @@ namespace ChainMart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL();
+                    h.BOTTOM_BUTTON("确认");
+                    h._FORM();
                 });
             }
             else // POST

@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using ChainFx;
 
 namespace ChainMart
@@ -38,7 +38,6 @@ namespace ChainMart
         internal decimal total;
         internal decimal rate;
         internal decimal pay;
-        internal short status;
 
         public override void Read(ISource s, short proj = 0xff)
         {
@@ -55,7 +54,6 @@ namespace ChainMart
             s.Get(nameof(total), ref total);
             s.Get(nameof(rate), ref rate);
             s.Get(nameof(pay), ref pay);
-            s.Get(nameof(status), ref status);
         }
 
         public override void Write(ISink s, short proj = 0xff)
@@ -73,7 +71,6 @@ namespace ChainMart
             s.Put(nameof(total), total);
             s.Put(nameof(rate), rate);
             s.Put(nameof(pay), pay);
-            s.Put(nameof(status), status);
         }
 
         public int Key => id;

@@ -22,8 +22,6 @@ namespace ChainMart
 
             wc.GivePane(200, h =>
             {
-                h.TITLEBAR(m.name);
-
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品", items[m.itemid].ToString())._LI();
                 h.LI_().FIELD("投放市场", topOrgs[m.ctrid].name)._LI();

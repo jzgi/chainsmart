@@ -1,12 +1,11 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
     /// <summary>
     /// An online retail buy order.
     /// </summary>
-    public class Buy : Entity, IKeyable<long>, IFlowable
+    public class Buy : Entity, IKeyable<long>
     {
         public static readonly Buy Empty = new Buy();
 
@@ -33,10 +32,6 @@ namespace ChainMart
         internal decimal pay;
         internal decimal refund;
 
-        internal string oker;
-        internal DateTime oked;
-        internal short state;
-
         public override void Read(ISource s, short msk = 0xff)
         {
             base.Read(s, msk);
@@ -61,9 +56,6 @@ namespace ChainMart
                 s.Get(nameof(fee), ref fee);
                 s.Get(nameof(pay), ref pay);
                 s.Get(nameof(refund), ref refund);
-                s.Get(nameof(oker), ref oker);
-                s.Get(nameof(oked), ref oked);
-                s.Get(nameof(state), ref state);
             }
         }
 
@@ -91,18 +83,9 @@ namespace ChainMart
                 s.Put(nameof(fee), fee);
                 s.Put(nameof(pay), pay);
                 s.Put(nameof(refund), refund);
-                s.Put(nameof(oker), oker);
-                s.Put(nameof(oked), oked);
-                s.Put(nameof(state), state);
             }
         }
 
         public long Key => id;
-
-        public string Oker => oker;
-
-        public DateTime Oked => oked;
-
-        public short State => state;
     }
 }

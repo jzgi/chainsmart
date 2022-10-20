@@ -1,12 +1,11 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
     /// <summary>
     /// A product lot for booking.
     /// </summary>
-    public class Lot : Entity, IKeyable<int>, IFlowable
+    public class Lot : Entity, IKeyable<int>
     {
         public static readonly Lot Empty = new Lot();
 
@@ -15,7 +14,7 @@ namespace ChainMart
             STA_SUBMITTED = 1,
             STU_OKED = 3;
 
-        public new static readonly Map<short, string> States = new Map<short, string>
+        public static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_CREATED, "新创建"},
             {STA_SUBMITTED, "已提交"},
@@ -36,10 +35,6 @@ namespace ChainMart
         internal short min;
         internal short max;
         internal short step;
-
-        internal string oker;
-        internal DateTime oked;
-        internal short state;
 
         internal int nstart;
         internal int nend;
@@ -73,9 +68,6 @@ namespace ChainMart
             {
                 s.Get(nameof(adapted), ref adapted);
                 s.Get(nameof(adapter), ref adapter);
-                s.Get(nameof(oker), ref oker);
-                s.Get(nameof(oked), ref oked);
-                s.Get(nameof(state), ref state);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
             }
@@ -110,9 +102,6 @@ namespace ChainMart
             {
                 s.Put(nameof(adapted), adapted);
                 s.Put(nameof(adapter), adapter);
-                s.Put(nameof(oker), oker);
-                s.Put(nameof(oked), oked);
-                s.Put(nameof(state), state);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
             }
@@ -121,11 +110,5 @@ namespace ChainMart
         public int Key => id;
 
         public override string ToString() => name;
-
-        public string Oker => oker;
-
-        public DateTime Oked => oked;
-
-        public short State => state;
     }
 }

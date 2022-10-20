@@ -1,12 +1,11 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
     /// <summary>
     /// An organizational unit.
     /// </summary>
-    public class Org : Entity, IKeyable<int>, IFlowable
+    public class Org : Entity, IKeyable<int>
     {
         public static readonly Org Empty = new Org();
 
@@ -58,10 +57,6 @@ namespace ChainMart
         internal int rvrid; // reviewer id 
         internal bool icon;
 
-        internal string oker;
-        internal DateTime oked;
-        internal short state;
-
         public override void Read(ISource s, short proj = 0xff)
         {
             base.Read(s, proj);
@@ -94,10 +89,6 @@ namespace ChainMart
                 s.Get(nameof(sprim), ref sprim);
                 s.Get(nameof(rvrid), ref rvrid);
                 s.Get(nameof(icon), ref icon);
-
-                s.Get(nameof(oker), ref oker);
-                s.Get(nameof(oked), ref oked);
-                s.Get(nameof(state), ref state);
             }
         }
 
@@ -137,10 +128,6 @@ namespace ChainMart
                 s.Put(nameof(sprim), sprim);
                 s.Put(nameof(rvrid), rvrid);
                 s.Put(nameof(icon), icon);
-
-                s.Put(nameof(oker), oker);
-                s.Put(nameof(oked), oked);
-                s.Put(nameof(state), state);
             }
         }
 
@@ -176,11 +163,5 @@ namespace ChainMart
         public string ShopName => IsMarket ? tip : name;
 
         public override string ToString() => name;
-
-        public string Oker => oker;
-
-        public DateTime Oked => oked;
-
-        public short State => state;
     }
 }

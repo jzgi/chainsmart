@@ -1138,7 +1138,6 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
     padding: 0 6px;
 }
 
@@ -1407,7 +1406,7 @@ select.uk-form-width-xsmall {
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    border: 1px solid #f59604;
+    border: 1px solid #666;
     transition: 0.2s ease-in-out;
     transition-property: background-color, border;
 }
@@ -1419,20 +1418,20 @@ select.uk-form-width-xsmall {
 .uk-radio:focus,
 .uk-checkbox:focus {
     outline: none;
-    border-color: #f59604;
+    border-color: #666;
 }
 
 .uk-radio:checked,
 .uk-checkbox:checked,
 .uk-checkbox:indeterminate {
-    background-color: #f59604;
-    border-color: #f59604;
+    background-color: #666;
+    border-color: #666;
 }
 
 .uk-radio:checked:focus,
 .uk-checkbox:checked:focus,
 .uk-checkbox:indeterminate:focus {
-    background-color: #f59604;
+    background-color: #666;
 }
 
 .uk-radio:checked {
@@ -1653,12 +1652,12 @@ select.uk-form-width-xsmall {
 }
 
 .uk-button-default {
-    padding: 6px 16px;
+    padding: 8px 16px;
     margin: 4px;
 }
 
 button.uk-button-default {
-    background-color: #999;
+    background-color: #666;
     color: #fff;
     border-radius: 12px;
     border: 0;
@@ -1683,6 +1682,9 @@ button.uk-button-primary {
     margin-left: auto;
 }
 
+.uk-bottom-bar button.uk-button-primary {
+    border: 1px solid #ccc;
+}
 
 button.uk-button-primary:hover,
 button.uk-button-primary:focus,

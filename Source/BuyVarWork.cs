@@ -29,7 +29,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("标签", @group: 1), Tool(ButtonOpen)]
+        [Ui("标签", group: 1), Tool(ButtonOpen)]
         public async Task tag(WebContext wc)
         {
             int orderid = wc[0];
@@ -60,7 +60,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("协议", @group: 2), Tool(ButtonOpen)]
+        [Ui("协议", group: 2), Tool(ButtonOpen)]
         public void agrmt(WebContext wc, int dietid)
         {
             var diets = Grab<short, Org>();
@@ -72,7 +72,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("申诉", @group: 2), Tool(ButtonOpen)]
+        [Ui("申诉", group: 2), Tool(ButtonOpen)]
         public async Task compl(WebContext wc)
         {
             int orderid = wc[0];

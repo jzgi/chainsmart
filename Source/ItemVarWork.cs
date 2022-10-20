@@ -75,8 +75,6 @@ namespace ChainMart
 
             wc.GivePane(200, h =>
             {
-                h.TITLEBAR(o.name);
-
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名称", o.name).FIELD("类别", o.typ, cats)._LI();
                 h.LI_().FIELD("简述", o.tip)._LI();

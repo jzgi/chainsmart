@@ -97,7 +97,7 @@ namespace ChainMart
     [Ui("业务报表", "中控")]
     public class CtrlyRptWork : RptWork
     {
-        [Ui("待收", @group: 1), Tool(Modal.Anchor)]
+        [Ui("待收", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)
         {
         }

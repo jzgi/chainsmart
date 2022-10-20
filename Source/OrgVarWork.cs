@@ -101,7 +101,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("웃", "设置管理员", @group: 7), Tool(ButtonOpen)]
+        [Ui("웃", "设置管理员", group: 7), Tool(ButtonOpen)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -238,6 +238,33 @@ namespace ChainMart
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
+            var topOrgs = Grab<int, Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("商户名称", o.name)._LI();
+                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name)._LI();
+                h.LI_().FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
+                h.LI_().FIELD("信用编号", o.license)._LI();
+                h.LI_().FIELD("单位提示", o.regid)._LI();
+                h.LI_().FIELD("只供代理", o.trust)._LI();
+                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true);
+            });
+        }
+
+        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonShow)]
+        public async Task edit(WebContext wc)
+        {
+            int id = wc[0];
             var regs = Grab<short, Reg>();
 
             if (wc.IsGet)
@@ -272,7 +299,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("✕", "删除"), Tool(ButtonOpen)]
+        [Ui("删除", icon: "trash"), Tool(ButtonShow)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];

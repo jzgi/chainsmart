@@ -101,7 +101,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("修改", @group: 1), Tool(ButtonOpen)]
+        [Ui("修改", group: 1), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)
         {
             var prin = (User) wc.Principal;

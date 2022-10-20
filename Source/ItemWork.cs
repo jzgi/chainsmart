@@ -20,7 +20,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("设置产品", "产源")]
+    [Ui("登记产品资料", "产源")]
     public class SrclyItemWork : ItemWork
     {
         protected override void OnCreate()
@@ -28,7 +28,7 @@ namespace ChainMart
             CreateVarWork<SrclyItemVarWork>();
         }
 
-        [Ui("有效产品", group: 1), Tool(Anchor)]
+        [Ui("产品资料", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();

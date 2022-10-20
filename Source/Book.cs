@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// A product booking record & process.
     /// </summary>
-    public class Book : Entity, IKeyable<int>, IFlowable
+    public class Book : Entity, IKeyable<int>
     {
         public static readonly Book Empty = new Book();
 
@@ -56,10 +56,6 @@ namespace ChainMart
         internal decimal pay;
         internal decimal refund; // pay refunded
 
-        internal string oker;
-        internal DateTime oked;
-        internal short state;
-
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -91,10 +87,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(oker), ref oker);
-                s.Get(nameof(oked), ref oked);
-                s.Get(nameof(state), ref state);
-
                 s.Get(nameof(cut), ref cut);
                 s.Get(nameof(refund), ref refund);
             }
@@ -131,10 +123,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(oker), oker);
-                s.Put(nameof(oked), oked);
-                s.Put(nameof(state), state);
-
                 s.Put(nameof(cut), cut);
                 s.Put(nameof(refund), refund);
             }
@@ -145,12 +133,5 @@ namespace ChainMart
         public bool IsOver(DateTime now) => false;
 
         public short Status => status;
-
-
-        public string Oker => oker;
-
-        public DateTime Oked => oked;
-
-        public short State => state;
     }
 }
