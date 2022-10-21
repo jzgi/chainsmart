@@ -164,7 +164,7 @@ svg:not(:root) {
 }
 
 p {
-    margin: 0px;
+    margin: 0;
     padding: 4px 0;
     color: #666;
 }
@@ -225,7 +225,7 @@ h4,
     font-size: 1rem;
     font-weight: 500;
     margin: 0;
-    color: #7daa1d;
+    color: #000;
 }
 
 h5,
@@ -2085,6 +2085,8 @@ main.uk-grid > li {
 
     padding: 4px 6px;
     background-color: #fff;
+    display: flex;
+    width: 100%;
 }
 
 .uk-card-header {
@@ -2132,8 +2134,12 @@ main.uk-grid > li {
 
 .uk-card-default {
     background-color: transparent;
-    border-radius: 6px;
-    padding: 6px;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+main.uk-grid {
+    padding: 4px;
 }
 
 .uk-card .uk-card-title {

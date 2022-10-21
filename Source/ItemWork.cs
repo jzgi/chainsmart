@@ -28,7 +28,7 @@ namespace ChainMart
             CreateVarWork<SrclyItemVarWork>();
         }
 
-        [Ui("产品资料", group: 1), Tool(Anchor)]
+        [Ui("当前产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -49,9 +49,12 @@ namespace ChainMart
 
                 h.GRIDA(map, o =>
                 {
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.SECTION_("uk-width-4-5");
-                    h.T(o.name);
+                    h.SECTION_("uk-card-body");
+                    h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H4(o.name);
+                    h.P(o.tip);
+                    h._DIV();
                     h._SECTION();
                 });
             });
@@ -100,16 +103,16 @@ namespace ChainMart
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("标准产品资料");
+                    h.FORM_().FIELDSUL_("填写产品资料");
 
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true)._LI();
-                    h.LI_().TEXT("包装单位", nameof(o.unitpkg), o.unitpkg).TEXT("包装含量", nameof(o.unitx), o.unitx, tip: "多个值则用空格分开", required: true)._LI();
+                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装单位", nameof(o.unitpkg), o.unitpkg)._LI();
+                    h.LI_().TEXT("包装基础比", nameof(o.unitx), o.unitx, tip: "如有多个值要用空格分开", required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STU_VOID, required: true)._LI();
 
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
                 });
             }
             else // POST

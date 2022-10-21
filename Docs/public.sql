@@ -25,24 +25,13 @@ create table entities
     created timestamp(0),
     creator varchar(10),
     adapted timestamp(0),
-    adapter varchar(10)
+    adapter varchar(10),
+    oked timestamp(0),
+    oker varchar(10),
+    state smallint
 );
 
 alter table entities owner to postgres;
-
-create table regs
-(
-    id smallint not null
-        constraint regs_pk
-            primary key,
-    idx smallint,
-    num smallint
-)
-    inherits (entities);
-
-comment on column regs_old.num is 'sub resources';
-
-alter table regs_old owner to postgres;
 
 create table dailys
 (
@@ -79,56 +68,36 @@ create table peerledgs_
 
 alter table peerledgs_ owner to postgres;
 
-create table peers_
-(
-    id smallint not null
-        constraint peers_pk
-            primary key,
-    weburl varchar(50),
-    secret varchar(16)
-)
-    inherits (entities);
-
-alter table peers_ owner to postgres;
-
-create table accts_
-(
-    no varchar(20),
-    v integer
-)
-    inherits (entities);
-
-alter table accts_ owner to postgres;
-
-create table clears
+create table users
 (
     id serial not null
-        constraint clears_pk
+        constraint users_pk
             primary key,
-    dt date,
-    orgid integer not null,
-    sprid integer not null,
-    orders integer,
-    total money,
-    rate money,
-    pay integer
+    tel varchar(11) not null,
+    addr varchar(50),
+    im varchar(28),
+    credential varchar(32),
+    admly smallint default 0 not null,
+    orgid smallint,
+    orgly smallint default 0 not null,
+    idcard varchar(18),
+    icon bytea
 )
     inherits (entities);
 
-alter table clears owner to postgres;
+alter table users owner to postgres;
 
-create table cats
+create table tests
 (
-    idx smallint,
-    size smallint,
-    constraint cats_pk
-        primary key (typ)
+    id serial not null
+        constraint tests_pk
+            primary key,
+    orgid integer,
+    level integer
 )
     inherits (entities);
 
-comment on column cats_old.size is 'sub resources';
-
-alter table cats_old owner to postgres;
+alter table tests owner to postgres;
 
 create table stocks
 (
@@ -152,6 +121,85 @@ create table stocks
 
 alter table stocks owner to postgres;
 
+create table regs
+(
+    id smallint not null,
+    idx smallint,
+    num smallint
+)
+    inherits (entities);
+
+alter table regs owner to postgres;
+
+create table peers_
+(
+    id smallint not null
+        constraint peers__pk
+            primary key,
+    weburl varchar(50),
+    secret varchar(16)
+)
+    inherits (entities);
+
+alter table peers_ owner to postgres;
+
+create table orgs
+(
+    id serial not null
+        constraint orgs_pk
+            primary key,
+    prtid integer,
+    ctrid integer,
+    license varchar(20),
+    trust boolean,
+    regid smallint,
+    addr varchar(30),
+    x double precision,
+    y double precision,
+    tel varchar(11),
+    link varchar(100),
+    sprid integer,
+    rvrid integer,
+    icon bytea
+)
+    inherits (entities);
+
+alter table orgs owner to postgres;
+
+create table marks
+(
+    id smallserial not null
+        constraint marks_pk
+            primary key,
+    icon bytea
+)
+    inherits (entities);
+
+alter table marks owner to postgres;
+
+create table lots
+(
+    id serial not null
+        constraint lots_pk
+            primary key,
+    itemid integer,
+    srcid integer,
+    ctrid integer,
+    ctring boolean,
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    nstart integer,
+    nend integer
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
+
 create table items
 (
     id serial not null
@@ -173,20 +221,33 @@ create table items
 )
     inherits (entities);
 
-alter table items_old owner to postgres;
+alter table items owner to postgres;
 
-create table rules
+create table clears
 (
-    id serial not null
-        constraint rules_pk
-            primary key,
-    oker varchar(12),
-    oked timestamp(0),
-    state smallint
+    id serial not null,
+    dt date,
+    orgid integer not null,
+    sprid integer not null,
+    orders integer,
+    total money,
+    rate money,
+    pay integer
 )
     inherits (entities);
 
-alter table marks owner to postgres;
+alter table clears owner to postgres;
+
+create table cats
+(
+    idx smallint,
+    size smallint,
+    constraint cats_pk
+        primary key (typ)
+)
+    inherits (entities);
+
+alter table cats owner to postgres;
 
 create table buys
 (
@@ -203,120 +264,11 @@ create table buys
     lines buyln_type[],
     fee money,
     pay money,
-    refund money,
-    oker varchar(10),
-    oked timestamp(0),
-    state smallint
+    refund money
 )
     inherits (entities);
 
 alter table buys owner to postgres;
-
-create index buys_orgs_state_idx
-    on buys (mktid, shpid, state);
-
-create table users
-(
-    id serial not null
-        constraint users_pk
-            primary key,
-    tel varchar(11) not null,
-    addr varchar(50),
-    im varchar(28),
-    credential varchar(32),
-    admly smallint default 0 not null,
-    orgid smallint,
-    orgly smallint default 0 not null,
-    idcard varchar(18),
-    icon bytea
-)
-    inherits (entities);
-
-alter table users_old owner to postgres;
-
-create table orgs
-(
-    id serial not null
-        constraint orgs_pk
-            primary key,
-    prtid integer
-        constraint orgs_prtid_fk
-            references orgs_old,
-    ctrid integer
-        constraint orgs_ctrid_fk
-            references orgs_old,
-    license varchar(20),
-    trust boolean,
-    regid smallint
-        constraint orgs_regid_fk
-            references regs_old
-            on update cascade,
-    addr varchar(30),
-    x double precision,
-    y double precision,
-    tel varchar(11),
-    sprid integer
-        constraint orgs_sprid_fk
-            references users_old,
-    rvrid integer
-        constraint orgs_rvrid_fk
-            references users_old,
-    icon bytea,
-    oker varchar(10),
-    oked timestamp(0),
-    state smallint
-)
-    inherits (entities);
-
-alter table orgs_old owner to postgres;
-
-create table events
-(
-    id serial not null
-        constraint events_pk
-            primary key,
-    orgid integer
-        constraint events_forid_fk
-            references orgs_old,
-    credit integer
-)
-    inherits (entities);
-
-alter table tests owner to postgres;
-
-create table lots
-(
-    id serial not null
-        constraint lots_pk
-            primary key,
-    itemid integer
-        constraint lots_items_fk
-            references items_old,
-    srcid integer
-        constraint lots_srcid_fk
-            references orgs_old,
-    ctrid integer
-        constraint lots_ctrid_fk
-            references orgs_old,
-    ctring boolean,
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer,
-    oker varchar(10),
-    oked timestamp(0),
-    state smallint,
-    nstart integer,
-    nend integer,
-    constraint lots_typ_fk
-        foreign key (typ) references cats_old
-)
-    inherits (entities);
-
-alter table lots_old owner to postgres;
 
 create table books
 (
@@ -328,70 +280,32 @@ create table books
     ctrid integer not null,
     srcid integer not null,
     zonid integer not null,
-    itemid integer
-        constraint books_itemid_fk
-            references items_old,
-    lotid integer
-        constraint books_lotid_fk
-            references lots_old,
+    itemid integer,
+    lotid integer,
     unit varchar(4),
     unitx smallint,
-    unitstd varchar(4),
+    unitpkg varchar(4),
     price money,
     "off" money,
     qty integer,
     cut integer,
     pay money,
-    refund money,
-    oker varchar(10),
-    oked timestamp(0),
-    state smallint
+    refund money
 )
     inherits (entities);
 
 alter table books owner to postgres;
 
-create index lots_nstart_nend_idx
-    on lots_old (nstart, nend);
+create table accts_
+(
+    no varchar(20),
+    v integer
+)
+    inherits (entities);
 
-create index users_admly_idx
-    on users_old (admly)
-    where (admly > 0);
+alter table accts_ owner to postgres;
 
-create unique index users_im_idx
-    on users_old (im);
-
-create unique index users_tel_idx
-    on users_old (tel);
-
-create index users_orgidorgly_idx
-    on users_old (orgid, orgly)
-    where (orgly > 0);
-
-create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, id, tel, addr, im, credential, admly, orgid, orgly, idcard, icon) as
-SELECT u.typ,
-       u.status,
-       u.name,
-       u.tip,
-       u.created,
-       u.creator,
-       u.adapted,
-       u.adapter,
-       u.id,
-       u.tel,
-       u.addr,
-       u.im,
-       u.credential,
-       u.admly,
-       u.orgid,
-       u.orgly,
-       u.idcard,
-       u.icon IS NOT NULL AS icon
-FROM users_old u;
-
-alter table users_vw owner to postgres;
-
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, sprid, sprname, sprtel, sprim, rvrid, icon, oker, oked, state) as
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, icon) as
 SELECT o.typ,
        o.status,
        o.name,
@@ -400,6 +314,9 @@ SELECT o.typ,
        o.creator,
        o.adapted,
        o.adapter,
+       o.oker,
+       o.oked,
+       o.state,
        o.id,
        o.prtid,
        o.ctrid,
@@ -410,21 +327,45 @@ SELECT o.typ,
        o.x,
        o.y,
        o.tel,
+       o.link,
        o.sprid,
        m.name             AS sprname,
        m.tel              AS sprtel,
        m.im               AS sprim,
        o.rvrid,
-       o.icon IS NOT NULL AS icon,
-       o.oker,
-       o.oked,
-       o.state
-FROM orgs_old o
-         LEFT JOIN users_old m
+       o.icon IS NOT NULL AS icon
+FROM orgs o
+         LEFT JOIN users m
                    ON o.sprid =
                       m.id;
 
 alter table orgs_vw owner to postgres;
+
+create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, idcard, icon) as
+SELECT u.typ,
+       u.status,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.oked,
+       u.oker,
+       u.state,
+       u.id,
+       u.tel,
+       u.addr,
+       u.im,
+       u.credential,
+       u.admly,
+       u.orgid,
+       u.orgly,
+       u.idcard,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
