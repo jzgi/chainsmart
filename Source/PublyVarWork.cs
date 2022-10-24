@@ -32,13 +32,32 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.NAVBAR(regs, string.Empty, sec, filter: (k, v) => v.IsSection);
+
+                if (map == null)
+                {
+                    h.ALERT("尚无商户");
+                    return;
+                }
+
                 h.GRIDA(map, o =>
                 {
-                    h.DIV_("uk-card-body");
-                    h.PIC("/org/", o.id, "/icon");
-                    h.T(o.name);
+                    h.SECTION_("uk-card-body");
+
+                    if (o.icon)
+                    {
+                        h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
                     h._DIV();
-                }, min: 2);
+                    h._SECTION();
+                });
             }, shared: true, maxage: 900, title: mrt.name);
         }
     }

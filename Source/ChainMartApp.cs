@@ -14,6 +14,7 @@ namespace ChainMart
 
         public static string MgtUrl;
 
+
         // periodic polling and concluding ended lots 
         static readonly Thread cycler = new Thread(Cycle);
 
@@ -21,7 +22,10 @@ namespace ChainMart
         /// The entry point of the application.
         /// </summary>
         public static async Task Main(string[] args)
+
+
         {
+
             // start the concluder thead
             cycler.Start();
 

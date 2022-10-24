@@ -52,7 +52,7 @@ namespace ChainMart
                     h.SECTION_("uk-card-body");
                     h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
-                    h.H4(o.name);
+                    h.H5(o.name);
                     h.P(o.tip);
                     h._DIV();
                     h._SECTION();

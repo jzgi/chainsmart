@@ -68,62 +68,11 @@ create table peerledgs_
 
 alter table peerledgs_ owner to postgres;
 
-create table users
-(
-    id serial not null
-        constraint users_pk
-            primary key,
-    tel varchar(11) not null,
-    addr varchar(50),
-    im varchar(28),
-    credential varchar(32),
-    admly smallint default 0 not null,
-    orgid smallint,
-    orgly smallint default 0 not null,
-    idcard varchar(18),
-    icon bytea
-)
-    inherits (entities);
-
-alter table users owner to postgres;
-
-create table tests
-(
-    id serial not null
-        constraint tests_pk
-            primary key,
-    orgid integer,
-    level integer
-)
-    inherits (entities);
-
-alter table tests owner to postgres;
-
-create table stocks
-(
-    id serial not null
-        constraint stocks_pk
-            primary key,
-    shpid integer,
-    itemid integer,
-    unit varchar(4),
-    unitstd varchar(4),
-    unitx money,
-    price money,
-    "off" money,
-    min smallint,
-    max smallint,
-    step smallint,
-    icon bytea,
-    pic bytea
-)
-    inherits (entities);
-
-alter table stocks owner to postgres;
-
 create table regs
 (
-    id smallint not null,
+    id smallint not null
+        constraint regs_pk
+            primary key,
     idx smallint,
     num smallint
 )
@@ -148,11 +97,17 @@ create table orgs
     id serial not null
         constraint orgs_pk
             primary key,
-    prtid integer,
-    ctrid integer,
+    prtid integer
+        constraint orgs_prtid_fk
+            references orgs,
+    ctrid integer
+        constraint orgs_ctrid_fk
+            references orgs,
     license varchar(20),
     trust boolean,
-    regid smallint,
+    regid smallint
+        constraint orgs_regid_fk
+            references regs,
     addr varchar(30),
     x double precision,
     y double precision,
@@ -166,6 +121,41 @@ create table orgs
 
 alter table orgs owner to postgres;
 
+create table users
+(
+    id serial not null
+        constraint users_pk
+            primary key,
+    tel varchar(11) not null,
+    addr varchar(50),
+    im varchar(28),
+    credential varchar(32),
+    admly smallint default 0 not null,
+    orgid smallint
+        constraint users_orgid_fk
+            references orgs,
+    orgly smallint default 0 not null,
+    idcard varchar(18),
+    icon bytea
+)
+    inherits (entities);
+
+alter table users owner to postgres;
+
+create table tests
+(
+    id serial not null
+        constraint tests_pk
+            primary key,
+    orgid integer
+        constraint tests_orgid_fk
+            references orgs,
+    level integer
+)
+    inherits (entities);
+
+alter table tests owner to postgres;
+
 create table marks
 (
     id smallserial not null
@@ -177,35 +167,14 @@ create table marks
 
 alter table marks owner to postgres;
 
-create table lots
-(
-    id serial not null
-        constraint lots_pk
-            primary key,
-    itemid integer,
-    srcid integer,
-    ctrid integer,
-    ctring boolean,
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer,
-    nstart integer,
-    nend integer
-)
-    inherits (entities);
-
-alter table lots owner to postgres;
-
 create table items
 (
     id serial not null
         constraint items_pk
             primary key,
-    srcid integer,
+    srcid integer
+        constraint items_srcid_fk
+            references orgs,
     store smallint,
     duration smallint,
     agt boolean,
@@ -223,11 +192,66 @@ create table items
 
 alter table items owner to postgres;
 
+create table stocks
+(
+    id serial not null
+        constraint stocks_pk
+            primary key,
+    shpid integer
+        constraint stocks_shpid_fk
+            references orgs,
+    itemid integer
+        constraint stocks_itemid_fk
+            references items,
+    unit varchar(4),
+    unitstd varchar(4),
+    unitx money,
+    price money,
+    "off" money,
+    min smallint,
+    max smallint,
+    step smallint,
+    icon bytea,
+    pic bytea
+)
+    inherits (entities);
+
+alter table stocks owner to postgres;
+
+create table lots
+(
+    id serial not null
+        constraint lots_pk
+            primary key,
+    itemid integer
+        constraint lots_itemid_fk
+            references items,
+    srcid integer,
+    ctrid integer,
+    ctring boolean,
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    nstart integer,
+    nend integer
+)
+    inherits (entities);
+
+alter table lots owner to postgres;
+
 create table clears
 (
-    id serial not null,
+    id serial not null
+        constraint clears_pk
+            primary key,
     dt date,
-    orgid integer not null,
+    orgid integer not null
+        constraint clears_orgid_fk
+            references orgs,
     sprid integer not null,
     orders integer,
     total money,
@@ -254,9 +278,15 @@ create table buys
     id bigserial not null
         constraint buys_pk
             primary key,
-    shpid integer not null,
-    mktid integer not null,
-    uid integer not null,
+    shpid integer not null
+        constraint buys_shpid_fk
+            references orgs,
+    mktid integer not null
+        constraint buys_mkt_fk
+            references orgs,
+    uid integer not null
+        constraint buys_uid_fk
+            references users,
     uname varchar(10),
     utel varchar(11),
     uaddr varchar(20),
@@ -275,13 +305,27 @@ create table books
     id bigserial not null
         constraint books_pk
             primary key,
-    shpid integer not null,
-    mktid integer not null,
-    ctrid integer not null,
-    srcid integer not null,
-    zonid integer not null,
-    itemid integer,
-    lotid integer,
+    shpid integer not null
+        constraint books_shpid_fk
+            references orgs,
+    mktid integer not null
+        constraint books_mktid_fk
+            references orgs,
+    ctrid integer not null
+        constraint books_ctrid_fk
+            references orgs,
+    srcid integer not null
+        constraint books_srcid_fk
+            references orgs,
+    zonid integer not null
+        constraint books_zonly_fk
+            references orgs,
+    itemid integer
+        constraint books_itemid_fk
+            references items,
+    lotid integer
+        constraint books_lotid_fk
+            references lots,
     unit varchar(4),
     unitx smallint,
     unitpkg varchar(4),

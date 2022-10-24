@@ -159,50 +159,50 @@ namespace ChainMart
             }
             finally
             {
-                j.Dispose();
+                j.Clear();
             }
         }
 
         public static async Task PostSendAsync(string openid, string text)
         {
-            var j = new JsonBuilder(true, 1024);
+            var bdr = new JsonBuilder(true, 1024);
             try
             {
-                j.OBJ_();
-                j.Put("touser", openid);
-                j.Put("msgtype", "text");
-                j.OBJ_("text");
-                j.Put("content", text);
-                j._OBJ();
-                j._OBJ();
-                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), j);
+                bdr.OBJ_();
+                bdr.Put("touser", openid);
+                bdr.Put("msgtype", "text");
+                bdr.OBJ_("text");
+                bdr.Put("content", text);
+                bdr._OBJ();
+                bdr._OBJ();
+                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
             }
             finally
             {
-                j.Dispose();
+                bdr.Clear();
             }
         }
 
         public static async Task PostSendAsync(string openid, string title, string descr, string url, string picurl = null)
         {
-            var j = new JsonBuilder(true, 1024);
+            var bdr = new JsonBuilder(true, 1024);
             try
             {
-                j.OBJ_();
-                j.Put("touser", openid);
-                j.Put("msgtype", "news");
-                j.OBJ_("news").ARR_("articles").OBJ_();
-                j.Put("title", title);
-                j.Put("description", descr);
-                j.Put("url", url);
-                j.Put("picurl", picurl);
-                j._OBJ()._ARR()._OBJ();
-                j._OBJ();
-                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), j);
+                bdr.OBJ_();
+                bdr.Put("touser", openid);
+                bdr.Put("msgtype", "news");
+                bdr.OBJ_("news").ARR_("articles").OBJ_();
+                bdr.Put("title", title);
+                bdr.Put("description", descr);
+                bdr.Put("url", url);
+                bdr.Put("picurl", picurl);
+                bdr._OBJ()._ARR()._OBJ();
+                bdr._OBJ();
+                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
             }
             finally
             {
-                j.Dispose();
+                bdr.Clear();
             }
         }
 

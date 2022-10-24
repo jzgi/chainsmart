@@ -130,7 +130,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("下属产源", "供区")]
+    [Ui("管理下属产源", "供区")]
     public class ZonlyOrgWork : OrgWork
     {
         protected override void OnCreate()
@@ -155,16 +155,19 @@ namespace ChainMart
 
                 h.GRIDA(map, o =>
                 {
+                    h.SECTION_("uk-card-body");
                     if (o.icon)
                     {
-                        h.PIC_().T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
-                        h.PIC("/void.webp");
+                        h.PIC("/void.webp", css: "uk-width-1-5");
                     }
-                    h.SECTION_("uk-width-4-5");
-                    h.T(o.name);
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
                     h._SECTION();
                 });
             });

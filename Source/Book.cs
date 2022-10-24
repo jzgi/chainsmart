@@ -47,7 +47,7 @@ namespace ChainMart
         internal short lotid;
 
         internal string unit;
-        internal string unitstd;
+        internal string unitpkg;
         internal short unitx;
         internal decimal price;
         internal decimal off;
@@ -78,7 +78,7 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(unit), ref unit);
-                s.Get(nameof(unitstd), ref unitstd);
+                s.Get(nameof(unitpkg), ref unitpkg);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
@@ -114,7 +114,7 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(unit), unit);
-                s.Put(nameof(unitstd), unitstd);
+                s.Put(nameof(unitpkg), unitpkg);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);

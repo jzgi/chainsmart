@@ -209,7 +209,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("验证产品批次", "中控")]
+    [Ui("产品批次验证", "中控")]
     public class CtrlyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -229,12 +229,23 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (map == null) return;
+                
+                if (map == null)
+                {
+                    h.ALERT("尚无待验证批次");
+                    return;
+                }
+
                 h.GRIDA(map, o =>
                 {
                     h.SECTION_("uk-card-body");
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.T(o.name);
+
+                    h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
                     h._SECTION();
                 });
             });

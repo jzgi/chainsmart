@@ -164,9 +164,10 @@ svg:not(:root) {
 }
 
 p {
-    margin: 0;
+    font-size: 0.75rem;
+    margin: 4px 0;
     padding: 4px 0;
-    color: #666;
+    color: #777;
 }
 
 label,
@@ -215,7 +216,7 @@ h2,
 h3,
 .uk-h3 {
     font-size: 1.125rem;
-    font-weight: 700;
+    font-weight: 500;
     margin: 2px 0;
     color: #7daa1d;
 }
@@ -224,21 +225,21 @@ h4,
 .uk-h4 {
     font-size: 1rem;
     font-weight: 500;
-    margin: 0;
-    color: #000;
+    margin: 2px 0;
+    color: #333;
 }
 
 h5,
 .uk-h5 {
-    font-size: 0.875rem;
-    color: #7daa1d;
-    padding: 2px 0;
-    margin: 2px 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin: 0;
+    color: #000;
 }
 
 h6,
 .uk-h6 {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     margin: 0;
     color: #333;
 }
@@ -2081,12 +2082,18 @@ main.uk-grid > li {
     background-color: rgb(143 195 33 / 10%);
 }
 
+.uk-card.uk-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+    text-decoration: none;
+}
+
 .uk-card-body {
 
     padding: 4px 6px;
     background-color: #fff;
-    display: flex;
-    width: 100%;
+    width: -webkit-fill-available;
 }
 
 .uk-card-header {
@@ -2155,7 +2162,7 @@ main.uk-grid {
  * Primary
  */
 .uk-card-primary {
-    margin: 6px;
+    margin: 8px;
     background-color: #fff;
 }
 
@@ -6938,58 +6945,40 @@ iframe.uk-cover {
 }
 
 .uk-padding {
-    padding: 16px;
+    padding: 8px;
 }
 
 .uk-padding-top {
-    padding-top: 16px;
-}
-
-.uk-padding-right {
-    padding-right: 16px;
-}
-
-.uk-padding-bottom {
-    padding-bottom: 16px;
-}
-
-
-.uk-padding-tiny-top {
-    padding-top: 4px;
-}
-
-.uk-padding-tiny-right {
-    padding-right: 4px;
-}
-
-.uk-padding-tiny-bottom {
-    padding-bottom: 4px;
-}
-
-.uk-padding-tiny-left {
-    padding-left: 4px;
-}
-
-
-
-.uk-padding-left {
-    padding-left: 16px;
-}
-
-.uk-padding-small-top {
     padding-top: 8px;
 }
 
-.uk-padding-small-right {
+.uk-padding-right {
     padding-right: 8px;
 }
 
-.uk-padding-small-bottom {
+.uk-padding-bottom {
     padding-bottom: 8px;
 }
 
-.uk-padding-small-left {
+
+.uk-padding-left {
     padding-left: 8px;
+}
+
+.uk-padding-small-top {
+    padding-top: 4px;
+}
+
+.uk-padding-small-right {
+    padding-right: 4px;
+}
+
+.uk-padding-small-bottom {
+    padding-bottom: 4px;
+}
+
+.uk-padding-small-left {
+    padding-left: 4px;
 }
 
 @media (min-width: 1280px) {
@@ -6999,7 +6988,7 @@ iframe.uk-cover {
 }
 
 .uk-padding-small {
-    padding: 8px;
+    padding: 4px;
 }
 
 .uk-padding-large {
