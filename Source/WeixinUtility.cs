@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -16,9 +15,11 @@ namespace ChainMart
     /// </summary>
     public static class WeixinUtility
     {
-        static readonly WebClient Api = new WebClient("https://api.weixin.qq.com");
+        static readonly WebClient OpenApi = new WebClient("https://api.weixin.qq.com");
 
         static readonly WebClient PayApi;
+
+        static readonly WebClient SmsApi = new WebClient("https://sms.tencentcloudapi.com");
 
         public static readonly string
             url,
@@ -32,6 +33,10 @@ namespace ChainMart
 
         public static readonly string key;
         public static readonly string watchurl;
+
+        public static readonly string
+            smssecretid,
+            smssecretkey;
 
 
         static WeixinUtility()
@@ -73,7 +78,7 @@ namespace ChainMart
             int now = Environment.TickCount;
             if (accessToken == null || now < tick || now - tick > 3600000)
             {
-                var (_, jo) = Api.GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret, null).Result;
+                var (_, jo) = OpenApi.GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret, null).Result;
                 string access_token = jo?[nameof(access_token)];
                 accessToken = access_token;
                 tick = now;
@@ -95,7 +100,7 @@ namespace ChainMart
         public static async Task<(string access_token, string openid)> GetAccessorAsync(string code)
         {
             string url = "/sns/oauth2/access_token?appid=" + appid + "&secret=" + appsecret + "&code=" + code + "&grant_type=authorization_code";
-            var (_, jo) = await Api.GetAsync<JObj>(url, null);
+            var (_, jo) = await OpenApi.GetAsync<JObj>(url, null);
             if (jo == null)
             {
                 return default((string, string));
@@ -113,7 +118,7 @@ namespace ChainMart
 
         public static async Task<User> GetUserInfoAsync(string access_token, string openid)
         {
-            var (_, jo) = await Api.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
+            var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
             string nickname = jo[nameof(nickname)];
             return new User {im = openid, name = nickname};
         }
@@ -154,7 +159,7 @@ namespace ChainMart
                 j._OBJ();
                 j._OBJ();
                 var (_, jo) =
-                    await Api.PostAsync<JObj>("/cgi-bin/qrcode/create?access_token=" + GetAccessToken(), j);
+                    await OpenApi.PostAsync<JObj>("/cgi-bin/qrcode/create?access_token=" + GetAccessToken(), j);
                 return (jo["ticket"], jo["url"]);
             }
             finally
@@ -175,7 +180,7 @@ namespace ChainMart
                 bdr.Put("content", text);
                 bdr._OBJ();
                 bdr._OBJ();
-                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
+                await OpenApi.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
             }
             finally
             {
@@ -198,7 +203,7 @@ namespace ChainMart
                 bdr.Put("picurl", picurl);
                 bdr._OBJ()._ARR()._OBJ();
                 bdr._OBJ();
-                await Api.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
+                await OpenApi.PostAsync<JObj>("/cgi-bin/message/custom/send?access_token=" + GetAccessToken(), bdr);
             }
             finally
             {
@@ -403,42 +408,82 @@ namespace ChainMart
 
         static string Sign(XElem xe, string exclude = null)
         {
-            var sb = new StringBuilder(1024);
-            for (int i = 0; i < xe.Count; i++)
+            var bdr = new TextBuilder(false, 1024);
+            try
             {
-                var child = xe[i];
-                // not include the sign field
-                if (exclude != null && child.Tag == exclude) continue;
-                if (sb.Length > 0)
+                for (int i = 0; i < xe.Count; i++)
                 {
-                    sb.Append('&');
+                    var child = xe[i];
+                    // not include the sign field
+                    if (exclude != null && child.Tag == exclude) continue;
+                    if (bdr.Count > 0)
+                    {
+                        bdr.Add('&');
+                    }
+
+                    bdr.Add(child.Tag);
+                    bdr.Add('=');
+                    bdr.Add(child.Text);
                 }
 
-                sb.Append(child.Tag).Append('=').Append(child.Text);
-            }
+                bdr.Add("&key=");
+                bdr.Add(key);
 
-            sb.Append("&key=").Append(key);
-            return MD5(sb.ToString(), true);
+                return MD5(bdr.ToString(), true);
+            }
+            finally
+            {
+                bdr.Clear();
+            }
         }
 
         static string Sign(JObj jo, string exclude = null)
         {
-            var sb = new StringBuilder(1024);
-            for (int i = 0; i < jo.Count; i++)
+            var bdr = new TextBuilder(false, 1024);
+            try
             {
-                var mbr = jo.ValueAt(i);
-                // not include the sign field
-                if (exclude != null && mbr.Key == exclude) continue;
-                if (sb.Length > 0)
+                for (int i = 0; i < jo.Count; i++)
                 {
-                    sb.Append('&');
+                    var mbr = jo.ValueAt(i);
+
+                    // not include the sign field
+                    if (exclude != null && mbr.Key == exclude) continue;
+
+                    if (bdr.Count > 0)
+                    {
+                        bdr.Add('&');
+                    }
+
+                    bdr.Add(mbr.Key);
+                    bdr.Add('=');
+                    bdr.Add((string) mbr);
                 }
 
-                sb.Append(mbr.Key).Append('=').Append((string) mbr);
+                bdr.Add("&key=");
+                bdr.Add(key);
+                return MD5(bdr.ToString(), true);
             }
+            finally
+            {
+                bdr.Clear();
+            }
+        }
 
-            sb.Append("&key=").Append(key);
-            return MD5(sb.ToString(), true);
+
+        public static async Task<string> SendSmsAsync(int id, string[] recipients, string tempid, string[] tempparamset)
+        {
+            var jo = new JObj
+            {
+                {"PhoneNumberSet", recipients},
+                {"SmsSdkAppId", noncestr},
+                {"SignName", ""},
+                {"TemplateId", tempid},
+                {"TemplateParamSet", tempparamset}
+            };
+            jo.Add("Signature", Sign(jo, "Signature"));
+
+            var (_, xe) = (await SmsApi.PostAsync<JObj>("/", jo.Dump()));
+            return null;
         }
     }
 }

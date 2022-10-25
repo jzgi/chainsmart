@@ -1151,7 +1151,6 @@ button.uk-icon:not(:disabled) {
 form legend {
     text-transform: uppercase;
     color: #7daa1d;
-    padding: 4px;
     min-height: 2.5rem;
     display: flex;
     align-items: center;
