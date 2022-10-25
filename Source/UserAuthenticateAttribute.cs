@@ -56,7 +56,7 @@ namespace ChainMart
                         return false;
                     }
 
-                    (_, string openid) = await WeChatUtility.GetAccessorAsync(code);
+                    (_, string openid) = await WeixinUtility.GetAccessorAsync(code);
                     if (openid == null)
                     {
                         return false;
@@ -78,7 +78,7 @@ namespace ChainMart
                 }
                 else // redirect to WeiXin auth
                 {
-                    WeChatUtility.GiveRedirectWeiXinAuthorize(wc, WeChatUtility.url, false);
+                    WeixinUtility.GiveRedirectWeiXinAuthorize(wc, WeixinUtility.url, false);
                     return false;
                 }
             }

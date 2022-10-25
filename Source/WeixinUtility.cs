@@ -14,7 +14,7 @@ namespace ChainMart
     /// <summary>
     /// A hub of operation that has its own weixin official acount.
     /// </summary>
-    public static class WeChatUtility
+    public static class WeixinUtility
     {
         static readonly WebClient Api = new WebClient("https://api.weixin.qq.com");
 
@@ -34,7 +34,7 @@ namespace ChainMart
         public static readonly string watchurl;
 
 
-        static WeChatUtility()
+        static WeixinUtility()
         {
             var s = Prog;
             s.Get(nameof(url), ref url);
@@ -282,7 +282,7 @@ namespace ChainMart
             string mch_id = xe.Child(nameof(mch_id));
             string nonce_str = xe.Child(nameof(nonce_str));
 
-            if (appid != WeChatUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
+            if (appid != WeixinUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
 
             string result_code = xe.Child(nameof(result_code));
 

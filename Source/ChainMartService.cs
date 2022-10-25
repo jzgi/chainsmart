@@ -22,7 +22,7 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_("uk-card uk-card-primary uk-card-body");
+                    h.FORM_();
 
                     h.FIELDSUL_("通过预留密码登录");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
@@ -79,7 +79,7 @@ namespace ChainMart
                     url = wc.Query[nameof(url)];
                     url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_("uk-card uk-card-primary uk-card-body");
+                    h.FORM_();
 
                     h.FIELDSUL_("填写新账号信息");
                     h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
@@ -117,7 +117,7 @@ namespace ChainMart
                         url = wc.Query[nameof(url)];
                         url = HttpUtility.UrlDecode(url);
 
-                        h.FORM_("uk-card uk-card-primary uk-card-body");
+                        h.FORM_();
 
                         h.FIELDSUL_("填写新账号信息");
                         h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();

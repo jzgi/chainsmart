@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
-using static ChainMart.WeChatUtility;
+using static ChainMart.WeixinUtility;
 using static ChainFx.Application;
 using static ChainFx.Fabric.Nodality;
 

@@ -264,17 +264,17 @@ namespace ChainMart
                         await dc.ExecuteAsync("UPDATE orders SET topay = @1 WHERE id = @2", p => p.Set(topay).Set(orderid));
                         // call WeChatPay to prepare order there
                         string trade_no = (orderid + "-" + topay).Replace('.', '-');
-                        var (prepay_id, _) = await WeChatUtility.PostUnifiedOrderAsync(
+                        var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
                             trade_no,
                             topay,
                             u.im, // the payer
                             wc.RemoteIpAddress.ToString(),
-                            WeChatUtility.url + "/" + nameof(MgtService.onpay),
-                            WeChatUtility.url
+                            WeixinUtility.url + "/" + nameof(MgtService.onpay),
+                            WeixinUtility.url
                         );
                         if (prepay_id != null)
                         {
-                            wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
+                            wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
                         }
                         else
                         {

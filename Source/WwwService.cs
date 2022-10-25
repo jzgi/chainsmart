@@ -4,7 +4,7 @@ using System.Web;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Entity;
-using static ChainMart.WeChatUtility;
+using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
