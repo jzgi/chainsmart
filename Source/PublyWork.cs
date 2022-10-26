@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
@@ -8,11 +9,20 @@ namespace ChainMart
     {
     }
 
-
     public class PublyTagWork : PublyWork
     {
-        public async Task @default(WebContext wc, int tagid)
+        protected override void OnCreate()
         {
+            CreateVarWork<PublyTagVarWork>();
+        }
+    }
+
+    public class PublyTagVarWork : PublyWork
+    {
+        public async Task @default(WebContext wc)
+        {
+            int tagid = wc[0];
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE nend >= @1 AND nstart <= @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(tagid));
@@ -42,7 +52,7 @@ namespace ChainMart
                 h.LI_().FIELD("批次创建", lot.created)._LI();
                 h.LI_().FIELD2("批次供量", lot.cap, item.unitpkg, true)._LI();
                 h._UL();
-            }, true, 3600, title: "产品溯源信息");
+            }, true, 3600, title: Self.Name + "产品溯源信息");
         }
     }
 }

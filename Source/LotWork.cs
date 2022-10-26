@@ -4,6 +4,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -85,7 +86,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("登记产品批次", "产源")]
+    [Ui("设置产品批次", "产源")]
     public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -100,19 +101,28 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status >= 1 ORDER BY status DESC, id DESC");
-            var map = await dc.QueryAsync<int, Lot>(p => p.Set(src.id));
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (map == null) return;
-                // h.MAINGRID(map, o =>
-                // {
-                //     h.SECTION_("uk-card-body");
-                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                //     h.T(o.name);
-                //     h._SECTION();
-                // });
+
+                if (arr == null)
+                {
+                    h.ALERT("尚无批次");
+                    return;
+                }
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -128,13 +138,16 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (arr == null) return;
-                h.GRID(arr, o =>
+
+                h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h._SECTION();
-                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
                 });
             });
         }
@@ -161,11 +174,6 @@ namespace ChainMart
 
             if (wc.IsGet)
             {
-                // selection of products
-                // using var dc = NewDbContext();
-                // dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0");
-                // var items = await dc.QueryAsync<int, Item>(p => p.Set(org.id));
-
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本资料");
@@ -209,7 +217,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产品批次验证", "中控")]
+    [Ui("验证产品批次", "中控")]
     public class CtrlyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -224,30 +232,28 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 ORDER BY id DESC");
-            var map = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
-                if (map == null)
+                if (arr == null)
                 {
                     h.ALERT("尚无待验证批次");
                     return;
                 }
 
-                // h.MAINGRID(map, o =>
-                // {
-                //     h.SECTION_("uk-card-body");
-                //
-                //     h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                //
-                //     h.DIV_("uk-width-expand uk-padding-left");
-                //     h.H5(o.name);
-                //     h.P(o.tip);
-                //     h._DIV();
-                //     h._SECTION();
-                // });
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 

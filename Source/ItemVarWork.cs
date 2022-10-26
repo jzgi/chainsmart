@@ -81,10 +81,10 @@ namespace ChainMart
                 h.LI_().FIELD("简述", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
                 h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("基础单位", o.unit)._LI();
+                h.LI_().FIELD("基准单位", o.unit)._LI();
                 h.LI_().FIELD("包装单位", o.unitpkg)._LI();
-                h.LI_().FIELD("包装含量", o.unitx)._LI();
-                h.LI_().FIELD("只供代理", o.agt)._LI();
+                h.LI_().FIELD("包装基准比", o.unitx)._LI();
+                h.LI_().FIELD("只供应代理", o.agt)._LI();
                 h.LI_().FIELD("状态", o.status, Statuses)._LI();
                 h._UL();
 

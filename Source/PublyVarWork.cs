@@ -42,11 +42,11 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -61,7 +61,7 @@ namespace ChainMart
                     h._A();
                 });
 
-            }, shared: true, maxage: 900, title: mrt.name);
+            }, true, 900, mrt.name);
         }
     }
 

@@ -8,6 +8,28 @@ namespace ChainMart
 {
     public abstract class UserVarWork : WebWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int uid = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE id = @1");
+            var m = await dc.QueryTopAsync<User>(p => p.Set(uid));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("姓名", m.name)._LI();
+                h.LI_().FIELD("类型", User.Typs[m.typ])._LI();
+                h.LI_().FIELD("电话", m.tel)._LI();
+                h.LI_().FIELD("状态", Entity.Statuses[m.status])._LI();
+                h.LI_().FIELD("平台权限", User.Admly[m.admly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[m.orgly])._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true);
+            });
+        }
     }
 
     public class AdmlyUserVarWork : UserVarWork
@@ -41,77 +63,36 @@ namespace ChainMart
         }
     }
 
-    public class AdmlyAccessVarWork : WebWork
+    public class AdmlyAccessVarWork : UserVarWork
     {
-        [UserAuthorize(orgly: 3)]
-        [Ui("删除", icon: "transh"), Tool(ButtonOpen)]
+        [Ui("删除", "确认删除此权限？", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
-            short orgid = wc[-2];
-            short id = wc[0];
-            var org = GrabObject<int, Org>(orgid);
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    if (org.sprid != id)
-                    {
-                        h.ALERT("删除人员权限？");
-                        h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                    }
-                    else
-                    {
-                        h.ALERT("不能删除主管理员权限");
-                    }
-                });
-            }
-            else
-            {
-                if (org.sprid != id)
-                {
-                    using var dc = NewDbContext();
-                    dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
-                    await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
-                }
-                wc.GivePane(200);
-            }
+            short uid = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE users SET admly = NULL WHERE id = @1");
+            await dc.ExecuteAsync(p => p.Set(uid).Set(uid));
+
+            wc.GivePane(200);
         }
     }
 
-    public class OrglyAccessVarWork : WebWork
+    public class OrglyAccessVarWork : UserVarWork
     {
-        [UserAuthorize(orgly: 3)]
-        [Ui(tip: "删除", icon: "close"), Tool(ButtonOpen)]
+        [Ui("删除", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
             short orgid = wc[-2];
             short id = wc[0];
             var org = GrabObject<int, Org>(orgid);
-            if (wc.IsGet)
+            if (org.sprid != id)
             {
-                wc.GivePane(200, h =>
-                {
-                    if (org.sprid != id)
-                    {
-                        h.ALERT("删除人员权限？");
-                        h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                    }
-                    else
-                    {
-                        h.ALERT("不能删除主管理员权限");
-                    }
-                });
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
             }
-            else
-            {
-                if (org.sprid != id)
-                {
-                    using var dc = NewDbContext();
-                    dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
-                    await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
-                }
-                wc.GivePane(200);
-            }
+            wc.GivePane(200);
         }
     }
 

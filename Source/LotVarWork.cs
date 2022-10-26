@@ -18,7 +18,7 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
-            var m = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
+            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
             wc.GivePane(200, h =>
             {
@@ -26,6 +26,14 @@ namespace ChainMart
                 h.LI_().FIELD("产品", items[m.itemid].ToString())._LI();
                 h.LI_().FIELD("投放市场", topOrgs[m.ctrid].name)._LI();
                 h.LI_().FIELD("物流经中控", m.ctring)._LI();
+                h.LI_().FIELD("状态", Statuses[m.status])._LI();
+                h.LI_().FIELD("单价", m.price)._LI();
+                h.LI_().FIELD("直降", m.off)._LI();
+                h.LI_().FIELD("起订量", m.min)._LI();
+                h.LI_().FIELD("限订量", m.max)._LI();
+                h.LI_().FIELD("递增量", m.step)._LI();
+                h.LI_().FIELD("总量", m.cap)._LI();
+                h.LI_().FIELD("剩余量", m.remain)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -35,7 +43,7 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonOpen)]
+        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
@@ -90,28 +98,17 @@ namespace ChainMart
             }
         }
 
-        [Ui("删除", icon: "trash"), Tool(ButtonOpen)]
+        [Ui("删除", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
 
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.ALERT("删除标品？");
-                    h.FORM_().HIDDEN(string.Empty, true)._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
-                await dc.ExecuteAsync(p => p.Set(lotid).Set(org.id));
+            using var dc = NewDbContext();
+            dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(lotid).Set(org.id));
 
-                wc.GivePane(200);
-            }
+            wc.GivePane(200);
         }
     }
 
