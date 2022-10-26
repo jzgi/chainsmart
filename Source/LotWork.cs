@@ -51,7 +51,7 @@ namespace ChainMart
         public async Task tag(WebContext wc, int tagid)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE nstart <= @1 AND nend >= @1");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE nend >= @1 AND nstart <= @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(tagid));
 
             wc.GivePage(200, h =>
@@ -85,7 +85,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("设置产品批次", "产源")]
+    [Ui("登记产品批次", "产源")]
     public class SrclyLotWork : LotWork
     {
         protected override void OnCreate()
@@ -106,13 +106,13 @@ namespace ChainMart
             {
                 h.TOOLBAR();
                 if (map == null) return;
-                h.GRIDA(map, o =>
-                {
-                    h.SECTION_("uk-card-body");
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.T(o.name);
-                    h._SECTION();
-                });
+                // h.MAINGRID(map, o =>
+                // {
+                //     h.SECTION_("uk-card-body");
+                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                //     h.T(o.name);
+                //     h._SECTION();
+                // });
             });
         }
 
@@ -229,25 +229,25 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 if (map == null)
                 {
                     h.ALERT("尚无待验证批次");
                     return;
                 }
 
-                h.GRIDA(map, o =>
-                {
-                    h.SECTION_("uk-card-body");
-
-                    h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
-                    h._SECTION();
-                });
+                // h.MAINGRID(map, o =>
+                // {
+                //     h.SECTION_("uk-card-body");
+                //
+                //     h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                //
+                //     h.DIV_("uk-width-expand uk-padding-left");
+                //     h.H5(o.name);
+                //     h.P(o.tip);
+                //     h._DIV();
+                //     h._SECTION();
+                // });
             });
         }
 

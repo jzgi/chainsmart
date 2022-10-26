@@ -1145,7 +1145,7 @@ button.uk-icon:not(:disabled) {
 .uk-fieldset {
     border: none;
     margin: 0 0 4px 0;
-    padding: 8px;
+    padding: 4px;
 }
 
 form legend {
@@ -1683,7 +1683,7 @@ button.uk-button-primary {
 }
 
 .uk-bottom-bar button.uk-button-primary {
-    border: 1px solid #ccc;
+    border: 1px solid #999;
 }
 
 button.uk-button-primary:hover,
@@ -2033,6 +2033,10 @@ button.uk-button-secondary {
     list-style: none;
 }
 
+main.uk-grid {
+    padding: 2px;
+}
+
 main.uk-grid > li {
     padding: 0;
     margin: 0;
@@ -2141,11 +2145,7 @@ main.uk-grid > li {
 .uk-card-default {
     background-color: transparent;
     border-radius: 4px;
-    padding: 4px;
-}
-
-main.uk-grid {
-    padding: 4px;
+    padding: 2px;
 }
 
 .uk-card .uk-card-title {
@@ -2161,7 +2161,7 @@ main.uk-grid {
  * Primary
  */
 .uk-card-primary {
-    margin: 8px;
+    margin: 4px;
     background-color: #fff;
 }
 

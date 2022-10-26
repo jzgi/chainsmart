@@ -33,6 +33,13 @@ namespace ChainMart
         internal string unitpkg;
         internal short[] unitx;
 
+        internal bool icon;
+        internal bool pic;
+        internal bool m1;
+        internal bool m2;
+        internal bool m3;
+        internal bool m4;
+
         public override void Read(ISource s, short msk = 0xff)
         {
             base.Read(s, msk);
@@ -54,6 +61,15 @@ namespace ChainMart
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitpkg), ref unitpkg);
                 s.Get(nameof(unitx), ref unitx);
+            }
+            if ((msk & MSK_LATER) == MSK_LATER)
+            {
+                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(pic), ref pic);
+                s.Get(nameof(m1), ref m1);
+                s.Get(nameof(m2), ref m2);
+                s.Get(nameof(m3), ref m3);
+                s.Get(nameof(m4), ref m4);
             }
         }
 
@@ -80,6 +96,7 @@ namespace ChainMart
                 s.Put(nameof(unitx), unitx);
             }
         }
+
 
         public int Key => id;
 

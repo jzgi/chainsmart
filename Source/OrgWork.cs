@@ -4,6 +4,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -36,18 +37,29 @@ namespace ChainMart
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MKT).T(" ORDER BY regid, status DESC");
-            var map = await dc.QueryAsync<int, Org>();
+            var arr = await dc.QueryAsync<Org>();
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 1);
-                h.GRIDA(map, o =>
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    if (o.icon)
                     {
-                        h.DIV_("uk-card-body");
-                        h.T(o.name);
-                        h._DIV();
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
-                );
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -56,17 +68,28 @@ namespace ChainMart
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
-            var map = await dc.QueryAsync<int, Org>();
+            var arr = await dc.QueryAsync<Org>();
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 2);
-                h.GRIDA(map, o =>
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    if (o.icon)
                     {
-                        h.DIV_("uk-card-body");
-                        h.T(o.name);
-                        h._DIV();
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
-                );
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -145,20 +168,20 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
-            var map = await dc.QueryAsync<int, Org>(p => p.Set(org.id));
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
 
             wc.GivePane(200, h =>
             {
                 h.TOOLBAR();
 
-                if (map == null) return;
+                if (arr == null) return;
 
-                h.GRIDA(map, o =>
+                h.MAINGRID(arr, o =>
                 {
-                    h.SECTION_("uk-card-body");
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -168,7 +191,7 @@ namespace ChainMart
                     h.H5(o.name);
                     h.P(o.tip);
                     h._DIV();
-                    h._SECTION();
+                    h._A();
                 });
             });
         }
@@ -237,17 +260,28 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id");
-            var arr = await dc.QueryAsync<int, Org>(p => p.Set(mrt.id));
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.GRIDA(arr, o =>
+
+                h.MAINGRID(arr, o =>
                 {
-                    h.DIV_("uk-card-body");
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
-                    h.T(o.name);
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
                     h._DIV();
+                    h._A();
                 });
             });
         }
@@ -274,16 +308,28 @@ namespace ChainMart
 
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE regid = @1");
-                var map = await dc.QueryAsync<int, Org>(p => p.Set(regid));
+                var arr = await dc.QueryAsync<Org>(p => p.Set(regid));
 
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    h.GRIDA(map, o =>
+
+                    h.MAINGRID(arr, o =>
                     {
-                        h.DIV_();
-                        h.T(o.name);
+                        h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                        if (o.icon)
+                        {
+                            h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        }
+                        else
+                        {
+                            h.PIC("/void.webp", css: "uk-width-1-5");
+                        }
+                        h.DIV_("uk-width-expand uk-padding-left");
+                        h.H5(o.name);
+                        h.P(o.tip);
                         h._DIV();
+                        h._A();
                     });
                 }, false, 3);
             }

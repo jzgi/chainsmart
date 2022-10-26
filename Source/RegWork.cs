@@ -5,6 +5,7 @@ using ChainFx.Web;
 using static ChainMart.User;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -24,21 +25,24 @@ namespace ChainMart
         [Ui("省份", group: 1), Tool(Anchor)]
         public void @default(WebContext wc)
         {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
+            var arr = dc.Query<Reg>();
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
 
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<short, Reg>();
-
-                h.GRIDA(arr, o =>
-                    {
-                        h.DIV_("uk-card-body");
-                        h.T(o.name);
-                        h._DIV();
-                    }
-                );
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -50,15 +54,18 @@ namespace ChainMart
                 h.TOOLBAR(subscript: Reg.TYP_CITY);
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_CITY).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<short, Reg>();
+                var arr = dc.Query<Reg>();
 
-                h.GRIDA(arr, o =>
-                    {
-                        h.DIV_("uk-card-body");
-                        h.T(o.name);
-                        h._DIV();
-                    }
-                );
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -71,19 +78,22 @@ namespace ChainMart
 
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
-                var arr = dc.Query<short, Reg>();
+                var arr = dc.Query<Reg>();
 
-                h.GRIDA(arr, o =>
-                    {
-                        h.DIV_("uk-card-body");
-                        h.T(o.name);
-                        h._DIV();
-                    }
-                );
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
-        [Ui("✛", "新建区域", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", "新建区域", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var prin = (User) wc.Principal;

@@ -4,6 +4,7 @@ using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -20,7 +21,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("登记产品资料", "产源")]
+    [Ui("设置产品资料", "产源")]
     public class SrclyItemWork : ItemWork
     {
         protected override void OnCreate()
@@ -34,28 +35,28 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0 ORDER BY created DESC");
-            var map = await dc.QueryAsync<int, Item>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status > 0 ORDER BY created DESC");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: STU_NORMAL);
 
-                if (map == null)
+                if (arr == null)
                 {
                     h.ALERT("尚无产品");
                     return;
                 }
 
-                h.GRIDA(map, o =>
+                h.MAINGRID(arr, o =>
                 {
-                    h.SECTION_("uk-card-body");
-                    h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
                     h._DIV();
-                    h._SECTION();
+                    h._A();
                 });
             });
         }
@@ -77,12 +78,16 @@ namespace ChainMart
                 {
                     return;
                 }
-                h.GRID(arr, o =>
+
+                h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h._SECTION();
-                    h.FOOTER_("uk-card-footer uk-flex-right").VARTOOLSET(o.Key)._FOOTER();
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
                 });
             });
         }

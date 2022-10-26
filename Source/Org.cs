@@ -57,20 +57,20 @@ namespace ChainMart
         internal int rvrid; // reviewer id 
         internal bool icon;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short msk = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, msk);
 
-            if ((proj & MSK_ID) == MSK_ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & MSK_BORN) == MSK_BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(prtid), ref prtid);
                 s.Get(nameof(ctrid), ref ctrid);
             }
-            if ((proj & MSK_EDIT) == MSK_EDIT)
+            if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(license), ref license);
                 s.Get(nameof(regid), ref regid);
@@ -81,7 +81,7 @@ namespace ChainMart
                 s.Get(nameof(link), ref link);
                 s.Get(nameof(trust), ref trust);
             }
-            if ((proj & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(sprid), ref sprid);
                 s.Get(nameof(sprname), ref sprname);
@@ -92,15 +92,15 @@ namespace ChainMart
             }
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, msk);
 
-            if ((proj & MSK_ID) == MSK_ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
-            if ((proj & MSK_BORN) == MSK_BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 if (prtid > 0) s.Put(nameof(prtid), prtid);
                 else s.PutNull(nameof(prtid));
@@ -108,7 +108,7 @@ namespace ChainMart
                 if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
                 else s.PutNull(nameof(ctrid));
             }
-            if ((proj & MSK_EDIT) == MSK_EDIT)
+            if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(license), license);
                 if (regid > 0) s.Put(nameof(regid), regid);
@@ -120,7 +120,7 @@ namespace ChainMart
                 s.Put(nameof(link), link);
                 s.Put(nameof(trust), trust);
             }
-            if ((proj & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(sprid), sprid);
                 s.Put(nameof(sprname), sprname);

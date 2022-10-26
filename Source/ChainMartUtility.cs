@@ -49,7 +49,7 @@ namespace ChainMart
                 {
                     h.T(";tel:").T(tel);
                 }
-                h.T("\" onclick=\"return dialog(this,8,false,1,'')\"></a>");
+                h.T("\" onclick=\"return dialog(this,16,false,'');\"></a>");
             }
             else
             {

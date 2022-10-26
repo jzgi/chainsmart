@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -27,25 +28,25 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (prtid = @1 OR id = @1) AND regid = @2 AND status > 0 ORDER BY addr");
-            var map = await dc.QueryAsync<int, Org>(p => p.Set(mrtid).Set(sec));
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
 
             wc.GivePage(200, h =>
             {
                 h.NAVBAR(regs, string.Empty, sec, filter: (k, v) => v.IsSection);
 
-                if (map == null)
+                if (arr == null)
                 {
                     h.ALERT("尚无商户");
                     return;
                 }
 
-                h.GRIDA(map, o =>
+                h.MAINGRID(arr, o =>
                 {
-                    h.SECTION_("uk-card-body");
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
 
                     if (o.icon)
                     {
-                        h.PIC_(css: "uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -56,8 +57,10 @@ namespace ChainMart
                     h.H5(o.name);
                     h.P(o.tip);
                     h._DIV();
-                    h._SECTION();
+
+                    h._A();
                 });
+
             }, shared: true, maxage: 900, title: mrt.name);
         }
     }

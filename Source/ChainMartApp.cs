@@ -25,7 +25,6 @@ namespace ChainMart
 
 
         {
-
             // start the concluder thead
             cycler.Start();
 
@@ -72,7 +71,7 @@ namespace ChainMart
             // top orgs
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_DST);
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_DST).T(" ORDER BY regid");
                     return dc.Query<int, Org>();
                 }, 60 * 15
             );
@@ -80,7 +79,7 @@ namespace ChainMart
             // items for each source org
             CacheMap((DbContext dc, int orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status > 0 ORDER BY status DESC");
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status > 0 ORDER BY status DESC");
                     return dc.Query<int, Item>(p => p.Set(orgid));
                 }, 60 * 15
             );

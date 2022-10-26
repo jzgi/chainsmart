@@ -243,6 +243,9 @@ create table lots
 
 alter table lots owner to postgres;
 
+create index lots_nend_idx
+    on lots (nend);
+
 create table clears
 (
     id serial not null
@@ -410,6 +413,36 @@ SELECT u.typ,
 FROM users u;
 
 alter table users_vw owner to postgres;
+
+create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, store, duration, agt, unit, unitpkg, unitx, icon, pic, m1, m2, m3, m4) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.state,
+       o.id,
+       o.srcid,
+       o.store,
+       o.duration,
+       o.agt,
+       o.unit,
+       o.unitpkg,
+       o.unitx,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM items o;
+
+alter table items_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

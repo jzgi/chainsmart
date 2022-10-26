@@ -32,13 +32,13 @@ namespace ChainMart
             {
                 h.TOOLBAR();
                 if (map == null) return;
-                h.GRIDA(map, o =>
-                {
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.SECTION_("uk-width-4-5");
-                    h.T(o.name);
-                    h._SECTION();
-                });
+                // h.MAINGRID(map, o =>
+                // {
+                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                //     h.SECTION_("uk-width-4-5");
+                //     h.T(o.name);
+                //     h._SECTION();
+                // });
             });
         }
 
@@ -55,13 +55,13 @@ namespace ChainMart
             {
                 h.TOOLBAR();
                 if (map == null) return;
-                h.GRIDA(map, o =>
-                {
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.SECTION_("uk-width-4-5");
-                    h.T(o.name);
-                    h._SECTION();
-                });
+                // h.MAINGRID(map, o =>
+                // {
+                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                //     h.SECTION_("uk-width-4-5");
+                //     h.T(o.name);
+                //     h._SECTION();
+                // });
             });
         }
 
@@ -93,13 +93,13 @@ namespace ChainMart
                     return;
                 }
 
-                h.GRIDA(map, o =>
-                {
-                    h.DIV_("uk-card-body");
-                    h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.T(o.name);
-                    h._DIV();
-                }, min: 2, mode: MOD_SHOW);
+                // h.MAINGRID(map, o =>
+                // {
+                //     h.DIV_("uk-card-body");
+                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                //     h.T(o.name);
+                //     h._DIV();
+                // }, min: 2, mode: MOD_SHOW);
             }, title: ctr.tip);
         }
     }

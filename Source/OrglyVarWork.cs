@@ -60,9 +60,9 @@ namespace ChainMart
 
             // src
 
-            CreateWork<SrclyLotWork>("slot");
-
             CreateWork<SrclyItemWork>("sitem");
+
+            CreateWork<SrclyLotWork>("slot");
 
             CreateWork<SrclyBookWork>("sbook");
 
