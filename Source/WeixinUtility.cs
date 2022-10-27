@@ -8,6 +8,9 @@ using ChainFx.Web;
 using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
 using WebUtility = System.Net.WebUtility;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ChainMart
 {
@@ -126,18 +129,18 @@ namespace ChainMart
         {
             var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
             string nickname = jo[nameof(nickname)];
-            return new User {im = openid, name = nickname};
+            return new User { im = openid, name = nickname };
         }
 
 
         static readonly DateTime EPOCH = new DateTime(1970, 1, 1);
 
-        public static long NowMillis => (long) (DateTime.Now - EPOCH).TotalMilliseconds;
+        public static long NowMillis => (long)(DateTime.Now - EPOCH).TotalMilliseconds;
 
         public static IContent BuildPrepayContent(string prepay_id)
         {
             string package = "prepay_id=" + prepay_id;
-            string timeStamp = ((int) (DateTime.Now - EPOCH).TotalSeconds).ToString();
+            string timeStamp = ((int)(DateTime.Now - EPOCH).TotalSeconds).ToString();
             var jo = new JObj
             {
                 {"appId", appid},
@@ -304,7 +307,7 @@ namespace ChainMart
             if (sign != Sign(xe, "sign")) return false;
 
             int total_fee = xe.Child(nameof(total_fee)); // in cent
-            total = ((decimal) total_fee) / 100;
+            total = ((decimal)total_fee) / 100;
             out_trade_no = xe.Child(nameof(out_trade_no)); // 商户订单号
             return true;
         }
@@ -462,7 +465,7 @@ namespace ChainMart
 
                     bdr.Add(mbr.Key);
                     bdr.Add('=');
-                    bdr.Add((string) mbr);
+                    bdr.Add((string)mbr);
                 }
 
                 bdr.Add("&key=");
@@ -474,30 +477,102 @@ namespace ChainMart
                 bdr.Clear();
             }
         }
-
-
-        public static async Task<string> SendSmsAsync(int id, string[] recipients, string tempid, string[] tempparamset)
+        public static string Sign(string signKey, string secret)
         {
-            var jo = new JObj
+            string signRet = string.Empty;
+            using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(signKey)))
             {
-                {"Action", ""},
-                {"Nonce", noncestr},
-                {"Timestamp", ""},
-                {"Version", ""},
+                byte[] hash = mac.ComputeHash(Encoding.UTF8.GetBytes(secret));
+                signRet = Convert.ToBase64String(hash);
+            }
+            return signRet;
+        }
+        public static string MakeSignPlainText(SortedDictionary<string, string> requestParams, string requestMethod, string requestHost, string requestPath)
+        {
+            string retStr = "";
+            retStr += requestMethod;
+            retStr += requestHost;
+            retStr += requestPath;
+            retStr += "?";
+            string v = "";
+            foreach (string key in requestParams.Keys)
+            {
+                v += string.Format("{0}={1}&", key, requestParams[key]);
+            }
+            retStr += v.TrimEnd('&');
+            return retStr;
+        }
 
-                {"SecretId", smssmssdkappid},
-                {"Region", "ap-guangzhou"},
+        public static long ToTimestamp()
+        {
+            DateTime startTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            DateTime nowTime = DateTime.UtcNow;
+            long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            return unixTime;
 
-                {"PhoneNumberSet", recipients},
-                {"SmsSdkAppId", noncestr},
-                {"SignName", Nodality.Self.Name},
-                {"TemplateId", tempid},
-                {"TemplateParamSet", tempparamset}
-            };
-            jo.Add("Signature", Sign(jo, "Signature"));
+        }
 
-            var (_, xe) = await SmsApi.PostAsync<JObj>("/", jo.Dump());
-            return null;
+        public static string GetSmsRequestV1(string[] PhoneNumberSet, string SignName, string TemplateId, string[] TemplateParamSet)
+        {
+
+            string SECRET_ID = "AKIDOaWBZhZAUYNwEH3YlhOoxpRmqdAQP7Xi";
+            string SECRET_KEY = "vZw3yd18yXpqa4GBqEblfIelbCWZMt86";
+            string SmsSdkAppId = "1400730065";
+            string endpoint = "sms.tencentcloudapi.com";
+            string region = "ap-guangzhou";
+            string action = "SendSms";
+            string version = "2021-01-11";
+            long timestamp = ToTimestamp() / 1000;
+            string requestTimestamp = timestamp.ToString();
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            param.Add("Action", action);
+            // param.Add("Nonce", "11886");
+            param.Add("Nonce", Math.Abs(new Random().Next()).ToString());
+
+            param.Add("Timestamp", requestTimestamp.ToString());
+            param.Add("Version", version);
+
+            param.Add("SecretId", SECRET_ID);
+            param.Add("Region", region);
+            // 实际调用需要更新参数，这里仅作为演示签名验证通过的例子
+            param.Add("SmsSdkAppId", SmsSdkAppId);
+            param.Add("SignName", SignName);
+            param.Add("TemplateId", TemplateId);
+            for (var i = 0; i < TemplateParamSet.Length; i++)
+            {
+                param.Add("TemplateParamSet." + i, TemplateParamSet[i]);
+            }
+            for (var i = 0; i < PhoneNumberSet.Length; i++)
+            {
+                param.Add("PhoneNumberSet." + i, PhoneNumberSet[i]);
+            }
+            // param.Add("SessionContext", "test");
+            SortedDictionary<string, string> headers = new SortedDictionary<string, string>(param, StringComparer.Ordinal);
+            string sigInParam = MakeSignPlainText(headers, "GET", endpoint, "/");
+            string sigOutParam = Sign(SECRET_KEY, sigInParam);
+            Console.WriteLine(sigOutParam); // 输出签名
+
+            // 获取 curl 命令串
+            param.Add("Signature", sigOutParam);
+            StringBuilder urlBuilder = new StringBuilder();
+            foreach (KeyValuePair<string, string> kvp in param)
+            {
+                urlBuilder.Append($"{WebUtility.UrlEncode(kvp.Key)}={WebUtility.UrlEncode(kvp.Value)}&");
+            }
+            string query = urlBuilder.ToString().TrimEnd('&');
+
+            string url = "https://" + endpoint + "/?" + query;
+            string curlcmd = "curl \"" + url + "\"";
+            Console.WriteLine(curlcmd);
+            return url;
+        }
+
+        public static async Task<string> SendSmsAsync(string[] PhoneNumberSet, string SignName, string TemplateId, string[] TemplateParamSet)
+        {
+            var url = GetSmsRequestV1(PhoneNumberSet, SignName, TemplateId, TemplateParamSet);
+            var (_, jo) = await SmsApi.GetAsync<JObj>(url, null);
+            Console.WriteLine(jo);
+            return jo.ToString();
         }
     }
 }
