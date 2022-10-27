@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using ChainFx;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
@@ -50,6 +51,9 @@ namespace ChainMart
             s.Get(nameof(spbillcreateip), ref spbillcreateip);
             s.Get(nameof(key), ref key);
             s.Get(nameof(watchurl), ref watchurl);
+
+            s.Get(nameof(smssecretid), ref smssecretid);
+            s.Get(nameof(smssecretkey), ref smssecretkey);
 
             try
             {
@@ -474,15 +478,23 @@ namespace ChainMart
         {
             var jo = new JObj
             {
+                {"Action", ""},
+                {"Nonce", noncestr},
+                {"Timestamp", ""},
+                {"Version", ""},
+
+                {"SecretId", recipients},
+                {"Region", recipients},
+
                 {"PhoneNumberSet", recipients},
                 {"SmsSdkAppId", noncestr},
-                {"SignName", ""},
+                {"SignName", tempid},
                 {"TemplateId", tempid},
                 {"TemplateParamSet", tempparamset}
             };
             jo.Add("Signature", Sign(jo, "Signature"));
 
-            var (_, xe) = (await SmsApi.PostAsync<JObj>("/", jo.Dump()));
+            var (_, xe) = await SmsApi.PostAsync<JObj>("/", jo.Dump());
             return null;
         }
     }
