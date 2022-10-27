@@ -37,7 +37,8 @@ namespace ChainMart
 
         public static readonly string
             smssecretid,
-            smssecretkey;
+            smssecretkey,
+            smssmssdkappid;
 
 
         static WeixinUtility()
@@ -54,6 +55,7 @@ namespace ChainMart
 
             s.Get(nameof(smssecretid), ref smssecretid);
             s.Get(nameof(smssecretkey), ref smssecretkey);
+            s.Get(nameof(smssmssdkappid), ref smssmssdkappid);
 
             try
             {
@@ -483,12 +485,12 @@ namespace ChainMart
                 {"Timestamp", ""},
                 {"Version", ""},
 
-                {"SecretId", recipients},
-                {"Region", recipients},
+                {"SecretId", smssmssdkappid},
+                {"Region", "ap-guangzhou"},
 
                 {"PhoneNumberSet", recipients},
                 {"SmsSdkAppId", noncestr},
-                {"SignName", tempid},
+                {"SignName", Nodality.Self.Name},
                 {"TemplateId", tempid},
                 {"TemplateParamSet", tempparamset}
             };
