@@ -11,7 +11,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("线上采购", "商户")]
+    [Ui("供应链采购", "商户")]
     public class ShplyBookWork : BookWork
     {
         protected override void OnCreate()
@@ -172,9 +172,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("线上采购收货", "市场")]
+    [Ui("供应链采购收货", "市场")]
 #else
-    [Ui("线上采购收货", "驿站")]
+    [Ui("供应链采购收货", "驿站")]
 #endif
     public class MktlyBookWork : BookWork
     {

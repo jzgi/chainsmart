@@ -7,32 +7,6 @@ namespace ChainMart
 {
     public abstract class OrglyVarWork : WebWork
     {
-        [Ui("运行设置"), Tool(Modal.ButtonOpen)]
-        public async Task setg(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
-                    h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else
-            {
-                var o = await wc.ReadObjectAsync(instance: org); // use existing object
-                using var dc = NewDbContext();
-                // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, date = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(org.id));
-
-                wc.GivePane(200);
-            }
-        }
     }
 
 
@@ -43,7 +17,7 @@ namespace ChainMart
         protected override void OnCreate()
         {
             // ctr
-            
+
             CreateWork<CtrlyLotWork>("clot");
 
             CreateWork<CtrlyBookWork>("cbook");
@@ -67,12 +41,14 @@ namespace ChainMart
             CreateWork<SrclyBookWork>("sbook");
 
             CreateWork<SrclyRptWork>("srpt");
-            
+
             // org
-            
-            CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglySetgWork>("setg");
 
             CreateWork<OrglyAccessWork>("access");
+
+            CreateWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)
@@ -114,6 +90,8 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
+            // mkt
+
             CreateWork<MktlyOrgWork>("morg");
 
             CreateWork<MktlyCustWork>("mcust");
@@ -124,19 +102,25 @@ namespace ChainMart
 
             CreateWork<MktlyRptWork>("mrpt");
 
+            // shp
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyBookWork>("sbook");
+            CreateWork<ShplyWareWork>("sware");
 
-            CreateWork<ShplyStockWork>("sstock");
+            CreateWork<ShplyBookWork>("sbook");
 
             CreateWork<ShplyRptWork>("srpt");
 
+            CreateWork<ShplyPosWork>("spos");
 
-            CreateWork<OrglyClearWork>("clear");
+            // org
+
+            CreateWork<OrglySetgWork>("setg");
 
             CreateWork<OrglyAccessWork>("access");
+
+            CreateWork<OrglyClearWork>("clear");
         }
 
         public void @default(WebContext wc)

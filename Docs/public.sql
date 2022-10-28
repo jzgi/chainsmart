@@ -142,6 +142,20 @@ create table users
 
 alter table users owner to postgres;
 
+create index users_admly_idx
+    on users (admly)
+    where (admly > 0);
+
+create unique index users_im_idx
+    on users (im);
+
+create unique index users_tel_idx
+    on users (tel);
+
+create index users_orgid_idx
+    on users (orgid)
+    where (orgid IS NOT NULL);
+
 create table tests
 (
     id serial not null
@@ -192,16 +206,16 @@ create table items
 
 alter table items owner to postgres;
 
-create table stocks
+create table wares
 (
     id serial not null
-        constraint stocks_pk
+        constraint wares_pk
             primary key,
     shpid integer
-        constraint stocks_shpid_fk
+        constraint wares_shpid_fk
             references orgs,
     itemid integer
-        constraint stocks_itemid_fk
+        constraint wares_itemid_fk
             references items,
     unit varchar(4),
     unitstd varchar(4),
@@ -216,7 +230,7 @@ create table stocks
 )
     inherits (entities);
 
-alter table stocks owner to postgres;
+alter table wares owner to postgres;
 
 create table lots
 (

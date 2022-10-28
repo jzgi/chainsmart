@@ -30,7 +30,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 if (arr == null)
                 {
                     h.ALERT("尚无消费订单");
@@ -46,7 +46,7 @@ namespace ChainMart
 
 
     [UserAuthorize(orgly: ORGLY_OPN)]
-    [Ui("线上销售", "商户")]
+    [Ui("零售外卖", "商户")]
     public class ShplyBuyWork : BuyWork
     {
         protected override void OnCreate()
@@ -54,7 +54,7 @@ namespace ChainMart
             CreateVarWork<ShplyBuyVarWork>();
         }
 
-        [Ui("销售订单", group: 1), Tool(Anchor)]
+        [Ui("外卖订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -66,27 +66,33 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
+                
+                h.MAINGRID(arr, o =>
                 {
-                    h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    // h.TD(o.mrtname, true);
-                    // h.TD(Statuses[o.status]);
+                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
                 });
             });
         }
 
-        [Ui(tip: "历史外卖", icon: "history", group: 2), Tool(Anchor)]
+        [Ui(tip: "历史外卖订单", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
-            
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status > 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
-            
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+                
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
@@ -99,9 +105,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("线上销售送货", "市场")]
+    [Ui("零售外卖送货", "市场")]
 #else
-    [Ui("线上销售送货", "驿站")]
+    [Ui("零售外卖送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork
     {

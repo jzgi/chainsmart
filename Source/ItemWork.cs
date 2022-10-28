@@ -50,7 +50,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
@@ -81,7 +81,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
@@ -92,7 +92,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("新建", icon: "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", "新建产品", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -117,7 +117,7 @@ namespace ChainMart
                     h.LI_().TEXT("包装基础比", nameof(o.unitx), o.unitx, tip: "如有多个值要用空格分开", required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STU_VOID, required: true)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
             }
             else // POST

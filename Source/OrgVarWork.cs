@@ -274,7 +274,8 @@ namespace ChainMart
                 var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产源属性");
+                    h.FORM_().FIELDSUL_("修改产源属性");
+
                     h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
@@ -282,7 +283,8 @@ namespace ChainMart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
-                    h._FIELDSUL()._FORM();
+
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else

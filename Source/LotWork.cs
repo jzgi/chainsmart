@@ -115,7 +115,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
@@ -141,7 +141,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
@@ -246,7 +246,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);

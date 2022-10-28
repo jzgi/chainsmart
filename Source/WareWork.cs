@@ -7,13 +7,13 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public abstract class StockWork : WebWork
+    public abstract class WareWork : WebWork
     {
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("设置线上货架", "商户")]
-    public class ShplyStockWork : StockWork
+    [Ui("零售商品设置", "商户")]
+    public class ShplyWareWork : WareWork
     {
         protected override void OnCreate()
         {
@@ -26,7 +26,7 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM stocks WHERE shpid = @1 AND status > 0 ORDER BY status DESC, id");
+            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC, id");
             var map = await dc.QueryAsync<int, Stock>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -53,7 +53,7 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM stocks WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM wares WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
             var map = await dc.QueryAsync<int, Stock>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -113,7 +113,7 @@ namespace ChainMart
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO prods ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
+                dc.Sql("INSERT INTO wares ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
@@ -159,7 +159,7 @@ namespace ChainMart
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO prods ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
+                dc.Sql("INSERT INTO wares ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog

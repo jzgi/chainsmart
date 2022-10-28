@@ -15,7 +15,6 @@ namespace ChainMart
     [Ui("账号信息", "功能")]
     public class MyInfoWork : UserWork
     {
-        [Ui("账号信息"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             int uid = wc[-1];
@@ -26,8 +25,6 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
-
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("类别", Typs[o.typ])._LI();
@@ -50,6 +47,10 @@ namespace ChainMart
                     h.SPAN(Orgly[o.orgly], "uk-width-1-2");
                     h._SECTION();
                 }
+
+                h.TOOLBAR(bottom: true);
+
+
                 // spr and rvr
             }, false, 6);
 
@@ -57,7 +58,7 @@ namespace ChainMart
             wc.SetTokenCookie(o);
         }
 
-        [Ui("设置", icon: "cog"), Tool(ButtonOpen)]
+        [Ui("设置", icon: "cog"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             const string PASSMASK = "t#0^0z4R4pX7";

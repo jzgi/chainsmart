@@ -3797,8 +3797,9 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #fff;
+    color: #333;
     font-size: 1rem;
+    font-weight: bold;
 }
 
 [class*='uk-modal-close-'] {

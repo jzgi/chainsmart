@@ -68,11 +68,7 @@ namespace ChainMart
                     h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
-                    h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确认", nameof(edit));
-
-                    h._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else // POST
