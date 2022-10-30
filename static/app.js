@@ -214,9 +214,9 @@ function appendTo(parent, html) {
 }
 
 // anchor without adding history
-function goto(e, evt) {
+function goto(url, evt) {
     evt.preventDefault(); 
-    location.replace(e.href); 
+    location.replace(url); 
     return false;
 }
 
@@ -250,7 +250,7 @@ const
 function dialog(trig, mode, pick, title) {
     var stylec =
         mode == PROMPT ? ' uk-modal-small' :
-            mode == OPEN ? ' uk-modal-large' :
+            mode == OPEN ? ' uk-modal-large uk-animation-scale-up' :
                 mode == SHOW || mode == CROP ? ' uk-modal-tall uk-animation-slide-bottom' :
                     mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
     // keep the trigger info

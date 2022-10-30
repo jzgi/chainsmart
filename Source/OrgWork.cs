@@ -253,29 +253,22 @@ namespace ChainMart
             CreateVarWork<MktlyOrgVarWork>();
         }
 
-        // [Ui("全部商户", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc, int secid)
+        [Ui("最新商户", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
         {
             var mrt = wc[-1].As<Org>();
 
-            var regs = Grab<short, Reg>();
-
-            if (secid == 0)
-            {
-                secid = wc.Subscript = regs.First(v => v.IsSection).id;
-            }
-
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 ORDER BY id");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id).Set(secid));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id DESC LIMIT 20 OFFSET @2 * 20");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mrt.id).Set(page));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(secid, regs, (k, v) => v.IsSection);
+                h.TOOLBAR();
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
                         h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
@@ -290,10 +283,61 @@ namespace ChainMart
                     h._DIV();
                     h._A();
                 });
+
+                h.PAGINATION(arr?.Length == 20);
             });
         }
 
-        [Ui(icon: "search"), Tool(AnchorPrompt)]
+        [Ui(tip: "分类", icon: "menu", group: 2), Tool(AnchorPrompt)]
+        public async Task reg(WebContext wc)
+        {
+            var regs = Grab<short, Reg>();
+
+            bool inner = wc.Query[nameof(inner)];
+            short regid = 0;
+            if (inner)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_();
+                    h.RADIOSET<short, Reg>(nameof(regid), regid, regs, filter: v => v.IsSection);
+                    h._FORM();
+                });
+            }
+            else // OUTER
+            {
+                regid = wc.Query[nameof(regid)];
+
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE regid = @1");
+                var arr = await dc.QueryAsync<Org>(p => p.Set(regid));
+
+                wc.GivePage(200, h =>
+                {
+                    h.TOOLBAR();
+
+                    h.MAINGRID(arr, o =>
+                    {
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                        if (o.icon)
+                        {
+                            h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        }
+                        else
+                        {
+                            h.PIC("/void.webp", css: "uk-width-1-5");
+                        }
+                        h.DIV_("uk-width-expand uk-padding-left");
+                        h.H5(o.name);
+                        h.P(o.tip);
+                        h._DIV();
+                        h._A();
+                    });
+                }, false, 15);
+            }
+        }
+
+        [Ui(tip: "查询", icon: "search", group: 4), Tool(AnchorPrompt)]
         public async Task search(WebContext wc)
         {
             var regs = Grab<short, Reg>();
@@ -323,7 +367,7 @@ namespace ChainMart
 
                     h.MAINGRID(arr, o =>
                     {
-                        h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-card-body uk-flex");
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                         if (o.icon)
                         {
                             h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
@@ -338,11 +382,11 @@ namespace ChainMart
                         h._DIV();
                         h._A();
                     });
-                }, false, 3);
+                }, false, 15);
             }
         }
 
-        [Ui("新建", icon: "plus", group: 2), Tool(ButtonOpen)]
+        [Ui("新建", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var mrt = wc[-1].As<Org>();

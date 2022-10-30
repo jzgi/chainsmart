@@ -1695,6 +1695,14 @@ button.uk-button-primary.uk-active {
     border: 1px solid #f59604;
 }
 
+select.uk-button-primary {
+    color: #333;
+    height: 3rem;
+    padding: 0 12px;
+    margin: 0 6px;
+    background-color: #ededed;
+}
+
 a.uk-button-primary {
     color: #333;
     height: 3rem;
@@ -1759,7 +1767,7 @@ button.uk-button-secondary {
 
 .uk-button-default:disabled,
 .uk-button-default.disabled {
-    background-color: rgb(245 150 4 / 36%);
+    background-color: #cde795;
     color: #fff;
 }
 
@@ -2037,7 +2045,7 @@ main.uk-grid {
     padding: 2px;
 }
 
-main.uk-grid > li {
+main.uk-grid>li {
     padding: 0;
     margin: 0;
 }
@@ -3003,17 +3011,14 @@ ul.uk-nav-sub {
 }
 
 .uk-subnav> :hover,
-.uk-subnav> :focus {
-    color: #333;
-    border-bottom: 2px solid #f59604;
-}
-
-.uk-subnav>.uk-active {
-    border-bottom: 2px solid #f59604;
-}
-
-.uk-subnav>.uk-active>a {
-    color: #333;
+.uk-subnav> :focus,
+.uk-subnav> .uk-active {
+    color: #000;
+    background-color: #ededed;
+    border-top: 2px solid #f59604;
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+    border-top-left-radius: 24px;
 }
 
 .uk-subnav-divider>* {
@@ -3106,9 +3111,9 @@ ul.uk-nav-sub {
     margin: 0 16px;
     position: relative;
     justify-content: center;
-    border: 1px solid #ddd;
+    border: 1px solid #f59604;
     border-radius: 50%;
-    background-color: #ededed;
+    background-color: #f8f8f8;
     padding: 2px 7px;
 }
 
@@ -3119,6 +3124,7 @@ ul.uk-nav-sub {
 
 .uk-pagination>.uk-disabled {
     color: #fbd9a6;
+    border: 1px solid #fbd9a6;
 }
 
 .uk-pagination>.uk-active>* {
@@ -5766,7 +5772,7 @@ iframe.uk-cover {
 }
 
 .uk-background-muted {
-    background-color: rgb(221 221 221 / 20%) !important;
+    background-color: #ededed !important;
 }
 
 .uk-background-primary {
@@ -5774,7 +5780,7 @@ iframe.uk-cover {
 }
 
 .uk-background-secondary {
-    background-color: #ededed;
+    background-color: #999;
 }
 
 .uk-background-cover,

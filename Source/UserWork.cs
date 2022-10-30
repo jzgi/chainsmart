@@ -369,33 +369,38 @@ namespace ChainMart
             CreateVarWork<MktlyCustVarWork>();
         }
 
-        [Ui("本埠消费者", group: 1), Tool(Anchor)]
+        [Ui("最近消费者", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             int mrtid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT ON (id) ").collst(Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND state > 2 LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT DISTINCT ON (id) ").collst(User.Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND b.state > 2 LIMIT 20 OFFSET 20 * @2");
             var arr = dc.Query<User>(p => p.Set(mrtid).Set(page));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
+
+                h.MAINGRID(arr, o =>
                 {
-                    h.TDCHECK(o.id);
-                    h.TD(o.name);
-                    h.TD(o.tel);
-                    h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
-                    h.TD_("uk-width-medium uk-visible@s");
-                    if (o.orgid > 0)
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    if (o.icon)
                     {
-                        // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
+                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                     }
-                    h._TD();
-                    h.TD("⊘", @if: o.IsDisabled);
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
                 });
-                h.PAGINATION(arr?.Length == 30);
+
+                h.PAGINATION(arr?.Length == 20);
             });
         }
 

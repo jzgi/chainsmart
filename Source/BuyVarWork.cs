@@ -163,5 +163,11 @@ namespace ChainMart
                 wc.GivePane(200);
             }
         }
+        
+    }
+
+    public class MktlyBuyVarWork : BuyVarWork
+    {
+
     }
 }

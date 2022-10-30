@@ -6,18 +6,17 @@ using static ChainFx.Web.Modal;
 
 namespace ChainMart
 {
-    public abstract class BuyWork : WebWork
-    {
-    }
-
-    [Ui("消费订单", "功能")]
-    public class MyBuyWork : BuyWork
+    public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     {
         protected override void OnCreate()
         {
-            CreateVarWork<MyBuyVarWork>();
+            CreateVarWork<V>();
         }
+    }
 
+    [Ui("消费订单", "功能")]
+    public class MyBuyWork : BuyWork<MyBuyVarWork>
+    {
         [Ui("消费订单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
@@ -47,13 +46,8 @@ namespace ChainMart
 
     [UserAuthorize(orgly: ORGLY_OPN)]
     [Ui("零售外卖", "商户")]
-    public class ShplyBuyWork : BuyWork
+    public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<ShplyBuyVarWork>();
-        }
-
         [Ui("外卖订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -66,7 +60,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
@@ -92,7 +86,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                
+
                 h.TABLE(arr, o =>
                 {
                     h.TD_().A_TEL(o.uname, o.utel)._TD();
@@ -109,12 +103,32 @@ namespace ChainMart
 #else
     [Ui("零售外卖送货", "驿站")]
 #endif
-    public class MktlyBuyWork : BuyWork
+    public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
-        [Ui("销售订单", group: 1), Tool(Anchor)]
+        [Ui("外卖订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            var mkt = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status > 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
+            });
         }
 
         [Ui(tip: "历史订单", icon: "history", group: 2), Tool(Anchor)]

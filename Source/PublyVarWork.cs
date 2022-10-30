@@ -73,7 +73,7 @@ namespace ChainMart
             var biz = GrabObject<int, Org>(bizid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM stocks WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
             var arr = await dc.QueryAsync<Stock>(p => p.Set(biz.id));
 
             wc.GivePage(200, h =>

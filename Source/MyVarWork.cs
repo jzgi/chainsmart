@@ -43,6 +43,5 @@ namespace ChainMart
                 h.TASKBOARD();
             }, false, 6, title: "个人账号");
         }
-
     }
 }
