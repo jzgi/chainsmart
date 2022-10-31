@@ -137,7 +137,7 @@ namespace ChainMart
                 h.TOPBARXL_();
                 if (prin.icon)
                 {
-                    h.PIC("/org/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                    h.PIC("/org/", prin.id, "/icon/", circle: true, css: "uk-width-small");
                 }
                 else
                 {
