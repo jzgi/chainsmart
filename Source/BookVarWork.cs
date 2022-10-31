@@ -139,7 +139,7 @@ namespace ChainMart
     }
 
 
-    public class MrtlyBookVarWork : BookVarWork
+    public class MktlyBookVarWork : BookVarWork
     {
     }
 }

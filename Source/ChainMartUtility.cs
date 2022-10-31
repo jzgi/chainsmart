@@ -59,7 +59,7 @@ namespace ChainMart
         }
 
 
-        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Stock> opts, Map<short, Cat> cats, Func<Stock, bool> filter = null, bool required = false)
+        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Ware> opts, Map<short, Cat> cats, Func<Ware, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)

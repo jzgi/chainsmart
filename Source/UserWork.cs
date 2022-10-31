@@ -8,12 +8,16 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
-    public abstract class UserWork : WebWork
+    public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<V>();
+        }
     }
 
     [Ui("账号信息", "功能")]
-    public class MyInfoWork : UserWork
+    public class MyInfoWork : WebWork
     {
         public async Task @default(WebContext wc)
         {
@@ -103,13 +107,8 @@ namespace ChainMart
     }
 
     [Ui("人员权限", "系统")]
-    public class AdmlyAccessWork : UserWork
+    public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<AdmlyAccessVarWork>();
-        }
-
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -194,13 +193,8 @@ namespace ChainMart
 
     [UserAuthorize(admly: ADMLY_MGT)]
     [Ui("用户管理", "业务")]
-    public class AdmlyUserWork : UserWork
+    public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<AdmlyUserVarWork>();
-        }
-
         [Ui("浏览", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
@@ -271,13 +265,8 @@ namespace ChainMart
     }
 
     [Ui("人员权限", "基础")]
-    public class OrglyAccessWork : UserWork
+    public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<OrglyAccessVarWork>();
-        }
-
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -362,14 +351,9 @@ namespace ChainMart
 #else
     [Ui("消费者管理", "驿站")]
 #endif
-    public class MktlyCustWork : UserWork
+    public class MktlyCustWork : UserWork<MktlyCustVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<MktlyCustVarWork>();
-        }
-
-        [Ui("最近消费者", group: 1), Tool(Anchor)]
+        [Ui("最近消费", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             int mrtid = wc[0];

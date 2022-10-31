@@ -8,27 +8,22 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
-    public abstract class ItemWork : WebWork
-    {
-    }
-
-    public class PublyItemWork : ItemWork
+    public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyItemVarWork>();
+            CreateVarWork<V>();
         }
+    }
+
+    public class PublyItemWork : ItemWork<PublyItemVarWork>
+    {
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("设置产品", "产源")]
-    public class SrclyItemWork : ItemWork
+    public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<SrclyItemVarWork>();
-        }
-
         [Ui("当前产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {

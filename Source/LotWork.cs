@@ -8,11 +8,15 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
-    public abstract class LotWork : WebWork
+    public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<V>();
+        }
     }
 
-    public class PublyLotWork : LotWork
+    public class PublyLotWork : LotWork<PublyLotVarWork>
     {
         public async Task @default(WebContext wc, int lotid)
         {
@@ -87,13 +91,8 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SRC, 1)]
     [Ui("设置产品批次", "产源")]
-    public class SrclyLotWork : LotWork
+    public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<SrclyLotVarWork>();
-        }
-
         [Ui("当前批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -218,13 +217,8 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("验证产品批次", "中控")]
-    public class CtrlyLotWork : LotWork
+    public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<CtrlyLotVarWork>();
-        }
-
         [Ui("待验批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {

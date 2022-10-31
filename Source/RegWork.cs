@@ -121,7 +121,7 @@ namespace ChainMart
             {
                 o = await wc.ReadObjectAsync(instance: o);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Stock.Empty);
+                dc.Sql("INSERT INTO regs ").colset(Reg.Empty)._VALUES_(Ware.Empty);
                 await dc.ExecuteAsync(p => o.Write(p));
 
                 wc.GivePane(200); // close dialog

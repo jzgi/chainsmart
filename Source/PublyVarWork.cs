@@ -60,7 +60,6 @@ namespace ChainMart
 
                     h._A();
                 });
-
             }, true, 900, mrt.name);
         }
     }
@@ -73,8 +72,8 @@ namespace ChainMart
             var biz = GrabObject<int, Org>(bizid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Stock.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
-            var arr = await dc.QueryAsync<Stock>(p => p.Set(biz.id));
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(biz.id));
 
             wc.GivePage(200, h =>
             {
@@ -96,7 +95,7 @@ namespace ChainMart
                 h._FIELDSUL();
                 h.BOTTOMBAR_().BUTTON("付款")._BOTTOMBAR();
                 h._FORM();
-            }, title: biz.name);
+            }, true, 900, title: biz.name);
         }
     }
 

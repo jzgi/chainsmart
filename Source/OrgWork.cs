@@ -8,26 +8,21 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
-    public abstract class OrgWork : WebWork
-    {
-    }
-
-    public class PublyOrgWork : OrgWork
+    public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyOrgVarWork>();
+            CreateVarWork<V>();
         }
+    }
+
+    public class PublyOrgWork : OrgWork<PublyOrgVarWork>
+    {
     }
 
     [Ui("设置入驻机构", "业务")]
-    public class AdmlyOrgWork : OrgWork
+    public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<AdmlyOrgVarWork>();
-        }
-
 #if ZHNT
         [Ui("市场", group: 1), Tool(Anchor)]
 #else
@@ -154,13 +149,8 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_ZON, 1)]
     [Ui("下属产源", "供区")]
-    public class ZonlyOrgWork : OrgWork
+    public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<ZonlyOrgVarWork>();
-        }
-
         [Ui("下属产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -246,13 +236,8 @@ namespace ChainMart
 #else
     [Ui("商户管理", "驿站")]
 #endif
-    public class MktlyOrgWork : OrgWork
+    public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<MktlyOrgVarWork>();
-        }
-
         [Ui("最新商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {

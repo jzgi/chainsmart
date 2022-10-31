@@ -99,9 +99,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("零售外卖送货", "市场")]
+    [Ui("零售外卖统一送货", "市场")]
 #else
-    [Ui("零售外卖送货", "驿站")]
+    [Ui("零售外卖统一送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {

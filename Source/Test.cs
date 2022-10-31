@@ -5,9 +5,9 @@ namespace ChainMart
     /// <summary>
     /// An event logged targeted to certain org
     /// </summary>
-    public class Event : Entity
+    public class Test : Entity
     {
-        public static readonly Event Empty = new Event();
+        public static readonly Test Empty = new Test();
 
         public const short
             TYP_MRT = 1,

@@ -2,23 +2,21 @@ using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
-    public abstract class BookWork : WebWork
+    public abstract class BookWork<V> : WebWork where V : BookVarWork, new()
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<V>();
+        }
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
     [Ui("供应链采购", "商户")]
-    public class ShplyBookWork : BookWork
+    public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<ShplyBookVarWork>();
-        }
-
         [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -106,13 +104,8 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
     [Ui("线上销售业务", "产源")]
-    public class SrclyBookWork : BookWork
+    public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
-        protected override void OnCreate()
-        {
-            CreateVarWork<SrclyBookVarWork>();
-        }
-
         [Ui("销售订货"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -172,11 +165,11 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("供应链采购收货", "市场")]
+    [Ui("供应链采购统一收货", "市场")]
 #else
-    [Ui("供应链采购收货", "驿站")]
+    [Ui("供应链采购统一收货", "驿站")]
 #endif
-    public class MktlyBookWork : BookWork
+    public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
@@ -184,14 +177,20 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT shpid, first(shpname) AS shpname, count(id) AS count FROM books WHERE mktid = @1 AND state > 0 GROUP BY shpid");
+            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE_();
-                h._TABLE();
+
+                h.TABLE(arr, o =>
+                {
+                    h.TD_();
+                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h._A();
+                    h._TD();
+                });
             });
         }
 
@@ -201,21 +200,27 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT shpid, first(shpname) AS shpname, count(id) AS count FROM books WHERE mktid = @1 AND state > 0 GROUP BY shpid");
+            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE_();
-                h._TABLE();
+
+                h.TABLE(arr, o =>
+                {
+                    h.TD_();
+                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h._A();
+                    h._TD();
+                });
             });
         }
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("订货分拣", "中控", icon: "sign-out")]
-    public class CtrlyBookWork : BookWork
+    [Ui("订货分运", "中控", icon: "sign-out")]
+    public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]
         public async Task @default(WebContext wc)
@@ -343,17 +348,6 @@ namespace ChainMart
             {
                 wc.GivePane(200); // close dialog
             }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("订货派运", "中控", icon: "sign-out")]
-    public class CtrlyDistrWork : BookWork
-    {
-        [Ui("按批次", group: 2), Tool(Anchor)]
-        public async Task @default(WebContext wc)
-        {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 }

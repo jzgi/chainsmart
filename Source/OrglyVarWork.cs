@@ -20,13 +20,13 @@ namespace ChainMart
 
             CreateWork<CtrlyBookWork>("cbook");
 
-            CreateWork<CtrlyDistrWork>("cdistr");
-
             CreateWork<CtrlyRptWork>("crpt");
 
             // zon
 
             CreateWork<ZonlyOrgWork>("zorg");
+
+            CreateWork<ZonlyTestWork>("ztest");
 
             CreateWork<ZonlyRptWork>("zrpt");
 
@@ -98,19 +98,21 @@ namespace ChainMart
 
             CreateWork<MktlyBookWork>("mbook");
 
+            CreateWork<MktlyTestWork>("mtest");
+
             CreateWork<MktlyRptWork>("mrpt");
 
             // shp
 
             CreateWork<ShplyBuyWork>("sbuy");
 
+            CreateWork<ShplyPosWork>("spos");
+
             CreateWork<ShplyWareWork>("sware");
 
             CreateWork<ShplyBookWork>("sbook");
 
             CreateWork<ShplyRptWork>("srpt");
-
-            CreateWork<ShplyPosWork>("spos");
 
             // org
 

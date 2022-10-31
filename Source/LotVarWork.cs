@@ -41,6 +41,10 @@ namespace ChainMart
         }
     }
 
+    public class PublyLotVarWork : LotVarWork
+    {
+    }
+
     public class SrclyLotVarWork : LotVarWork
     {
         [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonShow)]

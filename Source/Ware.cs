@@ -2,9 +2,9 @@
 
 namespace ChainMart
 {
-    public class Stock : Entity, IKeyable<int>
+    public class Ware : Entity, IKeyable<int>
     {
-        public static readonly Stock Empty = new Stock();
+        public static readonly Ware Empty = new Ware();
 
         internal int id;
         internal int shpid;
@@ -17,6 +17,9 @@ namespace ChainMart
         internal short min;
         internal short max;
         internal short step;
+
+        internal bool icon;
+        internal bool pic;
 
         public override void Read(ISource s, short msk = 255)
         {
@@ -41,6 +44,9 @@ namespace ChainMart
                 s.Get(nameof(min), ref min);
                 s.Get(nameof(max), ref max);
                 s.Get(nameof(step), ref step);
+
+                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(pic), ref pic);
             }
         }
 
@@ -67,6 +73,9 @@ namespace ChainMart
                 s.Put(nameof(min), min);
                 s.Put(nameof(max), max);
                 s.Put(nameof(step), step);
+
+                s.Put(nameof(icon), icon);
+                s.Put(nameof(pic), pic);
             }
         }
 
