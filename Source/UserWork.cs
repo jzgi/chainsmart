@@ -196,34 +196,23 @@ namespace ChainMart
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
         [Ui("浏览", group: 1), Tool(Anchor)]
-        public void @default(WebContext wc, int page)
+        public async Task @default(WebContext wc)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users ORDER BY name LIMIT 30 OFFSET 30 * @1");
-            var arr = dc.Query<User>(p => p.Set(page));
+            var num = (int) (await dc.ScalarAsync("SELECT count(*)::int FROM users"));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    h.TDCHECK(o.id);
-                    h.TD(o.name);
-                    h.TD(o.tel);
-                    h.TD_().T(Typs[o.typ])._TD();
-                    h.TD_("uk-visible@s");
-                    if (o.orgid > 0)
-                    {
-                        // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
-                    }
-                    h._TD();
-                    h.TD("⊘", @if: o.IsDisabled);
-                });
-                h.PAGINATION(arr?.Length == 30);
+
+                h.SECTION_("uk-card uk-card-primary");
+                h.H4("总用户数", "uk-card-header");
+                h.DIV_("uk-card-body").T(num)._DIV();
+                h._SECTION();
             });
         }
 
-        [Ui("查询"), Tool(AnchorPrompt)]
-        public void search(WebContext wc)
+        [Ui(tip: "查询", icon: "search"), Tool(AnchorPrompt)]
+        public async Task search(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
             string tel = null;
@@ -239,27 +228,32 @@ namespace ChainMart
             else // OUTER
             {
                 tel = wc.Query[nameof(tel)];
+
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User>(p => p.Set(tel));
+                var arr = await dc.QueryAsync<User>(p => p.Set(tel));
+
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    h.TABLE(arr, o =>
+                    h.MAINGRID(arr, o =>
                     {
-                        h.TDCHECK(o.id);
-                        h.TD(o.name);
-                        h.TD(o.tel);
-                        h.TD_().T(Typs[o.typ])._TD();
-                        h.TD_("uk-visible@s");
-                        if (o.orgid > 0)
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                        if (o.icon)
                         {
-                            // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
+                            h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                         }
-                        h._TD();
-                        h.TD("⊘", @if: o.IsDisabled);
+                        else
+                        {
+                            h.PIC("/void.webp", css: "uk-width-1-5");
+                        }
+                        h.DIV_("uk-width-expand uk-padding-left");
+                        h.H5(o.name).SP().SUB(o.tel);
+                        h.P(Orgly[o.orgly]);
+                        h._DIV();
+                        h._A();
                     });
-                }, false, 3);
+                }, false, 30);
             }
         }
     }
@@ -359,7 +353,7 @@ namespace ChainMart
             int mrtid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT ON (id) ").collst(User.Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND b.state > 2 LIMIT 20 OFFSET 20 * @2");
+            dc.Sql("SELECT DISTINCT ON (id) ").collst(Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND b.state > 2 LIMIT 20 OFFSET 20 * @2");
             var arr = dc.Query<User>(p => p.Set(mrtid).Set(page));
 
             wc.GivePage(200, h =>

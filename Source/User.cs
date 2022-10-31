@@ -10,7 +10,7 @@ namespace ChainMart
         // pro types
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {0, null},
+            {0, "普通"},
             {1, "健康市场运营师"},
             {2, "健康管理师"},
         };

@@ -34,8 +34,8 @@ namespace ChainMart
 
     public class AdmlyUserVarWork : UserVarWork
     {
-        [Ui("修改", icon: "pencil"), Tool(ButtonOpen)]
-        public async Task upd(WebContext wc)
+        [Ui("修改", icon: "pencil"), Tool(ButtonShow)]
+        public async Task edit(WebContext wc)
         {
             short typ;
             int id = wc[0];
@@ -44,10 +44,11 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 await dc.QueryTopAsync("SELECT typ FROM users WHERE id = @1", p => p.Set(id));
                 dc.Let(out typ);
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
+                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -55,9 +56,11 @@ namespace ChainMart
             {
                 var f = (await wc.ReadAsync<Form>());
                 typ = f[nameof(typ)];
+
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET typ = @1 WHERE id = @2");
                 await dc.ExecuteAsync(p => p.Set(typ).Set(id));
+
                 wc.GivePane(200);
             }
         }

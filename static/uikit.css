@@ -2498,9 +2498,9 @@ label.uk-label {
     justify-content: flex-end;
 }
 
-label.uk-label.uk-width-large {
-    width: 12rem;
-    min-width: 12rem;
+ul.uk-large > li> .uk-label {
+    width: 10rem;
+    min-width: 8rem;
 }
 
 label>input[type="checkbox"] {

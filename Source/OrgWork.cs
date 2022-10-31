@@ -20,7 +20,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("设置入驻机构", "业务")]
+    [Ui("机构设置", "业务")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
 #if ZHNT
