@@ -26,6 +26,7 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY dt DESC");
             var arr = await dc.QueryAsync<Clear>();
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();

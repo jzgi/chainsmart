@@ -43,7 +43,7 @@ namespace ChainMart
                     h._DIV();
                     h._A();
                 });
-            });
+            }, false, 15);
         }
 
         [Ui("地市", group: 2), Tool(Anchor)]
@@ -66,7 +66,7 @@ namespace ChainMart
                     h._DIV();
                     h._A();
                 });
-            });
+            }, false, 15);
         }
 
         [Ui("场区", group: 4), Tool(Anchor)]
@@ -90,7 +90,7 @@ namespace ChainMart
                     h._DIV();
                     h._A();
                 });
-            });
+            }, false, 15);
         }
 
         [Ui("新建", "新建区域", icon: "plus", group: 7), Tool(ButtonOpen)]

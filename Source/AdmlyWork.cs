@@ -50,7 +50,7 @@ namespace ChainMart
                 h._TOPBARXL();
 
                 h.TASKBOARD();
-            });
+            }, false, 900);
         }
     }
 

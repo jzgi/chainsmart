@@ -170,17 +170,6 @@ create table tests
 
 alter table tests owner to postgres;
 
-create table marks
-(
-    id smallserial not null
-        constraint marks_pk
-            primary key,
-    icon bytea
-)
-    inherits (entities);
-
-alter table marks owner to postgres;
-
 create table items
 (
     id serial not null
@@ -260,25 +249,6 @@ alter table lots owner to postgres;
 create index lots_nend_idx
     on lots (nend);
 
-create table clears
-(
-    id serial not null
-        constraint clears_pk
-            primary key,
-    dt date,
-    orgid integer not null
-        constraint clears_orgid_fk
-            references orgs,
-    sprid integer not null,
-    orders integer,
-    total money,
-    rate money,
-    pay integer
-)
-    inherits (entities);
-
-alter table clears owner to postgres;
-
 create table cats
 (
     idx smallint,
@@ -290,32 +260,14 @@ create table cats
 
 alter table cats owner to postgres;
 
-create table buys
+create table accts_
 (
-    id bigserial not null
-        constraint buys_pk
-            primary key,
-    shpid integer not null
-        constraint buys_shpid_fk
-            references orgs,
-    mktid integer not null
-        constraint buys_mkt_fk
-            references orgs,
-    uid integer not null
-        constraint buys_uid_fk
-            references users,
-    uname varchar(10),
-    utel varchar(11),
-    uaddr varchar(20),
-    uim varchar(28),
-    lines buyln_type[],
-    fee money,
-    pay money,
-    refund money
+    no varchar(20),
+    v integer
 )
     inherits (entities);
 
-alter table buys owner to postgres;
+alter table accts_ owner to postgres;
 
 create table books
 (
@@ -325,6 +277,7 @@ create table books
     shpid integer not null
         constraint books_shpid_fk
             references orgs,
+    shpname varchar(12),
     mktid integer not null
         constraint books_mktid_fk
             references orgs,
@@ -334,6 +287,7 @@ create table books
     srcid integer not null
         constraint books_srcid_fk
             references orgs,
+    srcname varchar(12),
     zonid integer not null
         constraint books_zonly_fk
             references orgs,
@@ -357,14 +311,55 @@ create table books
 
 alter table books owner to postgres;
 
-create table accts_
+create table buys
 (
-    no varchar(20),
-    v integer
+    id bigserial not null
+        constraint buys_pk
+            primary key,
+    shpid integer not null
+        constraint buys_shpid_fk
+            references orgs,
+    shpname varchar(12),
+    mktid integer not null
+        constraint buys_mkt_fk
+            references orgs,
+    uid integer not null
+        constraint buys_uid_fk
+            references users,
+    uname varchar(12),
+    utel varchar(11),
+    uaddr varchar(20),
+    uim varchar(28),
+    lines buyln_type[],
+    basic money,
+    fee money,
+    pay money,
+    refund money
 )
     inherits (entities);
 
-alter table accts_ owner to postgres;
+alter table buys owner to postgres;
+
+create table clears
+(
+    id serial not null
+        constraint clears_pk
+            primary key,
+    typ smallint default 0 not null,
+    status smallint,
+    till date,
+    dt date,
+    orgid integer not null
+        constraint clears_orgid_fk
+            references orgs,
+    sprid integer not null,
+    orders integer,
+    amt money,
+    rate money,
+    pay integer
+);
+
+alter table clears owner to postgres;
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, icon) as
 SELECT o.typ,
@@ -458,6 +453,35 @@ FROM items o;
 
 alter table items_vw owner to postgres;
 
+create view wares_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.state,
+       o.id,
+       o.shpid,
+       o.itemid,
+       o.unit,
+       o.unitstd,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.max,
+       o.step,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic
+FROM wares o;
+
+alter table wares_vw owner to postgres;
+
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
@@ -479,6 +503,36 @@ SELECT $2
 $$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
+
+create function recalc(timestamp without time zone) returns void
+    language plpgsql
+as $$
+BEGIN
+
+    -- clear
+    DELETE FROM clears WHERE status = 0;
+
+    -- by shop
+    INSERT INTO clears (typ, orgid, till, amt)
+    SELECT 1,
+           shpid,
+           $1,
+           sum((pay - coalesce(refund, 0::money)) * 0.88)
+    FROM buys
+    WHERE status IN (1,2) AND oked < $1 GROUP BY shpid;
+
+    -- mkt commission
+    INSERT INTO clears (typ, orgid, till, amt)
+    SELECT 4,
+           shpid,
+           $1,
+           sum(fee * 0.88)
+    FROM buys WHERE status IN (1, 2) AND oked < $1 GROUP BY shpid;
+
+END
+$$;
+
+alter function recalc(timestamp) owner to postgres;
 
 create aggregate first(anyelement) (
     sfunc = first_agg,
