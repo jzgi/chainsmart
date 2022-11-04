@@ -31,11 +31,11 @@ namespace ChainMart
         };
 
         internal int id;
-        internal DateTime dt;
+        internal DateTime till;
         internal int orgid;
         internal int sprid;
         internal short orders;
-        internal decimal total;
+        internal decimal amt;
         internal decimal rate;
         internal decimal pay;
 
@@ -47,11 +47,11 @@ namespace ChainMart
             {
                 s.Get(nameof(id), ref id);
             }
-            s.Get(nameof(dt), ref dt);
+            s.Get(nameof(till), ref till);
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(sprid), ref sprid);
             s.Get(nameof(orders), ref orders);
-            s.Get(nameof(total), ref total);
+            s.Get(nameof(amt), ref amt);
             s.Get(nameof(rate), ref rate);
             s.Get(nameof(pay), ref pay);
         }
@@ -64,11 +64,11 @@ namespace ChainMart
             {
                 s.Put(nameof(id), id);
             }
-            s.Put(nameof(dt), dt);
+            s.Put(nameof(till), till);
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(sprid), sprid);
             s.Put(nameof(orders), orders);
-            s.Put(nameof(total), total);
+            s.Put(nameof(amt), amt);
             s.Put(nameof(rate), rate);
             s.Put(nameof(pay), pay);
         }

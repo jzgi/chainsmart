@@ -43,6 +43,14 @@ namespace ChainMart
                 h._UL();
 
                 // admly & orgly
+                if (o.IsAdmly)
+                {
+                    h.SECTION_("uk-card uk-card-primary uk-card-body");
+                    h.SPAN("平台管理", "uk-width-1-2");
+                    h.SPAN(Admly[o.admly], "uk-width-1-2");
+                    h._SECTION();
+                }
+
                 if (o.IsOrgly)
                 {
                     var org = GrabObject<int, Org>(o.orgid);
@@ -341,20 +349,20 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("消费者管理", "市场")]
+    [Ui("重要消费账号管理", "市场")]
 #else
-    [Ui("消费者管理", "驿站")]
+    [Ui("重要消费账号管理", "驿站")]
 #endif
-    public class MktlyCustWork : UserWork<MktlyCustVarWork>
+    public class MktlyVipWork : UserWork<MktlyCustVarWork>
     {
-        [Ui("最近消费", group: 1), Tool(Anchor)]
+        [Ui("重要消费账号", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            int mrtid = wc[0];
+            int mktid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT ON (id) ").collst(Empty, alias: "u").T(" FROM users u, buys b WHERE u.id = b.uid AND b.mktid = @1 AND b.state > 2 LIMIT 20 OFFSET 20 * @2");
-            var arr = dc.Query<User>(p => p.Set(mrtid).Set(page));
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE mktid = @1 LIMIT 20 OFFSET 20 * @2");
+            var arr = dc.Query<User>(p => p.Set(mktid).Set(page));
 
             wc.GivePage(200, h =>
             {
@@ -391,7 +399,7 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("在本市场消费过的用户");
+                    h.FORM_().FIELDSUL_("已登记过的重要消费账号");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h._FIELDSUL()._FORM();
                 });
@@ -421,6 +429,52 @@ namespace ChainMart
                         h.TDFORM(() => h.VARTOOLSET(o.Key));
                     });
                 }, false, 3);
+            }
+        }
+
+        [Ui("添加", "添加重要消费账号", icon: "plus", group: 1), Tool(ButtonOpen)]
+        public async Task add(WebContext wc, int cmd)
+        {
+            short admly = 0;
+
+            if (wc.IsGet)
+            {
+                string tel = wc.Query[nameof(tel)];
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_();
+
+                    h.FIELDSUL_("必须是已注册的用户账号");
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h._FIELDSUL();
+
+                    if (cmd == 1) // search user
+                    {
+                        using var dc = NewDbContext();
+                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
+                        if (o != null)
+                        {
+                            h.FIELDSUL_();
+                            h.HIDDEN(nameof(o.id), o.id);
+                            h.LI_().FIELD("用户账号名称", o.name)._LI();
+                            h.LI_().SELECT("权限", nameof(admly), admly, Admly, filter: (k, v) => k > 0)._LI();
+                            h._FIELDSUL();
+                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                        }
+                    }
+                    h._FORM();
+                });
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                int id = f[nameof(id)];
+                admly = f[nameof(admly)];
+                using var dc = NewDbContext();
+                dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
+
+                wc.GivePane(200); // ok
             }
         }
     }

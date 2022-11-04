@@ -21,7 +21,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("零售业务报表", "业务")]
+    [Ui("消费业务报表", "业务")]
     public class AdmlyBuyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)

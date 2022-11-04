@@ -138,6 +138,10 @@ namespace ChainMart
 
         public string Im => sprim;
 
+        public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
+
+        public int ZoneId => IsZone ? id : IsOfSource ? prtid : 0;
+
         public bool IsParentCapable => (typ & TYP_PRT) == TYP_PRT;
 
         public bool IsZone => typ == TYP_ZON;

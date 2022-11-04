@@ -17,7 +17,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("零售结款", "财务")]
+    [Ui("消费结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
         [Ui("当前结算", group: 1), Tool(Anchor)]
@@ -44,7 +44,7 @@ namespace ChainMart
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(o.dt);
+                    h.TD(o.till);
                     h.TD(o.name);
                     h._TR();
 
@@ -92,7 +92,7 @@ namespace ChainMart
                             h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
                         }
                         h.TR_();
-                        h.TD(o.dt);
+                        h.TD(o.till);
                         h.TD(o.name);
                         h._TR();
 
@@ -171,7 +171,7 @@ namespace ChainMart
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
-                    h.TD(o.dt);
+                    h.TD(o.till);
                     h.TD(o.name);
                     h._TR();
 
@@ -219,7 +219,7 @@ namespace ChainMart
                             h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
                         }
                         h.TR_();
-                        h.TD(o.dt);
+                        h.TD(o.till);
                         h.TD(o.name);
                         h._TR();
 
@@ -287,9 +287,9 @@ namespace ChainMart
                 h.TABLE(arr, o =>
                 {
                     h.TDCHECK(o.Key);
-                    h.TD_().T(o.dt, 3, 0)._TD();
+                    h.TD_().T(o.till, 3, 0)._TD();
                     h.TD(Clear.Typs[o.typ]);
-                    h.TD(o.total, currency: true);
+                    h.TD(o.amt, currency: true);
                     h.TD(Clear.Statuses[((Entity) o).status]);
                 });
                 h.PAGINATION(arr?.Length == 20);

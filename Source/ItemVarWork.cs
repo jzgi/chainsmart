@@ -81,10 +81,10 @@ namespace ChainMart
                 h.LI_().FIELD("简述", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
                 h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("基准单位", o.unit)._LI();
-                h.LI_().FIELD("包装单位", o.unitpkg)._LI();
-                h.LI_().FIELD("包装基准比", o.unitx)._LI();
-                h.LI_().FIELD("只供应代理", o.agt)._LI();
+                h.LI_().FIELD("基础单位", o.unit)._LI();
+                h.LI_().FIELD("整装单位", o.unitpkg)._LI();
+                h.LI_().FIELD("整装基准倍", o.unitx)._LI();
+                h.LI_().FIELD("只供代理", o.agt)._LI();
                 h.LI_().FIELD("状态", o.status, Statuses)._LI();
                 h._UL();
 
@@ -112,8 +112,8 @@ namespace ChainMart
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装单位", nameof(o.unitpkg), o.unitpkg)._LI();
-                    h.LI_().TEXT("包装基础比", nameof(o.unitx), o.unitx, tip: "如有多个值要用空格分开", required: true)._LI();
+                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitpkg), o.unitpkg)._LI();
+                    h.LI_().TEXT("整装基础倍", nameof(o.unitx), o.unitx, tip: "如有多个值要用空格分开", required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STU_VOID, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();

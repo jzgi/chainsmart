@@ -59,7 +59,7 @@ function bybuy(trig) {
     return false;
 }
 
-function byact(trig) {
+function bybook(trig) {
     var method = 'post';
     var action = trig.formAction || trig.name;
     // validate form before submit
@@ -215,8 +215,8 @@ function appendTo(parent, html) {
 
 // anchor without adding history
 function goto(url, evt) {
-    evt.preventDefault(); 
-    location.replace(url); 
+    evt.preventDefault();
+    location.replace(url);
     return false;
 }
 
@@ -276,7 +276,7 @@ function dialog(trig, mode, pick, title) {
         }
         trigc = ' button-trig';
     } else if (tag == 'A') {
-        src = action = trig.href;
+        src = action = decodeURI(trig.href);
         method = 'get';
         if (mode == ASTACK) {
             src += src.indexOf('?') == -1 ? '?astack=true' : '&astack=true';
@@ -327,7 +327,7 @@ function dialog(trig, mode, pick, title) {
             UIkit.modal(dlg).hide();
         }
     });
-    history.pushState('dlg', null, action);
+    history.pushState('dlg', null, src.startsWith('http') ? 'get' : action);
 
     // display the modal
     UIkit.modal(e).show();

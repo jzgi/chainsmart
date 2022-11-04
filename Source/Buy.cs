@@ -28,9 +28,9 @@ namespace ChainMart
         internal string uaddr;
         internal string uim;
         internal BuyLn[] lines;
-        internal decimal fee; // delivery fee
         internal decimal pay;
-        internal decimal refund;
+        internal decimal deliv;
+        internal decimal hand;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -53,9 +53,9 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(fee), ref fee);
                 s.Get(nameof(pay), ref pay);
-                s.Get(nameof(refund), ref refund);
+                s.Get(nameof(deliv), ref deliv);
+                s.Get(nameof(hand), ref hand);
             }
         }
 
@@ -80,9 +80,9 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(fee), fee);
                 s.Put(nameof(pay), pay);
-                s.Put(nameof(refund), refund);
+                s.Put(nameof(deliv), deliv);
+                s.Put(nameof(hand), hand);
             }
         }
 

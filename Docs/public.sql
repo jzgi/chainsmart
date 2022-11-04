@@ -6,12 +6,13 @@ alter schema public owner to postgres;
 
 create type buyln_type as
 (
-    stockid integer,
+    wareid integer,
+    itemid integer,
     name varchar(12),
-    wareid smallint,
+    unit varchar(4),
     price money,
-    qty smallint,
-    qtyre smallint
+    "off" money,
+    qty smallint
 );
 
 alter type buyln_type owner to postgres;
@@ -135,7 +136,9 @@ create table users
         constraint users_orgid_fk
             references orgs,
     orgly smallint default 0 not null,
-    idcard varchar(18),
+    mktid integer
+        constraint users_mktid_fk
+            references orgs,
     icon bytea
 )
     inherits (entities);
@@ -156,6 +159,10 @@ create index users_orgid_idx
     on users (orgid)
     where (orgid IS NOT NULL);
 
+create index users_mktid_index
+    on users (mktid)
+    where (mktid > 0);
+
 create table tests
 (
     id serial not null
@@ -169,6 +176,17 @@ create table tests
     inherits (entities);
 
 alter table tests owner to postgres;
+
+create table cats
+(
+    idx smallint,
+    size smallint,
+    constraint cats_pk
+        primary key (typ)
+)
+    inherits (entities);
+
+alter table cats owner to postgres;
 
 create table items
 (
@@ -189,7 +207,9 @@ create table items
     m1 bytea,
     m2 bytea,
     m3 bytea,
-    m4 bytea
+    m4 bytea,
+    constraint items_typ_fk
+        foreign key (typ) references cats
 )
     inherits (entities);
 
@@ -220,45 +240,6 @@ create table wares
     inherits (entities);
 
 alter table wares owner to postgres;
-
-create table lots
-(
-    id serial not null
-        constraint lots_pk
-            primary key,
-    itemid integer
-        constraint lots_itemid_fk
-            references items,
-    srcid integer,
-    ctrid integer,
-    ctring boolean,
-    price money,
-    "off" money,
-    cap integer,
-    remain integer,
-    min integer,
-    max integer,
-    step integer,
-    nstart integer,
-    nend integer
-)
-    inherits (entities);
-
-alter table lots owner to postgres;
-
-create index lots_nend_idx
-    on lots (nend);
-
-create table cats
-(
-    idx smallint,
-    size smallint,
-    constraint cats_pk
-        primary key (typ)
-)
-    inherits (entities);
-
-alter table cats owner to postgres;
 
 create table accts_
 (
@@ -294,9 +275,7 @@ create table books
     itemid integer
         constraint books_itemid_fk
             references items,
-    lotid integer
-        constraint books_lotid_fk
-            references lots,
+    lotid integer,
     unit varchar(4),
     unitx smallint,
     unitpkg varchar(4),
@@ -310,6 +289,29 @@ create table books
     inherits (entities);
 
 alter table books owner to postgres;
+
+create unique index books_newbook_idx
+    on books (shpid, state)
+    where (state = 0);
+
+create table clears
+(
+    id serial not null
+        constraint clears_pk
+            primary key,
+    till date,
+    orgid integer not null
+        constraint clears_orgid_fk
+            references orgs,
+    sprid integer not null,
+    orders integer,
+    amt money,
+    rate money,
+    pay integer
+)
+    inherits (entities);
+
+alter table clears owner to postgres;
 
 create table buys
 (
@@ -331,35 +333,47 @@ create table buys
     uaddr varchar(20),
     uim varchar(28),
     lines buyln_type[],
-    basic money,
-    fee money,
     pay money,
-    refund money
+    deliv money,
+    hand money
 )
     inherits (entities);
 
 alter table buys owner to postgres;
 
-create table clears
+create table lots
 (
     id serial not null
-        constraint clears_pk
+        constraint lots_pk
             primary key,
-    typ smallint default 0 not null,
-    status smallint,
-    till date,
-    dt date,
-    orgid integer not null
-        constraint clears_orgid_fk
+    itemid integer
+        constraint lots_itemid_fk
+            references items,
+    srcid integer,
+    srcname varchar(12),
+    zonid integer not null
+        constraint lots_zonid_fk
             references orgs,
-    sprid integer not null,
-    orders integer,
-    amt money,
-    rate money,
-    pay integer
-);
+    ctrid integer not null,
+    ctring boolean,
+    price money,
+    "off" money,
+    cap integer,
+    remain integer,
+    min integer,
+    max integer,
+    step integer,
+    nstart integer,
+    nend integer,
+    constraint lots_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (entities);
 
-alter table clears owner to postgres;
+alter table lots owner to postgres;
+
+create index lots_nend_idx
+    on lots (nend);
 
 create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, icon) as
 SELECT o.typ,
@@ -396,32 +410,6 @@ FROM orgs o
                       m.id;
 
 alter table orgs_vw owner to postgres;
-
-create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, idcard, icon) as
-SELECT u.typ,
-       u.status,
-       u.name,
-       u.tip,
-       u.created,
-       u.creator,
-       u.adapted,
-       u.adapter,
-       u.oked,
-       u.oker,
-       u.state,
-       u.id,
-       u.tel,
-       u.addr,
-       u.im,
-       u.credential,
-       u.admly,
-       u.orgid,
-       u.orgly,
-       u.idcard,
-       u.icon IS NOT NULL AS icon
-FROM users u;
-
-alter table users_vw owner to postgres;
 
 create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, store, duration, agt, unit, unitpkg, unitx, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
@@ -481,6 +469,32 @@ SELECT o.typ,
 FROM wares o;
 
 alter table wares_vw owner to postgres;
+
+create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, mktid, icon) as
+SELECT u.typ,
+       u.status,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.oked,
+       u.oker,
+       u.state,
+       u.id,
+       u.tel,
+       u.addr,
+       u.im,
+       u.credential,
+       u.admly,
+       u.orgid,
+       u.orgly,
+       u.mktid,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

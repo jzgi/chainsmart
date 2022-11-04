@@ -10,6 +10,10 @@
     font-size: 0.857rem;
 }
 
+button output {
+    font-size: 1.25rem;
+}
+
 /* CROPPIE */
 
 .croppie-container {

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainMart
 {
@@ -17,26 +18,34 @@ namespace ChainMart
     [Ui("供应链采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
-        [Ui("采购订单", group: 1), Tool(Anchor)]
+        [Ui("当前采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state = 0 ORDER BY id");
-            var map = await dc.QueryAsync<int, Book>(p => p.Set(org.id));
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (map == null) return;
-                // h.MAINGRID(map, o =>
-                // {
-                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                //     h.SECTION_("uk-width-4-5");
-                //     h.T(o.name);
-                //     h._SECTION();
-                // });
+                if (arr == null)
+                {
+                    h.ALERT("尚无订货");
+                    return;
+                }
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
@@ -47,23 +56,26 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state >= 1 ORDER BY id");
-            var map = await dc.QueryAsync<int, Book>(p => p.Set(org.id));
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (map == null) return;
-                // h.MAINGRID(map, o =>
-                // {
-                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                //     h.SECTION_("uk-width-4-5");
-                //     h.T(o.name);
-                //     h._SECTION();
-                // });
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             });
         }
 
-        [Ui("新建", "选择批次下单进货", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();
@@ -79,34 +91,37 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0 AND typ = @2");
-            var map = await dc.QueryAsync<int, Lot>(p => p.Set(ctrid).Set(typ));
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ));
 
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().NAVBAR(cats, nameof(@new), typ)._TOPBAR();
 
-                if (map == null)
+                if (arr == null)
                 {
                     h.ALERT("没有批次");
                     return;
                 }
 
-                // h.MAINGRID(map, o =>
-                // {
-                //     h.DIV_("uk-card-body");
-                //     h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                //     h.T(o.name);
-                //     h._DIV();
-                // }, min: 2, mode: MOD_SHOW);
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
             }, title: ctr.tip);
         }
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("线上销售业务", "产源")]
+    [Ui("销售订货", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
-        [Ui("销售订货"), Tool(Anchor)]
+        [Ui("当前订货"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -144,7 +159,7 @@ namespace ChainMart
             });
         }
 
-        [Ui(tip: "历史销售订货", icon: "history", group: 2), Tool(Anchor)]
+        [Ui(tip: "以往订货", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -187,7 +202,7 @@ namespace ChainMart
                 h.TABLE(arr, o =>
                 {
                     h.TD_();
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     h._A();
                     h._TD();
                 });
@@ -210,7 +225,7 @@ namespace ChainMart
                 h.TABLE(arr, o =>
                 {
                     h.TD_();
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     h._A();
                     h._TD();
                 });

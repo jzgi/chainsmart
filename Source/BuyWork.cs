@@ -23,7 +23,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0  ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
 
             wc.GivePage(200, h =>
@@ -36,7 +36,29 @@ namespace ChainMart
                     return;
                 }
 
-                h.GRID(arr, o => { h.T(o.name); });
+                h.MAINGRID(arr, o =>
+                {
+                    h.HEADER_("uk-card-header").T(o.name)._HEADER();
+                    h.UL_("uk-card-body uk-list uk-list-divider");
+                    for (int i = 0; i < o?.lines.Length; i++)
+                    {
+                        var ln = o.lines[i];
+                        h.LI_();
+                        if (ln.itemid > 0)
+                        {
+                            h.PIC("/item/", ln.itemid, "/icon", css: "uk-width-1-6");
+                        }
+                        else
+                        {
+                            h.PIC("/ware/", ln.itemid, "/icon", css: "uk-width-1-6");
+                        }
+                        h.SPAN(ln.name, "uk-width-1-3");
+                        h.SPAN(ln.qty, "uk-width-1-6");
+                        h._LI();
+                    }
+                    h._UL();
+                    h.NAV_("uk-card-footer")._NAV();
+                });
 
                 h.PAGINATION(arr?.Length > 10);
             });
@@ -45,7 +67,7 @@ namespace ChainMart
 
 
     [UserAuthorize(orgly: ORGLY_OPN)]
-    [Ui("零售外卖", "商户")]
+    [Ui("消费外卖", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
         [Ui("外卖订单", group: 1), Tool(Anchor)]
@@ -99,9 +121,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("零售外卖统一送货", "市场")]
+    [Ui("消费外卖统一送货", "市场")]
 #else
-    [Ui("零售外卖统一送货", "驿站")]
+    [Ui("消费外卖统一送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {

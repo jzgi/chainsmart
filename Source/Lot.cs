@@ -24,6 +24,8 @@ namespace ChainMart
         internal int id;
         internal int itemid;
         internal int srcid;
+        internal string srcname;
+        internal int zonid;
         internal int ctrid;
         internal bool ctring; // required centering
 
@@ -51,6 +53,8 @@ namespace ChainMart
             {
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(srcid), ref srcid);
+                s.Get(nameof(srcname), ref srcname);
+                s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(ctring), ref ctring);
             }
@@ -85,6 +89,8 @@ namespace ChainMart
             {
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(srcid), srcid);
+                s.Put(nameof(srcname), srcname);
+                s.Put(nameof(zonid), zonid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(ctring), ctring);
             }
@@ -108,6 +114,8 @@ namespace ChainMart
         }
 
         public int Key => id;
+
+        public decimal RealPrice => price - off;
 
         public override string ToString() => name;
     }

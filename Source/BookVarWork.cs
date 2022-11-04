@@ -22,45 +22,129 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
-
             var items = GrabMap<int, int, Item>(lot.srcid);
             var item = items[lot.itemid];
 
             short qty;
             short unitx;
+            decimal pay = 0;
             wc.GivePane(200, h =>
             {
+                // picture
                 h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(lot.id).T("/pic")._PIC();
-                h.DIV_("uk-card uk-card-default");
 
+                h.DIV_("uk-card uk-card-default");
                 h._DIV();
 
-                h.BOTTOMBAR_();
+                // bottom bar
+                //
 
-                // unitx selection 
+                decimal realprice = lot.RealPrice;
+                h.BOTTOMBAR_().FORM_("uk-flex uk-width-1-1", oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);");
+                h.HIDDEN(nameof(lot.price), lot.price);
+                h.HIDDEN(nameof(lot.off), lot.off);
+
+                // unitpkg selection
+                unitx = item.unitx?[0] ?? 1;
                 h.SELECT_(null, nameof(unitx));
                 for (int i = 0; i < item.unitx?.Length; i++)
                 {
-                    h.OPTION_(i).T("每").T(item.unitpkg).SP().T(item.unitx[i]).SP().T(item.unit)._OPTION();
+                    var v = item.unitx[i];
+                    h.OPTION_(v).T("每").T(item.unitpkg).SP().T(v).SP().T(item.unit)._OPTION();
                 }
                 h._SELECT();
-
                 // qty selection
+                qty = lot.min;
                 h.SELECT_(null, nameof(qty));
                 for (int i = lot.min; i < lot.max; i += lot.step)
                 {
                     h.OPTION_(i).T(i).SP().T(item.unitpkg)._OPTION();
                 }
                 h._SELECT();
+                // pay button
+                pay = unitx * qty * lot.RealPrice;
+                h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(pay), pay)._BUTTON();
 
-                h.BUTTON_(nameof(place), css: "uk-button-danger uk-width-medium").T("付款").OUTPUT_CNY("付款", "", 0)._BUTTON();
-
-                h._BOTTOMBAR();
+                h._FORM()._BOTTOMBAR();
             });
         }
 
-        public async Task place(WebContext wc)
+        [UserAuthorize]
+        [Ui, Tool(ButtonPickScript)]
+        public async Task book(WebContext wc, int cmd)
         {
+            var shp = wc[-2].As<Org>();
+            int lotid = wc[0];
+
+            var prin = (User) wc.Principal;
+            var f = await wc.ReadAsync<Form>();
+            short unitx = f[nameof(unitx)];
+            short qty = f[nameof(qty)];
+
+            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+            try
+            {
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+                var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
+                var item = await dc.QueryTopAsync<Item>(p => p.Set(lot.itemid));
+
+                var m = new Book
+                {
+                    typ = lot.typ,
+                    name = lot.name,
+                    created = DateTime.Now,
+                    creator = prin.name,
+                    shpid = shp.id,
+                    shpname = shp.name,
+                    mktid = shp.MarketId,
+                    srcid = lot.srcid,
+                    srcname = lot.srcname,
+                    zonid = lot.zonid,
+                    ctrid = lot.ctrid,
+                    itemid = lot.itemid,
+                    lotid = lot.id,
+                    unit = item.unit,
+                    unitpkg = item.unitpkg,
+                    unitx = unitx,
+                    price = lot.price,
+                    off = lot.off,
+                    qty = qty
+                };
+
+                // make use of any existing abandoned record
+                dc.Sql("INSERT INTO books ").colset(Book.Empty)._VALUES_(Book.Empty).T(" ON CONFLICT (shpid, state) WHERE state = 0 DO UPDATE ")._SET_(Book.Empty).T(" RETURNING id, pay");
+                await dc.QueryTopAsync(p => m.Write(p));
+                dc.Let(out int bookid);
+                dc.Let(out decimal topay);
+
+                // call WeChatPay to prepare order there
+                string trade_no = (bookid + "-" + topay).Replace('.', '-');
+                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
+                    trade_no,
+                    topay,
+                    prin.im, // the payer
+                    wc.RemoteIpAddress.ToString(),
+                    ChainMartApp.MgtUrl + "/" + nameof(MgtService.onpay),
+                    ChainMartApp.MgtUrl
+                );
+                if (prepay_id != null)
+                {
+                    wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
+                }
+                else
+                {
+                    dc.Rollback();
+                    wc.Give(500);
+                }
+            }
+            catch (Exception e)
+            {
+                dc.Rollback();
+                Err(e.Message);
+                wc.Give(500);
+            }
         }
     }
 

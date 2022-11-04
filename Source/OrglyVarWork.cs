@@ -92,7 +92,7 @@ namespace ChainMart
 
             CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<MktlyCustWork>("mcust");
+            CreateWork<MktlyVipWork>("mvip");
 
             CreateWork<MktlyBuyWork>("mbuy");
 

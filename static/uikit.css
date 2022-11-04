@@ -164,7 +164,7 @@ svg:not(:root) {
 }
 
 p {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     margin: 4px 0;
     padding: 4px 0;
     color: #777;
@@ -1751,7 +1751,7 @@ button.uk-button-secondary {
     color: #fff;
     background-color: #f59604;
     border: 1px solid #f59604;
-    padding: 6px 16px;
+    padding: 4px 16px;
 }
 
 .uk-button-danger:hover,
@@ -2287,7 +2287,6 @@ main.uk-grid>li {
 }
 
 .uk-close {
-    color: #f59604;
     padding: 4px;
     transition: 0.1s ease-in-out;
     transition-property: color, opacity;
@@ -3680,9 +3679,9 @@ ul.uk-nav-sub {
     transform: translateY(0);
     display: flex;
     flex-direction: column;
-    border-left: 2px solid #f8f8f8;
-    border-right: 2px solid #f8f8f8;
-    border-bottom: 2px solid #f8f8f8;
+    border-left: 2px solid #999;
+    border-right: 2px solid #999;
+    border-bottom: 2px solid #999;
 }
 
 .uk-modal-large .uk-modal-body {
@@ -3761,7 +3760,7 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    background-color: #f8f8f8;
+    background-color: #999;
 }
 
 .uk-modal-footer {
@@ -3803,8 +3802,8 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #333;
-    font-size: 1rem;
+    color: #fff;
+    font-size: 1.125rem;
     font-weight: bold;
 }
 
@@ -3816,6 +3815,10 @@ ul.uk-nav-sub {
 
 [class*='uk-modal-close-']:first-child+* {
     margin-top: 0;
+}
+
+.uk-modal-close-default {
+    color: #fff;
 }
 
 .uk-modal-close-outside {

@@ -1,5 +1,4 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainMart
 {
@@ -66,7 +65,7 @@ namespace ChainMart
         internal short admly;
         internal int orgid;
         internal short orgly;
-        internal string idcard;
+        internal int mktid;
         internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -89,7 +88,7 @@ namespace ChainMart
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(idcard), ref idcard);
+                s.Get(nameof(mktid), ref mktid);
                 s.Get(nameof(icon), ref icon);
             }
         }
@@ -111,7 +110,7 @@ namespace ChainMart
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
-                s.Put(nameof(idcard), idcard);
+                s.Put(nameof(mktid), mktid);
                 s.Put(nameof(icon), icon);
             }
         }
@@ -122,40 +121,9 @@ namespace ChainMart
 
         public bool IsProfessional => typ >= 1;
 
-        public short Sex
-        {
-            get
-            {
-                if (idcard == null)
-                {
-                    return 0;
-                }
-                var num = idcard[16] - '0';
-                return (short) (num % 2 == 1 ? 1 : 2);
-            }
-        }
-
-        public DateTime Birth
-        {
-            get
-            {
-                if (idcard == null)
-                {
-                    return default;
-                }
-                var n = idcard;
-                int year = (n[6] - '0') * 1000 + (n[7] - '0') * 100 + (n[8] - '0') * 10 + (n[9] - '0') * 1;
-                int month = (n[10] - '0') * 10 + (n[11] - '0') * 1;
-                int day = (n[12] - '0') * 10 + (n[13] - '0') * 1;
-                return new DateTime(year, month, day);
-            }
-        }
-
         public bool IsAdmly => admly > 0;
 
         public bool IsOrgly => orgly > 0 && orgid > 0;
-
-        public bool IsCertified => !string.IsNullOrEmpty(idcard);
 
         public override string ToString() => name;
     }
