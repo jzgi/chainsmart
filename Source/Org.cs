@@ -10,6 +10,7 @@ namespace ChainMart
         public static readonly Org Empty = new Org();
 
         public const short
+            TYP_VTL = 0b00000, // virtual
             TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
@@ -143,6 +144,8 @@ namespace ChainMart
         public int ZoneId => IsZone ? id : IsOfSource ? prtid : 0;
 
         public bool IsParentCapable => (typ & TYP_PRT) == TYP_PRT;
+
+        public bool IsLink => typ == TYP_VTL;
 
         public bool IsZone => typ == TYP_ZON;
 

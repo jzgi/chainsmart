@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
@@ -25,15 +26,20 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品", items[m.itemid].ToString())._LI();
                 h.LI_().FIELD("投放市场", topOrgs[m.ctrid].name)._LI();
-                h.LI_().FIELD("物流经中控", m.ctring)._LI();
+                if (m.IsSelfTransport)
+                {
+                    h.LI_().FIELD("自运到市场", m.mktids, topOrgs)._LI();
+                }
                 h.LI_().FIELD("状态", Statuses[m.status])._LI();
                 h.LI_().FIELD("单价", m.price)._LI();
-                h.LI_().FIELD("直降", m.off)._LI();
+                h.LI_().FIELD("优惠", m.off)._LI();
                 h.LI_().FIELD("起订量", m.min)._LI();
                 h.LI_().FIELD("限订量", m.max)._LI();
                 h.LI_().FIELD("递增量", m.step)._LI();
                 h.LI_().FIELD("总量", m.cap)._LI();
                 h.LI_().FIELD("剩余量", m.remain)._LI();
+                h.LI_().FIELD("起始号", m.nstart)._LI();
+                h.LI_().FIELD("截至号", m.nend)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -87,12 +93,51 @@ namespace ChainMart
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE products ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
+                dc.Sql("UPDATE lots ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, 0);
                     p.Set(lotid).Set(org.id);
                 });
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("自运", "指定自运达市场", icon: "rss"), Tool(ButtonShow)]
+        public async Task direct(WebContext wc)
+        {
+            int lotid = wc[0];
+            var org = wc[-2].As<Org>();
+            var topOrgs = Grab<int, Org>();
+
+            int[] mktids;
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ctrid, mktids FROM lots WHERE id = @1 AND srcid = @2");
+                await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
+                dc.Let(out int ctrid);
+                dc.Let(out mktids);
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("设置为自运批次，指定目标市场");
+
+                    h.LI_().SELECT("自运达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 12, required: true)._LI();
+
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                });
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                mktids = f[nameof(mktids)];
+
+                // update
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE lots SET mktids = @1 WHERE id = @2 AND srcid = @3");
+                await dc.ExecuteAsync(p => p.Set(mktids).Set(lotid).Set(org.id));
 
                 wc.GivePane(200); // close dialog
             }
@@ -114,7 +159,44 @@ namespace ChainMart
 
     public class CtrlyLotVarWork : LotVarWork
     {
-        [Ui("贴标", "贴标", icon: "bookmark"), Tool(ButtonOpen)]
+        [Ui("标牌", "标牌号码绑定", icon: "tag"), Tool(ButtonShow)]
+        public async Task tag(WebContext wc)
+        {
+            int lotid = wc[0];
+            var ctr = wc[-2].As<Org>();
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
+                var m = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("输入连续的标牌号码");
+
+                    h.LI_().NUMBER("起始号", nameof(m.nstart), m.nstart)._LI();
+                    h.LI_().NUMBER("截至号", nameof(m.nend), m.nend)._LI();
+
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag))._FORM();
+                });
+            }
+            else
+            {
+                var f = await wc.ReadAsync<Form>();
+                int nstart = f[nameof(nstart)];
+                int nend = f[nameof(nend)];
+
+                // update
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE lots SET nstart = @1, nend = @2 WHERE id = @3 AND ctrid = @4");
+                await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(lotid).Set(ctr.id));
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [Ui("贴标", "打印本批次的贴标", icon: "print"), Tool(ButtonShow)]
         public async Task label(WebContext wc)
         {
             int lotid = wc[0];

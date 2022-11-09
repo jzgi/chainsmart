@@ -99,7 +99,7 @@ namespace ChainMart
         }
     }
 
-    public class MktlyCustVarWork : UserVarWork
+    public class ShplyVipVarWork : UserVarWork
     {
         [Ui("✎", "修改"), Tool(ButtonOpen)]
         public async Task upd(WebContext wc)

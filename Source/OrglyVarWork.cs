@@ -92,13 +92,11 @@ namespace ChainMart
 
             CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<MktlyVipWork>("mvip");
+            CreateWork<MktlyTestWork>("mtest");
 
             CreateWork<MktlyBuyWork>("mbuy");
 
             CreateWork<MktlyBookWork>("mbook");
-
-            CreateWork<MktlyTestWork>("mtest");
 
             CreateWork<MktlyRptWork>("mrpt");
 
@@ -109,6 +107,8 @@ namespace ChainMart
             CreateWork<ShplyPosWork>("spos");
 
             CreateWork<ShplyWareWork>("sware");
+
+            CreateWork<ShplyVipWork>("svip");
 
             CreateWork<ShplyBookWork>("sbook");
 

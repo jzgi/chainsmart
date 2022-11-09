@@ -347,15 +347,11 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_MKT, 1)]
-#if ZHNT
-    [Ui("重要消费账号管理", "市场")]
-#else
-    [Ui("重要消费账号管理", "驿站")]
-#endif
-    public class MktlyVipWork : UserWork<MktlyCustVarWork>
+    [UserAuthorize(Org.TYP_SHP, 1)]
+    [Ui("大客户管理", "商户")]
+    public class ShplyVipWork : UserWork<ShplyVipVarWork>
     {
-        [Ui("重要消费账号", group: 1), Tool(Anchor)]
+        [Ui("大客户列表", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             int mktid = wc[0];
@@ -399,7 +395,7 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("已登记过的重要消费账号");
+                    h.FORM_().FIELDSUL_("已登记过的大客户账号");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h._FIELDSUL()._FORM();
                 });
@@ -432,7 +428,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("添加", "添加重要消费账号", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
             short admly = 0;

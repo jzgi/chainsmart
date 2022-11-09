@@ -165,7 +165,6 @@ namespace ChainMart
             {
                 status = Entity.STU_VOID,
                 srcid = org.id,
-                ctring = true,
                 created = now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -179,7 +178,6 @@ namespace ChainMart
 
                     h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, items, required: true)._LI();
                     h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
-                    h.LI_().CHECKBOX("物流经中控", nameof(m.ctring), m.ctring, check: m.ctring)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("销货参数");
@@ -216,7 +214,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("验证产品批次", "中控")]
+    [Ui("核验产品批次", "中控")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
         [Ui("待验批次", group: 1), Tool(Anchor)]

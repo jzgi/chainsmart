@@ -234,10 +234,19 @@ function closeUp(reload) {
         };
     }
 
-    // close this windows
-    var ifr = window.frameElement;
-    var div = ancestorOf(ifr, 'uk-modal');
-    UIkit.modal(div).hide();
+    var dlg = $('#dialog');
+    if (dlg) {
+
+        popstate = false;
+        UIkit.modal(dlg).hide();
+        // // if reload
+        if (stale && reload) {
+            history.go(-2);
+            // NOTE trick for page reload
+            var ifr = window.frameElement;
+            window.location.replace(ifr.src);
+        }
+    }
 }
 
 // build and open a reveal dialog
@@ -306,28 +315,25 @@ function dialog(trig, mode, pick, title) {
         var dlg = $('#dialog');
         if (dlg) {
 
-            if (!popstate) {
+            if (!popstate) { // not by back button
                 history.back();
-                popstate = false;
             }
 
             document.body.removeChild(dlg);
-            if (stale) {
-                location.reload(false);
-            }
         }
-
     }, false);
 
     // history
     window.addEventListener('popstate', (evt) => {
         var dlg = $('#dialog');
         if (dlg) {
-            popstate = true; // triggered by back
+            popstate = true; // triggered by back button
             UIkit.modal(dlg).hide();
         }
     });
-    history.pushState('dlg', null, src.startsWith('http') ? 'get' : action);
+
+    var srcurl = new URL(src);
+    history.pushState('dlg', null, srcurl.hostname == location.hostname ? action : 'extern');
 
     // display the modal
     UIkit.modal(e).show();

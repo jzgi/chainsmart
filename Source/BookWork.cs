@@ -95,7 +95,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().NAVBAR(cats, nameof(@new), typ)._TOPBAR();
+                h.TOPBAR_().NAVBAR(nameof(@new), typ, cats)._TOPBAR();
 
                 if (arr == null)
                 {

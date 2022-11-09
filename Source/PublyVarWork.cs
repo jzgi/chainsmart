@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
@@ -17,22 +15,28 @@ namespace ChainMart
 
         public async Task @default(WebContext wc, int sec)
         {
-            int mrtid = wc[0];
-            var mrt = GrabObject<int, Org>(mrtid);
+            int mktid = wc[0];
+            var mkt = GrabObject<int, Org>(mktid);
             var regs = Grab<short, Reg>();
 
+            Org[] arr;
             if (sec == 0) // when default sect
             {
-                wc.Subscript = sec = regs.First(v => v.IsSection).id;
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status > 0 ORDER BY addr");
+                arr = await dc.QueryAsync<Org>(p => p.Set(mktid));
+                arr = arr.AddOf(mkt, first: true);
             }
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (prtid = @1 OR id = @1) AND regid = @2 AND status > 0 ORDER BY addr");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mrtid).Set(sec));
+            else
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status > 0 ORDER BY addr");
+                arr = await dc.QueryAsync<Org>(p => p.Set(mktid).Set(sec));
+            }
 
             wc.GivePage(200, h =>
             {
-                h.NAVBAR(regs, string.Empty, sec, filter: (k, v) => v.IsSection);
+                h.NAVBAR(string.Empty, sec, regs, (k, v) => v.IsSection, "star");
 
                 if (arr == null)
                 {
@@ -42,7 +46,14 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    if (o.IsLink)
+                    {
+                        h.A_(o.addr, css: "uk-card-body uk-flex");
+                    }
+                    else
+                    {
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.ShopName, css: "uk-card-body uk-flex");
+                    }
 
                     if (o.icon)
                     {
@@ -54,13 +65,13 @@ namespace ChainMart
                     }
 
                     h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
+                    h.H5(o.ShopName);
                     h.P(o.tip);
                     h._DIV();
 
                     h._A();
                 });
-            }, true, 900, mrt.name);
+            }, shared: sec > 0, 900, mkt.name); // shared cache when no personal data
         }
     }
 
@@ -124,7 +135,7 @@ namespace ChainMart
                     return;
                 }
 
-                h.NAVBAR(cats, "", 0);
+                // h.NAVBAR(cats, "", 0);
 
                 h.TABLE_();
                 var last = 0;
@@ -168,6 +179,5 @@ namespace ChainMart
                 h.BOTTOMBAR_().BUTTON("付款")._BOTTOMBAR();
             }, title: prv.tip);
         }
-
     }
 }
