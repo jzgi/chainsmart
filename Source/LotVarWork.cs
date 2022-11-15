@@ -216,7 +216,7 @@ namespace ChainMart
                 {
                     h.LI_();
                     h.DIV_("uk-card uk-card-default uk-flex");
-                    h.QRCODE(ChainMartApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
+                    h.QRCODE(MainApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
                     h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i + 1)._DIV();
                     h._DIV();
                     h._LI();

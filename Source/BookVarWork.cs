@@ -31,7 +31,7 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 // picture
-                h.PIC_().T(ChainMartApp.WwwUrl).T("/item/").T(lot.id).T("/pic")._PIC();
+                h.PIC_().T(MainApp.WwwUrl).T("/item/").T(lot.id).T("/pic")._PIC();
 
                 h.DIV_("uk-card uk-card-default");
                 h._DIV();
@@ -126,8 +126,8 @@ namespace ChainMart
                     topay,
                     prin.im, // the payer
                     wc.RemoteIpAddress.ToString(),
-                    ChainMartApp.MgtUrl + "/" + nameof(MgtService.onpay),
-                    ChainMartApp.MgtUrl
+                    MainApp.MgtUrl + "/" + nameof(MgtService.onpay),
+                    MainApp.MgtUrl
                 );
                 if (prepay_id != null)
                 {

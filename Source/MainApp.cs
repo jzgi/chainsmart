@@ -8,7 +8,7 @@ using static System.Data.IsolationLevel;
 
 namespace ChainMart
 {
-    public class ChainMartApp : Application
+    public class MainApp : Application
     {
         public static string WwwUrl;
 

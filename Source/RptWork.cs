@@ -21,7 +21,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("消费业务报表", "业务")]
+    [Ui("零售业务报表", "业务")]
     public class AdmlyBuyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)
@@ -94,7 +94,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("业务报表", "中控")]
+    [Ui("业务报表", "控运")]
     public class CtrlyRptWork : RptWork
     {
         [Ui("待收", group: 1), Tool(Modal.Anchor)]

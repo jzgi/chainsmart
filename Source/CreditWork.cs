@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
+﻿using ChainFx.Web;
 
 namespace ChainMart
 {
@@ -8,18 +6,16 @@ namespace ChainMart
     {
     }
 
-    [Ui("碳积分账户", "功能")]
+    [Ui("碳积分账户", "个人")]
     public class MyCreditWork : CreditWork
     {
-        [Ui("碳积分账户"), Tool(Anchor)]
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
-            wc.GivePage(200, h =>
+            wc.GivePane(200, h =>
             {
-                h.TOOLBAR();
-
-                // spr and rvr
-            }, false, 6);
+                h.ALERT("该功能尚未开启");
+                h.TOOLBAR(bottom: true);
+            }, false, 7);
         }
     }
 }

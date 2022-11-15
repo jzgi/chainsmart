@@ -10,7 +10,7 @@ using static ChainFx.Fabric.Nodality;
 namespace ChainMart
 {
     [UserAuthenticate]
-    public class WwwService : ChainMartService
+    public class WwwService : MainService
     {
         protected override void OnCreate()
         {
@@ -62,7 +62,7 @@ namespace ChainMart
                     }
 
                     h.LI_("uk-flex");
-                    h.A_(o.id, "/", css: "uk-width-expand").T(o.name)._A();
+                    h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markgo('mktid', this);\" cookie=\"mktid\" onenhance=\"setactive(event, this)\">").T(o.name)._A();
                     h.SPAN_("uk-margin-auto-left");
                     h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
                     h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
@@ -77,7 +77,7 @@ namespace ChainMart
                     h.LI_().T("（暂无市场）")._LI();
                 }
                 h._FORM();
-            }, false, 15, title: Self.Name);
+            }, true, 900, title: Self.Name, onload: "enhanceAll()");
         }
 
         public void @catch(WebContext wc)

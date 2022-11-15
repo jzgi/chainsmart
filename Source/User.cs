@@ -65,7 +65,7 @@ namespace ChainMart
         internal short admly;
         internal int orgid;
         internal short orgly;
-        internal int mktid;
+        internal int vip;
         internal bool icon;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -88,7 +88,7 @@ namespace ChainMart
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(mktid), ref mktid);
+                s.Get(nameof(vip), ref vip);
                 s.Get(nameof(icon), ref icon);
             }
         }
@@ -110,7 +110,7 @@ namespace ChainMart
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
-                s.Put(nameof(mktid), mktid);
+                s.Put(nameof(vip), vip);
                 s.Put(nameof(icon), icon);
             }
         }

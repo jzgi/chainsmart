@@ -40,10 +40,10 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -73,7 +73,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -171,7 +171,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -249,14 +249,14 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(subscript: Org.TYP_SHP);
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/-", Org.TYP_SHP, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -273,7 +273,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [Ui(tip: "查询", icon: "search", group: 4), Tool(AnchorPrompt)]
+        [Ui(tip: "查询", icon: "search", group: 2), Tool(AnchorPrompt)]
         public async Task search(WebContext wc)
         {
             var regs = Grab<short, Reg>();
@@ -303,10 +303,10 @@ namespace ChainMart
 
                     h.MAINGRID(arr, o =>
                     {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                        h.ADIALOG_(o.Key, "/-", o.typ, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                         if (o.icon)
                         {
-                            h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
                         }
                         else
                         {
@@ -322,8 +322,41 @@ namespace ChainMart
             }
         }
 
-        [Ui("新建", "新建商户", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc)
+        [Ui(tip: "虚拟商户", icon: "star", group: 4), Tool(Anchor)]
+        public async Task star(WebContext wc)
+        {
+            var mkt = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND typ = 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(mkt.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: Org.TYP_VTL);
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/-", Org.TYP_VTL, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
+                    else
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    }
+                    h.DIV_("uk-width-expand uk-padding-left");
+                    h.H5(o.name);
+                    h.P(o.tip);
+                    h._DIV();
+                    h._A();
+                });
+            }, false, 15);
+        }
+
+        [Ui("新建", "新建商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        public async Task @new(WebContext wc, int typ)
         {
             var mkt = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
@@ -331,7 +364,7 @@ namespace ChainMart
             var regs = Grab<short, Reg>();
             var m = new Org
             {
-                typ = Org.TYP_SHP,
+                typ = (short) typ,
                 created = DateTime.Now,
                 creator = prin.name,
                 status = Entity.STU_NORMAL,
@@ -341,70 +374,45 @@ namespace ChainMart
 
             if (wc.IsGet)
             {
-                m.Read(wc.Query, 0);
-                wc.GivePane(200, h =>
+                if (typ == Org.TYP_SHP)
                 {
-                    h.FORM_().FIELDSUL_("填写商户资料");
+                    m.Read(wc.Query, 0);
+                    wc.GivePane(200, h =>
+                    {
+                        h.FORM_().FIELDSUL_("填写商户资料");
 
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().TEXT("社会信用号", nameof(m.license), m.license, max: 20)._LI();
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
-                    h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsSection)._LI();
+                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                        h.LI_().TEXT("社会信用号", nameof(m.license), m.license, max: 20)._LI();
+                        h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust)._LI();
+                        h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsSection)._LI();
 #if ZHNT
-                    h.LI_().TEXT("档位号", nameof(m.addr), m.addr, max: 4)._LI();
+                        h.LI_().TEXT("档位号", nameof(m.addr), m.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().TEL("联系电话", nameof(m.tel), m.tel, max: 11)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().TEL("联系电话", nameof(m.tel), m.tel, max: 11)._LI();
+                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                await wc.ReadObjectAsync(0, instance: m);
-
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, 0)._VALUES_(Org.Empty, 0);
-                await dc.ExecuteAsync(p => { m.Write(p); });
-
-                wc.GivePane(201); // created
-            }
-        }
-
-        [Ui("链接", "新建链接", icon: "star", group: 1), Tool(ButtonOpen)]
-        public async Task newvtl(WebContext wc)
-        {
-            var mkt = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
-            var m = new Org
-            {
-                typ = Org.TYP_VTL,
-                created = DateTime.Now,
-                creator = prin.name,
-                status = Entity.STU_NORMAL,
-                prtid = mkt.id,
-                ctrid = mkt.ctrid,
-                regid = 0, // null
-            };
-
-            if (wc.IsGet)
-            {
-                m.Read(wc.Query, 0);
-                wc.GivePane(200, h =>
+                        h._FIELDSUL()._FORM();
+                    });
+                }
+                else // TYP_VTL
                 {
-                    h.FORM_().FIELDSUL_("填写链接信息");
+                    m.Read(wc.Query, 0);
+                    wc.GivePane(200, h =>
+                    {
+                        h.FORM_().FIELDSUL_("填写虚拟商户信息");
 
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                        h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
+                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newvtl))._FORM();
-                });
+                        h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
+                    });
+                }
             }
             else // POST
             {

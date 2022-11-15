@@ -115,7 +115,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
@@ -141,7 +141,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
@@ -214,7 +214,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("核验产品批次", "中控")]
+    [Ui("核验产品批次", "控运")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
         [Ui("待验批次", group: 1), Tool(Anchor)]
@@ -239,7 +239,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);

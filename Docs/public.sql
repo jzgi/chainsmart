@@ -116,6 +116,7 @@ create table orgs
     link varchar(100),
     sprid integer,
     rvrid integer,
+    alias varchar(12),
     icon bytea
 )
     inherits (entities);
@@ -136,7 +137,7 @@ create table users
         constraint users_orgid_fk
             references orgs,
     orgly smallint default 0 not null,
-    mktid integer
+    vip integer
         constraint users_mktid_fk
             references orgs,
     icon bytea
@@ -160,8 +161,8 @@ create index users_orgid_idx
     where (orgid IS NOT NULL);
 
 create index users_mktid_index
-    on users (mktid)
-    where (mktid > 0);
+    on users (vip)
+    where (vip > 0);
 
 create table tests
 (
@@ -355,7 +356,7 @@ create table lots
         constraint lots_zonid_fk
             references orgs,
     ctrid integer not null,
-    ctring boolean,
+    mktids integer[],
     price money,
     "off" money,
     cap integer,
@@ -374,42 +375,6 @@ alter table lots owner to postgres;
 
 create index lots_nend_idx
     on lots (nend);
-
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, icon) as
-SELECT o.typ,
-       o.status,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oker,
-       o.oked,
-       o.state,
-       o.id,
-       o.prtid,
-       o.ctrid,
-       o.license,
-       o.trust,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o.tel,
-       o.link,
-       o.sprid,
-       m.name             AS sprname,
-       m.tel              AS sprtel,
-       m.im               AS sprim,
-       o.rvrid,
-       o.icon IS NOT NULL AS icon
-FROM orgs o
-         LEFT JOIN users m
-                   ON o.sprid =
-                      m.id;
-
-alter table orgs_vw owner to postgres;
 
 create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, store, duration, agt, unit, unitpkg, unitx, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
@@ -470,7 +435,7 @@ FROM wares o;
 
 alter table wares_vw owner to postgres;
 
-create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, mktid, icon) as
+create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, vip, icon) as
 SELECT u.typ,
        u.status,
        u.name,
@@ -490,11 +455,48 @@ SELECT u.typ,
        u.admly,
        u.orgid,
        u.orgly,
-       u.mktid,
+       u.vip,
        u.icon IS NOT NULL AS icon
 FROM users u;
 
 alter table users_vw owner to postgres;
+
+create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, alias, icon) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oker,
+       o.oked,
+       o.state,
+       o.id,
+       o.prtid,
+       o.ctrid,
+       o.license,
+       o.trust,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.tel,
+       o.link,
+       o.sprid,
+       m.name             AS sprname,
+       m.tel              AS sprtel,
+       m.im               AS sprim,
+       o.rvrid,
+       o.alias,
+       o.icon IS NOT NULL AS icon
+FROM orgs o
+         LEFT JOIN users m
+                   ON o.sprid =
+                      m.id;
+
+alter table orgs_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

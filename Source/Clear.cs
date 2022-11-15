@@ -13,8 +13,8 @@ namespace ChainMart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SUPPLY, "供应"},
-            {TYP_BUY, "消费"},
+            {TYP_SUPPLY, "供应链"},
+            {TYP_BUY, "零售"},
         };
 
         public const short

@@ -16,7 +16,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("消费商品设置", "商户")]
+    [Ui("零售商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
         [Ui("在售商品", group: 1), Tool(Anchor)]
@@ -43,11 +43,11 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                     if (o.itemid > 0)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     }
                     else if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {

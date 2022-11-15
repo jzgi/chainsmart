@@ -18,7 +18,7 @@ namespace ChainMart
     [Ui("供应链采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
-        [Ui("当前采购", group: 1), Tool(Anchor)]
+        [Ui("供应链采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -39,7 +39,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
@@ -65,7 +65,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
@@ -106,7 +106,7 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.P(o.tip);
@@ -234,7 +234,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("订货分运", "中控", icon: "sign-out")]
+    [Ui("订货分运", "控运", icon: "sign-out")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

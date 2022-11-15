@@ -1,9 +1,4 @@
-using System.Threading.Tasks;
-using ChainFx;
 using ChainFx.Web;
-using static System.String;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
@@ -13,11 +8,13 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateWork<MyInfoWork>("info");
+            CreateWork<MyInfoVarWork>("info");
 
             CreateWork<MyBuyWork>("buy");
 
             CreateWork<MyCreditWork>("credit");
+
+            CreateWork<MyAccessVarWork>("access");
         }
 
         [UserAuthorize]

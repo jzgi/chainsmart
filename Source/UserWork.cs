@@ -16,104 +16,6 @@ namespace ChainMart
         }
     }
 
-    [Ui("账号信息", "功能")]
-    public class MyInfoWork : WebWork
-    {
-        public async Task @default(WebContext wc)
-        {
-            int uid = wc[-1];
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE id = @1");
-            var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
-
-            wc.GivePage(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("姓名", o.name)._LI();
-                h.LI_().FIELD("类别", Typs[o.typ])._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("地址", o.addr)._LI();
-                h._UL();
-
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
-                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
-                h._UL();
-
-                // admly & orgly
-                if (o.IsAdmly)
-                {
-                    h.SECTION_("uk-card uk-card-primary uk-card-body");
-                    h.SPAN("平台管理", "uk-width-1-2");
-                    h.SPAN(Admly[o.admly], "uk-width-1-2");
-                    h._SECTION();
-                }
-
-                if (o.IsOrgly)
-                {
-                    var org = GrabObject<int, Org>(o.orgid);
-                    h.SECTION_("uk-card uk-card-primary uk-card-body");
-                    h.SPAN(org.name, "uk-width-1-2");
-                    h.SPAN(Orgly[o.orgly], "uk-width-1-2");
-                    h._SECTION();
-                }
-
-                h.TOOLBAR(bottom: true);
-
-
-                // spr and rvr
-            }, false, 6);
-
-            // resend token cookie
-            wc.SetTokenCookie(o);
-        }
-
-        [Ui("设置", icon: "cog"), Tool(ButtonShow)]
-        public async Task setg(WebContext wc)
-        {
-            const string PASSMASK = "t#0^0z4R4pX7";
-            string name;
-            string tel;
-            string password;
-            var prin = (User) wc.Principal;
-            if (wc.IsGet)
-            {
-                name = prin.name;
-                tel = prin.tel;
-                password = string.IsNullOrEmpty(prin.credential) ? null : PASSMASK;
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("基本信息");
-                    h.LI_().TEXT("姓名", nameof(name), name, max: 8, min: 2, required: true)._LI();
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h._FIELDSUL().FIELDSUL_("操作密码（可选）");
-                    h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
-                    h._FIELDSUL()._FORM();
-
-                    h.BOTTOM_BUTTON("确定", nameof(setg));
-                });
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                name = f[nameof(name)];
-                tel = f[nameof(tel)];
-                password = f[nameof(password)];
-                string credential = string.IsNullOrEmpty(password) ? null :
-                    password == PASSMASK ? prin.credential : ChainMartUtility.ComputeCredential(tel, password);
-
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(Empty);
-                prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
-                // refresh cookie
-                wc.SetTokenCookie(prin);
-                wc.GivePane(200); // close
-            }
-        }
-    }
-
     [Ui("人员权限", "系统")]
     public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     {
@@ -135,7 +37,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -249,7 +151,7 @@ namespace ChainMart
                         h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                         if (o.icon)
                         {
-                            h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                         }
                         else
                         {
@@ -287,7 +189,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -351,13 +253,13 @@ namespace ChainMart
     [Ui("大客户管理", "商户")]
     public class ShplyVipWork : UserWork<ShplyVipVarWork>
     {
-        [Ui("大客户列表", group: 1), Tool(Anchor)]
+        [Ui("大客户", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             int mktid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE mktid = @1 LIMIT 20 OFFSET 20 * @2");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE vip = @1 LIMIT 20 OFFSET 20 * @2");
             var arr = dc.Query<User>(p => p.Set(mktid).Set(page));
 
             wc.GivePage(200, h =>
@@ -369,7 +271,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(ChainMartApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
                     }
                     else
                     {
@@ -431,7 +333,7 @@ namespace ChainMart
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
-            short admly = 0;
+            int shpid = wc[0];
 
             if (wc.IsGet)
             {
@@ -440,7 +342,7 @@ namespace ChainMart
                 {
                     h.FORM_();
 
-                    h.FIELDSUL_("必须是已注册的用户账号");
+                    h.FIELDSUL_("查找用户账号");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
@@ -451,12 +353,23 @@ namespace ChainMart
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
-                            h.FIELDSUL_();
-                            h.HIDDEN(nameof(o.id), o.id);
-                            h.LI_().FIELD("用户账号名称", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(admly), admly, Admly, filter: (k, v) => k > 0)._LI();
-                            h._FIELDSUL();
-                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                            if (o.vip > 0)
+                            {
+                                if (o.vip == shpid)
+                                {
+                                    h.LI_().FIELD("", "已经是本单位的大客户")._LI();
+                                }
+                                else
+                                {
+                                    h.LI_().FIELD("", "已经是其他商户的大客户，不能添加")._LI();
+                                }
+                            }
+                            else
+                            {
+                                h.HIDDEN(nameof(o.id), o.id);
+                                h.FIELDSUL_().LI_().FIELD("账号名称", o.name)._LI()._FIELDSUL();
+                                h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                            }
                         }
                     }
                     h._FORM();
@@ -466,9 +379,8 @@ namespace ChainMart
             {
                 var f = await wc.ReadAsync<Form>();
                 int id = f[nameof(id)];
-                admly = f[nameof(admly)];
                 using var dc = NewDbContext();
-                dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
+                dc.Execute("UPDATE users SET vip = @1 WHERE id = @2", p => p.Set(shpid).Set(id));
 
                 wc.GivePane(200); // ok
             }

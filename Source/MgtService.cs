@@ -10,7 +10,7 @@ using static ChainFx.Fabric.Nodality;
 namespace ChainMart
 {
     [UserAuthenticate]
-    public class MgtService : ChainMartService
+    public class MgtService : MainService
     {
         protected override void OnCreate()
         {

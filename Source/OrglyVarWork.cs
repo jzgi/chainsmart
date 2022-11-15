@@ -125,27 +125,27 @@ namespace ChainMart
 
         public void @default(WebContext wc)
         {
-            var org = wc[0].As<Org>();
+            var mkt = wc[0].As<Org>();
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                var role = prin.orgid != org.id ? "代办" : User.Orgly[prin.orgly];
+                var role = prin.orgid != mkt.id ? "代办" : User.Orgly[prin.orgly];
                 // h.TOOLBAR(tip: prin.name + "（" + role + "）");
 
                 h.TOPBARXL_();
-                if (prin.icon)
+                if (mkt.icon)
                 {
-                    h.PIC("/org/", prin.id, "/icon/", circle: true, css: "uk-width-small");
+                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(mkt.id).T("/icon")._PIC();
                 }
                 else
                 {
                     h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name);
-                h.SPAN(org.tel);
+                h.H2(mkt.name);
+                h.SPAN(mkt.tel);
                 h._DIV();
                 h._TOPBARXL();
 

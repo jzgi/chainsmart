@@ -29,7 +29,7 @@ namespace ChainMart
             {TYP_SHP, "驿站"},
 #endif
             {TYP_ZON, "供区"},
-            {TYP_CTR, "中控"},
+            {TYP_CTR, "控运"},
         };
 
         // id
@@ -56,6 +56,7 @@ namespace ChainMart
         internal string sprtel;
         internal string sprim;
         internal int rvrid; // reviewer id 
+        internal string alias;
         internal bool icon;
 
         public override void Read(ISource s, short msk = 0xff)
@@ -73,6 +74,7 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(alias), ref alias);
                 s.Get(nameof(license), ref license);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
@@ -111,6 +113,7 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(alias), alias);
                 s.Put(nameof(license), license);
                 if (regid > 0) s.Put(nameof(regid), regid);
                 else s.PutNull(nameof(regid));
@@ -167,7 +170,7 @@ namespace ChainMart
 
         public bool HasCtr => IsOfShop;
 
-        public string ShopName => IsMarket ? tip : name;
+        public string ShopName => IsMarket ? alias : name;
 
         public override string ToString() => name;
     }

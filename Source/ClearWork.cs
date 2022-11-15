@@ -17,7 +17,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("消费结款", "财务")]
+    [Ui("零售结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
         [Ui("当前结算", group: 1), Tool(Anchor)]

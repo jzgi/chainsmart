@@ -1,8 +1,4 @@
 
-// Registering Service Worker
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' });
-}
 
 var WCPay = function (data, lot) {
     WeixinJSBridge.invoke(
@@ -143,6 +139,38 @@ function subscriptUri(uri, num) {
     }
 }
 
+
+function enhanceAll() {
+    var cookies = {};
+    // parse all cookies
+    if (document.cookie && document.cookie != '') {
+        var split = document.cookie.split(';');
+        for (var i = 0; i < split.length; i++) {
+            var name_value = split[i].split('=');
+            name_value[0] = name_value[0].replace(/^ /, '');
+            cookies[name_value[0]] = decodeURIComponent(name_value[1]);
+        }
+    }
+    // traverse
+    var elst = document.querySelectorAll("[onenhance]");
+    for (var e of elst) {
+        var scpt = e.getAttribute("onenhance");
+
+        var cookie_name = e.getAttribute('cookie');
+        var cookie_val = cookies[cookie_name];
+        if (cookie_val) {
+            // cookie
+            var evt = new CustomEvent('enhance', { detail: cookie_val });
+            e.addEventListener('enhance', new Function(scpt));
+            e.dispatchEvent(evt);
+        } else {
+            var evt = new CustomEvent('enhance');
+            e.addEventListener('enhance', new Function(scpt));
+            e.dispatchEvent(evt);
+        }
+    }
+}
+
 function serialize(form) {
     if (!form || form.nodeName !== "FORM") {
         return null;
@@ -218,6 +246,17 @@ function goto(url, evt) {
     evt.preventDefault();
     location.replace(url);
     return false;
+}
+
+function markgo(cookieName, el) {
+    document.cookie = cookieName + '=' + el.id;
+    return true;
+}
+
+function setactive(evt, el) {
+    if (el.id == evt.detail) {
+        el.classList.add('uk-active');
+    }
 }
 
 // indicator of updates

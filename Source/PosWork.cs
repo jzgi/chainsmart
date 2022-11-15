@@ -7,7 +7,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("线下消费终端", "商户")]
+    [Ui("零售智能终端", "商户")]
     public class ShplyPosWork : PosWork
     {
         public async Task @default(WebContext wc)

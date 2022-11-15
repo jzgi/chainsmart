@@ -8,7 +8,7 @@ using static ChainFx.Entity;
 
 namespace ChainMart
 {
-    public abstract class ChainMartService : WebService
+    public abstract class MainService : WebService
     {
         public async Task signin(WebContext wc)
         {
@@ -42,7 +42,7 @@ namespace ChainMart
                 url = f[nameof(url)];
 
                 using var dc = Nodality.NewDbContext();
-                var credential = ChainMartUtility.ComputeCredential(tel, password);
+                var credential = MainUtility.ComputeCredential(tel, password);
                 dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
@@ -53,7 +53,7 @@ namespace ChainMart
 
                 // successfully signed in
                 wc.Principal = prin;
-                wc.SetTokenCookie(prin);
+                wc.SetUserCookie(prin);
                 wc.GiveRedirect(url ?? "/");
             }
         }
@@ -145,7 +145,7 @@ namespace ChainMart
 
                     // refresh cookie
                     wc.Principal = m;
-                    wc.SetTokenCookie(m);
+                    wc.SetUserCookie(m);
                     wc.GiveRedirect(url);
                 }
             }

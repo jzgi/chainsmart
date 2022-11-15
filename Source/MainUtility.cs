@@ -6,7 +6,7 @@ using static ChainFx.CryptoUtility;
 
 namespace ChainMart
 {
-    public static class ChainMartUtility
+    public static class MainUtility
     {
         public static double ComputeDistance(double lat1, double lng1, double lat2, double lng2)
         {
@@ -193,10 +193,19 @@ namespace ChainMart
             return MD5(v);
         }
 
-        public static void SetTokenCookie(this WebContext wc, User o)
+        public static void SetUserCookie(this WebContext wc, User o)
         {
+            const int A_WEEK = 3600 * 24 * 7;
+
+            // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            wc.SetCookie(nameof(token), token);
+            var tokenstr = WebUtility.FormatSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
+
+            // cookie for vip, o means none
+            var vipstr = WebUtility.FormatSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
+
+            // multiple cookie
+            wc.SetHeader("Set-Cookie", tokenstr, vipstr);
         }
 
         public static void ViewAgrmt(this HtmlBuilder h, JObj jo)

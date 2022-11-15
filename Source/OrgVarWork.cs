@@ -60,6 +60,35 @@ namespace ChainMart
     {
         public async Task @default(WebContext wc)
         {
+            int orgid = wc[0];
+            var prin = (User) wc.Principal;
+            var regs = Grab<short, Reg>();
+            var orgs = Grab<int, Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Org>(p => p.Set(orgid));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("机构名称", o.name)._LI();
+                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("别名", o.alias)._LI();
+                h.LI_().FIELD("信用编号", o.license)._LI();
+                h.LI_().FIELD("区域", o.regid, regs)._LI();
+                h.LI_().FIELD("地址", o.addr)._LI();
+                h.LI_().FIELD("电话", o.tel)._LI();
+                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true);
+            });
+        }
+
+        [Ui("修改", "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
+        public async Task edit(WebContext wc)
+        {
             short id = wc[0];
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
@@ -78,7 +107,7 @@ namespace ChainMart
                     h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联控运", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -101,7 +130,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("웃", "设置管理员", group: 7), Tool(ButtonOpen)]
+        [Ui("负责", "设置负责人", icon: "happy"), Tool(ButtonOpen)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -140,7 +169,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
+        [Ui("图标", icon: "github-alt"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
@@ -150,10 +179,11 @@ namespace ChainMart
 
     public class MktlyOrgVarWork : OrgVarWork
     {
-        public async Task @default(WebContext wc)
+        public async Task @default(WebContext wc, int typ)
         {
             int id = wc[0];
             var topOrgs = Grab<int, Org>();
+            var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
@@ -164,20 +194,21 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名称", o.name)._LI();
                 h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name)._LI();
-                h.LI_().FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
-                h.LI_().FIELD("信用编号", o.license)._LI();
-                h.LI_().FIELD("单位提示", o.regid)._LI();
-                h.LI_().FIELD("只供代理", o.trust)._LI();
+                h.LI_().FIELD("所属市场", topOrgs[o.prtid]?.name)._LI();
+                h.LI_().FIELD("品控中心", topOrgs[o.ctrid]?.name)._LI();
+                h.LI_().FIELD("信用代号", o.license)._LI();
+                h.LI_().FIELD("场区", o.regid, regs)._LI();
+                h.LI_().FIELD("档位号", o.addr)._LI();
+                h.LI_().FIELD("委托代办", o.trust)._LI();
                 h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true);
+                h.TOOLBAR(subscript: typ, bottom: true);
             });
         }
 
         [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonShow)]
-        public async Task edit(WebContext wc)
+        public async Task edit(WebContext wc, int typ)
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
@@ -192,31 +223,44 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
-                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
+                    if (typ == Org.TYP_SHP)
+                    {
+                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                        h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
+                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
 #if ZHNT
-                    h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
+                        h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                    }
+                    else
+                    {
+                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                        h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
+                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                    }
 
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit), subscript: typ)._FORM();
                 });
             }
             else
             {
-                var m = await wc.ReadObjectAsync<Org>(0);
+                const short msk = Entity.MSK_EDIT;
+                var m = await wc.ReadObjectAsync<Org>(msk);
+
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, msk);
                     p.Set(id);
                 });
+
                 wc.GivePane(200); // close
             }
         }
@@ -227,8 +271,9 @@ namespace ChainMart
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("事件", icon: "table"), Tool(ButtonShow)]
-        public async Task log(WebContext wc)
+        [UserAuthorize(Org.TYP_MKT, User.ORGLY_RVR)]
+        [Ui("审核", icon: "check"), Tool(ButtonShow)]
+        public async Task approve(WebContext wc)
         {
         }
     }
