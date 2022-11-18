@@ -14,7 +14,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("零售订单", "个人")]
+    [Ui("零售订单", "账号")]
     public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
         [Ui("零售订单"), Tool(Anchor)]

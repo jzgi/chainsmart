@@ -14,18 +14,24 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE id = @1");
-            var m = await dc.QueryTopAsync<User>(p => p.Set(uid));
+            var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("姓名", m.name)._LI();
-                h.LI_().FIELD("类型", User.Typs[m.typ])._LI();
-                h.LI_().FIELD("电话", m.tel)._LI();
-                h.LI_().FIELD("状态", Entity.Statuses[m.status])._LI();
-                h.LI_().FIELD("平台权限", User.Admly[m.admly])._LI();
-                h.LI_().FIELD("机构权限", User.Orgly[m.orgly])._LI();
+                h.LI_().FIELD("姓名", o.name)._LI();
+                h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
+                h.LI_().FIELD("电话", o.tel)._LI();
+                h.LI_().FIELD("状态", Entity.Statuses[o.status])._LI();
+                h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
                 h._UL();
+
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
+                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
+                h._UL();
+
 
                 h.TOOLBAR(bottom: true);
             });
@@ -33,22 +39,24 @@ namespace ChainMart
     }
 
 
-    [Ui("账号信息", "个人")]
+    [Ui("信息及身份", "账号")]
     public class MyInfoVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             int uid = wc[-1];
             var o = (User) wc.Principal;
 
-            wc.GivePage(200, h =>
+
+            wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("姓名", o.name)._LI();
-                h.LI_().FIELD("类别", User.Typs[o.typ])._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("地址", o.addr)._LI();
+                h.LI_().FIELD("状态", Entity.Statuses[o.status])._LI();
+                h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
                 h._UL();
 
                 h.UL_("uk-list uk-list-divider");
@@ -62,7 +70,7 @@ namespace ChainMart
             }, false, 7);
         }
 
-        [Ui("设置", icon: "cog"), Tool(ButtonShow)]
+        [Ui("信息", icon: "pencil"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             const string PASSMASK = "t#0^0z4R4pX7";
@@ -101,15 +109,51 @@ namespace ChainMart
                 prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
                 // refresh cookie
                 wc.SetUserCookie(prin);
+
                 wc.GivePane(200); // close
             }
         }
     }
 
-    [Ui("身份权限刷新", "个人")]
+    [Ui("身份和权限", "账号")]
     public class MyAccessVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
+        {
+            int uid = wc[-1];
+            var o = (User) wc.Principal;
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("已知的身份权限");
+
+                if (o.vip > 0)
+                {
+                    var org = GrabObject<int, Org>(o.vip);
+                    h.LI_().FIELD("大客户", org.name)._LI();
+                }
+
+                if (o.admly > 0)
+                {
+                    h.LI_().FIELD(User.Admly[o.admly], "平台")._LI();
+                }
+
+                if (o.IsOrgly)
+                {
+                    var org = GrabObject<int, Org>(o.orgid);
+                    h.LI_().FIELD(User.Orgly[o.orgly], org.name)._LI();
+                }
+
+                h._FIELDSUL()._FORM();
+
+                h.TOOLBAR(bottom: true);
+
+                // spr and rvr
+            }, false, 6);
+        }
+
+        [Ui("刷新", "刷新身份权限", icon: "refresh"), Tool(ButtonConfirm)]
+        public async Task refresh(WebContext wc)
         {
             int uid = wc[-1];
 
@@ -117,35 +161,29 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
             var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
-            wc.GivePage(200, h =>
-            {
-                // admly & orgly
-                h.H3("以获得最新身份权限");
-
-                if (o.IsAdmly)
-                {
-                    h.SECTION_("uk-card uk-card-primary uk-card-body");
-                    h.SPAN("平台管理", "uk-width-1-2");
-                    h.SPAN(User.Admly[o.admly], "uk-width-1-2");
-                    h._SECTION();
-                }
-
-                if (o.IsOrgly)
-                {
-                    var org = GrabObject<int, Org>(o.orgid);
-                    h.SECTION_("uk-card uk-card-primary uk-card-body");
-                    h.SPAN(org.name, "uk-width-1-2");
-                    h.SPAN(User.Orgly[o.orgly], "uk-width-1-2");
-                    h._SECTION();
-                }
-
-                h.TOOLBAR(bottom: true);
-
-                // spr and rvr
-            }, false, 6);
-
             // resend token cookie
             wc.SetUserCookie(o);
+
+            wc.Give(200, shared: false, maxage: 12);
+        }
+
+        [Ui("委派", "上层机构的委派", icon: "info"), Tool(ButtonShow)]
+        public async Task access(WebContext wc)
+        {
+            int uid = wc[-1];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 OR rvrid = @1");
+            var o = await dc.QueryTopAsync<Org>(p => p.Set(uid));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
+                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
+                h._UL();
+                //
+            });
         }
     }
 

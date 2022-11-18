@@ -78,12 +78,12 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名称", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, cats)._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
+                h.LI_().FIELD("说明", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
                 h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
                 h.LI_().FIELD("基础单位", o.unit)._LI();
                 h.LI_().FIELD("整装单位", o.unitpkg)._LI();
-                h.LI_().FIELD("整装基准倍", o.unitx)._LI();
+                h.LI_().FIELD("整装基础倍", o.unitx)._LI();
                 h.LI_().FIELD("只供代理", o.agt)._LI();
                 h.LI_().FIELD("状态", o.status, Statuses)._LI();
                 h._UL();

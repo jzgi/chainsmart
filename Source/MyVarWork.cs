@@ -3,7 +3,7 @@ using ChainFx.Web;
 namespace ChainMart
 {
     [UserAuthorize]
-    [Ui("账号信息")]
+    [Ui("我的个人账号")]
     public class MyVarWork : WebWork
     {
         protected override void OnCreate()
@@ -38,7 +38,10 @@ namespace ChainMart
                 h._TOPBARXL();
 
                 h.TASKBOARD();
-            }, false, 6, title: "个人账号");
+
+                h.DIV_("uk-margin-large-top uk-flex uk-flex-center").PIC("/qrcode.jpg", css: "uk-width-large")._DIV();
+                h.H4_("uk-flex uk-flex-center").T("推荐中惠农通")._H4();
+            }, false, 900);
         }
     }
 }

@@ -204,8 +204,10 @@ namespace ChainMart
             // cookie for vip, o means none
             var vipstr = WebUtility.FormatSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
 
+            var telstr = WebUtility.FormatSetCookie(nameof(o.tel), o.tel, maxage: A_WEEK);
+
             // multiple cookie
-            wc.SetHeader("Set-Cookie", tokenstr, vipstr);
+            wc.SetHeader("Set-Cookie", tokenstr, vipstr, telstr);
         }
 
         public static void ViewAgrmt(this HtmlBuilder h, JObj jo)

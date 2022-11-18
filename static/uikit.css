@@ -1776,7 +1776,7 @@ button.uk-button-secondary {
 .uk-button-primary.disabled {
     background-color: transparent;
     color: #999 !important;
-    border-color: #999 !important;
+    border-color: #ddd !important;
 }
 
 .uk-button-secondary:disabled,
@@ -6796,19 +6796,19 @@ iframe.uk-cover {
 }
 
 .uk-margin-large {
-    margin-bottom: 32px;
+    margin-bottom: 64px;
 }
 
 *+.uk-margin-large {
-    margin-top: 32px !important;
+    margin-top: 64px !important;
 }
 
 .uk-margin-large-top {
-    margin-top: 32px !important;
+    margin-top: 64px !important;
 }
 
 .uk-margin-large-bottom {
-    margin-bottom: 32px !important;
+    margin-bottom: 64px !important;
 }
 
 .uk-margin-large-left {
@@ -6848,53 +6848,6 @@ iframe.uk-cover {
 
 \.uk-margin-xlarge {
     margin-bottom: 70px;
-}
-
-*+.uk-margin-xlarge {
-    margin-top: 70px !important;
-}
-
-.uk-margin-xlarge-top {
-    margin-top: 70px !important;
-}
-
-.uk-margin-xlarge-bottom {
-    margin-bottom: 70px !important;
-}
-
-.uk-margin-xlarge-left {
-    margin-left: 70px !important;
-}
-
-.uk-margin-xlarge-right {
-    margin-right: 70px !important;
-}
-
-/* Desktop and bigger */
-@media (min-width: 1280px) {
-    .uk-margin-xlarge {
-        margin-bottom: 140px;
-    }
-
-    *+.uk-margin-xlarge {
-        margin-top: 140px !important;
-    }
-
-    .uk-margin-xlarge-top {
-        margin-top: 140px !important;
-    }
-
-    .uk-margin-xlarge-bottom {
-        margin-bottom: 140px !important;
-    }
-
-    .uk-margin-xlarge-left {
-        margin-left: 140px !important;
-    }
-
-    .uk-margin-xlarge-right {
-        margin-right: 140px !important;
-    }
 }
 
 .uk-margin-remove {

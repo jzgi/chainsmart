@@ -234,6 +234,28 @@ function serialize(form) {
     return q.length == 0 ? null : q.join("&");
 }
 
+function askSend(trig, tip) {
+
+    if (!window.confirm(tip)) return false;
+
+    var method = "post";
+    var action = trig.formAction || trig.name;
+    var form = trig.form;
+
+    if (!form || !form.reportValidity()) return false;
+
+    var xhr = new XMLHttpRequest;
+    xhr.onreadystatechange = function () {
+        if (4 == this.readyState && 200 == this.status) {
+            window.location.reload();
+        }
+    };
+    xhr.open(method, action, false);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(serialize(trig.form));
+
+    return false;
+}
 
 function appendTo(parent, html) {
     var e = document.createElement('div');
@@ -287,6 +309,7 @@ function closeUp(reload) {
         }
     }
 }
+
 
 // build and open a reveal dialog
 // trig - a button, input_button or anchor element
@@ -353,13 +376,12 @@ function dialog(trig, mode, pick, title) {
 
         var dlg = $('#dialog');
         if (dlg) {
-
             if (!popstate) { // not by back button
-                history.back();
+                history.go(-1);
             }
-
             document.body.removeChild(dlg);
         }
+        popstate = false; // adjust the flag
     }, false);
 
     // history
@@ -372,7 +394,8 @@ function dialog(trig, mode, pick, title) {
     });
 
     var srcurl = new URL(src);
-    history.pushState('dlg', null, srcurl.hostname == location.hostname ? action : 'extern');
+
+    history.pushState(null, null, srcurl.hostname == location.hostname ? action : 'extern');
 
     // display the modal
     UIkit.modal(e).show();
