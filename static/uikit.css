@@ -30,12 +30,19 @@ a {
     -webkit-text-decoration-skip: objects;
 }
 
+section,
+article,
 header,
 footer,
 nav {
     display: flex;
-    align-items: center;
     width: 100%;
+}
+
+header,
+footer,
+nav {
+    align-items: center;
 }
 
 span {
@@ -1135,12 +1142,10 @@ button.uk-icon:not(:disabled) {
     width: 100%;
     bottom: 0;
     left: 0;
-    color: #666;
     display: flex;
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    padding: 0 6px;
 }
 
 .uk-fieldset {
@@ -2458,8 +2463,12 @@ main.uk-grid>li {
 }
 
 .uk-badge-primary {
-    color: #222;
-    font-size: small;
+    color: #fff;
+    background-color: #7daa1d;
+    font-size: 0.75rem;
+    padding: 0 4px;
+    margin-left: auto;
+    margin-right: 4px;
 }
 
 .uk-badge-secondary {
@@ -2474,11 +2483,14 @@ main.uk-grid>li {
 .uk-badge-warning {
     color: #ffd6dd;
     font-size: 1rem;
-    ;
 }
 
 .uk-badge-danger {
     color: #ff3b30;
+    font-size: 0.875rem;
+    margin: 0 4px;
+    border-top: #ff3b30;
+    border-bottom: #ff3b30;
 }
 
 .uk-label {
@@ -2498,7 +2510,7 @@ label.uk-label {
     justify-content: flex-end;
 }
 
-ul.uk-large > li> .uk-label {
+ul.uk-large>li>.uk-label {
     width: 10rem;
     min-width: 8rem;
 }
@@ -3012,7 +3024,7 @@ ul.uk-nav-sub {
 
 .uk-subnav> :hover,
 .uk-subnav> :focus,
-.uk-subnav> .uk-active {
+.uk-subnav>.uk-active {
     color: #000;
     background-color: #ededed;
     border-top: 2px solid #f59604;

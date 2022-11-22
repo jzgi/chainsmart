@@ -32,7 +32,6 @@ namespace ChainMart
                 h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
                 h._UL();
 
-
                 h.TOOLBAR(bottom: true);
             });
         }
@@ -46,7 +45,6 @@ namespace ChainMart
         {
             int uid = wc[-1];
             var o = (User) wc.Principal;
-
 
             wc.GivePane(200, h =>
             {
@@ -232,7 +230,7 @@ namespace ChainMart
             dc.Sql("UPDATE users SET admly = NULL WHERE id = @1");
             await dc.ExecuteAsync(p => p.Set(uid).Set(uid));
 
-            wc.GivePane(200);
+            wc.Give(204); // no content
         }
     }
 
@@ -250,7 +248,8 @@ namespace ChainMart
                 dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
             }
-            wc.GivePane(200);
+
+            wc.Give(204); // no content
         }
     }
 

@@ -23,6 +23,35 @@ var WCPay = function (data, lot) {
     );
 };
 
+function fixPrice(trig, evt, a, b) {
+    var url = window.location.href;
+    var endp = url.lastIndexOf('/', url.length - 1);
+    var startp = url.lastIndexOf('/', endp - 1);
+    var n = parseInt(url.substring(startp + 1, endp));
+
+    if (evt.detail == n) { // personal-to-path matched
+        trig.value = a;
+        return;
+    }
+    // otherwise
+    trig.value = b;
+
+}
+
+function qtyFill(trg, min, max, step) {
+
+    var n = 0;
+
+    for (var i = min; i <= max; i += (n >= 50 ? step * 10 : n >= 30 ? step * 5 : step)) {
+        var opt = document.createElement("option");
+        opt.value = i;
+        opt.text = i;
+        trg.add(opt);
+
+        n++;
+    }
+}
+
 function bybuy(trig) {
     var method = 'post';
     var action = trig.formAction || trig.name;
@@ -246,8 +275,13 @@ function askSend(trig, tip) {
 
     var xhr = new XMLHttpRequest;
     xhr.onreadystatechange = function () {
-        if (4 == this.readyState && 200 == this.status) {
-            window.location.reload();
+        if (4 == this.readyState) {
+            if (200 == this.status) { // reset content
+                window.location.reload();
+            }
+            else if (204 == this.status) {
+                windows.parent.closeUp();
+            }
         }
     };
     xhr.open(method, action, false);
