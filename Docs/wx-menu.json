@@ -30,7 +30,7 @@
         },
         {
           "type": "view",
-          "name": "我的个人账号",
+          "name": "我的账号",
           "url": "http://jx.zhnt-x.com:80/my//"
         }
       ]
