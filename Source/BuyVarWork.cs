@@ -98,8 +98,7 @@ namespace ChainMart
 
     public class ShplyBuyVarWork : BuyVarWork
     {
-        [Ui("☰", "☰ 明细"), Tool(ButtonOpen)]
-        public async Task dtl(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             short orgid = wc[-2];
             int orderid = wc[0];
@@ -113,61 +112,53 @@ namespace ChainMart
             });
         }
 
-        [Ui("⥻", "⥻ 退款"), Tool(ButtonOpen)]
+        [Ui("备好", icon: "bag"), Tool(ButtonConfirm)]
+        public async Task ready(WebContext wc)
+        {
+        }
+
+
+        [Ui("退款", icon: "close"), Tool(ButtonConfirm)]
         public async Task refund(WebContext wc)
         {
             short orgid = wc[-2];
             int orderid = wc[0];
             short level = 0;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("请选择退款比例");
-                    h._FIELDSUL();
-                    h.BOTTOM_BUTTON("退款", nameof(refund));
-                    h._FORM();
-                });
-            }
-            else // POST
-            {
-                level = (await wc.ReadAsync<Form>())[nameof(level)];
 
-                using var dc = NewDbContext(IsolationLevel.ReadCommitted);
-                try
-                {
-                    var percent = level * 0.10M;
-                    dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN 2 ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
-                    var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
-                    if (refund <= 0)
-                    {
-                        wc.Give(403); // forbidden
-                        return;
-                    }
+            level = (await wc.ReadAsync<Form>())[nameof(level)];
 
-                    // remote call weixin
-                    string orderno = orderid.ToString();
-                    string err = await PostRefundAsync(orderno, refund, refund, orderno);
-                    if (err != null) // not success
-                    {
-                        dc.Rollback();
-                        Err(err);
-                    }
-                }
-                catch (Exception)
+            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+            try
+            {
+                var percent = level * 0.10M;
+                dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN 2 ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
+                var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
+                if (refund <= 0)
                 {
-                    dc.Rollback();
-                    Err("退款失败: orderid = " + orderid);
+                    wc.Give(403); // forbidden
                     return;
                 }
-                wc.GivePane(200);
+
+                // remote call weixin
+                string orderno = orderid.ToString();
+                string err = await PostRefundAsync(orderno, refund, refund, orderno);
+                if (err != null) // not success
+                {
+                    dc.Rollback();
+                    Err(err);
+                }
             }
+            catch (Exception)
+            {
+                dc.Rollback();
+                Err("退款失败: orderid = " + orderid);
+                return;
+            }
+            wc.GivePane(200);
         }
-        
     }
 
     public class MktlyBuyVarWork : BuyVarWork
     {
-
     }
 }

@@ -355,6 +355,7 @@ namespace ChainMart
             }, false, 15);
         }
 
+        [UserAuthorize(Org.TYP_MKT, User.ORGLY_OPN)]
         [Ui("新建", "新建商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -455,6 +456,7 @@ namespace ChainMart
             }, false, 900);
         }
 
+        [UserAuthorize(0, User.ORGLY_MGT)]
         [Ui("设置", "设置运行参数", icon: "cog"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {

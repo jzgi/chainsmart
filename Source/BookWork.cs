@@ -75,6 +75,7 @@ namespace ChainMart
             });
         }
 
+        [UserAuthorize(Org.TYP_SHP, User.ORGLY_OPN)]
         [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {

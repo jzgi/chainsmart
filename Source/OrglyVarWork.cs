@@ -98,8 +98,6 @@ namespace ChainMart
 
             CreateWork<MktlyBookWork>("mbook");
 
-            CreateWork<MktlyRptWork>("mrpt");
-
             // shp
 
             CreateWork<ShplyBuyWork>("sbuy");
@@ -111,8 +109,6 @@ namespace ChainMart
             CreateWork<ShplyVipWork>("svip");
 
             CreateWork<ShplyBookWork>("sbook");
-
-            CreateWork<ShplyRptWork>("srpt");
 
             // org
 

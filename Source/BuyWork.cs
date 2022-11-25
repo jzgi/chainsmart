@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainMart.User;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
 
@@ -67,7 +66,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(orgly: ORGLY_OPN)]
+    [UserAuthorize(Org.TYP_SHP, 1)]
     [Ui("零售外卖", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {

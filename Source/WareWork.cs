@@ -89,6 +89,7 @@ namespace ChainMart
             });
         }
 
+        [UserAuthorize(Org.TYP_SHP, User.ORGLY_MGT)]
         [Ui("新建", "新建自有商品", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {

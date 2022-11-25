@@ -69,8 +69,6 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize]
-        [Ui, Tool(ButtonPickScript)]
         public async Task book(WebContext wc, int cmd)
         {
             var shp = wc[-2].As<Org>();

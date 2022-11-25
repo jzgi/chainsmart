@@ -10,6 +10,7 @@ namespace ChainMart
         }
     }
 
+    [UserAuthorize(Org.TYP_MKT, 1)]
     [Ui("检测管理", "市场")]
     public class MktlyTestWork : TestWork<MktlyTestVarWork>
     {

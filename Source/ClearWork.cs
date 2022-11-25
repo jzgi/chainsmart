@@ -296,7 +296,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [UserAuthorize(orgly: 1)]
+        [UserAuthorize(0, User.ORGLY_MGT)]
         [Ui("统计", "时段统计"), Tool(ButtonOpen)]
         public async Task sum(WebContext wc, int page)
         {

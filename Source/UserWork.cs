@@ -2,7 +2,6 @@
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
-using static ChainMart.User;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
@@ -25,7 +24,7 @@ namespace ChainMart
             short orgid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users_vw WHERE admly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE admly > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(orgid));
 
             wc.GivePage(200, h =>
@@ -45,7 +44,7 @@ namespace ChainMart
                     }
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name).SP().SUB(o.tel);
-                    h.P(Orgly[o.orgly]);
+                    h.P(User.Orgly[o.orgly]);
                     h._DIV();
                     h._A();
                 });
@@ -72,14 +71,14 @@ namespace ChainMart
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(admly), admly, Admly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
@@ -101,7 +100,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(admly: ADMLY_MGT)]
+    [UserAuthorize(admly: User.ADMLY_MGT)]
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
@@ -140,7 +139,7 @@ namespace ChainMart
                 tel = wc.Query[nameof(tel)];
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var arr = await dc.QueryAsync<User>(p => p.Set(tel));
 
                 wc.GivePage(200, h =>
@@ -159,7 +158,7 @@ namespace ChainMart
                         }
                         h.DIV_("uk-width-expand uk-padding-left");
                         h.H5(o.name).SP().SUB(o.tel);
-                        h.P(Orgly[o.orgly]);
+                        h.P(User.Orgly[o.orgly]);
                         h._DIV();
                         h._A();
                     });
@@ -177,7 +176,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Empty).T(" FROM users_vw WHERE orgid = @1 AND orgly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE orgid = @1 AND orgly > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -197,14 +196,14 @@ namespace ChainMart
                     }
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name).SP().SUB(o.tel);
-                    h.P(Orgly[o.orgly]);
+                    h.P(User.Orgly[o.orgly]);
                     h._DIV();
                     h._A();
                 });
             }, false, 6);
         }
 
-        [UserAuthorize(orgly: 3)]
+        [UserAuthorize(0, User.ORGLY_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -220,14 +219,14 @@ namespace ChainMart
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(orgly), orgly, Orgly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
@@ -306,7 +305,7 @@ namespace ChainMart
             {
                 tel = wc.Query[nameof(tel)];
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var arr = dc.Query<User>(p => p.Set(tel));
                 wc.GivePage(200, h =>
                 {
@@ -316,7 +315,7 @@ namespace ChainMart
                         h.TDCHECK(o.id);
                         h.TD(o.name);
                         h.TD(o.tel);
-                        h.TD_("uk-width-tiny").T(Typs[o.typ])._TD();
+                        h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
                         h.TD_("uk-width-medium uk-visible@s");
                         if (o.orgid > 0)
                         {
@@ -330,6 +329,7 @@ namespace ChainMart
             }
         }
 
+        [UserAuthorize(Org.TYP_SHP, User.ORGLY_MGT)]
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -349,7 +349,7 @@ namespace ChainMart
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
-                        dc.Sql("SELECT ").collst(Empty).T(" FROM users WHERE tel = @1");
+                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
                         if (o != null)
                         {
