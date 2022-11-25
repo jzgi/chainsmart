@@ -180,32 +180,42 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("供应链采购统一收货", "市场")]
+    [Ui("供应链采购收货", "市场")]
 #else
-    [Ui("供应链采购统一收货", "驿站")]
+    [Ui("供应链采购收货", "驿站")]
 #endif
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
-        [Ui("采购订单", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc)
+        [Ui("按产品", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc, int page)
         {
-            var org = wc[-1].As<Org>();
+            var mkt = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT shpid, first(shpname) AS shpname, count(id) AS count FROM books WHERE mktid = @1 AND state > 0 GROUP BY shpid");
-            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
+            dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM books WHERE mktid = @1 AND state > 0 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
+            await dc.QueryAsync(p => p.Set(mkt.id).Set(page));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
-                h.TABLE(arr, o =>
+                h.TABLE_();
+                int n = 0;
+                while (dc.Next())
                 {
-                    h.TD_();
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
-                    h._A();
-                    h._TD();
-                });
+                    dc.Let(out int lotid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty);
+                    dc.Let(out string unit);
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty).SP().T(unit)._TD();
+                    h._TR();
+                    n++;
+                }
+                h._TABLE();
+
+                h.PAGINATION(n == 30);
             });
         }
 
@@ -229,6 +239,39 @@ namespace ChainMart
                     h._A();
                     h._TD();
                 });
+            });
+        }
+
+        [Ui("按商户", group: 4), Tool(Anchor)]
+        public async Task byshp(WebContext wc)
+        {
+            var mkt = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT shpid, first(shpname), count(qty) AS qty FROM books WHERE mktid = @1 AND state > 0 GROUP BY shpid, lotid");
+            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(mkt.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.TABLE_();
+                int n = 0;
+                while (dc.Next())
+                {
+                    dc.Let(out int lotid);
+                    dc.Let(out string name);
+                    dc.Let(out decimal qty);
+                    dc.Let(out string unit);
+                    h.TR_();
+                    h.TD(name);
+                    h.TD_("uk-visible@l").T(qty).SP().T(unit)._TD();
+                    h._TR();
+                    n++;
+                }
+                h._TABLE();
+
+                h.PAGINATION(n == 30);
             });
         }
     }

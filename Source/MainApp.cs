@@ -22,13 +22,9 @@ namespace ChainMart
         /// The entry point of the application.
         /// </summary>
         public static async Task Main(string[] args)
-
-
         {
             // start the concluder thead
             cycler.Start();
-
-            AddComposite<BuyLn>();
 
             CacheUp();
 

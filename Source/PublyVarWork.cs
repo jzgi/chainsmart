@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
@@ -85,6 +86,7 @@ namespace ChainMart
     /// 
     public class PublyVarVarWork : WebWork
     {
+        [UserAuthorize]
         public async Task @default(WebContext wc)
         {
             int shpid = wc[0];
@@ -124,7 +126,7 @@ namespace ChainMart
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
                     h.T("<em>￥<output name=\"price\" cookie=\"vip\" onenhance=\"fixPrice(this, event, ").T(o.RealPrice).T(',').T(o.price).T(");\"></output></em>").SP().T(o.unit);
-                    h.T("<select name=\"qty\" class=\"uk-select\" onenhance=\"qtyFill(this, ").T(o.min).T(',').T(o.max).T(',').T(o.step).T(");\"></select>");
+                    h.T("<select name=\"").T(o.id).T(" \" class=\"uk-select\" onenhance=\"qtyFill(this, ").T(o.min).T(',').T(o.max).T(',').T(o.step).T(");\"></select>");
                     h._DIV();
                     h._LI();
                 }
@@ -139,71 +141,81 @@ namespace ChainMart
                 h._SPAN();
                 h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"同城收货地址（街道／小区／室号）\" cookie=\"addr\" onenhance=\"this.value = event.detail;\" required>");
                 h._DIV();
-                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1").OUTPUTCNY(nameof(pay), pay)._BUTTON();
+                h.T("<button type=\"button\" formmethod=\"post\" formaction=\"buy\" class=\"uk-button-danger uk-width-medium uk-height-1-1\" onclick=\"return call_buy(this);\">").OUTPUTCNY(nameof(pay), pay)._BUTTON();
                 h._BOTTOMBAR();
 
                 h._FORM();
             }, true, 900, title: shp.name, onload: "enhanceAll();");
         }
 
-        [UserAuthorize]
-        [Ui, Tool(Modal.ButtonPickScript)]
         public async Task buy(WebContext wc, int cmd)
         {
-            var shp = wc[-2].As<Org>();
-            int lotid = wc[0];
-
+            int shpid = wc[-1];
+            var shp = GrabObject<int, Org>(shpid);
             var prin = (User) wc.Principal;
+
             var f = await wc.ReadAsync<Form>();
-            short unitx = f[nameof(unitx)];
-            short qty = f[nameof(qty)];
+            string addr = f[nameof(addr)];
+
+            // line item list
+            var linelst = new List<BuyLine>();
+            for (int i = 0; i < f.Count; i++)
+            {
+                var ety = f.EntryAt(i);
+                int id = ety.Key.ToInt();
+                short qty = ety.Value;
+                linelst.Add(new BuyLine
+                {
+                    wareid = id,
+                    qty = qty
+                });
+            }
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
-                var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(linelst);
+                var wares = await dc.QueryAsync<int, Ware>(p => p.Set(shpid).SetForIn(linelst));
 
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
-                var item = await dc.QueryTopAsync<Item>(p => p.Set(lot.itemid));
-
-                var m = new Book
+                for (int i = 0; i < linelst.Count; i++)
                 {
-                    typ = lot.typ,
-                    name = lot.name,
+                    var line = linelst[i];
+                    var ware = wares[line.wareid];
+                    if (ware != null)
+                    {
+                        line.InitializeByWare(ware, discount: prin.vip == shpid);
+                    }
+                }
+
+                var m = new Buy
+                {
+                    typ = Buy.TYP_ONLINE,
+                    name = shp.name,
                     created = DateTime.Now,
                     creator = prin.name,
                     shpid = shp.id,
-                    shpname = shp.name,
                     mktid = shp.MarketId,
-                    srcid = lot.srcid,
-                    srcname = lot.srcname,
-                    zonid = lot.zonid,
-                    ctrid = lot.ctrid,
-                    itemid = lot.itemid,
-                    lotid = lot.id,
-                    unit = item.unit,
-                    unitpkg = item.unitpkg,
-                    unitx = unitx,
-                    price = lot.price,
-                    off = lot.off,
-                    qty = qty
+                    lines = linelst.ToArray(),
+                    uid = prin.id,
+                    utel = prin.tel,
+                    uaddr = addr
                 };
 
                 // make use of any existing abandoned record
-                dc.Sql("INSERT INTO books ").colset(Book.Empty)._VALUES_(Book.Empty).T(" ON CONFLICT (shpid, state) WHERE state = 0 DO UPDATE ")._SET_(Book.Empty).T(" RETURNING id, pay");
-                await dc.QueryTopAsync(p => m.Write(p));
-                dc.Let(out int bookid);
+                const short msk = 0xfff ^ Entity.MSK_ID;
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, state) WHERE state = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, pay");
+                await dc.QueryTopAsync(p => m.Write(p, msk));
+                dc.Let(out int buyid);
                 dc.Let(out decimal topay);
 
                 // call WeChatPay to prepare order there
-                string trade_no = (bookid + "-" + topay).Replace('.', '-');
+                string trade_no = (buyid + "-" + topay).Replace('.', '-');
                 var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
                     trade_no,
                     topay,
                     prin.im, // the payer
                     wc.RemoteIpAddress.ToString(),
-                    MainApp.MgtUrl + "/" + nameof(MgtService.onpay),
+                    MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
                     MainApp.MgtUrl
                 );
                 if (prepay_id != null)

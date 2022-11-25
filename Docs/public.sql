@@ -15,7 +15,7 @@ create type buyln_type as
     qty smallint
 );
 
-alter type buyln_type owner to postgres;
+alter type buyline owner to postgres;
 
 create table entities
 (
@@ -333,7 +333,7 @@ create table buys
     utel varchar(11),
     uaddr varchar(20),
     uim varchar(28),
-    lines buyln_type[],
+    lines buyline[],
     pay money,
     deliv money,
     hand money

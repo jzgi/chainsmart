@@ -25,7 +25,12 @@
         },
         {
           "type": "view",
-          "name": "个人账号／消费订单",
+          "name": "我的外卖",
+          "url": "http://jx.zhnt-x.com:80/my//buy/"
+        },
+        {
+          "type": "view",
+          "name": "我的个人账号",
           "url": "http://jx.zhnt-x.com:80/my//"
         }
       ]

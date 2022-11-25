@@ -2,7 +2,7 @@
 
 namespace ChainMart
 {
-    public struct BuyLn : IData
+    public struct BuyLine : IData, IKeyable<int>
     {
         public int wareid;
         public int itemid;
@@ -35,6 +35,17 @@ namespace ChainMart
             s.Put(nameof(off), off);
             s.Put(nameof(qty), qty);
             s.Put(nameof(subtotal), subtotal);
+        }
+
+        public int Key => wareid;
+
+        internal void InitializeByWare(Ware v, bool discount)
+        {
+            name = v.name;
+            itemid = v.itemid;
+            unit = v.unit;
+            price = v.price;
+            off = discount ? v.off : 0;
         }
     }
 }

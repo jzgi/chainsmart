@@ -80,9 +80,9 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
-    [Ui("市场商户操作")]
+    [Ui("市场和商户操作")]
 #else
-    [Ui("驿站商户操作")]
+    [Ui("驿站和商户操作")]
 #endif
     public class MktlyVarWork : OrglyVarWork
     {

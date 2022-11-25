@@ -10,7 +10,7 @@ namespace ChainMart
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
             {0, "普通"},
-            {1, "健康市场运营师"},
+            {1, "市场运营师"},
             {2, "健康管理师"},
         };
 
@@ -18,7 +18,6 @@ namespace ChainMart
             ADMLY_ = 0b0000001, // common
             ADMLY_OPN = 0b0000011,
             ADMLY_FIN = 0b0000101,
-            ADMLY_SYS = 0b0001001,
             ADMLY_MGT = 0b0011111,
             ADMLY_SPR = 0b0111111,
             ADMLY_RVR = 0b1000001;
@@ -27,7 +26,6 @@ namespace ChainMart
         {
             {ADMLY_OPN, "业务"},
             {ADMLY_FIN, "财务"},
-            {ADMLY_SYS, "系统"},
             {ADMLY_MGT, "管理"},
             {ADMLY_SPR, "负责"},
             {ADMLY_RVR, "审核"},
@@ -36,23 +34,19 @@ namespace ChainMart
         public const short
             ORGLY_ = 0b000001, // common
             ORGLY_OPN = 0b0000011, // operation
-            ORGLY_FIN = 0b0000101, // finance
             ORGLY_LOG = 0b0001001, // logistic
-            ORGLY_MGT = 0b0011111, // manager
+            ORGLY_MGT = 0b0011111, // manager & delegate
             ORGLY_SPR = 0b0111111, // superviser
-            ORGLY_RVR = 0b1000001, // reviewer
-            ORGLY_DGT = 0b1111111; // delegate
+            ORGLY_RVR = 0b1000001; // reviewer
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
             {ORGLY_OPN, "业务"},
-            {ORGLY_FIN, "财务"},
             {ORGLY_LOG, "物流"},
             {ORGLY_MGT, "管理"},
             {ORGLY_SPR, "负责"},
             {ORGLY_RVR, "审核"},
-            {ORGLY_DGT, "代办"},
         };
 
         internal int id;
@@ -68,20 +62,20 @@ namespace ChainMart
         internal int vip;
         internal bool icon;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public override void Read(ISource s, short msk = 0xff)
         {
-            base.Read(s, proj);
+            base.Read(s, msk);
 
-            if ((proj & MSK_ID) == MSK_ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Get(nameof(id), ref id);
             }
-            if ((proj & MSK_BORN) == MSK_BORN)
+            if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(im), ref im);
             }
-            if ((proj & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(addr), ref addr);
                 s.Get(nameof(credential), ref credential);
@@ -93,17 +87,17 @@ namespace ChainMart
             }
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public override void Write(ISink s, short msk = 0xff)
         {
-            base.Write(s, proj);
+            base.Write(s, msk);
 
-            if ((proj & MSK_ID) == MSK_ID)
+            if ((msk & MSK_ID) == MSK_ID)
             {
                 s.Put(nameof(id), id);
             }
             s.Put(nameof(tel), tel);
             s.Put(nameof(im), im);
-            if ((proj & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(addr), addr);
                 s.Put(nameof(credential), credential);

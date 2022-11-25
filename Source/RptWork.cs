@@ -54,7 +54,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ORGLY_FIN)]
+        [UserAuthorize(Org.TYP_ZON, User.ORGLY_MGT)]
         [Ui("生成"), Tool(Modal.ButtonOpen)]
         public async Task gen(WebContext wc, int page)
         {

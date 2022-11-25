@@ -31,8 +31,6 @@ namespace ChainMart
 
             CreateWork<AdmlyAccessWork>("access");
 
-            CreateWork<AdmlyDataWork>("data");
-
             CreateWork<AdmlyNodeWork>("node");
         }
 
@@ -89,12 +87,6 @@ namespace ChainMart
                 h.TOOLBAR(bottom: true);
             });
         }
-    }
-
-    [UserAuthorize(admly: User.ADMLY_)]
-    [Ui("数据维护任务", "系统")]
-    public class AdmlyDataWork : WebWork
-    {
     }
 
     [UserAuthorize(admly: User.ADMLY_)]

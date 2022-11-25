@@ -71,7 +71,7 @@ namespace ChainMart
             {
                 if (!mock)
                 {
-                    wc.Role = User.ORGLY_DGT;
+                    wc.Role = User.ORGLY_MGT;
                 }
                 return true;
             }
