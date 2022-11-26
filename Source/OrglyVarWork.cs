@@ -9,7 +9,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供区产源操作")]
+    [Ui("供区和产源操作")]
     public class ZonlyVarWork : OrglyVarWork
     {
         protected override void OnCreate()

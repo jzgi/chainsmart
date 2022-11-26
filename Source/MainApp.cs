@@ -26,6 +26,8 @@ namespace ChainMart
             // start the concluder thead
             cycler.Start();
 
+            MapComposite<BuyLine>();
+
             CacheUp();
 
             const string STATIC_ROOT = "static";

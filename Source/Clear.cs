@@ -75,6 +75,6 @@ namespace ChainMart
 
         public int Key => id;
 
-        public short Status => status;
+        public short Status => state;
     }
 }

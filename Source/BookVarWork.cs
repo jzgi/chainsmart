@@ -45,24 +45,24 @@ namespace ChainMart
                 h.HIDDEN(nameof(lot.off), lot.off);
 
                 // unitpkg selection
-                unitx = item.unitx?[0] ?? 1;
+                // unitx = item.unitx?[0] ?? 1;
                 h.SELECT_(null, nameof(unitx));
-                for (int i = 0; i < item.unitx?.Length; i++)
-                {
-                    var v = item.unitx[i];
-                    h.OPTION_(v).T("每").T(item.unitpkg).SP().T(v).SP().T(item.unit)._OPTION();
-                }
+                // for (int i = 0; i < item.unitx?.Length; i++)
+                // {
+                //     var v = item.unitx[i];
+                //     h.OPTION_(v).T("每").T(item.unitas).SP().T(v).SP().T(item.unit)._OPTION();
+                // }
                 h._SELECT();
                 // qty selection
                 qty = lot.min;
                 h.SELECT_(null, nameof(qty));
                 for (int i = lot.min; i < lot.max; i += lot.step)
                 {
-                    h.OPTION_(i).T(i).SP().T(item.unitpkg)._OPTION();
+                    h.OPTION_(i).T(i).SP().T(item.unitas)._OPTION();
                 }
                 h._SELECT();
                 // pay button
-                pay = unitx * qty * lot.RealPrice;
+                pay = item.unitx * qty * lot.RealPrice;
                 h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(pay), pay)._BUTTON();
 
                 h._FORM()._BOTTOMBAR();
@@ -104,7 +104,7 @@ namespace ChainMart
                     itemid = lot.itemid,
                     lotid = lot.id,
                     unit = item.unit,
-                    unitpkg = item.unitpkg,
+                    unitpkg = item.unitas,
                     unitx = unitx,
                     price = lot.price,
                     off = lot.off,

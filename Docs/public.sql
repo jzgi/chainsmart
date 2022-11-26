@@ -4,7 +4,7 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create type buyln_type as
+create type buyline as
 (
     wareid integer,
     itemid integer,
@@ -20,7 +20,7 @@ alter type buyline owner to postgres;
 create table entities
 (
     typ smallint not null,
-    status smallint default 0 not null,
+    state smallint default 0 not null,
     name varchar(12) not null,
     tip varchar(30),
     created timestamp(0),
@@ -29,7 +29,7 @@ create table entities
     adapter varchar(10),
     oked timestamp(0),
     oker varchar(10),
-    state smallint
+    status smallint
 );
 
 alter table entities owner to postgres;
@@ -138,7 +138,7 @@ create table users
             references orgs,
     orgly smallint default 0 not null,
     vip integer
-        constraint users_mktid_fk
+        constraint users_vip_fk
             references orgs,
     icon bytea
 )
@@ -160,7 +160,7 @@ create index users_orgid_idx
     on users (orgid)
     where (orgid IS NOT NULL);
 
-create index users_mktid_index
+create index users_vip_idx
     on users (vip)
     where (vip > 0);
 
@@ -178,55 +178,15 @@ create table tests
 
 alter table tests owner to postgres;
 
-create table cats
-(
-    idx smallint,
-    size smallint,
-    constraint cats_pk
-        primary key (typ)
-)
-    inherits (entities);
-
-alter table cats owner to postgres;
-
-create table items
-(
-    id serial not null
-        constraint items_pk
-            primary key,
-    srcid integer
-        constraint items_srcid_fk
-            references orgs,
-    store smallint,
-    duration smallint,
-    agt boolean,
-    unit varchar(4),
-    unitpkg varchar(4),
-    unitx smallint[],
-    icon bytea,
-    pic bytea,
-    m1 bytea,
-    m2 bytea,
-    m3 bytea,
-    m4 bytea,
-    constraint items_typ_fk
-        foreign key (typ) references cats
-)
-    inherits (entities);
-
-alter table items owner to postgres;
-
 create table wares
 (
     id serial not null
         constraint wares_pk
             primary key,
-    shpid integer
+    shpid integer not null
         constraint wares_shpid_fk
             references orgs,
-    itemid integer
-        constraint wares_itemid_fk
-            references items,
+    itemid integer,
     unit varchar(4),
     unitstd varchar(4),
     unitx money,
@@ -241,6 +201,17 @@ create table wares
     inherits (entities);
 
 alter table wares owner to postgres;
+
+create table cats
+(
+    idx smallint,
+    size smallint,
+    constraint cats_pk
+        primary key (typ)
+)
+    inherits (entities);
+
+alter table cats owner to postgres;
 
 create table accts_
 (
@@ -273,9 +244,7 @@ create table books
     zonid integer not null
         constraint books_zonly_fk
             references orgs,
-    itemid integer
-        constraint books_itemid_fk
-            references items,
+    itemid integer,
     lotid integer,
     unit varchar(4),
     unitx smallint,
@@ -291,9 +260,9 @@ create table books
 
 alter table books owner to postgres;
 
-create unique index books_newbook_idx
-    on books (shpid, state)
-    where (state = 0);
+create unique index books_single_idx
+    on books (shpid, status)
+    where (status = 0);
 
 create table clears
 (
@@ -333,23 +302,25 @@ create table buys
     utel varchar(11),
     uaddr varchar(20),
     uim varchar(28),
-    lines buyline[],
     pay money,
     deliv money,
-    hand money
+    hand money,
+    lines buyline[]
 )
     inherits (entities);
 
 alter table buys owner to postgres;
+
+create unique index buys_single_idx
+    on buys (shpid, status)
+    where (status = 0);
 
 create table lots
 (
     id serial not null
         constraint lots_pk
             primary key,
-    itemid integer
-        constraint lots_itemid_fk
-            references items,
+    itemid integer,
     srcid integer,
     srcname varchar(12),
     zonid integer not null
@@ -376,35 +347,33 @@ alter table lots owner to postgres;
 create index lots_nend_idx
     on lots (nend);
 
-create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, store, duration, agt, unit, unitpkg, unitx, icon, pic, m1, m2, m3, m4) as
-SELECT o.typ,
-       o.status,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.state,
-       o.id,
-       o.srcid,
-       o.store,
-       o.duration,
-       o.agt,
-       o.unit,
-       o.unitpkg,
-       o.unitx,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
-FROM items o;
+create table items
+(
+    id serial not null
+        constraint items_pk
+            primary key,
+    srcid integer
+        constraint items_srcid_fk
+            references orgs,
+    origin varchar(12),
+    store smallint,
+    duration smallint,
+    unitas varchar(4),
+    unit varchar(4),
+    unitx smallint,
+    specs jsonb,
+    icon bytea,
+    pic bytea,
+    m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea,
+    constraint items_typ_fk
+        foreign key (typ) references cats
+)
+    inherits (entities);
 
-alter table items_vw owner to postgres;
+alter table items owner to postgres;
 
 create view wares_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
 SELECT o.typ,
@@ -497,6 +466,37 @@ FROM orgs o
                       m.id;
 
 alter table orgs_vw owner to postgres;
+
+create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, origin, store, duration, unitas, unit, unitx, specs, icon, pic, m1, m2, m3, m4) as
+SELECT o.typ,
+       o.status,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.state,
+       o.id,
+       o.srcid,
+       o.origin,
+       o.store,
+       o.duration,
+       o.unitas,
+       o.unit,
+       o.unitx,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM items o;
+
+alter table items_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

@@ -48,7 +48,7 @@ namespace ChainMart
                 h.LI_().FIELD("产源", src.name)._LI();
                 h.LI_().FIELD("批次号码", lot.id)._LI();
                 h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, item.unitpkg, true)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, item.unitas, true)._LI();
                 h._UL();
             }, true, 3600, title: "产品溯源信息");
         }
@@ -82,7 +82,7 @@ namespace ChainMart
                 h.LI_().FIELD("产源", src.name)._LI();
                 h.LI_().FIELD("批次号码", lot.id)._LI();
                 h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, item.unitpkg, true)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, item.unitas, true)._LI();
                 h._UL();
             }, true, 3600, title: "产品溯源信息");
         }
@@ -90,7 +90,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("设置产品批次", "产源")]
+    [Ui("产品批次管理", "产源")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
         [Ui("当前批次", group: 1), Tool(Anchor)]
@@ -163,7 +163,7 @@ namespace ChainMart
 
             var m = new Lot
             {
-                status = Entity.STU_VOID,
+                state = Entity.STA_VOID,
                 srcid = org.id,
                 created = now,
                 creator = prin.name,
@@ -178,7 +178,7 @@ namespace ChainMart
 
                     h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, items, required: true)._LI();
                     h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("销货参数");
                     h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
@@ -214,10 +214,10 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("核验产品批次", "控运")]
+    [Ui("产品批次审核上线", "品控")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
-        [Ui("待验批次", group: 1), Tool(Anchor)]
+        [Ui("产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();

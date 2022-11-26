@@ -290,7 +290,7 @@ namespace ChainMart
                     h.TD_().T(o.till, 3, 0)._TD();
                     h.TD(Clear.Typs[o.typ]);
                     h.TD(o.amt, currency: true);
-                    h.TD(Clear.Statuses[((Entity) o).status]);
+                    h.TD(Clear.Statuses[((Entity) o).state]);
                 });
                 h.PAGINATION(arr?.Length == 20);
             }, false, 3);

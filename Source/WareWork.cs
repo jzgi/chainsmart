@@ -30,7 +30,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STU_NORMAL);
+                h.TOOLBAR(subscript: STA_NORMAL);
 
                 if (arr == null)
                 {
@@ -73,7 +73,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STU_VOID);
+                h.TOOLBAR(subscript: STA_VOID);
                 if (map == null)
                 {
                     h.ALERT("暂无商品");
@@ -103,7 +103,7 @@ namespace ChainMart
                 var o = new Ware
                 {
                     created = DateTime.Now,
-                    status = (short) state,
+                    state = (short) state,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -149,7 +149,7 @@ namespace ChainMart
                 var o = new Ware
                 {
                     created = DateTime.Now,
-                    status = (short) state,
+                    state = (short) state,
                 };
                 wc.GivePane(200, h =>
                 {

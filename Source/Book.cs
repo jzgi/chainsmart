@@ -138,6 +138,6 @@ namespace ChainMart
 
         public bool IsOver(DateTime now) => false;
 
-        public short Status => status;
+        public short Status => state;
     }
 }

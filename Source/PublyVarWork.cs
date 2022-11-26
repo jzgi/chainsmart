@@ -203,30 +203,30 @@ namespace ChainMart
 
                 // make use of any existing abandoned record
                 const short msk = 0xfff ^ Entity.MSK_ID;
-                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, state) WHERE state = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, pay");
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, pay");
                 await dc.QueryTopAsync(p => m.Write(p, msk));
                 dc.Let(out int buyid);
                 dc.Let(out decimal topay);
 
-                // call WeChatPay to prepare order there
-                string trade_no = (buyid + "-" + topay).Replace('.', '-');
-                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
-                    trade_no,
-                    topay,
-                    prin.im, // the payer
-                    wc.RemoteIpAddress.ToString(),
-                    MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
-                    MainApp.MgtUrl
-                );
-                if (prepay_id != null)
-                {
-                    wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
-                }
-                else
-                {
-                    dc.Rollback();
-                    wc.Give(500);
-                }
+                // // call WeChatPay to prepare order there
+                // string trade_no = (buyid + "-" + topay).Replace('.', '-');
+                // var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
+                //     trade_no,
+                //     topay,
+                //     prin.im, // the payer
+                //     wc.RemoteIpAddress.ToString(),
+                //     MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
+                //     MainApp.MgtUrl
+                // );
+                // if (prepay_id != null)
+                // {
+                //     wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
+                // }
+                // else
+                // {
+                //     dc.Rollback();
+                //     wc.Give(500);
+                // }
             }
             catch (Exception e)
             {

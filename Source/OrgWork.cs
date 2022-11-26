@@ -102,7 +102,7 @@ namespace ChainMart
                     typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_ZON,
                     created = DateTime.Now,
                     creator = prin.name,
-                    status = Entity.STU_NORMAL
+                    state = Entity.STA_NORMAL
                 };
 
                 m.Read(wc.Query, 0);
@@ -127,7 +127,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -198,7 +198,7 @@ namespace ChainMart
                 prtid = zon.id,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Entity.STU_NORMAL
+                state = Entity.STA_NORMAL
             };
             if (wc.IsGet)
             {
@@ -212,7 +212,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
@@ -368,7 +368,7 @@ namespace ChainMart
                 typ = (short) typ,
                 created = DateTime.Now,
                 creator = prin.name,
-                status = Entity.STU_NORMAL,
+                state = Entity.STA_NORMAL,
                 prtid = mkt.id,
                 ctrid = mkt.ctrid,
             };
@@ -394,7 +394,7 @@ namespace ChainMart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
                         h.LI_().TEL("联系电话", nameof(m.tel), m.tel, max: 11)._LI();
-                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL()._FORM();
                     });
@@ -409,7 +409,7 @@ namespace ChainMart
                         h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                         h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                     });
@@ -449,7 +449,7 @@ namespace ChainMart
                 h.LI_().FIELD("信用编号", o.license)._LI();
                 h.LI_().FIELD("单位提示", o.regid)._LI();
                 h.LI_().FIELD("只供代理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h.LI_().FIELD("状态", o.state, Entity.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -468,7 +468,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.status), org.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
                 });
             }
@@ -478,7 +478,7 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 // update the db record
                 await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, date = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.status).Set(org.id));
+                    p => p.Set(o.tip).Set(o.state).Set(org.id));
 
                 wc.GivePane(200);
             }

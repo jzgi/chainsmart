@@ -5,13 +5,18 @@ namespace ChainMart
     public struct BuyLine : IData, IKeyable<int>
     {
         public int wareid;
+
         public int itemid;
+
         public string name;
+
         public string unit;
+
         public decimal price;
+
         public decimal off;
+
         public short qty;
-        public short subtotal;
 
         public void Read(ISource s, short msk = 0xff)
         {
@@ -22,7 +27,6 @@ namespace ChainMart
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(qty), ref qty);
-            s.Get(nameof(subtotal), ref subtotal);
         }
 
         public void Write(ISink s, short msk = 0xff)
@@ -34,10 +38,11 @@ namespace ChainMart
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(qty), qty);
-            s.Put(nameof(subtotal), subtotal);
         }
 
         public int Key => wareid;
+
+        public decimal Subtotal => (price - off) * qty;
 
         internal void InitializeByWare(Ware v, bool discount)
         {

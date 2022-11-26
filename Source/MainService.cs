@@ -101,7 +101,7 @@ namespace ChainMart
                 var m = new User
                 {
                     typ = 0,
-                    status = STU_NORMAL,
+                    state = STA_NORMAL,
                     name = f[nameof(name)],
                     tel = f[nameof(tel)],
                     im = openid,

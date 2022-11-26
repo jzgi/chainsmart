@@ -119,7 +119,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("销售订货", "产源")]
+    [Ui("供应批发", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         [Ui("当前订货"), Tool(Anchor)]
@@ -277,8 +277,8 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_DST, User.ORGLY_)]
-    [Ui("订货分运", "控运", icon: "sign-out")]
+    [UserAuthorize(Org.TYP_DST, 1)]
+    [Ui("分拣派运管理", "品控", icon: "sign-out")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

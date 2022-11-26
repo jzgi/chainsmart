@@ -25,7 +25,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("设置产品", "产源")]
+    [Ui("产品设置", "产源")]
     public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
         [Ui("当前产品", group: 1), Tool(Anchor)]
@@ -39,7 +39,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STU_NORMAL);
+                h.TOOLBAR(subscript: STA_NORMAL);
 
                 if (arr == null)
                 {
@@ -71,7 +71,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STU_VOID);
+                h.TOOLBAR(subscript: STA_VOID);
 
                 if (arr == null)
                 {
@@ -103,7 +103,7 @@ namespace ChainMart
                 var o = new Item
                 {
                     created = DateTime.Now,
-                    status = (short) state,
+                    state = (short) state,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -112,9 +112,9 @@ namespace ChainMart
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitpkg), o.unitpkg)._LI();
-                    h.LI_().TEXT("整装基础倍", nameof(o.unitx), o.unitx, tip: "如有多个值要用空格分开", required: true)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.agt), o.agt).SELECT("状态", nameof(o.status), o.status, Statuses, filter: (k, v) => k >= STU_VOID, required: true)._LI();
+                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitas), o.unitas)._LI();
+                    h.LI_().NUMBER("整装基础倍", nameof(o.unitx), o.unitx, required: true)._LI();
+                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, Statuses, filter: (k, v) => k >= STA_VOID, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });

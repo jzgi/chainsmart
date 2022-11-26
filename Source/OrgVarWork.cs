@@ -79,7 +79,7 @@ namespace ChainMart
                 h.LI_().FIELD("区域", o.regid, regs)._LI();
                 h.LI_().FIELD("地址", o.addr)._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h.LI_().FIELD("状态", o.state, Entity.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -108,7 +108,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联控运", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -200,7 +200,7 @@ namespace ChainMart
                 h.LI_().FIELD("场区", o.regid, regs)._LI();
                 h.LI_().FIELD("档位号", o.addr)._LI();
                 h.LI_().FIELD("委托代办", o.trust)._LI();
-                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h.LI_().FIELD("状态", o.state, Entity.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(subscript: typ, bottom: true);
@@ -235,14 +235,14 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
                     }
                     else
                     {
                         h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                         h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit), subscript: typ)._FORM();
@@ -299,7 +299,7 @@ namespace ChainMart
                 h.LI_().FIELD("信用编号", o.license)._LI();
                 h.LI_().FIELD("单位提示", o.regid)._LI();
                 h.LI_().FIELD("只供代理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.status, Entity.Statuses)._LI();
+                h.LI_().FIELD("状态", o.state, Entity.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -327,7 +327,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.status), m.status, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
