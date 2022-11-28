@@ -81,9 +81,6 @@ namespace ChainMart
                 h.LI_().FIELD("说明", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
                 h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("基础单位", o.unit)._LI();
-                h.LI_().FIELD("整装单位", o.unitas)._LI();
-                h.LI_().FIELD("整装基础倍", o.unitx)._LI();
                 h.LI_().FIELD("只供代理", o.origin)._LI();
                 h.LI_().FIELD("状态", o.state, States)._LI();
                 h._UL();
@@ -112,8 +109,6 @@ namespace ChainMart
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitas), o.unitas)._LI();
-                    h.LI_().NUMBER("整装基础倍", nameof(o.unitx), o.unitx, required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
@@ -172,6 +167,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
     }
+
     public class SrclyItemVarWork : ItemVarWork
     {
         public async Task @default(WebContext wc)
@@ -192,9 +188,6 @@ namespace ChainMart
                 h.LI_().FIELD("说明", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
                 h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("基础单位", o.unit)._LI();
-                h.LI_().FIELD("整装单位", o.unitas)._LI();
-                h.LI_().FIELD("整装基础倍", o.unitx)._LI();
                 h.LI_().FIELD("只供代理", o.origin)._LI();
                 h.LI_().FIELD("状态", o.state, States)._LI();
                 h._UL();
@@ -223,8 +216,6 @@ namespace ChainMart
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitas), o.unitas)._LI();
-                    h.LI_().NUMBER("整装基础倍", nameof(o.unitx), o.unitx, required: true)._LI();
                     h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();

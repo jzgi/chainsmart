@@ -48,7 +48,7 @@ namespace ChainMart
                 h.LI_().FIELD("产源", src.name)._LI();
                 h.LI_().FIELD("批次号码", lot.id)._LI();
                 h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, item.unitas, true)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
                 h._UL();
             }, true, 3600, title: "产品溯源信息");
         }
@@ -82,7 +82,7 @@ namespace ChainMart
                 h.LI_().FIELD("产源", src.name)._LI();
                 h.LI_().FIELD("批次号码", lot.id)._LI();
                 h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, item.unitas, true)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
                 h._UL();
             }, true, 3600, title: "产品溯源信息");
         }
@@ -161,7 +161,7 @@ namespace ChainMart
 
             var now = DateTime.Now;
 
-            var m = new Lot
+            var o = new Lot
             {
                 state = Entity.STA_VOID,
                 srcid = org.id,
@@ -176,15 +176,16 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("基本资料");
 
-                    h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, items, required: true)._LI();
-                    h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("销货参数");
-                    h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(m.min), m.min).NUMBER("限订量", nameof(m.max), m.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(m.step), m.step)._LI();
-                    h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
+                    h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("整装基础倍", nameof(o.unitx), o.unitx, required: true)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
+                    h.LI_().NUMBER("总量", nameof(o.cap), o.cap).NUMBER("剩余量", nameof(o.remain), o.remain)._LI();
 
                     h._FIELDSUL();
 
@@ -197,16 +198,16 @@ namespace ChainMart
             {
                 // populate 
                 const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-                await wc.ReadObjectAsync(msk, instance: m);
+                await wc.ReadObjectAsync(msk, instance: o);
 
-                var item = items[m.itemid];
-                m.name = item.name;
-                m.typ = item.typ;
+                var item = items[o.itemid];
+                o.name = item.name;
+                o.typ = item.typ;
 
                 // db insert
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO lots ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
-                await dc.ExecuteAsync(p => m.Write(p, msk));
+                await dc.ExecuteAsync(p => o.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
             }

@@ -18,7 +18,6 @@ namespace ChainMart
         };
 
         internal int id;
-        internal int itemid;
         internal int srcid;
         internal string srcname;
         internal int zonid;
@@ -26,6 +25,9 @@ namespace ChainMart
         internal int[] mktids; // optional
 
         // individual order relevant
+        internal int itemid;
+        internal string unit;
+        internal short unitx; // proximate units
         internal decimal price;
         internal decimal off;
         internal int cap;
@@ -56,11 +58,13 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(unit), ref unit);
+                s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
-                s.Get(nameof(max), ref max);
                 s.Get(nameof(step), ref step);
+                s.Get(nameof(max), ref max);
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(remain), ref remain);
             }
@@ -92,11 +96,13 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(unit), unit);
+                s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
-                s.Put(nameof(max), max);
                 s.Put(nameof(step), step);
+                s.Put(nameof(max), max);
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(remain), remain);
             }

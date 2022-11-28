@@ -22,9 +22,6 @@ namespace ChainMart
         internal short store;
         internal short duration;
         internal string origin;
-        internal string unitas; // unit for sale
-        internal string unit; // unit basic
-        internal short unitx;
         internal JObj specs;
         internal bool icon;
         internal bool pic;
@@ -51,9 +48,6 @@ namespace ChainMart
                 s.Get(nameof(store), ref store);
                 s.Get(nameof(duration), ref duration);
                 s.Get(nameof(origin), ref origin);
-                s.Get(nameof(unitas), ref unitas);
-                s.Get(nameof(unit), ref unit);
-                s.Get(nameof(unitx), ref unitx);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
@@ -85,9 +79,6 @@ namespace ChainMart
                 s.Put(nameof(store), store);
                 s.Put(nameof(duration), duration);
                 s.Put(nameof(origin), origin);
-                s.Put(nameof(unit), unit);
-                s.Put(nameof(unitas), unitas);
-                s.Put(nameof(unitx), unitx);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {

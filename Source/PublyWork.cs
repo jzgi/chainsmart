@@ -49,7 +49,7 @@ namespace ChainMart
                 h.LI_().FIELD("产源", src.name)._LI();
                 h.LI_().FIELD("批次号码", lot.id)._LI();
                 h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, item.unitas, true)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
                 h._UL();
             }, true, 3600, title: Self.Name + "产品溯源信息");
         }

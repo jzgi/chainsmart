@@ -58,11 +58,11 @@ namespace ChainMart
                 h.SELECT_(null, nameof(qty));
                 for (int i = lot.min; i < lot.max; i += lot.step)
                 {
-                    h.OPTION_(i).T(i).SP().T(item.unitas)._OPTION();
+                    h.OPTION_(i).T(i).SP().T(lot.step)._OPTION();
                 }
                 h._SELECT();
                 // pay button
-                pay = item.unitx * qty * lot.RealPrice;
+                pay = qty * lot.RealPrice;
                 h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(pay), pay)._BUTTON();
 
                 h._FORM()._BOTTOMBAR();
@@ -76,7 +76,6 @@ namespace ChainMart
 
             var prin = (User) wc.Principal;
             var f = await wc.ReadAsync<Form>();
-            short unitx = f[nameof(unitx)];
             short qty = f[nameof(qty)];
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
@@ -103,9 +102,8 @@ namespace ChainMart
                     ctrid = lot.ctrid,
                     itemid = lot.itemid,
                     lotid = lot.id,
-                    unit = item.unit,
-                    unitpkg = item.unitas,
-                    unitx = unitx,
+                    unit = lot.unit,
+                    unitx = lot.unitx,
                     price = lot.price,
                     off = lot.off,
                     qty = qty
