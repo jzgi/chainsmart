@@ -127,7 +127,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -148,7 +148,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("下属产源", "供区")]
+    [Ui("产源管理", "供区")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
         [Ui("下属产源"), Tool(Anchor)]
@@ -212,7 +212,7 @@ namespace ChainMart
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
@@ -355,7 +355,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [UserAuthorize(Org.TYP_MKT, User.ORGLY_OPN)]
+        [UserAuthorize(Org.TYP_MKT, User.ROLE_OPN)]
         [Ui("新建", "新建商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -394,7 +394,7 @@ namespace ChainMart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
                         h.LI_().TEL("联系电话", nameof(m.tel), m.tel, max: 11)._LI();
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL()._FORM();
                     });
@@ -409,7 +409,7 @@ namespace ChainMart
                         h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                         h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                     });
@@ -449,14 +449,14 @@ namespace ChainMart
                 h.LI_().FIELD("信用编号", o.license)._LI();
                 h.LI_().FIELD("单位提示", o.regid)._LI();
                 h.LI_().FIELD("只供代理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.state, Entity.Statuses)._LI();
+                h.LI_().FIELD("状态", o.state, Entity.States)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
             }, false, 900);
         }
 
-        [UserAuthorize(0, User.ORGLY_MGT)]
+        [UserAuthorize(0, User.ROLE_MGT)]
         [Ui("设置", "设置运行参数", icon: "cog"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
@@ -468,7 +468,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("修改基本设置");
                     h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
                     h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.Statuses, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
                 });
             }

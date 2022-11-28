@@ -15,38 +15,28 @@ namespace ChainMart
         };
 
         public const short
-            ADMLY_ = 0b0000001, // common
-            ADMLY_OPN = 0b0000011,
-            ADMLY_FIN = 0b0000101,
-            ADMLY_MGT = 0b0011111,
-            ADMLY_SPR = 0b0111111,
-            ADMLY_RVR = 0b1000001;
+            ROLE_ = 0b000001, // common
+            ROLE_OPN = 0b000011, // operation
+            ROLE_LOG = 0b000101, // logistic
+            ROLE_FIN = 0b001001, // finance
+            ROLE_MGT = 0b011111, // management
+            ROLE_RVW = 0b100001; // review
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
-            {ADMLY_OPN, "业务"},
-            {ADMLY_FIN, "财务"},
-            {ADMLY_MGT, "管理"},
-            {ADMLY_SPR, "负责"},
-            {ADMLY_RVR, "审核"},
+            {ROLE_OPN, "业务"},
+            {ROLE_FIN, "财务"},
+            {ROLE_MGT, "管理"},
+            {ROLE_RVW, "审核"},
         };
-
-        public const short
-            ORGLY_ = 0b000001, // common
-            ORGLY_OPN = 0b0000011, // operation
-            ORGLY_LOG = 0b0001001, // logistic
-            ORGLY_MGT = 0b0011111, // manager & delegate
-            ORGLY_SPR = 0b0111111, // superviser
-            ORGLY_RVR = 0b1000001; // reviewer
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ORGLY_OPN, "业务"},
-            {ORGLY_LOG, "物流"},
-            {ORGLY_MGT, "管理"},
-            {ORGLY_SPR, "负责"},
-            {ORGLY_RVR, "审核"},
+            {ROLE_OPN, "业务"},
+            {ROLE_LOG, "物流"},
+            {ROLE_MGT, "管理"},
+            {ROLE_RVW, "审核"},
         };
 
         internal int id;
@@ -111,7 +101,7 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool IsDelegateOf(int orgid) => orgid == this.orgid && (orgly & ORGLY_OPN) == orgly;
+        public bool IsDelegateOf(int orgid) => orgid == this.orgid && (orgly & ROLE_OPN) == orgly;
 
         public bool IsProfessional => typ >= 1;
 

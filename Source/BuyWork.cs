@@ -14,10 +14,10 @@ namespace ChainMart
         }
     }
 
-    [Ui("零售订单", "账号")]
+    [Ui("消费订单", "账号")]
     public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
-        [Ui("零售订单"), Tool(Anchor)]
+        [Ui("消费订单"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -32,7 +32,7 @@ namespace ChainMart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无零售订单");
+                    h.ALERT("尚无消费订单");
                     return;
                 }
 
@@ -67,10 +67,10 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售外卖", "商户")]
+    [Ui("消费外卖", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
-        [Ui("零售外卖", group: 1), Tool(Anchor)]
+        [Ui("消费外卖", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -121,13 +121,13 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("零售外卖送货", "市场")]
+    [Ui("消费外卖送货", "市场")]
 #else
-    [Ui("零售外卖送货", "驿站")]
+    [Ui("消费外卖送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
-        [Ui("零售外卖", group: 1), Tool(Anchor)]
+        [Ui("消费外卖", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mkt = wc[-1].As<Org>();

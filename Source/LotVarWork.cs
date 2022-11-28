@@ -30,7 +30,7 @@ namespace ChainMart
                 {
                     h.LI_().FIELD("自运到市场", m.mktids, topOrgs)._LI();
                 }
-                h.LI_().FIELD("状态", Statuses[m.state])._LI();
+                h.LI_().FIELD("状态", States[m.state])._LI();
                 h.LI_().FIELD("单价", m.price)._LI();
                 h.LI_().FIELD("优惠", m.off)._LI();
                 h.LI_().FIELD("起订量", m.min)._LI();
@@ -76,7 +76,7 @@ namespace ChainMart
                     h.LI_().NUMBER("起订量", nameof(m.min), m.min).NUMBER("限订量", nameof(m.max), m.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(m.step), m.step)._LI();
                     h.LI_().NUMBER("总量", nameof(m.cap), m.cap).NUMBER("剩余量", nameof(m.remain), m.remain)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });

@@ -22,7 +22,7 @@ namespace ChainMart
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("状态", Entity.Statuses[o.state])._LI();
+                h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
                 h._UL();
@@ -52,7 +52,7 @@ namespace ChainMart
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("状态", Entity.Statuses[o.state])._LI();
+                h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
                 h._UL();
@@ -242,7 +242,7 @@ namespace ChainMart
             short orgid = wc[-2];
             short id = wc[0];
             var org = GrabObject<int, Org>(orgid);
-            if (org.sprid != id)
+            if (org.mgrid != id)
             {
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");

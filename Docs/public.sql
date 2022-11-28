@@ -20,7 +20,6 @@ alter type buyline owner to postgres;
 create table entities
 (
     typ smallint not null,
-    state smallint default 0 not null,
     name varchar(12) not null,
     tip varchar(30),
     created timestamp(0),
@@ -114,10 +113,10 @@ create table orgs
     y double precision,
     tel varchar(11),
     link varchar(100),
-    sprid integer,
-    rvrid integer,
+    mgrid integer,
     alias varchar(12),
-    icon bytea
+    icon bytea,
+    specs jsonb
 )
     inherits (entities);
 
@@ -326,7 +325,9 @@ create table lots
     zonid integer not null
         constraint lots_zonid_fk
             references orgs,
-    ctrid integer not null,
+    ctrid integer not null
+        constraint lots_ctrid_fk
+            references orgs,
     mktids integer[],
     price money,
     "off" money,
@@ -375,9 +376,8 @@ create table items
 
 alter table items owner to postgres;
 
-create view wares_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
+create view wares_vw(typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
 SELECT o.typ,
-       o.status,
        o.name,
        o.tip,
        o.created,
@@ -386,7 +386,7 @@ SELECT o.typ,
        o.adapter,
        o.oked,
        o.oker,
-       o.state,
+       o.status,
        o.id,
        o.shpid,
        o.itemid,
@@ -404,9 +404,8 @@ FROM wares o;
 
 alter table wares_vw owner to postgres;
 
-create view users_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, tel, addr, im, credential, admly, orgid, orgly, vip, icon) as
+create view users_vw(typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, orgid, orgly, vip, icon) as
 SELECT u.typ,
-       u.status,
        u.name,
        u.tip,
        u.created,
@@ -415,7 +414,7 @@ SELECT u.typ,
        u.adapter,
        u.oked,
        u.oker,
-       u.state,
+       u.status,
        u.id,
        u.tel,
        u.addr,
@@ -430,9 +429,8 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view orgs_vw(typ, status, name, tip, created, creator, adapted, adapter, oker, oked, state, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, sprid, sprname, sprtel, sprim, rvrid, alias, icon) as
+create view orgs_vw(typ, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, mgrid, mgrname, mgrtel, mgrim, alias, specs, icon) as
 SELECT o.typ,
-       o.status,
        o.name,
        o.tip,
        o.created,
@@ -441,7 +439,7 @@ SELECT o.typ,
        o.adapter,
        o.oker,
        o.oked,
-       o.state,
+       o.status,
        o.id,
        o.prtid,
        o.ctrid,
@@ -453,23 +451,22 @@ SELECT o.typ,
        o.y,
        o.tel,
        o.link,
-       o.sprid,
-       m.name             AS sprname,
-       m.tel              AS sprtel,
-       m.im               AS sprim,
-       o.rvrid,
+       o.mgrid,
+       m.name             AS mgrname,
+       m.tel              AS mgrtel,
+       m.im               AS mgrim,
        o.alias,
+       o.specs,
        o.icon IS NOT NULL AS icon
 FROM orgs o
          LEFT JOIN users m
-                   ON o.sprid =
+                   ON o.mgrid =
                       m.id;
 
 alter table orgs_vw owner to postgres;
 
-create view items_vw(typ, status, name, tip, created, creator, adapted, adapter, oked, oker, state, id, srcid, origin, store, duration, unitas, unit, unitx, specs, icon, pic, m1, m2, m3, m4) as
+create view items_vw(typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, unitas, unit, unitx, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
-       o.status,
        o.name,
        o.tip,
        o.created,
@@ -478,7 +475,7 @@ SELECT o.typ,
        o.adapter,
        o.oked,
        o.oker,
-       o.state,
+       o.status,
        o.id,
        o.srcid,
        o.origin,

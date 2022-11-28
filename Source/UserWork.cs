@@ -100,7 +100,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(admly: User.ADMLY_MGT)]
+    [UserAuthorize(admly: User.ROLE_MGT)]
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
@@ -203,7 +203,7 @@ namespace ChainMart
             }, false, 6);
         }
 
-        [UserAuthorize(0, User.ORGLY_MGT)]
+        [UserAuthorize(0, User.ROLE_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -329,7 +329,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ORGLY_MGT)]
+        [UserAuthorize(Org.TYP_SHP, User.ROLE_MGT)]
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

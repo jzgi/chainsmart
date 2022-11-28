@@ -20,7 +20,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("检测管理", "供区")]
+    [Ui("产源检测报告", "供区")]
     public class ZonlyTestWork : TestWork<ZonlyTestVarWork>
     {
         public void @default(WebContext wc, int page)

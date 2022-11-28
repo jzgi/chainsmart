@@ -51,13 +51,13 @@ namespace ChainMart
         internal string link;
         internal bool trust;
 
-        internal int sprid; // supervisor id
-        internal string sprname;
-        internal string sprtel;
-        internal string sprim;
-        internal int rvrid; // reviewer id 
+        internal int mgrid; // supervisor id
+        internal string mgrname;
+        internal string mgrtel;
+        internal string mgrim;
         internal string alias;
         internal bool icon;
+        internal JObj specs;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -86,12 +86,12 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(sprid), ref sprid);
-                s.Get(nameof(sprname), ref sprname);
-                s.Get(nameof(sprtel), ref sprtel);
-                s.Get(nameof(sprim), ref sprim);
-                s.Get(nameof(rvrid), ref rvrid);
+                s.Get(nameof(mgrid), ref mgrid);
+                s.Get(nameof(mgrname), ref mgrname);
+                s.Get(nameof(mgrtel), ref mgrtel);
+                s.Get(nameof(mgrim), ref mgrim);
                 s.Get(nameof(icon), ref icon);
+                s.Get(nameof(specs), ref specs);
             }
         }
 
@@ -126,12 +126,12 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(sprid), sprid);
-                s.Put(nameof(sprname), sprname);
-                s.Put(nameof(sprtel), sprtel);
-                s.Put(nameof(sprim), sprim);
-                s.Put(nameof(rvrid), rvrid);
+                s.Put(nameof(mgrid), mgrid);
+                s.Put(nameof(mgrname), mgrname);
+                s.Put(nameof(mgrtel), mgrtel);
+                s.Put(nameof(mgrim), mgrim);
                 s.Put(nameof(icon), icon);
+                s.Put(nameof(specs), specs);
             }
         }
 
@@ -140,7 +140,7 @@ namespace ChainMart
 
         public string Tel => tel;
 
-        public string Im => sprim;
+        public string Im => mgrim;
 
         public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
 

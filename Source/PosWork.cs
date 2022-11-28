@@ -10,8 +10,8 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SHP, User.ORGLY_OPN)]
-    [Ui("现场零售终端", "商户")]
+    [UserAuthorize(Org.TYP_SHP, User.ROLE_OPN)]
+    [Ui("现场消费终端", "商户")]
     public class ShplyPosWork : PosWork<ShplyPosVarWork>
     {
         public void @default(WebContext wc)

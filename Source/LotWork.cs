@@ -178,7 +178,7 @@ namespace ChainMart
 
                     h.LI_().SELECT("产品", nameof(m.itemid), m.itemid, items, required: true)._LI();
                     h.LI_().SELECT("投放市场", nameof(m.ctrid), m.ctrid, toporgs, filter: (k, v) => v.IsCenter, tip: true, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.Statuses, filter: (k, v) => k > 0, required: true)._LI();
+                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
 
                     h._FIELDSUL().FIELDSUL_("销货参数");
                     h.LI_().NUMBER("单价", nameof(m.price), m.price, min: 0.00M, max: 99999.99M).NUMBER("直降", nameof(m.off), m.off, min: 0.00M, max: 99999.99M)._LI();
@@ -214,7 +214,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产品批次审核上线", "品控")]
+    [Ui("产品批次核验", "品控")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
         [Ui("产品批次", group: 1), Tool(Anchor)]
@@ -223,7 +223,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

@@ -47,11 +47,11 @@ namespace ChainMart
             var org = wc[typeof(OrglyVarWork)].As<Org>();
 
             // is the supervisor of the org
-            if (org.sprid == prin.id)
+            if (org.mgrid == prin.id)
             {
                 if (!mock)
                 {
-                    wc.Role = User.ORGLY_SPR;
+                    wc.Role = User.ROLE_MGT;
                 }
                 return true;
             }
@@ -71,7 +71,7 @@ namespace ChainMart
             {
                 if (!mock)
                 {
-                    wc.Role = User.ORGLY_MGT;
+                    wc.Role = User.ROLE_MGT;
                 }
                 return true;
             }

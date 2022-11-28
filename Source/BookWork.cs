@@ -75,7 +75,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ORGLY_OPN)]
+        [UserAuthorize(Org.TYP_SHP, User.ROLE_OPN)]
         [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -118,11 +118,11 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ORGLY_LOG)]
-    [Ui("供应批发", "产源")]
+    [UserAuthorize(Org.TYP_SRC, User.ROLE_LOG)]
+    [Ui("供应链销售", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
-        [Ui("当前订货"), Tool(Anchor)]
+        [Ui("供应链销售"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -288,7 +288,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM purchs WHERE ctrid = @1 AND status = ").T(Book.STA_DELIVERED).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_DELIVERED).T(" GROUP BY mktid, lotid ORDER BY mktid");
             await dc.QueryAsync(p => p.Set(ctr.id));
 
             wc.GivePage(200, h =>
@@ -319,7 +319,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("⌹", "按批次历史", group: 4), Tool(Anchor)]
+        [Ui(icon:"history", group: 4), Tool(Anchor)]
         public async Task bylotpast(WebContext wc)
         {
         }
@@ -362,7 +362,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("以往按市场", group: 16), Tool(Anchor)]
+        [Ui(icon:"history", group: 16), Tool(Anchor)]
         public async Task bymrtpast(WebContext wc)
         {
         }

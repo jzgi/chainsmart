@@ -9,16 +9,12 @@ namespace ChainMart
     {
         public static readonly Lot Empty = new Lot();
 
-        public const short
-            STA_CREATED = 0,
-            STA_SUBMITTED = 1,
-            STU_OKED = 3;
 
         public new static readonly Map<short, string> States = new Map<short, string>
         {
-            {STA_CREATED, "新创建"},
-            {STA_SUBMITTED, "已提交"},
-            {STU_OKED, "已验证"},
+            {STU_CREATED, "新创建"},
+            {STU_ADAPTED, "已提交"},
+            {STU_OKED, "已核验"},
         };
 
         internal int id;

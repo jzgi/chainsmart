@@ -13,7 +13,7 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(admly: ADMLY_MGT)]
+    [UserAuthorize(admly: ROLE_MGT)]
     [Ui("区域设置", "业务")]
     public class AdmlyRegWork : RegWork
     {
@@ -113,7 +113,7 @@ namespace ChainMart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                     h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
-                    h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.Statuses)._LI();
+                    h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

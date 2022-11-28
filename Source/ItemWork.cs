@@ -28,13 +28,13 @@ namespace ChainMart
     [Ui("产品设置", "产源")]
     public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
-        [Ui("当前产品", group: 1), Tool(Anchor)]
+        [Ui("可用产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status > 0 ORDER BY created DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND state > 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -66,7 +66,7 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND status <= 0 ORDER BY created DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE srcid = @1 AND state = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -114,7 +114,7 @@ namespace ChainMart
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
                     h.LI_().TEXT("基础单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("整装单位", nameof(o.unitas), o.unitas)._LI();
                     h.LI_().NUMBER("整装基础倍", nameof(o.unitx), o.unitx, required: true)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, Statuses, filter: (k, v) => k >= STA_VOID, required: true)._LI();
+                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });

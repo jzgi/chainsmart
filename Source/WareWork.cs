@@ -16,7 +16,7 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售商品设置", "商户")]
+    [Ui("消费商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
         [Ui("在售商品", group: 1), Tool(Anchor)]
@@ -89,7 +89,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ORGLY_MGT)]
+        [UserAuthorize(Org.TYP_SHP, User.ROLE_MGT)]
         [Ui("新建", "新建自有商品", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
