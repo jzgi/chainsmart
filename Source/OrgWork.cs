@@ -179,7 +179,8 @@ namespace ChainMart
                     }
                     h.DIV_("uk-width-expand uk-padding-left");
                     h.H5(o.name);
-                    h.P(o.tip);
+
+                    h.P_().T(o.tip).SP().BUTTONVAR("/zonly/" + o.Key + "/", "link")._P();
                     h._DIV();
                     h._A();
                 });
@@ -430,7 +431,7 @@ namespace ChainMart
     }
 
 
-    [Ui("运行参数", "基础")]
+    [Ui("运行参数", "常规")]
     public class OrglySetgWork : WebWork
     {
         public async Task @default(WebContext wc)

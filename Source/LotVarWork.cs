@@ -157,7 +157,7 @@ namespace ChainMart
         }
     }
 
-    public class CtrlyLotVarWork : LotVarWork
+    public class ZonlyLotVarWork : LotVarWork
     {
         [Ui("标牌", "标牌号码绑定", icon: "tag"), Tool(ButtonShow)]
         public async Task tag(WebContext wc)

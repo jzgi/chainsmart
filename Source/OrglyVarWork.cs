@@ -16,8 +16,6 @@ namespace ChainMart
         {
             // ctr
 
-            CreateWork<CtrlyLotWork>("clot");
-
             CreateWork<CtrlyBookWork>("cbook");
 
             CreateWork<CtrlyRptWork>("crpt");
@@ -64,7 +62,7 @@ namespace ChainMart
                 }
                 else
                 {
-                    h.PIC("/zon.webp", circle: true, css: "uk-width-small");
+                    h.PIC(org.IsZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
                 }
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
                 h.H2(org.name);

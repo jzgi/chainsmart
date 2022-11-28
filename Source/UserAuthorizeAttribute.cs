@@ -46,6 +46,12 @@ namespace ChainMart
             // check access to org
             var org = wc[typeof(OrglyVarWork)].As<Org>();
 
+            // var and task group check
+            if ((org.typ & orgtyp) != orgtyp)
+            {
+                return false;
+            }
+
             // is the supervisor of the org
             if (org.mgrid == prin.id)
             {
@@ -67,11 +73,11 @@ namespace ChainMart
             }
 
             // is trusted for the org
-            if (org.trust && org.prtid == prin.orgid && prin.IsDelegateOf(org.id))
+            if (prin.CanDelegate(org))
             {
                 if (!mock)
                 {
-                    wc.Role = User.ROLE_MGT;
+                    wc.Role = org.trust ? (short) (User.ROLE_OPN | User.ROLE_RVW) : User.ROLE_RVW;
                 }
                 return true;
             }

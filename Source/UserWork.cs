@@ -167,7 +167,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("人员权限", "基础")]
+    [Ui("人员权限", "常规")]
     public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     {
         [Ui("人员权限"), Tool(Anchor)]

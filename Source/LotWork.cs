@@ -216,7 +216,7 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("产品批次核验", "品控")]
-    public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
+    public class ZonlyLotWork : LotWork<ZonlyLotVarWork>
     {
         [Ui("产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)

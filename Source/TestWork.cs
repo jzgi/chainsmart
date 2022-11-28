@@ -20,6 +20,7 @@ namespace ChainMart
         }
     }
 
+    [UserAuthorize(Org.TYP_ZON, 1)]
     [Ui("产源检测报告", "供区")]
     public class ZonlyTestWork : TestWork<ZonlyTestVarWork>
     {

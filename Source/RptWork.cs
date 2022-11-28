@@ -84,7 +84,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ROLE_LOG)]
+    [UserAuthorize(Org.TYP_SRC, User.ROLE_)]
     [Ui("业务报表", "产源")]
     public class SrclyRptWork : RptWork
     {

@@ -101,7 +101,7 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool IsDelegateOf(int orgid) => orgid == this.orgid && (orgly & ROLE_OPN) == orgly;
+        public bool CanDelegate(Org targ) => targ.prtid == orgid && (orgly & ROLE_OPN) == ROLE_OPN;
 
         public bool IsProfessional => typ >= 1;
 

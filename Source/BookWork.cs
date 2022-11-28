@@ -277,7 +277,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_DST, 1)]
+    [UserAuthorize(Org.TYP_CTR, 1)]
     [Ui("分拣派运管理", "品控", icon: "sign-out")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
@@ -319,7 +319,7 @@ namespace ChainMart
             });
         }
 
-        [Ui(icon:"history", group: 4), Tool(Anchor)]
+        [Ui(icon: "history", group: 4), Tool(Anchor)]
         public async Task bylotpast(WebContext wc)
         {
         }
@@ -362,7 +362,7 @@ namespace ChainMart
             });
         }
 
-        [Ui(icon:"history", group: 16), Tool(Anchor)]
+        [Ui(icon: "history", group: 16), Tool(Anchor)]
         public async Task bymrtpast(WebContext wc)
         {
         }
