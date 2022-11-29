@@ -20,7 +20,8 @@ namespace ChainMart
             ROLE_LOG = 0b000101, // logistic
             ROLE_FIN = 0b001001, // finance
             ROLE_MGT = 0b011111, // management
-            ROLE_RVW = 0b100001; // review
+            ROLE_RVW = 0b100001, // review
+            ROLE_DEL = ROLE_OPN | ROLE_RVW; // delegate
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
@@ -37,6 +38,7 @@ namespace ChainMart
             {ROLE_LOG, "物流"},
             {ROLE_MGT, "管理"},
             {ROLE_RVW, "审核"},
+            {ROLE_DEL, "代办"},
         };
 
         internal int id;
@@ -101,7 +103,9 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool CanDelegate(Org targ) => targ.prtid == orgid && (orgly & ROLE_OPN) == ROLE_OPN;
+        public bool CanDelegate(Org targ) =>
+            (targ.prtid == 0 && (admly & ROLE_OPN) == ROLE_OPN) ||
+            (targ.prtid == orgid && (orgly & ROLE_OPN) == ROLE_OPN);
 
         public bool IsProfessional => typ >= 1;
 

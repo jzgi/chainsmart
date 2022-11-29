@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -38,7 +39,7 @@ namespace ChainMart
     }
 
 
-    [Ui("信息及身份", "账号")]
+    [Ui("我的账号信息", "账号")]
     public class MyInfoVarWork : WebWork
     {
         public void @default(WebContext wc)
@@ -113,7 +114,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("身份和权限", "账号")]
+    [Ui("我的身份权限", "账号")]
     public class MyAccessVarWork : WebWork
     {
         public void @default(WebContext wc)
@@ -165,22 +166,27 @@ namespace ChainMart
             wc.Give(200, shared: false, maxage: 12);
         }
 
-        [Ui("委派", "上层机构的委派", icon: "info"), Tool(ButtonShow)]
+        [Ui("主管", "机构的主管", icon: "list"), Tool(ButtonShow)]
         public async Task access(WebContext wc)
         {
             int uid = wc[-1];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE sprid = @1 OR rvrid = @1");
-            var o = await dc.QueryTopAsync<Org>(p => p.Set(uid));
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE mgrid = @1");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(uid));
 
             wc.GivePane(200, h =>
             {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
-                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
-                h._UL();
-                //
+                if (arr == null)
+                {
+                    h.ALERT("未设为任何机构的主管");
+                    return;
+                }
+                h.H4("已设为以下机构的主管");
+                h.LIST(arr, o =>
+                {
+                    h.SPAN(o.name);
+                });
             });
         }
     }

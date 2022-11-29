@@ -38,7 +38,7 @@ namespace ChainMart
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM dailys WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT * FROM rpts WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = dc.Query<Rptie>(p => p.Set(org.id).Set(page));
             wc.GivePage(200, h =>
             {

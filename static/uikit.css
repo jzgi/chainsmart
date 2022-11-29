@@ -174,7 +174,6 @@ svg:not(:root) {
 p {
     font-size: 0.8125rem;
     margin: 4px 0;
-    padding: 4px 0;
     color: #777;
 }
 
@@ -6784,27 +6783,27 @@ iframe.uk-cover {
 }
 
 .uk-margin-medium {
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 }
 
 *+.uk-margin-medium {
-    margin-top: 24px !important;
+    margin-top: 32px !important;
 }
 
 .uk-margin-medium-top {
-    margin-top: 24px !important;
+    margin-top: 32px !important;
 }
 
 .uk-margin-medium-bottom {
-    margin-bottom: 24px !important;
+    margin-bottom: 32px !important;
 }
 
 .uk-margin-medium-left {
-    margin-left: 24px !important;
+    margin-left: 32px !important;
 }
 
 .uk-margin-medium-right {
-    margin-right: 24px !important;
+    margin-right: 32px !important;
 }
 
 .uk-margin-large {

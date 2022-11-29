@@ -37,6 +37,10 @@ namespace ChainMart
 
             if (admly > 0)
             {
+                if (!mock)
+                {
+                    wc.Role = prin.admly;
+                }
                 return (prin.admly & admly) == admly;
             }
 
@@ -52,7 +56,7 @@ namespace ChainMart
                 return false;
             }
 
-            // is the supervisor of the org
+            // is manager for the org
             if (org.mgrid == prin.id)
             {
                 if (!mock)
@@ -72,12 +76,12 @@ namespace ChainMart
                 return true;
             }
 
-            // is trusted for the org
+            // is delegate to the org
             if (prin.CanDelegate(org))
             {
                 if (!mock)
                 {
-                    wc.Role = org.trust ? (short) (User.ROLE_OPN | User.ROLE_RVW) : User.ROLE_RVW;
+                    wc.Role = org.trust ? User.ROLE_DEL : User.ROLE_RVW;
                 }
                 return true;
             }

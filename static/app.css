@@ -10,6 +10,21 @@
     font-size: 0.857rem;
 }
 
+.major-col {
+    padding-left: 8px;
+    height: 100%;
+    width: 100%;
+    min-width: 1px;
+    box-sizing: border-box;
+    flex: 1;
+    box-sizing: border-box;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
 button output {
     font-size: 1.125rem;
 }

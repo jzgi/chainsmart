@@ -14,10 +14,10 @@ namespace ChainMart
         }
     }
 
-    [Ui("消费订单", "账号")]
+    [Ui("我的消费", "账号")]
     public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
-        [Ui("消费订单"), Tool(Anchor)]
+        [Ui("我的消费"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;

@@ -37,14 +37,17 @@ namespace ChainMart
         public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            var o = Self;
+            
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
+
                 h.PIC("/logo.webp", circle: true, css: "uk-width-small");
+
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(Self.name);
+                h.HEADER_().H2(Self.name).P2(prin.name, User.Admly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
                 h._DIV();
+
                 h._TOPBARXL();
 
                 h.TASKBOARD();

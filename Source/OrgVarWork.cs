@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -130,7 +129,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("负责", "设置负责人", icon: "happy"), Tool(ButtonOpen)]
+        [Ui("主管", "设置主管", icon: "happy"), Tool(ButtonShow)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -139,7 +138,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("指定用户");
-                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false)._LI();
+                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
                     if (cmd == 1) // search user
                     {
@@ -152,6 +151,7 @@ namespace ChainMart
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户名", o.name)._LI();
                             h._FIELDSUL();
+
                             h.BOTTOMBAR_().BUTTON("确认", nameof(mgr), 2)._BOTTOMBAR();
                         }
                     }
@@ -162,9 +162,10 @@ namespace ChainMart
             {
                 int orgid = wc[0];
                 int id = (await wc.ReadAsync<Form>())[nameof(id)];
-                using var dc = NewDbContext(IsolationLevel.ReadCommitted);
-                dc.Execute("UPDATE orgs SET mgrid = @1 WHERE id = @2", p => p.Set(id).Set(orgid));
-                dc.Execute("UPDATE users SET orgid = @1, orgly = 15 WHERE id = @2", p => p.Set(orgid).Set(id));
+
+                using var dc = NewDbContext();
+                await dc.ExecuteAsync("UPDATE orgs SET mgrid = @1 WHERE id = @2", p => p.Set(id).Set(orgid));
+
                 wc.GivePane(200); // ok
             }
         }

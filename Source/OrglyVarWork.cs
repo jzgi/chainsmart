@@ -64,10 +64,11 @@ namespace ChainMart
                 {
                     h.PIC(org.IsZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
                 }
+
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name);
-                h.SPAN(org.tel);
+                h.HEADER_().H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
                 h._DIV();
+
                 h._TOPBARXL();
 
                 h.TASKBOARD();
@@ -119,28 +120,26 @@ namespace ChainMart
 
         public void @default(WebContext wc)
         {
-            var mkt = wc[0].As<Org>();
+            var org = wc[0].As<Org>();
             var prin = (User) wc.Principal;
             using var dc = NewDbContext();
 
             wc.GivePage(200, h =>
             {
-                var role = prin.orgid != mkt.id ? "代办" : User.Orgly[prin.orgly];
-                // h.TOOLBAR(tip: prin.name + "（" + role + "）");
-
                 h.TOPBARXL_();
-                if (mkt.icon)
+                if (org.icon)
                 {
-                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(mkt.id).T("/icon")._PIC();
+                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
                 }
                 else
                 {
                     h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
                 }
+
                 h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(mkt.name);
-                h.SPAN(mkt.tel);
+                h.HEADER_().H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
                 h._DIV();
+
                 h._TOPBARXL();
 
                 h.TASKBOARD();

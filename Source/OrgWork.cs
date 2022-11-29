@@ -49,9 +49,10 @@ namespace ChainMart
                     {
                         h.PIC("/void.webp", css: "uk-width-1-5");
                     }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
+                    h.DIV_("major-col");
+                    h.H5_().T(o.name).SPAN("")._H5();
+                    h.P(o.tip, "uk-width-expand");
+                    h.SECTION_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", "link")._SPAN()._SECTION();
                     h._DIV();
                     h._A();
                 });
@@ -79,9 +80,10 @@ namespace ChainMart
                     {
                         h.PIC("/void.webp", css: "uk-width-1-5");
                     }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
+                    h.DIV_("major-col");
+                    h.H5_().T(o.name).SPAN("")._H5();
+                    h.P(o.tip, "uk-width-expand");
+                    h.SECTION_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", "link")._SPAN()._SECTION();
                     h._DIV();
                     h._A();
                 });
@@ -151,7 +153,7 @@ namespace ChainMart
     [Ui("产源管理", "供区")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("下属产源"), Tool(Anchor)]
+        [Ui("本供区产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -177,11 +179,13 @@ namespace ChainMart
                     {
                         h.PIC("/void.webp", css: "uk-width-1-5");
                     }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
 
-                    h.P_().T(o.tip).SP().BUTTONVAR("/zonly/" + o.Key + "/", "link")._P();
+                    h.DIV_("major-col");
+                    h.H5_().T(o.name).SPAN("")._H5();
+                    h.P(o.tip, "uk-width-expand");
+                    h.SECTION_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", "link")._SPAN()._SECTION();
                     h._DIV();
+
                     h._A();
                 });
             }, false, 15);
