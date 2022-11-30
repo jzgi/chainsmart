@@ -129,7 +129,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("主管", "设置主管", icon: "happy"), Tool(ButtonShow)]
+        [Ui("管理", "设置管理人员", icon: "happy"), Tool(ButtonShow)]
         public async Task mgr(WebContext wc, int cmd)
         {
             if (wc.IsGet)
@@ -150,6 +150,15 @@ namespace ChainMart
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户名", o.name)._LI();
+                            if (o.orgid > 0)
+                            {
+                                var org = GrabObject<int, Org>(o.orgid);
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                            }
+                            else
+                            {
+                                h.LI_().FIELD("现有权限", "无")._LI();
+                            }
                             h._FIELDSUL();
 
                             h.BOTTOMBAR_().BUTTON("确认", nameof(mgr), 2)._BOTTOMBAR();
@@ -164,7 +173,8 @@ namespace ChainMart
                 int id = (await wc.ReadAsync<Form>())[nameof(id)];
 
                 using var dc = NewDbContext();
-                await dc.ExecuteAsync("UPDATE orgs SET mgrid = @1 WHERE id = @2", p => p.Set(id).Set(orgid));
+                dc.Sql("UPDATE users SET orgid = @1, orgly = ").T(User.ROLE_MGT).T(" WHERE id = @2");
+                await dc.ExecuteAsync(p => p.Set(orgid).Set(id));
 
                 wc.GivePane(200); // ok
             }

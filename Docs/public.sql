@@ -121,7 +121,6 @@ create table orgs
     y double precision,
     tel varchar(11),
     link varchar(100),
-    mgrid integer,
     alias varchar(12),
     icon bytea,
     specs jsonb
@@ -437,43 +436,6 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, mgrid, mgrname, mgrtel, mgrim, alias, specs, icon) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oker,
-       o.oked,
-       o.status,
-       o.id,
-       o.prtid,
-       o.ctrid,
-       o.license,
-       o.trust,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o.tel,
-       o.link,
-       o.mgrid,
-       m.name             AS mgrname,
-       m.tel              AS mgrtel,
-       m.im               AS mgrim,
-       o.alias,
-       o.specs,
-       o.icon IS NOT NULL AS icon
-FROM orgs o
-         LEFT JOIN users m
-                   ON o.mgrid =
-                      m.id;
-
-alter table orgs_vw owner to postgres;
-
 create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
@@ -501,6 +463,36 @@ SELECT o.typ,
 FROM items o;
 
 alter table items_vw owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, alias, specs, icon) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oker,
+       o.oked,
+       o.status,
+       o.id,
+       o.prtid,
+       o.ctrid,
+       o.license,
+       o.trust,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.tel,
+       o.link,
+       o.alias,
+       o.specs,
+       o.icon IS NOT NULL AS icon
+FROM orgs o;
+
+alter table orgs_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

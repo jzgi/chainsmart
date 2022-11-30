@@ -51,10 +51,6 @@ namespace ChainMart
         internal string link;
         internal bool trust;
 
-        internal int mgrid; // supervisor id
-        internal string mgrname;
-        internal string mgrtel;
-        internal string mgrim;
         internal string alias;
         internal bool icon;
         internal JObj specs;
@@ -86,10 +82,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(mgrid), ref mgrid);
-                s.Get(nameof(mgrname), ref mgrname);
-                s.Get(nameof(mgrtel), ref mgrtel);
-                s.Get(nameof(mgrim), ref mgrim);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(specs), ref specs);
             }
@@ -126,10 +118,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(mgrid), mgrid);
-                s.Put(nameof(mgrname), mgrname);
-                s.Put(nameof(mgrtel), mgrtel);
-                s.Put(nameof(mgrim), mgrim);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(specs), specs);
             }
@@ -139,8 +127,6 @@ namespace ChainMart
         public int Key => id;
 
         public string Tel => tel;
-
-        public string Im => mgrim;
 
         public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
 

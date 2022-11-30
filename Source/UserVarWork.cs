@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -119,28 +118,39 @@ namespace ChainMart
     {
         public void @default(WebContext wc)
         {
-            int uid = wc[-1];
-            var o = (User) wc.Principal;
+            var prin = (User) wc.Principal;
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("已知的身份权限");
+                h.FORM_().FIELDSUL_("机构及身份权限");
 
-                if (o.vip > 0)
+                var any = 0;
+                if (prin.vip > 0)
                 {
-                    var org = GrabObject<int, Org>(o.vip);
-                    h.LI_().FIELD("大客户", org.name)._LI();
+                    var org = GrabObject<int, Org>(prin.vip);
+                    h.LI_().SPAN2(org.name, "大客户", brace: true)._LI();
+
+                    any++;
                 }
 
-                if (o.admly > 0)
+                if (prin.admly > 0)
                 {
-                    h.LI_().FIELD(User.Admly[o.admly], "平台")._LI();
+                    h.LI_().SPAN2("平台", User.Admly[prin.admly], brace: true)._LI();
+
+                    any++;
                 }
 
-                if (o.IsOrgly)
+                if (prin.IsOrgly)
                 {
-                    var org = GrabObject<int, Org>(o.orgid);
-                    h.LI_().FIELD(User.Orgly[o.orgly], org.name)._LI();
+                    var org = GrabObject<int, Org>(prin.orgid);
+                    h.LI_().SPAN2(org.name, User.Orgly[prin.orgly], brace: true)._LI();
+
+                    any++;
+                }
+
+                if (any == 0)
+                {
+                    h.LI_().SPAN("暂无特殊权限")._LI();
                 }
 
                 h._FIELDSUL()._FORM();
@@ -148,7 +158,7 @@ namespace ChainMart
                 h.TOOLBAR(bottom: true);
 
                 // spr and rvr
-            }, false, 6);
+            }, false, 7);
         }
 
         [Ui("刷新", "刷新身份权限", icon: "refresh"), Tool(ButtonConfirm)]
@@ -164,30 +174,6 @@ namespace ChainMart
             wc.SetUserCookie(o);
 
             wc.Give(200, shared: false, maxage: 12);
-        }
-
-        [Ui("主管", "机构的主管", icon: "list"), Tool(ButtonShow)]
-        public async Task access(WebContext wc)
-        {
-            int uid = wc[-1];
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE mgrid = @1");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(uid));
-
-            wc.GivePane(200, h =>
-            {
-                if (arr == null)
-                {
-                    h.ALERT("未设为任何机构的主管");
-                    return;
-                }
-                h.H4("已设为以下机构的主管");
-                h.LIST(arr, o =>
-                {
-                    h.SPAN(o.name);
-                });
-            });
         }
     }
 
@@ -247,15 +233,12 @@ namespace ChainMart
         {
             short orgid = wc[-2];
             short id = wc[0];
-            var org = GrabObject<int, Org>(orgid);
-            if (org.mgrid != id)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
-            }
 
-            wc.Give(204); // no content
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
+
+            wc.Give(205); // content reset
         }
     }
 

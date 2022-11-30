@@ -56,16 +56,6 @@ namespace ChainMart
                 return false;
             }
 
-            // is manager for the org
-            if (org.mgrid == prin.id)
-            {
-                if (!mock)
-                {
-                    wc.Role = User.ROLE_MGT;
-                }
-                return true;
-            }
-
             // is of any role for the org
             if (org.id == prin.orgid && (org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly)
             {

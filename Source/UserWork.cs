@@ -21,7 +21,7 @@ namespace ChainMart
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            short orgid = wc[-1];
+            int orgid = wc[-1];
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE admly > 0");
@@ -78,6 +78,15 @@ namespace ChainMart
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
+                            if (o.orgid > 0)
+                            {
+                                var org = GrabObject<int, Org>(o.orgid);
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                            }
+                            else
+                            {
+                                h.LI_().FIELD("现有权限", "无")._LI();
+                            }
                             h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
@@ -226,7 +235,16 @@ namespace ChainMart
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            h.LI_().SELECT("权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0)._LI();
+                            if (o.orgid > 0)
+                            {
+                                var org = GrabObject<int, Org>(o.orgid);
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                            }
+                            else
+                            {
+                                h.LI_().FIELD("现有权限", "无")._LI();
+                            }
+                            h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
