@@ -74,7 +74,7 @@ namespace ChainMart
                 h.LI_().FIELD("机构名称", o.name)._LI();
                 h.LI_().FIELD("简述", o.tip)._LI();
                 h.LI_().FIELD("别名", o.alias)._LI();
-                h.LI_().FIELD("信用编号", o.license)._LI();
+                h.LI_().FIELD("信用编号", o.link)._LI();
                 h.LI_().FIELD("区域", o.regid, regs)._LI();
                 h.LI_().FIELD("地址", o.addr)._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
@@ -207,7 +207,7 @@ namespace ChainMart
                 h.LI_().FIELD("简述", o.tip)._LI();
                 h.LI_().FIELD("所属市场", topOrgs[o.prtid]?.name)._LI();
                 h.LI_().FIELD("品控中心", topOrgs[o.ctrid]?.name)._LI();
-                h.LI_().FIELD("信用代号", o.license)._LI();
+                h.LI_().FIELD("信用代号", o.link)._LI();
                 h.LI_().FIELD("场区", o.regid, regs)._LI();
                 h.LI_().FIELD("档位号", o.addr)._LI();
                 h.LI_().FIELD("委托代办", o.trust)._LI();
@@ -238,7 +238,7 @@ namespace ChainMart
                     {
                         h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                        h.LI_().TEXT("工商登记号", nameof(m.license), m.license, max: 20)._LI();
+                        h.LI_().TEXT("工商登记号", nameof(m.link), m.link, max: 20)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
 #if ZHNT
                         h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
@@ -294,7 +294,6 @@ namespace ChainMart
         public async Task @default(WebContext wc)
         {
             int id = wc[0];
-            var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
@@ -303,14 +302,13 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商户名称", o.name)._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("主管机构", topOrgs[o.prtid]?.name)._LI();
-                h.LI_().FIELD("保存周期", topOrgs[o.ctrid]?.name)._LI();
-                h.LI_().FIELD("信用编号", o.license)._LI();
-                h.LI_().FIELD("单位提示", o.regid)._LI();
-                h.LI_().FIELD("只供代理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.state, Entity.States)._LI();
+                h.LI_().FIELD("常用名称", o.name)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("全称", o.fully)._LI();
+                h.LI_().FIELD("省份", o.regid)._LI();
+                h.LI_().FIELD("联系地址", o.addr)._LI();
+                h.LI_().FIELD("联系电话", o.tel)._LI();
+                h.LI_().FIELD("委托办理", o.trust)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
@@ -332,38 +330,54 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("修改产源属性");
 
-                    h.LI_().TEXT("主体名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
-                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().TEXT("电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), m.trust).SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0, required: true)._LI();
+                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else
             {
-                var m = await wc.ReadObjectAsync<Org>(0);
+                const short msk = Entity.MSK_EDIT;
+                var m = await wc.ReadObjectAsync<Org>(msk);
+
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
                 dc.Execute(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, msk);
                     p.Set(id);
                 });
+
                 wc.GivePane(200); // close
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
+        [Ui("图标", icon: "github-alt"), Tool(ButtonCrop)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("删除", "确定删除此产源？"), Tool(ButtonConfirm)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop)]
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), false, 3);
+        }
+
+        [Ui("图集", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, "m" + sub, false, 3);
+        }
+
+        [Ui("删除", "确定删除此产源"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];

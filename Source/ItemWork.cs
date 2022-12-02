@@ -50,11 +50,16 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    else h.PIC("/void.webp", "uk-width-1-5");
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });
@@ -81,11 +86,16 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    else h.PIC("/void.webp", "uk-width-1-5");
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });

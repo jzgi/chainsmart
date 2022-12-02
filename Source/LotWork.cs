@@ -115,11 +115,15 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });
@@ -141,11 +145,15 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });
@@ -211,66 +219,6 @@ namespace ChainMart
 
                 wc.GivePane(200); // close dialog
             }
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产品批次核验", "品控")]
-    public class ZonlyLotWork : LotWork<ZonlyLotVarWork>
-    {
-        [Ui("产品批次", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 1 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-
-                if (arr == null)
-                {
-                    h.ALERT("尚无待验证批次");
-                    return;
-                }
-
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
-                    h._A();
-                });
-            });
-        }
-
-        [Ui(icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = ").T(Lot.STU_OKED).T(" ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                if (arr == null) return;
-                h.GRID(arr, o =>
-                {
-                    h.HEADER_("uk-card-header").AVAR(o.Key, o.name)._HEADER();
-                    h.SECTION_("uk-card-body");
-                    h._SECTION();
-                    h.FOOTER_("uk-card-footer").VARTOOLSET(o.Key)._FOOTER();
-                });
-            });
         }
     }
 }

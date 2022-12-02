@@ -52,6 +52,26 @@ function qtyFill(trg, min, max, step) {
     }
 }
 
+function call_smsvcode(trig) {
+    var method = trig.formMethod;
+    var action = trig.formAction || trig.name;
+    var form = trig.form;
+    // validate form before submit
+    if (!form || !form.reportValidity()) return false;
+
+    // get prepare id
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function (e) {
+        form.vcode.required = true; // set voce as required
+        form.smsvcode.disabled = true;
+    };
+    xhr.open(method, action, false);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(serialize(trig.form));
+
+    return false;
+}
+
 function call_buy(trig) {
     var method = 'post';
     var action = trig.formAction || trig.name;
@@ -487,7 +507,7 @@ function crop(trig, siz, title, subs) {
             wid = 400; hei = 240;
             break;
         case 3:
-            wid = 800; hei = 640;
+            wid = 800; hei = 800;
             break;
     }
     var html = '<div id="dialog" class="uk-modal-tall uk-animation-slide-bottom ' + trigc + '" uk-modal>';

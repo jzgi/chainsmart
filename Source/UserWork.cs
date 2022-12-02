@@ -34,21 +34,21 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+
                     if (o.icon)
-                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
                     else
-                    {
                         h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name).SP().SUB(o.tel);
-                    h.P(User.Orgly[o.orgly]);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().SPAN2(o.name, User.Admly[o.admly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.P(o.tel, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
-            }, false, 3);
+            }, false, 12);
         }
 
         [UserAuthorize(orgly: 3)]
@@ -165,10 +165,13 @@ namespace ChainMart
                         {
                             h.PIC("/void.webp", css: "uk-width-1-5");
                         }
-                        h.DIV_("uk-width-expand uk-padding-left");
-                        h.H5(o.name).SP().SUB(o.tel);
-                        h.P(User.Orgly[o.orgly]);
-                        h._DIV();
+
+                        h.ASIDE_();
+                        h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                        h.P(o.tel, "uk-width-expand");
+                        h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                        h._ASIDE();
+
                         h._A();
                     });
                 }, false, 30);
@@ -195,18 +198,18 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+
                     if (o.icon)
-                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
                     else
-                    {
                         h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name).SP().SUB(o.tel);
-                    h.P(User.Orgly[o.orgly]);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().SPAN2(o.name, User.Orgly[o.orgly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.P(o.tel, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             }, false, 6);
@@ -286,18 +289,18 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+
                     if (o.icon)
-                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
                     else
-                    {
                         h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tel, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
 
@@ -328,22 +331,24 @@ namespace ChainMart
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    h.TABLE(arr, o =>
+                    h.MAINGRID(arr, o =>
                     {
-                        h.TDCHECK(o.id);
-                        h.TD(o.name);
-                        h.TD(o.tel);
-                        h.TD_("uk-width-tiny").T(User.Typs[o.typ])._TD();
-                        h.TD_("uk-width-medium uk-visible@s");
-                        if (o.orgid > 0)
-                        {
-                            // h.T(orgs[o.orgid].name).SP().T(Orgly[o.orgly]);
-                        }
-                        h._TD();
-                        h.TD("⊘", @if: o.IsDisabled);
-                        h.TDFORM(() => h.VARTOOLSET(o.Key));
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+
+                        if (o.icon)
+                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        else
+                            h.PIC("/void.webp", css: "uk-width-1-5");
+
+                        h.ASIDE_();
+                        h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                        h.P(o.tel, "uk-width-expand");
+                        h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                        h._ASIDE();
+
+                        h._A();
                     });
-                }, false, 3);
+                }, false, 30);
             }
         }
 

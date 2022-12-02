@@ -50,6 +50,22 @@ span {
     align-items: center;
 }
 
+aside {
+    padding-left: 8px;
+    height: 100%;
+    width: 100%;
+    min-width: 1px;
+    box-sizing: border-box;
+    flex: 1;
+    box-sizing: border-box;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+
 a:active,
 a.uk-active,
 a:hover {
@@ -1861,7 +1877,7 @@ button.uk-button-secondary {
     align-items: center;
     font-weight: normal;
     align-items: center;
-    min-height: 2rem;
+    padding: 4px;
 }
 
 .uk-button-link:hover,

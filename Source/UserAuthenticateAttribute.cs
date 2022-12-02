@@ -78,7 +78,7 @@ namespace ChainMart
                 }
                 else // redirect to WeiXin auth
                 {
-                    WeixinUtility.GiveRedirectWeiXinAuthorize(wc, WeixinUtility.url, false);
+                    WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
                     return false;
                 }
             }

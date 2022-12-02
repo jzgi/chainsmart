@@ -10,7 +10,7 @@ namespace ChainMart
         public static readonly Org Empty = new Org();
 
         public const short
-            TYP_VTL = 0b00000, // virtual
+            TYP_BRD = 0b00000, // virtual
             TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
@@ -41,19 +41,23 @@ namespace ChainMart
         // center id, only if market or shop
         internal int ctrid;
 
-        internal string license;
+        internal string alias;
+        internal string fully; // full name
         internal short regid;
         internal string addr;
         internal double x;
         internal double y;
-
         internal string tel;
-        internal string link;
         internal bool trust;
+        internal string link;
 
-        internal string alias;
         internal bool icon;
         internal JObj specs;
+        internal bool pic;
+        internal bool m1;
+        internal bool m2;
+        internal bool m3;
+        internal bool m4;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -71,19 +75,24 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(alias), ref alias);
-                s.Get(nameof(license), ref license);
+                s.Get(nameof(fully), ref fully);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
                 s.Get(nameof(x), ref x);
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(tel), ref tel);
-                s.Get(nameof(link), ref link);
                 s.Get(nameof(trust), ref trust);
+                s.Get(nameof(link), ref link);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(specs), ref specs);
+                s.Get(nameof(pic), ref pic);
+                s.Get(nameof(m1), ref m1);
+                s.Get(nameof(m2), ref m2);
+                s.Get(nameof(m3), ref m3);
+                s.Get(nameof(m4), ref m4);
             }
         }
 
@@ -106,19 +115,18 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(alias), alias);
-                s.Put(nameof(license), license);
+                s.Put(nameof(fully), fully);
                 if (regid > 0) s.Put(nameof(regid), regid);
                 else s.PutNull(nameof(regid));
                 s.Put(nameof(addr), addr);
                 s.Put(nameof(x), x);
                 s.Put(nameof(y), y);
+                s.Put(nameof(trust), trust);
                 s.Put(nameof(tel), tel);
                 s.Put(nameof(link), link);
-                s.Put(nameof(trust), trust);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(icon), icon);
                 s.Put(nameof(specs), specs);
             }
         }
@@ -134,7 +142,7 @@ namespace ChainMart
 
         public bool IsParentCapable => (typ & TYP_PRT) == TYP_PRT;
 
-        public bool IsLink => typ == TYP_VTL;
+        public bool IsBrand => typ == TYP_BRD;
 
         public bool IsZone => typ == TYP_ZON;
 

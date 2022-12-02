@@ -1,16 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
 using WebUtility = System.Net.WebUtility;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ChainMart
 {
@@ -26,7 +25,6 @@ namespace ChainMart
         static readonly WebClient SmsApi = new WebClient("https://sms.tencentcloudapi.com");
 
         public static readonly string
-            url,
             appid,
             appsecret;
 
@@ -41,13 +39,13 @@ namespace ChainMart
         public static readonly string
             smssecretid,
             smssecretkey,
-            smssmssdkappid;
+            smssdkappid,
+            smstemplateid;
 
 
         static WeixinUtility()
         {
             var s = Prog;
-            s.Get(nameof(url), ref url);
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);
             s.Get(nameof(mchid), ref mchid);
@@ -58,7 +56,8 @@ namespace ChainMart
 
             s.Get(nameof(smssecretid), ref smssecretid);
             s.Get(nameof(smssecretkey), ref smssecretkey);
-            s.Get(nameof(smssmssdkappid), ref smssmssdkappid);
+            s.Get(nameof(smssdkappid), ref smssdkappid);
+            s.Get(nameof(smstemplateid), ref smstemplateid);
 
             try
             {
@@ -129,18 +128,18 @@ namespace ChainMart
         {
             var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
             string nickname = jo[nameof(nickname)];
-            return new User { im = openid, name = nickname };
+            return new User {im = openid, name = nickname};
         }
 
 
         static readonly DateTime EPOCH = new DateTime(1970, 1, 1);
 
-        public static long NowMillis => (long)(DateTime.Now - EPOCH).TotalMilliseconds;
+        public static long NowMillis => (long) (DateTime.Now - EPOCH).TotalMilliseconds;
 
         public static IContent BuildPrepayContent(string prepay_id)
         {
             string package = "prepay_id=" + prepay_id;
-            string timeStamp = ((int)(DateTime.Now - EPOCH).TotalSeconds).ToString();
+            string timeStamp = ((int) (DateTime.Now - EPOCH).TotalSeconds).ToString();
             var jo = new JObj
             {
                 {"appId", appid},
@@ -307,7 +306,7 @@ namespace ChainMart
             if (sign != Sign(xe, "sign")) return false;
 
             int total_fee = xe.Child(nameof(total_fee)); // in cent
-            total = ((decimal)total_fee) / 100;
+            total = ((decimal) total_fee) / 100;
             out_trade_no = xe.Child(nameof(out_trade_no)); // 商户订单号
             return true;
         }
@@ -465,7 +464,7 @@ namespace ChainMart
 
                     bdr.Add(mbr.Key);
                     bdr.Add('=');
-                    bdr.Add((string)mbr);
+                    bdr.Add((string) mbr);
                 }
 
                 bdr.Add("&key=");
@@ -477,101 +476,89 @@ namespace ChainMart
                 bdr.Clear();
             }
         }
+
         public static string Sign(string signKey, string secret)
         {
-            string signRet = string.Empty;
-            using (HMACSHA1 mac = new HMACSHA1(Encoding.UTF8.GetBytes(signKey)))
-            {
-                byte[] hash = mac.ComputeHash(Encoding.UTF8.GetBytes(secret));
-                signRet = Convert.ToBase64String(hash);
-            }
-            return signRet;
+            using var mac = new HMACSHA1(Encoding.UTF8.GetBytes(signKey));
+
+            byte[] hash = mac.ComputeHash(Encoding.UTF8.GetBytes(secret));
+
+            return Convert.ToBase64String(hash);
         }
-        public static string MakeSignPlainText(SortedDictionary<string, string> requestParams, string requestMethod, string requestHost, string requestPath)
+
+        public static string MakeSignPlainText(SortedDictionary<string, string> dict, string host)
         {
-            string retStr = "";
-            retStr += requestMethod;
-            retStr += requestHost;
-            retStr += requestPath;
-            retStr += "?";
-            string v = "";
-            foreach (string key in requestParams.Keys)
+            var url = new StringBuilder("GET ").Append(host).Append("/?");
+            int num = 0;
+            foreach (var (k, v) in dict)
             {
-                v += string.Format("{0}={1}&", key, requestParams[key]);
+                if (num > 0)
+                {
+                    url.Append('&');
+                }
+                url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
+                num++;
             }
-            retStr += v.TrimEnd('&');
-            return retStr;
+            return url.ToString();
         }
 
         public static long ToTimestamp()
         {
-            DateTime startTime = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             DateTime nowTime = DateTime.UtcNow;
-            long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+            long unixTime = (long) Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
             return unixTime;
-
         }
 
-        public static string GetSmsRequestV1(string[] PhoneNumberSet, string SignName, string TemplateId, string[] TemplateParamSet)
+        public static async Task<string> SendSmsAsync(string[] phoneNumberSet, string signName, params string[] templateParamSet)
         {
+            const string endpoint = "sms.tencentcloudapi.com";
 
-            string SECRET_ID = "AKIDOaWBZhZAUYNwEH3YlhOoxpRmqdAQP7Xi";
-            string SECRET_KEY = "vZw3yd18yXpqa4GBqEblfIelbCWZMt86";
-            string SmsSdkAppId = "1400730065";
-            string endpoint = "sms.tencentcloudapi.com";
-            string region = "ap-guangzhou";
-            string action = "SendSms";
-            string version = "2021-01-11";
             long timestamp = ToTimestamp() / 1000;
-            string requestTimestamp = timestamp.ToString();
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            param.Add("Action", action);
-            // param.Add("Nonce", "11886");
-            param.Add("Nonce", Math.Abs(new Random().Next()).ToString());
-
-            param.Add("Timestamp", requestTimestamp.ToString());
-            param.Add("Version", version);
-
-            param.Add("SecretId", SECRET_ID);
-            param.Add("Region", region);
-            // 实际调用需要更新参数，这里仅作为演示签名验证通过的例子
-            param.Add("SmsSdkAppId", SmsSdkAppId);
-            param.Add("SignName", SignName);
-            param.Add("TemplateId", TemplateId);
-            for (var i = 0; i < TemplateParamSet.Length; i++)
+            var dict = new Dictionary<string, string>
             {
-                param.Add("TemplateParamSet." + i, TemplateParamSet[i]);
-            }
-            for (var i = 0; i < PhoneNumberSet.Length; i++)
+                {"Action", "SendSms"},
+                {"Nonce", "11886"},
+                {"Timestamp", timestamp.ToString()},
+                {"Version", "2021-01-11"},
+                {"SecretId", smssecretid},
+                {"Region", "ap-guangzhou"},
+                {"SmsSdkAppId", smssdkappid},
+                {"SignName", signName},
+                {"TemplateId", smstemplateid}
+            };
+
+            for (var i = 0; i < templateParamSet.Length; i++)
             {
-                param.Add("PhoneNumberSet." + i, PhoneNumberSet[i]);
+                dict.Add("TemplateParamSet." + i, templateParamSet[i]);
             }
-            // param.Add("SessionContext", "test");
-            SortedDictionary<string, string> headers = new SortedDictionary<string, string>(param, StringComparer.Ordinal);
-            string sigInParam = MakeSignPlainText(headers, "GET", endpoint, "/");
-            string sigOutParam = Sign(SECRET_KEY, sigInParam);
-            Console.WriteLine(sigOutParam); // 输出签名
+            for (var i = 0; i < phoneNumberSet.Length; i++)
+            {
+                dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
+            }
+
+            var sorted = new SortedDictionary<string, string>(dict, StringComparer.Ordinal);
+            string sigInParam = MakeSignPlainText(sorted, endpoint);
+            string sigOutParam = Sign(smssecretkey, sigInParam);
 
             // 获取 curl 命令串
-            param.Add("Signature", sigOutParam);
-            StringBuilder urlBuilder = new StringBuilder();
-            foreach (KeyValuePair<string, string> kvp in param)
+            dict.Add("Signature", sigOutParam);
+
+            var url = new StringBuilder("https://").Append(endpoint).Append("/?");
+            int num = 0;
+            foreach (var (k, v) in dict)
             {
-                urlBuilder.Append($"{WebUtility.UrlEncode(kvp.Key)}={WebUtility.UrlEncode(kvp.Value)}&");
+                if (num > 0)
+                {
+                    url.Append('&');
+                }
+                url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
+                num++;
             }
-            string query = urlBuilder.ToString().TrimEnd('&');
 
-            string url = "https://" + endpoint + "/?" + query;
-            string curlcmd = "curl \"" + url + "\"";
-            Console.WriteLine(curlcmd);
-            return url;
-        }
-
-        public static async Task<string> SendSmsAsync(string[] PhoneNumberSet, string SignName, string TemplateId, string[] TemplateParamSet)
-        {
-            var url = GetSmsRequestV1(PhoneNumberSet, SignName, TemplateId, TemplateParamSet);
-            var (_, jo) = await SmsApi.GetAsync<JObj>(url, null);
-            Console.WriteLine(jo);
+            //
+            // send request
+            var (_, jo) = await SmsApi.GetAsync<JObj>(url.ToString(), null);
             return jo.ToString();
         }
     }

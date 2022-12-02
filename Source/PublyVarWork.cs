@@ -52,7 +52,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    if (o.IsLink)
+                    if (o.IsBrand)
                     {
                         h.A_(o.addr, css: "uk-card-body uk-flex");
                     }

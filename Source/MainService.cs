@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
@@ -62,11 +63,11 @@ namespace ChainMart
         {
             // must have openid
             string openid = wc.Cookies[nameof(openid)];
-            if (openid == null)
-            {
-                wc.Give(400); // bad request
-                return;
-            }
+            // if (openid == null)
+            // {
+            //     wc.Give(400); // bad request
+            //     return;
+            // }
 
             string name = null;
             string tel = null;
@@ -81,10 +82,10 @@ namespace ChainMart
 
                     h.FORM_();
 
-                    h.FIELDSUL_("填写新账号信息");
+                    h.FIELDSUL_("填写账号信息");
                     h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
-                    h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("获取验证码", onclick: "", css: "uk-button-small")._LI();
-                    h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4, required: true)._LI();
+                    h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return call_smsvcode(this);", css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
                     h._FIELDSUL();
 
                     h.HIDDEN(nameof(url), url);
@@ -149,6 +150,22 @@ namespace ChainMart
                     wc.GiveRedirect(url);
                 }
             }
+        }
+
+        public async Task smsvcode(WebContext wc)
+        {
+            var f = await wc.ReadAsync<Form>();
+            string tel = f[nameof(tel)];
+            string name = f[nameof(name)];
+
+            string str = tel + ":" + name;
+            // digest and transform
+            long v = 0;
+            CryptoUtility.Digest(str, ref v);
+            var code = new StringBuilder();
+            code.Append(Math.Abs((v >> 48) % 10)).Append(Math.Abs((v >> 32) % 10)).Append(Math.Abs((v >> 16) % 10)).Append(Math.Abs((v) % 10));
+
+            string ret = await WeixinUtility.SendSmsAsync(new[] {tel}, Nodality.Self.name, code.ToString());
         }
     }
 }
