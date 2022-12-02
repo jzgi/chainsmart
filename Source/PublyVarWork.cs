@@ -62,19 +62,16 @@ namespace ChainMart
                     }
 
                     if (o.icon)
-                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
-                    }
                     else
-                    {
                         h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
 
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.ShopName);
-                    h.P(o.tip);
-                    h._DIV();
-
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.ShopName).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+                    
                     h._A();
                 });
             }, shared: sec > 0, 900, mkt.name); // shared cache when no personal data

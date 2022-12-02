@@ -488,7 +488,7 @@ namespace ChainMart
 
         public static string MakeSignPlainText(SortedDictionary<string, string> dict, string host)
         {
-            var url = new StringBuilder("GET ").Append(host).Append("/?");
+            var url = new StringBuilder("GET").Append(host).Append("/?");
             int num = 0;
             foreach (var (k, v) in dict)
             {
@@ -496,7 +496,7 @@ namespace ChainMart
                 {
                     url.Append('&');
                 }
-                url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
+                url.Append(k).Append('=').Append(v);
                 num++;
             }
             return url.ToString();
@@ -544,7 +544,7 @@ namespace ChainMart
             // 获取 curl 命令串
             dict.Add("Signature", sigOutParam);
 
-            var url = new StringBuilder("https://").Append(endpoint).Append("/?");
+            var url = new StringBuilder("/?");
             int num = 0;
             foreach (var (k, v) in dict)
             {

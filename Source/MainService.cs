@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
@@ -75,62 +74,34 @@ namespace ChainMart
             string url;
             if (wc.IsGet) // GET
             {
-                wc.GivePage(200, h =>
-                {
-                    url = wc.Query[nameof(url)];
-                    url = HttpUtility.UrlDecode(url);
+                url = wc.Query[nameof(url)];
+                url = HttpUtility.UrlDecode(url);
 
-                    h.FORM_();
-
-                    h.FIELDSUL_("填写账号信息");
-                    h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
-                    h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return call_smsvcode(this);", css: "uk-button-secondary")._LI();
-                    h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
-                    h._FIELDSUL();
-
-                    h.HIDDEN(nameof(url), url);
-
-                    h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
-                    h._FORM();
-                }, title: "注册新用户");
+                RenderPage(wc);
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
                 url = f[nameof(url)];
+                name = f[nameof(name)];
+                tel = f[nameof(tel)];
                 vcode = f[nameof(vcode)];
+
                 var m = new User
                 {
                     typ = 0,
                     state = STA_NORMAL,
-                    name = f[nameof(name)],
-                    tel = f[nameof(tel)],
+                    name = name,
+                    tel = tel,
                     im = openid,
                     created = DateTime.Now,
-                    creator = f[nameof(name)]
+                    creator = name
                 };
 
                 // check
-                if (vcode != CryptoUtility.GetVCode(m.tel, Application.Secret))
+                if (vcode != CryptoUtility.ComputeVCode(m.tel))
                 {
-                    wc.GivePage(200, h =>
-                    {
-                        url = wc.Query[nameof(url)];
-                        url = HttpUtility.UrlDecode(url);
-
-                        h.FORM_();
-
-                        h.FIELDSUL_("填写新账号信息");
-                        h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
-                        h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("获取验证码", onclick: "", css: "uk-button-small")._LI();
-                        h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4, required: true)._LI();
-                        h._FIELDSUL();
-
-                        h.HIDDEN(nameof(url), url);
-
-                        h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
-                        h._FORM();
-                    }, title: "注册新用户");
+                    RenderPage(wc, error: true);
                 }
                 else
                 {
@@ -150,6 +121,33 @@ namespace ChainMart
                     wc.GiveRedirect(url);
                 }
             }
+
+            void RenderPage(WebContext webctx, bool error = false)
+            {
+                webctx.GivePage(200, h =>
+                {
+                    h.FORM_();
+
+                    h.FIELDSUL_("填写账号信息");
+                    h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
+                    h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return call_smsvcode(this);", css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
+                    h._FIELDSUL();
+
+                    h.HIDDEN(nameof(url), url);
+
+                    if (error)
+                    {
+                        h.ALERT("验证码错误", css: "uk-alert-danger");
+                    }
+                    else
+                    {
+                        h.BOTTOMBAR_().BUTTON("注册", nameof(signup))._BOTTOMBAR();
+                    }
+
+                    h._FORM();
+                }, title: "注册新用户");
+            }
         }
 
         public async Task smsvcode(WebContext wc)
@@ -158,14 +156,9 @@ namespace ChainMart
             string tel = f[nameof(tel)];
             string name = f[nameof(name)];
 
-            string str = tel + ":" + name;
-            // digest and transform
-            long v = 0;
-            CryptoUtility.Digest(str, ref v);
-            var code = new StringBuilder();
-            code.Append(Math.Abs((v >> 48) % 10)).Append(Math.Abs((v >> 32) % 10)).Append(Math.Abs((v >> 16) % 10)).Append(Math.Abs((v) % 10));
+            string vcode = CryptoUtility.ComputeVCode(tel);
 
-            string ret = await WeixinUtility.SendSmsAsync(new[] {tel}, Nodality.Self.name, code.ToString());
+            string ret = await WeixinUtility.SendSmsAsync(new[] {tel}, Nodality.Self.name, vcode.ToString());
         }
     }
 }

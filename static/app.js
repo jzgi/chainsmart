@@ -53,6 +53,8 @@ function qtyFill(trg, min, max, step) {
 }
 
 function call_smsvcode(trig) {
+    trig.disabled = true;
+    
     var method = trig.formMethod;
     var action = trig.formAction || trig.name;
     var form = trig.form;
@@ -63,7 +65,6 @@ function call_smsvcode(trig) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         form.vcode.required = true; // set voce as required
-        form.smsvcode.disabled = true;
     };
     xhr.open(method, action, false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

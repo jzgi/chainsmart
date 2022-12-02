@@ -1756,7 +1756,6 @@ button.uk-button-secondary {
 .uk-button-secondary:hover,
 .uk-button-secondary:focus {
     color: #f59604;
-    background-color: #ededed;
 }
 
 .uk-button-secondary:active,
@@ -2435,13 +2434,11 @@ main.uk-grid>li {
 }
 
 .uk-alert-warning {
-    background: #fff6ee;
     color: #faa05a;
 }
 
 .uk-alert-danger {
-    background: #fef4f6;
-    color: #f59604;
+    color: #ff3b30;
 }
 
 .uk-alert h1,
