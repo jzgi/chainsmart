@@ -190,6 +190,10 @@ namespace ChainMart
                 h.LI_().FIELD2("保存天数", o.duration, "天")._LI();
                 h.LI_().FIELD("基地", o.origin)._LI();
                 h.LI_().FIELD("规格参数", o.specs)._LI();
+                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status);
@@ -248,7 +252,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
-        [Ui("图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
@@ -283,21 +287,22 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
-        [Ui("发布", "批准投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 2 WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
+            dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
-        [Ui("撤回", "停止发布以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
             int itemid = wc[0];
