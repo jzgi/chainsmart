@@ -9,8 +9,15 @@ namespace ChainMart
     {
         public static readonly Lot Empty = new Lot();
 
-
         public new static readonly Map<short, string> States = new Map<short, string>
+        {
+            {STA_VOID, null},
+            {STA_NORMAL, "运行"},
+            {STA_TOP, "停用"},
+        };
+
+
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STU_CREATED, "新创建"},
             {STU_ADAPTED, "已提交"},
@@ -49,15 +56,14 @@ namespace ChainMart
             }
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
                 s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(mktids), ref mktids);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
@@ -70,8 +76,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(adapted), ref adapted);
-                s.Get(nameof(adapter), ref adapter);
+                s.Get(nameof(mktids), ref mktids);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
             }
@@ -87,15 +92,14 @@ namespace ChainMart
             }
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Put(nameof(itemid), itemid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
                 s.Put(nameof(zonid), zonid);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(mktids), mktids);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(itemid), itemid);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
@@ -108,8 +112,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(adapted), adapted);
-                s.Put(nameof(adapter), adapter);
+                s.Put(nameof(mktids), mktids);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
             }
