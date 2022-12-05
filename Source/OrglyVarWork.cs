@@ -71,7 +71,7 @@ namespace ChainMart
 
                 h._TOPBARXL();
 
-                h.TASKBOARD();
+                h.WORKBOARD();
             }, false, 3);
         }
     }
@@ -142,7 +142,7 @@ namespace ChainMart
 
                 h._TOPBARXL();
 
-                h.TASKBOARD();
+                h.WORKBOARD();
             }, false, 3);
         }
     }

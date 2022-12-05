@@ -48,10 +48,10 @@ namespace ChainMart
                 s.Get(nameof(store), ref store);
                 s.Get(nameof(duration), ref duration);
                 s.Get(nameof(origin), ref origin);
+                s.Get(nameof(specs), ref specs);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(specs), ref specs);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
@@ -79,9 +79,6 @@ namespace ChainMart
                 s.Put(nameof(store), store);
                 s.Put(nameof(duration), duration);
                 s.Put(nameof(origin), origin);
-            }
-            if ((msk & MSK_LATER) == MSK_LATER)
-            {
                 s.Put(nameof(specs), specs);
             }
         }

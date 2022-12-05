@@ -71,7 +71,7 @@ namespace ChainMart
                     h.P(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
-                    
+
                     h._A();
                 });
             }, shared: sec > 0, 900, mkt.name); // shared cache when no personal data

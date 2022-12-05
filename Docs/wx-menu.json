@@ -3,7 +3,7 @@
     {
       "type": "view",
       "name": "逛市场",
-      "url": "http://jx.zhnt-x.com:80/"
+      "url": "http://jx.zhnt-x.com/"
     },
     {
       "name": "我的",
@@ -21,17 +21,17 @@
         {
           "type": "view",
           "name": "关于",
-          "url": "http://jx.zhnt-x.com:80/about.html"
+          "url": "http://jx.zhnt-x.com/about.html"
         },
         {
           "type": "view",
           "name": "我的消费",
-          "url": "http://jx.zhnt-x.com:80/my//buy/"
+          "url": "http://jx.zhnt-x.com/my//buy/"
         },
         {
           "type": "view",
           "name": "我的个人账号",
-          "url": "http://jx.zhnt-x.com:80/my//"
+          "url": "http://jx.zhnt-x.com/my//"
         }
       ]
     }

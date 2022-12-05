@@ -34,7 +34,7 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND state > 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status > 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -52,7 +52,7 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    else h.PIC("/void.webp", "uk-width-1-5");
+                    else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
@@ -119,17 +119,19 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("填写产品资料");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
+                    h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
             }
             else // POST
             {
-                const short msk = MSK_BORN;
+                const short msk = MSK_BORN | MSK_EDIT;
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Item
                 {

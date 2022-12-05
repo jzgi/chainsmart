@@ -48,7 +48,8 @@ namespace ChainMart
             if (orgtyp == 0 || orgly == 0) return true;
 
             // check access to org
-            var org = wc[typeof(OrglyVarWork)].As<Org>();
+            var seg = wc[typeof(OrglyVarWork)];
+            var org = seg.As<Org>();
 
             // var and task group check
             if ((org.typ & orgtyp) != orgtyp)
@@ -67,7 +68,7 @@ namespace ChainMart
             }
 
             // is delegate to the org
-            if (prin.CanDelegate(org))
+            if (!seg.IsImplicit && prin.CanDelegate(org))
             {
                 if (!mock)
                 {

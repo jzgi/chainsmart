@@ -90,7 +90,7 @@ namespace ChainMart
 
 
     [UserAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品批次管理", "产源")]
+    [Ui("批次管理", "产源")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
         [Ui("当前批次", group: 1), Tool(Anchor)]

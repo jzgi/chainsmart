@@ -185,18 +185,19 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名称", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, cats)._LI();
-                h.LI_().FIELD("说明", o.tip)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
-                h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("只供代理", o.origin)._LI();
-                h.LI_().FIELD("状态", o.state, States)._LI();
+                h.LI_().FIELD2("保存天数", o.duration, "天")._LI();
+                h.LI_().FIELD("基地", o.origin)._LI();
+                h.LI_().FIELD("规格参数", o.specs)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true);
+                h.TOOLBAR(bottom: true, status: o.status);
             });
         }
 
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int itemid = wc[0];
@@ -213,18 +214,21 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("修改产品资料");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
+                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
+                    h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
                 });
             }
             else // POST
             {
+                const short msk = MSK_EDIT;
                 // populate 
-                var m = await wc.ReadObjectAsync(0, new Item
+                var m = await wc.ReadObjectAsync(msk, new Item
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -232,10 +236,10 @@ namespace ChainMart
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE products ")._SET_(Item.Empty, 0).T(" WHERE id = @1 AND srcid = @2");
+                dc.Sql("UPDATE items ")._SET_(Item.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
                 await dc.ExecuteAsync(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, msk);
                     p.Set(itemid).Set(src.id);
                 });
 
@@ -243,25 +247,29 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "happy"), Tool(ButtonCrop)]
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui("图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [Ui("照片", icon: "image"), Tool(ButtonCrop)]
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [Ui("多图", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui("图集", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
-        [Ui("删除", "确认删除此产品？", icon: "trash"), Tool(ButtonConfirm)]
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui(tip: "确认删除此产品？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
             int itemid = wc[0];
@@ -269,6 +277,34 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("DELETE FROM items WHERE id = @1 AND srcid = @1");
+            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
+
+            wc.GivePane(200);
+        }
+
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
+        [Ui("发布", "批准投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task ok(WebContext wc)
+        {
+            int itemid = wc[0];
+            var src = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET status = 2 WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
+
+            wc.GivePane(200);
+        }
+
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
+        [Ui("撤回", "停止发布以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        public async Task unok(WebContext wc)
+        {
+            int itemid = wc[0];
+            var src = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET status = 2 WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
 
             wc.GivePane(200);

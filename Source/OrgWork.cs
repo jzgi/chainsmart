@@ -42,9 +42,9 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    if (o.icon) 
+                    if (o.icon)
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
-                    else 
+                    else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
@@ -147,10 +147,10 @@ namespace ChainMart
     }
 
     [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("产源管理", "供区")]
+    [Ui("下属产源", "供区")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("本供区产源"), Tool(Anchor)]
+        [Ui("下属产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -183,7 +183,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [Ui("新建", "新建产源", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建下属产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -231,13 +231,13 @@ namespace ChainMart
 
     [UserAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("商户管理", "市场")]
+    [Ui("下属商户", "市场")]
 #else
-    [Ui("商户管理", "驿站")]
+    [Ui("下属商户", "驿站")]
 #endif
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        [Ui("最新商户", group: 1), Tool(Anchor)]
+        [Ui("下属商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var mkt = wc[-1].As<Org>();
@@ -349,7 +349,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_MKT, User.ROLE_OPN)]
-        [Ui("新建", "新建商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        [Ui("新建", "新建下属商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mkt = wc[-1].As<Org>();

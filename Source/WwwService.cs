@@ -98,7 +98,7 @@ namespace ChainMart
                 }
                 else if (we.Code == 403)
                 {
-                    wc.GivePage(403, m => { m.ALERT("此功能需要系统授权后才能使用。", head: "⛔ 没有访问权限"); }, title: "权限保护");
+                    wc.GivePage(403, m => { m.ALERT(head: "⛔ 没有访问权限", p: "此功能需要系统授权后才能使用。"); }, title: "权限保护");
                 }
             }
             else

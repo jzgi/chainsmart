@@ -37,7 +37,7 @@ namespace ChainMart
                 h._DIV();
                 h._TOPBARXL();
 
-                h.TASKBOARD();
+                h.WORKBOARD();
 
                 h.DIV_("uk-margin-large-top uk-flex uk-flex-center").PIC("/qrcode.jpg", css: "uk-width-large")._DIV();
                 h.H4_("uk-flex uk-flex-center").T("推荐中惠农通")._H4();
