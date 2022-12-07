@@ -45,6 +45,7 @@ namespace ChainMart
 
         internal int nstart;
         internal int nend;
+        internal bool pic;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -79,6 +80,7 @@ namespace ChainMart
                 s.Get(nameof(mktids), ref mktids);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
+                s.Get(nameof(pic), ref pic);
             }
         }
 
@@ -115,6 +117,7 @@ namespace ChainMart
                 s.Put(nameof(mktids), mktids);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
+                s.Put(nameof(pic), pic);
             }
         }
 

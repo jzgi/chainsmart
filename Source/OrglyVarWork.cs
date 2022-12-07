@@ -58,7 +58,7 @@ namespace ChainMart
                 h.TOPBARXL_();
                 if (org.icon)
                 {
-                    h.PIC("/org/", org.id, "/icon/", circle: true, css: "uk-width-medium");
+                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
                 }
                 else
                 {

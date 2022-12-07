@@ -53,13 +53,14 @@ function qtyFill(trg, min, max, step) {
 }
 
 function call_smsvcode(trig) {
-    trig.disabled = true;
     
     var method = trig.formMethod;
     var action = trig.formAction || trig.name;
     var form = trig.form;
     // validate form before submit
     if (!form || !form.reportValidity()) return false;
+
+    trig.disabled = true;
 
     // get prepare id
     var xhr = new XMLHttpRequest();
@@ -508,7 +509,7 @@ function crop(trig, siz, title, subs) {
             wid = 400; hei = 240;
             break;
         case 3:
-            wid = 800; hei = 800;
+            wid = 900; hei = 640;
             break;
     }
     var html = '<div id="dialog" class="uk-modal-tall uk-animation-slide-bottom ' + trigc + '" uk-modal>';
@@ -530,7 +531,10 @@ function crop(trig, siz, title, subs) {
         html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
     html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
-    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">确定</button>';
+    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
+    if (subs > 0) {
+        html += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
+    }
     html += '</div>'; // control group
     // html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
     html += '</footer>'; // header
@@ -540,7 +544,9 @@ function crop(trig, siz, title, subs) {
 
     var e = appendTo(document.body, html);
     UIkit.modal(e).show();
+
     bind($('#imgbnd'), subs == 0 ? action : action + '-1', wid, hei);
+
     e.addEventListener('hidden', function () {
         var dlg = $('#dialog');
         if (dlg) {
@@ -558,10 +564,13 @@ var croppie;
 
 function bind(el, url, wid, hei) {
     if (croppie) {
+        var viewport = croppie.options.viewport;
+        // swap width & height
+        if (!wid) wid = viewport.height;
+        if (!hei) hei = viewport.width;
         croppie.destroy();
     }
     croppie = new Croppie(el, {
-        url: url,
         viewport: {
             width: wid,
             height: hei
@@ -569,7 +578,10 @@ function bind(el, url, wid, hei) {
         enforceBoundary: true,
         showZoomer: false
     });
-    croppie.setZoom(1);
+    
+    croppie.bind(url).then(function(){
+        croppie.setZoom(1); // itially native size
+    });
 }
 
 function upload(el, url, close) {
@@ -587,9 +599,12 @@ function upload(el, url, close) {
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, false);
         xhr.onload = function (e) {
-            if (xhr.status == 200 && close) {
-                var div = ancestorOf(el, 'uk-modal');
-                UIkit.modal(div).hide();
+            if (xhr.status == 200 || xhr.status == 201) {
+                alert("上传成功");
+                if (close) {
+                    var div = ancestorOf(el, 'uk-modal');
+                    UIkit.modal(div).hide();
+                }
             }
         };
         xhr.send(dat);

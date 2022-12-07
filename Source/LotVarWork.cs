@@ -24,22 +24,57 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品", items[o.itemid].ToString())._LI();
-                h.LI_().FIELD("投放市场", topOrgs[o.ctrid].name)._LI();
+                h.LI_().FIELD("产品名", items[o.itemid].ToString())._LI();
+                h.LI_().FIELD("投放市场", topOrgs[o.ctrid].alias)._LI();
                 if (o.IsSelfTransport)
                 {
                     h.LI_().FIELD("自运到市场", o.mktids, topOrgs)._LI();
                 }
                 h.LI_().FIELD("状态", States[o.state])._LI();
+                h.LI_().FIELD("单位", o.unit).FIELD("每包装含有", o.unitx)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订量", o.min).FIELD("限订量", o.max)._LI();
                 h.LI_().FIELD("递增量", o.step)._LI();
                 h.LI_().FIELD("总量", o.cap).FIELD("剩余量", o.remain)._LI();
-                h.LI_().FIELD("起始号", o.nstart).FIELD("截至号", o.nend)._LI();
+                h.LI_().FIELD("起始溯源号", o.nstart).FIELD("截至溯源号", o.nend)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status);
             });
+        }
+
+        protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
+        {
+            int id = wc[0];
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").T(col).T(" FROM lots WHERE id = @1");
+                if (dc.QueryTop(p => p.Set(id)))
+                {
+                    dc.Let(out byte[] bytes);
+                    if (bytes == null) wc.Give(204); // no content 
+                    else wc.Give(200, new WebStaticContent(bytes), shared, maxage);
+                }
+                else
+                {
+                    wc.Give(404, null, shared, maxage); // not found
+                }
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                ArraySegment<byte> img = f[nameof(img)];
+
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE lots SET ").T(col).T(" = @1 WHERE id = @2");
+                if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
+                {
+                    wc.Give(200); // ok
+                }
+                else
+                    wc.Give(500); // internal server error
+            }
         }
     }
 
@@ -49,7 +84,7 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
+        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
@@ -66,13 +101,13 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("批次信息");
+                    h.FORM_().FIELDSUL_("产品批次信息");
 
-                    h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().SELECT("产品名", nameof(o.itemid), o.itemid, items, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
                     h.LI_().SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k > 0, required: true)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含量", nameof(o.unitx), o.unitx, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含有", nameof(o.unitx), o.unitx, min: 1, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
@@ -85,7 +120,7 @@ namespace ChainMart
             {
                 const short msk = MSK_EDIT;
                 // populate 
-                var o = await wc.ReadObjectAsync(0, new Lot
+                var o = await wc.ReadObjectAsync(msk, instance: new Lot
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name,
@@ -108,8 +143,16 @@ namespace ChainMart
             }
         }
 
-        [Ui("自运", "指定自运达市场", icon: "rss"), Tool(ButtonShow)]
-        public async Task direct(WebContext wc)
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
+        [Ui("资料", icon: "file-text"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3)]
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), false, 12);
+        }
+
+
+        [Ui("自达", icon: "git-branch"), Tool(ButtonShow)]
+        public async Task free(WebContext wc)
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
@@ -126,9 +169,9 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("设置为自运批次，指定目标市场");
+                    h.FORM_().FIELDSUL_("自行货运到达市场（不经过品控中心）");
 
-                    h.LI_().SELECT("自运达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 12, required: true)._LI();
+                    h.LI_().SELECT("自达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 12, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -156,35 +199,6 @@ namespace ChainMart
             using var dc = NewDbContext();
             dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(lotid).Set(org.id));
-
-            wc.GivePane(200);
-        }
-
-        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-        public async Task ok(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
-
-            wc.GivePane(200);
-        }
-
-        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
-        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
-        public async Task unok(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 2 WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);
         }
@@ -228,7 +242,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
-        [Ui("贴标", "打印本批次的贴标", icon: "print"), Tool(ButtonShow)]
+        [Ui("标签", "打印标签", icon: "thumbnails"), Tool(ButtonShow)]
         public async Task label(WebContext wc)
         {
             int lotid = wc[0];
@@ -255,6 +269,35 @@ namespace ChainMart
                 }
                 h._UL();
             });
+        }
+
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task ok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+            wc.GivePane(200);
+        }
+
+        [UserAuthorize(Org.TYP_SRC, User.ROLE_RVW)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        public async Task unok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE lots SET status = 2 WHERE id = @1 AND srcid = @2")._MEET_(wc);
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+            wc.GivePane(200);
         }
     }
 }

@@ -212,7 +212,7 @@ namespace ChainMart
                 h.LI_().FIELD("信用代号", o.link)._LI();
                 h.LI_().FIELD("场区", o.regid, regs)._LI();
                 h.LI_().FIELD("档位号", o.addr)._LI();
-                h.LI_().FIELD("委托代办", o.trust)._LI();
+                h.LI_().FIELD("委托办理", o.trust)._LI();
                 h.LI_().FIELD("状态", o.state, States)._LI();
                 h._UL();
 
@@ -241,7 +241,7 @@ namespace ChainMart
                         h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                         h.LI_().TEXT("工商登记号", nameof(m.link), m.link, max: 20)._LI();
-                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
+                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
 #if ZHNT
                         h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
 #else
@@ -345,10 +345,10 @@ namespace ChainMart
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
-                    h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), m.trust)._LI();
+                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -389,7 +389,7 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
-        [Ui("图集", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);

@@ -148,7 +148,7 @@ namespace ChainMart
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [Ui("图集", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 6)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
@@ -259,14 +259,14 @@ namespace ChainMart
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
         [UserAuthorize(Org.TYP_SRC, User.ROLE_OPN)]
-        [Ui("图集", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 6)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
@@ -290,13 +290,13 @@ namespace ChainMart
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
-            int id = wc[0];
+            int itemid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(itemid).Set(org.id));
 
             wc.GivePane(200);
         }

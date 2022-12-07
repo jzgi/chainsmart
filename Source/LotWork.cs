@@ -190,7 +190,7 @@ namespace ChainMart
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
                     h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含量", nameof(o.unitx), o.unitx, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含有", nameof(o.unitx), o.unitx, min: 1, required: true)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();

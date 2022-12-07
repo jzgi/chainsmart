@@ -91,11 +91,11 @@ namespace ChainMart
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(trust), ref trust);
                 s.Get(nameof(link), ref link);
+                s.Get(nameof(specs), ref specs);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(icon), ref icon);
-                s.Get(nameof(specs), ref specs);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
                 s.Get(nameof(m2), ref m2);
@@ -132,10 +132,16 @@ namespace ChainMart
                 s.Put(nameof(trust), trust);
                 s.Put(nameof(tel), tel);
                 s.Put(nameof(link), link);
+                s.Put(nameof(specs), specs);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(specs), specs);
+                s.Put(nameof(icon), icon);
+                s.Put(nameof(pic), pic);
+                s.Put(nameof(m1), m1);
+                s.Put(nameof(m2), m2);
+                s.Put(nameof(m3), m3);
+                s.Put(nameof(m4), m4);
             }
         }
 
@@ -177,7 +183,7 @@ namespace ChainMart
         public override string ToString() => name;
 
         public string Name => name;
-        
+
         public string Alias => alias;
     }
 }

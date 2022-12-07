@@ -247,7 +247,7 @@ namespace ChainMart
                             {
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
-                            h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROLE_MGT, required: true)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
