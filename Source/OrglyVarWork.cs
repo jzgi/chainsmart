@@ -56,18 +56,21 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
-                if (org.icon)
+
+                bool astack = wc.Query[nameof(astack)];
+                if (astack)
                 {
-                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
-                }
-                else
-                {
-                    h.PIC(org.IsZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
+                    h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
                 }
 
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.HEADER_().H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
-                h._DIV();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+                h.H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true);
+                h._HEADER();
+
+                if (org.icon)
+                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
+                else
+                    h.PIC(org.IsZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 
@@ -127,18 +130,21 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
-                if (org.icon)
+
+                bool astack = wc.Query[nameof(astack)];
+                if (astack)
                 {
-                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
-                }
-                else
-                {
-                    h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
+                    h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
                 }
 
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.HEADER_().H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
-                h._DIV();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+                h.H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true);
+                h._HEADER();
+
+                if (org.icon)
+                    h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
+                else
+                    h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 

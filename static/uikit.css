@@ -254,7 +254,7 @@ h4,
 
 h5,
 .uk-h5 {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
     font-weight: 500;
     margin: 0;
     color: #000;
@@ -262,7 +262,7 @@ h5,
 
 h6,
 .uk-h6 {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     margin: 0;
     color: #333;
 }
@@ -3720,6 +3720,12 @@ ul.uk-nav-sub {
     padding: 0;
     border: none;
     background: none;
+    border: none;
+}
+
+.uk-modal-tall:active
+.uk-modal-tall:focus {
+    border: none;
 }
 
 .uk-modal-tall .uk-modal-dialog {
@@ -3828,31 +3834,13 @@ ul.uk-nav-sub {
     font-weight: bold;
 }
 
-[class*='uk-modal-close-'] {
+.uk-modal-xclose {
     position: absolute;
     z-index: 1010;
-    right: 10px;
-}
-
-[class*='uk-modal-close-']:first-child+* {
-    margin-top: 0;
-}
-
-.uk-modal-close-default {
+    right: 8px;
     color: #f59604;
 }
 
-.uk-modal-close-outside {
-    top: 0;
-    /* 1 */
-    right: -5px;
-    transform: translate(0, -100%);
-    color: #000;
-}
-
-.uk-modal-close-outside:hover {
-    color: #000;
-}
 
 @media (min-width: 960px) {
 

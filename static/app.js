@@ -53,7 +53,7 @@ function qtyFill(trg, min, max, step) {
 }
 
 function call_smsvcode(trig) {
-    
+
     var method = trig.formMethod;
     var action = trig.formAction || trig.name;
     var form = trig.form;
@@ -384,6 +384,9 @@ function dialog(trig, mode, pick, title) {
             qstr = serialize(trig.form);
             if (!qstr) return false;
         }
+        if (mode == ASTACK) {
+            qstr = qstr ? qstr + '&astack=true' : 'astack=true';
+        }
         if (qstr) {
             src = action.indexOf('?') == -1 ? action + '?' + qstr : action + '&' + qstr;
         } else {
@@ -405,7 +408,7 @@ function dialog(trig, mode, pick, title) {
     var div = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
     if (mode == PROMPT || mode == OPEN || mode == CROP) {
-        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-close-default" type="button" uk-close></button></header>';
+        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button id="closebtn" class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
     if (mode == PROMPT) {
@@ -424,8 +427,17 @@ function dialog(trig, mode, pick, title) {
                 history.go(-1);
             }
             document.body.removeChild(dlg);
+
+            if (window.parent != window) {
+                var btn = window.parent.$('#closebtn');
+                if (btn) {
+                    btn.disabled = false;
+                }
+            }
+
         }
         popstate = false; // adjust the flag
+
     }, false);
 
     // history
@@ -436,6 +448,14 @@ function dialog(trig, mode, pick, title) {
             UIkit.modal(dlg).hide();
         }
     });
+
+    // disable the close button before showing dialog
+    if (window.parent != window) {
+        var btn = window.parent.$('#closebtn');
+        if (btn) {
+            btn.disabled = true;
+        }
+    }
 
     var srcurl = new URL(src);
 
@@ -578,8 +598,8 @@ function bind(el, url, wid, hei) {
         enforceBoundary: true,
         showZoomer: false
     });
-    
-    croppie.bind(url).then(function(){
+
+    croppie.bind(url).then(function () {
         croppie.setZoom(1); // itially native size
     });
 }

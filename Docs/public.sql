@@ -22,14 +22,14 @@ create table entities
     typ smallint not null,
     state smallint,
     name varchar(12) not null,
-    tip varchar(30),
+    tip varchar(40),
     created timestamp(0),
     creator varchar(10),
     adapted timestamp(0),
     adapter varchar(10),
     oked timestamp(0),
     oker varchar(10),
-    status smallint
+    status smallint default 1 not null
 );
 
 alter table entities owner to postgres;
@@ -111,8 +111,8 @@ create table orgs
     ctrid integer
         constraint orgs_ctrid_fk
             references orgs,
-    license varchar(20),
-    trust boolean,
+    alias varchar(12),
+    fully varchar(20),
     regid smallint
         constraint orgs_regid_fk
             references regs,
@@ -120,10 +120,15 @@ create table orgs
     x double precision,
     y double precision,
     tel varchar(11),
-    link varchar(100),
-    alias varchar(12),
+    trust boolean,
+    link varchar(12),
+    specs jsonb,
     icon bytea,
-    specs jsonb
+    pic bytea,
+    m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea
 )
     inherits (entities);
 
@@ -337,6 +342,8 @@ create table items
     m2 bytea,
     m3 bytea,
     m4 bytea,
+    m5 bytea,
+    m6 bytea,
     constraint items_typ_fk
         foreign key (typ) references cats
 )
@@ -436,35 +443,7 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.srcid,
-       o.origin,
-       o.store,
-       o.duration,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
-FROM items o;
-
-alter table items_vw owner to postgres;
-
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, license, trust, regid, addr, x, y, tel, link, alias, specs, icon) as
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, alias, fully, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -489,10 +468,80 @@ SELECT o.typ,
        o.trust,
        o.link,
        o.specs,
-       o.icon IS NOT NULL AS icon
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
 FROM orgs o;
 
 alter table orgs_vw owner to postgres;
+
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, price, "off", min, step, max, cap, remain, nstart, nend, pic) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.srcid,
+       o.srcname,
+       o.zonid,
+       o.ctrid,
+       o.mktids,
+       o.itemid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.step,
+       o.max,
+       o.cap,
+       o.remain,
+       o.nstart,
+       o.nend,
+       o.pic IS NOT NULL AS pic
+FROM lots o;
+
+alter table lots_vw owner to postgres;
+
+create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.srcid,
+       o.origin,
+       o.store,
+       o.duration,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4,
+       o.m5 IS NOT NULL   AS m5,
+       o.m6 IS NOT NULL   AS m6
+FROM items o;
+
+alter table items_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
