@@ -363,11 +363,16 @@ const
     SCRIPT = 1, CONFIRM = 2, CROP = 4, PROMPT = 8, SHOW = 16, OPEN = 32, ASTACK = 64;
 
 function dialog(trig, mode, pick, title) {
-    var stylec =
+    var modalc =
         mode == PROMPT ? ' uk-modal-small' :
-            mode == OPEN ? ' uk-modal-large uk-animation-scale-up' :
-                mode == SHOW || mode == CROP ? ' uk-modal-tall uk-animation-slide-bottom' :
-                    mode == ASTACK ? ' uk-modal-full uk-animation-slide-right' : null;
+            mode == OPEN ? ' uk-modal-large' :
+                mode == SHOW || mode == CROP ? ' uk-modal-tall' :
+                    mode == ASTACK ? ' uk-modal-full' : null;
+    var annimc =
+        mode == PROMPT ? '' :
+            mode == OPEN ? ' uk-animation-scale-up' :
+                mode == SHOW || mode == CROP ? ' uk-animation-slide-bottom' :
+                    mode == ASTACK ? ' uk-animation-slide-right' : null;
     // keep the trigger info
     var formid = trig.form ? trig.form.id : '';
     var tag = trig.tagName;
@@ -405,8 +410,8 @@ function dialog(trig, mode, pick, title) {
 
     title = title || '';
 
-    var div = '<div id="dialog" class="' + stylec + trigc + '" uk-modal>';
-    div += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
+    var div = '<div id="dialog" class="' + modalc + trigc + '" uk-modal>';
+    div += '<section class="uk-modal-dialog uk-margin-auto-vertical' + annimc + '">';
     if (mode == PROMPT || mode == OPEN || mode == CROP) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button id="closebtn" class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
     }
@@ -529,7 +534,7 @@ function crop(trig, siz, title, subs) {
             wid = 400; hei = 240;
             break;
         case 3:
-            wid = 900; hei = 640;
+            wid = 640; hei = 900;
             break;
     }
     var html = '<div id="dialog" class="uk-modal-tall uk-animation-slide-bottom ' + trigc + '" uk-modal>';

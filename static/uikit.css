@@ -348,7 +348,7 @@ pre {
     tab-size: 4;
     overflow: auto;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 3px;
     background: #fff;
 }
@@ -491,7 +491,7 @@ a.uk-link-reset:hover,
 
 .uk-heading-divider {
     padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-heading-bullet {
@@ -506,7 +506,7 @@ a.uk-link-reset:hover,
     vertical-align: middle;
     height: 0.9em;
     margin-right: 10px;
-    border-left: 5px solid #ddd;
+    border-left: 5px solid #ccc;
 }
 
 .uk-heading-line {
@@ -527,7 +527,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: calc(50% - (1px / 2));
     width: 2000px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-heading-line> ::before {
@@ -563,7 +563,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: 50%;
     max-width: calc(50% - (50px / 2));
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-divider-icon::before {
@@ -644,8 +644,8 @@ form .uk-list-divider>li:nth-child(n+2) {
 }
 
 .uk-list-striped>li:nth-of-type(odd) {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-list-striped>li:nth-of-type(odd) {
@@ -928,7 +928,7 @@ button.uk-icon:not(:disabled) {
 
 .uk-icon-link:disabled,
 .uk-icon-link.uk-inactive {
-    color: #ddd;
+    color: #ccc;
 }
 
 .uk-icon-button {
@@ -1035,7 +1035,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #dddccc;
+    border: 1px solid #cccccc;
 }
 
 /* Firefox */
@@ -1047,7 +1047,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #dddccc;
+    border: 1px solid #cccccc;
 }
 
 /* Edge */
@@ -1065,7 +1065,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #dddccc;
+    border: 1px solid #cccccc;
 }
 
 /* Edge + IE11 */
@@ -1128,7 +1128,7 @@ button.uk-icon:not(:disabled) {
     min-height: 6rem;
     padding: 6px;
     background-color: inherit;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 }
 
 .uk-top-bar.uk-modal-title {
@@ -1468,26 +1468,26 @@ select.uk-form-width-xsmall {
 }
 
 .uk-radio:disabled {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 .uk-checkbox:disabled {
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 
 .uk-radio:disabled:checked {
-    background-color: #ddd;
+    background-color: #ccc;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Ccircle%20fill%3D%22%23999%22%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
 .uk-checkbox:disabled:checked {
-    background-color: #ddd;
+    background-color: #ccc;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23999%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
 }
 
 .uk-checkbox:disabled:indeterminate {
-    background-color: #ddd;
+    background-color: #ccc;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23999%22%20x%3D%223%22%20y%3D%228%22%20width%3D%2210%22%20height%3D%221%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
@@ -1750,7 +1750,7 @@ a.uk-button-primary.uk-active {
 
 button.uk-button-secondary {
     border-radius: 12px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
 }
 
 .uk-button-secondary:hover,
@@ -1794,15 +1794,15 @@ button.uk-button-secondary {
 .uk-button-primary:disabled,
 .uk-button-primary.disabled {
     background-color: transparent;
-    color: #999 !important;
-    border-color: #ddd !important;
+    color: #ccc !important;
+    border-color: #ccc !important;
 }
 
 .uk-button-secondary:disabled,
 .uk-button-secondary.disabled {
     background-color: transparent;
-    color: #ddd;
-    border-color: #ddd;
+    color: #ccc;
+    border-color: #ccc;
 }
 
 .uk-button-danger:disabled,
@@ -3610,7 +3610,7 @@ ul.uk-nav-sub {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     padding: 16px 16px;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.125);
     opacity: 0;
     transition: opacity 0.15s linear;
 }
@@ -3718,9 +3718,6 @@ ul.uk-nav-sub {
 
 .uk-modal-tall {
     padding: 0;
-    border: none;
-    background: none;
-    border: none;
 }
 
 .uk-modal-tall:active
@@ -3734,7 +3731,7 @@ ul.uk-nav-sub {
     margin: 0;
     width: 100%;
     max-width: 100%;
-    height: 85%;
+    height: 80%;
     min-height: 400px;
     transform: translateY(0);
     display: flex;
@@ -5471,13 +5468,13 @@ ul.uk-nav-sub {
 }
 
 .uk-text-warning {
-    color: chocolate !important;
+    color: #f59604 !important;
     background-color: #fff;
     font-weight: normal;
 }
 
 .uk-text-danger {
-    color: #f59604 !important;
+    color: #ff3b30 !important;
     font-weight: normal;
 }
 

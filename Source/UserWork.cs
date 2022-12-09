@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -215,41 +216,63 @@ namespace ChainMart
             }, false, 6);
         }
 
-        [UserAuthorize(0, User.ROLE_MGT)]
+        [UserAuthorize(1, User.ROLE_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
+            var org = wc[-1].As<Org>();
+
+            string password = null;
+
             short orgly = 0;
             if (wc.IsGet)
             {
                 string tel = wc.Query[nameof(tel)];
+
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("指定用户");
+                    h.FORM_();
+
+                    h.FIELDSUL_("指定用户");
                     h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
+
                     if (cmd == 1) // search user
                     {
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
+
                         if (o != null)
                         {
                             h.FIELDSUL_();
+
                             h.HIDDEN(nameof(o.id), o.id);
+                            h.HIDDEN(nameof(o.tel), o.tel);
+
                             h.LI_().FIELD("用户姓名", o.name)._LI();
+                            var yes = true;
                             if (o.orgid > 0)
                             {
-                                var org = GrabObject<int, Org>(o.orgid);
-                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                                var exorg = GrabObject<int, Org>(o.orgid);
+                                h.LI_().FIELD2("现有权限", exorg.name, User.Orgly[o.orgly])._LI();
+                                if (exorg.id != o.orgid)
+                                {
+                                    h.LI_().FIELD(null, "必须先取消现有权限", css: "uk-text-danger")._LI();
+                                    yes = false;
+                                }
                             }
                             else
                             {
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
-                            h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROLE_MGT, required: true)._LI();
+                            if (yes)
+                            {
+                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROLE_MGT, required: true)._LI();
+                                h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
+                            }
                             h._FIELDSUL();
-                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
                         }
                     }
                     h._FORM();
@@ -257,12 +280,16 @@ namespace ChainMart
             }
             else // POST
             {
-                short orgid = wc[-1];
                 var f = await wc.ReadAsync<Form>();
+
                 int id = f[nameof(id)];
+                string tel = f[nameof(tel)];
                 orgly = f[nameof(orgly)];
+                password = f[nameof(password)];
+                string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
+
                 using var dc = NewDbContext();
-                dc.Execute("UPDATE users SET orgid = @1, orgly = @2 WHERE id = @3", p => p.Set(orgid).Set(orgly).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET orgid = @1, orgly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(orgly).Set(credential).Set(id));
 
                 wc.GivePane(200); // ok
             }
