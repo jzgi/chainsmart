@@ -139,7 +139,7 @@ namespace ChainMart
                     any++;
                 }
 
-                if (prin.IsOrgly)
+                if (prin.HasOrgly)
                 {
                     var org = GrabObject<int, Org>(prin.orgid);
                     h.LI_().SPAN2(org.name, User.Orgly[prin.orgly], brace: true)._LI();
@@ -227,7 +227,7 @@ namespace ChainMart
 
     public class OrglyAccessVarWork : UserVarWork
     {
-        [UserAuthorize(1, User.ROLE_MGT)]
+        [UserAuthorize(1, User.ROL_MGT)]
         [Ui("删除", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {

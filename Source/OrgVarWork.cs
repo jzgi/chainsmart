@@ -175,7 +175,7 @@ namespace ChainMart
                 int id = (await wc.ReadAsync<Form>())[nameof(id)];
 
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET orgid = @1, orgly = ").T(User.ROLE_MGT).T(" WHERE id = @2");
+                dc.Sql("UPDATE users SET orgid = @1, orgly = ").T(User.ROL_MGT).T(" WHERE id = @2");
                 await dc.ExecuteAsync(p => p.Set(orgid).Set(id));
 
                 wc.GivePane(200); // ok
@@ -284,7 +284,7 @@ namespace ChainMart
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_MKT, User.ROLE_RVW)]
+        [UserAuthorize(Org.TYP_MKT, User.ROL_RVW)]
         [Ui("审核", icon: "check"), Tool(ButtonShow)]
         public async Task approve(WebContext wc)
         {
@@ -324,7 +324,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(tip: "修改产源资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
@@ -337,18 +337,19 @@ namespace ChainMart
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
                 var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("修改产源属性");
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -374,28 +375,28 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(tip: "确定删除此产源", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
@@ -408,7 +409,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -423,7 +424,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

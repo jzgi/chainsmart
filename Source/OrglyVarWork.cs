@@ -68,14 +68,16 @@ namespace ChainMart
                 h._HEADER();
 
                 if (org.icon)
+                {
                     h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
+                }
                 else
                     h.PIC(org.IsZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 
                 h.WORKBOARD();
-            }, false, 3);
+            }, false, 720, title: org.name);
         }
     }
 
@@ -142,14 +144,16 @@ namespace ChainMart
                 h._HEADER();
 
                 if (org.icon)
+                {
                     h.PIC_("uk-width-1-5", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
+                }
                 else
                     h.PIC("/mkt.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 
                 h.WORKBOARD();
-            }, false, 3);
+            }, false, 720, title: org.name);
         }
     }
 }

@@ -325,35 +325,6 @@ function setactive(evt, el) {
     }
 }
 
-// indicator of updates
-var stale;
-var popstate;
-
-function closeUp(reload) {
-    // set flags on parents
-    if (reload) {
-        var win = window;
-        while (win != win.parent) {
-            win.stale = true;
-            win = win.parent;
-        };
-    }
-
-    var dlg = $('#dialog');
-    if (dlg) {
-
-        popstate = false;
-        UIkit.modal(dlg).hide();
-        // // if reload
-        if (stale && reload) {
-            history.go(-2);
-            // NOTE trick for page reload
-            var ifr = window.frameElement;
-            window.location.replace(ifr.src);
-        }
-    }
-}
-
 
 // build and open a reveal dialog
 // trig - a button, input_button or anchor element
@@ -413,7 +384,7 @@ function dialog(trig, mode, pick, title) {
     var div = '<div id="dialog" class="' + modalc + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical' + annimc + '">';
     if (mode == PROMPT || mode == OPEN || mode == CROP) {
-        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button id="closebtn" class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
+        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
     if (mode == PROMPT) {
@@ -423,54 +394,60 @@ function dialog(trig, mode, pick, title) {
 
     var e = appendTo(document.body, div);
 
-    // destroy in DOM on close
-    e.addEventListener('hidden', function (evt) {
-
-        var dlg = $('#dialog');
-        if (dlg) {
-            if (!popstate) { // not by back button
-                history.go(-1);
-            }
-            document.body.removeChild(dlg);
-
-            if (window.parent != window) {
-                var btn = window.parent.$('#closebtn');
-                if (btn) {
-                    btn.disabled = false;
-                }
-            }
-
-        }
-        popstate = false; // adjust the flag
-
-    }, false);
-
     // history
     window.addEventListener('popstate', (evt) => {
+
         var dlg = $('#dialog');
         if (dlg) {
-            popstate = true; // triggered by back button
-            UIkit.modal(dlg).hide();
+
+            UIkit.modal(dlg).hide().then(function () {
+
+                // // if reload
+                if (modified && reload) {
+                    history.go(-2);
+                    // NOTE trick for page reload
+                    var ifr = window.frameElement;
+                    window.location.replace(ifr.src);
+                } else {
+                    document.body.removeChild(dlg);
+                }
+            });
+
         }
     });
 
-    // disable the close button before showing dialog
-    if (window.parent != window) {
-        var btn = window.parent.$('#closebtn');
-        if (btn) {
-            btn.disabled = true;
-        }
-    }
-
-    var srcurl = new URL(src);
-
-    history.pushState(null, null, srcurl.hostname == location.hostname ? action : 'extern');
-
     // display the modal
-    UIkit.modal(e).show();
+    UIkit.modal(e).show().then(function () {
+        // add to navigation history
+        if (mode != SHOW) { // show has no history
+            var srcurl = new URL(src);
+            history.pushState(null, null, srcurl.hostname == location.hostname ? action : 'extern');
+        }
+    });
 
     return false;
 }
+
+// need of refresh
+var modified;
+
+function closeUp(reload) {
+    // set flags on parents
+    if (reload) {
+        var win = window;
+        while (win != win.parent) {
+            win.stale = true;
+            win = win.parent;
+        };
+    }
+
+    var dlg = $('#dialog');
+    if (dlg) {
+
+        history.go(-1);
+    }
+}
+
 
 // when clicked on the OK button
 function ok(okbtn, mode, formid, tag, action, method) {
@@ -537,8 +514,8 @@ function crop(trig, siz, title, subs) {
             wid = 640; hei = 900;
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-tall uk-animation-slide-bottom ' + trigc + '" uk-modal>';
-    html += '<section class="uk-modal-dialog uk-margin-auto-vertical">';
+    var html = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
+    html += '<section class="uk-modal-dialog uk-margin-auto-vertical uk-animation-slide-bottom">';
 
     html += '<main id="imgbnd" class="uk-modal-body uk-padding-remove">'; // body
     html += '<input type="file" id="imginp" style="display: none;" onchange="bind(this.parentNode, window.URL.createObjectURL(this.files[0]),' + wid + ',' + hei + ');">';

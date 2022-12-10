@@ -15,30 +15,36 @@ namespace ChainMart
         };
 
         public const short
-            ROLE_ = 0b000001, // common
-            ROLE_OPN = 0b000011, // operation
-            ROLE_LOG = 0b000101, // logistic
-            ROLE_FIN = 0b001001, // finance
-            ROLE_MGT = 0b011111, // management
-            ROLE_RVW = 0b100001, // review
-            ROLE_DEL = ROLE_MGT | ROLE_RVW; // delegate
+            ROL_ = 0b000001, // common
+            ROL_OPN = 0b0000011, // operation
+            ROL_LOG = 0b0000101, // logistic
+            ROL_FIN = 0b0001001, // finance
+            ROL_MGT = 0b0011111, // management
+            ROL_RVW = 0b0100001, // review
+            ROL_REP = 0b1000000; // represent
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
-            {ROLE_OPN, "业务"},
-            {ROLE_FIN, "财务"},
-            {ROLE_MGT, "管理"},
-            {ROLE_RVW, "审核"},
+            {ROL_OPN, "业务"},
+            {ROL_LOG, "物流"},
+            {ROL_FIN, "财务"},
+            {ROL_MGT, "管理"},
+            {ROL_RVW, "审核"},
         };
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
             {0, null},
-            {ROLE_OPN, "业务"},
-            {ROLE_LOG, "物流"},
-            {ROLE_MGT, "管理"},
-            {ROLE_RVW, "审核"},
-            {ROLE_DEL, "代办"},
+            {ROL_OPN, "业务"},
+            {ROL_LOG, "物流"},
+            {ROL_FIN, "财务"},
+            {ROL_MGT, "管理"},
+            {ROL_RVW, "审核"},
+            {ROL_REP | ROL_OPN, "代业务"},
+            {ROL_REP | ROL_LOG, "代物流"},
+            {ROL_REP | ROL_FIN, "代财务"},
+            {ROL_REP | ROL_MGT, "代管理"},
+            {ROL_REP | ROL_MGT | ROL_RVW, "代管审"},
         };
 
         internal int id;
@@ -103,15 +109,13 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool CanDelegate(Org targ) =>
-            (targ.prtid == 0 && (admly & ROLE_MGT) == ROLE_MGT) ||
-            (targ.prtid == orgid && (orgly & ROLE_MGT) == ROLE_MGT);
-
         public bool IsProfessional => typ >= 1;
 
-        public bool IsAdmly => admly > 0;
+        public bool HasAdmly => admly > 0;
 
-        public bool IsOrgly => orgly > 0 && orgid > 0;
+        public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
+
+        public bool HasOrgly => orgly > 0 && orgid > 0;
 
         public override string ToString() => name;
     }

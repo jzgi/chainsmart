@@ -9,6 +9,7 @@ namespace ChainMart
     {
         public static readonly Org Empty = new Org();
 
+
         public const short
             TYP_BRD = 0b00000, // virtual
             TYP_PRT = 0b01000, // parent
@@ -31,6 +32,15 @@ namespace ChainMart
             {TYP_ZON, "供区"},
             {TYP_CTR, "控运"},
         };
+
+        public new static readonly Map<short, string> States = new Map<short, string>
+        {
+            {STA_VOID, "停业"},
+            {STA_EASY, "放假"},
+            {STA_NORMAL, "正常"},
+            {STA_TOP, "火爆"},
+        };
+
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
@@ -177,6 +187,8 @@ namespace ChainMart
         public bool HasXy => IsMarket || IsSource || IsCenter;
 
         public bool HasCtr => IsOfShop;
+
+        public bool IsTopOrg => prtid == 0;
 
         public string ShopName => IsMarket ? alias : name;
 

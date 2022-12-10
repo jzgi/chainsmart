@@ -58,7 +58,7 @@ namespace ChainMart
             }
 
             // is of any role for the org
-            if (org.id == prin.orgid && (org.typ & orgtyp) == orgtyp && (prin.orgly & orgly) == orgly)
+            if (org.id == prin.orgid && (prin.orgly & orgly) == orgly)
             {
                 if (!mock)
                 {
@@ -67,14 +67,42 @@ namespace ChainMart
                 return true;
             }
 
-            // is delegate to the org
-            if (!seg.IsImplicit && prin.CanDelegate(org))
+            // is rep for the org
+            if (!seg.IsImplicit)
             {
-                if (!mock)
+                short reply = 0;
+
+                if (org.IsTopOrg && prin.admly > 0)
                 {
-                    wc.Role = org.trust ? User.ROLE_DEL : User.ROLE_RVW;
+                    if (org.trust)
+                    {
+                        reply = (short) (User.ROL_REP | prin.admly);
+                    }
+                    if (prin.HasAdmlyMgt)
+                    {
+                        reply |= User.ROL_RVW;
+                    }
                 }
-                return true;
+                else if (!org.IsTopOrg && prin.orgid == org.prtid && prin.HasOrgly)
+                {
+                    if (org.trust)
+                    {
+                        reply = (short) (User.ROL_REP | prin.orgly);
+                    }
+                    if (prin.HasAdmlyMgt)
+                    {
+                        reply |= User.ROL_RVW;
+                    }
+                }
+
+                if ((reply & orgly) == orgly)
+                {
+                    if (!mock)
+                    {
+                        wc.Role = reply;
+                    }
+                    return true;
+                }
             }
 
             return false;

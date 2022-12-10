@@ -110,7 +110,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(admly: User.ROLE_MGT)]
+    [UserAuthorize(admly: User.ROL_MGT)]
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
@@ -216,7 +216,7 @@ namespace ChainMart
             }, false, 6);
         }
 
-        [UserAuthorize(1, User.ROLE_MGT)]
+        [UserAuthorize(1, User.ROL_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -268,7 +268,7 @@ namespace ChainMart
                             }
                             if (yes)
                             {
-                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROLE_MGT, required: true)._LI();
+                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
                             h._FIELDSUL();
@@ -379,7 +379,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ROLE_MGT)]
+        [UserAuthorize(Org.TYP_SHP, User.ROL_MGT)]
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

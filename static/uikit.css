@@ -935,7 +935,7 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     width: 36px;
     height: 36px;
-    margin: 6px;
+    margin: 4px;
     border: none;
     background: inherit;
     vertical-align: middle;
@@ -1126,7 +1126,7 @@ button.uk-icon:not(:disabled) {
 .uk-top-bar.uk-large {
     height: 6rem;
     min-height: 6rem;
-    padding: 6px;
+    padding: 4px;
     background-color: inherit;
     border-bottom: 1px solid #ccc;
 }
@@ -3610,7 +3610,7 @@ ul.uk-nav-sub {
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     padding: 16px 16px;
-    background: rgba(0, 0, 0, 0.125);
+    border: none;
     opacity: 0;
     transition: opacity 0.15s linear;
 }
@@ -3665,7 +3665,7 @@ ul.uk-nav-sub {
 
 .uk-modal-small {
     padding: 0;
-    border: none;
+    background: rgba(0, 0, 0, 0.125);
 }
 
 .uk-modal-small .uk-modal-dialog {
@@ -3718,6 +3718,7 @@ ul.uk-nav-sub {
 
 .uk-modal-tall {
     padding: 0;
+    background: rgba(0, 0, 0, 0.125);
 }
 
 .uk-modal-tall:active

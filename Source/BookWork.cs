@@ -75,7 +75,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_SHP, User.ROL_OPN)]
         [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -118,7 +118,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ROLE_LOG)]
+    [UserAuthorize(Org.TYP_SRC, User.ROL_LOG)]
     [Ui("供应链销售", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {

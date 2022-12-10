@@ -5,7 +5,7 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    [UserAuthorize(admly: User.ROLE_)]
+    [UserAuthorize(admly: User.ROL_)]
     [Ui("平台管理")]
     public class AdmlyWork : WebWork
     {
@@ -55,7 +55,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROLE_)]
+    [UserAuthorize(admly: User.ROL_)]
     [Ui("运行参数", "系统")]
     public class AdmlySetgWork : WebWork
     {
@@ -92,7 +92,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROLE_)]
+    [UserAuthorize(admly: User.ROL_)]
     [Ui("联盟网络管理", "系统", icon: "social")]
     public class AdmlyNodeWork : NodeWork
     {

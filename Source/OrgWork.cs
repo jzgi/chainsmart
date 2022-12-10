@@ -204,13 +204,13 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("填写产源属性");
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
+                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
@@ -348,7 +348,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [UserAuthorize(Org.TYP_MKT, User.ROLE_OPN)]
+        [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
         [Ui("新建", "新建下属商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -423,12 +423,13 @@ namespace ChainMart
     }
 
 
-    [Ui("运行参数", "常规")]
+    [Ui("基本设置", "常规")]
     public class OrglySetgWork : WebWork
     {
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+            var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
@@ -437,41 +438,52 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商户名称", o.name)._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("信用编号", o.link)._LI();
-                h.LI_().FIELD("单位提示", o.regid)._LI();
-                h.LI_().FIELD("只供代理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.state, Entity.States)._LI();
+                h.LI_().FIELD("常用名", o.name)._LI();
+                h.LI_().FIELD("工商登记名", o.fully)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("地市", regs[o.regid])._LI();
+                h.LI_().FIELD("联系地址", o.link)._LI();
+                h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
+                h.LI_().FIELD("联系电话", o.tel)._LI();
+                h.LI_().FIELD("委托代办", o.trust)._LI();
+                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);
             }, false, 900);
         }
 
-        [UserAuthorize(0, User.ROLE_MGT)]
+        [UserAuthorize(0, User.ROL_MGT)]
         [Ui("设置", "设置运行参数", icon: "cog"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             if (wc.IsGet)
             {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Org>(p => p.Set(org.id));
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXT("标语", nameof(org.tip), org.tip, max: 16)._LI();
-                    h.LI_().TEXT("地址", nameof(org.addr), org.addr, max: 16)._LI();
-                    h.LI_().SELECT("状态", nameof(org.state), org.state, Entity.States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(org.tip), org.tip, max: 40)._LI();
+                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().SELECT("工作状态", nameof(org.state), org.state, Org.States, required: true)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
                 });
             }
             else
             {
                 var o = await wc.ReadObjectAsync(instance: org); // use existing object
+
                 using var dc = NewDbContext();
                 // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, cttid = CASE WHEN @2 = 0 THEN NULL ELSE @2 END, date = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.state).Set(org.id));
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, state = @3 WHERE id = @4",
+                    p => p.Set(o.tip).Set(o.tel).Set(o.state).Set(org.id));
 
                 wc.GivePane(200);
             }
