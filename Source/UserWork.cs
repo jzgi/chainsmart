@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -52,7 +51,7 @@ namespace ChainMart
             }, false, 12);
         }
 
-        [UserAuthorize(orgly: 3)]
+        [OrglyAuthorize(orgly: 3)]
         [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -110,7 +109,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(admly: User.ROL_MGT)]
+    [AdmlyAuthorize(User.ROL_MGT)]
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
@@ -216,7 +215,7 @@ namespace ChainMart
             }, false, 6);
         }
 
-        [UserAuthorize(1, User.ROL_MGT)]
+        [OrglyAuthorize(1, User.ROL_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -296,7 +295,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SHP, 1)]
+    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("大客户", "商户")]
     public class ShplyVipWork : UserWork<ShplyVipVarWork>
     {
@@ -379,7 +378,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+        [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

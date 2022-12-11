@@ -5,7 +5,7 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("平台管理")]
     public class AdmlyWork : WebWork
     {
@@ -37,7 +37,7 @@ namespace ChainMart
         public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;
-            
+
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
@@ -55,7 +55,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("运行参数", "系统")]
     public class AdmlySetgWork : WebWork
     {
@@ -92,7 +92,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("联盟网络管理", "系统", icon: "social")]
     public class AdmlyNodeWork : NodeWork
     {

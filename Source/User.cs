@@ -20,8 +20,7 @@ namespace ChainMart
             ROL_LOG = 0b0000101, // logistic
             ROL_FIN = 0b0001001, // finance
             ROL_MGT = 0b0011111, // management
-            ROL_RVW = 0b0100001, // review
-            ROL_REP = 0b1000000; // represent
+            ROL_RVW = 0b0100001; // review
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
@@ -34,17 +33,12 @@ namespace ChainMart
 
         public static readonly Map<short, string> Orgly = new Map<short, string>
         {
-            {0, null},
             {ROL_OPN, "业务"},
             {ROL_LOG, "物流"},
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
             {ROL_RVW, "审核"},
-            {ROL_REP | ROL_OPN, "代业务"},
-            {ROL_REP | ROL_LOG, "代物流"},
-            {ROL_REP | ROL_FIN, "代财务"},
-            {ROL_REP | ROL_MGT, "代管理"},
-            {ROL_REP | ROL_MGT | ROL_RVW, "代管审"},
+            {ROL_MGT | ROL_RVW, "管理＋审核"},
         };
 
         internal int id;
@@ -116,6 +110,56 @@ namespace ChainMart
         public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
 
         public bool HasOrgly => orgly > 0 && orgid > 0;
+
+        /// <summary>
+        /// admly, orgid + orgly
+        /// </summary>
+        public (bool dive, short role ) GetRoleForOrg(Org org)
+        {
+            bool dive;
+            short role = 0;
+
+            // is of any role for the org
+            if (org.id == orgid)
+            {
+                role = orgly;
+                dive = false;
+            }
+            else //  downward role
+            {
+                if (org.IsTopOrg && admly > 0)
+                {
+                    if (org.trust)
+                    {
+                        role = admly;
+                    }
+                    if ((admly & ROL_MGT) == ROL_MGT)
+                    {
+                        role |= ROL_RVW;
+                    }
+                }
+                else if (!org.IsTopOrg && orgid == org.prtid && HasOrgly)
+                {
+                    if (org.trust)
+                    {
+                        role = orgly;
+                    }
+                    if ((orgly & ROL_MGT) == ROL_MGT)
+                    {
+                        role |= ROL_RVW;
+                    }
+                }
+                dive = true;
+            }
+
+            return (dive, role);
+        }
+
+        public bool CanDive(Org org)
+        {
+            var (_, role) = GetRoleForOrg(org);
+            return role > 0;
+        }
 
         public override string ToString() => name;
     }

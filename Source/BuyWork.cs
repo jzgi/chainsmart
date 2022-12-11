@@ -66,7 +66,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SHP, 1)]
+    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("消费外卖", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
@@ -119,7 +119,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
     [Ui("消费外卖送货", "市场")]
 #else

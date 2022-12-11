@@ -10,7 +10,7 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("供应链业务报表", "业务")]
     public class AdmlyBookRptWork : RptWork
     {
@@ -20,7 +20,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("消费业务报表", "业务")]
     public class AdmlyBuyRptWork : RptWork
     {
@@ -30,7 +30,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_ZON, User.ROL_)]
+    [OrglyAuthorize(Org.TYP_ZON, 1)]
     [Ui("综合报表", "供区")]
     public class ZonlyRptWork : RptWork
     {
@@ -54,7 +54,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
         [Ui("生成"), Tool(Modal.ButtonOpen)]
         public async Task gen(WebContext wc, int page)
         {
@@ -84,7 +84,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, User.ROL_)]
+    [OrglyAuthorize(Org.TYP_SRC, User.ROL_)]
     [Ui("业务报表", "产源")]
     public class SrclyRptWork : RptWork
     {
@@ -93,7 +93,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_DST, User.ROL_)]
+    [OrglyAuthorize(Org.TYP_DST, User.ROL_)]
     [Ui("业务报表", "品控")]
     public class CtrlyRptWork : RptWork
     {
@@ -103,7 +103,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SHP, User.ROL_)]
+    [OrglyAuthorize(Org.TYP_SHP, User.ROL_)]
     [Ui("业务报表", "商户")]
     public class ShplyRptWork : RptWork
     {

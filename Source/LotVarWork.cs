@@ -143,7 +143,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
         [Ui("资料", icon: "file-text"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3)]
         public async Task pic(WebContext wc)
         {
@@ -203,7 +203,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
         [Ui("标牌", "标牌号码绑定", icon: "tag"), Tool(ButtonShow)]
         public async Task tag(WebContext wc)
         {
@@ -241,7 +241,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
         [Ui("标签", "打印标签", icon: "thumbnails"), Tool(ButtonShow)]
         public async Task label(WebContext wc)
         {
@@ -271,7 +271,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -286,7 +286,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

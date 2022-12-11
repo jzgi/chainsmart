@@ -24,7 +24,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("产品设置", "产源")]
     public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
@@ -101,6 +101,7 @@ namespace ChainMart
             });
         }
 
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
         [Ui("新建", "新建产品", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {

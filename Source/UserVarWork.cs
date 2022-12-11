@@ -227,7 +227,7 @@ namespace ChainMart
 
     public class OrglyAccessVarWork : UserVarWork
     {
-        [UserAuthorize(1, User.ROL_MGT)]
+        [OrglyAuthorize(1, User.ROL_MGT)]
         [Ui("删除", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {

@@ -2,7 +2,7 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
-    [UserAuthorize]
+    [MyAuthorize]
     [Ui("我的个人账号")]
     public class MyVarWork : WebWork
     {
@@ -17,7 +17,6 @@ namespace ChainMart
             CreateWork<MyAccessVarWork>("access");
         }
 
-        [UserAuthorize]
         public void @default(WebContext wc)
         {
             var prin = (User) wc.Principal;

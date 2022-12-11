@@ -83,7 +83,7 @@ namespace ChainMart
     /// 
     public class PublyVarVarWork : WebWork
     {
-        [UserAuthorize]
+        [MyAuthorize]
         public async Task @default(WebContext wc)
         {
             int shpid = wc[0];
@@ -206,24 +206,24 @@ namespace ChainMart
                 dc.Let(out decimal topay);
 
                 // // call WeChatPay to prepare order there
-                // string trade_no = (buyid + "-" + topay).Replace('.', '-');
-                // var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
-                //     trade_no,
-                //     topay,
-                //     prin.im, // the payer
-                //     wc.RemoteIpAddress.ToString(),
-                //     MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
-                //     MainApp.MgtUrl
-                // );
-                // if (prepay_id != null)
-                // {
-                //     wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
-                // }
-                // else
-                // {
-                //     dc.Rollback();
-                //     wc.Give(500);
-                // }
+                string trade_no = (buyid + "-" + topay).Replace('.', '-');
+                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
+                    trade_no,
+                    topay,
+                    prin.im, // the payer
+                    wc.RemoteIpAddress.ToString(),
+                    MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
+                    MainApp.MgtUrl
+                );
+                if (prepay_id != null)
+                {
+                    wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
+                }
+                else
+                {
+                    dc.Rollback();
+                    wc.Give(500);
+                }
             }
             catch (Exception e)
             {

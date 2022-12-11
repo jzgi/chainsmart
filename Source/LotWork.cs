@@ -89,7 +89,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("产品批次管理", "产源")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {

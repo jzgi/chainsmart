@@ -20,7 +20,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("机构设置", "业务")]
+    [Ui("下级机构", "业务")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
 #if ZHNT
@@ -30,6 +30,8 @@ namespace ChainMart
 #endif
         public async Task @default(WebContext wc)
         {
+            var prin = (User) wc.Principal;
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MKT).T(" ORDER BY regid, status DESC");
             var arr = await dc.QueryAsync<Org>();
@@ -43,14 +45,16 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon)
+                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -61,9 +65,12 @@ namespace ChainMart
         [Ui("供区", group: 2), Tool(Anchor)]
         public async Task zon(WebContext wc)
         {
+            var prin = (User) wc.Principal;
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
             var arr = await dc.QueryAsync<Org>();
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 2);
@@ -72,13 +79,16 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
-                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -146,14 +156,15 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_ZON, 1)]
-    [Ui("下属产源", "供区")]
+    [OrglyAuthorize(Org.TYP_ZON, 1)]
+    [Ui("管理下级产源", "供区")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("下属产源"), Tool(Anchor)]
+        [Ui("下级产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
@@ -169,13 +180,16 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -183,7 +197,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [Ui("新建", "新建下属产源", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建下级产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -201,7 +215,7 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("填写产源属性");
+                    h.FORM_().FIELDSUL_("下级产源属性");
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
@@ -229,22 +243,23 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("下属商户", "市场")]
+    [Ui("管理下级商户", "市场")]
 #else
-    [Ui("下属商户", "驿站")]
+    [Ui("管理下级商户", "驿站")]
 #endif
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         [Ui("下属商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            var mkt = wc[-1].As<Org>();
+            var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id DESC LIMIT 20 OFFSET @2 * 20");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mkt.id).Set(page));
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
@@ -254,13 +269,16 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/-", Org.TYP_SHP, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -274,6 +292,7 @@ namespace ChainMart
         public async Task search(WebContext wc)
         {
             var regs = Grab<short, Reg>();
+            var prin = (User) wc.Principal;
 
             bool inner = wc.Query[nameof(inner)];
             short regid = 0;
@@ -302,13 +321,16 @@ namespace ChainMart
                     {
                         h.ADIALOG_(o.Key, "/-", o.typ, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                        if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        if (o.icon)
+                        {
+                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        }
                         else h.PIC("/void.webp", css: "uk-width-1-5");
 
                         h.ASIDE_();
                         h.HEADER_().H5(o.name).SPAN("")._HEADER();
                         h.P(o.tip, "uk-width-expand");
-                        h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                        h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                         h._ASIDE();
 
                         h._A();
@@ -320,11 +342,12 @@ namespace ChainMart
         [Ui(tip: "品牌链接", icon: "star", group: 4), Tool(Anchor)]
         public async Task star(WebContext wc)
         {
-            var mkt = wc[-1].As<Org>();
+            var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND typ = 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Org>(p => p.Set(mkt.id));
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -340,7 +363,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", "link")._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -348,7 +371,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
         [Ui("新建", "新建下属商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -456,7 +479,7 @@ namespace ChainMart
             }, false, 900);
         }
 
-        [UserAuthorize(0, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("设置", "设置运行参数", icon: "cog"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {

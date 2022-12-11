@@ -13,7 +13,7 @@ namespace ChainMart
     {
     }
 
-    [UserAuthorize(admly: ROL_MGT)]
+    [AdmlyAuthorize(ROL_MGT)]
     [Ui("区域设置", "业务")]
     public class AdmlyRegWork : RegWork
     {

@@ -8,7 +8,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SRC, 1)]
+    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("供区和产源操作")]
     public class ZonlyVarWork : OrglyVarWork
     {
@@ -50,7 +50,6 @@ namespace ChainMart
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var topOrgs = Grab<int, Org>();
             var prin = (User) wc.Principal;
 
             wc.GivePage(200, h =>
@@ -63,8 +62,10 @@ namespace ChainMart
                     h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
                 }
 
+                string rol = wc.Dive ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true);
+                h.H2(org.name).P2(prin.name, rol, brace: true);
                 h._HEADER();
 
                 if (org.icon)
@@ -82,7 +83,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_SHP, 1)]
+    [OrglyAuthorize(Org.TYP_SHP, 1)]
 #if ZHNT
     [Ui("市场和商户操作")]
 #else
@@ -139,8 +140,10 @@ namespace ChainMart
                     h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
                 }
 
+                string rol = wc.Dive ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name).P2(prin.name, User.Orgly[wc.Role], brace: true);
+                h.H2(org.name).P2(prin.name, rol, brace: true);
                 h._HEADER();
 
                 if (org.icon)

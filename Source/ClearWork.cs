@@ -16,7 +16,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(User.ROL_)]
     [Ui("消费结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
@@ -104,7 +104,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(admly: 1)]
+        [AdmlyAuthorize(1)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
         public async Task calc(WebContext wc)
         {
@@ -144,7 +144,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(admly: User.ROL_)]
+    [AdmlyAuthorize(1)]
     [Ui("供应链结款", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlySupplyClearVarWork>
     {
@@ -231,7 +231,7 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(admly: 1)]
+        [AdmlyAuthorize(1)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
         public async Task calc(WebContext wc)
         {
@@ -296,7 +296,7 @@ namespace ChainMart
             }, false, 3);
         }
 
-        [UserAuthorize(0, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("统计", "时段统计"), Tool(ButtonOpen)]
         public async Task sum(WebContext wc, int page)
         {

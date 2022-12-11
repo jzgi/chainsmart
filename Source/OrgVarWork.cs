@@ -1,5 +1,4 @@
 using System;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -11,9 +10,41 @@ namespace ChainMart
 {
     public abstract class OrgVarWork : WebWork
     {
+        public async Task @default(WebContext wc, int typ)
+        {
+            int id = wc[0];
+            var regs = Grab<short, Reg>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("常用名", o.name)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("工商登记名", o.fully)._LI();
+                h.LI_().FIELD("区域", o.regid, regs)._LI();
+                h.LI_().FIELD("联系地址", o.addr)._LI();
+                h.LI_().FIELD("联系电话", o.tel)._LI();
+                h.LI_().FIELD("委托办理", o.trust)._LI();
+                h.LI_().FIELD("指标参数", o.specs)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true, status: o.status);
+            });
+        }
+
+
         protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
         {
             int id = wc[0];
+
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
@@ -33,6 +64,7 @@ namespace ChainMart
             {
                 var f = await wc.ReadAsync<Form>();
                 ArraySegment<byte> img = f[nameof(img)];
+
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE orgs SET ").T(col).T(" = @1 WHERE id = @2");
                 if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
@@ -47,10 +79,6 @@ namespace ChainMart
 
     public class PublyOrgVarWork : OrgVarWork
     {
-        public async Task @default(WebContext wc)
-        {
-        }
-
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), true, 3600);
@@ -59,34 +87,6 @@ namespace ChainMart
 
     public class AdmlyOrgVarWork : OrgVarWork
     {
-        public async Task @default(WebContext wc)
-        {
-            int orgid = wc[0];
-            var prin = (User) wc.Principal;
-            var regs = Grab<short, Reg>();
-            var orgs = Grab<int, Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-            var o = await dc.QueryTopAsync<Org>(p => p.Set(orgid));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("机构名称", o.name)._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("别名", o.alias)._LI();
-                h.LI_().FIELD("信用编号", o.link)._LI();
-                h.LI_().FIELD("区域", o.regid, regs)._LI();
-                h.LI_().FIELD("地址", o.addr)._LI();
-                h.LI_().FIELD("电话", o.tel)._LI();
-                h.LI_().FIELD("状态", o.state, States)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true);
-            });
-        }
-
         [Ui("修改", "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
@@ -94,6 +94,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
             var regs = Grab<short, Reg>();
             var orgs = Grab<int, Org>();
+
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
@@ -115,18 +116,22 @@ namespace ChainMart
             }
             else // POST
             {
-                var m = await wc.ReadObjectAsync(0, new Org
+                const short msk = MSK_EDIT;
+
+                var m = await wc.ReadObjectAsync(msk, new Org
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name
                 });
+
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE orgs")._SET_(Org.Empty, 0).T(" WHERE id = @1");
-                dc.Execute(p =>
+                dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
+                await dc.ExecuteAsync(p =>
                 {
-                    m.Write(p, 0);
+                    m.Write(p, msk);
                     p.Set(id);
                 });
+
                 wc.GivePane(200); // close
             }
         }
@@ -182,44 +187,71 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github-alt"), Tool(ButtonCrop)]
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
+        }
+
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), false, 3);
+        }
+
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, "m" + sub, false, 3);
+        }
+
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task rm(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
+            await dc.ExecuteAsync(p => p.Set(id));
+
+            wc.GivePane(200);
+        }
+
+        [AdmlyAuthorize(User.ROL_MGT)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task ok(WebContext wc)
+        {
+            int id = wc[0];
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
+
+            wc.GivePane(200);
+        }
+
+        [AdmlyAuthorize(User.ROL_MGT)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        public async Task unok(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 2 WHERE id = @1");
+            await dc.ExecuteAsync(p => p.Set(id));
+
+            wc.GivePane(200);
         }
     }
 
 
     public class MktlyOrgVarWork : OrgVarWork
     {
-        public async Task @default(WebContext wc, int typ)
-        {
-            int id = wc[0];
-            var topOrgs = Grab<int, Org>();
-            var regs = Grab<short, Reg>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-            var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商户名称", o.name)._LI();
-                h.LI_().FIELD("简述", o.tip)._LI();
-                h.LI_().FIELD("所属市场", topOrgs[o.prtid]?.name)._LI();
-                h.LI_().FIELD("品控中心", topOrgs[o.ctrid]?.name)._LI();
-                h.LI_().FIELD("信用代号", o.link)._LI();
-                h.LI_().FIELD("场区", o.regid, regs)._LI();
-                h.LI_().FIELD("档位号", o.addr)._LI();
-                h.LI_().FIELD("委托办理", o.trust)._LI();
-                h.LI_().FIELD("状态", o.state, States)._LI();
-                h._UL();
-
-                h.TOOLBAR(subscript: typ, bottom: true);
-            });
-        }
-
         [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc, int typ)
         {
@@ -278,53 +310,73 @@ namespace ChainMart
             }
         }
 
-        [Ui("图标", icon: "github"), Tool(ButtonCrop)]
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_MKT, User.ROL_RVW)]
-        [Ui("审核", icon: "check"), Tool(ButtonShow)]
-        public async Task approve(WebContext wc)
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        public async Task pic(WebContext wc)
         {
+            await doimg(wc, nameof(pic), false, 3);
+        }
+
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, "m" + sub, false, 3);
+        }
+
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task rm(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
+            await dc.ExecuteAsync(p => p.Set(id));
+
+            wc.GivePane(200);
+        }
+
+        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task ok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+            wc.GivePane(200);
+        }
+
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        public async Task unok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 2 WHERE id = @1 AND prtid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+            wc.GivePane(200);
         }
     }
 
     public class ZonlyOrgVarWork : OrgVarWork
     {
-        public async Task @default(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-            var regs = Grab<short, Reg>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND prtid = @2");
-            var o = await dc.QueryTopAsync<Org>(p => p.Set(id).Set(org.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("工商登记名", o.fully)._LI();
-                h.LI_().FIELD("省份", o.regid, regs)._LI();
-                h.LI_().FIELD("联系地址", o.addr)._LI();
-                h.LI_().FIELD("联系电话", o.tel)._LI();
-                h.LI_().FIELD("委托办理", o.trust)._LI();
-                h.LI_().FIELD("指标参数", o.specs)._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true, status: o.status);
-            });
-        }
-
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(tip: "修改产源资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
@@ -375,28 +427,28 @@ namespace ChainMart
             }
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui(tip: "确定删除此产源", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
@@ -409,7 +461,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -424,7 +476,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [UserAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

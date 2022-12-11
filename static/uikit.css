@@ -348,7 +348,7 @@ pre {
     tab-size: 4;
     overflow: auto;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 3px;
     background: #fff;
 }
@@ -491,7 +491,7 @@ a.uk-link-reset:hover,
 
 .uk-heading-divider {
     padding-bottom: 10px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-heading-bullet {
@@ -506,7 +506,7 @@ a.uk-link-reset:hover,
     vertical-align: middle;
     height: 0.9em;
     margin-right: 10px;
-    border-left: 5px solid #ccc;
+    border-left: 5px solid #ddd;
 }
 
 .uk-heading-line {
@@ -527,7 +527,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: calc(50% - (1px / 2));
     width: 2000px;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-heading-line> ::before {
@@ -563,7 +563,7 @@ a.uk-link-reset:hover,
     position: absolute;
     top: 50%;
     max-width: calc(50% - (50px / 2));
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-divider-icon::before {
@@ -644,8 +644,8 @@ form .uk-list-divider>li:nth-child(n+2) {
 }
 
 .uk-list-striped>li:nth-of-type(odd) {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-list-striped>li:nth-of-type(odd) {
@@ -928,7 +928,7 @@ button.uk-icon:not(:disabled) {
 
 .uk-icon-link:disabled,
 .uk-icon-link.uk-inactive {
-    color: #ccc;
+    color: #ddd;
 }
 
 .uk-icon-button {
@@ -1035,7 +1035,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Firefox */
@@ -1047,7 +1047,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Edge */
@@ -1065,7 +1065,7 @@ button.uk-icon:not(:disabled) {
     width: 15px;
     border-radius: 500px;
     background: #fff;
-    border: 1px solid #cccccc;
+    border: 1px solid #dddccc;
 }
 
 /* Edge + IE11 */
@@ -1128,7 +1128,7 @@ button.uk-icon:not(:disabled) {
     min-height: 6rem;
     padding: 4px;
     background-color: inherit;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ddd;
 }
 
 .uk-top-bar.uk-modal-title {
@@ -1468,26 +1468,26 @@ select.uk-form-width-xsmall {
 }
 
 .uk-radio:disabled {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
 .uk-checkbox:disabled {
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
 
 .uk-radio:disabled:checked {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Ccircle%20fill%3D%22%23999%22%20cx%3D%228%22%20cy%3D%228%22%20r%3D%222%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
 .uk-checkbox:disabled:checked {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2214%22%20height%3D%2211%22%20viewBox%3D%220%200%2014%2011%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Cpolygon%20fill%3D%22%23999%22%20points%3D%2212%201%205%207.5%202%205%201%205.5%205%2010%2013%201.5%22%20%2F%3E%0A%3C%2Fsvg%3E%0A");
 }
 
 .uk-checkbox:disabled:indeterminate {
-    background-color: #ccc;
+    background-color: #ddd;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%20%20%20%20%3Crect%20fill%3D%22%23999%22%20x%3D%223%22%20y%3D%228%22%20width%3D%2210%22%20height%3D%221%22%20%2F%3E%0A%3C%2Fsvg%3E");
 }
 
@@ -1750,7 +1750,7 @@ a.uk-button-primary.uk-active {
 
 button.uk-button-secondary {
     border-radius: 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
 }
 
 .uk-button-secondary:hover,
@@ -1794,15 +1794,15 @@ button.uk-button-secondary {
 .uk-button-primary:disabled,
 .uk-button-primary.disabled {
     background-color: transparent;
-    color: #ccc !important;
-    border-color: #ccc !important;
+    color: #ddd !important;
+    border-color: #ddd !important;
 }
 
 .uk-button-secondary:disabled,
 .uk-button-secondary.disabled {
     background-color: transparent;
-    color: #ccc;
-    border-color: #ccc;
+    color: #ddd;
+    border-color: #ddd;
 }
 
 .uk-button-danger:disabled,

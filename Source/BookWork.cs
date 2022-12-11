@@ -14,7 +14,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SHP, 1)]
+    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("供应链采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
@@ -75,7 +75,7 @@ namespace ChainMart
             });
         }
 
-        [UserAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
         [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
@@ -118,7 +118,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_SRC, User.ROL_LOG)]
+    [OrglyAuthorize(Org.TYP_SRC, User.ROL_LOG)]
     [Ui("供应链销售", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
@@ -179,7 +179,7 @@ namespace ChainMart
     }
 
 
-    [UserAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
     [Ui("供应链采购收货", "市场")]
 #else
@@ -277,7 +277,7 @@ namespace ChainMart
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR, 1)]
     [Ui("分拣派运管理", "品控", icon: "sign-out")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
