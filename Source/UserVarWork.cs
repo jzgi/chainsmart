@@ -212,7 +212,8 @@ namespace ChainMart
 
     public class AdmlyAccessVarWork : UserVarWork
     {
-        [Ui("删除", "确认删除此权限？", icon: "trash"), Tool(ButtonConfirm)]
+        [AdmlyAuthorize(User.ROL_MGT)]
+        [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
             short uid = wc[0];
@@ -228,7 +229,7 @@ namespace ChainMart
     public class OrglyAccessVarWork : UserVarWork
     {
         [OrglyAuthorize(1, User.ROL_MGT)]
-        [Ui("删除", icon: "trash"), Tool(ButtonConfirm)]
+        [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
             short orgid = wc[-2];
@@ -244,8 +245,8 @@ namespace ChainMart
 
     public class ShplyVipVarWork : UserVarWork
     {
-        [Ui("✎", "修改"), Tool(ButtonOpen)]
-        public async Task upd(WebContext wc)
+        [Ui(tip: "修改", icon: "pencil"), Tool(ButtonOpen)]
+        public async Task edit(WebContext wc)
         {
             short typ;
             int id = wc[0];

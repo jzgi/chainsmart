@@ -38,7 +38,7 @@ namespace ChainMart
             {STA_VOID, "停业"},
             {STA_EASY, "放假"},
             {STA_NORMAL, "正常"},
-            {STA_TOP, "火爆"},
+            {STA_TOP, "满负"},
         };
 
 
@@ -187,6 +187,8 @@ namespace ChainMart
         public bool HasXy => IsMarket || IsSource || IsCenter;
 
         public bool HasCtr => IsOfShop;
+
+        public bool IsAliasable => IsCenter;
 
         public bool IsTopOrg => prtid == 0;
 

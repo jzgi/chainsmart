@@ -13,9 +13,9 @@ namespace ChainMart
         {
             CreateWork<AdmlyRegWork>("reg");
 
-            CreateWork<AdmlyOrgWork>("org");
-
             CreateWork<AdmlyUserWork>("user");
+
+            CreateWork<AdmlyOrgWork>("org");
 
             CreateWork<AdmlyBuyRptWork>("buyrpt");
 
@@ -56,7 +56,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(1)]
-    [Ui("运行参数", "系统")]
+    [Ui("平台信息和参数", "常规")]
     public class AdmlySetgWork : WebWork
     {
         public static readonly decimal
@@ -93,7 +93,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(1)]
-    [Ui("联盟网络管理", "系统", icon: "social")]
+    [Ui("联盟网络管理", "常规", icon: "social")]
     public class AdmlyNodeWork : NodeWork
     {
     }

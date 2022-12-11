@@ -404,7 +404,7 @@ function dialog(trig, mode, pick, title) {
 
                 // // if reload
                 if (modified && reload) {
-                    history.go(-2);
+                    history.go(-1);
                     // NOTE trick for page reload
                     var ifr = window.frameElement;
                     window.location.replace(ifr.src);
@@ -443,6 +443,22 @@ function closeUp(reload) {
 
     var dlg = $('#dialog');
     if (dlg) {
+
+        if (dlg.classList.contains('uk-modal-tall')) {
+
+            UIkit.modal(dlg).hide().then(function () {
+
+                // // if reload
+                if (modified && reload) {
+                    history.go(-1);
+                    // NOTE trick for page reload
+                    var ifr = window.frameElement;
+                    window.location.replace(ifr.src);
+                } else {
+                    document.body.removeChild(dlg);
+                }
+            });
+        }
 
         history.go(-1);
     }

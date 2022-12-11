@@ -10,6 +10,36 @@ namespace ChainMart
 {
     public abstract class ItemVarWork : WebWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int itemid = wc[0];
+            var src = wc[-2].As<Org>();
+            var cats = Grab<short, Cat>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
+            var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("常用名", o.name)._LI();
+                h.LI_().FIELD("类别", o.typ, cats)._LI();
+                h.LI_().FIELD("简介语", o.tip)._LI();
+                h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
+                h.LI_().FIELD2("保存天数", o.duration, "天")._LI();
+                h.LI_().FIELD("基地", o.origin)._LI();
+                h.LI_().FIELD("规格参数", o.specs)._LI();
+                h.LI_().FIELD("信息状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true, status: o.status);
+            });
+        }
+
         protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
         {
             int id = wc[0];
@@ -61,145 +91,8 @@ namespace ChainMart
         }
     }
 
-    public class ZonlyItemVarWork : ItemVarWork
-    {
-        public async Task @default(WebContext wc)
-        {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
-            var cats = Grab<short, Cat>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
-            var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名称", o.name)._LI();
-                h.LI_().FIELD("类别", o.typ, cats)._LI();
-                h.LI_().FIELD("说明", o.tip)._LI();
-                h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
-                h.LI_().FIELD2("保存周期", o.duration, "天")._LI();
-                h.LI_().FIELD("只供代理", o.origin)._LI();
-                h.LI_().FIELD("状态", o.state, States)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true);
-            });
-        }
-
-        [Ui("修改", "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
-        public async Task edit(WebContext wc)
-        {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
-            var cats = Grab<short, Cat>();
-
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
-                var o = dc.QueryTop<Item>(p => p.Set(itemid));
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("修改产品资料");
-
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存周期", nameof(o.duration), o.duration, min: 1, required: true)._LI();
-                    h.LI_().CHECKBOX("只供代理", nameof(o.origin), o.origin).SELECT("状态", nameof(o.state), o.state, States, filter: (k, v) => k >= STA_VOID, required: true)._LI();
-
-                    h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
-                });
-            }
-            else // POST
-            {
-                // populate 
-                var m = await wc.ReadObjectAsync(0, new Item
-                {
-                    adapted = DateTime.Now,
-                    adapter = prin.name,
-                });
-
-                // update
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE products ")._SET_(Item.Empty, 0).T(" WHERE id = @1 AND srcid = @2");
-                await dc.ExecuteAsync(p =>
-                {
-                    m.Write(p, 0);
-                    p.Set(itemid).Set(src.id);
-                });
-
-                wc.GivePane(200); // close dialog
-            }
-        }
-
-        [Ui("图标", icon: "uikit"), Tool(ButtonCrop)]
-        public async Task icon(WebContext wc)
-        {
-            await doimg(wc, nameof(icon), false, 3);
-        }
-
-        [Ui("照片", icon: "image"), Tool(ButtonCrop)]
-        public async Task pic(WebContext wc)
-        {
-            await doimg(wc, nameof(pic), false, 3);
-        }
-
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 6)]
-        public async Task m(WebContext wc, int sub)
-        {
-            await doimg(wc, "m" + sub, false, 3);
-        }
-
-        [Ui("删除", "确认删除此产品？", icon: "trash"), Tool(ButtonConfirm)]
-        public async Task rm(WebContext wc)
-        {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("DELETE FROM items WHERE id = @1 AND srcid = @1");
-            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
-
-            wc.GivePane(200);
-        }
-    }
-
     public class SrclyItemVarWork : ItemVarWork
     {
-        public async Task @default(WebContext wc)
-        {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
-            var cats = Grab<short, Cat>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
-            var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名称", o.name)._LI();
-                h.LI_().FIELD("类别", o.typ, cats)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
-                h.LI_().FIELD2("保存天数", o.duration, "天")._LI();
-                h.LI_().FIELD("基地", o.origin)._LI();
-                h.LI_().FIELD("规格参数", o.specs)._LI();
-                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true, status: o.status);
-            });
-        }
-
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
         [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
@@ -286,31 +179,31 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
-            int itemid = wc[0];
+            int id = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(itemid).Set(org.id));
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_RVW)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
-            int itemid = wc[0];
-            var src = wc[-2].As<Org>();
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 2 WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
+            dc.Sql("UPDATE items SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);
         }

@@ -14,19 +14,13 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            // ctr
+            // org
 
-            CreateWork<CtrlyBookWork>("cbook");
+            CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<CtrlyRptWork>("crpt");
+            CreateWork<OrglyAccessWork>("access");
 
-            // zon
-
-            CreateWork<ZonlyOrgWork>("zorg");
-
-            CreateWork<ZonlyTestWork>("ztest");
-
-            CreateWork<ZonlyRptWork>("zrpt");
+            CreateWork<OrglyClearWork>("clear");
 
             // src
 
@@ -38,13 +32,19 @@ namespace ChainMart
 
             CreateWork<SrclyRptWork>("srpt");
 
-            // org
+            // zon
 
-            CreateWork<OrglySetgWork>("setg");
+            CreateWork<ZonlyOrgWork>("zorg");
 
-            CreateWork<OrglyAccessWork>("access");
+            CreateWork<ZonlyTestWork>("ztest");
 
-            CreateWork<OrglyClearWork>("clear");
+            CreateWork<ZonlyRptWork>("zrpt");
+
+            // ctr
+
+            CreateWork<CtrlyBookWork>("cbook");
+
+            CreateWork<CtrlyRptWork>("crpt");
         }
 
         public void @default(WebContext wc)

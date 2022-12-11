@@ -20,7 +20,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("下级机构", "业务")]
+    [Ui("管理下级机构", "业务")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
 #if ZHNT
@@ -77,7 +77,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon)
                     {
@@ -96,7 +96,7 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [Ui("新建", "新建入驻机构", icon: "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", "新建下级机构", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int cmd)
         {
             var prin = (User) wc.Principal;
@@ -446,70 +446,4 @@ namespace ChainMart
     }
 
 
-    [Ui("基本设置", "常规")]
-    public class OrglySetgWork : WebWork
-    {
-        public async Task @default(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-            var regs = Grab<short, Reg>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-            var o = await dc.QueryTopAsync<Org>(p => p.Set(org.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("工商登记名", o.fully)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("地市", regs[o.regid])._LI();
-                h.LI_().FIELD("联系地址", o.link)._LI();
-                h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
-                h.LI_().FIELD("联系电话", o.tel)._LI();
-                h.LI_().FIELD("委托代办", o.trust)._LI();
-                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true);
-            }, false, 900);
-        }
-
-        [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("设置", "设置运行参数", icon: "cog"), Tool(ButtonShow)]
-        public async Task setg(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Org>(p => p.Set(org.id));
-
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("修改基本设置");
-                    h.LI_().TEXTAREA("简介语", nameof(org.tip), org.tip, max: 40)._LI();
-                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("工作状态", nameof(org.state), org.state, Org.States, required: true)._LI();
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
-                });
-            }
-            else
-            {
-                var o = await wc.ReadObjectAsync(instance: org); // use existing object
-
-                using var dc = NewDbContext();
-                // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, state = @3 WHERE id = @4",
-                    p => p.Set(o.tip).Set(o.tel).Set(o.state).Set(org.id));
-
-                wc.GivePane(200);
-            }
-        }
-    }
 }

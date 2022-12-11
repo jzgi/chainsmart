@@ -16,7 +16,7 @@ namespace ChainMart
         }
     }
 
-    [AdmlyAuthorize(User.ROL_)]
+    [AdmlyAuthorize(User.ROL_FIN)]
     [Ui("消费结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
@@ -144,7 +144,7 @@ namespace ChainMart
         }
     }
 
-    [AdmlyAuthorize(1)]
+    [AdmlyAuthorize(User.ROL_FIN)]
     [Ui("供应链结款", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlySupplyClearVarWork>
     {

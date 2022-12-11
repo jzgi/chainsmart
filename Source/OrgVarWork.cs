@@ -10,9 +10,10 @@ namespace ChainMart
 {
     public abstract class OrgVarWork : WebWork
     {
-        public async Task @default(WebContext wc, int typ)
+        public async Task @default(WebContext wc)
         {
-            int id = wc[0];
+            var org = wc[-1].As<Org>();
+            var id = org?.id ?? (int) wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -23,21 +24,23 @@ namespace ChainMart
             {
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("工商登记名", o.fully)._LI();
-                h.LI_().FIELD("区域", o.regid, regs)._LI();
-                h.LI_().FIELD("联系地址", o.addr)._LI();
-                h.LI_().FIELD("联系电话", o.tel)._LI();
-                h.LI_().FIELD("委托办理", o.trust)._LI();
+                if (o.IsAliasable) h.LI_().FIELD("别名", o.alias)._LI();
+                h.LI_().FIELD("简介语", o.tip)._LI();
+                h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
+                h.LI_().FIELD("联系地址", o.link)._LI();
+                h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", o.specs)._LI();
+                h.LI_().FIELD("委托代办", o.trust).FIELD("服务状况", Org.States[o.state])._LI();
+
+                h.LI_().FIELD("信息状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status);
-            });
+            }, false, 900);
         }
 
 
@@ -85,9 +88,50 @@ namespace ChainMart
         }
     }
 
+    [Ui("基本信息和参数", "常规")]
+    public class OrglySetgWork : OrgVarWork
+    {
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("设置", icon: "cog"), Tool(ButtonShow)]
+        public async Task setg(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User) wc.Principal;
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                var m = await dc.QueryTopAsync<Org>(p => p.Set(org.id));
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("设置基本信息和参数");
+                    h.LI_().TEXTAREA("简介语", nameof(org.tip), org.tip, max: 40)._LI();
+                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.LI_().SELECT("服务状况", nameof(org.state), org.state, Org.States, required: true)._LI();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
+                });
+            }
+            else
+            {
+                var o = await wc.ReadObjectAsync(instance: org); // use existing object
+
+                using var dc = NewDbContext();
+                // update the db record
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, state = @3, adapter = @4, adapted = @5, status = 2 WHERE id = @6",
+                    p => p.Set(o.tip).Set(o.tel).Set(o.state).Set(prin.name).Set(DateTime.Now).Set(org.id));
+
+                wc.GivePane(200);
+            }
+        }
+    }
+
+
     public class AdmlyOrgVarWork : OrgVarWork
     {
-        [Ui("修改", "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(tip: "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
             short id = wc[0];
@@ -484,7 +528,7 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2 WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

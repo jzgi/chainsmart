@@ -12,16 +12,15 @@ namespace ChainMart
         public new static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_VOID, null},
-            {STA_NORMAL, "运行"},
-            {STA_TOP, "停用"},
+            {STA_NORMAL, "正常"},
         };
 
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STU_CREATED, "新创建"},
-            {STU_ADAPTED, "已提交"},
-            {STU_OKED, "已核验"},
+            {STU_CREATED, "创建"},
+            {STU_ADAPTED, "锁定"},
+            {STU_OKED, "上线"},
         };
 
         internal int id;

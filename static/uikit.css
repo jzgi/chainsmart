@@ -1705,6 +1705,7 @@ button.uk-button-primary {
 
 .uk-bottom-bar button.uk-button-primary {
     border: 1px solid #999;
+    background-color: #f8f8f8;
 }
 
 button.uk-button-primary:hover,
@@ -1876,7 +1877,7 @@ button.uk-button-secondary {
     align-items: center;
     font-weight: normal;
     align-items: center;
-    padding: 4px;
+    padding: 6px;
 }
 
 .uk-button-link:hover,
@@ -1890,7 +1891,7 @@ button.uk-button-secondary {
 }
 
 .uk-button-link:disabled {
-    color: #999;
+    color: #ddd;
     text-decoration: none;
 }
 

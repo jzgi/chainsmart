@@ -157,8 +157,8 @@ namespace ChainMart
 
         public bool CanDive(Org org)
         {
-            var (_, role) = GetRoleForOrg(org);
-            return role > 0;
+            var (div, role) = GetRoleForOrg(org);
+            return div && role > 0;
         }
 
         public override string ToString() => name;

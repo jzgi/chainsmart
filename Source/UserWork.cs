@@ -15,7 +15,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("人员权限", "系统")]
+    [Ui("人员权限", "常规")]
     public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     {
         [Ui("人员权限"), Tool(Anchor)]
@@ -51,7 +51,7 @@ namespace ChainMart
             }, false, 12);
         }
 
-        [OrglyAuthorize(orgly: 3)]
+        [AdmlyAuthorize(User.ROL_MGT)]
         [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
