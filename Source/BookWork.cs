@@ -298,14 +298,14 @@ namespace ChainMart
                 int last = 0;
                 while (dc.Next())
                 {
-                    dc.Let(out int mrtid);
+                    dc.Let(out int mktid);
                     dc.Let(out int wareid);
                     dc.Let(out string name);
                     dc.Let(out decimal qty
                     );
-                    if (mrtid != last)
+                    if (mktid != last)
                     {
-                        var spr = topOrgs[mrtid];
+                        var spr = topOrgs[mktid];
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
@@ -313,7 +313,7 @@ namespace ChainMart
                     h.TD_("uk-visible@l").T(qty)._TD();
                     h._TR();
 
-                    last = mrtid;
+                    last = mktid;
                 }
                 h._MAIN();
             });
@@ -331,7 +331,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mrtid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_RECEIVED).T(" GROUP BY mrtid, wareid ORDER BY mrtid");
+            dc.Sql("SELECT mktid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_RECEIVED).T(" GROUP BY mktid, wareid ORDER BY mktid");
             await dc.QueryAsync(p => p.Set(ctr.id));
 
             wc.GivePage(200, h =>
@@ -341,14 +341,14 @@ namespace ChainMart
                 int last = 0;
                 while (dc.Next())
                 {
-                    dc.Let(out int mrtid);
+                    dc.Let(out int mktid);
                     dc.Let(out int wareid);
                     dc.Let(out string name);
                     dc.Let(out decimal qty
                     );
-                    if (mrtid != last)
+                    if (mktid != last)
                     {
-                        var spr = topOrgs[mrtid];
+                        var spr = topOrgs[mktid];
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
                     h.TR_();
@@ -356,7 +356,7 @@ namespace ChainMart
                     h.TD_("uk-visible@l").T(qty)._TD();
                     h._TR();
 
-                    last = mrtid;
+                    last = mktid;
                 }
                 h._MAIN();
             });

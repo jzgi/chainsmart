@@ -215,7 +215,7 @@ namespace ChainMart
             }, false, 6);
         }
 
-        [OrglyAuthorize(1, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {

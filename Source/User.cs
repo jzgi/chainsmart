@@ -114,7 +114,7 @@ namespace ChainMart
         /// <summary>
         /// admly, orgid + orgly
         /// </summary>
-        public (bool dive, short role ) GetRoleForOrg(Org org)
+        public (bool dive, short role ) GetRoleForOrg(Org org, short orgtyp = 0)
         {
             bool dive;
             short role = 0;
@@ -140,7 +140,7 @@ namespace ChainMart
                 }
                 else if (!org.IsTopOrg && orgid == org.prtid && HasOrgly)
                 {
-                    if (org.trust)
+                    if (org.trust || (orgtyp > org.typ)) // the prin is in super org, here a check only
                     {
                         role = orgly;
                     }

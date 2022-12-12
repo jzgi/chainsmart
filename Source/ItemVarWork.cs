@@ -170,13 +170,13 @@ namespace ChainMart
         public async Task rm(WebContext wc)
         {
             int itemid = wc[0];
-            var src = wc[-2].As<Org>();
+            var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("DELETE FROM items WHERE id = @1 AND srcid = @1");
-            await dc.ExecuteAsync(p => p.Set(itemid).Set(src.id));
+            dc.Sql("DELETE FROM items WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(itemid).Set(org.id));
 
-            wc.GivePane(200);
+            wc.Give(204);
         }
 
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]

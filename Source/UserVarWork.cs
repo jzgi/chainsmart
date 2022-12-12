@@ -228,7 +228,7 @@ namespace ChainMart
 
     public class OrglyAccessVarWork : UserVarWork
     {
-        [OrglyAuthorize(1, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
@@ -239,7 +239,7 @@ namespace ChainMart
             dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
 
-            wc.Give(205); // content reset
+            wc.Give(204); // no content
         }
     }
 

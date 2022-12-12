@@ -44,7 +44,7 @@ namespace ChainMart
                 return false;
             }
 
-            var (down, role) = prin.GetRoleForOrg(org);
+            var (down, role) = prin.GetRoleForOrg(org, orgtyp);
             if ((role & orgly) == orgly)
             {
                 if (!mock)

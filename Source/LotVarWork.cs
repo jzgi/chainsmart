@@ -209,12 +209,12 @@ namespace ChainMart
         }
 
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
             int lotid = wc[0];
-            var ctr = wc[-2].As<Org>();
+            var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
             if (wc.IsGet)
@@ -232,8 +232,8 @@ namespace ChainMart
                 }
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
-                var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
+                var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
                 if (cmd == 1)
                 {
