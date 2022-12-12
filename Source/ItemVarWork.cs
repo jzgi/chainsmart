@@ -36,7 +36,7 @@ namespace ChainMart
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status);
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
             });
         }
 

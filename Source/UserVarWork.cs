@@ -32,7 +32,7 @@ namespace ChainMart
                 h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true);
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
             });
         }
     }

@@ -37,13 +37,13 @@ namespace ChainMart
                 h.LI_().FIELD("递增量", o.step)._LI();
                 h.LI_().FIELD("本批次总量", o.cap).FIELD("剩余量", o.remain)._LI();
                 h.LI_().FIELD("起始溯源号", o.nstart).FIELD("截至溯源号", o.nend)._LI();
-                h.LI_().FIELD("信息状态", o.status, Lot.Statuses)._LI();
+                h.LI_().FIELD("处理进展", o.status, Lot.Statuses).FIELD("应用状况", Lot.States[o.state])._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("锁定", o.adapted, o.adapter)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status);
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
             });
         }
 
@@ -88,7 +88,7 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow)]
+        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
@@ -148,15 +148,14 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("资料", icon: "file-text"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 12);
         }
 
-
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("自达", icon: "crosshairs"), Tool(ButtonShow)]
+        [Ui("自达", icon: "crosshairs"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task self(WebContext wc)
         {
             int lotid = wc[0];
@@ -206,41 +205,55 @@ namespace ChainMart
             dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
-            wc.GivePane(200);
+            wc.Give(204); // no content
         }
 
+
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
-        [Ui("溯源", "溯源标签绑定", icon: "tag"), Tool(ButtonShow)]
+        [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
             int lotid = wc[0];
             var ctr = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
 
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
-                var m = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
-
                 if (cmd == 0)
                 {
                     wc.GivePane(200, h =>
                     {
-                        h.FORM_().FIELDSUL_("输入连续的标牌号码");
+                        h.FORM_().FIELDSUL_("溯源标签方式");
+                        h.LI_().AGOTO("Ａ）绑定预制标签", "tag-1")._LI();
+                        h.LI_().AGOTO("Ｂ）现场印制专属贴标", "tag-2")._LI();
+                        h._FIELDSUL()._FORM();
+                    });
+                    return;
+                }
 
-                        h.LI_().NUMBER("起始号", nameof(m.nstart), m.nstart)._LI();
-                        h.LI_().NUMBER("截至号", nameof(m.nend), m.nend)._LI();
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
+                var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
 
-                        h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag))._FORM();
+                if (cmd == 1)
+                {
+                    wc.GivePane(200, h =>
+                    {
+                        h.FORM_().FIELDSUL_("绑定预制标签号码");
+
+                        h.LI_().NUMBER("起始号码", nameof(o.nstart), o.nstart)._LI();
+                        h.LI_().NUMBER("截至号码", nameof(o.nend), o.nend)._LI();
+
+                        h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag), subscript: cmd)._FORM();
                     });
                 }
                 else
                 {
-                    var src = GrabObject<int, Org>(m.srcid);
+                    var src = GrabObject<int, Org>(o.srcid);
 
                     wc.GivePane(200, h =>
                     {
-                        int count = m.remain;
+                        int count = o.remain;
                         h.UL_(grid: true, css: "uk-child-width-1-2@s");
                         for (int i = 0; i < count; i++)
                         {
@@ -257,7 +270,7 @@ namespace ChainMart
             }
             else // POST
             {
-                if (cmd == 0)
+                if (cmd == 1)
                 {
                     var f = await wc.ReadAsync<Form>();
                     int nstart = f[nameof(nstart)];
@@ -265,86 +278,20 @@ namespace ChainMart
 
                     // update
                     using var dc = NewDbContext();
-                    dc.Sql("UPDATE lots SET nstart = @1, nend = @2 WHERE id = @3 AND ctrid = @4");
-                    await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(lotid).Set(ctr.id));
+                    dc.Sql("UPDATE lots SET nstart = @1, nend = @2, state = 2, status = 2, adapted = @3, adapter = @4 WHERE id = @5");
+                    await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(DateTime.Now).Set(prin.name).Set(lotid));
                 }
-                else
+                else if (cmd == 2)
                 {
                 }
 
-                wc.GivePane(200); // close dialog
+                wc.GivePane(200); // close
             }
         }
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
-        [Ui("溯源", "溯源标签印制", icon: "thumbnails"), Tool(ButtonShow)]
-        public async Task label(WebContext wc, int cmd)
-        {
-            int lotid = wc[0];
-            var ctr = wc[-2].As<Org>();
-
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND ctrid = @2");
-                var m = dc.QueryTop<Lot>(p => p.Set(lotid).Set(ctr.id));
-
-                if (cmd == 0)
-                {
-                    wc.GivePane(200, h =>
-                    {
-                        h.FORM_().FIELDSUL_("输入连续的标牌号码");
-
-                        h.LI_().NUMBER("起始号", nameof(m.nstart), m.nstart)._LI();
-                        h.LI_().NUMBER("截至号", nameof(m.nend), m.nend)._LI();
-
-                        h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag))._FORM();
-                    });
-                }
-                else
-                {
-                    var src = GrabObject<int, Org>(m.srcid);
-
-                    wc.GivePane(200, h =>
-                    {
-                        int count = m.remain;
-                        h.UL_(grid: true, css: "uk-child-width-1-2@s");
-                        for (int i = 0; i < count; i++)
-                        {
-                            h.LI_();
-                            h.DIV_("uk-card uk-card-default uk-flex");
-                            h.QRCODE(MainApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
-                            h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i + 1)._DIV();
-                            h._DIV();
-                            h._LI();
-                        }
-                        h._UL();
-                    });
-                }
-            }
-            else // POST
-            {
-                if (cmd == 0)
-                {
-                    var f = await wc.ReadAsync<Form>();
-                    int nstart = f[nameof(nstart)];
-                    int nend = f[nameof(nend)];
-
-                    // update
-                    using var dc = NewDbContext();
-                    dc.Sql("UPDATE lots SET nstart = @1, nend = @2 WHERE id = @3 AND ctrid = @4");
-                    await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(lotid).Set(ctr.id));
-                }
-                else
-                {
-                }
-
-                wc.GivePane(200); // close dialog
-            }
-        }
 
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_ADAPTED, state: STA_NORMAL)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -359,14 +306,14 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
-        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED, state: STA_NORMAL)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 2 WHERE id = @1 AND srcid = @2")._MEET_(wc);
+            dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

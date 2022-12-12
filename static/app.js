@@ -290,7 +290,7 @@ function askSend(trig, tip) {
                 window.location.reload();
             }
             else if (204 == this.status) {
-                windows.parent.closeUp();
+                window.parent.closeUp(true);
             }
         }
     };
@@ -400,19 +400,17 @@ function dialog(trig, mode, pick, title) {
         var dlg = $('#dialog');
         if (dlg) {
 
-            UIkit.modal(dlg).hide().then(function () {
+            // // if reload
+            if (modified) {
 
-                // // if reload
-                if (modified && reload) {
-                    history.go(-1);
-                    // NOTE trick for page reload
-                    var ifr = window.frameElement;
-                    window.location.replace(ifr.src);
-                } else {
+                // NOTE trick for page reload
+                var ifr = window.frameElement;
+                window.location.replace(ifr.src);
+            } else {
+                UIkit.modal(dlg).hide().then(function () {
                     document.body.removeChild(dlg);
-                }
-            });
-
+                });
+            }
         }
     });
 
@@ -431,12 +429,18 @@ function dialog(trig, mode, pick, title) {
 // need of refresh
 var modified;
 
-function closeUp(reload) {
+function closeUp(reload, delta) {
+
     // set flags on parents
     if (reload) {
         var win = window;
         while (win != win.parent) {
-            win.stale = true;
+
+            win.modified = true;
+
+            var d = win.$('#dialog');
+            if (d && d.classList.contains('uk-modal-full')) break;
+
             win = win.parent;
         };
     }
@@ -445,22 +449,23 @@ function closeUp(reload) {
     if (dlg) {
 
         if (dlg.classList.contains('uk-modal-tall')) {
+            // // if reload
+            if (modified && reload) {
 
-            UIkit.modal(dlg).hide().then(function () {
+                // NOTE trick for page reload
+                var ifr = window.frameElement;
+                window.location.replace(ifr.src);
 
-                // // if reload
-                if (modified && reload) {
-                    history.go(-1);
-                    // NOTE trick for page reload
-                    var ifr = window.frameElement;
-                    window.location.replace(ifr.src);
-                } else {
+                history.go(-1);
+                
+            } else {
+                UIkit.modal(dlg).hide().then(function () {
                     document.body.removeChild(dlg);
-                }
-            });
+                });
+            }
+        } else {
+            history.go(delta ? delta : -1);
         }
-
-        history.go(-1);
     }
 }
 

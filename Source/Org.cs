@@ -36,7 +36,7 @@ namespace ChainMart
         public new static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_VOID, "停业"},
-            {STA_EASY, "放假"},
+            {STA_PRE, "放假"},
             {STA_NORMAL, "正常"},
             {STA_TOP, "满负"},
         };
