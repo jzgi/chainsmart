@@ -49,11 +49,11 @@ namespace ChainMart
         internal int lotid;
 
         internal string unit;
-        internal short unitx;
+        internal string unitx;
         internal decimal price;
         internal decimal off;
         internal short qty;
-        internal short cut; // qty cut
+        internal short ret; // qty cut
         internal decimal pay;
         internal decimal refund; // pay refunded
 
@@ -89,7 +89,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(cut), ref cut);
+                s.Get(nameof(ret), ref ret);
                 s.Get(nameof(refund), ref refund);
             }
         }
@@ -126,7 +126,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(cut), cut);
+                s.Put(nameof(ret), ret);
                 s.Put(nameof(refund), refund);
             }
         }

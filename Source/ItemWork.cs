@@ -51,7 +51,10 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    if (o.icon) h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                    }
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
@@ -120,11 +123,11 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("填写产品资料");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();

@@ -93,15 +93,13 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            // mkt
+            // org
 
-            CreateWork<MktlyOrgWork>("morg");
+            CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<MktlyTestWork>("mtest");
+            CreateWork<OrglyAccessWork>("access");
 
-            CreateWork<MktlyBuyWork>("mbuy");
-
-            CreateWork<MktlyBookWork>("mbook");
+            CreateWork<OrglyClearWork>("clear");
 
             // shp
 
@@ -115,13 +113,15 @@ namespace ChainMart
 
             CreateWork<ShplyBookWork>("sbook");
 
-            // org
+            // mkt
 
-            CreateWork<OrglySetgWork>("setg");
+            CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<OrglyAccessWork>("access");
+            CreateWork<MktlyTestWork>("mtest");
 
-            CreateWork<OrglyClearWork>("clear");
+            CreateWork<MktlyBuyWork>("mbuy");
+
+            CreateWork<MktlyBookWork>("mbook");
         }
 
         public void @default(WebContext wc)

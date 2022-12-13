@@ -19,9 +19,9 @@ namespace ChainMart
         internal int id;
 
         internal int srcid;
+        internal string origin;
         internal short store;
         internal short duration;
-        internal string origin;
         internal JObj specs;
         internal bool icon;
         internal bool pic;
@@ -47,9 +47,9 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(origin), ref origin);
                 s.Get(nameof(store), ref store);
                 s.Get(nameof(duration), ref duration);
-                s.Get(nameof(origin), ref origin);
                 s.Get(nameof(specs), ref specs);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -80,9 +80,9 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(origin), origin);
                 s.Put(nameof(store), store);
                 s.Put(nameof(duration), duration);
-                s.Put(nameof(origin), origin);
                 s.Put(nameof(specs), specs);
             }
             if ((msk & MSK_LATER) == MSK_LATER)

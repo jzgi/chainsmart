@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainMart
 {
@@ -33,7 +34,8 @@ namespace ChainMart
         // individual order relevant
         internal int itemid;
         internal string unit;
-        internal short unitx; // proximate units
+        internal string unitx; // proximate units
+        internal DateTime futured;
         internal decimal price;
         internal decimal off;
         internal int cap;
@@ -44,7 +46,7 @@ namespace ChainMart
 
         internal int nstart;
         internal int nend;
-        internal bool pic;
+        internal bool m1;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -66,6 +68,7 @@ namespace ChainMart
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
+                s.Get(nameof(futured), ref futured);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
@@ -79,7 +82,7 @@ namespace ChainMart
                 s.Get(nameof(mktids), ref mktids);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
-                s.Get(nameof(pic), ref pic);
+                s.Get(nameof(m1), ref m1);
             }
         }
 
@@ -103,6 +106,7 @@ namespace ChainMart
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
+                s.Put(nameof(futured), futured);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
@@ -116,7 +120,7 @@ namespace ChainMart
                 s.Put(nameof(mktids), mktids);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
-                s.Put(nameof(pic), pic);
+                s.Put(nameof(m1), m1);
             }
         }
 

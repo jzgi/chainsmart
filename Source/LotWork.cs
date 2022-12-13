@@ -182,15 +182,21 @@ namespace ChainMart
 
             if (wc.IsGet)
             {
+                if (items == null)
+                {
+                    wc.GivePane(200, h => h.ALERT("尚无上线的产品"));
+                    return;
+                }
+
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("基本信息");
+                    h.FORM_().FIELDSUL_("产品销售批次信息");
 
                     h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 30)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
-                    // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含量", nameof(o.unitx), o.unitx, min: 1, required: true)._LI();
+                    h.LI_().DATE("预售交货日", nameof(o.futured), o.futured)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装说明", nameof(o.unitx), o.unitx, min: 2, max: 12)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
@@ -205,8 +211,8 @@ namespace ChainMart
             }
             else // POST
             {
-                // populate 
                 const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+                // populate 
                 await wc.ReadObjectAsync(msk, instance: o);
 
                 var item = items[o.itemid];

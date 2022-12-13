@@ -20,7 +20,9 @@ namespace ChainMart
             ROL_LOG = 0b0000101, // logistic
             ROL_FIN = 0b0001001, // finance
             ROL_MGT = 0b0011111, // management
-            ROL_RVW = 0b0100001; // review
+            // suppliement
+            ROL_EXT = 0b0100001, // cross-level extension
+            ROL_RVW = 0b1000001; // review
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
@@ -28,6 +30,8 @@ namespace ChainMart
             {ROL_LOG, "物流"},
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
+            // suppliement
+            {ROL_EXT, "扩展"},
             {ROL_RVW, "审核"},
         };
 
@@ -38,7 +42,13 @@ namespace ChainMart
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
             {ROL_RVW, "审核"},
-            {ROL_MGT | ROL_RVW, "管理＋审核"},
+            {ROL_OPN | ROL_EXT, "业务Ｘ"},
+            {ROL_LOG | ROL_EXT, "物流Ｘ"},
+            {ROL_FIN | ROL_EXT, "财务Ｘ"},
+            {ROL_MGT | ROL_EXT, "管理Ｘ"},
+            
+            {ROL_MGT | ROL_RVW, "管审"},
+            {ROL_MGT | ROL_EXT | ROL_RVW, "管审Ｘ"},
         };
 
         internal int id;
@@ -51,6 +61,7 @@ namespace ChainMart
         internal short admly;
         internal int orgid;
         internal short orgly;
+        internal bool orgext;
         internal int vip;
         internal bool icon;
 
@@ -74,6 +85,7 @@ namespace ChainMart
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(orgid), ref orgid);
                 s.Get(nameof(orgly), ref orgly);
+                s.Get(nameof(orgext), ref orgext);
                 s.Get(nameof(vip), ref vip);
                 s.Get(nameof(icon), ref icon);
             }
@@ -96,6 +108,7 @@ namespace ChainMart
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(orgid), orgid);
                 s.Put(nameof(orgly), orgly);
+                s.Put(nameof(orgext), orgext);
                 s.Put(nameof(vip), vip);
                 s.Put(nameof(icon), icon);
             }
@@ -123,6 +136,10 @@ namespace ChainMart
             if (org.id == orgid)
             {
                 role = orgly;
+                if (orgext)
+                {
+                    role |= ROL_EXT;
+                }
                 dive = false;
             }
             else //  downward role
@@ -143,6 +160,10 @@ namespace ChainMart
                     if (org.trust || (orgtyp > org.typ)) // the prin is in super org, here a check only
                     {
                         role = orgly;
+                    }
+                    if (orgext)
+                    {
+                        role |= ROL_EXT;
                     }
                     if ((orgly & ROL_MGT) == ROL_MGT)
                     {

@@ -16,10 +16,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("消费商品设置", "商户")]
+    [Ui("零售商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
-        [Ui("在售商品", group: 1), Tool(Anchor)]
+        [Ui("零售商品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();

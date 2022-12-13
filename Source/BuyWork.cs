@@ -32,7 +32,7 @@ namespace ChainMart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无消费订单");
+                    h.ALERT("尚无零售订单");
                     return;
                 }
 
@@ -67,10 +67,10 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("消费外卖", "商户")]
+    [Ui("零售外卖", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
-        [Ui("消费外卖", group: 1), Tool(Anchor)]
+        [Ui("零售外卖", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -121,13 +121,13 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("消费外卖送货", "市场")]
+    [Ui("零售外卖送货", "市场")]
 #else
-    [Ui("消费外卖送货", "驿站")]
+    [Ui("零售外卖送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
-        [Ui("消费外卖", group: 1), Tool(Anchor)]
+        [Ui("零售外卖", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mkt = wc[-1].As<Org>();

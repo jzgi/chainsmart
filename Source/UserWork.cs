@@ -100,6 +100,7 @@ namespace ChainMart
                 var f = await wc.ReadAsync<Form>();
                 int id = f[nameof(id)];
                 admly = f[nameof(admly)];
+
                 using var dc = NewDbContext();
                 dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
 
@@ -197,7 +198,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon)
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
@@ -255,9 +256,9 @@ namespace ChainMart
                             {
                                 var exorg = GrabObject<int, Org>(o.orgid);
                                 h.LI_().FIELD2("现有权限", exorg.name, User.Orgly[o.orgly])._LI();
-                                if (exorg.id != o.orgid)
+                                if (exorg.id != org.id)
                                 {
-                                    h.LI_().FIELD(null, "必须先取消现有权限", css: "uk-text-danger")._LI();
+                                    h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
                                     yes = false;
                                 }
                             }

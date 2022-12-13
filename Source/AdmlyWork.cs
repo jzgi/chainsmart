@@ -83,7 +83,7 @@ namespace ChainMart
 
                 h.LI_().FIELD("外卖派送基本费", rtlbasic)._LI();
                 h.LI_().FIELD("外卖每单打理费", rtlfee)._LI();
-                h.LI_().FIELD("消费支付扣点", rtlpayrate)._LI();
+                h.LI_().FIELD("零售支付扣点", rtlpayrate)._LI();
                 h.LI_().FIELD("供应链支付扣点", suppayrate)._LI();
                 h._UL();
 

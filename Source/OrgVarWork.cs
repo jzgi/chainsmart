@@ -296,8 +296,9 @@ namespace ChainMart
 
     public class MktlyOrgVarWork : OrgVarWork
     {
-        [Ui("修改", "修改商户资料", icon: "pencil"), Tool(ButtonShow)]
-        public async Task edit(WebContext wc, int typ)
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        public async Task edit(WebContext wc)
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
@@ -306,35 +307,35 @@ namespace ChainMart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-                var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
+                var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
 
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
 
-                    if (typ == Org.TYP_SHP)
+                    if (o.typ == Org.TYP_SHP)
                     {
-                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 8, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                        h.LI_().TEXT("工商登记号", nameof(m.link), m.link, max: 20)._LI();
-                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
+                        h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 8, required: true)._LI();
+                        h.LI_().TEXT("工商登记号", nameof(o.link), o.link, max: 20)._LI();
+                        h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
 #if ZHNT
-                        h.LI_().TEXT("挡位号", nameof(m.addr), m.addr, max: 4)._LI();
+                        h.LI_().TEXT("场地编号", nameof(o.addr), o.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
+                        // h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
                     }
-                    else
+                    else // brand
                     {
-                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                        h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                        h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
+                        // h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
                     }
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit), subscript: typ)._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else
@@ -354,28 +355,28 @@ namespace ChainMart
             }
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
@@ -388,7 +389,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -403,7 +404,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

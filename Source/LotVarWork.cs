@@ -88,7 +88,7 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改产品销售批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
@@ -105,13 +105,13 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产品批次信息");
+                    h.FORM_().FIELDSUL_("产品销售批次信息");
 
                     h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 30)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
-                    // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k > 0, required: true)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每包装含量", nameof(o.unitx), o.unitx, min: 1, required: true)._LI();
+                    h.LI_().DATE("预售交货日", nameof(o.futured), o.futured)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装说明", nameof(o.unitx), o.unitx, min: 2, max: 12)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
@@ -148,10 +148,10 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3)]
-        public async Task pic(WebContext wc)
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 1)]
+        public async Task m(WebContext wc)
         {
-            await doimg(wc, nameof(pic), false, 12);
+            await doimg(wc, nameof(m), false, 12);
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
@@ -208,8 +208,7 @@ namespace ChainMart
             wc.Give(204); // no content
         }
 
-
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
@@ -290,7 +289,7 @@ namespace ChainMart
         }
 
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -302,10 +301,10 @@ namespace ChainMart
             dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
-            wc.GivePane(200);
+            wc.Give(200);
         }
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
@@ -316,7 +315,7 @@ namespace ChainMart
             dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
-            wc.GivePane(200);
+            wc.Give(200);
         }
     }
 }

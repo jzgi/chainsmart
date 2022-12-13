@@ -26,11 +26,10 @@ namespace ChainMart
                 h.LI_().FIELD("常用名", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, cats)._LI();
                 h.LI_().FIELD("简介语", o.tip)._LI();
-                h.LI_().FIELD("贮藏方法", o.store, Item.Stores)._LI();
-                h.LI_().FIELD2("保存天数", o.duration, "天")._LI();
                 h.LI_().FIELD("基地", o.origin)._LI();
+                h.LI_().FIELD("贮藏方法", o.store, Item.Stores).FIELD2("保存天数", o.duration, "天")._LI();
                 h.LI_().FIELD("规格参数", o.specs)._LI();
-                h.LI_().FIELD("信息状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD("进展状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
@@ -111,11 +110,11 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("修改产品资料");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 30)._LI();
                     h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();

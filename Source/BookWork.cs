@@ -24,7 +24,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state = 0 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 1 ORDER BY id");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -32,18 +32,22 @@ namespace ChainMart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无订货");
+                    h.ALERT("尚无采购");
                     return;
                 }
 
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });
@@ -65,18 +69,22 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("新建", "选择产品批次", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "采购产品", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();
@@ -100,18 +108,22 @@ namespace ChainMart
 
                 if (arr == null)
                 {
-                    h.ALERT("没有批次");
+                    h.ALERT("尚无产品");
                     return;
                 }
 
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             }, title: ctr.tip);

@@ -22,7 +22,7 @@ create table entities
     typ smallint not null,
     state smallint,
     name varchar(12) not null,
-    tip varchar(40),
+    tip varchar(50),
     created timestamp(0),
     creator varchar(10),
     adapted timestamp(0),
@@ -148,9 +148,8 @@ create table users
         constraint users_orgid_fk
             references orgs,
     orgly smallint default 0 not null,
-    vip integer
-        constraint users_vip_fk
-            references orgs,
+    orgext boolean,
+    vip integer,
     icon bytea
 )
     inherits (entities);
@@ -170,10 +169,6 @@ create unique index users_tel_idx
 create index users_orgid_idx
     on users (orgid)
     where (orgid IS NOT NULL);
-
-create index users_vip_idx
-    on users (vip)
-    where (vip > 0);
 
 create table wares
 (
@@ -293,7 +288,7 @@ create table books
     price money,
     "off" money,
     qty integer,
-    cut integer,
+    ret integer,
     pay money,
     refund money
 )
@@ -323,6 +318,53 @@ create table clears
     inherits (entities);
 
 alter table clears owner to postgres;
+
+create table items_old
+(
+    id serial not null,
+    srcid integer,
+    origin varchar(12),
+    store smallint,
+    duration smallint,
+    specs jsonb,
+    icon bytea,
+    pic bytea,
+    m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea,
+    m5 bytea,
+    m6 bytea
+)
+    inherits (entities);
+
+alter table items_old owner to postgres;
+
+create table lots_old
+(
+    id serial not null,
+    srcid integer,
+    srcname varchar(12),
+    zonid integer not null,
+    ctrid integer not null,
+    mktids integer[],
+    itemid integer,
+    unit varchar(4),
+    unitx varchar(12),
+    price money,
+    "off" money,
+    min integer,
+    step integer,
+    max integer,
+    cap integer,
+    remain integer,
+    nstart integer,
+    nend integer,
+    m1 bytea
+)
+    inherits (entities);
+
+alter table lots_old owner to postgres;
 
 create table items
 (
@@ -365,9 +407,12 @@ create table lots
         constraint lots_ctrid_fk
             references orgs,
     mktids integer[],
-    itemid integer,
+    itemid integer
+        constraint lots_itemid_fk
+            references items,
     unit varchar(4),
-    unitx smallint,
+    unitx varchar(12),
+    futured date,
     price money,
     "off" money,
     min integer,
@@ -377,7 +422,7 @@ create table lots
     remain integer,
     nstart integer,
     nend integer,
-    pic bytea,
+    m1 bytea,
     constraint lots_typ_fk
         foreign key (typ) references cats
 )
@@ -417,32 +462,6 @@ FROM wares o;
 
 alter table wares_vw owner to postgres;
 
-create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, orgid, orgly, vip, icon) as
-SELECT u.typ,
-       u.state,
-       u.name,
-       u.tip,
-       u.created,
-       u.creator,
-       u.adapted,
-       u.adapter,
-       u.oked,
-       u.oker,
-       u.status,
-       u.id,
-       u.tel,
-       u.addr,
-       u.im,
-       u.credential,
-       u.admly,
-       u.orgid,
-       u.orgly,
-       u.vip,
-       u.icon IS NOT NULL AS icon
-FROM users u;
-
-alter table users_vw owner to postgres;
-
 create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, alias, fully, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
@@ -478,7 +497,34 @@ FROM orgs o;
 
 alter table orgs_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, price, "off", min, step, max, cap, remain, nstart, nend, pic) as
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, orgid, orgly, orgext, vip, icon) as
+SELECT u.typ,
+       u.state,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.oked,
+       u.oker,
+       u.status,
+       u.id,
+       u.tel,
+       u.addr,
+       u.im,
+       u.credential,
+       u.admly,
+       u.orgid,
+       u.orgly,
+       u.orgext,
+       u.vip,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
+
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, futured, price, "off", min, step, max, cap, remain, nstart, nend, m1) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -499,6 +545,7 @@ SELECT o.typ,
        o.itemid,
        o.unit,
        o.unitx,
+       o.futured,
        o.price,
        o.off,
        o.min,
@@ -508,7 +555,7 @@ SELECT o.typ,
        o.remain,
        o.nstart,
        o.nend,
-       o.pic IS NOT NULL AS pic
+       o.m1 IS NOT NULL AS m1
 FROM lots o;
 
 alter table lots_vw owner to postgres;
