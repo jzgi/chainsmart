@@ -84,7 +84,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("新建", "采购产品", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("下单", "采购下单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var mrt = wc[-1].As<Org>();
@@ -126,7 +126,7 @@ namespace ChainMart
 
                     h._A();
                 });
-            }, title: ctr.tip);
+            });
         }
     }
 

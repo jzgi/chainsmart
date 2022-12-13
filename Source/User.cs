@@ -42,13 +42,13 @@ namespace ChainMart
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
             {ROL_RVW, "审核"},
-            {ROL_OPN | ROL_EXT, "业务Ｘ"},
-            {ROL_LOG | ROL_EXT, "物流Ｘ"},
-            {ROL_FIN | ROL_EXT, "财务Ｘ"},
-            {ROL_MGT | ROL_EXT, "管理Ｘ"},
+            {ROL_OPN | ROL_EXT, "业务+"},
+            {ROL_LOG | ROL_EXT, "物流+"},
+            {ROL_FIN | ROL_EXT, "财务+"},
+            {ROL_MGT | ROL_EXT, "管理+"},
             
             {ROL_MGT | ROL_RVW, "管审"},
-            {ROL_MGT | ROL_EXT | ROL_RVW, "管审Ｘ"},
+            {ROL_MGT | ROL_EXT | ROL_RVW, "管审+"},
         };
 
         internal int id;

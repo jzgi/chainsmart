@@ -23,7 +23,6 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
             var items = GrabMap<int, int, Item>(lot.srcid);
-            var item = items[lot.itemid];
 
             short qty;
             short unitx;

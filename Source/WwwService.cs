@@ -62,7 +62,7 @@ namespace ChainMart
                     }
 
                     h.LI_("uk-flex");
-                    h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markgo('mktid', this);\" cookie=\"mktid\" onenhance=\"setactive(event, this)\">").T(o.name)._A();
+                    h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markGo('mktid', this);\" cookie=\"mktid\" onenhance=\"setActive(event, this)\">").T(o.name)._A();
                     h.SPAN_("uk-margin-auto-left");
                     h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
                     h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
