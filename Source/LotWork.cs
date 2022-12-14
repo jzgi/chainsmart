@@ -18,73 +18,19 @@ namespace ChainMart
 
     public class PublyLotWork : LotWork<PublyLotVarWork>
     {
-        public async Task @default(WebContext wc, int lotid)
+        public async Task @default(WebContext wc, int id)
         {
             using var dc = NewDbContext();
-
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
-
-            wc.GivePage(200, h =>
+            dc.Sql("SELECT id FROM lots WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
+            if (await dc.QueryTopAsync(p => p.Set(id)))
             {
-                if (lot == null)
-                {
-                    h.ALERT("没有找到产品");
-                    return;
-                }
-
-                var item = GrabMap<int, int, Item>(lot.srcid)[lot.itemid];
-
-                var src = GrabObject<int, Org>(lot.srcid);
-
-                h.TOPBARXL_();
-                h.PIC("/item/", lot.itemid, "/icon", circle: true, css: "uk-width-small");
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._DIV();
-                h._TOPBARXL();
-
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("品名", item.name)._LI();
-                h.LI_().FIELD("描述", item.tip)._LI();
-                h.LI_().FIELD("产源", src.name)._LI();
-                h.LI_().FIELD("批次号码", lot.id)._LI();
-                h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
-                h._UL();
-            }, true, 3600, title: "产品溯源信息");
-        }
-
-        public async Task tag(WebContext wc, int tagid)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE nend >= @1 AND nstart <= @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(tagid));
-
-            wc.GivePage(200, h =>
+                dc.Let(out int lotid);
+                wc.GiveRedirect(lotid + "/");
+            }
+            else
             {
-                if (lot == null)
-                {
-                    h.ALERT("没有找到产品");
-                    return;
-                }
-
-                var item = GrabMap<int, int, Item>(lot.srcid)[lot.itemid];
-
-                var src = GrabObject<int, Org>(lot.srcid);
-
-                h.TOPBARXL_();
-                h.PIC("/item/", lot.itemid, "/icon", circle: true, css: "uk-width-small");
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._DIV();
-                h._TOPBARXL();
-
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("品名", item.name)._LI();
-                h.LI_().FIELD("描述", item.tip)._LI();
-                h.LI_().FIELD("产源", src.name)._LI();
-                h.LI_().FIELD("批次号码", lot.id)._LI();
-                h.LI_().FIELD("批次创建", lot.created)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
-                h._UL();
-            }, true, 3600, title: "产品溯源信息");
+                wc.GivePage(304, h => h.ALERT("此溯源码没有绑定产品"));
+            }
         }
     }
 
@@ -165,7 +111,6 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var topOrgs = Grab<int, Org>();
-            var items = GrabMap<int, int, Item>(org.id);
 
             var zon = org.prtid == 0 ? org : topOrgs[org.prtid];
 
@@ -182,6 +127,11 @@ namespace ChainMart
 
             if (wc.IsGet)
             {
+                using var dc = NewDbContext();
+
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4");
+                var items = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
+
                 if (items == null)
                 {
                     wc.GivePane(200, h => h.ALERT("尚无上线的产品"));
@@ -215,7 +165,7 @@ namespace ChainMart
                 // populate 
                 await wc.ReadObjectAsync(msk, instance: o);
 
-                var item = items[o.itemid];
+                var item = GrabObject<int, Item>(o.itemid);
                 o.name = item.name;
                 o.typ = item.typ;
 

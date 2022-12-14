@@ -46,7 +46,7 @@ namespace ChainMart
             {ROL_LOG | ROL_EXT, "物流+"},
             {ROL_FIN | ROL_EXT, "财务+"},
             {ROL_MGT | ROL_EXT, "管理+"},
-            
+
             {ROL_MGT | ROL_RVW, "管审"},
             {ROL_MGT | ROL_EXT | ROL_RVW, "管审+"},
         };
@@ -157,7 +157,7 @@ namespace ChainMart
                 }
                 else if (!org.IsTopOrg && orgid == org.prtid && HasOrgly)
                 {
-                    if (org.trust || (orgtyp > org.typ)) // the prin is in super org, here a check only
+                    if (org.trust)
                     {
                         role = orgly;
                     }

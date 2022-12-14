@@ -319,53 +319,6 @@ create table clears
 
 alter table clears owner to postgres;
 
-create table items_old
-(
-    id serial not null,
-    srcid integer,
-    origin varchar(12),
-    store smallint,
-    duration smallint,
-    specs jsonb,
-    icon bytea,
-    pic bytea,
-    m1 bytea,
-    m2 bytea,
-    m3 bytea,
-    m4 bytea,
-    m5 bytea,
-    m6 bytea
-)
-    inherits (entities);
-
-alter table items_old owner to postgres;
-
-create table lots_old
-(
-    id serial not null,
-    srcid integer,
-    srcname varchar(12),
-    zonid integer not null,
-    ctrid integer not null,
-    mktids integer[],
-    itemid integer,
-    unit varchar(4),
-    unitx varchar(12),
-    price money,
-    "off" money,
-    min integer,
-    step integer,
-    max integer,
-    cap integer,
-    remain integer,
-    nstart integer,
-    nend integer,
-    m1 bytea
-)
-    inherits (entities);
-
-alter table lots_old owner to postgres;
-
 create table items
 (
     id serial not null

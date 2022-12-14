@@ -10,21 +10,22 @@ namespace ChainMart
 {
     public class LotVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
+        public virtual async Task @default(WebContext wc)
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
-            var items = GrabMap<int, int, Item>(org.id);
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
+            var item = GrabObject<int, Item>(o.itemid);
+
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品", items[o.itemid].ToString())._LI();
+                h.LI_().FIELD("产品", item.name)._LI();
                 h.LI_().FIELD("投放市场", topOrgs[o.ctrid].alias)._LI();
                 if (o.IsSelfTransport)
                 {
@@ -84,6 +85,66 @@ namespace ChainMart
 
     public class PublyLotVarWork : LotVarWork
     {
+        public override async Task @default(WebContext wc)
+        {
+            int lotid = wc[0];
+
+            using var dc = NewDbContext();
+
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
+            wc.GivePage(200, h =>
+            {
+                if (lot == null)
+                {
+                    h.ALERT("无效的溯源产品批次");
+                    return;
+                }
+
+                var item = GrabObject<int, Item>(lot.itemid);
+
+                var src = GrabObject<int, Org>(lot.srcid);
+
+                h.TOPBARXL_();
+                h.PIC("/item/", lot.itemid, "/icon", circle: true, css: "uk-width-small");
+                h.DIV_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._DIV();
+                h._TOPBARXL();
+
+                h.UL_("uk-card uk-card-primary uk-list uk-list-divider");
+                h.LI_().FIELD("品名", item.name)._LI();
+                h.LI_().FIELD("描述", item.tip)._LI();
+                h.LI_().FIELD("产源", src.name)._LI();
+                h.LI_().FIELD("批次号码", lot.id)._LI();
+                h.LI_().FIELD("批次创建", lot.created)._LI();
+                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
+                h._UL();
+
+                if (item.pic)
+                {
+                    h.ARTICLE_("uk-card uk-card-primary");
+                    h.PIC("/item/", lot.itemid, "/pic");
+                    h._ARTICLE();
+                }
+
+                h.ARTICLE_("uk-card uk-card-primary");
+
+                h.HEADER("产源或供应信息", "uk-card-header");
+                h.HEADER(src.name, "uk-card-header");
+                h.SECTION_("uk-card-body");
+
+                h._SECTION();
+                h._ARTICLE();
+
+
+                if (src.pic)
+                {
+                    h.SECTION_("uk-card uk-card-primary");
+                    h.PIC("/item/", lot.itemid, "/pic");
+                    h._SECTION();
+                }
+            }, true, 3600, title: "中惠农通产品溯源信息");
+        }
     }
 
     public class SrclyLotVarWork : LotVarWork
@@ -94,14 +155,16 @@ namespace ChainMart
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
-            var items = GrabMap<int, int, Item>(org.id);
             var prin = (User) wc.Principal;
 
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
+
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4");
+                var items = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
 
                 wc.GivePane(200, h =>
                 {
@@ -130,7 +193,7 @@ namespace ChainMart
                     adapter = prin.name,
                 });
 
-                var item = items[o.itemid];
+                var item = GrabObject<int, Item>(o.itemid);
                 o.name = item.name;
                 o.typ = item.typ;
 

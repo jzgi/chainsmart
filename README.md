@@ -2,7 +2,7 @@
 
 ChainMart (品链供销平台) is a decentralized industrial supply chain & marketing platform
 
-# Business platforms that have deployed ChainMart
+# Reference Platforms
 
 | ![ZHNT](https://raw.githubusercontent.com/jzgi/chainmart/master/Docs/zhnt.png) | ![skyiah](https://raw.githubusercontent.com/jzgi/chainmart/master/Docs/skyiah.png) |
 | ---- | ----- |

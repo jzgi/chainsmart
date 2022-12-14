@@ -24,7 +24,7 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY dt DESC");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Clear>();
 
             wc.GivePage(200, h =>
@@ -73,7 +73,7 @@ namespace ChainMart
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" AND sprid = @1 AND status > 0 ORDER BY dt DESC LIMIT 40 OFFSET 40 * @2");
+                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
                 var arr = await dc.QueryAsync<Clear>();
                 wc.GivePage(200, h =>
                 {
@@ -152,7 +152,7 @@ namespace ChainMart
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" ORDER BY dt DESC");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" ORDER BY id DESC");
             var arr = await dc.QueryAsync<Clear>();
             wc.GivePage(200, h =>
             {
@@ -200,7 +200,7 @@ namespace ChainMart
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" AND sprid = @1 AND status > 0 ORDER BY dt DESC LIMIT 40 OFFSET 40 * @2");
+                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
                 var arr = await dc.QueryAsync<Clear>(p => p.Set(prv).Set(page));
                 wc.GivePage(200, h =>
                 {

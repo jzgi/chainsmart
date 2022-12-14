@@ -23,7 +23,6 @@ namespace ChainMart
         /// </summary>
         public static async Task Main(string[] args)
         {
-
             // start the concluder thead
             // cycler.Start();
 
@@ -75,11 +74,11 @@ namespace ChainMart
                 }, 60 * 15
             );
 
-            // items for each source org
-            CacheMap((DbContext dc, int orgid) =>
+            // each of the working items
+            CacheObject<int, Item>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status > 0 ORDER BY status DESC");
-                    return dc.Query<int, Item>(p => p.Set(orgid));
+                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
+                    return dc.QueryTop<Item>(p => p.Set(id));
                 }, 60 * 15
             );
         }

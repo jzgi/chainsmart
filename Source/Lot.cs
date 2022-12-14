@@ -130,6 +130,12 @@ namespace ChainMart
 
         public decimal RealPrice => price - off;
 
+
+        public bool IsAvailableFor(int mktid)
+        {
+            return mktids == null || mktids.Contains(mktid);
+        }
+
         public override string ToString() => name;
     }
 }

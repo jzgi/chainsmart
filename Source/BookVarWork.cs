@@ -21,8 +21,7 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
-            var items = GrabMap<int, int, Item>(lot.srcid);
+            var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             short qty;
             short unitx;
@@ -30,7 +29,7 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 // picture
-                h.PIC_().T(MainApp.WwwUrl).T("/item/").T(lot.id).T("/pic")._PIC();
+                h.PIC_().T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/pic")._PIC();
 
                 h.DIV_("uk-card uk-card-default");
                 h._DIV();
@@ -38,10 +37,10 @@ namespace ChainMart
                 // bottom bar
                 //
 
-                decimal realprice = lot.RealPrice;
+                decimal realprice = o.RealPrice;
                 h.BOTTOMBAR_().FORM_("uk-flex uk-width-1-1", oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);");
-                h.HIDDEN(nameof(lot.price), lot.price);
-                h.HIDDEN(nameof(lot.off), lot.off);
+                h.HIDDEN(nameof(o.price), o.price);
+                h.HIDDEN(nameof(o.off), o.off);
 
                 // unitpkg selection
                 // unitx = item.unitx?[0] ?? 1;
@@ -53,15 +52,15 @@ namespace ChainMart
                 // }
                 h._SELECT();
                 // qty selection
-                qty = lot.min;
+                qty = o.min;
                 h.SELECT_(null, nameof(qty));
-                for (int i = lot.min; i < lot.max; i += lot.step)
+                for (int i = o.min; i < o.max; i += o.step)
                 {
-                    h.OPTION_(i).T(i).SP().T(lot.step)._OPTION();
+                    h.OPTION_(i).T(i).SP().T(o.step)._OPTION();
                 }
                 h._SELECT();
                 // pay button
-                pay = qty * lot.RealPrice;
+                pay = qty * o.RealPrice;
                 h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(pay), pay)._BUTTON();
 
                 h._FORM()._BOTTOMBAR();

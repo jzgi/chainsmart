@@ -92,7 +92,7 @@ namespace ChainMart
 
     public class SrclyItemVarWork : ItemVarWork
     {
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
@@ -143,28 +143,28 @@ namespace ChainMart
             }
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 6)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "确认删除此产品？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
@@ -178,7 +178,7 @@ namespace ChainMart
             wc.Give(204);
         }
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_RVW)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -193,7 +193,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(Org.TYP_ZON, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_RVW)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

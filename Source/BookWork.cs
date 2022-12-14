@@ -87,8 +87,8 @@ namespace ChainMart
         [Ui("下单", "采购下单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var mrt = wc[-1].As<Org>();
-            int ctrid = mrt.ctrid;
+            var org = wc[-1].As<Org>();
+            int ctrid = org.ctrid;
             var topOrgs = Grab<int, Org>();
             var ctr = topOrgs[ctrid];
             var cats = Grab<short, Cat>();
@@ -99,7 +99,7 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0 AND typ = @2");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 4 AND typ = @2");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ));
 
             wc.GivePage(200, h =>
@@ -125,7 +125,7 @@ namespace ChainMart
                     h._ASIDE();
 
                     h._A();
-                });
+                }, filter: v => v.IsAvailableFor(org.MarketId));
             });
         }
     }

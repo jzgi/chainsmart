@@ -197,6 +197,7 @@ namespace ChainMart
             }, false, 15);
         }
 
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("新建", "新建下级产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
@@ -371,11 +372,11 @@ namespace ChainMart
             }, false, 15);
         }
 
-        [OrglyAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("新建", "新建下属商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var mkt = wc[-1].As<Org>();
+            var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
 
             var regs = Grab<short, Reg>();
@@ -385,8 +386,8 @@ namespace ChainMart
                 created = DateTime.Now,
                 creator = prin.name,
                 state = Entity.STA_NORMAL,
-                prtid = mkt.id,
-                ctrid = mkt.ctrid,
+                prtid = org.id,
+                ctrid = org.ctrid,
             };
 
             if (wc.IsGet)
@@ -444,6 +445,4 @@ namespace ChainMart
             }
         }
     }
-
-
 }
