@@ -38,19 +38,13 @@ namespace ChainMart
                 //
 
                 decimal realprice = o.RealPrice;
-                h.BOTTOMBAR_().FORM_("uk-flex uk-width-1-1", oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);");
+                h.BOTTOMBAR_().FORM_("uk-flex uk-width-1-1", oninput: $"pay.value = {realprice} * parseInt(qty.value);");
                 h.HIDDEN(nameof(o.price), o.price);
                 h.HIDDEN(nameof(o.off), o.off);
 
                 // unitpkg selection
                 // unitx = item.unitx?[0] ?? 1;
-                h.SELECT_(null, nameof(unitx));
-                // for (int i = 0; i < item.unitx?.Length; i++)
-                // {
-                //     var v = item.unitx[i];
-                //     h.OPTION_(v).T("每").T(item.unitas).SP().T(v).SP().T(item.unit)._OPTION();
-                // }
-                h._SELECT();
+                h.T("每").T(o.unit).SP().OUTPUTCNY(nameof(realprice),realprice);
                 // qty selection
                 qty = o.min;
                 h.SELECT_(null, nameof(qty));

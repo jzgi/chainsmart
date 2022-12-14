@@ -376,6 +376,9 @@ create table lots
     nstart integer,
     nend integer,
     m1 bytea,
+    m2 bytea,
+    m3 bytea,
+    m4 bytea,
     constraint lots_typ_fk
         foreign key (typ) references cats
 )
@@ -477,7 +480,37 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, futured, price, "off", min, step, max, cap, remain, nstart, nend, m1) as
+create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.srcid,
+       o.origin,
+       o.store,
+       o.duration,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4,
+       o.m5 IS NOT NULL   AS m5,
+       o.m6 IS NOT NULL   AS m6
+FROM items o;
+
+alter table items_vw owner to postgres;
+
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, futured, price, "off", min, step, max, cap, remain, nstart, nend, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -508,40 +541,13 @@ SELECT o.typ,
        o.remain,
        o.nstart,
        o.nend,
-       o.m1 IS NOT NULL AS m1
+       o.m1 IS NOT NULL AS m1,
+       o.m2 IS NOT NULL AS m2,
+       o.m3 IS NOT NULL AS m3,
+       o.m4 IS NOT NULL AS m4
 FROM lots o;
 
 alter table lots_vw owner to postgres;
-
-create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.srcid,
-       o.origin,
-       o.store,
-       o.duration,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4,
-       o.m5 IS NOT NULL   AS m5,
-       o.m6 IS NOT NULL   AS m6
-FROM items o;
-
-alter table items_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

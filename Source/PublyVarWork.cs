@@ -62,7 +62,9 @@ namespace ChainMart
                     }
 
                     if (o.icon)
+                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                    }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
@@ -80,7 +82,8 @@ namespace ChainMart
 
     /// 
     /// The home for shop
-    /// 
+    ///
+    [UserAuthenticate]
     public class PublyVarVarWork : WebWork
     {
         [MyAuthorize]

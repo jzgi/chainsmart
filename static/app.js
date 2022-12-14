@@ -540,10 +540,10 @@ function crop(trig, siz, title, subs) {
             wid = 120; hei = 120;
             break;
         case 2:
-            wid = 400; hei = 240;
+            wid = 400; hei = 200;
             break;
         case 3:
-            wid = 640; hei = 900;
+            wid = 600; hei = 800;
             break;
     }
     var html = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
@@ -565,7 +565,7 @@ function crop(trig, siz, title, subs) {
         html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
     html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
-    html += '<button class="uk-button uk-button-default" onclick="upload($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
+    html += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
     if (subs > 0) {
         html += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
     }
@@ -595,14 +595,15 @@ function crop(trig, siz, title, subs) {
 }
 
 var croppie;
-var cropSwap = false; // toggle
-var cropWid, cropHei;
+
+var cropWid = 0; 
+var cropHei = 0;
 
 function bind(el, url, wid, hei) {
 
     // swap width & height
     if (!wid || !hei) {
-        cropSwap = !cropSwap;
+        var n = cropWid; cropWid = cropHei; cropHei = n;
     }
     else {
         cropWid = wid;
@@ -614,8 +615,8 @@ function bind(el, url, wid, hei) {
     }
     croppie = new Croppie(el, {
         viewport: {
-            width: cropSwap ? cropHei : cropWid,
-            height: cropSwap ? cropWid : cropHei
+            width: cropWid / 2,
+            height: cropHei / 2
         },
         enforceBoundary: true,
         showZoomer: false
@@ -628,11 +629,11 @@ function bind(el, url, wid, hei) {
 
 }
 
-function upload(el, url, close) {
+function cropUpd(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: 'viewport', format: 'webp', quality: 0.875
+            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.875
         }
     ).then(function (blob) {
 

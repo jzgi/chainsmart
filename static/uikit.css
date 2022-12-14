@@ -5779,7 +5779,7 @@ iframe.uk-cover {
 }
 
 .uk-background-default {
-    background-color: #fff;
+    background-color: #fff !important;
 }
 
 .uk-background-muted {

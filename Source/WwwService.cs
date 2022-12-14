@@ -9,7 +9,6 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    [UserAuthenticate]
     public class WwwService : MainService
     {
         protected override void OnCreate()

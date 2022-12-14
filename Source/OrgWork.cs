@@ -130,7 +130,7 @@ namespace ChainMart
                         h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 50)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
                     h.LI_().SELECT(m.IsMarket ? "场区" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
@@ -220,7 +220,7 @@ namespace ChainMart
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 50)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -380,7 +380,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             var regs = Grab<short, Reg>();
-            var m = new Org
+            var o = new Org
             {
                 typ = (short) typ,
                 created = DateTime.Now,
@@ -394,39 +394,37 @@ namespace ChainMart
             {
                 if (typ == Org.TYP_SHP)
                 {
-                    m.Read(wc.Query, 0);
+                    o.Read(wc.Query, 0);
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("填写商户资料");
 
-                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                        h.LI_().TEXT("社会信用号", nameof(m.link), m.link, max: 20)._LI();
-                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
-                        h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsSection)._LI();
+                        h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                        h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
+                        h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                        h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
+                        h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
 #if ZHNT
-                        h.LI_().TEXT("档位号", nameof(m.addr), m.addr, max: 4)._LI();
+                        h.LI_().TEXT("场地编号", nameof(o.addr), o.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
-                        h.LI_().TEL("联系电话", nameof(m.tel), m.tel, max: 11)._LI();
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0)._LI();
-
                         h._FIELDSUL()._FORM();
                     });
                 }
                 else // TYP_VTL
                 {
-                    m.Read(wc.Query, 0);
+                    o.Read(wc.Query, 0);
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("填写虚拟商户信息");
 
-                        h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                        h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k >= 0)._LI();
+                        h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
+                        h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
+                        h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                     });
@@ -435,11 +433,11 @@ namespace ChainMart
             else // POST
             {
                 const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-                await wc.ReadObjectAsync(msk, instance: m);
+                await wc.ReadObjectAsync(msk, instance: o);
 
                 using var dc = NewDbContext();
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
-                await dc.ExecuteAsync(p => m.Write(p, msk));
+                await dc.ExecuteAsync(p => o.Write(p, msk));
 
                 wc.GivePane(201); // created
             }

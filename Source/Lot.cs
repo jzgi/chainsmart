@@ -47,6 +47,9 @@ namespace ChainMart
         internal int nstart;
         internal int nend;
         internal bool m1;
+        internal bool m2;
+        internal bool m3;
+        internal bool m4;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -83,6 +86,9 @@ namespace ChainMart
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
                 s.Get(nameof(m1), ref m1);
+                s.Get(nameof(m2), ref m2);
+                s.Get(nameof(m3), ref m3);
+                s.Get(nameof(m4), ref m4);
             }
         }
 
@@ -121,6 +127,9 @@ namespace ChainMart
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
                 s.Put(nameof(m1), m1);
+                s.Put(nameof(m2), m2);
+                s.Put(nameof(m3), m3);
+                s.Put(nameof(m4), m4);
             }
         }
 

@@ -129,8 +129,8 @@ namespace ChainMart
             {
                 using var dc = NewDbContext();
 
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4");
-                var items = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
+                await dc.QueryAsync("SELECT id, name FROM items_vw WHERE srcid = @1 AND status = 4", p => p.Set(org.id));
+                var items = dc.ToIntMap();
 
                 if (items == null)
                 {

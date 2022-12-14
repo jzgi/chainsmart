@@ -91,7 +91,7 @@ namespace ChainMart
 
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             wc.GivePage(200, h =>
@@ -106,44 +106,90 @@ namespace ChainMart
 
                 var src = GrabObject<int, Org>(lot.srcid);
 
-                h.TOPBARXL_();
-                h.PIC("/item/", lot.itemid, "/icon", circle: true, css: "uk-width-small");
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._DIV();
+                h.TOPBARXL_(css: "uk-background-default");
+                h.PIC("/item/", item.id, "/icon", css: "uk-width-small");
+                h.DIV_("uk-width-expand uk-col uk-padding-left").H2(item.name)._DIV();
                 h._TOPBARXL();
 
-                h.UL_("uk-card uk-card-primary uk-list uk-list-divider");
-                h.LI_().FIELD("品名", item.name)._LI();
-                h.LI_().FIELD("描述", item.tip)._LI();
-                h.LI_().FIELD("产源", src.name)._LI();
-                h.LI_().FIELD("批次号码", lot.id)._LI();
-                h.LI_().FIELD("批次创建", lot.created)._LI();
+                h.DIV_("uk-card uk-card-primary");
+                h.H4("批次信息", "uk-card-header");
+                h.UL_("uk-card body uk-list uk-list-divider");
+                h.LI_().FIELD("批次编号", $"{lot.id:0000 0000}")._LI();
+                h.LI_().FIELD("品名", lot.name)._LI();
+                h.LI_().FIELD("批次简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
                 h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
+                h.LI_().FIELD2("创建", lot.created, lot.creator)._LI();
+                h.LI_().FIELD2("制码", lot.adapted, lot.adapter)._LI();
+                h.LI_().FIELD2("上线", lot.oked, lot.oker)._LI();
                 h._UL();
+                h._DIV();
 
+                h.DIV_("uk-card uk-card-primary");
+                h.H4("批次检验", "uk-card-header");
+                if (lot.m1)
+                {
+                    h.PIC("/lot/", lot.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                }
+                if (lot.m2)
+                {
+                    h.PIC("/lot/", lot.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                }
+                if (lot.m3)
+                {
+                    h.PIC("/lot/", lot.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                }
+                if (lot.m4)
+                {
+                    h.PIC("/lot/", lot.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                }
+                h._DIV();
+
+                h.DIV_("uk-card uk-card-primary");
+                h.H4("产品详情", "uk-card-header");
+                h.DIV_("uk-card-body");
                 if (item.pic)
                 {
-                    h.ARTICLE_("uk-card uk-card-primary");
-                    h.PIC("/item/", lot.itemid, "/pic");
-                    h._ARTICLE();
+                    h.PIC("/item/", lot.itemid, "/pic", css: "uk-width-1-1");
                 }
-
-                h.ARTICLE_("uk-card uk-card-primary");
-
-                h.HEADER("产源或供应信息", "uk-card-header");
-                h.HEADER(src.name, "uk-card-header");
-                h.SECTION_("uk-card-body");
-
-                h._SECTION();
-                h._ARTICLE();
-
-
-                if (src.pic)
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("品名", item.name)._LI();
+                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
+                if (!string.IsNullOrEmpty(item.origin))
                 {
-                    h.SECTION_("uk-card uk-card-primary");
-                    h.PIC("/item/", lot.itemid, "/pic");
-                    h._SECTION();
+                    h.LI_().FIELD("生产基地", item.origin)._LI();
                 }
+                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.fully)._A()._LI();
+                h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
+                h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
+                h._UL();
+                h._DIV();
+                h._DIV();
+
+                h.DIV_("uk-card uk-card-primary");
+                h.H4("产品证照", "uk-card-header");
+                if (item.m1)
+                {
+                    h.PIC("/item/", item.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                }
+                if (item.m2)
+                {
+                    h.PIC("/item/", item.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                }
+                if (item.m3)
+                {
+                    h.PIC("/item/", item.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                }
+                if (item.m4)
+                {
+                    h.PIC("/item/", item.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                }
+                h._DIV();
             }, true, 3600, title: "中惠农通产品溯源信息");
+        }
+
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, nameof(m) + sub, true, 900);
         }
     }
 
@@ -163,14 +209,14 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4");
-                var items = await dc.QueryAsync<int, Lot>(p => p.Set(org.id));
+                await dc.QueryAsync("SELECT id, name FROM items_vw WHERE srcid = @1 AND status = 4", p => p.Set(org.id));
+                var items = dc.ToIntMap();
 
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("产品销售批次信息");
 
-                    h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
                     h.LI_().DATE("预售交货日", nameof(o.futured), o.futured)._LI();
@@ -211,10 +257,10 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 1)]
-        public async Task m(WebContext wc)
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
+        public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, nameof(m), false, 12);
+            await doimg(wc, nameof(m) + sub, false, 3);
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
