@@ -344,7 +344,7 @@ create table items
 )
     inherits (entities);
 
-alter table items owner to postgres;
+alter table items_old owner to postgres;
 
 create table lots
 (
@@ -362,7 +362,7 @@ create table lots
     mktids integer[],
     itemid integer
         constraint lots_itemid_fk
-            references items,
+            references items_old,
     unit varchar(4),
     unitx varchar(12),
     futured date,
@@ -384,10 +384,10 @@ create table lots
 )
     inherits (entities);
 
-alter table lots owner to postgres;
+alter table lots_old owner to postgres;
 
 create index lots_nend_idx
-    on lots (nend);
+    on lots_old (nend);
 
 create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
 SELECT o.typ,
@@ -506,7 +506,7 @@ SELECT o.typ,
        o.m4 IS NOT NULL   AS m4,
        o.m5 IS NOT NULL   AS m5,
        o.m6 IS NOT NULL   AS m6
-FROM items o;
+FROM items_old o;
 
 alter table items_vw owner to postgres;
 
@@ -545,7 +545,7 @@ SELECT o.typ,
        o.m2 IS NOT NULL AS m2,
        o.m3 IS NOT NULL AS m3,
        o.m4 IS NOT NULL AS m4
-FROM lots o;
+FROM lots_old o;
 
 alter table lots_vw owner to postgres;
 

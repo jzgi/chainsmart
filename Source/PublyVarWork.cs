@@ -202,7 +202,7 @@ namespace ChainMart
                 };
 
                 // make use of any existing abandoned record
-                const short msk = 0xfff ^ Entity.MSK_ID;
+                const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
                 dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, pay");
                 await dc.QueryTopAsync(p => m.Write(p, msk));
                 dc.Let(out int buyid);
@@ -210,7 +210,7 @@ namespace ChainMart
 
                 // // call WeChatPay to prepare order there
                 string trade_no = (buyid + "-" + topay).Replace('.', '-');
-                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
+                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(SC: false,
                     trade_no,
                     topay,
                     prin.im, // the payer
@@ -234,77 +234,6 @@ namespace ChainMart
                 Application.Err(e.Message);
                 wc.Give(500);
             }
-        }
-    }
-
-
-    public class PublyCtrVarWork : WebWork
-    {
-        /// <summary>
-        /// To display territories marked by centers.
-        /// </summary>
-        public async Task @default(WebContext wc)
-        {
-            int ctrid = wc[0];
-            var topOrgs = Grab<int, Org>();
-            var ctr = topOrgs[ctrid];
-            var cats = Grab<short, Cat>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status > 0");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid));
-
-            wc.GivePage(200, h =>
-            {
-                if (arr == null)
-                {
-                    h.ALERT("没有在批发的产品");
-                    return;
-                }
-
-                // h.NAVBAR(cats, "", 0);
-
-                h.TABLE_();
-                var last = 0;
-                for (var i = 0; i < arr?.Length; i++)
-                {
-                    var o = arr[i];
-                    // if (o.prvid != last)
-                    // {
-                    //     var spr = topOrgs[o.prvid];
-                    //     h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                    // }
-                    h.TR_();
-                    h.TD(o.name);
-                    // h.TD(o.price, true);
-                    h._TR();
-
-                    // last = o.prvid;
-                }
-                h._TABLE();
-            }, title: ctr.tip);
-        }
-
-        public async Task lot(WebContext wc, int lotid)
-        {
-            int prvid = wc[0];
-            var topOrgs = Grab<int, Org>();
-            var prv = topOrgs[prvid];
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND status > 0");
-            var obj = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
-
-            wc.GivePage(200, h =>
-            {
-                h.PIC("/prod/", obj.id, "/icon");
-                h.SECTION_();
-                h.T(obj.name);
-
-                h._SECTION();
-
-                h.BOTTOMBAR_().BUTTON("付款")._BOTTOMBAR();
-            }, title: prv.tip);
         }
     }
 }

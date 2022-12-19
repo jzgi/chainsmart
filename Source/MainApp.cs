@@ -16,7 +16,7 @@ namespace ChainMart
 
 
         // periodic polling and concluding ended lots 
-        static readonly Thread cycler = new Thread(Cycle);
+        // static readonly Thread cycler = new Thread(Cycle);
 
         /// <summary>
         /// The entry point of the application.
@@ -36,7 +36,7 @@ namespace ChainMart
 
             MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
 
-            CreateService<FedService>("fed", STATIC_ROOT);
+            // CreateService<FedService>("fed", STATIC_ROOT);
 
             await StartAsync();
         }

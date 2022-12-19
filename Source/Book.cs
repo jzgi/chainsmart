@@ -49,12 +49,13 @@ namespace ChainMart
         internal int lotid;
 
         internal string unit;
-        internal string unitx;
+        internal decimal unitx;
         internal decimal price;
         internal decimal off;
         internal short qty;
-        internal short ret; // qty cut
+        internal decimal topay;
         internal decimal pay;
+        internal decimal ret; // qty cut
         internal decimal refund; // pay refunded
 
 
@@ -85,10 +86,11 @@ namespace ChainMart
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(qty), ref qty);
-                s.Get(nameof(pay), ref pay);
+                s.Get(nameof(topay), ref topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(pay), ref pay);
                 s.Get(nameof(ret), ref ret);
                 s.Get(nameof(refund), ref refund);
             }
@@ -122,10 +124,11 @@ namespace ChainMart
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(qty), qty);
-                s.Put(nameof(pay), pay);
+                s.Put(nameof(topay), topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(pay), pay);
                 s.Put(nameof(ret), ret);
                 s.Put(nameof(refund), refund);
             }
@@ -135,6 +138,6 @@ namespace ChainMart
 
         public bool IsOver(DateTime now) => false;
 
-        public short Status => state;
+        public override string ToString() => shpname + "采购" + srcname + "产品" + qty + "件";
     }
 }

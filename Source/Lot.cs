@@ -30,12 +30,13 @@ namespace ChainMart
         internal int zonid;
         internal int ctrid;
         internal int[] mktids; // optional
+        internal DateTime dated;
+        internal short term;
 
         // individual order relevant
         internal int itemid;
         internal string unit;
-        internal string unitx; // proximate units
-        internal DateTime futured;
+        internal decimal unitx;
         internal decimal price;
         internal decimal off;
         internal int cap;
@@ -68,10 +69,11 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(dated), ref dated);
+                s.Get(nameof(term), ref term);
                 s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
-                s.Get(nameof(futured), ref futured);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
@@ -109,10 +111,11 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(dated), dated);
+                s.Put(nameof(term), term);
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
-                s.Put(nameof(futured), futured);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);

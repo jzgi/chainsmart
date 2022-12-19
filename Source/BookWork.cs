@@ -84,7 +84,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("下单", "采购下单", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("下单", "供应链采购下单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -99,8 +99,8 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 4 AND typ = @2");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 4 AND typ = @2 AND (mktids IS NULL OR mktids @> ARRAY[@3])");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.MarketId));
 
             wc.GivePage(200, h =>
             {
@@ -125,7 +125,7 @@ namespace ChainMart
                     h._ASIDE();
 
                     h._A();
-                }, filter: v => v.IsAvailableFor(org.MarketId));
+                });
             });
         }
     }
@@ -290,7 +290,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("分拣派运管理", "品控", icon: "sign-out")]
+    [Ui("分拣派运管理", "分发", icon: "sign-out")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

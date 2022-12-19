@@ -23,9 +23,6 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-            short qty;
-            short unitx;
-            decimal pay = 0;
             wc.GivePane(200, h =>
             {
                 // picture
@@ -36,28 +33,30 @@ namespace ChainMart
 
                 // bottom bar
                 //
-
                 decimal realprice = o.RealPrice;
-                h.BOTTOMBAR_().FORM_("uk-flex uk-width-1-1", oninput: $"pay.value = {realprice} * parseInt(qty.value);");
-                h.HIDDEN(nameof(o.price), o.price);
-                h.HIDDEN(nameof(o.off), o.off);
+                short qty = o.min;
+                decimal unitx = o.unitx;
+                decimal qtyx = qty * unitx;
+                decimal topay = qtyx * o.RealPrice;
 
-                // unitpkg selection
-                // unitx = item.unitx?[0] ?? 1;
-                h.T("每").T(o.unit).SP().OUTPUTCNY(nameof(realprice),realprice);
-                // qty selection
-                qty = o.min;
-                h.SELECT_(null, nameof(qty));
+                h.BOTTOMBAR_();
+                h.FORM_("uk-flex uk-width-1-1", oninput: $"qtyx.value = qty.value * {unitx}; topay.value = {realprice} * parseInt(qtyx.value);");
+
+                h.HIDDEN(nameof(realprice), realprice);
+
+                h.SELECT_(null, nameof(qty), css: "uk-width-small");
                 for (int i = o.min; i < o.max; i += o.step)
                 {
-                    h.OPTION_(i).T(i).SP().T(o.step)._OPTION();
+                    h.OPTION_(i).T(i)._OPTION();
                 }
-                h._SELECT();
-                // pay button
-                pay = qty * o.RealPrice;
-                h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(pay), pay)._BUTTON();
+                h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
+                h.OUTPUT(nameof(qtyx), qtyx).SP().T(o.unit)._SPAN();
 
-                h._FORM()._BOTTOMBAR();
+                // pay button
+                h.BUTTON_(nameof(book), css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(topay), topay)._BUTTON();
+
+                h._FORM();
+                h._BOTTOMBAR();
             });
         }
 
@@ -67,6 +66,8 @@ namespace ChainMart
             int lotid = wc[0];
 
             var prin = (User) wc.Principal;
+
+            // submitted values
             var f = await wc.ReadAsync<Form>();
             short qty = f[nameof(qty)];
 
@@ -98,24 +99,27 @@ namespace ChainMart
                     unitx = lot.unitx,
                     price = lot.price,
                     off = lot.off,
-                    qty = qty
+                    qty = qty,
+                    topay = lot.RealPrice * qty * lot.unitx
                 };
 
                 // make use of any existing abandoned record
-                dc.Sql("INSERT INTO books ").colset(Book.Empty)._VALUES_(Book.Empty).T(" ON CONFLICT (shpid, state) WHERE state = 0 DO UPDATE ")._SET_(Book.Empty).T(" RETURNING id, pay");
+                const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+                dc.Sql("INSERT INTO books ").colset(Book.Empty, msk)._VALUES_(Book.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Book.Empty, msk).T(" RETURNING id, topay");
                 await dc.QueryTopAsync(p => m.Write(p));
                 dc.Let(out int bookid);
                 dc.Let(out decimal topay);
 
+
                 // call WeChatPay to prepare order there
                 string trade_no = (bookid + "-" + topay).Replace('.', '-');
-                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(
+                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(SC: true,
                     trade_no,
                     topay,
                     prin.im, // the payer
                     wc.RemoteIpAddress.ToString(),
                     MainApp.MgtUrl + "/" + nameof(MgtService.onpay),
-                    MainApp.MgtUrl
+                    m.ToString()
                 );
                 if (prepay_id != null)
                 {

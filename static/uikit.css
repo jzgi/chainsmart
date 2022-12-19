@@ -30,18 +30,11 @@ a {
     -webkit-text-decoration-skip: objects;
 }
 
-section,
-article,
 header,
 footer,
 nav {
     display: flex;
     width: 100%;
-}
-
-header,
-footer,
-nav {
     align-items: center;
 }
 

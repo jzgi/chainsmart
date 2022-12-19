@@ -20,28 +20,27 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var item = GrabObject<int, Item>(o.itemid);
-
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品", item.name)._LI();
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("投放市场", topOrgs[o.ctrid].alias)._LI();
                 if (o.IsSelfTransport)
                 {
                     h.LI_().FIELD("自达市场", o.mktids, topOrgs)._LI();
                 }
                 // h.LI_().FIELD("状态", States[o.state])._LI();
-                h.LI_().FIELD("单位", o.unit).FIELD("每包装含量", o.unitx)._LI();
+                h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
-                h.LI_().FIELD("起订量", o.min).FIELD("限订量", o.max)._LI();
-                h.LI_().FIELD("递增量", o.step)._LI();
-                h.LI_().FIELD("本批次总量", o.cap).FIELD("剩余量", o.remain)._LI();
-                h.LI_().FIELD("起始溯源号", o.nstart).FIELD("截至溯源号", o.nend)._LI();
+                h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
+                h.LI_().FIELD("递增", o.step)._LI();
+                h.LI_().FIELD("总件数", o.cap).FIELD("剩余件数", o.remain)._LI();
+                h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
                 h.LI_().FIELD("处理进展", o.status, Lot.Statuses).FIELD("应用状况", Lot.States[o.state])._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator, "&nbsp;")._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter, "&nbsp;")._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker, "&nbsp;")._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -106,25 +105,30 @@ namespace ChainMart
 
                 var src = GrabObject<int, Org>(lot.srcid);
 
-                h.TOPBARXL_(css: "uk-background-default");
-                h.PIC("/item/", item.id, "/icon", css: "uk-width-small");
-                h.DIV_("uk-width-expand uk-col uk-padding-left").H2(item.name)._DIV();
+                h.TOPBARXL_();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._HEADER();
+                if (item.icon)
+                {
+                    h.PIC("/item/", item.id, "/icon", circle: true, css: "uk-width-small");
+                }
+                else
+                    h.PIC("/void.webp", circle: true, css: "uk-width-small");
                 h._TOPBARXL();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次信息", "uk-card-header");
                 h.UL_("uk-card body uk-list uk-list-divider");
-                h.LI_().FIELD("批次编号", $"{lot.id:0000 0000}")._LI();
-                h.LI_().FIELD("品名", lot.name)._LI();
-                h.LI_().FIELD("批次简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
-                h.LI_().FIELD2("批次供量", lot.cap, lot.unit, true)._LI();
+                h.LI_().FIELD("产品名", lot.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
+                h.LI_().FIELD2("总件数", lot.cap, lot.unit)._LI();
+                h.LI_().FIELD2("溯源编号", $"{lot.nstart:0000 0000}", $"{lot.nend:0000 0000}", "－")._LI();
                 h.LI_().FIELD2("创建", lot.created, lot.creator)._LI();
                 h.LI_().FIELD2("制码", lot.adapted, lot.adapter)._LI();
                 h.LI_().FIELD2("上线", lot.oked, lot.oker)._LI();
                 h._UL();
-                h._DIV();
+                h._ARTICLE();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次检验", "uk-card-header");
                 if (lot.m1)
                 {
@@ -142,11 +146,11 @@ namespace ChainMart
                 {
                     h.PIC("/lot/", lot.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
-                h._DIV();
+                h._ARTICLE();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("产品详情", "uk-card-header");
-                h.DIV_("uk-card-body");
+                h.SECTION_("uk-card-body");
                 if (item.pic)
                 {
                     h.PIC("/item/", lot.itemid, "/pic", css: "uk-width-1-1");
@@ -162,10 +166,10 @@ namespace ChainMart
                 h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
                 h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
                 h._UL();
-                h._DIV();
-                h._DIV();
+                h._SECTION();
+                h._ARTICLE();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("产品证照", "uk-card-header");
                 if (item.m1)
                 {
@@ -183,13 +187,18 @@ namespace ChainMart
                 {
                     h.PIC("/item/", item.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
-                h._DIV();
+                h._ARTICLE();
+
+                h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
+                h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
+                h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
+                h._FOOTER();
             }, true, 3600, title: "中惠农通产品溯源信息");
         }
 
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, nameof(m) + sub, true, 900);
+            await doimg(wc, nameof(m) + sub, true, 3600);
         }
     }
 
@@ -217,14 +226,14 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("产品销售批次信息");
 
                     h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
-                    h.LI_().DATE("预售交货日", nameof(o.futured), o.futured)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装说明", nameof(o.unitx), o.unitx, min: 2, max: 12)._LI();
+                    h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
+                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
-                    h.LI_().NUMBER("本批次总量", nameof(o.cap), o.cap).NUMBER("剩余量", nameof(o.remain), o.remain)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
+                    h.LI_().NUMBER("总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.remain), o.remain)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });

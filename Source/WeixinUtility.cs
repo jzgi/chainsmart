@@ -20,7 +20,7 @@ namespace ChainMart
     {
         static readonly WebClient OpenApi = new WebClient("https://api.weixin.qq.com");
 
-        static readonly WebClient PayApi;
+        static readonly WebClient ScPayApi, RtlPayApi;
 
         static readonly WebClient SmsApi = new WebClient("https://sms.tencentcloudapi.com");
 
@@ -29,7 +29,8 @@ namespace ChainMart
             appsecret;
 
         public static readonly string
-            mchid,
+            sc_mchid,
+            rtl_mchid,
             noncestr,
             spbillcreateip;
 
@@ -48,7 +49,8 @@ namespace ChainMart
             var s = Prog;
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);
-            s.Get(nameof(mchid), ref mchid);
+            s.Get(nameof(sc_mchid), ref sc_mchid);
+            s.Get(nameof(rtl_mchid), ref rtl_mchid);
             s.Get(nameof(noncestr), ref noncestr);
             s.Get(nameof(spbillcreateip), ref spbillcreateip);
             s.Get(nameof(key), ref key);
@@ -61,21 +63,26 @@ namespace ChainMart
 
             try
             {
-                // load and init client certificate
-                var handler = new WebClientHandler
-                {
-                    ClientCertificateOptions = ClientCertificateOption.Manual
-                };
-                var cert = new X509Certificate2("apiclient_cert.p12", mchid, X509KeyStorageFlags.MachineKeySet);
-                handler.ClientCertificates.Add(cert);
-                PayApi = new WebClient("https://api.mch.weixin.qq.com", handler);
+                ScPayApi = Set("apiclient_cert.p12", sc_mchid);
+
+                RtlPayApi = Set("apiclient_cert.p12", rtl_mchid);
             }
             catch (Exception e)
             {
-                War("failed to load certificate: " + e.Message);
+                War("Failed to load Weixin Pay certificate: " + e.Message);
             }
         }
 
+        static WebClient Set(string fileName, string password)
+        {
+            var handler = new WebClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual
+            };
+            var cert = new X509Certificate2(fileName, password, X509KeyStorageFlags.MachineKeySet);
+            handler.ClientCertificates.Add(cert);
+            return new WebClient("https://api.mch.weixin.qq.com", handler);
+        }
 
         static string accessToken;
 
@@ -219,46 +226,11 @@ namespace ChainMart
             }
         }
 
-        public static async Task<string> PostTransferAsync(int id, string openid, string username, decimal cash, string desc)
+        public static async Task<(string, string)> PostUnifiedOrderAsync(bool SC, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
         {
-            var x = new XElem("xml")
-            {
-                {"amount", ((int) (cash * 100)).ToString()},
-                {"check_name", "FORCE_CHECK"},
-                {"desc", desc},
-                {"mch_appid", appid},
-                {"mchid", mchid},
-                {"nonce_str", noncestr},
-                {"openid", openid},
-                {"partner_trade_no", id.ToString()},
-                {"re_user_name", username},
-                {"spbill_create_ip", spbillcreateip}
-            };
-            string sign = Sign(x);
-            x.Add("sign", sign);
+            var mchid = SC ? sc_mchid : rtl_mchid;
+            var api = SC ? ScPayApi : RtlPayApi;
 
-            var (_, xe) = (await PayApi.PostAsync<XElem>("/mmpaymkttransfers/promotion/transfers", x.Dump()));
-            string return_code = xe.Child(nameof(return_code));
-            if ("SUCCESS" == return_code)
-            {
-                string result_code = xe.Child(nameof(result_code));
-                if ("SUCCESS" != result_code)
-                {
-                    string err_code_des = xe.Child(nameof(err_code_des));
-                    return err_code_des;
-                }
-            }
-            else
-            {
-                string return_msg = xe.Child(nameof(return_msg));
-                return return_msg;
-            }
-
-            return null;
-        }
-
-        public static async Task<(string, string)> PostUnifiedOrderAsync(string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
-        {
             var x = new XElem("xml")
             {
                 {"appid", appid},
@@ -276,7 +248,7 @@ namespace ChainMart
             string sign = Sign(x);
             x.Add("sign", sign);
 
-            var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/unifiedorder", x.Dump()));
+            var (_, xe) = (await api.PostAsync<XElem>("/pay/unifiedorder", x.Dump()));
             string prepay_id = xe.Child(nameof(prepay_id));
             string err_code = null;
             if (prepay_id == null)
@@ -287,8 +259,10 @@ namespace ChainMart
             return (prepay_id, err_code);
         }
 
-        public static bool OnNotified(XElem xe, out string out_trade_no, out decimal total)
+        public static bool OnNotified(bool SC, XElem xe, out string out_trade_no, out decimal total)
         {
+            var mchid = SC ? sc_mchid : rtl_mchid;
+
             total = 0;
             out_trade_no = null;
             string appid = xe.Child(nameof(appid));
@@ -311,8 +285,12 @@ namespace ChainMart
             return true;
         }
 
-        public static async Task<decimal> PostOrderQueryAsync(string orderno)
+        public static async Task<decimal> PostOrderQueryAsync(bool sc, string orderno)
         {
+            var mchid = sc ? sc_mchid : rtl_mchid;
+            var api = sc ? ScPayApi : RtlPayApi;
+
+
             var x = new XElem("xml")
             {
                 {"appid", appid},
@@ -322,7 +300,7 @@ namespace ChainMart
             };
             string sign = Sign(x);
             x.Add("sign", sign);
-            var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/orderquery", x.Dump()));
+            var (_, xe) = (await api.PostAsync<XElem>("/pay/orderquery", x.Dump()));
             sign = xe.Child(nameof(sign));
             xe.Sort();
             if (sign != Sign(xe, "sign")) return 0;
@@ -335,8 +313,12 @@ namespace ChainMart
             return cash_fee;
         }
 
-        public static async Task<string> PostRefundAsync(string orderno, decimal total, decimal refund, string refoundno, string descr = null)
+        public static async Task<string> PostRefundAsync(bool SC, string orderno, decimal total, decimal refund, string refoundno, string descr = null)
         {
+            var mchid = SC ? sc_mchid : rtl_mchid;
+            var api = SC ? ScPayApi : RtlPayApi;
+
+
             var x = new XElem("xml")
             {
                 {"appid", appid},
@@ -352,7 +334,7 @@ namespace ChainMart
             string sign = Sign(x);
             x.Add("sign", sign);
 
-            var (_, xe) = (await PayApi.PostAsync<XElem>("/secapi/pay/refund", x.Dump()));
+            var (_, xe) = (await api.PostAsync<XElem>("/secapi/pay/refund", x.Dump()));
             if (xe == null)
             {
                 return "TIMEOUT";
@@ -374,8 +356,12 @@ namespace ChainMart
             return null;
         }
 
-        public static async Task<string> PostRefundQueryAsync(long orderid)
+
+        public static async Task<string> PostRefundQueryAsync(bool SC, long orderid)
         {
+            var mchid = SC ? sc_mchid : rtl_mchid;
+            var api = SC ? ScPayApi : RtlPayApi;
+
             var x = new XElem("xml")
             {
                 {"appid", appid},
@@ -385,7 +371,7 @@ namespace ChainMart
             };
             string sign = Sign(x);
             x.Add("sign", sign);
-            var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/refundquery", x.Dump()));
+            var (_, xe) = (await api.PostAsync<XElem>("/pay/refundquery", x.Dump()));
 
             sign = xe.Child(nameof(sign));
             xe.Sort();

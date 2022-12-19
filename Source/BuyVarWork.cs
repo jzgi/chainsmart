@@ -141,7 +141,7 @@ namespace ChainMart
 
                 // remote call weixin
                 string orderno = orderid.ToString();
-                string err = await PostRefundAsync(orderno, refund, refund, orderno);
+                string err = await PostRefundAsync(SC: false, orderno, refund, refund, orderno);
                 if (err != null) // not success
                 {
                     dc.Rollback();

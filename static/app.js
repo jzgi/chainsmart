@@ -564,7 +564,7 @@ function crop(trig, siz, title, subs) {
     } else {
         html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
-    html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click()">选择</button>';
+    html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click();">选择</button>';
     html += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
     if (subs > 0) {
         html += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
@@ -596,7 +596,7 @@ function crop(trig, siz, title, subs) {
 
 var croppie;
 
-var cropWid = 0; 
+var cropWid = 0;
 var cropHei = 0;
 
 function bind(el, url, wid, hei) {
@@ -606,8 +606,10 @@ function bind(el, url, wid, hei) {
         var n = cropWid; cropWid = cropHei; cropHei = n;
     }
     else {
-        cropWid = wid;
-        cropHei = hei;
+        if ((!cropWid || !cropHei) || (cropWid != hei && cropHei != wid)) { // replace only needed
+            cropWid = wid;
+            cropHei = hei;
+        }
     }
 
     if (croppie) {
@@ -622,9 +624,7 @@ function bind(el, url, wid, hei) {
         showZoomer: false
     });
     croppie.bind(url).then(function () {
-        croppie.setZoom(1); // itially native size
-
-        croppie.bind(); // resure visible
+        croppie.setZoom(0.5); // itially native size
     });
 
 }
@@ -633,7 +633,7 @@ function cropUpd(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.875
+            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.95
         }
     ).then(function (blob) {
 

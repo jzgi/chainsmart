@@ -1,9 +1,7 @@
-using System;
 using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Entity;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -14,8 +12,6 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyCtrVarWork>(); // provisions related to present center
-
             CreateWork<AdmlyWork>("admly"); // for admin
 
             CreateWork<ZonlyWork>("zonly"); // for zone / source / center
@@ -53,29 +49,27 @@ namespace ChainMart
         public async Task onpay(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
-            if (!OnNotified(xe, out var trade_no, out var cash))
+            if (!OnNotified(SC: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
             int pos = 0;
-            var orderid = trade_no.ParseInt(ref pos);
+            var bookid = trade_no.ParseInt(ref pos);
             try
             {
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STA_VOID);
-                var price = (decimal) dc.Scalar(p => p.Set(orderid));
-                if (price == cash) // update order status and line states
+                var topay = (decimal) dc.Scalar("SELECT topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid));
+                if (topay == cash) // update data
                 {
-                    dc.Sql("UPDATE orders SET status = 1, pay = @1, issued = @2 WHERE id = @3 AND status = 0");
-                    await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
+                    dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0");
+                    await dc.ExecuteAsync(p => p.Set(cash).Set(bookid));
                 }
                 else // try to refund this payment
                 {
-                    await PostRefundAsync(trade_no, cash, cash, trade_no);
+                    await PostRefundAsync(SC: true, trade_no, cash, cash, trade_no);
                 }
             }
             finally

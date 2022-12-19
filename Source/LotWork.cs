@@ -120,6 +120,7 @@ namespace ChainMart
                 srcid = org.id,
                 srcname = org.name,
                 zonid = zon.id,
+                unitx = 1.0M,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1, max = 200, step = 1,
@@ -142,15 +143,15 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("产品销售批次信息");
 
-                    h.LI_().SELECT("产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
+                    h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
                     h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
-                    h.LI_().DATE("预售交货日", nameof(o.futured), o.futured)._LI();
-                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).TEXT("包装说明", nameof(o.unitx), o.unitx, min: 2, max: 12)._LI();
+                    h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
+                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订量", nameof(o.min), o.min).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增量", nameof(o.step), o.step)._LI();
-                    h.LI_().NUMBER("本批次总量", nameof(o.cap), o.cap).NUMBER("剩余量", nameof(o.remain), o.remain)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
+                    h.LI_().NUMBER("总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.remain), o.remain)._LI();
 
                     h._FIELDSUL();
 

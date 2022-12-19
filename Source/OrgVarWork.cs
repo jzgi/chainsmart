@@ -26,7 +26,7 @@ namespace ChainMart
                 h.LI_().FIELD("常用名", o.name)._LI();
                 h.LI_().FIELD("工商登记名", o.fully)._LI();
                 if (o.IsAliasable) h.LI_().FIELD("别名", o.alias)._LI();
-                h.LI_().FIELD("简介语", o.tip)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("联系地址", o.link)._LI();
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
@@ -92,22 +92,21 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Org>(p => p.Set(id));
 
-            wc.GivePane(200, h =>
+            wc.GivePage(200, h =>
             {
-                h.TOPBARXL_(css: "uk-background-default");
-
+                h.TOPBARXL_();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.fully)._HEADER();
                 if (o.icon)
                 {
-                    h.PIC("/org/", o.id, "/icon", css: "uk-width-small");
+                    h.PIC("/org/", o.id, "/icon", circle: true, css: "uk-width-small");
                 }
                 else
                     h.PIC("/void.webp", circle: true, css: "uk-width-small");
-                h.DIV_("uk-width-expand uk-col uk-padding-left").H2(o.fully)._DIV();
                 h._TOPBARXL();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("机构信息", "uk-card-header");
-                h.DIV_("uk-card-body");
+                h.SECTION_("uk-card-body");
                 if (o.pic)
                 {
                     h.PIC("/org/", o.id, "/pic", css: "uk-width-1-1");
@@ -116,7 +115,7 @@ namespace ChainMart
                 h.LI_().FIELD("常用名", o.name)._LI();
                 h.LI_().FIELD("工商登记名", o.fully)._LI();
                 if (o.IsAliasable) h.LI_().FIELD("别名", o.alias)._LI();
-                h.LI_().FIELD("简介语", o.tip)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("地址／场地", o.addr)._LI();
                 // h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
@@ -127,10 +126,10 @@ namespace ChainMart
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
-                h._DIV();
-                h._DIV();
+                h._SECTION();
+                h._ARTICLE();
 
-                h.DIV_("uk-card uk-card-primary");
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("机构证照", "uk-card-header");
                 if (o.m1)
                 {
@@ -148,8 +147,8 @@ namespace ChainMart
                 {
                     h.PIC("/o/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
-                h._DIV();
-            }, false, 900);
+                h._ARTICLE();
+            }, false, 900, title: "机构信息");
         }
 
 
@@ -183,7 +182,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("设置基本信息和参数");
-                    h.LI_().TEXTAREA("简介语", nameof(org.tip), org.tip, max: 40)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                     h.LI_().SELECT("服务状况", nameof(org.state), org.state, Org.States, required: true)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
@@ -393,7 +392,7 @@ namespace ChainMart
                     {
                         h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
                         h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
-                        h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 50)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
@@ -407,7 +406,7 @@ namespace ChainMart
                     else // brand
                     {
                         h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 50)._LI();
                         h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
                         // h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
                     }
@@ -557,7 +556,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
@@ -580,7 +579,7 @@ namespace ChainMart
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SRC);
             await dc.ExecuteAsync(p => p.Set(id));
 
-            wc.GivePane(200);
+            wc.Give(204);
         }
 
         [OrglyAuthorize(0, User.ROL_RVW)]
