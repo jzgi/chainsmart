@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Web;
 using ChainFx;
 using ChainFx.Web;
+using static ChainFx.Application;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -48,28 +49,38 @@ namespace ChainMart
 
         public async Task onpay(WebContext wc)
         {
+            War("entered onpay");
+
             var xe = await wc.ReadAsync<XElem>();
             if (!OnNotified(SC: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
+
+            War("trade_no " + trade_no + "; cash " + cash);
+
             int pos = 0;
             var bookid = trade_no.ParseInt(ref pos);
+
+            War("bookid " + bookid);
+
             try
             {
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                var topay = (decimal) dc.Scalar("SELECT topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid));
-                if (topay == cash) // update data
+                if (await dc.QueryTopAsync("SELECT qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
                 {
-                    dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0");
-                    await dc.ExecuteAsync(p => p.Set(cash).Set(bookid));
-                }
-                else // try to refund this payment
-                {
-                    await PostRefundAsync(SC: true, trade_no, cash, cash, trade_no);
+                    dc.Let(out short qty);
+                    dc.Let(out decimal topay);
+
+                    if (topay == cash) // update data
+                    {
+                        // the book and the lot updates
+                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0; UPDATE lots SET remain = remain - @3 WHERE ");
+                        await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty));
+                    }
                 }
             }
             finally

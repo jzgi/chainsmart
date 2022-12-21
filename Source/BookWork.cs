@@ -18,13 +18,21 @@ namespace ChainMart
     [Ui("供应链采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+
+            // add sub work for creation of booking
+            CreateWork<ShplyBookLotWork>("lot");
+        }
+
         [Ui("供应链采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -53,13 +61,13 @@ namespace ChainMart
             });
         }
 
-        [Ui(icon: "history", group: 2), Tool(Anchor)]
+        [Ui(tip: "历史记录", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND state >= 1 ORDER BY id");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status >= 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -114,7 +122,8 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
+                    // anchor to the lot sub work
+                    h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 

@@ -1,23 +1,23 @@
 
 
-var WCPay = function (data, lot) {
+// sc true = supply chain, false = retail
+var WCPay = function (data, sc) {
     WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         data,
         function (res) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
-                if (lot) {
-                    location.href = '/lot/result';
-                } else {
-                    location.href = '/diet/result';
-                }
-            } else if (res.err_msg == "get_brand_wcpay_request:cancel") {
-            } else {
-                if (lot) {
-                    location.href = '/lot/result-2';
-                } else {
-                    location.href = '/diet/result-2';
-                }
+
+                alert('支付成功');
+
+                // close current payment page
+                window.parent.closeUp();
+
+            }
+            else if (res.err_msg == "get_brand_wcpay_request:cancel") {
+            }
+            else { // if error
+                alert('支付功能异常');
             }
         }
     );
@@ -103,10 +103,13 @@ function call_book(trig) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         if (this.responseText) {
+
             var data = JSON.parse(this.responseText);
+
             window.top.WCPay(data, true); // call top windows's weixin pay bridge
-        } else {
-            location.href = '/lot/result';
+        }
+        else {
+            alert('服务器端无返回数据');
         }
     };
     xhr.open(method, action, false);

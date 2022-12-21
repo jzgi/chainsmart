@@ -138,6 +138,6 @@ namespace ChainMart
 
         public bool IsOver(DateTime now) => false;
 
-        public override string ToString() => shpname + "采购" + srcname + "产品" + qty + "件";
+        public override string ToString() => shpname + "采购" + srcname + "产品" + name;
     }
 }

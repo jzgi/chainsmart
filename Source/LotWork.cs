@@ -178,5 +178,12 @@ namespace ChainMart
                 wc.GivePane(200); // close dialog
             }
         }
+        
+        
+    }
+
+    public class ShplyBookLotWork : LotWork<ShplyBookLotVarWork>
+    {
+        
     }
 }

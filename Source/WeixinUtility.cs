@@ -29,13 +29,12 @@ namespace ChainMart
             appsecret;
 
         public static readonly string
-            sc_mchid,
-            rtl_mchid,
-            noncestr,
-            spbillcreateip;
+            scmchid,
+            rtlmchid,
+            noncestr;
+        // spbillcreateip;
 
         public static readonly string key;
-        public static readonly string watchurl;
 
         public static readonly string
             smssecretid,
@@ -49,12 +48,11 @@ namespace ChainMart
             var s = Prog;
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);
-            s.Get(nameof(sc_mchid), ref sc_mchid);
-            s.Get(nameof(rtl_mchid), ref rtl_mchid);
+            s.Get(nameof(scmchid), ref scmchid);
+            s.Get(nameof(rtlmchid), ref rtlmchid);
             s.Get(nameof(noncestr), ref noncestr);
-            s.Get(nameof(spbillcreateip), ref spbillcreateip);
+            // s.Get(nameof(spbillcreateip), ref spbillcreateip);
             s.Get(nameof(key), ref key);
-            s.Get(nameof(watchurl), ref watchurl);
 
             s.Get(nameof(smssecretid), ref smssecretid);
             s.Get(nameof(smssecretkey), ref smssecretkey);
@@ -63,9 +61,9 @@ namespace ChainMart
 
             try
             {
-                ScPayApi = Set("apiclient_cert.p12", sc_mchid);
+                ScPayApi = Set("sc_apiclient_cert.p12", scmchid);
 
-                RtlPayApi = Set("apiclient_cert.p12", rtl_mchid);
+                RtlPayApi = Set("rtl_apiclient_cert.p12", rtlmchid);
             }
             catch (Exception e)
             {
@@ -228,14 +226,13 @@ namespace ChainMart
 
         public static async Task<(string, string)> PostUnifiedOrderAsync(bool SC, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
         {
-            var mchid = SC ? sc_mchid : rtl_mchid;
+            var mchid = SC ? scmchid : rtlmchid;
             var api = SC ? ScPayApi : RtlPayApi;
 
             var x = new XElem("xml")
             {
                 {"appid", appid},
                 {"body", descr},
-                {"detail", descr},
                 {"mch_id", mchid},
                 {"nonce_str", noncestr},
                 {"notify_url", notifyurl},
@@ -261,7 +258,7 @@ namespace ChainMart
 
         public static bool OnNotified(bool SC, XElem xe, out string out_trade_no, out decimal total)
         {
-            var mchid = SC ? sc_mchid : rtl_mchid;
+            var mchid = SC ? scmchid : rtlmchid;
 
             total = 0;
             out_trade_no = null;
@@ -287,7 +284,7 @@ namespace ChainMart
 
         public static async Task<decimal> PostOrderQueryAsync(bool sc, string orderno)
         {
-            var mchid = sc ? sc_mchid : rtl_mchid;
+            var mchid = sc ? scmchid : rtlmchid;
             var api = sc ? ScPayApi : RtlPayApi;
 
 
@@ -315,7 +312,7 @@ namespace ChainMart
 
         public static async Task<string> PostRefundAsync(bool SC, string orderno, decimal total, decimal refund, string refoundno, string descr = null)
         {
-            var mchid = SC ? sc_mchid : rtl_mchid;
+            var mchid = SC ? scmchid : rtlmchid;
             var api = SC ? ScPayApi : RtlPayApi;
 
 
@@ -359,7 +356,7 @@ namespace ChainMart
 
         public static async Task<string> PostRefundQueryAsync(bool SC, long orderid)
         {
-            var mchid = SC ? sc_mchid : rtl_mchid;
+            var mchid = SC ? scmchid : rtlmchid;
             var api = SC ? ScPayApi : RtlPayApi;
 
             var x = new XElem("xml")
