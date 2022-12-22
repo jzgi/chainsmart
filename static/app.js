@@ -16,7 +16,7 @@ var WCPay = function (data, sc) {
             }
             else if (res.err_msg == "get_brand_wcpay_request:cancel") {
             }
-            else { // if error
+            else { // error
                 alert('支付功能异常');
             }
         }
@@ -75,6 +75,7 @@ function call_smsvcode(trig) {
 }
 
 function call_buy(trig) {
+
     var method = 'post';
     var action = trig.formAction || trig.name;
     var form = trig.form;
@@ -95,10 +96,12 @@ function call_buy(trig) {
 }
 
 function call_book(trig) {
+
     var method = 'post';
     var action = trig.formAction || trig.name;
     // validate form before submit
     if (!trig.form || !trig.form.reportValidity()) return false;
+
     // get prepare id
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
@@ -115,6 +118,7 @@ function call_book(trig) {
     xhr.open(method, action, false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(serialize(trig.form));
+    
     return false;
 }
 

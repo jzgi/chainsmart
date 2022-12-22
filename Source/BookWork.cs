@@ -150,7 +150,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT itemid, last(name), ctrid, sum(qty - cut) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY itemid, ctrid");
+            dc.Sql("SELECT itemid, last(name), ctrid, sum(qty - ret) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY itemid, ctrid");
             await dc.QueryAsync(p => p.Set(src.id));
 
             wc.GivePage(200, h =>

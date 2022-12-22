@@ -463,10 +463,10 @@ namespace ChainMart
                 short qty = o.min;
                 decimal unitx = o.unitx;
                 decimal qtyx = qty * unitx;
-                decimal topay = qtyx * o.RealPrice;
+                decimal topay = decimal.Round(qtyx * o.RealPrice, 2); // round to money 2 decimal digits
 
                 h.BOTTOMBAR_();
-                h.FORM_("uk-flex uk-width-1-1", oninput: $"qtyx.value = qty.value * {unitx}; topay.value = {realprice} * parseInt(qtyx.value);");
+                h.FORM_("uk-flex uk-width-1-1", oninput: $"qtyx.value = (qty.value * {unitx}).toFixed(1); topay.value = ({realprice} * qtyx.value).toFixed(2);");
 
                 h.HIDDEN(nameof(realprice), realprice);
 
@@ -479,7 +479,7 @@ namespace ChainMart
                 h.OUTPUT(nameof(qtyx), qtyx).SP().T(o.unit)._SPAN();
 
                 // pay button
-                h.BUTTON_(nameof(book), onclick: "call_book(this);", css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(topay), topay)._BUTTON();
+                h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(topay), topay, true)._BUTTON();
 
                 h._FORM();
                 h._BOTTOMBAR();

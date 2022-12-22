@@ -199,16 +199,16 @@ namespace ChainMart
 
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            var tokenstr = WebUtility.FormatSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
+            var tokenStr = WebUtility.FormatSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
 
             // cookie for vip, o means none
-            var vipstr = WebUtility.FormatSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
+            var vipStr = WebUtility.FormatSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
 
-            var namestr = WebUtility.FormatSetCookie(nameof(o.name), (o.name), maxage: A_WEEK);
-            var telstr = WebUtility.FormatSetCookie(nameof(o.tel), o.tel, maxage: A_WEEK);
+            var nameStr = WebUtility.FormatSetCookie(nameof(o.name), (o.name), maxage: A_WEEK);
+            var telStr = WebUtility.FormatSetCookie(nameof(o.tel), o.tel, maxage: A_WEEK);
 
             // multiple cookie
-            wc.SetHeader("Set-Cookie", tokenstr, vipstr, namestr, telstr);
+            wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);
         }
 
         public static void ViewAgrmt(this HtmlBuilder h, JObj jo)
