@@ -40,7 +40,7 @@ namespace ChainMart
         internal decimal price;
         internal decimal off;
         internal int cap;
-        internal int remain;
+        internal int avail;
         internal short min;
         internal short max;
         internal short step;
@@ -80,7 +80,7 @@ namespace ChainMart
                 s.Get(nameof(step), ref step);
                 s.Get(nameof(max), ref max);
                 s.Get(nameof(cap), ref cap);
-                s.Get(nameof(remain), ref remain);
+                s.Get(nameof(avail), ref avail);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
@@ -122,7 +122,7 @@ namespace ChainMart
                 s.Put(nameof(step), step);
                 s.Put(nameof(max), max);
                 s.Put(nameof(cap), cap);
-                s.Put(nameof(remain), remain);
+                s.Put(nameof(avail), avail);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {

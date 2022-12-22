@@ -42,6 +42,8 @@ namespace ChainMart
 
             // ctr
 
+            CreateWork<CtrlyLotWork>("clot");
+
             CreateWork<CtrlyBookWork>("cbook");
 
             CreateWork<CtrlyRptWork>("crpt");

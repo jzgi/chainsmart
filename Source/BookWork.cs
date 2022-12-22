@@ -51,7 +51,7 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status])._HEADER();
                     h.P(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -139,45 +139,42 @@ namespace ChainMart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SRC, User.ROL_LOG)]
+    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("供应链销售", "产源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         [Ui("供应链销售"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            var src = wc[-1].As<Org>();
-            var topOrgs = Grab<int, Org>();
+            var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT itemid, last(name), ctrid, sum(qty - ret) FROM books WHERE srcid = @1 AND status = ").T(Book.STA_PAID).T(" GROUP BY itemid, ctrid");
-            await dc.QueryAsync(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.MAIN_();
-                int last = 0;
-                while (dc.Next())
+                if (arr == null)
                 {
-                    dc.Let(out int wareid);
-                    dc.Let(out string name);
-                    dc.Let(out int ctrid);
-                    dc.Let(out decimal qty);
-
-                    if (ctrid != last)
-                    {
-                        var spr = topOrgs[ctrid];
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(name);
-                    h.TD_("uk-visible@l").T(qty)._TD();
-                    h._TR();
-
-                    last = ctrid;
+                    h.ALERT("尚无销售");
+                    return;
                 }
-                h._MAIN();
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
+                    h._A();
+                });
             });
         }
 
@@ -187,14 +184,28 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status > 0 ORDER BY id");
-            await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status >= 4 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE_();
-                h._TABLE();
+                if (arr == null) return;
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
+                    h._A();
+                });
             });
         }
     }
@@ -299,7 +310,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("分拣派运管理", "分发", icon: "sign-out")]
+    [Ui("供应链销售统一发货", "物流")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]
@@ -309,7 +320,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_DELIVERED).T(" GROUP BY mktid, lotid ORDER BY mktid");
+            dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM books WHERE ctrid = @1 AND status = 2 GROUP BY mktid, lotid ORDER BY mktid");
             await dc.QueryAsync(p => p.Set(ctr.id));
 
             wc.GivePage(200, h =>
@@ -352,7 +363,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mktid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = ").T(Book.STA_RECEIVED).T(" GROUP BY mktid, wareid ORDER BY mktid");
+            dc.Sql("SELECT mktid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = 4 GROUP BY mktid, wareid ORDER BY mktid");
             await dc.QueryAsync(p => p.Set(ctr.id));
 
             wc.GivePage(200, h =>

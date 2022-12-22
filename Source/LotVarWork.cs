@@ -37,7 +37,7 @@ namespace ChainMart
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
                 h.LI_().FIELD("递增", o.step)._LI();
-                h.LI_().FIELD("总件数", o.cap).FIELD("剩余件数", o.remain)._LI();
+                h.LI_().FIELD("总件数", o.cap).FIELD("剩余件数", o.avail)._LI();
                 h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
                 h.LI_().FIELD("处理进展", o.status, Lot.Statuses).FIELD("应用状况", Lot.States[o.state])._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator, "&nbsp;")._LI();
@@ -235,7 +235,7 @@ namespace ChainMart
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
-                    h.LI_().NUMBER("总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.remain), o.remain)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("可售件数", nameof(o.avail), o.avail)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -372,7 +372,7 @@ namespace ChainMart
 
                     wc.GivePane(200, h =>
                     {
-                        int count = o.remain;
+                        int count = o.avail;
                         h.UL_(grid: true, css: "uk-child-width-1-2@s");
                         for (int i = 0; i < count; i++)
                         {
@@ -437,6 +437,10 @@ namespace ChainMart
 
             wc.Give(200);
         }
+    }
+
+    public class CtrlyLotVarWork : LotVarWork
+    {
     }
 
     public class ShplyBookLotVarWork : LotVarWork

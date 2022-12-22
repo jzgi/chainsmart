@@ -259,47 +259,6 @@ create table rpts
 
 alter table rpts owner to postgres;
 
-create table books
-(
-    id bigserial not null
-        constraint books_pk
-            primary key,
-    shpid integer not null
-        constraint books_shpid_fk
-            references orgs,
-    shpname varchar(12),
-    mktid integer not null
-        constraint books_mktid_fk
-            references orgs,
-    ctrid integer not null
-        constraint books_ctrid_fk
-            references orgs,
-    srcid integer not null
-        constraint books_srcid_fk
-            references orgs,
-    srcname varchar(12),
-    zonid integer not null
-        constraint books_zonly_fk
-            references orgs,
-    itemid integer,
-    lotid integer,
-    unit varchar(4),
-    unitx smallint,
-    price money,
-    "off" money,
-    qty integer,
-    ret integer,
-    pay money,
-    refund money
-)
-    inherits (entities);
-
-alter table books owner to postgres;
-
-create unique index books_single_idx
-    on books (shpid, status)
-    where (status = 0);
-
 create table clears
 (
     id serial not null
@@ -344,7 +303,7 @@ create table items
 )
     inherits (entities);
 
-alter table items_old owner to postgres;
+alter table items owner to postgres;
 
 create table lots
 (
@@ -360,12 +319,13 @@ create table lots
         constraint lots_ctrid_fk
             references orgs,
     mktids integer[],
+    dated date,
+    term smallint,
     itemid integer
         constraint lots_itemid_fk
-            references items_old,
+            references items,
     unit varchar(4),
-    unitx varchar(12),
-    futured date,
+    unitx numeric(6,1),
     price money,
     "off" money,
     min integer,
@@ -384,10 +344,56 @@ create table lots
 )
     inherits (entities);
 
-alter table lots_old owner to postgres;
+alter table lots owner to postgres;
+
+create table books
+(
+    id bigserial not null
+        constraint books_pk
+            primary key,
+    shpid integer not null
+        constraint books_shpid_fk
+            references orgs,
+    shpname varchar(12),
+    mktid integer not null
+        constraint books_mktid_fk
+            references orgs,
+    ctrid integer not null
+        constraint books_ctrid_fk
+            references orgs,
+    srcid integer not null
+        constraint books_srcid_fk
+            references orgs,
+    srcname varchar(12),
+    zonid integer not null
+        constraint books_zonly_fk
+            references orgs,
+    itemid integer
+        constraint books_itemid_fk
+            references items,
+    lotid integer
+        constraint books_lotid_fk
+            references lots,
+    unit varchar(4),
+    unitx numeric(6,1),
+    price money,
+    "off" money,
+    qty integer,
+    topay money,
+    pay money,
+    ret numeric(6,1),
+    refund money
+)
+    inherits (entities);
+
+alter table books owner to postgres;
+
+create unique index books_single_idx
+    on books (shpid, status)
+    where (status = 0);
 
 create index lots_nend_idx
-    on lots_old (nend);
+    on lots (nend);
 
 create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
 SELECT o.typ,
@@ -506,11 +512,11 @@ SELECT o.typ,
        o.m4 IS NOT NULL   AS m4,
        o.m5 IS NOT NULL   AS m5,
        o.m6 IS NOT NULL   AS m6
-FROM items_old o;
+FROM items o;
 
 alter table items_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, itemid, unit, unitx, futured, price, "off", min, step, max, cap, remain, nstart, nend, m1, m2, m3, m4) as
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, remain, nstart, nend, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -528,24 +534,25 @@ SELECT o.typ,
        o.zonid,
        o.ctrid,
        o.mktids,
+       o.dated,
+       o.term,
        o.itemid,
        o.unit,
        o.unitx,
-       o.futured,
        o.price,
        o.off,
        o.min,
        o.step,
        o.max,
        o.cap,
-       o.remain,
+       o.avail,
        o.nstart,
        o.nend,
        o.m1 IS NOT NULL AS m1,
        o.m2 IS NOT NULL AS m2,
        o.m3 IS NOT NULL AS m3,
        o.m4 IS NOT NULL AS m4
-FROM lots_old o;
+FROM lots o;
 
 alter table lots_vw owner to postgres;
 

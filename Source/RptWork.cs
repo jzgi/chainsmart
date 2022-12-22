@@ -94,7 +94,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_DST, User.ROL_)]
-    [Ui("业务报表", "分发")]
+    [Ui("业务报表", "物流")]
     public class CtrlyRptWork : RptWork
     {
         [Ui("待收", group: 1), Tool(Modal.Anchor)]

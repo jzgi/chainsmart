@@ -151,7 +151,7 @@ namespace ChainMart
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
-                    h.LI_().NUMBER("总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.remain), o.remain)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("可售件数", nameof(o.avail), o.avail)._LI();
 
                     h._FIELDSUL();
 
@@ -178,12 +178,15 @@ namespace ChainMart
                 wc.GivePane(200); // close dialog
             }
         }
-        
-        
+    }
+
+    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [Ui("产品销售批次统一盘存", "物流")]
+    public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
+    {
     }
 
     public class ShplyBookLotWork : LotWork<ShplyBookLotVarWork>
     {
-        
     }
 }
