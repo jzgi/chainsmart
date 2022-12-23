@@ -27,12 +27,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("投放市场", topOrgs[o.ctrid].alias)._LI();
-                if (o.IsSelfTransport)
-                {
-                    h.LI_().FIELD("自达市场", o.mktids, topOrgs)._LI();
-                }
-                // h.LI_().FIELD("状态", States[o.state])._LI();
+                h.LI_().FIELD("限投放", o.targets, topOrgs, alias: true)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -229,7 +224,6 @@ namespace ChainMart
 
                     h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
-                    h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
                     h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
@@ -267,15 +261,15 @@ namespace ChainMart
             }
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, nameof(m) + sub, false, 3);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("自达", icon: "crosshairs"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("限域", icon: "crosshairs"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task self(WebContext wc)
         {
             int lotid = wc[0];
@@ -295,7 +289,9 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("自行货运到达市场（不经过品控中心）");
 
-                    h.LI_().SELECT("自达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 12, required: true)._LI();
+                    h.LI_().SELECT("投放市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsCenter, size: 6, required: true, alias: true)._LI();
+
+                    h.LI_().SELECT("自达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 6, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -314,7 +310,7 @@ namespace ChainMart
             }
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "删除该产品批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED)]
         public async Task rm(WebContext wc)
         {
@@ -328,7 +324,7 @@ namespace ChainMart
             wc.Give(204); // no content
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_EXT)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
@@ -522,7 +518,7 @@ namespace ChainMart
                     srcid = lot.srcid,
                     srcname = lot.srcname,
                     zonid = lot.zonid,
-                    ctrid = lot.ctrid,
+                    ctrid = shp.ctrid,
                     itemid = lot.itemid,
                     lotid = lot.id,
                     unit = lot.unit,

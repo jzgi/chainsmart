@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using ChainFx;
 using ChainFx.Fabric;
 using static System.Data.IsolationLevel;
@@ -26,6 +27,7 @@ namespace ChainMart
             // start the concluder thead
             // cycler.Start();
 
+            
             MapComposite<BuyLine>();
 
             CacheUp();

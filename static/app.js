@@ -8,10 +8,10 @@ var WCPay = function (data, sc) {
         function (res) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
 
-                alert('支付成功');
+                alert('下单支付成功');
 
                 // close current payment page
-                window.parent.closeUp();
+                window.parent.closeUp(true);
 
             }
             else if (res.err_msg == "get_brand_wcpay_request:cancel") {

@@ -98,7 +98,6 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
             int ctrid = org.ctrid;
             var topOrgs = Grab<int, Org>();
-            var ctr = topOrgs[ctrid];
             var cats = Grab<short, Cat>();
 
             if (typ == 0)
@@ -107,8 +106,8 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE ctrid = @1 AND status = 4 AND typ = @2 AND (mktids IS NULL OR mktids @> ARRAY[@3])");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.MarketId));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targets IS NULL OR targets @> ARRAY[@3] OR targets @> ARRAY[@4])");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid).Set(org.MarketId));
 
             wc.GivePage(200, h =>
             {
@@ -149,8 +148,8 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT lotid, name, mktid, FROM books WHERE srcid = @1 AND status = 1 GROUP BY lotid, mktid DESC");
+            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -169,7 +168,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    // h.P(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -310,7 +309,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("供应链销售统一发货", "物流")]
+    [Ui("供应链销售统一发货", "中库")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

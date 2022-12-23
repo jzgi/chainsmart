@@ -28,8 +28,8 @@ namespace ChainMart
         internal int srcid;
         internal string srcname;
         internal int zonid;
-        internal int ctrid;
-        internal int[] mktids; // optional
+
+        internal int[] targets; // (optional) targetd centers or markets
         internal DateTime dated;
         internal short term;
 
@@ -65,7 +65,6 @@ namespace ChainMart
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
                 s.Get(nameof(zonid), ref zonid);
-                s.Get(nameof(ctrid), ref ctrid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -84,7 +83,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(mktids), ref mktids);
+                s.Get(nameof(targets), ref targets);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
                 s.Get(nameof(m1), ref m1);
@@ -107,7 +106,6 @@ namespace ChainMart
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
                 s.Put(nameof(zonid), zonid);
-                s.Put(nameof(ctrid), ctrid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -126,7 +124,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(mktids), mktids);
+                s.Put(nameof(targets), targets);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
                 s.Put(nameof(m1), m1);
@@ -138,14 +136,11 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool IsSelfTransport => mktids != null;
-
         public decimal RealPrice => price - off;
-
 
         public bool IsAvailableFor(int mktid)
         {
-            return mktids == null || mktids.Contains(mktid);
+            return targets == null || targets.Contains(mktid);
         }
 
         public override string ToString() => name;

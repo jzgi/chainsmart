@@ -262,6 +262,7 @@ namespace ChainMart
 
             total = 0;
             out_trade_no = null;
+
             string appid = xe.Child(nameof(appid));
             string mch_id = xe.Child(nameof(mch_id));
             string nonce_str = xe.Child(nameof(nonce_str));
@@ -270,15 +271,22 @@ namespace ChainMart
 
             string result_code = xe.Child(nameof(result_code));
 
-            if (result_code != "SUCCESS") return false;
+            if (result_code != "SUCCESS")
+            {
+                return false;
+            }
 
             string sign = xe.Child(nameof(sign));
             xe.Sort();
-            if (sign != Sign(xe, "sign")) return false;
+            if (sign != Sign(xe, "sign"))
+            {
+                return false;
+            }
 
             int total_fee = xe.Child(nameof(total_fee)); // in cent
             total = ((decimal) total_fee) / 100;
-            out_trade_no = xe.Child(nameof(out_trade_no)); // 商户订单号
+            out_trade_no = xe.Child(nameof(out_trade_no)); // order no
+
             return true;
         }
 
@@ -286,7 +294,6 @@ namespace ChainMart
         {
             var mchid = sc ? scmchid : rtlmchid;
             var api = sc ? ScPayApi : RtlPayApi;
-
 
             var x = new XElem("xml")
             {
@@ -297,13 +304,20 @@ namespace ChainMart
             };
             string sign = Sign(x);
             x.Add("sign", sign);
+
             var (_, xe) = (await api.PostAsync<XElem>("/pay/orderquery", x.Dump()));
             sign = xe.Child(nameof(sign));
             xe.Sort();
-            if (sign != Sign(xe, "sign")) return 0;
+            if (sign != Sign(xe, "sign"))
+            {
+                return 0;
+            }
 
             string return_code = xe.Child(nameof(return_code));
-            if (return_code != "SUCCESS") return 0;
+            if (return_code != "SUCCESS")
+            {
+                return 0;
+            }
 
             decimal cash_fee = xe.Child(nameof(cash_fee));
 

@@ -1,0 +1,18 @@
+<xml>
+    <appid>wx15809e9c6f599b8c</appid>
+    <bank_type>OTHERS</bank_type>
+    <cash_fee>360</cash_fee>
+    <fee_type>CNY</fee_type>
+    <is_subscribe>Y</is_subscribe>
+    <mch_id>1594855091</mch_id>
+    <nonce_str>30a5fe271</nonce_str>
+    <openid>oQ6Kf5oSWwzE-heaLxHl78dfvsvg</openid>
+    <out_trade_no>68-3-60</out_trade_no>
+    <result_code>SUCCESS</result_code>
+    <return_code>SUCCESS</return_code>
+    <sign>2B35F62690FB511F33C90FD1483AA75D</sign>
+    <time_end>20221223224439</time_end>
+    <total_fee>360</total_fee>
+    <trade_type>JSAPI</trade_type>
+    <transaction_id>4200001694202212231849124762</transaction_id>
+</xml>

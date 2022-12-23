@@ -145,7 +145,6 @@ namespace ChainMart
 
                     h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
-                    h.LI_().SELECT("投放市场", nameof(o.ctrid), o.ctrid, topOrgs, filter: (k, v) => v.IsCenter, tip: true, required: true, alias: true)._LI();
                     h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
@@ -181,7 +180,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产品销售批次统一盘存", "物流")]
+    [Ui("产品销售批次统一盘存", "中库")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
     }

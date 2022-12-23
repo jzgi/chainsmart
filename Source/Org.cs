@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// An organizational unit.
     /// </summary>
-    public class Org : Entity, IKeyable<int>, IEquivocal
+    public class Org : Entity, IKeyable<int>, IDual
     {
         public static readonly Org Empty = new Org();
 

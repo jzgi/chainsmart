@@ -49,16 +49,20 @@ namespace ChainMart
 
         public async Task onpay(WebContext wc)
         {
-            War("entered onpay");
-
             var xe = await wc.ReadAsync<XElem>();
+
+            // For DEBUG
+            // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
+            //  
+
             if (!OnNotified(SC: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
 
-            War("trade_no " + trade_no + "; cash " + cash);
+            War("trade_no " + trade_no);
+            War("cash " + cash);
 
             int pos = 0;
             var bookid = trade_no.ParseInt(ref pos);
@@ -70,16 +74,23 @@ namespace ChainMart
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                if (await dc.QueryTopAsync("SELECT qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
+                if (await dc.QueryTopAsync("SELECT lotid, qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
                 {
+                    dc.Let(out int lotid);
                     dc.Let(out short qty);
                     dc.Let(out decimal topay);
+
+                    War("lotid " + lotid);
+                    War("qty " + qty);
+                    War("topay " + topay);
 
                     if (topay == cash) // update data
                     {
                         // the book and the lot updates
-                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0; UPDATE lots SET remain = remain - @3 WHERE ");
-                        await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty));
+                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0; UPDATE lots SET avail = avail - @3 WHERE id = @4");
+                        await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty).Set(lotid));
+
+                        War("update ok!");
                     }
                 }
             }
