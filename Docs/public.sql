@@ -315,10 +315,7 @@ create table lots
     zonid integer not null
         constraint lots_zonid_fk
             references orgs,
-    ctrid integer not null
-        constraint lots_ctrid_fk
-            references orgs,
-    mktids integer[],
+    targets integer[],
     dated date,
     term smallint,
     itemid integer
@@ -332,7 +329,7 @@ create table lots
     step integer,
     max integer,
     cap integer,
-    remain integer,
+    avail integer,
     nstart integer,
     nend integer,
     m1 bytea,
@@ -382,7 +379,8 @@ create table books
     topay money,
     pay money,
     ret numeric(6,1),
-    refund money
+    refund money,
+    shptel varchar(11)
 )
     inherits (entities);
 
@@ -516,7 +514,7 @@ FROM items o;
 
 alter table items_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, ctrid, mktids, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, remain, nstart, nend, m1, m2, m3, m4) as
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, targets, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -532,7 +530,6 @@ SELECT o.typ,
        o.srcid,
        o.srcname,
        o.zonid,
-       o.ctrid,
        o.targets,
        o.dated,
        o.term,

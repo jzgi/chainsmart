@@ -1,4 +1,3 @@
-using System;
 using ChainFx;
 
 namespace ChainMart
@@ -24,6 +23,7 @@ namespace ChainMart
 
         internal int shpid; // shop
         internal string shpname;
+        internal string shptel;
         internal int mktid; // market
         internal int ctrid; // center
         internal int srcid; // source
@@ -56,6 +56,7 @@ namespace ChainMart
             {
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(shpname), ref shpname);
+                s.Get(nameof(shptel), ref shptel);
                 s.Get(nameof(mktid), ref mktid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(zonid), ref zonid);
@@ -93,6 +94,7 @@ namespace ChainMart
             {
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(shpname), shpname);
+                s.Put(nameof(shptel), shptel);
                 s.Put(nameof(mktid), mktid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(zonid), zonid);
@@ -121,7 +123,9 @@ namespace ChainMart
 
         public int Key => id;
 
-        public bool IsOver(DateTime now) => false;
+        public decimal RealPrice => price - off;
+
+        public decimal Total => decimal.Round(RealPrice * unitx * qty, 2);
 
         public override string ToString() => shpname + "采购" + srcname + "产品" + name;
     }

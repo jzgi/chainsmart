@@ -26,6 +26,7 @@ namespace ChainMart
                 h.LI_().FIELD("单价", o.price, money: true).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("件数", o.qty).FIELD("支付", o.pay, money: true)._LI();
                 h.LI_().FIELD("状态", o.status, Lot.Statuses).FIELD("状况", Lot.States[o.state])._LI();
+                h.LI_().FIELD("买方", o.shpname).LABEL("电话").SPAN_("uk-static").A_TEL(o.shptel, o.shptel)._SPAN()._LI();
                 h.LI_().FIELD2("下单", o.created, o.creator, "&nbsp;")._LI();
                 if (o.adapter != null) h.LI_().FIELD2("发货", o.adapted, o.adapter, "&nbsp;")._LI();
                 if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker, "&nbsp;")._LI();
@@ -35,6 +36,25 @@ namespace ChainMart
             });
         }
     }
+
+    public class SrclyBookVarWork : BookVarWork
+    {
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("发货", "确认发货？", icon: "push"), Tool(ButtonConfirm, status: STU_CREATED)]
+        public async Task snd(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE books SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND srcid = @4 AND status = 1");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+            wc.Give(204);
+        }
+    }
+
 
     public class ShplyBookVarWork : BookVarWork
     {
@@ -57,24 +77,6 @@ namespace ChainMart
 
                 wc.GivePane(200);
             }
-        }
-    }
-
-    public class SrclyBookVarWork : BookVarWork
-    {
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("发货", "确认发货？", icon: "push"), Tool(ButtonConfirm, status: STU_CREATED)]
-        public async Task snd(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND srcid = @4 AND status = 1");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
-
-            wc.Give(204);
         }
     }
 

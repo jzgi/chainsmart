@@ -153,7 +153,7 @@ namespace ChainMart
                     h.PIC("/item/", lot.itemid, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("品名", item.name)._LI();
+                h.LI_().FIELD("产品名", item.name)._LI();
                 h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
                 if (!string.IsNullOrEmpty(item.origin))
                 {
@@ -405,8 +405,8 @@ namespace ChainMart
         }
 
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_ADAPTED)]
+        [OrglyAuthorize(0, User.ROL_EXT)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -420,7 +420,7 @@ namespace ChainMart
             wc.Give(200);
         }
 
-        [OrglyAuthorize(Org.TYP_SRC, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_EXT)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
@@ -447,23 +447,40 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
-            var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
+            var item = GrabObject<int, Item>(lot.itemid);
 
             wc.GivePane(200, h =>
             {
-                // picture
-                h.PIC_().T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/pic")._PIC();
-
-                h.DIV_("uk-card uk-card-default");
-                h._DIV();
+                h.ARTICLE_("uk-card uk-card-primary");
+                if (item.pic)
+                {
+                    h.PIC_().T(MainApp.WwwUrl).T("/item/").T(lot.itemid).T("/pic")._PIC();
+                }
+                h.H4("产品详情", "uk-card-header");
+                h.SECTION_("uk-card-body");
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", item.name)._LI();
+                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
+                if (!string.IsNullOrEmpty(item.origin))
+                {
+                    h.LI_().FIELD("生产基地", item.origin)._LI();
+                }
+                // h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.fully)._A()._LI();
+                h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
+                h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
+                h._UL();
+                h._SECTION();
+                h._ARTICLE();
 
                 // bottom bar
                 //
-                decimal realprice = o.RealPrice;
-                short qty = o.min;
-                decimal unitx = o.unitx;
+                decimal realprice = lot.RealPrice;
+                short qty = lot.min;
+                decimal unitx = lot.unitx;
                 decimal qtyx = qty * unitx;
-                decimal topay = decimal.Round(qtyx * o.RealPrice, 2); // round to money 2 decimal digits
+                decimal topay = decimal.Round(qtyx * lot.RealPrice, 2); // round to money 2 decimal digits
 
                 h.BOTTOMBAR_();
                 h.FORM_("uk-flex uk-width-1-1", oninput: $"qtyx.value = (qty.value * {unitx}).toFixed(1); topay.value = ({realprice} * qtyx.value).toFixed(2);");
@@ -471,12 +488,12 @@ namespace ChainMart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qty), css: "uk-width-small");
-                for (int i = o.min; i < o.max; i += o.step)
+                for (int i = lot.min; i < lot.max; i += lot.step)
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
                 h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
-                h.OUTPUT(nameof(qtyx), qtyx).SP().T(o.unit)._SPAN();
+                h.OUTPUT(nameof(qtyx), qtyx).SP().T(lot.unit)._SPAN();
 
                 // pay button
                 h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(topay), topay, true)._BUTTON();
@@ -514,6 +531,7 @@ namespace ChainMart
                     creator = prin.name,
                     shpid = shp.id,
                     shpname = shp.ShopName,
+                    shptel = shp.tel,
                     mktid = shp.MarketId,
                     srcid = lot.srcid,
                     srcname = lot.srcname,

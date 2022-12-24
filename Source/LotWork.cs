@@ -67,7 +67,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();

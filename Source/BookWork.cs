@@ -67,12 +67,17 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status >= 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无采购");
+                    return;
+                }
 
                 h.MAINGRID(arr, o =>
                 {
@@ -81,7 +86,7 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status])._HEADER();
                     h.P(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -129,7 +134,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -148,8 +153,8 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT lotid, name, mktid, FROM books WHERE srcid = @1 AND status = 1 GROUP BY lotid, mktid DESC");
-            var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -168,8 +173,8 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    // h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.P(o.tip, "uk-width-expand");
+                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -183,13 +188,17 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status >= 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (arr == null) return;
+                if (arr == null)
+                {
+                    h.ALERT("尚无销售");
+                    return;
+                }
 
                 h.MAINGRID(arr, o =>
                 {
@@ -200,7 +209,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
