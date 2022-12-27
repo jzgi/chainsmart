@@ -10,7 +10,28 @@ namespace ChainMart
 {
     public abstract class MainService : WebService
     {
-        public async Task signin(WebContext wc)
+        public void @catch(WebContext wc)
+        {
+            var err = wc.Error;
+
+            if (err is ForbiddenException ex)
+            {
+                wc.GivePage(403,
+                    m => m.ALERT(head: "⛔ 没有访问权限", p: "此功能需要系统授权后才能使用。"),
+                    title: "权限保护",
+                    shared: false, maxage: 30
+                );
+            }
+            else
+            {
+                wc.GiveMsg(500,
+                    err.Message, err.StackTrace,
+                    shared: false, maxage: 30
+                );
+            }
+        }
+
+        public async Task login(WebContext wc)
         {
             string tel = null;
             string password = null;
@@ -30,7 +51,7 @@ namespace ChainMart
                     h._FIELDSUL();
 
                     h.HIDDEN(nameof(url), url);
-                    h.BOTTOMBAR_().BUTTON("登录", nameof(signin))._BOTTOMBAR();
+                    h.BOTTOMBAR_().BUTTON("登录", nameof(login))._BOTTOMBAR();
                     h._FORM();
                 }, title: "用户登录");
             }
@@ -47,13 +68,13 @@ namespace ChainMart
                 var prin = dc.QueryTop<User>(p => p.Set(tel));
                 if (prin == null || !credential.Equals(prin.credential))
                 {
-                    wc.GiveRedirect(nameof(signin));
+                    wc.GiveRedirect(nameof(login));
                     return;
                 }
 
                 // successfully signed in
                 wc.Principal = prin;
-                wc.SetUserCookie(prin);
+                wc.SetPersonalCookies(prin);
                 wc.GiveRedirect(url ?? "/");
             }
         }
@@ -62,11 +83,6 @@ namespace ChainMart
         {
             // must have openid
             string openid = wc.Cookies[nameof(openid)];
-            // if (openid == null)
-            // {
-            //     wc.Give(400); // bad request
-            //     return;
-            // }
 
             string name = null;
             string tel = null;
@@ -117,7 +133,7 @@ namespace ChainMart
 
                     // refresh cookie
                     wc.Principal = m;
-                    wc.SetUserCookie(m);
+                    wc.SetPersonalCookies(m);
                     wc.GiveRedirect(url);
                 }
             }

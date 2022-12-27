@@ -105,7 +105,7 @@ namespace ChainMart
                 dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);
                 prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
                 // refresh cookie
-                wc.SetUserCookie(prin);
+                wc.SetPersonalCookies(prin);
 
                 wc.GivePane(200); // close
             }
@@ -170,7 +170,7 @@ namespace ChainMart
             var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
             // resend token cookie
-            wc.SetUserCookie(o);
+            wc.SetPersonalCookies(o);
 
             wc.Give(200, shared: false, maxage: 12);
         }
@@ -193,7 +193,7 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("设置专业类型");
                     h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs, required: true)._LI();
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(msg))._FORM();
                 });
             }
             else
@@ -205,6 +205,35 @@ namespace ChainMart
                 dc.Sql("UPDATE users SET typ = @1 WHERE id = @2");
                 await dc.ExecuteAsync(p => p.Set(typ).Set(id));
 
+                wc.GivePane(200);
+            }
+        }
+
+        [Ui("消息", icon: "mail"), Tool(ButtonShow)]
+        public async Task msg(WebContext wc)
+        {
+            int id = wc[0];
+            string text = null;
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("设置专业类型");
+                    h.LI_().TEXT("消息", nameof(text), text, min: 2, max: 20, required: true)._LI();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(msg))._FORM();
+                });
+            }
+            else // POST
+            {
+                using var dc = NewDbContext();
+                await dc.QueryTopAsync("SELECT im FROM users WHERE id = @1", p => p.Set(id));
+                dc.Let(out string im);
+
+                var f = await wc.ReadAsync<Form>();
+                text = f[nameof(text)];
+
+                await WeixinUtility.PostSendAsync(im, text);
+                
                 wc.GivePane(200);
             }
         }

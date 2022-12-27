@@ -22,11 +22,6 @@ namespace ChainMart
         {
             var prin = (User) wc.Principal;
 
-            if (prin == null) // auth required
-            {
-                return false;
-            }
-
             // if meet spedified typ
             if (typ == 0 || (prin.typ & typ) == typ)
             {

@@ -11,6 +11,7 @@ namespace ChainMart
     /// <summary>
     /// Works for zones and sources.
     /// </summary>
+    [UserAuthenticate]
     [Ui("供区产源操作")]
     public class ZonlyWork : OrglyWork
     {
@@ -34,6 +35,7 @@ namespace ChainMart
 #else
     [Ui("驿站商户操作")]
 #endif
+    [UserAuthenticate]
     public class MktlyWork : OrglyWork
     {
         protected override void OnCreate()

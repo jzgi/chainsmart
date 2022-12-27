@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
 using ChainFx.Fabric;
 using ChainFx.Web;
 
@@ -68,13 +69,17 @@ namespace ChainMart
                     if (await dc.QueryTopAsync(p => p.Set(openid)))
                     {
                         var prin = dc.ToObject<User>();
-                        
+
                         wc.Principal = prin; // set principal for afterwrads
-                        wc.SetUserCookie(prin);
+                        wc.SetPersonalCookies(prin);
                     }
-                    else // keep the acquired openid thru cookie
+                    else // keep the acquired openid and signup
                     {
                         wc.SetCookie(nameof(openid), openid);
+
+                        // new account
+                        wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));
+                        return false;
                     }
                 }
                 else // redirect to WeiXin auth
@@ -82,6 +87,11 @@ namespace ChainMart
                     WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
                     return false;
                 }
+            }
+            else // custom form authentication
+            {
+                wc.GiveRedirect("/login?url=" + HttpUtility.UrlEncode(wc.Url));
+                return false;
             }
 
             return true;

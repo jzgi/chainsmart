@@ -16,7 +16,7 @@ namespace ChainMart
         readonly short orgly;
 
 
-        public OrglyAuthorizeAttribute(short orgtyp = 0, short orgly = 0)
+        public OrglyAuthorizeAttribute(short orgtyp = 0, short orgly = 1)
         {
             this.orgtyp = orgtyp;
             this.orgly = orgly;
@@ -26,19 +26,9 @@ namespace ChainMart
         {
             var prin = (User) wc.Principal;
 
-            if (prin == null) // auth required
-            {
-                return false;
-            }
-
-            // sign-in required
-            if (orgtyp == 0 || orgly == 0)
-            {
-                return true;
-            }
             var seg = wc[typeof(OrglyVarWork)];
             var org = seg.As<Org>();
-            
+
             // var and task group check
             if ((org.typ & orgtyp) != orgtyp)
             {

@@ -59,24 +59,18 @@ namespace ChainMart
     public class ShplyBookVarWork : BookVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("收货", "确认收货？", icon: "pull"), Tool(ButtonShow, status: STU_ADAPTED)]
+        [Ui("收货", "确认收货？", icon: "pull"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task rcv(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
-            if (wc.IsGet)
-            {
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE books SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 1");
-                await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE books SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
-                wc.GivePane(200);
-            }
+            wc.Give(204);
         }
     }
 

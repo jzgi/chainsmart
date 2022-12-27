@@ -5,7 +5,7 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    [AdmlyAuthorize(1)]
+    [UserAuthenticate, AdmlyAuthorize(1)]
     [Ui("平台管理")]
     public class AdmlyWork : WebWork
     {

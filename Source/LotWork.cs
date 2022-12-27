@@ -45,7 +45,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status > 0 ORDER BY status DESC, id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status BETWEEN 1 AND 4 ORDER BY status DESC, id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -65,7 +65,7 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
                     h.P(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
@@ -81,7 +81,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -95,9 +95,9 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();

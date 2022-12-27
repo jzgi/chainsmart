@@ -193,10 +193,10 @@ namespace ChainMart
             return MD5(v);
         }
 
-        public static void SetUserCookie(this WebContext wc, User o)
-        {
-            const int A_WEEK = 3600 * 24 * 7;
+        const int A_WEEK = 3600 * 24 * 7;
 
+        public static void SetPersonalCookies(this WebContext wc, User o)
+        {
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
             var tokenStr = WebUtility.FormatSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);

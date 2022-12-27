@@ -51,9 +51,9 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status])._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -67,7 +67,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -86,9 +86,9 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status])._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
                     h.P(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -111,8 +111,9 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targets IS NULL OR targets @> ARRAY[@3] OR targets @> ARRAY[@4])");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3] OR targs @> ARRAY[@4])");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid).Set(org.MarketId));
+
 
             wc.GivePage(200, h =>
             {

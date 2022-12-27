@@ -27,7 +27,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("限投放", o.targets, topOrgs, alias: true)._LI();
+                h.LI_().FIELD("限投放", o.targs, topOrgs, alias: true)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -270,41 +270,47 @@ namespace ChainMart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("限域", icon: "crosshairs"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
-        public async Task self(WebContext wc)
+        public async Task targ(WebContext wc)
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
 
-            int[] mktids;
+            int[] targsA, targsB;
+
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ctrid, mktids FROM lots WHERE id = @1 AND srcid = @2");
-                await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
-                dc.Let(out int ctrid);
-                dc.Let(out mktids);
+
+                await dc.QueryTopAsync("SELECT targs FROM lots WHERE id = @1 AND srcid = @2", p => p.Set(lotid).Set(org.id));
+                dc.Let(out int[] targs);
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("自行货运到达市场（不经过品控中心）");
+                    h.FORM_();
 
-                    h.LI_().SELECT("投放市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsCenter, size: 6, required: true, alias: true)._LI();
+                    h.FIELDSUL_("该批次限定销售区域");
+                    h.LI_().SELECT("限定区域", nameof(targsA), targs, topOrgs, filter: (k, v) => v.IsCenter, size: 6, alias: true)._LI();
+                    h._FIELDSUL();
 
-                    h.LI_().SELECT("自达市场", nameof(mktids), mktids, topOrgs, filter: (k, v) => v.IsMarket && v.ctrid == ctrid, size: 6, required: true)._LI();
+                    h.FIELDSUL_("或者，限定销售市场");
+                    h.LI_().SELECT("限定市场", nameof(targsB), targs, topOrgs, filter: (k, v) => v.IsMarket, size: 12)._LI();
+                    h._FIELDSUL();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                    h.BOTTOM_BUTTON("确认", nameof(edit));
+                    h._FORM();
                 });
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
-                mktids = f[nameof(mktids)];
+                targsA = f[nameof(targsA)];
+                targsB = f[nameof(targsB)];
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE lots SET mktids = @1 WHERE id = @2 AND srcid = @3");
-                await dc.ExecuteAsync(p => p.Set(mktids).Set(lotid).Set(org.id));
+                dc.Sql("UPDATE lots SET targs = @1 WHERE id = @2 AND srcid = @3");
+                await dc.ExecuteAsync(p => p.Set(targsA ?? targsB).Set(lotid).Set(org.id));
 
                 wc.GivePane(200); // close dialog
             }
@@ -432,6 +438,20 @@ namespace ChainMart
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(200);
+        }
+
+        [OrglyAuthorize(0, User.ROL_EXT)]
+        [Ui("无效", "将批次设为无效", icon: "ban"), Tool(ButtonConfirm, status: STU_ADAPTED | STU_OKED)]
+        public async Task @void(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+            wc.Give(204); // no content
         }
     }
 

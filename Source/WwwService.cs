@@ -79,32 +79,6 @@ namespace ChainMart
             }, true, 900, title: Self.Name, onload: "enhanceAll()");
         }
 
-        public void @catch(WebContext wc)
-        {
-            var e = wc.Error;
-            if (e is WebException we)
-            {
-                if (we.Code == 401)
-                {
-                    if (wc.IsWeChat) // initiate signup
-                    {
-                        wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));
-                    }
-                    else // initiate form auth
-                    {
-                        wc.GiveRedirect("/signin?url=" + HttpUtility.UrlEncode(wc.Url));
-                    }
-                }
-                else if (we.Code == 403)
-                {
-                    wc.GivePage(403, m => { m.ALERT(head: "⛔ 没有访问权限", p: "此功能需要系统授权后才能使用。"); }, title: "权限保护");
-                }
-            }
-            else
-            {
-                wc.GiveMsg(500, e.Message, e.StackTrace);
-            }
-        }
 
         public async Task onpay(WebContext wc)
         {

@@ -19,6 +19,7 @@ namespace ChainMart
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
+            {STU_VOID, "无效"},
             {STU_CREATED, "创建"},
             {STU_ADAPTED, "调整"},
             {STU_OKED, "上线"},
@@ -29,7 +30,7 @@ namespace ChainMart
         internal string srcname;
         internal int zonid;
 
-        internal int[] targets; // (optional) targetd centers or markets
+        internal int[] targs; // (optional) targeted centers or markets
         internal DateTime dated;
         internal short term;
 
@@ -83,7 +84,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(targets), ref targets);
+                s.Get(nameof(targs), ref targs);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
                 s.Get(nameof(m1), ref m1);
@@ -124,7 +125,7 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(targets), targets);
+                s.Put(nameof(targs), targs);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
                 s.Put(nameof(m1), m1);
@@ -140,7 +141,7 @@ namespace ChainMart
 
         public bool IsAvailableFor(int mktid)
         {
-            return targets == null || targets.Contains(mktid);
+            return targs == null || targs.Contains(mktid);
         }
 
         public override string ToString() => name;

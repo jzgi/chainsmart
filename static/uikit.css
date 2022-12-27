@@ -1154,6 +1154,7 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
+    background-color: inherit;
 }
 
 .uk-fieldset {
