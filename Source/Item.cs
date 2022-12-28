@@ -15,6 +15,15 @@ namespace ChainMart
             {1, "冷藏"},
             {2, "冷冻"},
         };
+        
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STU_VOID, "无效"},
+            {STU_CREATED, "创建"},
+            {STU_ADAPTED, "调整"},
+            {STU_OKED, "上线"},
+        };
+
 
         internal int id;
 

@@ -2,7 +2,6 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
-    [UserAuthenticate]
     [MyAuthorize]
     [Ui("我的个人账号")]
     public class MyVarWork : WebWork

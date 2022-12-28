@@ -566,7 +566,7 @@ namespace ChainMart
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, "m" + sub, false, 3);
+            await doimg(wc, nameof(m) + sub, false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
@@ -582,7 +582,7 @@ namespace ChainMart
             wc.Give(204);
         }
 
-        [OrglyAuthorize(0, User.ROL_RVW)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -597,7 +597,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_RVW)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {

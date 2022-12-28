@@ -121,7 +121,7 @@ create table orgs
     y double precision,
     tel varchar(11),
     trust boolean,
-    link varchar(12),
+    link varchar(30),
     specs jsonb,
     icon bytea,
     pic bytea,
@@ -315,7 +315,7 @@ create table lots
     zonid integer not null
         constraint lots_zonid_fk
             references orgs,
-    targets integer[],
+    targs integer[],
     dated date,
     term smallint,
     itemid integer
@@ -422,41 +422,6 @@ FROM wares o;
 
 alter table wares_vw owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, alias, fully, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oker,
-       o.oked,
-       o.status,
-       o.id,
-       o.prtid,
-       o.ctrid,
-       o.alias,
-       o.fully,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o.tel,
-       o.trust,
-       o.cntid,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
-FROM orgs o;
-
-alter table orgs_vw owner to postgres;
-
 create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, orgid, orgly, orgext, vip, icon) as
 SELECT u.typ,
        u.state,
@@ -514,7 +479,7 @@ FROM items o;
 
 alter table items_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, targets, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4) as
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, zonid, targs, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -552,6 +517,41 @@ SELECT o.typ,
 FROM lots o;
 
 alter table lots_vw owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, alias, fully, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oker,
+       o.oked,
+       o.status,
+       o.id,
+       o.prtid,
+       o.ctrid,
+       o.alias,
+       o.fully,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.tel,
+       o.trust,
+       o.link,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM orgs o;
+
+alter table orgs_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

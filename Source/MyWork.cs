@@ -3,6 +3,7 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
+    [UserAuthenticate]
     public class MyWork : WebWork
     {
         protected override void OnCreate()

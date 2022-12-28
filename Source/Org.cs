@@ -5,7 +5,7 @@ namespace ChainMart
     /// <summary>
     /// An organizational unit.
     /// </summary>
-    public class Org : Entity, IKeyable<int>, IDual
+    public class Org : Entity, IKeyable<int>
     {
         public static readonly Org Empty = new Org();
 
@@ -194,10 +194,8 @@ namespace ChainMart
 
         public string ShopName => IsMarket ? alias : name;
 
+        public string TargetName => IsCenter ? alias : name;
+
         public override string ToString() => name;
-
-        public string Name => name;
-
-        public string Alias => alias;
     }
 }

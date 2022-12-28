@@ -178,7 +178,7 @@ namespace ChainMart
             wc.Give(204);
         }
 
-        [OrglyAuthorize(0, User.ROL_RVW)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -193,7 +193,7 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_RVW)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
@@ -205,6 +205,20 @@ namespace ChainMart
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);
+        }
+
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("无效", "将产品设为无效", icon: "ban"), Tool(ButtonConfirm, status: STU_ADAPTED | STU_OKED)]
+        public async Task @void(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+            wc.Give(204); // no content
         }
     }
 }

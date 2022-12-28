@@ -27,7 +27,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("限投放", o.targs, topOrgs, alias: true)._LI();
+                h.LI_().FIELD("限投放", o.targs, topOrgs, capt: v => v.TargetName)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -276,41 +276,47 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
 
-            int[] targsA, targsB;
+            int[] targs;
 
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
 
                 await dc.QueryTopAsync("SELECT targs FROM lots WHERE id = @1 AND srcid = @2", p => p.Set(lotid).Set(org.id));
-                dc.Let(out int[] targs);
+                dc.Let(out targs);
 
                 wc.GivePane(200, h =>
                 {
                     h.FORM_();
 
                     h.FIELDSUL_("该批次限定销售区域");
-                    h.LI_().SELECT("限定区域", nameof(targsA), targs, topOrgs, filter: (k, v) => v.IsCenter, size: 6, alias: true)._LI();
+                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.IsCenter || v.IsMarket, capt: v => v.TargetName, size: 12, required: false)._LI();
                     h._FIELDSUL();
 
-                    h.FIELDSUL_("或者，限定销售市场");
-                    h.LI_().SELECT("限定市场", nameof(targsB), targs, topOrgs, filter: (k, v) => v.IsMarket, size: 12)._LI();
-                    h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确认", nameof(edit));
+                    h.BOTTOM_BUTTON("确认", nameof(targ));
                     h._FORM();
                 });
             }
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
-                targsA = f[nameof(targsA)];
-                targsB = f[nameof(targsB)];
+                targs = f[nameof(targs)];
+                targs = targs.RemovedOf(0);
 
                 // update
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE lots SET targs = @1 WHERE id = @2 AND srcid = @3");
-                await dc.ExecuteAsync(p => p.Set(targsA ?? targsB).Set(lotid).Set(org.id));
+                await dc.ExecuteAsync(p =>
+                {
+                    if (targs == null || targs.Length == 0)
+                    {
+                        p.SetNull();
+                    }
+                    else
+                        p.Set(targs);
+
+                    p.Set(lotid).Set(org.id);
+                });
 
                 wc.GivePane(200); // close dialog
             }
