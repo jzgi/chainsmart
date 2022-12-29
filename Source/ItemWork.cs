@@ -34,7 +34,7 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status BETWEEN 1 AND 4 ORDER BY status DESC, id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>

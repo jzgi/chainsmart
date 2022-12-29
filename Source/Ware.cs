@@ -6,12 +6,20 @@ namespace ChainMart
     {
         public static readonly Ware Empty = new Ware();
 
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STU_VOID, "封存"},
+            {STU_CREATED, "创建"},
+            {STU_ADAPTED, "调整"},
+            {STU_OKED, "上线"},
+        };
+
+
         internal int id;
         internal int shpid;
         internal int itemid;
         internal string unit;
-        internal string unitstd;
-        internal short unitx;
+        internal decimal unitx;
         internal decimal price;
         internal decimal off;
         internal short min;
@@ -37,14 +45,15 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(unit), ref unit);
-                s.Get(nameof(unitstd), ref unitstd);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
                 s.Get(nameof(max), ref max);
                 s.Get(nameof(step), ref step);
-
+            }
+            if ((msk & MSK_LATER) == MSK_LATER)
+            {
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
             }
@@ -66,14 +75,15 @@ namespace ChainMart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(unit), unit);
-                s.Put(nameof(unitstd), unitstd);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
                 s.Put(nameof(max), max);
                 s.Put(nameof(step), step);
-
+            }
+            if ((msk & MSK_LATER) == MSK_LATER)
+            {
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
             }

@@ -17,7 +17,7 @@ namespace ChainMart
             var cats = Grab<short, Cat>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1 AND srcid = @2");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1 AND srcid = @2");
             var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid).Set(src.id));
 
             wc.GivePane(200, h =>

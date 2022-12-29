@@ -19,7 +19,7 @@ namespace ChainMart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
             wc.GivePane(200, h =>
