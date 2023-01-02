@@ -38,7 +38,7 @@ function fixPrice(trig, evt, a, b) {
 
 }
 
-function qtyFill(trg, min, max, step) {
+function qtyFill(trig, min, max, step) {
 
     var n = 0;
 
@@ -46,7 +46,7 @@ function qtyFill(trg, min, max, step) {
         var opt = document.createElement("option");
         opt.value = i;
         opt.text = i;
-        trg.add(opt);
+        trig.add(opt);
 
         n++;
     }
@@ -186,7 +186,7 @@ function subscriptUri(uri, num) {
 }
 
 
-function enhanceAll() {
+function fixAll() {
     var cookies = {};
     // parse all cookies
     if (document.cookie && document.cookie != '') {
@@ -198,20 +198,20 @@ function enhanceAll() {
         }
     }
     // traverse
-    var elst = document.querySelectorAll("[onenhance]");
+    var elst = document.querySelectorAll("[onfix]");
     for (var e of elst) {
-        var scpt = e.getAttribute("onenhance");
+        var scpt = e.getAttribute("onfix");
 
         var cookie_name = e.getAttribute('cookie');
         var cookie_val = cookies[cookie_name];
         if (cookie_val) {
             // cookie
-            var evt = new CustomEvent('enhance', { detail: cookie_val });
-            e.addEventListener('enhance', new Function(scpt));
+            var evt = new CustomEvent('fix', { detail: cookie_val });
+            e.addEventListener('fix', new Function(scpt));
             e.dispatchEvent(evt);
         } else {
-            var evt = new CustomEvent('enhance');
-            e.addEventListener('enhance', new Function(scpt));
+            var evt = new CustomEvent('fix');
+            e.addEventListener('fix', new Function(scpt));
             e.dispatchEvent(evt);
         }
     }

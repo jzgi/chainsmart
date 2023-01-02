@@ -18,6 +18,17 @@ namespace ChainMart
             CreateWork<MktlyWork>("mktly"); // for markets and shops
         }
 
+        public void @default(WebContext wc)
+        {
+            wc.GivePage(200, h =>
+            {
+                h.FORM_().FIELDSUL_("运营管理模块");
+                h.LI_().A_("admly/").T("Ａ）平台管理")._A()._LI();
+                h.LI_().A_("zonly//").T("Ｂ）供区和产源操作")._A()._LI();
+                h.LI_().A_("mktly//").T("Ｃ）市场和商户操作")._A()._LI();
+                h._FIELDSUL()._FORM();
+            }, true, 3600, title: "中惠农通运营管理");
+        }
 
         public async Task onpay(WebContext wc)
         {

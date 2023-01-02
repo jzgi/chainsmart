@@ -223,7 +223,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("产品销售批次信息");
 
                     h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 50)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
@@ -290,7 +290,7 @@ namespace ChainMart
                     h.FORM_();
 
                     h.FIELDSUL_("该批次限定销售区域");
-                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.IsCenter || v.IsMarket, capt: v => v.TargetName, size: 12, required: false)._LI();
+                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.EqCenter || v.EqMarket, capt: v => v.TargetName, size: 12, required: false)._LI();
                     h._FIELDSUL();
 
                     h.BOTTOM_BUTTON("确认", nameof(targ));
@@ -336,7 +336,7 @@ namespace ChainMart
             wc.Give(204); // no content
         }
 
-        [OrglyAuthorize(0, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_RVW)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
@@ -417,7 +417,7 @@ namespace ChainMart
         }
 
 
-        [OrglyAuthorize(0, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -432,7 +432,7 @@ namespace ChainMart
             wc.Give(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
@@ -446,7 +446,7 @@ namespace ChainMart
             wc.Give(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_EXT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("无效", "将批次设为无效", icon: "ban"), Tool(ButtonConfirm, status: STU_ADAPTED | STU_OKED)]
         public async Task @void(WebContext wc)
         {
@@ -522,7 +522,7 @@ namespace ChainMart
                 h.OUTPUT(nameof(qtyx), qtyx).SP().T(lot.unit)._SPAN();
 
                 // pay button
-                h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").OUTPUTCNY(nameof(topay), topay, true)._BUTTON();
+                h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
                 h._FORM();
                 h._BOTTOMBAR();

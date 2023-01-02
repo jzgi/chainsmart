@@ -74,7 +74,7 @@ namespace ChainMart
 
                 // successfully signed in
                 wc.Principal = prin;
-                wc.SetPersonalCookies(prin);
+                wc.SetUserCookies(prin);
                 wc.GiveRedirect(url ?? "/");
             }
         }
@@ -133,7 +133,7 @@ namespace ChainMart
 
                     // refresh cookie
                     wc.Principal = m;
-                    wc.SetPersonalCookies(m);
+                    wc.SetUserCookies(m);
                     wc.GiveRedirect(url);
                 }
             }

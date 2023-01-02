@@ -2,7 +2,7 @@
 
 namespace ChainMart
 {
-    public struct BuyLine : IData, IKeyable<int>
+    public struct BuyDetail : IData, IKeyable<int>
     {
         public int wareid;
 
@@ -11,6 +11,8 @@ namespace ChainMart
         public string name;
 
         public string unit;
+
+        public decimal unitx;
 
         public decimal price;
 
@@ -24,6 +26,7 @@ namespace ChainMart
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(name), ref name);
             s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(qty), ref qty);
@@ -35,6 +38,7 @@ namespace ChainMart
             s.Put(nameof(name), name);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(unit), unit);
+            s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(qty), qty);
@@ -42,9 +46,12 @@ namespace ChainMart
 
         public int Key => wareid;
 
-        public decimal Subtotal => (price - off) * qty;
+        public decimal RealPrice => price - off;
 
-        internal void InitializeByWare(Ware v, bool discount)
+        public decimal SubTotal => decimal.Round(RealPrice * unitx * qty, 2);
+
+
+        internal void InitWithWare(Ware v, bool discount)
         {
             name = v.name;
             itemid = v.itemid;

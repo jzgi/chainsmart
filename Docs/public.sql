@@ -4,25 +4,26 @@ comment on schema public is 'standard public schema';
 
 alter schema public owner to postgres;
 
-create type buyline as
+create type buydetail as
 (
     wareid integer,
     itemid integer,
     name varchar(12),
     unit varchar(4),
+    unitx numeric(6,1),
     price money,
     "off" money,
     qty smallint
 );
 
-alter type buyline owner to postgres;
+alter type buydetail owner to postgres;
 
 create table entities
 (
     typ smallint not null,
     state smallint,
     name varchar(12) not null,
-    tip varchar(50),
+    tip varchar(40),
     created timestamp(0),
     creator varchar(10),
     adapted timestamp(0),
@@ -144,12 +145,17 @@ create table users
     im varchar(28),
     credential varchar(32),
     admly smallint default 0 not null,
-    orgid smallint
-        constraint users_orgid_fk
+    srcid smallint
+        constraint users_srcid_fk
             references orgs,
-    orgly smallint default 0 not null,
-    orgext boolean,
-    vip integer,
+    zonly smallint default 0 not null,
+    shpid integer
+        constraint users_shpid_fk
+            references orgs,
+    mktly smallint,
+    vip integer
+        constraint users_vip_fk
+            references orgs,
     icon bytea
 )
     inherits (entities);
@@ -166,9 +172,17 @@ create unique index users_im_idx
 create unique index users_tel_idx
     on users (tel);
 
-create index users_orgid_idx
-    on users (orgid)
-    where (orgid IS NOT NULL);
+create index users_shpid_idx
+    on users (shpid)
+    where (shpid > 0);
+
+create index users_srcid_idx
+    on users (srcid)
+    where (srcid > 0);
+
+create index users_vip_index
+    on users (vip)
+    where (vip > 0);
 
 create table wares
 (
@@ -180,8 +194,7 @@ create table wares
             references orgs,
     itemid integer,
     unit varchar(4),
-    unitstd varchar(4),
-    unitx money,
+    unitx numeric(6,1),
     price money,
     "off" money,
     min smallint,
@@ -207,44 +220,6 @@ create table tests
     inherits (entities);
 
 alter table tests owner to postgres;
-
-create table buys
-(
-    id bigserial not null
-        constraint buys_pk
-            primary key,
-    shpid integer not null
-        constraint buys_shpid_fk
-            references orgs,
-    shpname varchar(12),
-    mktid integer not null
-        constraint buys_mkt_fk
-            references orgs,
-    uid integer not null
-        constraint buys_uid_fk
-            references users,
-    uname varchar(12),
-    utel varchar(11),
-    uaddr varchar(20),
-    uim varchar(28),
-    pay money,
-    deliv money,
-    hand money,
-    lines buyline[]
-)
-    inherits (entities);
-
-alter table buys owner to postgres;
-
-create unique index buys_single_idx
-    on buys (shpid, status)
-    where (status = 0);
-
-create index buys_uidstatus_idx
-    on buys (uid, status);
-
-create index buys_shpidstatus_idx
-    on buys (shpid, status);
 
 create table rpts
 (
@@ -393,61 +368,43 @@ create unique index books_single_idx
 create index lots_nend_idx
     on lots (nend);
 
-create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitstd, unitx, price, "off", min, max, step, icon, pic) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.shpid,
-       o.itemid,
-       o.unit,
-       o.unitstd,
-       o.unitx,
-       o.price,
-       o.off,
-       o.min,
-       o.max,
-       o.step,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic
-FROM wares o;
+create table buys
+(
+    id bigserial not null
+        constraint buys_pk
+            primary key,
+    shpid integer not null
+        constraint buys_shpid_fk
+            references orgs,
+    shpname varchar(12),
+    mktid integer not null
+        constraint buys_mkt_fk
+            references orgs,
+    uid integer not null
+        constraint buys_uid_fk
+            references users,
+    uname varchar(12),
+    utel varchar(11),
+    uaddr varchar(20),
+    uim varchar(28),
+    details buydetail[],
+    topay money,
+    pay money,
+    refund money
+)
+    inherits (entities);
 
-alter table wares_vw owner to postgres;
+alter table buys owner to postgres;
 
-create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, orgid, orgly, orgext, vip, icon) as
-SELECT u.typ,
-       u.state,
-       u.name,
-       u.tip,
-       u.created,
-       u.creator,
-       u.adapted,
-       u.adapter,
-       u.oked,
-       u.oker,
-       u.status,
-       u.id,
-       u.tel,
-       u.addr,
-       u.im,
-       u.credential,
-       u.admly,
-       u.orgid,
-       u.orgly,
-       u.orgext,
-       u.vip,
-       u.icon IS NOT NULL AS icon
-FROM users u;
+create unique index buys_single_idx
+    on buys (shpid, status)
+    where (status = 0);
 
-alter table users_vw owner to postgres;
+create index buys_uidstatus_idx
+    on buys (uid, status);
+
+create index buys_shpidstatus_idx
+    on buys (shpid, status);
 
 create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
 SELECT o.typ,
@@ -552,6 +509,62 @@ SELECT o.typ,
 FROM orgs o;
 
 alter table orgs_vw owner to postgres;
+
+create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitx, price, "off", min, max, step, icon, pic) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.shpid,
+       o.itemid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.max,
+       o.step,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic
+FROM wares o;
+
+alter table wares_vw owner to postgres;
+
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, srcid, zonly, shpid, mktly, vip, icon) as
+SELECT u.typ,
+       u.state,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.oked,
+       u.oker,
+       u.status,
+       u.id,
+       u.tel,
+       u.addr,
+       u.im,
+       u.credential,
+       u.admly,
+       u.srcid,
+       u.zonly,
+       u.shpid,
+       u.mktly,
+       u.vip,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

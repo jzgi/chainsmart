@@ -71,7 +71,7 @@ namespace ChainMart
                         var prin = dc.ToObject<User>();
 
                         wc.Principal = prin; // set principal for afterwrads
-                        wc.SetPersonalCookies(prin);
+                        wc.SetUserCookies(prin);
                     }
                     else // keep the acquired openid and signup
                     {

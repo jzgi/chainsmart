@@ -27,7 +27,7 @@ namespace ChainMart
             // start the concluder thead
             // cycler.Start();
 
-            MapComposite<BuyLine>();
+            MapComposite<BuyDetail>();
 
             CacheUp();
 

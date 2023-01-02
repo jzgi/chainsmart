@@ -10,8 +10,9 @@ using static ChainFx.Web.ToolAttribute;
 namespace ChainMart
 {
     /// 
-    /// The home for market
-    /// 
+    /// The home for a certain market
+    ///
+    [UserAuthenticate]
     public class PublyVarWork : WebWork
     {
         protected override void OnCreate()
@@ -26,17 +27,17 @@ namespace ChainMart
             var regs = Grab<short, Reg>();
 
             Org[] arr;
-            if (sec == 0) // when default sect
+            if (sec == 0) // when default section
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status > 0 ORDER BY addr");
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
                 arr = await dc.QueryAsync<Org>(p => p.Set(mktid));
                 arr = arr.AddOf(mkt, first: true);
             }
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status > 0 ORDER BY addr");
+                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
                 arr = await dc.QueryAsync<Org>(p => p.Set(mktid).Set(sec));
             }
 
@@ -52,7 +53,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    if (o.IsBrand)
+                    if (o.EqBrand)
                     {
                         h.A_(o.addr, css: "uk-card-body uk-flex");
                     }
@@ -70,7 +71,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.ShopName).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -83,17 +84,15 @@ namespace ChainMart
     /// 
     /// The home for shop
     ///
-    [UserAuthenticate]
     public class PublyVarVarWork : WebWork
     {
-        [MyAuthorize]
         public async Task @default(WebContext wc)
         {
             int shpid = wc[0];
             var shp = GrabObject<int, Org>(shpid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status > 0 ORDER BY status DESC");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(shp.id));
 
             wc.GivePage(200, h =>
@@ -105,47 +104,61 @@ namespace ChainMart
                 }
 
                 decimal realprice = 0;
-                h.FORM_(oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);").FIELDSUL_();
 
-                foreach (var o in arr)
+                h.FORM_(oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);");
+
+                h.MAINGRID(arr, o =>
                 {
-                    h.LI_("uk-card uk-card-default uk-card-body");
+                    h.DIV_("uk-card-body uk-flex");
                     if (o.icon)
                     {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
                     }
                     else if (o.itemid > 0)
                     {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
                     }
                     else
                     {
                         h.PIC("/void.webp", css: "uk-width-1-5");
                     }
 
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.T("<em>￥<output name=\"price\" cookie=\"vip\" onenhance=\"fixPrice(this, event, ").T(o.RealPrice).T(',').T(o.price).T(");\"></output></em>").SP().T(o.unit);
-                    h.T("<select name=\"").T(o.id).T(" \" class=\"uk-select\" onenhance=\"qtyFill(this, ").T(o.min).T(',').T(o.max).T(',').T(o.step).T(");\"></select>");
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
+                    h.Q(o.tip, "uk-width-expand");
+                    
+                    h.FOOTER_();
+
+                    decimal qtyx = 1 * o.unitx;
+                    h.SPAN_("uk-width-1-4").CNYOUTPUT(nameof(o.price), o.price, cookie: "vip", onfix: $"fixPrice(this,event,{o.RealPrice},{o.price});")._SPAN();
+                    
+                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.step});", css: "uk-width-1-6 uk-height-auto uk-border-rounded")._SELECT();
+                    h.SPAN_("uk-width-expand").T("件共").SP().OUTPUT(nameof(qtyx), qtyx).SP().T(o.unit)._SPAN();
+
+                    h.SPAN_("uk-margin-auto-left")._SPAN();
+                    h._FOOTER();
+                    
+                    h._ASIDE();
+
                     h._DIV();
-                    h._LI();
-                }
-                h._FIELDSUL();
+                });
 
                 decimal pay = 0;
-
+                string nametel = null;
                 h.BOTTOMBAR_();
-                h.DIV_("uk-width-1-1").SPAN_("uk-width-1-1 uk-background-default");
-                h.T("<output name=\"name\" cookie=\"name\" onenhance=\"this.value = event.detail;\"></output>").SP();
-                h.T("<output name=\"tel\" cookie=\"tel\" onenhance=\"this.value = event.detail;\"></output>").SP();
-                h._SPAN();
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"同城收货地址（街道／小区／室号）\" cookie=\"addr\" onenhance=\"this.value = event.detail;\" required>");
+
+                h.DIV_("uk-width-1-1");
+
+                h.OUTPUT(nameof(nametel), nametel, cookie: "nametel", onfix: "this.value = event.detail;", css: "uk-width-1-1 uk-background-default").SP();
+
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"同城收货地址（街道／小区／室号）\" cookie=\"addr\" fix=\"this.value = event.detail;\" required>");
                 h._DIV();
-                h.T("<button type=\"button\" formmethod=\"post\" formaction=\"buy\" class=\"uk-button-danger uk-width-medium uk-height-1-1\" onclick=\"return call_buy(this);\">").OUTPUTCNY(nameof(pay), pay)._BUTTON();
+
+                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);\">").CNYOUTPUT(nameof(pay), pay)._BUTTON();
                 h._BOTTOMBAR();
 
                 h._FORM();
-            }, true, 900, title: shp.name, onload: "enhanceAll();");
+            }, true, 300, title: shp.name, onload: "fixAll();");
         }
 
         public async Task buy(WebContext wc, int cmd)
@@ -158,13 +171,13 @@ namespace ChainMart
             string addr = f[nameof(addr)];
 
             // line item list
-            var linelst = new List<BuyLine>();
+            var linelst = new List<BuyDetail>();
             for (int i = 0; i < f.Count; i++)
             {
                 var ety = f.EntryAt(i);
                 int id = ety.Key.ToInt();
                 short qty = ety.Value;
-                linelst.Add(new BuyLine
+                linelst.Add(new BuyDetail
                 {
                     wareid = id,
                     qty = qty
@@ -183,7 +196,7 @@ namespace ChainMart
                     var ware = wares[line.wareid];
                     if (ware != null)
                     {
-                        line.InitializeByWare(ware, discount: prin.vip == shpid);
+                        line.InitWithWare(ware, discount: prin.vip == shpid);
                     }
                 }
 
@@ -195,7 +208,7 @@ namespace ChainMart
                     creator = prin.name,
                     shpid = shp.id,
                     mktid = shp.MarketId,
-                    lines = linelst.ToArray(),
+                    details = linelst.ToArray(),
                     uid = prin.id,
                     utel = prin.tel,
                     uaddr = addr

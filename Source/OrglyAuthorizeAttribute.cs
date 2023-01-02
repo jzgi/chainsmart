@@ -3,9 +3,6 @@ using ChainFx.Web;
 
 namespace ChainMart
 {
-    /// <summary>
-    /// To implement principal authorization of access to the target resources.
-    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public class OrglyAuthorizeAttribute : AuthorizeAttribute
     {
@@ -35,12 +32,12 @@ namespace ChainMart
                 return false;
             }
 
-            var (down, role) = prin.GetRoleForOrg(org, orgtyp);
+            var (dive, role) = prin.GetRoleForOrg(org, orgtyp);
             if ((role & orgly) == orgly)
             {
                 if (!mock)
                 {
-                    wc.Dive = down;
+                    wc.Dive = dive;
                     wc.Role = role;
                 }
                 return true;

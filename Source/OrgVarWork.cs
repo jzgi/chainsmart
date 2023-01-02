@@ -222,13 +222,13 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(m.IsMarket ? "市场属性" : "供应版块属性");
+                    h.FORM_().FIELDSUL_(m.EqMarket ? "市场属性" : "供应版块属性");
                     h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                    h.LI_().SELECT(m.EqMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsSection : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("关联控运", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联控运", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -276,10 +276,10 @@ namespace ChainMart
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户名", o.name)._LI();
-                            if (o.orgid > 0)
+                            if (o.srcid > 0)
                             {
-                                var org = GrabObject<int, Org>(o.orgid);
-                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                                var org = GrabObject<int, Org>(o.srcid);
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.zonly])._LI();
                             }
                             else
                             {
@@ -392,7 +392,7 @@ namespace ChainMart
                     {
                         h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
                         h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
@@ -406,7 +406,7 @@ namespace ChainMart
                     else // brand
                     {
                         h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
                         // h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k >= 0)._LI();
                     }
@@ -517,7 +517,7 @@ namespace ChainMart
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 30)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();

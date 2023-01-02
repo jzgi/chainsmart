@@ -53,7 +53,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -87,7 +87,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -130,12 +130,12 @@ namespace ChainMart
                         h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 50)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
-                    h.LI_().SELECT(m.IsMarket ? "场区" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.IsMarket ? v.IsSection : v.IsProvince, required: !m.IsZone)._LI();
+                    h.LI_().SELECT(m.EqMarket ? "场区" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsSection : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
                     h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
                     h._FIELDSUL()._FORM();
                 });
@@ -188,7 +188,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -220,7 +220,7 @@ namespace ChainMart
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 50)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -278,7 +278,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -330,7 +330,7 @@ namespace ChainMart
 
                         h.ASIDE_();
                         h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                        h.P(o.tip, "uk-width-expand");
+                        h.Q(o.tip, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                         h._ASIDE();
 
@@ -363,7 +363,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -401,7 +401,7 @@ namespace ChainMart
 
                         h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
                         h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 50)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
@@ -422,7 +422,7 @@ namespace ChainMart
                         h.FORM_().FIELDSUL_("填写虚拟商户信息");
 
                         h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 30)._LI();
+                        h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
                         h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0)._LI();
 

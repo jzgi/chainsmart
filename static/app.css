@@ -1,13 +1,12 @@
 
 .rmb {
-    color: #e36209;
-    font-size: 1.25rem;
+    color: #7daa1d;
+    font-weight: bold;
 }
 
 .rmb::before {
-    content: "¥";
-    color: #000;
-    font-size: 0.857rem;
+    content: "￥";
+    color: #7daa1d;
 }
 
 button output {

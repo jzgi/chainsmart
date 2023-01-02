@@ -24,7 +24,7 @@ namespace ChainMart
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
-                h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.zonly])._LI();
                 h._UL();
 
                 h.UL_("uk-list uk-list-divider");
@@ -53,7 +53,7 @@ namespace ChainMart
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
-                h.LI_().FIELD("机构权限", User.Orgly[o.orgly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.zonly])._LI();
                 h._UL();
 
                 h.UL_("uk-list uk-list-divider");
@@ -105,7 +105,7 @@ namespace ChainMart
                 dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);
                 prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
                 // refresh cookie
-                wc.SetPersonalCookies(prin);
+                wc.SetUserCookies(prin);
 
                 wc.GivePane(200); // close
             }
@@ -139,10 +139,18 @@ namespace ChainMart
                     any++;
                 }
 
-                if (prin.HasOrgly)
+                if (prin.zonly > 0)
                 {
-                    var org = GrabObject<int, Org>(prin.orgid);
-                    h.LI_().SPAN2(org.name, User.Orgly[prin.orgly], brace: true)._LI();
+                    var org = GrabObject<int, Org>(prin.srcid);
+                    h.LI_().SPAN2(org.name, User.Orgly[prin.zonly], brace: true)._LI();
+
+                    any++;
+                }
+
+                if (prin.mktly > 0)
+                {
+                    var org = GrabObject<int, Org>(prin.shpid);
+                    h.LI_().SPAN2(org.name, User.Orgly[prin.mktly], brace: true)._LI();
 
                     any++;
                 }
@@ -170,7 +178,7 @@ namespace ChainMart
             var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
             // resend token cookie
-            wc.SetPersonalCookies(o);
+            wc.SetUserCookies(o);
 
             wc.Give(200, shared: false, maxage: 12);
         }
@@ -233,7 +241,7 @@ namespace ChainMart
                 text = f[nameof(text)];
 
                 await WeixinUtility.PostSendAsync(im, text);
-                
+
                 wc.GivePane(200);
             }
         }
@@ -255,7 +263,24 @@ namespace ChainMart
         }
     }
 
-    public class OrglyAccessVarWork : UserVarWork
+    public class ZonlyAccessVarWork : UserVarWork
+    {
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
+        public async Task rm(WebContext wc)
+        {
+            short orgid = wc[-2];
+            short id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
+
+            wc.Give(204); // no content
+        }
+    }
+
+    public class MktlyAccessVarWork : UserVarWork
     {
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]

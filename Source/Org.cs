@@ -160,41 +160,41 @@ namespace ChainMart
 
         public string Tel => tel;
 
-        public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
+        public int MarketId => EqMarket ? id : IsShop ? prtid : 0;
 
-        public int ZoneId => IsZone ? id : IsOfSource ? prtid : 0;
+        public int ZoneId => EqZone ? id : IsSource ? prtid : 0;
 
-        public bool IsParentCapable => (typ & TYP_PRT) == TYP_PRT;
+        public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
-        public bool IsBrand => typ == TYP_BRD;
+        public bool EqBrand => typ == TYP_BRD;
 
-        public bool IsZone => typ == TYP_ZON;
+        public bool EqZone => typ == TYP_ZON;
 
-        public bool IsOfZone => (typ & TYP_ZON) == TYP_ZON;
+        public bool IsZone => (typ & TYP_ZON) == TYP_ZON;
 
-        public bool IsSource => typ == TYP_SRC;
+        public bool EqSource => typ == TYP_SRC;
 
-        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsSource => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool IsShop => typ == TYP_SHP;
+        public bool EqShop => typ == TYP_SHP;
 
-        public bool IsOfShop => (typ & TYP_SHP) == TYP_SHP;
+        public bool IsShop => (typ & TYP_SHP) == TYP_SHP;
 
-        public bool IsMarket => typ == TYP_MKT;
+        public bool EqMarket => typ == TYP_MKT;
 
-        public bool IsCenter => typ == TYP_CTR;
+        public bool EqCenter => typ == TYP_CTR;
 
-        public bool HasXy => IsMarket || IsSource || IsCenter;
+        public bool HasXy => EqMarket || EqSource || EqCenter;
 
-        public bool HasCtr => IsOfShop;
+        public bool HasCtr => IsShop;
 
-        public bool IsAliasable => IsCenter;
+        public bool IsAliasable => EqCenter;
 
         public bool IsTopOrg => prtid == 0;
 
-        public string ShopName => IsMarket ? alias : name;
+        public string ShopName => EqMarket ? alias : name;
 
-        public string TargetName => IsCenter ? alias : name;
+        public string TargetName => EqCenter ? alias : name;
 
         public override string ToString() => name;
     }

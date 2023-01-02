@@ -52,6 +52,8 @@ aside {
     box-sizing: border-box;
     max-width: 100%;
     display: flex;
+    flex: 1;
+    min-width: 1px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
@@ -126,7 +128,22 @@ mark {
 }
 
 q {
-    font-style: italic;
+    font-size: 0.8125rem;
+    margin: 4px 0;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+
+q::before {
+    content: none;
+}
+
+q::after {
+    content: none;
 }
 
 small,
@@ -1204,6 +1221,10 @@ form legend {
 
 .uk-select {
     text-transform: none;
+}
+
+select.uk-border-rounded {
+    background-color: #ededed !important;
 }
 
 .uk-select optgroup {
@@ -3018,7 +3039,7 @@ ul.uk-nav-sub {
 
 .uk-subnav>* {
     flex: none;
-    padding: 6px 8px;
+    padding: 6px;
     position: relative;
     border: 2px solid transparent;
 }
@@ -6138,6 +6159,10 @@ iframe.uk-cover {
     box-sizing: border-box;
 }
 
+.uk-height-auto {
+    height: auto !important;
+}
+
 .uk-height-1-1 {
     height: 100%;
 }
@@ -6214,7 +6239,7 @@ iframe.uk-cover {
 }
 
 .uk-border-rounded {
-    border-radius: 25px;
+    border-radius: 12px;
 }
 
 .uk-inline-clip[class*='uk-border-'] {

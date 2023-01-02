@@ -27,10 +27,10 @@ namespace ChainMart
         internal string utel;
         internal string uaddr;
         internal string uim;
+        internal BuyDetail[] details;
+        internal decimal topay;
         internal decimal pay;
-        internal decimal deliv;
-        internal decimal hand;
-        internal BuyLine[] lines;
+        internal decimal refund;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -49,16 +49,16 @@ namespace ChainMart
                 s.Get(nameof(utel), ref utel);
                 s.Get(nameof(uaddr), ref uaddr);
                 s.Get(nameof(uim), ref uim);
+                s.Get(nameof(topay), ref topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(pay), ref pay);
-                s.Get(nameof(deliv), ref deliv);
-                s.Get(nameof(hand), ref hand);
+                s.Get(nameof(refund), ref refund);
             }
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
-                s.Get(nameof(lines), ref lines);
+                s.Get(nameof(details), ref details);
             }
         }
 
@@ -79,16 +79,16 @@ namespace ChainMart
                 s.Put(nameof(utel), utel);
                 s.Put(nameof(uaddr), uaddr);
                 s.Put(nameof(uim), uim);
+                s.Put(nameof(topay), topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(pay), pay);
-                s.Put(nameof(deliv), deliv);
-                s.Put(nameof(hand), hand);
+                s.Put(nameof(refund), refund);
             }
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
-                s.Put(nameof(lines), lines);
+                s.Put(nameof(details), details);
             }
         }
 

@@ -195,20 +195,21 @@ namespace ChainMart
 
         const int A_WEEK = 3600 * 24 * 7;
 
-        public static void SetPersonalCookies(this WebContext wc, User o)
+        public static void SetUserCookies(this WebContext wc, User o)
         {
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            var tokenStr = WebUtility.FormatSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
+            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
 
             // cookie for vip, o means none
-            var vipStr = WebUtility.FormatSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
+            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
 
-            var nameStr = WebUtility.FormatSetCookie(nameof(o.name), (o.name), maxage: A_WEEK);
-            var telStr = WebUtility.FormatSetCookie(nameof(o.tel), o.tel, maxage: A_WEEK);
+            // cookie for name and tel
+            var nametel = o.name + ' ' + o.tel;
+            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: A_WEEK);
 
             // multiple cookie
-            wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);
+            wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameTelStr);
         }
 
         public static void ViewAgrmt(this HtmlBuilder h, JObj jo)

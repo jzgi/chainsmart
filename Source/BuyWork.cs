@@ -17,7 +17,6 @@ namespace ChainMart
     [Ui("我的消费", "账号")]
     public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
-        [Ui("我的消费"), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
@@ -28,11 +27,11 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(tip: prin.name);
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无零售订单");
+                    h.ALERT("尚无消费订单");
                     return;
                 }
 
@@ -40,9 +39,9 @@ namespace ChainMart
                 {
                     h.HEADER_("uk-card-header").T(o.name)._HEADER();
                     h.UL_("uk-card-body uk-list uk-list-divider");
-                    for (int i = 0; i < o?.lines.Length; i++)
+                    for (int i = 0; i < o?.details.Length; i++)
                     {
-                        var ln = o.lines[i];
+                        var ln = o.details[i];
                         h.LI_();
                         if (ln.itemid > 0)
                         {

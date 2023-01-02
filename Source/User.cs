@@ -21,8 +21,7 @@ namespace ChainMart
             ROL_FIN = 0b0001001, // finance
             ROL_MGT = 0b0011111, // management
             // suppliement
-            ROL_EXT = 0b0100001, // cross-level extension
-            ROL_RVW = 0b1000001; // review
+            ROL_RVW = 0b0100001; // review
 
         public static readonly Map<short, string> Admly = new Map<short, string>
         {
@@ -31,7 +30,6 @@ namespace ChainMart
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
             // suppliement
-            {ROL_EXT, "扩展"},
             {ROL_RVW, "审核"},
         };
 
@@ -42,13 +40,8 @@ namespace ChainMart
             {ROL_FIN, "财务"},
             {ROL_MGT, "管理"},
             {ROL_RVW, "审核"},
-            {ROL_OPN | ROL_EXT, "业务+"},
-            {ROL_LOG | ROL_EXT, "物流+"},
-            {ROL_FIN | ROL_EXT, "财务+"},
-            {ROL_MGT | ROL_EXT, "管理+"},
 
-            {ROL_MGT | ROL_RVW, "管审"},
-            {ROL_MGT | ROL_EXT | ROL_RVW, "管审+"},
+            {ROL_MGT | ROL_RVW, "管理审核"},
         };
 
         internal int id;
@@ -59,9 +52,10 @@ namespace ChainMart
         // later
         internal string credential;
         internal short admly;
-        internal int orgid;
-        internal short orgly;
-        internal bool orgext;
+        internal int srcid;
+        internal short zonly;
+        internal int shpid;
+        internal short mktly;
         internal int vip;
         internal bool icon;
 
@@ -83,9 +77,10 @@ namespace ChainMart
                 s.Get(nameof(addr), ref addr);
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
-                s.Get(nameof(orgid), ref orgid);
-                s.Get(nameof(orgly), ref orgly);
-                s.Get(nameof(orgext), ref orgext);
+                s.Get(nameof(srcid), ref srcid);
+                s.Get(nameof(zonly), ref zonly);
+                s.Get(nameof(shpid), ref shpid);
+                s.Get(nameof(mktly), ref mktly);
                 s.Get(nameof(vip), ref vip);
                 s.Get(nameof(icon), ref icon);
             }
@@ -106,9 +101,10 @@ namespace ChainMart
                 s.Put(nameof(addr), addr);
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
-                s.Put(nameof(orgid), orgid);
-                s.Put(nameof(orgly), orgly);
-                s.Put(nameof(orgext), orgext);
+                s.Put(nameof(srcid), srcid);
+                s.Put(nameof(zonly), zonly);
+                s.Put(nameof(shpid), shpid);
+                s.Put(nameof(mktly), mktly);
                 s.Put(nameof(vip), vip);
                 s.Put(nameof(icon), icon);
             }
@@ -122,27 +118,25 @@ namespace ChainMart
 
         public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
 
-        public bool HasOrgly => orgly > 0 && orgid > 0;
 
         /// <summary>
-        /// admly, orgid + orgly
+        /// admly, srcid + zonly, shpid + mktly
         /// </summary>
         public (bool dive, short role ) GetRoleForOrg(Org org, short orgtyp = 0)
         {
             bool dive;
             short role = 0;
 
+            var orgid_ = org.IsSource ? srcid : shpid;
+            var orgly_ = org.IsSource ? zonly : mktly;
+
             // is of any role for the org
-            if (org.id == orgid)
+            if (org.id == orgid_)
             {
-                role = orgly;
-                if (orgext)
-                {
-                    role |= ROL_EXT;
-                }
+                role = orgly_;
                 dive = false;
             }
-            else //  downward role
+            else //  diving role
             {
                 if (org.IsTopOrg && admly > 0)
                 {
@@ -155,17 +149,13 @@ namespace ChainMart
                         role |= ROL_RVW;
                     }
                 }
-                else if (!org.IsTopOrg && orgid == org.prtid && HasOrgly)
+                else if (!org.IsTopOrg && orgid_ == org.prtid && (orgly_ > 0 && orgid_ > 0))
                 {
                     if (org.trust)
                     {
-                        role = orgly;
+                        role = orgly_;
                     }
-                    if (orgext)
-                    {
-                        role |= ROL_EXT;
-                    }
-                    if ((orgly & ROL_MGT) == ROL_MGT)
+                    if ((orgly_ & ROL_MGT) == ROL_MGT)
                     {
                         role |= ROL_RVW;
                     }

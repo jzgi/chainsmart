@@ -52,7 +52,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -87,7 +87,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -134,7 +134,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -174,7 +174,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -209,7 +209,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                     h._ASIDE();
 

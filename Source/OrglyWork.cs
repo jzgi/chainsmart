@@ -8,9 +8,9 @@ namespace ChainMart
     {
     }
 
-    /// <summary>
+    /// 
     /// Works for zones and sources.
-    /// </summary>
+    /// 
     [UserAuthenticate]
     [Ui("供区产源操作")]
     public class ZonlyWork : OrglyWork
@@ -20,16 +20,16 @@ namespace ChainMart
             // id of either current user or the specified
             CreateVarWork<ZonlyVarWork>((prin, key) =>
                 {
-                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
+                    var orgid = key?.ToInt() ?? ((User) prin).srcid;
                     return GrabObject<int, Org>(orgid);
                 }
             );
         }
     }
 
-    /// <summary>
+    /// 
     /// Works for markets and shops.
-    /// </summary>
+    /// 
 #if ZHNT
     [Ui("市场商户操作")]
 #else
@@ -43,7 +43,7 @@ namespace ChainMart
             // id of either current user or the specified
             CreateVarWork<MktlyVarWork>((prin, key) =>
                 {
-                    var orgid = key?.ToInt() ?? ((User) prin).orgid;
+                    var orgid = key?.ToInt() ?? ((User) prin).shpid;
                     return GrabObject<int, Org>(orgid);
                 }
             );

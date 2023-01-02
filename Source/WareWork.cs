@@ -56,7 +56,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -100,7 +100,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
-                    h.P(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -130,7 +130,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
                     h.LI_().TEXT("产品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();

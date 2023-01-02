@@ -66,7 +66,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("按市场");
-                    h.LI_().SELECT("市场", nameof(prvid), prvid, topOrgs, filter: (k, v) => v.IsMarket, required: true);
+                    h.LI_().SELECT("市场", nameof(prvid), prvid, topOrgs, filter: (k, v) => v.EqMarket, required: true);
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -193,7 +193,7 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("按供应版块");
-                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.IsZone, required: true);
+                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.EqZone, required: true);
                     h._FIELDSUL()._FORM();
                 });
             }

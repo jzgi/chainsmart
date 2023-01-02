@@ -42,7 +42,7 @@ namespace ChainMart
 
                     h.ASIDE_();
                     h.HEADER_().SPAN2(o.name, User.Admly[o.admly], brace: true, "uk-h5").SPAN("")._HEADER();
-                    h.P(o.tel, "uk-width-expand");
+                    h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -78,10 +78,10 @@ namespace ChainMart
                             h.FIELDSUL_();
                             h.HIDDEN(nameof(o.id), o.id);
                             h.LI_().FIELD("用户姓名", o.name)._LI();
-                            if (o.orgid > 0)
+                            if (o.srcid > 0)
                             {
-                                var org = GrabObject<int, Org>(o.orgid);
-                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.orgly])._LI();
+                                var org = GrabObject<int, Org>(o.srcid);
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.zonly])._LI();
                             }
                             else
                             {
@@ -169,7 +169,7 @@ namespace ChainMart
 
                         h.ASIDE_();
                         h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                        h.P(o.tel, "uk-width-expand");
+                        h.Q(o.tel, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                         h._ASIDE();
 
@@ -181,7 +181,7 @@ namespace ChainMart
     }
 
     [Ui("人员权限", "常规")]
-    public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
+    public class ZonlyAccessWork : UserWork<ZonlyAccessVarWork>
     {
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
@@ -189,7 +189,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE orgid = @1 AND orgly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE srcid = @1 AND zonly > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -206,8 +206,8 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().SPAN2(o.name, User.Orgly[o.orgly], brace: true, "uk-h5").SPAN("")._HEADER();
-                    h.P(o.tel, "uk-width-expand");
+                    h.HEADER_().SPAN2(o.name, User.Orgly[o.zonly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
 
@@ -224,7 +224,7 @@ namespace ChainMart
 
             string password = null;
 
-            short orgly = 0;
+            short zonly = 0;
             if (wc.IsGet)
             {
                 string tel = wc.Query[nameof(tel)];
@@ -252,11 +252,12 @@ namespace ChainMart
 
                             h.LI_().FIELD("用户姓名", o.name)._LI();
                             var yes = true;
-                            if (o.orgid > 0)
+                            if (o.srcid > 0)
                             {
-                                var exorg = GrabObject<int, Org>(o.orgid);
-                                h.LI_().FIELD2("现有权限", exorg.name, User.Orgly[o.orgly])._LI();
-                                if (exorg.id != org.id)
+                                var exOrg = GrabObject<int, Org>(o.srcid);
+
+                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.zonly])._LI();
+                                if (exOrg.id != org.id)
                                 {
                                     h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
                                     yes = false;
@@ -268,7 +269,7 @@ namespace ChainMart
                             }
                             if (yes)
                             {
-                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                                h.LI_().SELECT("授予权限", nameof(zonly), zonly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
                             h._FIELDSUL();
@@ -284,12 +285,131 @@ namespace ChainMart
 
                 int id = f[nameof(id)];
                 string tel = f[nameof(tel)];
-                orgly = f[nameof(orgly)];
+                zonly = f[nameof(zonly)];
                 password = f[nameof(password)];
                 string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
-                await dc.ExecuteAsync("UPDATE users SET orgid = @1, orgly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(orgly).Set(credential).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET srcid = @1, zonly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(zonly).Set(credential).Set(id));
+
+                wc.GivePane(200); // ok
+            }
+        }
+    }
+
+    [Ui("人员权限", "常规")]
+    public class MktlyAccessWork : UserWork<MktlyAccessVarWork>
+    {
+        [Ui("人员权限"), Tool(Anchor)]
+        public async Task @default(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE shpid = @1 AND mktly > 0");
+            var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                    if (o.icon)
+                    {
+                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                    }
+                    else
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+
+                    h.ASIDE_();
+                    h.HEADER_().SPAN2(o.name, User.Orgly[o.mktly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.Q(o.tel, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
+                    h._ASIDE();
+
+                    h._A();
+                });
+            }, false, 6);
+        }
+
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
+        public async Task add(WebContext wc, int cmd)
+        {
+            var org = wc[-1].As<Org>();
+
+            string password = null;
+
+            short mktly = 0;
+            if (wc.IsGet)
+            {
+                string tel = wc.Query[nameof(tel)];
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_();
+
+                    h.FIELDSUL_("指定用户");
+                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h._FIELDSUL();
+
+                    if (cmd == 1) // search user
+                    {
+                        using var dc = NewDbContext();
+                        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                        var o = dc.QueryTop<User>(p => p.Set(tel));
+
+                        if (o != null)
+                        {
+                            h.FIELDSUL_();
+
+                            h.HIDDEN(nameof(o.id), o.id);
+                            h.HIDDEN(nameof(o.tel), o.tel);
+
+                            h.LI_().FIELD("用户姓名", o.name)._LI();
+                            var yes = true;
+                            if (o.shpid > 0)
+                            {
+                                var exOrg = GrabObject<int, Org>(o.shpid);
+
+                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.mktly])._LI();
+                                if (exOrg.id != org.id)
+                                {
+                                    h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
+                                    yes = false;
+                                }
+                            }
+                            else
+                            {
+                                h.LI_().FIELD("现有权限", "无")._LI();
+                            }
+                            if (yes)
+                            {
+                                h.LI_().SELECT("授予权限", nameof(mktly), mktly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                                h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
+                            }
+                            h._FIELDSUL();
+                            h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
+                        }
+                    }
+                    h._FORM();
+                });
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+
+                int id = f[nameof(id)];
+                string tel = f[nameof(tel)];
+                mktly = f[nameof(mktly)];
+                password = f[nameof(password)];
+                string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
+
+                using var dc = NewDbContext();
+                await dc.ExecuteAsync("UPDATE users SET shpid = @1, mktly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(mktly).Set(credential).Set(id));
 
                 wc.GivePane(200); // ok
             }
@@ -318,13 +438,15 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
                     if (o.icon)
+                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                    }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.P(o.tel, "uk-width-expand");
+                    h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -352,9 +474,11 @@ namespace ChainMart
             else // OUTER
             {
                 tel = wc.Query[nameof(tel)];
+
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                 var arr = dc.Query<User>(p => p.Set(tel));
+
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
@@ -363,13 +487,15 @@ namespace ChainMart
                         h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
                         if (o.icon)
+                        {
                             h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        }
                         else
                             h.PIC("/void.webp", css: "uk-width-1-5");
 
                         h.ASIDE_();
                         h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                        h.P(o.tel, "uk-width-expand");
+                        h.Q(o.tel, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                         h._ASIDE();
 
@@ -401,6 +527,7 @@ namespace ChainMart
                         using var dc = NewDbContext();
                         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                         var o = dc.QueryTop<User>(p => p.Set(tel));
+
                         if (o != null)
                         {
                             if (o.vip > 0)
