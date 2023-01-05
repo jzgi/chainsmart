@@ -1,16 +1,77 @@
 
 .rmb {
-    color: #7daa1d;
-    font-weight: bold;
+    font-size: larger;
 }
 
 .rmb::before {
     content: "￥";
-    color: #7daa1d;
+    font-size: x-small;
+    font-weight: normal;
 }
 
 button output {
     font-size: 1.125rem;
+}
+
+mark.state-0 {
+    color: #999;
+    border-color: #999;
+}
+mark.state-1 {
+    color: #f59604;
+    border-color: #f59604;
+}
+mark.state-2 {
+    color: #007aff;
+    border-color: #007aff;
+}
+mark.state-4 {
+    color: #7daa1d;
+    border-color: #7daa1d;
+}
+
+.qtyselect {
+    appearance: none;
+    vertical-align: middle;
+    display: inline-flex;
+    background-color: #ededed;
+    height: auto !important;
+    box-sizing: border-box;
+    padding: 4px;
+    color: #333;
+    border: 0;
+    font-size: inherit;
+    transition: .2s ease-in-out;
+    transition-property: color,background-color,border;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.qtydetail {
+    flex: 1;
+    min-width: 1px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    color: #fff;
+    background-color: #999;
+}
+
+.nametel {
+    box-sizing: border-box;
+    background-color: #fff;
+    flex: 1;
+    min-width: 1px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    height: 2rem;
+    min-height: 2rem;
+    color: #7daa1d;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
 }
 
 /* CROPPIE */

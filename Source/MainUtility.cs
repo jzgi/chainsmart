@@ -202,7 +202,7 @@ namespace ChainMart
             var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
 
             // cookie for vip, o means none
-            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), o.vip.ToString(), maxage: A_WEEK);
+            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: A_WEEK);
 
             // cookie for name and tel
             var nametel = o.name + ' ' + o.tel;

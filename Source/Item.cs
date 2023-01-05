@@ -9,13 +9,21 @@ namespace ChainMart
     {
         public static readonly Item Empty = new Item();
 
+        public new static readonly Map<short, string> States = new Map<short, string>
+        {
+            {STA_VOID, "其它"},
+            {STA_PRE, "通货"},
+            {STA_FINE, "进口"},
+            {STA_TOP, "特品"},
+        };
+
         public static readonly Map<short, string> Stores = new Map<short, string>
         {
             {0, "常规"},
             {1, "冷藏"},
             {2, "冷冻"},
         };
-        
+
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STU_VOID, "无效"},

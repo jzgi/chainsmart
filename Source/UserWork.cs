@@ -36,12 +36,14 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
                     if (o.icon)
+                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                    }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().SPAN2(o.name, User.Admly[o.admly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(User.Admly[o.admly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -60,12 +62,13 @@ namespace ChainMart
             if (wc.IsGet)
             {
                 string tel = wc.Query[nameof(tel)];
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_();
 
                     h.FIELDSUL_("授权给指定用户");
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
                     if (cmd == 1) // search user
@@ -201,12 +204,14 @@ namespace ChainMart
                     h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon)
+                    {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                    }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().SPAN2(o.name, User.Orgly[o.zonly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(User.Orgly[o.zonly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -234,7 +239,7 @@ namespace ChainMart
                     h.FORM_();
 
                     h.FIELDSUL_("指定用户");
-                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
                     if (cmd == 1) // search user
@@ -325,7 +330,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().SPAN2(o.name, User.Orgly[o.mktly], brace: true, "uk-h5").SPAN("")._HEADER();
+                    h.HEADER_().H5(o.name).SPAN(User.Orgly[o.mktly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -353,7 +358,7 @@ namespace ChainMart
                     h.FORM_();
 
                     h.FIELDSUL_("指定用户");
-                    h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
                     if (cmd == 1) // search user
@@ -423,11 +428,11 @@ namespace ChainMart
         [Ui("大客户", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            int mktid = wc[0];
+            int shpid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE vip = @1 LIMIT 20 OFFSET 20 * @2");
-            var arr = dc.Query<User>(p => p.Set(mktid).Set(page));
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE vip @> ARRAY[@1] LIMIT 20 OFFSET 20 * @2");
+            var arr = dc.Query<User>(p => p.Set(shpid).Set(page));
 
             wc.GivePage(200, h =>
             {
@@ -530,9 +535,9 @@ namespace ChainMart
 
                         if (o != null)
                         {
-                            if (o.vip > 0)
+                            if (o.vip != null)
                             {
-                                if (o.vip == shpid)
+                                if (o.vip.Contains(shpid))
                                 {
                                     h.LI_().FIELD("", "已经是本单位的大客户")._LI();
                                 }

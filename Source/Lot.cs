@@ -13,7 +13,7 @@ namespace ChainMart
         public new static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_VOID, null},
-            {STA_NORMAL, "溯源"},
+            {STA_FINE, "溯源"},
         };
 
 

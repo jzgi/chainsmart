@@ -19,6 +19,15 @@ namespace ChainMart
             {TYP_OFFLINE, "线下"},
         };
 
+        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        {
+            {STU_VOID, null},
+            {STU_CREATED, "下单"},
+            {STU_ADAPTED, "发货"},
+            {STU_OKED, "收货"},
+        };
+
+
         internal long id;
         internal int shpid;
         internal int mktid;
@@ -49,16 +58,13 @@ namespace ChainMart
                 s.Get(nameof(utel), ref utel);
                 s.Get(nameof(uaddr), ref uaddr);
                 s.Get(nameof(uim), ref uim);
+                s.Get(nameof(details), ref details);
                 s.Get(nameof(topay), ref topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(pay), ref pay);
                 s.Get(nameof(refund), ref refund);
-            }
-            if ((msk & MSK_EXTRA) == MSK_EXTRA)
-            {
-                s.Get(nameof(details), ref details);
             }
         }
 
@@ -79,6 +85,7 @@ namespace ChainMart
                 s.Put(nameof(utel), utel);
                 s.Put(nameof(uaddr), uaddr);
                 s.Put(nameof(uim), uim);
+                s.Put(nameof(details), details);
                 s.Put(nameof(topay), topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -86,12 +93,26 @@ namespace ChainMart
                 s.Put(nameof(pay), pay);
                 s.Put(nameof(refund), refund);
             }
-            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        }
+
+        public void SetToPay()
+        {
+            var sum = 0.00M;
+            if (details != null)
             {
-                s.Put(nameof(details), details);
+                for (int i = 0; i < details.Length; i++)
+                {
+                    var dtl = details[i];
+                    sum += dtl.SubTotal;
+                }
             }
+
+            // set the topay field
+            topay = sum;
         }
 
         public long Key => id;
+
+        public override string ToString() => uname + "购买" + name + "商品";
     }
 }

@@ -37,7 +37,7 @@ namespace ChainMart
         {
             {STA_VOID, "停业"},
             {STA_PRE, "放假"},
-            {STA_NORMAL, "正常"},
+            {STA_FINE, "正常"},
             {STA_TOP, "满负"},
         };
 

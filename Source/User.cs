@@ -56,7 +56,7 @@ namespace ChainMart
         internal short zonly;
         internal int shpid;
         internal short mktly;
-        internal int vip;
+        internal int[] vip;
         internal bool icon;
 
         public override void Read(ISource s, short msk = 0xff)

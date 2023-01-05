@@ -22,7 +22,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND state > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
 
             wc.GivePage(200, h =>
@@ -37,26 +37,27 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").T(o.name)._HEADER();
+                    h.HEADER_("uk-card-header").H4(o.name)._HEADER();
                     h.UL_("uk-card-body uk-list uk-list-divider");
+                    h.LI_().T(o.created)._LI();
                     for (int i = 0; i < o?.details.Length; i++)
                     {
                         var ln = o.details[i];
                         h.LI_();
                         if (ln.itemid > 0)
                         {
-                            h.PIC("/item/", ln.itemid, "/icon", css: "uk-width-1-6");
+                            h.PIC("/item/", ln.itemid, "/icon", css: "uk-width-micro");
                         }
                         else
                         {
-                            h.PIC("/ware/", ln.itemid, "/icon", css: "uk-width-1-6");
+                            h.PIC("/ware/", ln.itemid, "/icon", css: "uk-width-micro");
                         }
-                        h.SPAN(ln.name, "uk-width-1-3");
+                        h.SPAN(ln.name, "uk-width-expand");
                         h.SPAN(ln.qty, "uk-width-1-6");
                         h._LI();
                     }
                     h._UL();
-                    h.NAV_("uk-card-footer")._NAV();
+                    h.FOOTER_("uk-card-footer").T("合计：").T(o.topay)._FOOTER();
                 });
 
                 h.PAGINATION(arr?.Length > 10);
@@ -75,7 +76,7 @@ namespace ChainMart
             var shp = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND state > 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
 
             wc.GivePage(200, h =>
@@ -86,10 +87,13 @@ namespace ChainMart
                 {
                     h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
                     h.PIC("/void.webp", css: "uk-width-1-5");
-                    h.DIV_("uk-width-expand uk-padding-left");
-                    h.H5(o.name);
-                    h.P(o.tip);
-                    h._DIV();
+
+                    h.ASIDE_();
+                    h.HEADER_().H5(o.name).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
+                    h.Q(o.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
                     h._A();
                 });
             });

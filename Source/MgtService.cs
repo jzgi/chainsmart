@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Application;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -38,19 +37,19 @@ namespace ChainMart
             // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
             //  
 
-            if (!OnNotified(SC: true, xe, out var trade_no, out var cash))
+            if (!OnNotified(sc: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
 
-            War("trade_no " + trade_no);
-            War("cash " + cash);
+            // War("trade_no " + trade_no);
+            // War("cash " + cash);
 
             int pos = 0;
             var bookid = trade_no.ParseInt(ref pos);
 
-            War("bookid " + bookid);
+            // War("bookid " + bookid);
 
             try
             {
@@ -63,9 +62,9 @@ namespace ChainMart
                     dc.Let(out short qty);
                     dc.Let(out decimal topay);
 
-                    War("lotid " + lotid);
-                    War("qty " + qty);
-                    War("topay " + topay);
+                    // War("lotid " + lotid);
+                    // War("qty " + qty);
+                    // War("topay " + topay);
 
                     if (topay == cash) // update data
                     {
@@ -73,7 +72,7 @@ namespace ChainMart
                         dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0; UPDATE lots SET avail = avail - @3 WHERE id = @4");
                         await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty).Set(lotid));
 
-                        War("update ok!");
+                        // War("update ok!");
                     }
                 }
             }

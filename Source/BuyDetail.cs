@@ -2,7 +2,7 @@
 
 namespace ChainMart
 {
-    public struct BuyDetail : IData, IKeyable<int>
+    public class BuyDetail : IData, IKeyable<int>
     {
         public int wareid;
 
@@ -46,18 +46,22 @@ namespace ChainMart
 
         public int Key => wareid;
 
-        public decimal RealPrice => price - off;
+        public decimal Discounted => price - off;
 
-        public decimal SubTotal => decimal.Round(RealPrice * unitx * qty, 2);
+        public decimal SubTotal => decimal.Round(Discounted * unitx * qty, 2);
 
 
-        internal void InitWithWare(Ware v, bool discount)
+        internal void SetupWithWare(Ware w, bool offed)
         {
-            name = v.name;
-            itemid = v.itemid;
-            unit = v.unit;
-            price = v.price;
-            off = discount ? v.off : 0;
+            name = w.name;
+            itemid = w.itemid;
+            unit = w.unit;
+            unitx = w.unitx;
+            price = w.price;
+            if (offed)
+            {
+                off = w.off;
+            }
         }
     }
 }

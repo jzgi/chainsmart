@@ -8,7 +8,12 @@ var WCPay = function (data, sc) {
         function (res) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
 
-                alert('下单支付成功');
+                if (sc) {
+                    alert('下单成功');
+                }
+                else {
+                    alert('下单成功，查看订单在「我的消费」');
+                }
 
                 // close current payment page
                 window.parent.closeUp(true);
@@ -23,18 +28,71 @@ var WCPay = function (data, sc) {
     );
 };
 
-function fixPrice(trig, evt, a, b) {
+function fixPrice(trig, evt, price, off) {
+
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
     var startp = url.lastIndexOf('/', endp - 1);
     var n = parseInt(url.substring(startp + 1, endp));
 
-    if (evt.detail == n) { // personal-to-path matched
-        trig.value = a;
-        return;
+    var vip = false;
+    if (evt.detail) {
+        var lst = evt.detail.split(' ');
+        if (lst.includes(n)) { // personal-to-path matched
+            vip = true;
+        }
     }
-    // otherwise
-    trig.value = b;
+
+    // fill fprice
+    var out_fprice = trig.querySelector('.fprice');
+    if (vip) {
+        out_fprice.value = (price - off).toFixed(2);
+
+        // pad with the normal price
+        if (off > 0) {
+            var badge = trig.parentElement.querySelector('.uk-badge');
+            badge.innerHTML = '<s>￥' + price.toFixed(2) + '</s>&nbsp;' + badge.innerHTML;
+        }
+    }
+    else {
+        out_fprice.value = price.toFixed(2);
+    }
+
+}
+
+function sumQtyDetails(trig, unitx) {
+
+    var footer = trig.parentElement;
+
+    var output_qtyx = footer.querySelector('.qtyx');
+    var output_fprice = footer.querySelector('.fprice');
+    var output_subtotal = footer.querySelector('.subtotal');
+
+    var fprice = parseFloat(output_fprice.value);
+
+    output_qtyx.value = (unitx * trig.value).toFixed(1);
+    output_subtotal.value = (unitx * trig.value * fprice).toFixed(2);
+
+    var span = footer.querySelector('.qtydetail');
+
+    // toggle visibility
+    if (trig.value == 0) {
+        span.classList.add("uk-invisible");
+    }
+    else {
+        span.classList.remove("uk-invisible");
+    }
+
+    // sum up topay
+    var sum = 0.00;
+    var lst = trig.form.querySelectorAll('.subtotal');
+    for (var i = 0; i < lst.length; i++) {
+        var v = lst[i].value;
+        if (v) {
+            sum += parseFloat(v);
+        }
+    }
+    trig.form.topay.value = sum.toFixed(2);
 
 }
 
@@ -76,16 +134,32 @@ function call_smsvcode(trig) {
 
 function call_buy(trig) {
 
+    var topay = parseFloat(trig.querySelector('output').value);
+    if (topay <= 0) {
+        alert('请先选择商品及件数');
+        return;
+    }
+
     var method = 'post';
     var action = trig.formAction || trig.name;
     var form = trig.form;
     // validate form before submit
     if (!form || !form.reportValidity()) return false;
 
+    // reap of cookies
+    var inps = trig.form.querySelectorAll('input[cookie');
+    for (var i = 0; i < inps.length; i++) {
+        var inp = inps[i];
+        var cookieName = inp.getAttribute('cookie');
+
+        document.cookie = cookieName + '=' + inp.value + ';max-age=31104000';
+    }
+
     // get prepare id
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         var data = JSON.parse(this.responseText);
+
         window.top.WCPay(data, false); // call top windows's weixin pay bridge
     };
     xhr.open(method, action, false);
@@ -118,7 +192,7 @@ function call_book(trig) {
     xhr.open(method, action, false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(serialize(trig.form));
-    
+
     return false;
 }
 
@@ -321,8 +395,8 @@ function goto(url, evt) {
     return false;
 }
 
-function markGo(cookieName, el) {
-    document.cookie = cookieName + '=' + el.id;
+function markAndGo(cookieName, el) {
+    document.cookie = cookieName + '=' + el.id + ';max-age=31104000';
     return true;
 }
 
@@ -335,12 +409,21 @@ function setActive(evt, el) {
 // SELECT element triggered
 function formRefresh(trig, evt) {
 
-    var a = location.href.split('?');
     var b = serialize(trig.form);
-    var url = a[0] + '?' + b + (a.length == 1 ? '' : '&' + a[1]);
 
     evt.preventDefault();
-    location.replace(url);
+
+    if (trig.tagName = 'BUTTON') {
+        var a = trig.formAction;
+        var url = a + '?' + b;
+        location.replace(url);
+    }
+    else {
+        var a = location.href.split('?');
+        var url = a[0] + '?' + b + (a.length == 1 ? '' : '&' + a[1]);
+        location.replace(url);
+    }
+
 }
 
 

@@ -91,6 +91,6 @@ namespace ChainMart
 
         public int Key => id;
 
-        public decimal RealPrice => price - off;
+        public decimal Discounted => price - off;
     }
 }

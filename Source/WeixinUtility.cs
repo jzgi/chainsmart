@@ -224,10 +224,10 @@ namespace ChainMart
             }
         }
 
-        public static async Task<(string, string)> PostUnifiedOrderAsync(bool SC, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
+        public static async Task<(string, string)> PostUnifiedOrderAsync(bool sc, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
         {
-            var mchid = SC ? scmchid : rtlmchid;
-            var api = SC ? ScPayApi : RtlPayApi;
+            var mchid = sc ? scmchid : rtlmchid;
+            var api = sc ? ScPayApi : RtlPayApi;
 
             var x = new XElem("xml")
             {
@@ -256,9 +256,9 @@ namespace ChainMart
             return (prepay_id, err_code);
         }
 
-        public static bool OnNotified(bool SC, XElem xe, out string out_trade_no, out decimal total)
+        public static bool OnNotified(bool sc, XElem xe, out string out_trade_no, out decimal total)
         {
-            var mchid = SC ? scmchid : rtlmchid;
+            var mchid = sc ? scmchid : rtlmchid;
 
             total = 0;
             out_trade_no = null;

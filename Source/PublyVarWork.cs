@@ -103,13 +103,13 @@ namespace ChainMart
                     return;
                 }
 
-                decimal realprice = 0;
+                decimal fprice = 0;
 
-                h.FORM_(oninput: $"pay.value = {realprice} * parseInt(unitx.value) * parseInt(qty.value);");
+                h.FORM_(oninput: $"pay.value = {fprice} * parseInt(unitx.value) * parseInt(qty.value);");
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.DIV_("uk-card-body uk-flex");
+                    h.SECTION_("uk-card-body uk-flex");
                     if (o.icon)
                     {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
@@ -124,37 +124,53 @@ namespace ChainMart
                     }
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
+
+                    h.HEADER_().H5(o.name);
+                    if (o.unitx != 1)
+                    {
+                        h.T('（').T(o.unitx).T(o.unit).T("件").T('）');
+                    }
+                    // top right corner span
+                    h.SPAN_(css: "uk-badge");
+                    // ran mark
+                    short rank = 0;
+                    if (o.itemid > 0)
+                    {
+                        var item = GrabObject<int, Item>(o.itemid);
+                        if (item.state > 0)
+                        {
+                            rank = item.state;
+                        }
+                    }
+                    h.MARK(Item.States[rank], "state", rank);
+                    h._SPAN();
+                    h._HEADER();
+
                     h.Q(o.tip, "uk-width-expand");
-                    
-                    h.FOOTER_();
 
-                    decimal qtyx = 1 * o.unitx;
-                    h.SPAN_("uk-width-1-4").CNYOUTPUT(nameof(o.price), o.price, cookie: "vip", onfix: $"fixPrice(this,event,{o.RealPrice},{o.price});")._SPAN();
-                    
-                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.step});", css: "uk-width-1-6 uk-height-auto uk-border-rounded")._SELECT();
-                    h.SPAN_("uk-width-expand").T("件共").SP().OUTPUT(nameof(qtyx), qtyx).SP().T(o.unit)._SPAN();
-
-                    h.SPAN_("uk-margin-auto-left")._SPAN();
+                    // FOOTER: price and qty select & detail
+                    h.T($"<footer cookie= \"vip\" onfix=\"fixPrice(this,event,{o.price},{o.off});\">"); // pricing portion
+                    h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
+                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.step});", onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-6 qtyselect ").OPTION((short) 0, "不选")._SELECT().SPAN("件&nbsp;", css: "uk-background-muted uk-height-1-1");
+                    h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                     h._FOOTER();
-                    
+
                     h._ASIDE();
 
-                    h._DIV();
+                    h._SECTION();
                 });
 
-                decimal pay = 0;
-                string nametel = null;
-                h.BOTTOMBAR_();
+                var topay = 0.00M;
 
-                h.DIV_("uk-width-1-1");
+                h.BOTTOMBAR_(large: true);
 
-                h.OUTPUT(nameof(nametel), nametel, cookie: "nametel", onfix: "this.value = event.detail;", css: "uk-width-1-1 uk-background-default").SP();
-
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"同城收货地址（街道／小区／室号）\" cookie=\"addr\" fix=\"this.value = event.detail;\" required>");
+                h.DIV_("uk-col");
+                h.T("<output class=\"nametel\" name=\"nametel\" cookie=\"nametel\" onfix=\"this.value = event.detail;\"></output>");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" cookie=\"addr\" onfix=\"this.value = event.detail;\" required>");
                 h._DIV();
 
-                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);\">").CNYOUTPUT(nameof(pay), pay)._BUTTON();
+                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+
                 h._BOTTOMBAR();
 
                 h._FORM();
@@ -170,14 +186,20 @@ namespace ChainMart
             var f = await wc.ReadAsync<Form>();
             string addr = f[nameof(addr)];
 
-            // line item list
-            var linelst = new List<BuyDetail>();
+            // detail list
+            var details = new List<BuyDetail>();
             for (int i = 0; i < f.Count; i++)
             {
                 var ety = f.EntryAt(i);
                 int id = ety.Key.ToInt();
                 short qty = ety.Value;
-                linelst.Add(new BuyDetail
+
+                if (id <= 0 || qty <= 0) // filter out the non-selected (but submitted)
+                {
+                    continue;
+                }
+
+                details.Add(new BuyDetail
                 {
                     wareid = id,
                     qty = qty
@@ -187,49 +209,52 @@ namespace ChainMart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(linelst);
-                var wares = await dc.QueryAsync<int, Ware>(p => p.Set(shpid).SetForIn(linelst));
+                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(details);
+                var map = await dc.QueryAsync<int, Ware>(p => p.Set(shpid).SetForIn(details));
 
-                for (int i = 0; i < linelst.Count; i++)
+                for (int i = 0; i < details.Count; i++)
                 {
-                    var line = linelst[i];
-                    var ware = wares[line.wareid];
+                    var dtl = details[i];
+                    var ware = map[dtl.wareid];
                     if (ware != null)
                     {
-                        line.InitWithWare(ware, discount: prin.vip == shpid);
+                        dtl.SetupWithWare(ware, offed: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 
                 var m = new Buy
                 {
                     typ = Buy.TYP_ONLINE,
-                    name = shp.name,
+                    name = shp.ShopName,
                     created = DateTime.Now,
                     creator = prin.name,
                     shpid = shp.id,
                     mktid = shp.MarketId,
-                    details = linelst.ToArray(),
+                    details = details.ToArray(),
                     uid = prin.id,
+                    uname = prin.name,
                     utel = prin.tel,
-                    uaddr = addr
+                    uim = prin.im,
+                    uaddr = addr,
                 };
+                m.SetToPay();
 
-                // make use of any existing abandoned record
+                // NOTE single unsubmitted record
                 const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, pay");
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
                 await dc.QueryTopAsync(p => m.Write(p, msk));
                 dc.Let(out int buyid);
                 dc.Let(out decimal topay);
 
                 // // call WeChatPay to prepare order there
                 string trade_no = (buyid + "-" + topay).Replace('.', '-');
-                var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(SC: false,
+                var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sc: false,
                     trade_no,
                     topay,
                     prin.im, // the payer
                     wc.RemoteIpAddress.ToString(),
-                    MainApp.MgtUrl + "/" + nameof(WwwService.onpay),
-                    MainApp.MgtUrl
+                    MainApp.WwwUrl + "/" + nameof(WwwService.onpay),
+                    m.ToString()
                 );
                 if (prepay_id != null)
                 {

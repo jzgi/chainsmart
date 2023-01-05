@@ -105,6 +105,7 @@ namespace ChainMart
             });
         }
 
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("新建", "新建产品销售批次", icon: "plus", group: 3), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {

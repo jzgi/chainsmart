@@ -1,9 +1,7 @@
-using System;
 using System.Threading.Tasks;
-using System.Web;
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Entity;
+using static ChainFx.Application;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -61,7 +59,7 @@ namespace ChainMart
                     }
 
                     h.LI_("uk-flex");
-                    h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">").T(o.name)._A();
+                    h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markAndGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">").T(o.name)._A();
                     h.SPAN_("uk-margin-auto-left");
                     h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
                     h.A_POI(o.x, o.y, o.name, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
@@ -83,29 +81,44 @@ namespace ChainMart
         public async Task onpay(WebContext wc)
         {
             var xe = await wc.ReadAsync<XElem>();
-            if (!OnNotified(SC: false, xe, out var trade_no, out var cash))
+
+            // For DEBUG
+            // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
+            //  
+
+            if (!OnNotified(sc: false, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
+
+            // War("trade_no " + trade_no);
+            // War("cash " + cash);
+
             int pos = 0;
-            var orderid = trade_no.ParseInt(ref pos);
+            var buyid = trade_no.ParseInt(ref pos);
+
+            // War("buyid " + buyid);
+
             try
             {
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                var today = DateTime.Today;
-                dc.Sql("SELECT price FROM orders WHERE id = @1 AND status = ").T(STA_VOID);
-                var price = (decimal) dc.Scalar(p => p.Set(orderid));
-                if (price == cash) // update order status and line states
+                if (await dc.QueryTopAsync("SELECT topay FROM buys WHERE id = @1 AND status = 0", p => p.Set(buyid)))
                 {
-                    dc.Sql("UPDATE orders SET status = 1, pay = @1, issued = @2 WHERE id = @3 AND status = 0");
-                    await dc.ExecuteAsync(p => p.Set(cash).Set(today).Set(orderid));
-                }
-                else // try to refund this payment
-                {
-                    await PostRefundAsync(SC: false, trade_no, cash, cash, trade_no);
+                    dc.Let(out decimal topay);
+
+                    // War("topay " + topay);
+
+                    if (topay == cash) // update data
+                    {
+                        // the book and the lot updates
+                        dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = 0");
+                        await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
+
+                        // War("update ok!");
+                    }
                 }
             }
             finally

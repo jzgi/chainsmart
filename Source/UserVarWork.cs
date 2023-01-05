@@ -121,20 +121,31 @@ namespace ChainMart
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("机构及身份权限");
+                h.UL_("uk-list uk-list-divider");
 
                 var any = 0;
-                if (prin.vip > 0)
+                var vip = prin.vip;
+                if (vip != null)
                 {
-                    var org = GrabObject<int, Org>(prin.vip);
-                    h.LI_().SPAN2(org.name, "大客户", brace: true)._LI();
+                    h.LI_().LABEL("大客户").SPAN_("uk-static");
+                    for (int i = 0; i < vip.Length; i++)
+                    {
+                        if (i > 0)
+                        {
+                            h.BR();
+                        }
+                        var org = GrabObject<int, Org>(vip[i]);
+                        h.T(org.name);
+                    }
+                    h._SPAN();
+                    h._LI();
 
                     any++;
                 }
 
                 if (prin.admly > 0)
                 {
-                    h.LI_().SPAN2("平台", User.Admly[prin.admly], brace: true)._LI();
+                    h.LI_().FIELD(User.Admly[prin.admly], "平台")._LI();
 
                     any++;
                 }
@@ -142,7 +153,8 @@ namespace ChainMart
                 if (prin.zonly > 0)
                 {
                     var org = GrabObject<int, Org>(prin.srcid);
-                    h.LI_().SPAN2(org.name, User.Orgly[prin.zonly], brace: true)._LI();
+
+                    h.LI_().FIELD(User.Orgly[prin.zonly], org.name)._LI();
 
                     any++;
                 }
@@ -150,22 +162,23 @@ namespace ChainMart
                 if (prin.mktly > 0)
                 {
                     var org = GrabObject<int, Org>(prin.shpid);
-                    h.LI_().SPAN2(org.name, User.Orgly[prin.mktly], brace: true)._LI();
+
+                    h.LI_().FIELD(User.Orgly[prin.mktly], org.name)._LI();
 
                     any++;
                 }
 
                 if (any == 0)
                 {
-                    h.LI_().SPAN("暂无特殊权限")._LI();
+                    h.LI_().FIELD(null, "暂无特殊权限")._LI();
                 }
 
-                h._FIELDSUL()._FORM();
+                h._UL();
 
                 h.TOOLBAR(bottom: true);
 
                 // spr and rvr
-            }, false, 7);
+            }, false, 12);
         }
 
         [Ui("刷新", "刷新身份权限", icon: "refresh"), Tool(ButtonConfirm)]

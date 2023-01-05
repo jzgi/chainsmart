@@ -10,8 +10,30 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public class BuyVarWork : WebWork
+    public abstract class BuyVarWork : WebWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE id = @1");
+            var o = await dc.QueryTopAsync<Buy>(p => p.Set(id));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("状态", o.status, Lot.Statuses).FIELD("状况", Lot.States[o.state])._LI();
+                h.LI_().FIELD2("下单", o.created, o.creator, "&nbsp;")._LI();
+                if (o.adapter != null) h.LI_().FIELD2("发货", o.adapted, o.adapter, "&nbsp;")._LI();
+                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker, "&nbsp;")._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+            });
+        }
     }
 
     public class MyBuyVarWork : BuyVarWork
@@ -98,20 +120,6 @@ namespace ChainMart
 
     public class ShplyBuyVarWork : BuyVarWork
     {
-        public async Task @default(WebContext wc)
-        {
-            short orgid = wc[-2];
-            int orderid = wc[0];
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM orderlgs WHERE orderid = @1 ORDER BY dt");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(orderid));
-            wc.GivePane(200, h =>
-            {
-                var today = DateTime.Today;
-                h.BOTTOM_BUTTON("退款", nameof(refund));
-            });
-        }
-
         [Ui("备好", icon: "bag"), Tool(ButtonConfirm)]
         public async Task ready(WebContext wc)
         {
