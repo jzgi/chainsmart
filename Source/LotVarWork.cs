@@ -27,7 +27,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("限投放", o.targs, topOrgs, capt: v => v.TargetName)._LI();
+                h.LI_().FIELD("限投放", o.targs, topOrgs, capt: v => v.Ext)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -159,7 +159,7 @@ namespace ChainMart
                 {
                     h.LI_().FIELD("生产基地", item.origin)._LI();
                 }
-                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.fully)._A()._LI();
+                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
                 h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
                 h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
                 h._UL();
@@ -290,7 +290,7 @@ namespace ChainMart
                     h.FORM_();
 
                     h.FIELDSUL_("该批次限定销售区域");
-                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.EqCenter || v.EqMarket, capt: v => v.TargetName, size: 12, required: false)._LI();
+                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.EqCenter || v.EqMarket, capt: v => v.Ext, size: 12, required: false)._LI();
                     h._FIELDSUL();
 
                     h.BOTTOM_BUTTON("确认", nameof(targ));
@@ -556,7 +556,7 @@ namespace ChainMart
                     created = DateTime.Now,
                     creator = prin.name,
                     shpid = shp.id,
-                    shpname = shp.ShopName,
+                    shpname = shp.Name,
                     shptel = shp.tel,
                     mktid = shp.MarketId,
                     srcid = lot.srcid,

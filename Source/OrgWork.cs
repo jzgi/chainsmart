@@ -52,8 +52,8 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                    h.Q2(o.Ext, o.tip, css: "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -86,8 +86,8 @@ namespace ChainMart
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                    h.Q2(o.Ext, o.tip, css: "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
@@ -103,54 +103,55 @@ namespace ChainMart
             var regs = Grab<short, Reg>();
             var orgs = Grab<int, Org>();
 
+            var m = new Org
+            {
+                typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_ZON,
+                created = DateTime.Now,
+                creator = prin.name,
+                state = Entity.STA_FINE
+            };
+
             if (wc.IsGet)
             {
-                var m = new Org
-                {
-                    typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_ZON,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                    state = Entity.STA_FINE
-                };
-
                 m.Read(wc.Query, 0);
+
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_(cmd == 1
                         ?
 #if ZHNT
-                        "填写市场资料"
+                        "市场/／体验中心信息"
 #else
-                        "填写驿站资料"
+                        "驿站资料"
 #endif
-                        : "填写供区资料"
+                        : "供区／品控中心信息"
                     );
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
-                    h.LI_().TEXT("常用名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().TEXT("商业名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
-                    h.LI_().SELECT(m.EqMarket ? "场区" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsSection : v.IsProvince, required: !m.EqZone)._LI();
+                    h.LI_().TEXT("延展商业名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().SELECT(m.EqMarket ? "地市" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsCity : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, Entity.States, filter: (k, v) => k > 0)._LI();
+
                     h._FIELDSUL()._FORM();
                 });
             }
             else // POST
             {
-                var o = await wc.ReadObjectAsync(Entity.MSK_BORN, new Org
-                {
-                    typ = (short) (cmd == 1 ? Org.TYP_MKT : 0),
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+
+                var o = await wc.ReadObjectAsync(msk, m);
+
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, Entity.MSK_BORN)._VALUES_(Org.Empty, Entity.MSK_BORN);
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
                 await dc.ExecuteAsync(p => o.Write(p, Entity.MSK_BORN));
+
                 wc.GivePane(201); // created
             }
         }
@@ -187,7 +188,7 @@ namespace ChainMart
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
@@ -219,7 +220,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("下级产源属性");
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
@@ -277,7 +278,7 @@ namespace ChainMart
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
@@ -329,7 +330,7 @@ namespace ChainMart
                         else h.PIC("/void.webp", css: "uk-width-1-5");
 
                         h.ASIDE_();
-                        h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
                         h.Q(o.tip, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                         h._ASIDE();
@@ -362,7 +363,7 @@ namespace ChainMart
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
@@ -400,7 +401,7 @@ namespace ChainMart
                         h.FORM_().FIELDSUL_("填写商户资料");
 
                         h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
+                        h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();

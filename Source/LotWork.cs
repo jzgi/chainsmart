@@ -65,7 +65,7 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
@@ -95,7 +95,7 @@ namespace ChainMart
                     h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();

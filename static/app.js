@@ -37,9 +37,14 @@ function fixPrice(trig, evt, price, off) {
 
     var vip = false;
     if (evt.detail) {
+
+        // to-path matched
         var lst = evt.detail.split(' ');
-        if (lst.includes(n)) { // personal-to-path matched
-            vip = true;
+        for (var i = 0; i < lst.length; i++) {
+            if (n == parseInt(lst[i])) {
+                vip = true;
+                break;
+            }
         }
     }
 

@@ -112,8 +112,8 @@ create table orgs
     ctrid integer
         constraint orgs_ctrid_fk
             references orgs,
-    alias varchar(12),
-    fully varchar(20),
+    ext varchar(12),
+    legal varchar(20),
     regid smallint
         constraint orgs_regid_fk
             references regs,
@@ -153,9 +153,9 @@ create table users
         constraint users_shpid_fk
             references orgs,
     mktly smallint,
-    vip integer
-        constraint users_vip_fk
-            references orgs,
+    vip integer[]
+        constraint users_vip_chk
+            check (array_length(vip, 1) <= 4),
     icon bytea
 )
     inherits (entities);
@@ -180,9 +180,8 @@ create index users_srcid_idx
     on users (srcid)
     where (srcid > 0);
 
-create index users_vip_index
-    on users (vip)
-    where (vip > 0);
+create index users_vip_idx
+    on users (vip);
 
 create table wares
 (
@@ -376,7 +375,6 @@ create table buys
     shpid integer not null
         constraint buys_shpid_fk
             references orgs,
-    shpname varchar(12),
     mktid integer not null
         constraint buys_mkt_fk
             references orgs,
@@ -475,7 +473,7 @@ FROM lots o;
 
 alter table lots_vw owner to postgres;
 
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, alias, fully, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, ext, legal, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -490,8 +488,8 @@ SELECT o.typ,
        o.id,
        o.prtid,
        o.ctrid,
-       o.alias,
-       o.fully,
+       o.ext,
+       o.legal,
        o.regid,
        o.addr,
        o.x,

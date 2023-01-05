@@ -135,7 +135,10 @@ namespace ChainMart
                             h.BR();
                         }
                         var org = GrabObject<int, Org>(vip[i]);
-                        h.T(org.name);
+                        if (org != null)
+                        {
+                            h.T(org.name);
+                        }
                     }
                     h._SPAN();
                     h._LI();

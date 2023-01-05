@@ -23,7 +23,9 @@ namespace ChainMart
                 string rol = wc.Dive ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
-                h.H2(org.name).P2(prin.name, rol, brace: true);
+                h.H2(org.name);
+                if (org.IsParent) h.H4(org.Ext);
+                h.P2(prin.name, rol, brace: true);
                 h._HEADER();
 
                 if (org.icon)

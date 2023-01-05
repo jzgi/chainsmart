@@ -23,17 +23,16 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("工商登记名", o.fully)._LI();
-                if (o.IsAliasable) h.LI_().FIELD("别名", o.alias)._LI();
+                h.LI_().FIELD("商业名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
+                if (o.IsParent) h.LI_().FIELD("延展商业名", o.ext)._LI();
+                h.LI_().FIELD("工商登记名", o.legal)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
-                h.LI_().FIELD("联系地址", o.link)._LI();
+                h.LI_().FIELD("联系地址", o.addr)._LI();
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", o.specs)._LI();
                 h.LI_().FIELD("委托代办", o.trust).FIELD("服务状况", Org.States[o.state])._LI();
-
-                h.LI_().FIELD("进度状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
@@ -95,7 +94,7 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.fully)._HEADER();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.legal)._HEADER();
                 if (o.icon)
                 {
                     h.PIC("/org/", o.id, "/icon", circle: true, css: "uk-width-small");
@@ -112,10 +111,10 @@ namespace ChainMart
                     h.PIC("/org/", o.id, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("工商登记名", o.fully)._LI();
-                if (o.IsAliasable) h.LI_().FIELD("别名", o.alias)._LI();
+                h.LI_().FIELD("商业名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("工商登记名", o.legal)._LI();
+                if (o.IsParent) h.LI_().FIELD("延展商业名", o.ext)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("地址／场地", o.addr)._LI();
                 // h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
@@ -222,14 +221,17 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(m.EqMarket ? "市场属性" : "供应版块属性");
-                    h.LI_().TEXT("机构名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.FORM_().FIELDSUL_(m.EqMarket ? "市场/／体验中心信息" : "供区／品控中心信息");
+
+                    h.LI_().TEXT("商业名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().SELECT(m.EqMarket ? "市场区划" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsSection : v.IsProvince, required: !m.EqZone)._LI();
-                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                    h.LI_().TEXT("延展商业名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().SELECT(m.EqMarket ? "地市" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsCity : v.IsProvince, required: !m.EqZone)._LI();
+                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().SELECT("关联控运", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
-                    h.LI_().SELECT("状态", nameof(m.state), m.state, States, filter: (k, v) => k > 0)._LI();
+                    h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
+
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -391,7 +393,7 @@ namespace ChainMart
                     if (o.typ == Org.TYP_SHP)
                     {
                         h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXT("工商登记名", nameof(o.fully), o.fully, max: 20, required: true)._LI();
+                        h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
@@ -516,7 +518,7 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("修改产源属性");
 
                     h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.fully), m.fully, max: 20, required: true)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();

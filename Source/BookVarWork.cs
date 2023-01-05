@@ -39,7 +39,7 @@ namespace ChainMart
 
     public class SrclyBookVarWork : BookVarWork
     {
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN | User.ROL_LOG)]
         [Ui("发货", "确认发货？", icon: "push"), Tool(ButtonConfirm, status: STU_CREATED)]
         public async Task snd(WebContext wc)
         {
@@ -58,7 +58,7 @@ namespace ChainMart
 
     public class ShplyBookVarWork : BookVarWork
     {
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN | User.ROL_LOG)]
         [Ui("收货", "确认收货？", icon: "pull"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task rcv(WebContext wc)
         {

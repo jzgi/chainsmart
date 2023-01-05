@@ -86,12 +86,13 @@ namespace ChainMart
                 h.MAINGRID(arr, o =>
                 {
                     h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+
                     h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h.HEADER_().H4(o.uname).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
+                    h.Q(o.uaddr, "uk-width-expand");
+                    h.FOOTER_().CNY(o.pay, true).SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();

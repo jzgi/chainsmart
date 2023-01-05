@@ -59,7 +59,7 @@ namespace ChainMart
                     }
                     else
                     {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.ShopName, css: "uk-card-body uk-flex");
+                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Name, css: "uk-card-body uk-flex");
                     }
 
                     if (o.icon)
@@ -70,7 +70,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.ShopName).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.Name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -125,7 +125,7 @@ namespace ChainMart
 
                     h.ASIDE_();
 
-                    h.HEADER_().H5(o.name);
+                    h.HEADER_().H4(o.name);
                     if (o.unitx != 1)
                     {
                         h.T('（').T(o.unitx).T(o.unit).T("件").T('）');
@@ -225,7 +225,7 @@ namespace ChainMart
                 var m = new Buy
                 {
                     typ = Buy.TYP_ONLINE,
-                    name = shp.ShopName,
+                    name = shp.Name,
                     created = DateTime.Now,
                     creator = prin.name,
                     shpid = shp.id,

@@ -30,7 +30,7 @@ namespace ChainMart
             {TYP_SHP, "驿站"},
 #endif
             {TYP_ZON, "供区"},
-            {TYP_CTR, "控运"},
+            {TYP_CTR, "品控"},
         };
 
         public new static readonly Map<short, string> States = new Map<short, string>
@@ -59,8 +59,8 @@ namespace ChainMart
         // center id, only if market or shop
         internal int ctrid;
 
-        internal string alias;
-        internal string fully; // full name
+        internal string ext; // extended territory name
+        internal string legal; // legal name
         internal short regid;
         internal string addr;
         internal double x;
@@ -92,8 +92,8 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(alias), ref alias);
-                s.Get(nameof(fully), ref fully);
+                s.Get(nameof(ext), ref ext);
+                s.Get(nameof(legal), ref legal);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
                 s.Get(nameof(x), ref x);
@@ -132,8 +132,8 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(alias), alias);
-                s.Put(nameof(fully), fully);
+                s.Put(nameof(ext), ext);
+                s.Put(nameof(legal), legal);
                 if (regid > 0) s.Put(nameof(regid), regid);
                 else s.PutNull(nameof(regid));
                 s.Put(nameof(addr), addr);
@@ -188,13 +188,11 @@ namespace ChainMart
 
         public bool HasCtr => IsShop;
 
-        public bool IsAliasable => EqCenter;
-
         public bool IsTopOrg => prtid == 0;
 
-        public string ShopName => EqMarket ? alias : name;
+        public string Name => name;
 
-        public string TargetName => EqCenter ? alias : name;
+        public string Ext => ext;
 
         public override string ToString() => name;
     }

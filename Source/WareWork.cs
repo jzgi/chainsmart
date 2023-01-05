@@ -55,7 +55,7 @@ namespace ChainMart
                     }
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
@@ -99,7 +99,7 @@ namespace ChainMart
                     }
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();

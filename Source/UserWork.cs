@@ -43,7 +43,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(User.Admly[o.admly], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(User.Admly[o.admly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -171,7 +171,7 @@ namespace ChainMart
                         }
 
                         h.ASIDE_();
-                        h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
                         h.Q(o.tel, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                         h._ASIDE();
@@ -211,7 +211,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(User.Orgly[o.zonly], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.zonly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -330,7 +330,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN(User.Orgly[o.mktly], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.mktly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -428,11 +428,11 @@ namespace ChainMart
         [Ui("大客户", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            int shpid = wc[0];
+            var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE vip @> ARRAY[@1] LIMIT 20 OFFSET 20 * @2");
-            var arr = dc.Query<User>(p => p.Set(shpid).Set(page));
+            var arr = dc.Query<User>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
@@ -450,7 +450,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -465,14 +465,16 @@ namespace ChainMart
         [Ui(tip: "查询", icon: "search"), Tool(AnchorPrompt)]
         public void search(WebContext wc)
         {
+            var org = wc[-1].As<Org>();
+
             bool inner = wc.Query[nameof(inner)];
             string tel = null;
             if (inner)
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("已登记过的大客户账号");
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.FORM_().FIELDSUL_("注册的用户账号");
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(search), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -481,8 +483,8 @@ namespace ChainMart
                 tel = wc.Query[nameof(tel)];
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
-                var arr = dc.Query<User>(p => p.Set(tel));
+                dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1 AND vip @> ARRAY[@2]");
+                var arr = dc.Query<User>(p => p.Set(tel).Set(org.id));
 
                 wc.GivePage(200, h =>
                 {
@@ -499,7 +501,7 @@ namespace ChainMart
                             h.PIC("/void.webp", css: "uk-width-1-5");
 
                         h.ASIDE_();
-                        h.HEADER_().H5(o.name).SPAN("")._HEADER();
+                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
                         h.Q(o.tel, "uk-width-expand");
                         h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                         h._ASIDE();
@@ -514,7 +516,7 @@ namespace ChainMart
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
-            int shpid = wc[0];
+            var org = wc[-1].As<Org>();
 
             if (wc.IsGet)
             {
@@ -524,7 +526,7 @@ namespace ChainMart
                     h.FORM_();
 
                     h.FIELDSUL_("查找用户账号");
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, css: "uk-button-secondary")._LI();
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
                     if (cmd == 1) // search user
@@ -537,19 +539,19 @@ namespace ChainMart
                         {
                             if (o.vip != null)
                             {
-                                if (o.vip.Contains(shpid))
+                                if (o.vip.Contains(org.id))
                                 {
                                     h.LI_().FIELD("", "已经是本单位的大客户")._LI();
                                 }
-                                else
+                                else if (o.vip.Length >= 4)
                                 {
-                                    h.LI_().FIELD("", "已经是其他商户的大客户，不能添加")._LI();
+                                    h.LI_().FIELD("", "已经是４个商户的大客户，不能添加")._LI();
                                 }
                             }
                             else
                             {
                                 h.HIDDEN(nameof(o.id), o.id);
-                                h.FIELDSUL_().LI_().FIELD("账号名称", o.name)._LI()._FIELDSUL();
+                                h.FIELDSUL_().LI_().FIELD("用户名称", o.name)._LI()._FIELDSUL();
                                 h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                             }
                         }
@@ -561,8 +563,9 @@ namespace ChainMart
             {
                 var f = await wc.ReadAsync<Form>();
                 int id = f[nameof(id)];
+
                 using var dc = NewDbContext();
-                dc.Execute("UPDATE users SET vip = @1 WHERE id = @2", p => p.Set(shpid).Set(id));
+                dc.Execute("UPDATE users SET vip = array_append(vip, @1) WHERE id = @2", p => p.Set(org.id).Set(id));
 
                 wc.GivePane(200); // ok
             }
