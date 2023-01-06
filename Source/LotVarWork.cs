@@ -114,7 +114,7 @@ namespace ChainMart
 
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次信息", "uk-card-header");
-                h.UL_("uk-card body uk-list uk-list-divider");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", lot.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
                 h.LI_().FIELD2("总件数", lot.cap, lot.unit)._LI();
@@ -374,24 +374,39 @@ namespace ChainMart
                         h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag), subscript: cmd)._FORM();
                     });
                 }
-                else
+                else // cmd = (page - 1)
                 {
                     var src = GrabObject<int, Org>(o.srcid);
 
+                    const short NUM = 90;
+
                     wc.GivePane(200, h =>
                     {
-                        int count = o.avail;
-                        h.UL_(grid: true, css: "uk-child-width-1-2@s");
-                        for (int i = 0; i < count; i++)
+                        h.UL_(css: "uk-grid uk-child-width-1-6");
+
+                        var today = DateTime.Today;
+                        var idx = (cmd - 2) * NUM;
+                        for (var i = 0; i < NUM; i++)
                         {
-                            h.LI_();
-                            h.DIV_("uk-card uk-card-default uk-flex");
-                            h.QRCODE(MainApp.WwwUrl + "/lot/x-" + i, css: "uk-width-1-5");
-                            h.DIV_("uk-width-expand uk-padding-small").P(src.name).T(i + 1)._DIV();
-                            h._DIV();
+                            h.LI_("height-1-15");
+
+                            h.HEADER_();
+                            h.QRCODE(MainApp.WwwUrl + "/lot/" + o.id + "/", css: "uk-width-1-3");
+                            h.ASIDE_().H6_("uk-margin-small-bottom").T(Self.name).T("溯源")._H6().SMALL(src.name)._ASIDE();
+                            h._HEADER();
+
+                            h.H6_("uk-flex").SPAN(idx + 1).SPAN_("uk-margin-auto-left").T(today, date: 2, time: 0)._SPAN()._H6();
+
                             h._LI();
+
+                            if (++idx >= o.cap)
+                            {
+                                break;
+                            }
                         }
                         h._UL();
+
+                        h.PAGINATION(idx <= o.cap, print: true);
                     });
                 }
             }

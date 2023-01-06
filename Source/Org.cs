@@ -22,7 +22,7 @@ namespace ChainMart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SHP, "摊位"},
+            {TYP_SHP, "摊铺"},
             {TYP_SRC, "产源"},
 #if ZHNT
             {TYP_MKT, "市场"},

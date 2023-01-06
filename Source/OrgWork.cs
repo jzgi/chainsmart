@@ -247,13 +247,13 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("联盟摊位管理", "市场")]
+    [Ui("联盟摊铺管理", "市场")]
 #else
-    [Ui("联盟摊位管理", "驿站")]
+    [Ui("联盟摊铺管理", "驿站")]
 #endif
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        [Ui("联盟摊位", group: 1), Tool(Anchor)]
+        [Ui("联盟摊铺", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -374,7 +374,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建联盟摊位", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟摊铺", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -406,7 +406,7 @@ namespace ChainMart
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
 #if ZHNT
-                        h.LI_().TEXT("摊位编号", nameof(o.addr), o.addr, max: 4)._LI();
+                        h.LI_().TEXT("摊铺编号", nameof(o.addr), o.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();

@@ -24,7 +24,7 @@ namespace ChainMart
                 h.FORM_().FIELDSUL_("运营管理模块");
                 h.LI_().A_("admly/").T("Ａ）平台管理")._A()._LI();
                 h.LI_().A_("srcly//").T("Ｂ）供区产源操作")._A()._LI();
-                h.LI_().A_("shply//").T("Ｃ）市场摊位操作")._A()._LI();
+                h.LI_().A_("shply//").T("Ｃ）市场摊铺操作")._A()._LI();
                 h._FIELDSUL()._FORM();
             }, true, 3600, title: "中惠农通运营管理");
         }

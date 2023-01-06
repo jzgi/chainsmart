@@ -398,7 +398,7 @@ namespace ChainMart
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
 #if ZHNT
-                        h.LI_().TEXT("摊位编号", nameof(o.addr), o.addr, max: 4)._LI();
+                        h.LI_().TEXT("摊铺编号", nameof(o.addr), o.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
