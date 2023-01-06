@@ -25,7 +25,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品设置", "产源")]
+    [Ui("产品设置", "商户")]
     public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
         [Ui("可用产品", group: 1), Tool(Anchor)]

@@ -45,7 +45,7 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("供应和产源操作")]
-    public class ZonlyVarWork : OrglyVarWork
+    public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
@@ -53,7 +53,7 @@ namespace ChainMart
 
             CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<ZonlyAccessWork>("access");
+            CreateWork<SrclyAccessWork>("access");
 
             CreateWork<OrglyClearWork>("clear");
 
@@ -92,7 +92,7 @@ namespace ChainMart
 #else
     [Ui("驿站和商户操作")]
 #endif
-    public class MktlyVarWork : OrglyVarWork
+    public class ShplyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
         {
@@ -100,7 +100,7 @@ namespace ChainMart
 
             CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<MktlyAccessWork>("access");
+            CreateWork<ShplyAccessWork>("access");
 
             CreateWork<OrglyClearWork>("clear");
 

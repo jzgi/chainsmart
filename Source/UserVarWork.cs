@@ -24,7 +24,7 @@ namespace ChainMart
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
-                h.LI_().FIELD("机构权限", User.Orgly[o.zonly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
                 h._UL();
 
                 h.UL_("uk-list uk-list-divider");
@@ -53,7 +53,7 @@ namespace ChainMart
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
-                h.LI_().FIELD("机构权限", User.Orgly[o.zonly])._LI();
+                h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
                 h._UL();
 
                 h.UL_("uk-list uk-list-divider");
@@ -153,20 +153,20 @@ namespace ChainMart
                     any++;
                 }
 
-                if (prin.zonly > 0)
+                if (prin.srcly > 0)
                 {
                     var org = GrabObject<int, Org>(prin.srcid);
 
-                    h.LI_().FIELD(User.Orgly[prin.zonly], org.name)._LI();
+                    h.LI_().FIELD(User.Orgly[prin.srcly], org.name)._LI();
 
                     any++;
                 }
 
-                if (prin.mktly > 0)
+                if (prin.shply > 0)
                 {
                     var org = GrabObject<int, Org>(prin.shpid);
 
-                    h.LI_().FIELD(User.Orgly[prin.mktly], org.name)._LI();
+                    h.LI_().FIELD(User.Orgly[prin.shply], org.name)._LI();
 
                     any++;
                 }
@@ -279,7 +279,7 @@ namespace ChainMart
         }
     }
 
-    public class ZonlyAccessVarWork : UserVarWork
+    public class SrclyAccessVarWork : UserVarWork
     {
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
@@ -296,7 +296,7 @@ namespace ChainMart
         }
     }
 
-    public class MktlyAccessVarWork : UserVarWork
+    public class ShplyAccessVarWork : UserVarWork
     {
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]

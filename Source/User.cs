@@ -53,9 +53,9 @@ namespace ChainMart
         internal string credential;
         internal short admly;
         internal int srcid;
-        internal short zonly;
+        internal short srcly;
         internal int shpid;
-        internal short mktly;
+        internal short shply;
         internal int[] vip;
         internal bool icon;
 
@@ -78,9 +78,9 @@ namespace ChainMart
                 s.Get(nameof(credential), ref credential);
                 s.Get(nameof(admly), ref admly);
                 s.Get(nameof(srcid), ref srcid);
-                s.Get(nameof(zonly), ref zonly);
+                s.Get(nameof(srcly), ref srcly);
                 s.Get(nameof(shpid), ref shpid);
-                s.Get(nameof(mktly), ref mktly);
+                s.Get(nameof(shply), ref shply);
                 s.Get(nameof(vip), ref vip);
                 s.Get(nameof(icon), ref icon);
             }
@@ -102,9 +102,9 @@ namespace ChainMart
                 s.Put(nameof(credential), credential);
                 s.Put(nameof(admly), admly);
                 s.Put(nameof(srcid), srcid);
-                s.Put(nameof(zonly), zonly);
+                s.Put(nameof(srcly), srcly);
                 s.Put(nameof(shpid), shpid);
-                s.Put(nameof(mktly), mktly);
+                s.Put(nameof(shply), shply);
                 s.Put(nameof(vip), vip);
                 s.Put(nameof(icon), icon);
             }
@@ -120,7 +120,7 @@ namespace ChainMart
 
 
         /// <summary>
-        /// admly, srcid + zonly, shpid + mktly
+        /// admly, srcid + srcly, shpid + shply
         /// </summary>
         public (bool dive, short role ) GetRoleForOrg(Org org, short orgtyp = 0)
         {
@@ -128,7 +128,7 @@ namespace ChainMart
             short role = 0;
 
             var orgid_ = org.IsSource ? srcid : shpid;
-            var orgly_ = org.IsSource ? zonly : mktly;
+            var orgly_ = org.IsSource ? srcly : shply;
 
             // is of any role for the org
             if (org.id == orgid_)

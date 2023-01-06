@@ -193,20 +193,21 @@ namespace ChainMart
             return MD5(v);
         }
 
-        const int A_WEEK = 3600 * 24 * 7;
+        // 3 days
+        const int EXPIRY = 3600 * 24 * 3;
 
         public static void SetUserCookies(this WebContext wc, User o)
         {
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: A_WEEK, httponly: true);
+            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: EXPIRY, httponly: true);
 
             // cookie for vip, o means none
-            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: A_WEEK);
+            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: EXPIRY);
 
             // cookie for name and tel
             var nametel = o.name + ' ' + o.tel;
-            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: A_WEEK);
+            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: EXPIRY);
 
             // multiple cookie
             wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameTelStr);

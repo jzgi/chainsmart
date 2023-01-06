@@ -12,7 +12,7 @@ namespace ChainMart
 
         public const short
             TYP_BRD = 0b00000, // virtual
-            TYP_PRT = 0b01000, // parent
+            TYP_PRT = 0b01000, // parent or leader
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
             TYP_DST = 0b00100, // distributor
@@ -22,7 +22,7 @@ namespace ChainMart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SHP, "商户"},
+            {TYP_SHP, "摊位"},
             {TYP_SRC, "产源"},
 #if ZHNT
             {TYP_MKT, "市场"},
@@ -30,7 +30,7 @@ namespace ChainMart
             {TYP_SHP, "驿站"},
 #endif
             {TYP_ZON, "供区"},
-            {TYP_CTR, "品控"},
+            {TYP_CTR, "中控"},
         };
 
         public new static readonly Map<short, string> States = new Map<short, string>

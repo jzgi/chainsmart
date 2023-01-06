@@ -54,7 +54,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -88,7 +88,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -130,9 +130,9 @@ namespace ChainMart
                     {
                         h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
                     }
-                    h.LI_().TEXT("商业名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("延展商业名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
+                    h.LI_().TEXT("联盟延展名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT(m.EqMarket ? "地市" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsCity : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
@@ -158,10 +158,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("管理下级产源", "供区")]
+    [Ui("联盟产源管理", "供区")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("下级产源"), Tool(Anchor)]
+        [Ui("联盟产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -190,7 +190,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/zonly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -199,7 +199,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建下级产源", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -217,11 +217,11 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("下级产源属性");
+                    h.FORM_().FIELDSUL_("产源信息");
 
-                    h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -247,13 +247,13 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("管理下级商户", "市场")]
+    [Ui("联盟摊位管理", "市场")]
 #else
-    [Ui("管理下级商户", "驿站")]
+    [Ui("联盟摊位管理", "驿站")]
 #endif
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        [Ui("下属商户", group: 1), Tool(Anchor)]
+        [Ui("联盟摊位", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -280,7 +280,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -332,7 +332,7 @@ namespace ChainMart
                         h.ASIDE_();
                         h.HEADER_().H4(o.name).SPAN("")._HEADER();
                         h.Q(o.tip, "uk-width-expand");
-                        h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                        h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                         h._ASIDE();
 
                         h._A();
@@ -365,7 +365,7 @@ namespace ChainMart
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN("")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -374,7 +374,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建下属商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟摊位", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -398,20 +398,21 @@ namespace ChainMart
                     o.Read(wc.Query, 0);
                     wc.GivePane(200, h =>
                     {
-                        h.FORM_().FIELDSUL_("填写商户资料");
+                        h.FORM_().FIELDSUL_("商户信息");
 
-                        h.LI_().TEXT("常用名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                        h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                        h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                        h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
-                        h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
 #if ZHNT
-                        h.LI_().TEXT("场地编号", nameof(o.addr), o.addr, max: 4)._LI();
+                        h.LI_().TEXT("摊位编号", nameof(o.addr), o.addr, max: 4)._LI();
 #else
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
 #endif
+                        h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
+
                         h._FIELDSUL()._FORM();
                     });
                 }

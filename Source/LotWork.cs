@@ -36,7 +36,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品销售批次", "产源")]
+    [Ui("产品销售批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
         [Ui("产品销售批次", group: 1), Tool(Anchor)]

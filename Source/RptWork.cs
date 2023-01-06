@@ -85,7 +85,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SRC, User.ROL_)]
-    [Ui("业务报表", "产源")]
+    [Ui("业务报表", "商户")]
     public class SrclyRptWork : RptWork
     {
         public async Task @default(WebContext wc, int page)

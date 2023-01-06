@@ -13,12 +13,12 @@ namespace ChainMart
     /// 
     [UserAuthenticate]
     [Ui("供区产源操作")]
-    public class ZonlyWork : OrglyWork
+    public class SrclyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<ZonlyVarWork>((prin, key) =>
+            CreateVarWork<SrclyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).srcid;
                     return GrabObject<int, Org>(orgid);
@@ -36,12 +36,12 @@ namespace ChainMart
     [Ui("驿站商户操作")]
 #endif
     [UserAuthenticate]
-    public class MktlyWork : OrglyWork
+    public class ShplyWork : OrglyWork
     {
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<MktlyVarWork>((prin, key) =>
+            CreateVarWork<ShplyVarWork>((prin, key) =>
                 {
                     var orgid = key?.ToInt() ?? ((User) prin).shpid;
                     return GrabObject<int, Org>(orgid);

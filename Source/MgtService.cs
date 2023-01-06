@@ -12,9 +12,9 @@ namespace ChainMart
         {
             CreateWork<AdmlyWork>("admly"); // for admin
 
-            CreateWork<ZonlyWork>("zonly"); // for zone / source / center
+            CreateWork<SrclyWork>("srcly"); // for zone / source / center
 
-            CreateWork<MktlyWork>("mktly"); // for markets and shops
+            CreateWork<ShplyWork>("shply"); // for markets and shops
         }
 
         public void @default(WebContext wc)
@@ -23,8 +23,8 @@ namespace ChainMart
             {
                 h.FORM_().FIELDSUL_("运营管理模块");
                 h.LI_().A_("admly/").T("Ａ）平台管理")._A()._LI();
-                h.LI_().A_("zonly//").T("Ｂ）供区和产源操作")._A()._LI();
-                h.LI_().A_("mktly//").T("Ｃ）市场和商户操作")._A()._LI();
+                h.LI_().A_("srcly//").T("Ｂ）供区和产源操作")._A()._LI();
+                h.LI_().A_("shply//").T("Ｃ）市场和商户操作")._A()._LI();
                 h._FIELDSUL()._FORM();
             }, true, 3600, title: "中惠农通运营管理");
         }

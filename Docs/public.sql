@@ -148,11 +148,11 @@ create table users
     srcid smallint
         constraint users_srcid_fk
             references orgs,
-    zonly smallint default 0 not null,
+    srcly smallint default 0 not null,
     shpid integer
         constraint users_shpid_fk
             references orgs,
-    mktly smallint,
+    shply smallint,
     vip integer[]
         constraint users_vip_chk
             check (array_length(vip, 1) <= 4),
@@ -536,7 +536,7 @@ FROM wares o;
 
 alter table wares_vw owner to postgres;
 
-create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, srcid, zonly, shpid, mktly, vip, icon) as
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, srcid, srcly, shpid, shply, vip, icon) as
 SELECT u.typ,
        u.state,
        u.name,
@@ -555,9 +555,9 @@ SELECT u.typ,
        u.credential,
        u.admly,
        u.srcid,
-       u.zonly,
+       u.srcly,
        u.shpid,
-       u.mktly,
+       u.shply,
        u.vip,
        u.icon IS NOT NULL AS icon
 FROM users u;

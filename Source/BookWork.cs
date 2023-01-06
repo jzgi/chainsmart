@@ -145,7 +145,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应链销售", "产源")]
+    [Ui("供应链销售", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         [Ui("供应链销售"), Tool(Anchor)]

@@ -84,7 +84,7 @@ namespace ChainMart
                             if (o.srcid > 0)
                             {
                                 var org = GrabObject<int, Org>(o.srcid);
-                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.zonly])._LI();
+                                h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.srcly])._LI();
                             }
                             else
                             {
@@ -184,7 +184,7 @@ namespace ChainMart
     }
 
     [Ui("人员权限", "常规")]
-    public class ZonlyAccessWork : UserWork<ZonlyAccessVarWork>
+    public class SrclyAccessWork : UserWork<SrclyAccessVarWork>
     {
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
@@ -192,7 +192,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE srcid = @1 AND zonly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE srcid = @1 AND srcly > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -211,7 +211,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.zonly], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.srcly], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -229,7 +229,7 @@ namespace ChainMart
 
             string password = null;
 
-            short zonly = 0;
+            short srcly = 0;
             if (wc.IsGet)
             {
                 string tel = wc.Query[nameof(tel)];
@@ -261,7 +261,7 @@ namespace ChainMart
                             {
                                 var exOrg = GrabObject<int, Org>(o.srcid);
 
-                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.zonly])._LI();
+                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.srcly])._LI();
                                 if (exOrg.id != org.id)
                                 {
                                     h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
@@ -274,7 +274,7 @@ namespace ChainMart
                             }
                             if (yes)
                             {
-                                h.LI_().SELECT("授予权限", nameof(zonly), zonly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                                h.LI_().SELECT("授予权限", nameof(srcly), srcly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
                             h._FIELDSUL();
@@ -290,12 +290,12 @@ namespace ChainMart
 
                 int id = f[nameof(id)];
                 string tel = f[nameof(tel)];
-                zonly = f[nameof(zonly)];
+                srcly = f[nameof(srcly)];
                 password = f[nameof(password)];
                 string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
-                await dc.ExecuteAsync("UPDATE users SET srcid = @1, zonly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(zonly).Set(credential).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET srcid = @1, srcly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(srcly).Set(credential).Set(id));
 
                 wc.GivePane(200); // ok
             }
@@ -303,7 +303,7 @@ namespace ChainMart
     }
 
     [Ui("人员权限", "常规")]
-    public class MktlyAccessWork : UserWork<MktlyAccessVarWork>
+    public class ShplyAccessWork : UserWork<ShplyAccessVarWork>
     {
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
@@ -311,7 +311,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE shpid = @1 AND mktly > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE shpid = @1 AND shply > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -330,7 +330,7 @@ namespace ChainMart
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.mktly], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.shply], "uk-badge")._HEADER();
                     h.Q(o.tel, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
                     h._ASIDE();
@@ -348,7 +348,7 @@ namespace ChainMart
 
             string password = null;
 
-            short mktly = 0;
+            short shply = 0;
             if (wc.IsGet)
             {
                 string tel = wc.Query[nameof(tel)];
@@ -380,7 +380,7 @@ namespace ChainMart
                             {
                                 var exOrg = GrabObject<int, Org>(o.shpid);
 
-                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.mktly])._LI();
+                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[o.shply])._LI();
                                 if (exOrg.id != org.id)
                                 {
                                     h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
@@ -393,7 +393,7 @@ namespace ChainMart
                             }
                             if (yes)
                             {
-                                h.LI_().SELECT("授予权限", nameof(mktly), mktly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                                h.LI_().SELECT("授予权限", nameof(shply), shply, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
                             h._FIELDSUL();
@@ -409,12 +409,12 @@ namespace ChainMart
 
                 int id = f[nameof(id)];
                 string tel = f[nameof(tel)];
-                mktly = f[nameof(mktly)];
+                shply = f[nameof(shply)];
                 password = f[nameof(password)];
                 string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
-                await dc.ExecuteAsync("UPDATE users SET shpid = @1, mktly = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(mktly).Set(credential).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET shpid = @1, shply = @2, credential = @3 WHERE id = @4", p => p.Set(org.id).Set(shply).Set(credential).Set(id));
 
                 wc.GivePane(200); // ok
             }
