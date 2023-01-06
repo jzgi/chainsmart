@@ -15,6 +15,11 @@ namespace ChainMart
         }
     }
 
+    public class PublyWareWork : WareWork<PublyWareVarWork>
+    {
+
+    }
+
     [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("零售商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>

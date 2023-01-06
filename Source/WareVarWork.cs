@@ -74,6 +74,14 @@ namespace ChainMart
         }
     }
 
+    public class PublyWareVarWork : WareVarWork
+    {
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), true, 3600 * 6);
+        }
+    }
+
     public class ShplyWareVarWork : WareVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]

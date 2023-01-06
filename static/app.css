@@ -31,7 +31,6 @@ mark.state-4 {
 }
 
 .qtyselect {
-    appearance: none;
     vertical-align: middle;
     display: inline-flex;
     background-color: #ededed;
@@ -45,6 +44,7 @@ mark.state-4 {
     transition-property: color,background-color,border;
     border-top-left-radius: 12px;
     border-bottom-left-radius: 12px;
+    text-align: right;
 }
 
 .qtydetail {

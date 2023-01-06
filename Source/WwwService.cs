@@ -21,6 +21,8 @@ namespace ChainMart
 
             CreateWork<PublyItemWork>("item");
 
+            CreateWork<PublyWareWork>("ware");
+
             CreateWork<MyWork>("my");
         }
 

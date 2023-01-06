@@ -1,5 +1,5 @@
 html {
-    font-family: Microsoft YaHei, Arial, sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Hiragino Sans GB,Microsoft YaHei UI,Microsoft YaHei,Arial,sans-serif;
     font-size: 16px;
     font-weight: normal;
     line-height: normal;
@@ -251,7 +251,7 @@ h2,
 
 h3,
 .uk-h3 {
-    font-size: 1.125rem;
+    font-size: 1rem;
     font-weight: 500;
     margin: 2px 0;
     color: #7daa1d;
@@ -645,7 +645,7 @@ a.uk-link-reset:hover,
     border-top: 1px solid #fff;
 }
 
-form.uk-list-divider>li:nth-child(n+2) {
+form  .uk-list-divider>li:nth-child(n+2) {
     border-top: 1px solid #ededed !important;
 }
 

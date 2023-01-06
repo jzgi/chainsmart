@@ -108,7 +108,7 @@ function qtyFill(trig, min, max, step) {
     for (var i = min; i <= max; i += (n >= 50 ? step * 10 : n >= 30 ? step * 5 : step)) {
         var opt = document.createElement("option");
         opt.value = i;
-        opt.text = i;
+        opt.text = i + ' 件';
         trig.add(opt);
 
         n++;
