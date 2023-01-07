@@ -86,21 +86,20 @@ namespace ChainMart
             int lotid = wc[0];
 
             using var dc = NewDbContext();
-
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             wc.GivePage(200, h =>
             {
-                if (lot == null)
+                if (o == null)
                 {
                     h.ALERT("无效的溯源产品批次");
                     return;
                 }
 
-                var item = GrabObject<int, Item>(lot.itemid);
+                var item = GrabObject<int, Item>(o.itemid);
 
-                var src = GrabObject<int, Org>(lot.srcid);
+                var src = GrabObject<int, Org>(o.srcid);
 
                 h.TOPBARXL_();
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._HEADER();
@@ -115,33 +114,33 @@ namespace ChainMart
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次信息", "uk-card-header");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", lot.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
-                h.LI_().FIELD2("总件数", lot.cap, lot.unit)._LI();
-                h.LI_().FIELD2("溯源编号", $"{lot.nstart:0000 0000}", $"{lot.nend:0000 0000}", "－")._LI();
-                h.LI_().FIELD2("创建", lot.created, lot.creator)._LI();
-                h.LI_().FIELD2("制码", lot.adapted, lot.adapter)._LI();
-                h.LI_().FIELD2("上线", lot.oked, lot.oker)._LI();
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().FIELD("总件数", o.cap)._LI();
+                if (o.nstart > 0 && o.nend > 0) h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
                 h._ARTICLE();
 
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次检验", "uk-card-header");
-                if (lot.m1)
+                if (o.m1)
                 {
-                    h.PIC("/lot/", lot.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/lot/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
                 }
-                if (lot.m2)
+                if (o.m2)
                 {
-                    h.PIC("/lot/", lot.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/lot/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
                 }
-                if (lot.m3)
+                if (o.m3)
                 {
-                    h.PIC("/lot/", lot.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/lot/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
                 }
-                if (lot.m4)
+                if (o.m4)
                 {
-                    h.PIC("/lot/", lot.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/lot/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
                 h._ARTICLE();
 
@@ -150,7 +149,7 @@ namespace ChainMart
                 h.SECTION_("uk-card-body");
                 if (item.pic)
                 {
-                    h.PIC("/item/", lot.itemid, "/pic", css: "uk-width-1-1");
+                    h.PIC("/item/", o.itemid, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", item.name)._LI();
@@ -160,8 +159,8 @@ namespace ChainMart
                     h.LI_().FIELD("生产基地", item.origin)._LI();
                 }
                 h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
-                h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
-                h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
+                h.LI_().FIELD2("创建", item.created, o.creator)._LI();
+                h.LI_().FIELD2("上线", item.oked, o.oker)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -392,10 +391,10 @@ namespace ChainMart
 
                             h.HEADER_();
                             h.QRCODE(MainApp.WwwUrl + "/lot/" + o.id + "/", css: "uk-width-1-3");
-                            h.ASIDE_().H6_("uk-margin-small-bottom").T(Self.name).T("溯源")._H6().SMALL(src.name)._ASIDE();
+                            h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").SPAN(idx + 1).SPAN_("uk-margin-auto-left").T(today, date: 2, time: 0)._SPAN()._H6();
+                            h.H6_("uk-flex uk-flex-center").T(lotid.ToString("D6")).SP().T(idx + 1)._H6();
 
                             h._LI();
 

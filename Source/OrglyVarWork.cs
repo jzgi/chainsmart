@@ -108,7 +108,7 @@ namespace ChainMart
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyPosWork>("spos");
+            // CreateWork<ShplyPosWork>("spos");
 
             CreateWork<ShplyWareWork>("sware");
 

@@ -242,7 +242,7 @@ namespace ChainMart
                 {"total_fee", ((int) (amount * 100)).ToString()},
                 {"trade_type", "JSAPI"}
             };
-            string sign = Sign(x);
+            var sign = Sign(x);
             x.Add("sign", sign);
 
             var (_, xe) = (await api.PostAsync<XElem>("/pay/unifiedorder", x.Dump()));
@@ -324,25 +324,25 @@ namespace ChainMart
             return cash_fee;
         }
 
-        public static async Task<string> PostRefundAsync(bool SC, string orderno, decimal total, decimal refund, string refoundno, string descr = null)
+        public static async Task<string> PostRefundAsync(bool sc, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
         {
-            var mchid = SC ? scmchid : rtlmchid;
-            var api = SC ? ScPayApi : RtlPayApi;
+            var mchid = sc ? scmchid : rtlmchid;
+            var api = sc ? ScPayApi : RtlPayApi;
 
-
+            // must be in ascii order
             var x = new XElem("xml")
             {
                 {"appid", appid},
                 {"mch_id", mchid},
                 {"nonce_str", noncestr},
-                {"op_user_id", mchid},
+                // {"op_user_id", mchid},
                 {"out_refund_no", refoundno},
-                {"out_trade_no", orderno},
+                {"out_trade_no", out_trade_no},
                 {"refund_desc", descr},
                 {"refund_fee", ((int) (refund * 100)).ToString()},
                 {"total_fee", ((int) (total * 100)).ToString()}
             };
-            string sign = Sign(x);
+            var sign = Sign(x);
             x.Add("sign", sign);
 
             var (_, xe) = (await api.PostAsync<XElem>("/secapi/pay/refund", x.Dump()));
@@ -419,16 +419,20 @@ namespace ChainMart
                 for (int i = 0; i < xe.Count; i++)
                 {
                     var child = xe[i];
-                    // not include the sign field
-                    if (exclude != null && child.Tag == exclude) continue;
+
+                    var tag = child.Tag;
+                    if (exclude != null && tag == exclude) continue; // check exclude
+
+                    var txt = child.Text;
+                    if (string.IsNullOrEmpty(txt)) continue; // avoid empty value
+
                     if (bdr.Count > 0)
                     {
                         bdr.Add('&');
                     }
-
-                    bdr.Add(child.Tag);
+                    bdr.Add(tag);
                     bdr.Add('=');
-                    bdr.Add(child.Text);
+                    bdr.Add(txt);
                 }
 
                 bdr.Add("&key=");

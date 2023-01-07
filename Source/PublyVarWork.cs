@@ -247,7 +247,7 @@ namespace ChainMart
                 dc.Let(out decimal topay);
 
                 // // call WeChatPay to prepare order there
-                string trade_no = (buyid + "-" + topay).Replace('.', '-');
+                string trade_no = Buy.GetOutTradeNo(buyid, topay);
                 var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sc: false,
                     trade_no,
                     topay,

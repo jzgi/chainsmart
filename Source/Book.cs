@@ -128,5 +128,7 @@ namespace ChainMart
         public decimal Total => decimal.Round(RealPrice * unitx * qty, 2);
 
         public override string ToString() => shpname + "采购" + srcname + "产品" + name;
+
+        public static string GetOutTradeNo(int id, decimal topay) => (id + "-" + topay).Replace('.', '-');
     }
 }

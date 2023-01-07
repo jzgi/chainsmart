@@ -114,5 +114,7 @@ namespace ChainMart
         public long Key => id;
 
         public override string ToString() => uname + "购买" + name + "商品";
+
+        public static string GetOutTradeNo(int id, decimal topay) => (id + "-" + topay).Replace('.', '-');
     }
 }

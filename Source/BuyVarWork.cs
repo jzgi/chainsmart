@@ -6,6 +6,7 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Application;
+using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
@@ -23,12 +24,22 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", o.name)._LI();
+
+                h.LI_().FIELD("消费者", o.uname)._LI();
+                h.LI_().FIELD("商户", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("状态", o.status, Lot.Statuses).FIELD("状况", Lot.States[o.state])._LI();
-                h.LI_().FIELD2("下单", o.created, o.creator, "&nbsp;")._LI();
-                if (o.adapter != null) h.LI_().FIELD2("发货", o.adapted, o.adapter, "&nbsp;")._LI();
-                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker, "&nbsp;")._LI();
+                h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
+
+                // details
+                for (var i = 0; i < o.details?.Length; i++)
+                {
+                    var dtl = o.details[i];
+                    //
+                }
+
+                if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -120,49 +131,67 @@ namespace ChainMart
 
     public class ShplyBuyVarWork : BuyVarWork
     {
-        [Ui("备好", icon: "bag"), Tool(ButtonConfirm)]
-        public async Task ready(WebContext wc)
+        [OrglyAuthorize(0, User.ROL_LOG)]
+        [Ui("发货", "确认发货？", icon: "push"), Tool(ButtonConfirm, status: STU_CREATED)]
+        public async Task snd(WebContext wc)
         {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, pay");
+            if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
+            {
+                dc.Let(out string uim);
+                dc.Let(out decimal pay);
+
+                await PostSendAsync(uim, "您的订单已经发货，请留意接收（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
+            }
+
+            wc.Give(204);
         }
 
 
-        [Ui("退款", icon: "close"), Tool(ButtonConfirm)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("撤单", "确认撤单并退款？", icon: "close"), Tool(ButtonConfirm, status: STU_CREATED)]
         public async Task refund(WebContext wc)
         {
-            short orgid = wc[-2];
-            int orderid = wc[0];
-            short level = 0;
-
-            level = (await wc.ReadAsync<Form>())[nameof(level)];
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                var percent = level * 0.10M;
-                dc.Sql("UPDATE orders SET refund = pay * @1, status = CASE WHEN @1 = 1 THEN 2 ELSE status END WHERE id = @2 AND orgid = @3 AND status IN ) RETURNING refund");
-                var refund = (decimal) await dc.ScalarAsync(p => p.Set(percent).Set(orderid).Set(orgid));
-                if (refund <= 0)
+                dc.Sql("UPDATE buys SET refund = pay, status = 8, adapted = @1, adapter = @2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, topay, refund");
+                if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
-                    wc.Give(403); // forbidden
-                    return;
-                }
+                    dc.Let(out string uim);
+                    dc.Let(out decimal topay);
+                    dc.Let(out decimal refund);
 
-                // remote call weixin
-                string orderno = orderid.ToString();
-                string err = await PostRefundAsync(SC: false, orderno, refund, refund, orderno);
-                if (err != null) // not success
-                {
-                    dc.Rollback();
-                    Err(err);
+                    // remote call
+                    var trade_no = Buy.GetOutTradeNo(id, topay);
+                    string err = await PostRefundAsync(sc: false, trade_no, refund, refund, trade_no);
+                    if (err != null) // not success
+                    {
+                        dc.Rollback();
+                        Err(err);
+                    }
+
+                    // notify user
+                    await PostSendAsync(uim, "您的订单已经撤销，请查收退款通知（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + topay + "）");
                 }
             }
             catch (Exception)
             {
                 dc.Rollback();
-                Err("退款失败: orderid = " + orderid);
+                Err("退款失败，订单号：" + id);
                 return;
             }
-            wc.GivePane(200);
+
+            wc.Give(204);
         }
     }
 

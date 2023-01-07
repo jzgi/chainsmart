@@ -86,8 +86,9 @@ mark.state-4 {
 
     html,
     body {
-        width: 210mm;
-        height: 297mm;
+        width: 210mm - 5mm;
+        height: 297mm - 5mm;
+        margin: 2.5mm;
     }
 
     .uk-pagination {
@@ -96,9 +97,8 @@ mark.state-4 {
 }
 
 .height-1-15 {
-    margin-top: 4px;
-    padding: 6px;
-    height: 19.8mm;
+    padding: 6px 8px 0 2px;
+    height: 19.0mm;
 }
 
 

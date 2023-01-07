@@ -67,10 +67,10 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售外卖", "商户")]
+    [Ui("零售网单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
-        [Ui("零售外卖", group: 1), Tool(Anchor)]
+        [Ui("零售网单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var shp = wc[-1].As<Org>();
@@ -85,7 +85,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
                     h.PIC("/void.webp", css: "uk-width-1-5");
 
@@ -125,9 +125,9 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("零售外卖送货", "市场")]
+    [Ui("零售网单送货", "市场")]
 #else
-    [Ui("零售外卖送货", "驿站")]
+    [Ui("零售网单送货", "驿站")]
 #endif
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {

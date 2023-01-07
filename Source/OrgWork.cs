@@ -247,9 +247,9 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
 #if ZHNT
-    [Ui("联盟摊铺管理", "市场")]
+    [Ui("联盟摊铺", "市场")]
 #else
-    [Ui("联盟摊铺管理", "驿站")]
+    [Ui("联盟摊铺", "驿站")]
 #endif
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {

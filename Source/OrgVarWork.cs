@@ -111,10 +111,10 @@ namespace ChainMart
                     h.PIC("/org/", o.id, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商业名", o.name)._LI();
+                h.LI_().FIELD("商户名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
+                if (o.IsParent) h.LI_().FIELD("联盟延展名", o.Ext)._LI();
                 h.LI_().FIELD("工商登记名", o.legal)._LI();
-                if (o.IsParent) h.LI_().FIELD("延展商业名", o.ext)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("地址／场地", o.addr)._LI();
                 // h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
@@ -132,24 +132,23 @@ namespace ChainMart
                 h.H4("机构证照", "uk-card-header");
                 if (o.m1)
                 {
-                    h.PIC("/o/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/org/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
                 }
                 if (o.m2)
                 {
-                    h.PIC("/o/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/org/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
                 }
                 if (o.m3)
                 {
-                    h.PIC("/o/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/org/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
                 }
                 if (o.m4)
                 {
-                    h.PIC("/o/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                    h.PIC("/org/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
                 h._ARTICLE();
             }, false, 900, title: "机构信息");
         }
-
 
         public async Task icon(WebContext wc)
         {
@@ -159,6 +158,11 @@ namespace ChainMart
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), true, 3600);
+        }
+
+        public async Task m(WebContext wc, int sub)
+        {
+            await doimg(wc, nameof(m) + sub, true, 3600);
         }
     }
 

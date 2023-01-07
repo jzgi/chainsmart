@@ -21,7 +21,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售商品设置", "商户")]
+    [Ui("零售商品", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
         [Ui("零售商品", group: 1), Tool(Anchor)]
