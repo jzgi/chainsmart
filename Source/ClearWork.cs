@@ -131,7 +131,6 @@ namespace ChainMart
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    var orgs = Grab<short, Org>();
                     h.TABLE(arr, o =>
                     {
                         // h.TD(Clear.Typs[o.typ]);
@@ -258,7 +257,6 @@ namespace ChainMart
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    var orgs = Grab<short, Org>();
                     h.TABLE(arr, o =>
                     {
                         // h.TD(Clear.Typs[o.typ]);

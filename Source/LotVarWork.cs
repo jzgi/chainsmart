@@ -375,8 +375,6 @@ namespace ChainMart
                 }
                 else // cmd = (page - 1)
                 {
-                    var src = GrabObject<int, Org>(o.srcid);
-
                     const short NUM = 90;
 
                     wc.GivePane(200, h =>

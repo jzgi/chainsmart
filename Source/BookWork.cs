@@ -102,7 +102,6 @@ namespace ChainMart
         {
             var org = wc[-1].As<Org>();
             int ctrid = org.ctrid;
-            var topOrgs = Grab<int, Org>();
             var cats = Grab<short, Cat>();
 
             if (typ == 0)

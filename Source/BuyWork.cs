@@ -3,6 +3,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
+using static ChainMart.NoticeUtility;
 
 namespace ChainMart
 {
@@ -100,7 +101,8 @@ namespace ChainMart
             });
         }
 
-        [Ui(tip: "历史外卖订单", icon: "history", group: 2), Tool(Anchor)]
+        [BizNotice(NTC_BUY_CREATED)]
+        [Ui(tip: "历史零售订单", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc)
         {
             var shp = wc[-1].As<Org>();

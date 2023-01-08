@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Application;
 using static ChainMart.WeixinUtility;
 using static ChainFx.Fabric.Nodality;
 
@@ -30,7 +29,7 @@ namespace ChainMart
         /// <summary>
         /// To show the market list.
         /// </summary>
-        public void @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             var topOrgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();

@@ -17,7 +17,6 @@ namespace ChainMart
 
     public class PublyWareWork : WareWork<PublyWareVarWork>
     {
-
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]

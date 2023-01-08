@@ -93,18 +93,6 @@ namespace ChainMart
             }
         }
 
-        [Ui("协议", group: 2), Tool(ButtonOpen)]
-        public void agrmt(WebContext wc, int dietid)
-        {
-            var diets = Grab<short, Org>();
-            var diet = diets[(short) dietid];
-            wc.GivePane(200, h =>
-            {
-                h.FORM_();
-                h._FORM();
-            });
-        }
-
         [Ui("申诉", group: 2), Tool(ButtonOpen)]
         public async Task compl(WebContext wc)
         {

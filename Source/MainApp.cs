@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
 using ChainFx;
-using ChainFx.Fabric;
 using static System.Data.IsolationLevel;
 
 namespace ChainMart
@@ -49,25 +47,17 @@ namespace ChainMart
                 {
                     dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY idx");
                     return dc.Query<short, Cat>();
-                }, 3600 * 24
+                }, 60 * 60 * 12
             );
 
             Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                     return dc.Query<short, Reg>();
-                }, 3600 * 24
+                }, 60 * 60 * 12
             );
 
-            // each of the orgs
-            CacheObject<int, Org>((dc, id) =>
-                {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-                    return dc.QueryTop<Org>(p => p.Set(id));
-                }, 60 * 15
-            );
-
-            // top orgs
+            // upper level orgs
             Cache(dc =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_DST).T(" ORDER BY regid");
@@ -75,12 +65,20 @@ namespace ChainMart
                 }, 60 * 15
             );
 
-            // each of the working items
+            // indivisual working items
             CacheObject<int, Item>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
                     return dc.QueryTop<Item>(p => p.Set(id));
-                }, 60 * 15
+                }, 60 * 60
+            );
+
+            // individual working orgs
+            CacheObject<int, Org>((dc, id) =>
+                {
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+                    return dc.QueryTop<Org>(p => p.Set(id));
+                }, 60 * 60
             );
         }
 
