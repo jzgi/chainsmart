@@ -37,7 +37,7 @@ namespace ChainMart
 
                 h._TOPBARXL();
 
-                h.WORKBOARD();
+                h.WORKBOARD(notice: org.id);
             }, false, 720, title: org.name);
         }
     }

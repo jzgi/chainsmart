@@ -158,7 +158,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("联盟产源管理", "供区")]
+    [Ui("联盟产源", "盟主")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
         [Ui("联盟产源"), Tool(Anchor)]
@@ -246,11 +246,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-#if ZHNT
-    [Ui("联盟摊铺", "市场")]
-#else
-    [Ui("联盟摊铺", "驿站")]
-#endif
+    [Ui("联盟摊铺", "盟主")]
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         [Ui("联盟摊铺", group: 1), Tool(Anchor)]

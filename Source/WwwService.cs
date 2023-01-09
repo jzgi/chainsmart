@@ -119,6 +119,9 @@ namespace ChainMart
                         await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
 
                         // War("update ok!");
+
+                        // put a notice
+                        NoticeBox.Put(9, Notice.BUY_CREATED, 1, cash);
                     }
                 }
             }

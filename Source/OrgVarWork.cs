@@ -504,7 +504,7 @@ namespace ChainMart
     public class ZonlyOrgVarWork : OrgVarWork
     {
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
-        [Ui(tip: "修改联盟产源信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改成员产源信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];

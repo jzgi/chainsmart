@@ -3,6 +3,7 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
+using static ChainMart.Notice;
 
 namespace ChainMart
 {
@@ -26,13 +27,32 @@ namespace ChainMart
             CreateWork<ShplyBookLotWork>("lot");
         }
 
+
+        static void MainGrid(HtmlBuilder h, Book[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q_("uk-width-expand").T(o.id, digits: 10)._Q();
+                h.FOOTER_().SPAN_("uk-width-1-3").T(o.created, time: 0)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
         [Ui("供应链采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -44,25 +64,35 @@ namespace ChainMart
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr);
             });
         }
 
-        [Ui(tip: "历史记录", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [BizNotice(BOOK_ADAPTED)]
+        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        public async Task adapted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 2 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
+                {
+                    h.ALERT("尚无发货");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            });
+        }
+
+        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -75,24 +105,34 @@ namespace ChainMart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无采购");
+                    h.ALERT("尚无收货");
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
+                MainGrid(h, arr);
+            });
+        }
+
+        [BizNotice(BOOK_ABORTED)]
+        [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 8 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无撤单");
+                    return;
+                }
 
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr);
             });
         }
 
@@ -147,13 +187,54 @@ namespace ChainMart
     [Ui("供应链销售", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
+        static void MainGrid(HtmlBuilder h, Book[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q_("uk-width-expand").T(o.id, digits: 10)._Q();
+                h.FOOTER_().SPAN_("uk-width-1-3").T(o.created, time: 0)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
+        [BizNotice(BOOK_CREATED)]
         [Ui("供应链销售"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 1 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
+                {
+                    h.ALERT("尚无销售");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            });
+        }
+
+        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        public async Task adapted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -161,29 +242,17 @@ namespace ChainMart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无销售");
+                    h.ALERT("尚无发货");
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr);
             });
         }
 
-        [Ui(tip: "以往订货", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [BizNotice(BOOK_OKED)]
+        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -193,38 +262,43 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无销售");
+                    h.ALERT("尚无收货");
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
+                MainGrid(h, arr);
+            });
+        }
+
+        [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 8 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无撤单");
+                    return;
+                }
 
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr);
             });
         }
     }
 
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-#if ZHNT
-    [Ui("供应链采购收货", "市场")]
-#else
-    [Ui("供应链采购收货", "驿站")]
-#endif
+    [Ui("供应链采购收货", "盟主")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("按产品", group: 1), Tool(Anchor)]

@@ -73,6 +73,9 @@ namespace ChainMart
                         await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty).Set(lotid));
 
                         // War("update ok!");
+
+                        // put a notice
+                        NoticeBox.Put(9, Notice.BOOK_CREATED, 1, cash);
                     }
                 }
             }

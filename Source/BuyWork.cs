@@ -3,7 +3,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
-using static ChainMart.NoticeUtility;
+using static ChainMart.Notice;
 
 namespace ChainMart
 {
@@ -71,66 +71,118 @@ namespace ChainMart
     [Ui("零售网单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
-        [Ui("零售网单", group: 1), Tool(Anchor)]
-        public async Task @default(WebContext wc)
+        static void MainGrid(HtmlBuilder h, Buy[] arr)
         {
-            var shp = wc[-1].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
-
-            wc.GivePage(200, h =>
+            h.MAINGRID(arr, o =>
             {
-                h.TOOLBAR();
+                h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
+                h.PIC("/void.webp", css: "uk-width-1-5");
 
-                    h.PIC("/void.webp", css: "uk-width-1-5");
+                h.ASIDE_();
+                h.HEADER_().H4(o.uname).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q(o.uaddr, "uk-width-expand");
+                h.FOOTER_().CNY(o.pay, true).SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.uname).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.uaddr, "uk-width-expand");
-                    h.FOOTER_().CNY(o.pay, true).SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                h._A();
             });
         }
 
-        [BizNotice(NTC_BUY_CREATED)]
-        [Ui(tip: "历史零售订单", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+
+        [BizNotice(BUY_CREATED)]
+        [Ui("零售网单", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc)
         {
-            var shp = wc[-1].As<Org>();
+            var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status > 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(shp.id));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 1 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
-
-                h.TABLE(arr, o =>
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
                 {
-                    h.TD_().A_TEL(o.uname, o.utel)._TD();
-                    // h.TD(o.mrtname, true);
-                    // h.TD(Statuses[o.status]);
-                });
+                    h.ALERT("尚无网单");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            });
+        }
+
+        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        public async Task adapted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 2 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
+                {
+                    h.ALERT("尚无发货");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            });
+        }
+
+        [BizNotice(BUY_OKED)]
+        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        public async Task oked(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
+                {
+                    h.ALERT("尚无收货");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            });
+        }
+
+        [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 8 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(notice: org.id);
+                if (arr == null)
+                {
+                    h.ALERT("尚无撤单");
+                    return;
+                }
+
+                MainGrid(h, arr);
             });
         }
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-#if ZHNT
-    [Ui("零售网单送货", "市场")]
-#else
-    [Ui("零售网单送货", "驿站")]
-#endif
+    [Ui("零售网单送货", "盟主")]
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
         [Ui("零售外卖", group: 1), Tool(Anchor)]

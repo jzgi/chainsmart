@@ -253,7 +253,7 @@ h3,
 .uk-h3 {
     font-size: 1rem;
     font-weight: 500;
-    margin: 2px 0;
+    margin: 0;
     color: #7daa1d;
 }
 
@@ -892,7 +892,6 @@ form  .uk-list-divider>li:nth-child(n+2) {
     fill: currentcolor;
     line-height: 0;
 }
-
 
 /* Required for `button`. */
 button.uk-icon:not(:disabled) {
@@ -2159,7 +2158,7 @@ main.uk-grid>li {
 
 .uk-card-body {
 
-    padding: 4px;
+    padding: 4px 6px;
     background-color: #fff;
     width: -webkit-fill-available;
 }
@@ -2526,8 +2525,18 @@ a.uk-card-body {
 }
 
 .uk-badge-secondary {
-    color: #333;
+    color: #fff;
+    background-color: #ff3b30;
     font-size: 12px;
+    border-radius: 500px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 18px;
+    height: 18px;;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .uk-badge-success {

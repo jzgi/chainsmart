@@ -174,7 +174,7 @@ namespace ChainMart
 
             string vcode = CryptoUtility.ComputeVCode(tel);
 
-            string ret = await WeixinUtility.SendSmsAsync(new[] {tel}, Nodality.Self.name, vcode.ToString());
+            string ret = await WeixinUtility.SendVCodeSmsAsync(tel, vcode);
         }
     }
 }

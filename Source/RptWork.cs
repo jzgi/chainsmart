@@ -31,7 +31,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("综合报表", "供区")]
+    [Ui("综合报表", "盟主")]
     public class ZonlyRptWork : RptWork
     {
         public void @default(WebContext wc, int page)

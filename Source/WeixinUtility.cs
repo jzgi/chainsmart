@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
+using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
@@ -40,7 +41,8 @@ namespace ChainMart
             smssecretid,
             smssecretkey,
             smssdkappid,
-            smstemplateid;
+            smsvcodetempid,
+            smsnotiftempid;
 
 
         static WeixinUtility()
@@ -51,13 +53,13 @@ namespace ChainMart
             s.Get(nameof(scmchid), ref scmchid);
             s.Get(nameof(rtlmchid), ref rtlmchid);
             s.Get(nameof(noncestr), ref noncestr);
-            // s.Get(nameof(spbillcreateip), ref spbillcreateip);
             s.Get(nameof(key), ref key);
 
             s.Get(nameof(smssecretid), ref smssecretid);
             s.Get(nameof(smssecretkey), ref smssecretkey);
             s.Get(nameof(smssdkappid), ref smssdkappid);
-            s.Get(nameof(smstemplateid), ref smstemplateid);
+            s.Get(nameof(smsvcodetempid), ref smsvcodetempid);
+            s.Get(nameof(smsnotiftempid), ref smsnotiftempid);
 
             try
             {
@@ -511,7 +513,7 @@ namespace ChainMart
             return unixTime;
         }
 
-        public static async Task<string> SendSmsAsync(string[] phoneNumberSet, string signName, params string[] templateParamSet)
+        public static async Task<string> SendVCodeSmsAsync(string phoneNumber, params string[] templateParamSet)
         {
             const string endpoint = "sms.tencentcloudapi.com";
 
@@ -525,18 +527,19 @@ namespace ChainMart
                 {"SecretId", smssecretid},
                 {"Region", "ap-guangzhou"},
                 {"SmsSdkAppId", smssdkappid},
-                {"SignName", signName},
-                {"TemplateId", smstemplateid}
+                {"SignName", Nodality.Self.name},
+                {"TemplateId", smsvcodetempid}
             };
 
             for (var i = 0; i < templateParamSet.Length; i++)
             {
                 dict.Add("TemplateParamSet." + i, templateParamSet[i]);
             }
-            for (var i = 0; i < phoneNumberSet.Length; i++)
-            {
-                dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
-            }
+            // for (var i = 0; i < phoneNumberSet.Length; i++)
+            // {
+            //     dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
+            // }
+            dict.Add("PhoneNumberSet.0", phoneNumber);
 
             var sorted = new SortedDictionary<string, string>(dict, StringComparer.Ordinal);
             string sigInParam = MakeSignPlainText(sorted, endpoint);
@@ -559,7 +562,60 @@ namespace ChainMart
 
             //
             // send request
-            var (_, jo) = await SmsApi.GetAsync<JObj>(url.ToString(), null);
+            var (_, jo) = await SmsApi.GetAsync<JObj>(url.ToString());
+            return jo.ToString();
+        }
+
+        public static async Task<string> SendNotifSmsAsync(string phoneNumber, params string[] templateParamSet)
+        {
+            const string endpoint = "sms.tencentcloudapi.com";
+
+            long timestamp = ToTimestamp() / 1000;
+            var dict = new Dictionary<string, string>
+            {
+                {"Action", "SendSms"},
+                {"Nonce", "11886"},
+                {"Timestamp", timestamp.ToString()},
+                {"Version", "2021-01-11"},
+                {"SecretId", smssecretid},
+                {"Region", "ap-guangzhou"},
+                {"SmsSdkAppId", smssdkappid},
+                {"SignName", Nodality.Self.name},
+                {"TemplateId", smsnotiftempid}
+            };
+
+            for (var i = 0; i < templateParamSet.Length; i++)
+            {
+                dict.Add("TemplateParamSet." + i, templateParamSet[i]);
+            }
+            // for (var i = 0; i < phoneNumberSet.Length; i++)
+            // {
+            //     dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
+            // }
+            dict.Add("PhoneNumberSet.0", phoneNumber);
+
+            var sorted = new SortedDictionary<string, string>(dict, StringComparer.Ordinal);
+            string sigInParam = MakeSignPlainText(sorted, endpoint);
+            string sigOutParam = Sign(smssecretkey, sigInParam);
+
+            // 获取 curl 命令串
+            dict.Add("Signature", sigOutParam);
+
+            var url = new StringBuilder("/?");
+            int num = 0;
+            foreach (var (k, v) in dict)
+            {
+                if (num > 0)
+                {
+                    url.Append('&');
+                }
+                url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
+                num++;
+            }
+
+            //
+            // send request
+            var (_, jo) = await SmsApi.GetAsync<JObj>(url.ToString());
             return jo.ToString();
         }
     }

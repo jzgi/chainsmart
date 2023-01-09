@@ -20,6 +20,7 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("单号", o.id, digits: 10)._LI();
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();

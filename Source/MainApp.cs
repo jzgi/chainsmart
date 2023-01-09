@@ -29,6 +29,7 @@ namespace ChainMart
 
             CacheUp();
 
+            
             const string STATIC_ROOT = "static";
 
             WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
@@ -37,6 +38,8 @@ namespace ChainMart
 
             // CreateService<FedService>("fed", STATIC_ROOT);
 
+            NoticeBox.Start();
+            
             await StartAsync();
         }
 

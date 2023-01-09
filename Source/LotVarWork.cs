@@ -117,6 +117,8 @@ namespace ChainMart
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
                 h.LI_().FIELD("总件数", o.cap)._LI();
+                h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
+
                 if (o.nstart > 0 && o.nend > 0) h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
@@ -361,6 +363,8 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
+                var item = GrabObject<int, Item>(o.itemid);
+
                 if (cmd == 1)
                 {
                     wc.GivePane(200, h =>
@@ -392,7 +396,7 @@ namespace ChainMart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex uk-flex-center").T(lotid.ToString("D6")).SP().T(idx + 1)._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Item.States[item.state], "uk-margin-auto-left")._H6();
 
                             h._LI();
 
@@ -403,7 +407,7 @@ namespace ChainMart
                         }
                         h._UL();
 
-                        h.PAGINATION(idx <= o.cap, print: true);
+                        h.PAGINATION(idx < o.cap, begin: 2, print: true);
                     });
                 }
             }

@@ -1,22 +1,23 @@
-﻿using System;
-using ChainFx.Web;
+﻿using ChainFx.Web;
 
 namespace ChainMart
 {
     public class BizNoticeAttribute : NoticeAttribute
     {
-        public BizNoticeAttribute(short typ) : base(typ)
+        public BizNoticeAttribute(short slot) : base(slot)
         {
         }
 
-        public override int DoCheck()
+        public override int DoCheck(int noticeId, bool clear = false)
         {
-            return 0;
-        }
-
-        public override void DoClear(WebContext wc)
-        {
-            throw new NotImplementedException();
+            if (clear)
+            {
+                return NoticeBox.CheckAndClearPully(noticeId, slot);
+            }
+            else
+            {
+                return NoticeBox.CheckPully(noticeId, slot);
+            }
         }
     }
 }

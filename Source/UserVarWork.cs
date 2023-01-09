@@ -289,7 +289,7 @@ namespace ChainMart
             short id = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE users SET srcid = NULL, srcly = 0 WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
 
             wc.Give(204); // no content
@@ -306,7 +306,7 @@ namespace ChainMart
             short id = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET orgid = NULL, orgly = 0 WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE users SET shpid = NULL, shply = 0 WHERE id = @1 AND shpid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
 
             wc.Give(204); // no content
