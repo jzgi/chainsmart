@@ -10,14 +10,14 @@ var WCPay = function (data, sc) {
 
                 if (sc) {
                     alert('下单成功');
+                    // close 
+                    window.parent.closeUp(false);
                 }
                 else {
                     alert('下单成功，查看订单在「我的消费」');
+                    // close and refresh
+                    window.parent.closeUp(true);
                 }
-
-                // close current payment page
-                window.parent.closeUp(true);
-
             }
             else if (res.err_msg == "get_brand_wcpay_request:cancel") {
             }

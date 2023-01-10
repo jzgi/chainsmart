@@ -1,5 +1,4 @@
 ﻿using ChainFx.Web;
-using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
@@ -38,7 +37,7 @@ namespace ChainMart
                 h._TOPBARXL();
 
                 h.WORKBOARD(notice: org.id);
-            }, false, 720, title: org.name);
+            }, false, 30, title: org.name);
         }
     }
 

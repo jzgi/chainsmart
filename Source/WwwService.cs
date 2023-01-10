@@ -29,7 +29,7 @@ namespace ChainMart
         /// <summary>
         /// To show the market list.
         /// </summary>
-        public async Task @default(WebContext wc)
+        public void @default(WebContext wc)
         {
             var topOrgs = Grab<int, Org>();
             var regs = Grab<short, Reg>();
@@ -106,8 +106,9 @@ namespace ChainMart
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                if (await dc.QueryTopAsync("SELECT topay FROM buys WHERE id = @1 AND status = 0", p => p.Set(buyid)))
+                if (await dc.QueryTopAsync("SELECT shpid, topay FROM buys WHERE id = @1 AND status = 0", p => p.Set(buyid)))
                 {
+                    dc.Let(out int shpid);
                     dc.Let(out decimal topay);
 
                     // War("topay " + topay);
@@ -121,7 +122,7 @@ namespace ChainMart
                         // War("update ok!");
 
                         // put a notice
-                        NoticeBox.Put(9, Notice.BUY_CREATED, 1, cash);
+                        NoticeBox.Put(shpid, Notice.BUY_CREATED, 1, cash);
                     }
                 }
             }

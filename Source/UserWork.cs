@@ -422,7 +422,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("大客户", "商户")]
+    [Ui("大客户管理", "商户")]
     public class ShplyVipWork : UserWork<ShplyVipVarWork>
     {
         [Ui("大客户", group: 1), Tool(Anchor)]

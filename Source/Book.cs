@@ -23,7 +23,6 @@ namespace ChainMart
 
         internal int shpid; // shop
         internal string shpname;
-        internal string shptel;
         internal int mktid; // market
         internal int ctrid; // center
         internal int srcid; // source
@@ -56,7 +55,6 @@ namespace ChainMart
             {
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(shpname), ref shpname);
-                s.Get(nameof(shptel), ref shptel);
                 s.Get(nameof(mktid), ref mktid);
                 s.Get(nameof(ctrid), ref ctrid);
                 s.Get(nameof(zonid), ref zonid);
@@ -94,13 +92,11 @@ namespace ChainMart
             {
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(shpname), shpname);
-                s.Put(nameof(shptel), shptel);
                 s.Put(nameof(mktid), mktid);
                 s.Put(nameof(ctrid), ctrid);
                 s.Put(nameof(zonid), zonid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
-
                 s.Put(nameof(itemid), itemid);
                 s.Put(nameof(lotid), lotid);
             }

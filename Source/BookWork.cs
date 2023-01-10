@@ -38,7 +38,7 @@ namespace ChainMart
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                h.Q_("uk-width-expand").T(o.id, digits: 10)._Q();
+                h.Q_("uk-width-expand").T(o.srcname)._Q();
                 h.FOOTER_().SPAN_("uk-width-1-3").T(o.created, time: 0)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                 h._ASIDE();
 
@@ -197,7 +197,7 @@ namespace ChainMart
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
-                h.Q_("uk-width-expand").T(o.id, digits: 10)._Q();
+                h.Q_("uk-width-expand").T(o.shpname)._Q();
                 h.FOOTER_().SPAN_("uk-width-1-3").T(o.created, time: 0)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                 h._ASIDE();
 

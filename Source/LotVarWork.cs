@@ -562,9 +562,6 @@ namespace ChainMart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
                 var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
-                var item = await dc.QueryTopAsync<Item>(p => p.Set(lot.itemid));
-
                 var m = new Book
                 {
                     typ = lot.typ,
@@ -573,7 +570,6 @@ namespace ChainMart
                     creator = prin.name,
                     shpid = shp.id,
                     shpname = shp.Name,
-                    shptel = shp.tel,
                     mktid = shp.MarketId,
                     srcid = lot.srcid,
                     srcname = lot.srcname,

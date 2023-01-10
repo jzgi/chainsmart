@@ -48,7 +48,7 @@ namespace ChainMart
                     h.TD(Rptie.Typs[o.typ]);
                     h.TD_().T(o.dt, 3, 0)._TD();
                     h.TD_().T(o.count).SP().T('笔')._TD();
-                    h.TD(o.amt, currency: true);
+                    h.TD(o.amt, money: true);
                 });
                 h.PAGINATION(arr?.Length == 30);
             }, false, 3);

@@ -56,8 +56,9 @@ namespace ChainMart
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                if (await dc.QueryTopAsync("SELECT lotid, qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
+                if (await dc.QueryTopAsync("SELECT srcid, lotid, qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
                 {
+                    dc.Let(out int srcid);
                     dc.Let(out int lotid);
                     dc.Let(out short qty);
                     dc.Let(out decimal topay);
@@ -74,8 +75,8 @@ namespace ChainMart
 
                         // War("update ok!");
 
-                        // put a notice
-                        NoticeBox.Put(9, Notice.BOOK_CREATED, 1, cash);
+                        // put a notice to the accepter
+                        NoticeBox.Put(srcid, Notice.BOOK_CREATED, 1, cash);
                     }
                 }
             }
