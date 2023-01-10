@@ -105,11 +105,11 @@ namespace ChainMart
 
             // shp
 
+            CreateWork<ShplyWareWork>("sware");
+
             CreateWork<ShplyBuyWork>("sbuy");
 
             // CreateWork<ShplyPosWork>("spos");
-
-            CreateWork<ShplyWareWork>("sware");
 
             CreateWork<ShplyVipWork>("svip");
 

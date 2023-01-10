@@ -20,10 +20,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售商品", "商户")]
+    [Ui("商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
-        [Ui("零售商品", group: 1), Tool(Anchor)]
+        [Ui("在线商品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -172,7 +172,7 @@ namespace ChainMart
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT DISTINCT itemid, name FROM books WHERE shpid = @1 AND status = 4 AND itemid NOT IN (SELECT itemid FROM wares WHERE shpid = @1)");
+                dc.Sql("SELECT DISTINCT itemid, concat(srcname, ' ', name), id FROM books WHERE shpid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
                 await dc.QueryAsync(p => p.Set(org.id));
                 var map = dc.ToIntMap();
 

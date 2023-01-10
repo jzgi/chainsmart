@@ -1,5 +1,5 @@
 html {
-    font-family: -apple-system,BlinkMacSystemFont,Helvetica Neue,PingFang SC,Hiragino Sans GB,Microsoft YaHei UI,Microsoft YaHei,Arial,sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, Helvetica Neue, PingFang SC, Hiragino Sans GB, Microsoft YaHei UI, Microsoft YaHei, Arial, sans-serif;
     font-size: 16px;
     font-weight: normal;
     line-height: normal;
@@ -34,7 +34,7 @@ header,
 footer,
 nav {
     display: flex;
-    width: 100%;
+    width: -webkit-fill-available;
     align-items: center;
 }
 
@@ -647,7 +647,7 @@ a.uk-link-reset:hover,
     border-top: 1px solid #fff;
 }
 
-form  .uk-list-divider>li:nth-child(n+2) {
+form .uk-list-divider>li:nth-child(n+2) {
     border-top: 1px solid #ededed !important;
 }
 
@@ -2533,7 +2533,8 @@ a.uk-card-body {
     top: 0;
     right: 0;
     min-width: 12px;
-    height: 12px;;
+    height: 12px;
+    ;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3772,8 +3773,7 @@ ul.uk-nav-sub {
     background: rgba(0, 0, 0, 0.25);
 }
 
-.uk-modal-tall:active
-.uk-modal-tall:focus {
+.uk-modal-tall:active .uk-modal-tall:focus {
     border: none;
 }
 

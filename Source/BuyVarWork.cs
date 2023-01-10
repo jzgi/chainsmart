@@ -44,49 +44,25 @@ namespace ChainMart
 
     public class MyBuyVarWork : BuyVarWork
     {
-        [Ui("✎", "✎ 填写日志"), Tool(ButtonOpen)]
-        public async Task log(WebContext wc, int dt)
+        [Ui("收货", "确认收货？", icon: "sign-in"), Tool(ButtonConfirm, status: STU_ADAPTED)]
+        public async Task ok(WebContext wc)
         {
-            int orderid = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close
-            }
-        }
-
-        [Ui("标签", group: 1), Tool(ButtonOpen)]
-        public async Task tag(WebContext wc)
-        {
-            int orderid = wc[0];
+            int id = wc[0];
             var prin = (User) wc.Principal;
-            if (wc.IsGet)
-            {
-                // list
-                using var dc = NewDbContext();
-                dc.Sql("SELECT tag FROM buys WHERE id = @1 AND uid = @2");
-                var o = (string) await dc.ScalarAsync(p => p.Set(orderid).Set(prin.id));
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_();
-                    h.FIELDSUL_("相较调养之前");
-                    h.LI_().TEXT("肠胃排泄", nameof(o), o)._LI();
-                    h._FIELDSUL();
-                    h._FORM();
-                });
-            }
-            else // POST
-            {
-                string tag = (await wc.ReadAsync<Form>())[nameof(tag)];
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE orders SET tag = @1 WHERE id = @1 AND uid = @2");
-                dc.Execute(p => p.Set(tag).Set(orderid).Set(prin.id));
 
-                wc.GivePane(200); // close
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
+            if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(prin.id)))
+            {
+                dc.Let(out int shpid);
+                dc.Let(out decimal pay);
+
+                NoticeBox.Put(shpid, Notice.BUY_OKED, 1, pay);
             }
+
+            wc.Give(200);
         }
+
 
         [Ui("申诉", group: 2), Tool(ButtonOpen)]
         public async Task compl(WebContext wc)
@@ -130,6 +106,27 @@ namespace ChainMart
                 dc.Let(out decimal pay);
 
                 await PostSendAsync(uim, "您的订单已经发货，请留意接收（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
+            }
+
+            wc.Give(204);
+        }
+
+        [OrglyAuthorize(0, User.ROL_LOG)]
+        [Ui("收货", "确认收货？", icon: "sign-in"), Tool(ButtonConfirm, status: STU_ADAPTED)]
+        public async Task ok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
+            if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
+            {
+                dc.Let(out string uim);
+                dc.Let(out decimal pay);
+
+                await PostSendAsync(uim, prin.name + "已替您做了收货操作（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
             }
 
             wc.Give(204);

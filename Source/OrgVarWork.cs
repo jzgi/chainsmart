@@ -25,7 +25,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                if (o.IsParent) h.LI_().FIELD("联盟延展名", o.ext)._LI();
+                if (o.IsParent) h.LI_().FIELD("联盟名", o.ext)._LI();
                 h.LI_().FIELD("工商登记名", o.legal)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("联系地址", o.addr)._LI();
@@ -113,7 +113,7 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                if (o.IsParent) h.LI_().FIELD("联盟延展名", o.Ext)._LI();
+                if (o.IsParent) h.LI_().FIELD("联盟名", o.Ext)._LI();
                 h.LI_().FIELD("工商登记名", o.legal)._LI();
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("地址／场地", o.addr)._LI();
@@ -229,7 +229,7 @@ namespace ChainMart
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("联盟延展名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
+                    h.LI_().TEXT("联盟名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT(m.EqMarket ? "地市" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsCity : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();

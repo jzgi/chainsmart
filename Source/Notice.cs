@@ -24,10 +24,10 @@ namespace ChainMart
             {BOOK_ADAPTED, "供应链发货"},
             {BOOK_OKED, "供应链收货"},
             {BOOK_ABORTED, "供应链撤单"},
-            {BUY_CREATED, "零售新单"},
-            {BUY_ADAPTED, "零售发货"},
-            {BUY_OKED, "零售收货"},
-            {BUY_ABORTED, "零售撤单"},
+            {BUY_CREATED, "消费新单"},
+            {BUY_ADAPTED, "消费发货"},
+            {BUY_OKED, "消费收货"},
+            {BUY_ABORTED, "消费撤单"},
         };
 
 

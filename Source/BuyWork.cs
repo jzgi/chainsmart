@@ -68,7 +68,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("零售网单", "商户")]
+    [Ui("消费订单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
         static void MainGrid(HtmlBuilder h, Buy[] arr)
@@ -91,7 +91,7 @@ namespace ChainMart
 
 
         [BizNotice(BUY_CREATED)]
-        [Ui("零售网单", group: 1), Tool(Anchor)]
+        [Ui("消费订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -182,10 +182,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("零售网单送货", "盟主")]
+    [Ui("消费订单统一送货", "盟主")]
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
-        [Ui("零售外卖", group: 1), Tool(Anchor)]
+        [Ui("消费订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mkt = wc[-1].As<Org>();

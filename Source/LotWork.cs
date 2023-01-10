@@ -22,10 +22,10 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品销售批次", "商户")]
+    [Ui("销售批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
-        [Ui("产品销售批次", group: 1), Tool(Anchor)]
+        [Ui("在线销售批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -167,7 +167,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("产品销售批次统一盘存", "中库")]
+    [Ui("销售批次统一盘存", "中库")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
     }

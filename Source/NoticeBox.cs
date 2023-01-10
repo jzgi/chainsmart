@@ -54,14 +54,14 @@ namespace ChainMart
             pusher.Start();
         }
 
-        public static void Put(int id, short slot, int num, decimal amt)
+        public static void Put(int noticeId, short slot, int num, decimal amt)
         {
             // get or create the notice
-            var ntc = notices.GetOrAdd(id, k =>
+            var ntc = notices.GetOrAdd(noticeId, k =>
             {
-                var org = Nodality.GrabObject<int, Org>(id);
+                var org = Nodality.GrabObject<int, Org>(noticeId);
 
-                return new Notice(id, org.name, org.tel);
+                return new Notice(noticeId, org.name, org.tel);
             });
 
             // put to slot

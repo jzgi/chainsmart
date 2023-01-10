@@ -132,7 +132,7 @@ namespace ChainMart
                     }
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("联盟延展名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
+                    h.LI_().TEXT("联盟名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT(m.EqMarket ? "地市" : "省份", nameof(m.regid), m.regid, regs, filter: (k, v) => m.EqMarket ? v.IsCity : v.IsProvince, required: !m.EqZone)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
@@ -158,10 +158,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("联盟产源管理", "盟主")]
+    [Ui("盟友产源管理", "盟主")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("联盟产源"), Tool(Anchor)]
+        [Ui("盟友产源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -199,7 +199,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建联盟产源", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建盟友产源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -246,10 +246,10 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("联盟摊铺管理", "盟主")]
+    [Ui("盟友摊铺管理", "盟主")]
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        [Ui("联盟摊铺", group: 1), Tool(Anchor)]
+        [Ui("盟友摊铺", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -370,7 +370,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建联盟摊铺", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        [Ui("新建", "新建盟友摊铺", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();

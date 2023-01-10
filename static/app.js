@@ -10,14 +10,12 @@ var WCPay = function (data, sc) {
 
                 if (sc) {
                     alert('下单成功');
-                    // close 
-                    window.parent.closeUp(false);
                 }
                 else {
                     alert('下单成功，查看订单在「我的消费」');
-                    // close and refresh
-                    window.parent.closeUp(true);
                 }
+                // close without refresh
+                window.parent.closeUp(false);
             }
             else if (res.err_msg == "get_brand_wcpay_request:cancel") {
             }
@@ -394,9 +392,17 @@ function appendTo(parent, html) {
 }
 
 // anchor without adding history
-function goto(url, evt) {
+function goto(trigOrUrl, evt) {
+
     evt.preventDefault();
-    location.replace(url);
+
+    if (trigOrUrl.tagName == 'A') {
+        location.replace(trigOrUrl.href);
+    }
+    else {
+        location.replace(trigOrUrl);
+    }
+
     return false;
 }
 
@@ -560,7 +566,8 @@ function closeUp(reload, delta) {
 
                 // NOTE trick for page reload
                 var ifr = window.frameElement;
-                window.location.replace(ifr.src);
+                // window.location.replace(ifr.src);
+                ifr.contentWindow.location.reload();
 
                 history.go(-1);
 

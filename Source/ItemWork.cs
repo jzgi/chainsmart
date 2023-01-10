@@ -28,7 +28,7 @@ namespace ChainMart
     [Ui("产品设置", "商户")]
     public class SrclyItemWork : ItemWork<SrclyItemVarWork>
     {
-        [Ui("可用产品", group: 1), Tool(Anchor)]
+        [Ui("在线产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
