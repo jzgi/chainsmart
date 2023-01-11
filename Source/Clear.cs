@@ -8,35 +8,41 @@ namespace ChainMart
         public static readonly Clear Empty = new Clear();
 
         public const short
-            TYP_SUPPLY = 1,
-            TYP_BUY = 2;
+            TYP_PLAT = 1,
+            TYP_GATEWAY = 2,
+            TYP_SRC = 3,
+            TYP_ZON = 4,
+            TYP_CTR = 5,
+            TYP_SHP = 7,
+            TYP_MKT = 8;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_SUPPLY, "供应链"},
-            {TYP_BUY, "消费"},
+            {TYP_PLAT, "平台设施"},
+            {TYP_GATEWAY, "支付网关"},
+            {TYP_SRC, "产源销售"},
+            {TYP_ZON, "供区盟主"},
+            {TYP_CTR, "中库服务"},
+            {TYP_SHP, "摊铺销售"},
+            {TYP_MKT, "市场盟主"},
         };
-
-        public const short
-            STU_ = 0,
-            STU_APPROVED = 2,
-            STU_PAID = 3;
 
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STU_, "新结算"},
-            {STU_APPROVED, "已确认"},
-            {STU_PAID, "已支付"},
+            {STU_CREATED, "结算"},
+            {STU_ADAPTED, "确认"},
+            {STU_OKED, "支付"},
         };
 
         internal int id;
         internal DateTime till;
         internal int orgid;
-        internal int sprid;
-        internal short orders;
+        internal int prtid;
+        internal short trans;
         internal decimal amt;
         internal decimal rate;
+        internal decimal topay;
         internal decimal pay;
 
         public override void Read(ISource s, short proj = 0xff)
@@ -49,10 +55,11 @@ namespace ChainMart
             }
             s.Get(nameof(till), ref till);
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(sprid), ref sprid);
-            s.Get(nameof(orders), ref orders);
+            s.Get(nameof(prtid), ref prtid);
+            s.Get(nameof(trans), ref trans);
             s.Get(nameof(amt), ref amt);
             s.Get(nameof(rate), ref rate);
+            s.Get(nameof(topay), ref topay);
             s.Get(nameof(pay), ref pay);
         }
 
@@ -66,15 +73,14 @@ namespace ChainMart
             }
             s.Put(nameof(till), till);
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(sprid), sprid);
-            s.Put(nameof(orders), orders);
+            s.Put(nameof(prtid), prtid);
+            s.Put(nameof(trans), trans);
             s.Put(nameof(amt), amt);
             s.Put(nameof(rate), rate);
+            s.Put(nameof(topay), topay);
             s.Put(nameof(pay), pay);
         }
 
         public int Key => id;
-
-        public short Status => state;
     }
 }

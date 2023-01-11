@@ -42,11 +42,12 @@ namespace ChainMart
             {
                 h.TOPBARXL_();
 
-                h.PIC("/logo.webp", circle: true, css: "uk-width-small");
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+                h.H2(Self.name);
+                h.P2(prin.name, User.Admly[wc.Role], brace: true);
+                h._HEADER();
 
-                h.DIV_("uk-width-expand uk-col uk-padding-small-left");
-                h.HEADER_().H2(Self.name).P2(prin.name, User.Admly[wc.Role], brace: true, "uk-margin-auto-left")._HEADER();
-                h._DIV();
+                h.PIC("/logo.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 

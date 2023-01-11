@@ -33,64 +33,62 @@ namespace ChainMart
                     return true;
                 }
             }
-            else
+
+            if (!wc.IsWeChat) // not from weixin
             {
-                string openid;
-                if (wc.Cookies.TryGetValue(nameof(openid), out openid))
-                {
-                    if (openid != null)
-                    {
-                        return true;
-                    }
-                }
+                // redirect to custom form authentication
+                wc.GiveRedirect("/login?url=" + HttpUtility.UrlEncode(wc.Url));
+                return false;
             }
 
             // wechat authenticate
-            if (wc.IsWeChat) // weixin
+            string openid; 
+            if (wc.Cookies.TryGetValue(nameof(openid), out openid)) // a previously kept openid
             {
-                string state = wc.Query[nameof(state)];
-                if (WXAUTH.Equals(state)) // if weixin auth
+                if (openid != null)
                 {
-                    string code = wc.Query[nameof(code)];
-                    if (code == null)
-                    {
-                        return false;
-                    }
-
-                    (_, string openid) = await WeixinUtility.GetAccessorAsync(code);
-                    if (openid == null)
-                    {
-                        return false;
-                    }
-
-                    // create principal
-                    using var dc = Nodality.NewDbContext();
-                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE im = @1");
-                    if (await dc.QueryTopAsync(p => p.Set(openid)))
-                    {
-                        var prin = dc.ToObject<User>();
-
-                        wc.Principal = prin; // set principal for afterwrads
-                        wc.SetUserCookies(prin);
-                    }
-                    else // keep the acquired openid and signup
-                    {
-                        wc.SetCookie(nameof(openid), openid);
-
-                        // new account
-                        wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));
-                        return false;
-                    }
-                }
-                else // redirect to WeiXin auth
-                {
-                    WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
-                    return false;
+                    goto HasGotOpenId;
                 }
             }
-            else // custom form authentication
+
+            string state = wc.Query[nameof(state)];
+            if (WXAUTH.Equals(state)) // if weixin auth
             {
-                wc.GiveRedirect("/login?url=" + HttpUtility.UrlEncode(wc.Url));
+                // redirect to WeiXin auth
+                WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
+                return false;
+            }
+
+            string code = wc.Query[nameof(code)];
+            if (code == null)
+            {
+                return false;
+            }
+
+            (_, openid) = await WeixinUtility.GetAccessorAsync(code);
+            if (openid == null)
+            {
+                return false;
+            }
+
+            HasGotOpenId:
+
+            // create principal
+            using var dc = Nodality.NewDbContext();
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE im = @1");
+            if (await dc.QueryTopAsync(p => p.Set(openid)))
+            {
+                var prin = dc.ToObject<User>();
+
+                wc.Principal = prin; // set principal for afterwrads
+                wc.SetUserCookies(prin);
+            }
+            else // keep the acquired openid and signup
+            {
+                wc.SetCookie(nameof(openid), openid);
+
+                // new account
+                wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));
                 return false;
             }
 

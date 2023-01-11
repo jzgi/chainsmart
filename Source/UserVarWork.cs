@@ -153,7 +153,7 @@ namespace ChainMart
                     any++;
                 }
 
-                if (prin.srcly > 0)
+                if (prin.srcly > 0 && prin.srcid > 0)
                 {
                     var org = GrabObject<int, Org>(prin.srcid);
 
@@ -162,7 +162,7 @@ namespace ChainMart
                     any++;
                 }
 
-                if (prin.shply > 0)
+                if (prin.shply > 0 && prin.shpid > 0)
                 {
                     var org = GrabObject<int, Org>(prin.shpid);
 

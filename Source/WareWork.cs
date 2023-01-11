@@ -59,9 +59,16 @@ namespace ChainMart
                     }
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name);
+                    if (o.unitx != 1)
+                    {
+                        h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                    }
+                    h.SPAN(Ware.Statuses[o.status], "uk-badge");
+                    h._HEADER();
+
                     h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                    h.FOOTER_().SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();
@@ -114,7 +121,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
-        [Ui("自定", "自定义商品", icon: "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("自创", "自创其它来源商品", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task def(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -163,7 +170,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("导入", "平台导入商品", icon: "cloud-download", group: 7), Tool(ButtonOpen)]
+        [Ui("引用", "引用供应链产品", icon: "cloud-download", group: 7), Tool(ButtonOpen)]
         public async Task imp(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();

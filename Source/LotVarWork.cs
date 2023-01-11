@@ -594,7 +594,7 @@ namespace ChainMart
 
                 // call WeChatPay to prepare order there
                 string trade_no = (bookid + "-" + topay).Replace('.', '-');
-                var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sc: true,
+                var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sup: true,
                     trade_no,
                     topay,
                     prin.im, // the payer

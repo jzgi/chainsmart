@@ -37,7 +37,7 @@ namespace ChainMart
             // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
             //  
 
-            if (!OnNotified(sc: true, xe, out var trade_no, out var cash))
+            if (!OnNotified(sup: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;

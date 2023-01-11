@@ -35,7 +35,7 @@ create table entities
 
 alter table entities owner to postgres;
 
-create table ledgers_
+create table ldgs_
 (
     seq integer,
     acct varchar(20),
@@ -47,15 +47,15 @@ create table ledgers_
     stamp timestamp(0)
 );
 
-alter table ledgers_ owner to postgres;
+alter table ldgs_ owner to postgres;
 
-create table peerledgs_
+create table peerldgs_
 (
     peerid smallint
 )
-    inherits (ledgers_);
+    inherits (ldgs_);
 
-alter table peerledgs_ owner to postgres;
+alter table peerldgs_ owner to postgres;
 
 create table peers_
 (
@@ -220,38 +220,6 @@ create table tests
 
 alter table tests owner to postgres;
 
-create table rpts
-(
-    orgid integer,
-    dt date,
-    itemid smallint,
-    count integer,
-    amt money,
-    qty integer
-)
-    inherits (entities);
-
-alter table rpts owner to postgres;
-
-create table clears
-(
-    id serial not null
-        constraint clears_pk
-            primary key,
-    till date,
-    orgid integer not null
-        constraint clears_orgid_fk
-            references orgs,
-    sprid integer not null,
-    orders integer,
-    amt money,
-    rate money,
-    pay integer
-)
-    inherits (entities);
-
-alter table clears owner to postgres;
-
 create table items
 (
     id serial not null
@@ -353,8 +321,7 @@ create table books
     topay money,
     pay money,
     ret numeric(6,1),
-    refund money,
-    shptel varchar(11)
+    refund money
 )
     inherits (entities);
 
@@ -403,6 +370,53 @@ create index buys_uidstatus_idx
 
 create index buys_shpidstatus_idx
     on buys (shpid, status);
+
+create table bookldgs
+(
+    orgid integer not null,
+    dt date,
+    orgname integer not null,
+    prtid integer not null,
+    ctrid integer not null,
+    trans integer,
+    amt money,
+    created timestamp(0),
+    creator varchar(12)
+);
+
+alter table bookldgs owner to postgres;
+
+create table buyldgs
+(
+    orgid integer not null,
+    dt date,
+    orgname integer not null,
+    prtid integer not null,
+    ctrid integer,
+    trans integer,
+    amt money,
+    created timestamp(0),
+    creator varchar(12)
+);
+
+alter table buyldgs owner to postgres;
+
+create table clears
+(
+    id serial not null,
+    orgid integer not null,
+    till date,
+    prtid integer not null,
+    ctrid integer not null,
+    trans integer,
+    amt money,
+    rate money,
+    topay integer,
+    pay money
+)
+    inherits (entities);
+
+alter table clears owner to postgres;
 
 create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
 SELECT o.typ,
@@ -586,35 +600,101 @@ $$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
 
-create function recalc(timestamp without time zone) returns void
+create function postldgs(dt timestamp without time zone, opr character varying) returns void
     language plpgsql
 as $$
+DECLARE
+
+    now timestamp(0);
+
 BEGIN
 
-    -- clear
-    DELETE FROM clears WHERE status = 0;
+    -- adjust parameters
+    dt = least(dt, localtimestamp(0));
+    dt = date_trunc('day', dt);
+    opr = coalesce(opr, 'SYS');
 
-    -- by shop
-    INSERT INTO clears (typ, orgid, till, amt)
-    SELECT 1,
-           shpid,
-           $1,
-           sum((pay - coalesce(refund, 0::money)) * 0.88)
+    now = localtimestamp(0);
+
+    INSERT INTO bookldgs (orgid, dt, orgname, prtid, ctrid, trans, amt, created, creator)
+    SELECT srcid,
+           dt,
+           srcname,
+           zonid,
+           ctrid,
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked < dt GROUP BY srcid;
+
+
+    INSERT INTO buyldgs (orgid, dt, orgname, prtid, ctrid, trans, amt, created, creator)
+    SELECT shpid,
+           dt,
+           name,
+           mktid,
+           NULL,
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
     FROM buys
-    WHERE status IN (1,2) AND oked < $1 GROUP BY shpid;
-
-    -- mkt commission
-    INSERT INTO clears (typ, orgid, till, amt)
-    SELECT 4,
-           shpid,
-           $1,
-           sum(fee * 0.88)
-    FROM buys WHERE status IN (1, 2) AND oked < $1 GROUP BY shpid;
+    WHERE status = 4 AND oked < dt GROUP BY shpid;
 
 END
 $$;
 
-alter function recalc(timestamp) owner to postgres;
+alter function postldgs(timestamp, varchar) owner to postgres;
+
+create function clearsgen(till date, opr character varying) returns void
+    language plpgsql
+as $$
+DECLARE
+
+    TYP_PLAT constant int = 1;
+    TYP_GATEWAY constant int = 2;
+    TYP_SRC constant int = 3;
+    TYP_ZON constant int = 4;
+    TYP_CTR constant int = 5;
+
+--     rates in thousandth
+    BASE constant int = 1000;
+    RATE_PLAT constant int = 4;
+    RATE_GATEWAY constant int = 6;
+    RATE_SRC constant int = 970;
+    RATE_ZON constant int = 4;
+    RATE_CTR constant int = 16;
+
+    now timestamp(0);
+
+BEGIN
+
+    opr = coalesce(opr, 'SYS');
+
+    now = localtimestamp(0);
+
+    INSERT INTO clears (typ, name, created, creator, orgid, till, prtid, ctrid, trans, amt, rate, topay)
+    SELECT TYP_SRC,
+           orgname,
+           till,
+           opr,
+           orgid,
+           dt,
+           prtid,
+           ctrid,
+           sum(trans),
+           sum(amt),
+           RATE_SRC,
+           sum(amt * RATE_SRC / BASE)
+    FROM bookldgs
+    WHERE dt <= till GROUP BY orgid;
+
+END
+$$;
+
+alter function clearsgen(date, varchar) owner to postgres;
 
 create aggregate first(anyelement) (
     sfunc = first_agg,

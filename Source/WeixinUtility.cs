@@ -21,7 +21,7 @@ namespace ChainMart
     {
         static readonly WebClient OpenApi = new WebClient("https://api.weixin.qq.com");
 
-        static readonly WebClient ScPayApi, RtlPayApi;
+        static readonly WebClient SupPayApi, RtlPayApi;
 
         static readonly WebClient SmsApi = new WebClient("https://sms.tencentcloudapi.com");
 
@@ -30,7 +30,7 @@ namespace ChainMart
             appsecret;
 
         public static readonly string
-            scmchid,
+            supmchid,
             rtlmchid,
             noncestr;
         // spbillcreateip;
@@ -50,7 +50,7 @@ namespace ChainMart
             var s = Prog;
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);
-            s.Get(nameof(scmchid), ref scmchid);
+            s.Get(nameof(supmchid), ref supmchid);
             s.Get(nameof(rtlmchid), ref rtlmchid);
             s.Get(nameof(noncestr), ref noncestr);
             s.Get(nameof(key), ref key);
@@ -63,7 +63,7 @@ namespace ChainMart
 
             try
             {
-                ScPayApi = Set("sc_apiclient_cert.p12", scmchid);
+                SupPayApi = Set("sc_apiclient_cert.p12", supmchid);
 
                 RtlPayApi = Set("rtl_apiclient_cert.p12", rtlmchid);
             }
@@ -226,10 +226,10 @@ namespace ChainMart
             }
         }
 
-        public static async Task<(string, string)> PostUnifiedOrderAsync(bool sc, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
+        public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
         {
-            var mchid = sc ? scmchid : rtlmchid;
-            var api = sc ? ScPayApi : RtlPayApi;
+            var mchid = sup ? supmchid : rtlmchid;
+            var api = sup ? SupPayApi : RtlPayApi;
 
             var x = new XElem("xml")
             {
@@ -258,9 +258,9 @@ namespace ChainMart
             return (prepay_id, err_code);
         }
 
-        public static bool OnNotified(bool sc, XElem xe, out string out_trade_no, out decimal total)
+        public static bool OnNotified(bool sup, XElem xe, out string out_trade_no, out decimal total)
         {
-            var mchid = sc ? scmchid : rtlmchid;
+            var mchid = sup ? supmchid : rtlmchid;
 
             total = 0;
             out_trade_no = null;
@@ -292,10 +292,10 @@ namespace ChainMart
             return true;
         }
 
-        public static async Task<decimal> PostOrderQueryAsync(bool sc, string orderno)
+        public static async Task<decimal> PostOrderQueryAsync(bool sup, string orderno)
         {
-            var mchid = sc ? scmchid : rtlmchid;
-            var api = sc ? ScPayApi : RtlPayApi;
+            var mchid = sup ? supmchid : rtlmchid;
+            var api = sup ? SupPayApi : RtlPayApi;
 
             var x = new XElem("xml")
             {
@@ -326,10 +326,10 @@ namespace ChainMart
             return cash_fee;
         }
 
-        public static async Task<string> PostRefundAsync(bool sc, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
+        public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
         {
-            var mchid = sc ? scmchid : rtlmchid;
-            var api = sc ? ScPayApi : RtlPayApi;
+            var mchid = sup ? supmchid : rtlmchid;
+            var api = sup ? SupPayApi : RtlPayApi;
 
             // must be in ascii order
             var x = new XElem("xml")
@@ -370,10 +370,10 @@ namespace ChainMart
         }
 
 
-        public static async Task<string> PostRefundQueryAsync(bool SC, long orderid)
+        public static async Task<string> PostRefundQueryAsync(bool sup, long orderid)
         {
-            var mchid = SC ? scmchid : rtlmchid;
-            var api = SC ? ScPayApi : RtlPayApi;
+            var mchid = sup ? supmchid : rtlmchid;
+            var api = sup ? SupPayApi : RtlPayApi;
 
             var x = new XElem("xml")
             {

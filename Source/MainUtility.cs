@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.CryptoUtility;
@@ -26,17 +25,6 @@ namespace ChainMart
             {
                 return degrees * Math.PI / 180;
             }
-        }
-
-        public static string GetUrlLink(string uri)
-        {
-            string url;
-            url = Application.Prog[nameof(url)];
-            if (uri == null)
-            {
-                return url;
-            }
-            return url + uri;
         }
 
 
@@ -90,37 +78,6 @@ namespace ChainMart
             return h;
         }
 
-
-        public static HtmlBuilder SELECT_ORG(this HtmlBuilder h, string label, string name, int v, Map<int, Org> opts, Map<short, Reg> regs, Func<Org, bool> filter = null, bool required = false)
-        {
-            h.SELECT_(label, name, false, required);
-            if (opts != null)
-            {
-                short last = 0; // last typ
-                for (int i = 0; i < opts.Count; i++)
-                {
-                    var org = opts.ValueAt(i);
-                    if (filter != null && !filter(org))
-                    {
-                        continue;
-                    }
-                    if (org.regid != last)
-                    {
-                        if (last > 0)
-                        {
-                            h.T("</optgroup>");
-                        }
-                        h.T("<optgroup label=\"").T(regs[org.regid]?.name).T("\">");
-                    }
-                    h.OPTION(org.id, org.name);
-
-                    last = org.regid;
-                }
-                h.T("</optgroup>");
-            }
-            h._SELECT();
-            return h;
-        }
 
         public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
         {
@@ -193,21 +150,21 @@ namespace ChainMart
             return MD5(v);
         }
 
-        // 3 days
-        const int EXPIRY = 3600 * 24 * 3;
+
+        const int COOKIE_MAXAGE = 3600 * 24 * 7; // 7 days
 
         public static void SetUserCookies(this WebContext wc, User o)
         {
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: EXPIRY, httponly: true);
+            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: COOKIE_MAXAGE, httponly: true);
 
             // cookie for vip, o means none
-            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: EXPIRY);
+            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: COOKIE_MAXAGE);
 
             // cookie for name and tel
             var nametel = o.name + ' ' + o.tel;
-            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: EXPIRY);
+            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: COOKIE_MAXAGE);
 
             // multiple cookie
             wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameTelStr);
@@ -231,46 +188,6 @@ namespace ChainMart
             }
             h._OL();
             h.FIELD("甲方", a).FIELD("乙方", b);
-        }
-
-
-        public const string LOTS = "健康拼团";
-
-        public static string FormatLotTime(DateTime t)
-        {
-            var sb = new StringBuilder();
-
-            sb.Append(t.Year).Append('-');
-
-            var mon = t.Month;
-            if (mon < 10)
-            {
-                sb.Append('0');
-            }
-            sb.Append(mon).Append('-');
-
-            var day = t.Day;
-            if (day < 10)
-            {
-                sb.Append('0');
-            }
-            sb.Append(day).Append(' ');
-
-            var hr = t.Hour;
-            if (hr < 10)
-            {
-                sb.Append('0');
-            }
-            sb.Append(hr).Append(':');
-
-            var min = t.Minute;
-            if (min < 10)
-            {
-                sb.Append('0');
-            }
-            sb.Append(min);
-
-            return sb.ToString();
         }
     }
 }

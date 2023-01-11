@@ -1,14 +1,15 @@
 
 
-// sc true = supply chain, false = retail
-var WCPay = function (data, sc) {
+// sup: supply or retail
+//
+var WCPay = function (data, sup) {
     WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         data,
         function (res) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
 
-                if (sc) {
+                if (sup) {
                     alert('下单成功');
                 }
                 else {

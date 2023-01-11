@@ -248,7 +248,7 @@ namespace ChainMart
 
                 // // call WeChatPay to prepare order there
                 string trade_no = Buy.GetOutTradeNo(buyid, topay);
-                var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sc: false,
+                var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sup: false,
                     trade_no,
                     topay,
                     prin.im, // the payer

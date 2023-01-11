@@ -153,7 +153,7 @@ namespace ChainMart
 
                     // remote call
                     var trade_no = Buy.GetOutTradeNo(id, topay);
-                    string err = await PostRefundAsync(sc: false, trade_no, refund, refund, trade_no);
+                    string err = await PostRefundAsync(sup: false, trade_no, refund, refund, trade_no);
                     if (err != null) // not success
                     {
                         dc.Rollback();

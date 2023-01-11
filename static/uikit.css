@@ -134,11 +134,9 @@ q {
     font-size: 0.8125rem;
     margin: 4px 0;
     color: #666;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
 }
 
 q::before {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
@@ -14,94 +15,76 @@ namespace ChainMart
         {
             CreateVarWork<V>();
         }
+
+        protected static void ClearTable(HtmlBuilder h, IEnumerable<Clear> arr)
+        {
+            h.TABLE_();
+            var last = 0;
+            foreach (var o in arr)
+            {
+                if (o.prtid != last)
+                {
+                    var spr = GrabObject<int, Org>(o.prtid);
+                    h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                }
+                h.TR_();
+                h.TD(o.till);
+                h.TD(o.name);
+                h._TR();
+
+                last = o.prtid;
+            }
+            h._TABLE();
+        }
     }
+
 
     [AdmlyAuthorize(User.ROL_FIN)]
     [Ui("消费订单结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
-        [Ui("当前结算", group: 1), Tool(Anchor)]
+        [Ui("当前结款", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Clear>();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN ").T(Clear.TYP_SHP).T(" AND ").T(Clear.TYP_MKT).T(" ANd status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+            var arr = await dc.QueryAsync<Clear>(p => p.Set(page));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
+                    h.ALERT("尚无结款");
                     return;
                 }
-                h.TABLE_();
-                var last = 0;
-                foreach (var o in arr)
-                {
-                    if (o.sprid != last)
-                    {
-                        var spr = GrabObject<int, Org>(o.sprid);
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(o.till);
-                    h.TD(o.name);
-                    h._TR();
 
-                    last = o.sprid;
-                }
-                h._TABLE();
+                ClearTable(h, arr);
+
                 h.PAGINATION(arr.Length == 40);
             }, false, 3);
         }
 
-        [Ui(tip: "历史", icon: "history", group: 2), Tool(AnchorPrompt)]
-        public async Task past(WebContext wc, int page)
+        [Ui(tip: "已付款", icon: "credit-card", group: 2), Tool(Anchor)]
+        public async Task oked(WebContext wc, int page)
         {
-            var topOrgs = Grab<int, Org>();
-            int prvid = 0;
-            bool inner = wc.Query[nameof(inner)];
-            if (inner)
-            {
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("按市场");
-                    h.LI_().SELECT("市场", nameof(prvid), prvid, topOrgs, filter: (k, v) => v.EqMarket, required: true);
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_BUY).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
-                var arr = await dc.QueryAsync<Clear>();
-                wc.GivePage(200, h =>
-                {
-                    h.TOOLBAR();
-                    if (arr == null)
-                    {
-                        return;
-                    }
-                    h.TABLE_();
-                    var last = 0;
-                    foreach (var o in arr)
-                    {
-                        if (o.sprid != last)
-                        {
-                            var spr = GrabObject<int, Org>(o.sprid);
-                            h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                        }
-                        h.TR_();
-                        h.TD(o.till);
-                        h.TD(o.name);
-                        h._TR();
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN ").T(Clear.TYP_SHP).T(" AND ").T(Clear.TYP_MKT).T(" AND status = 4 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+            var arr = await dc.QueryAsync<Clear>(p => p.Set(page));
 
-                        last = o.sprid;
-                    }
-                    h._TABLE();
-                    h.PAGINATION(arr.Length == 40);
-                }, false, 3);
-            }
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无结款");
+                    return;
+                }
+
+                ClearTable(h, arr);
+
+                h.PAGINATION(arr.Length == 40);
+            }, false, 3);
         }
 
         [AdmlyAuthorize(1)]
@@ -144,39 +127,27 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应链结款", "财务")]
+    [Ui("供应链订单结款", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlySupplyClearVarWork>
     {
-        [Ui("当前结算", group: 1), Tool(Anchor)]
+        [Ui("当前结款", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
             var arr = await dc.QueryAsync<Clear>();
+
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
+                    h.ALERT("尚无结款");
                     return;
                 }
-                h.TABLE_();
-                var last = 0;
-                foreach (var o in arr)
-                {
-                    if (o.sprid != last)
-                    {
-                        var spr = GrabObject<int, Org>(o.sprid);
-                        h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                    }
-                    h.TR_();
-                    h.TD(o.till);
-                    h.TD(o.name);
-                    h._TR();
 
-                    last = o.sprid;
-                }
-                h._TABLE();
+                ClearTable(h, arr);
+
                 h.PAGINATION(arr.Length == 40);
             }, false, 3);
         }
@@ -199,7 +170,7 @@ namespace ChainMart
             else
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUPPLY).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
+                dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SRC).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
                 var arr = await dc.QueryAsync<Clear>(p => p.Set(prv).Set(page));
                 wc.GivePage(200, h =>
                 {
@@ -212,9 +183,9 @@ namespace ChainMart
                     var last = 0;
                     foreach (var o in arr)
                     {
-                        if (o.sprid != last)
+                        if (o.prtid != last)
                         {
-                            var spr = GrabObject<int, Org>(o.sprid);
+                            var spr = GrabObject<int, Org>(o.prtid);
                             h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
                         }
                         h.TR_();
@@ -222,7 +193,7 @@ namespace ChainMart
                         h.TD(o.name);
                         h._TR();
 
-                        last = o.sprid;
+                        last = o.prtid;
                     }
                     h._TABLE();
                     h.PAGINATION(arr.Length == 40);
@@ -276,7 +247,7 @@ namespace ChainMart
         {
             var org = wc[-1].As<Org>();
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM clears WHERE orgid = @1 ORDER BY dt DESC LIMIT 20 OFFSET 20 * @2");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE orgid = @1 AND status = 1 ORDER BY id LIMIT 40 OFFSET @2 * 40");
             var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
