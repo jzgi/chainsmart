@@ -77,12 +77,21 @@ namespace ChainMart
             {
                 h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
-                h.PIC("/void.webp", css: "uk-width-1-5");
+                // first detail line
+                var first = o.details[0];
+                if (first.itemid > 0)
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(first.itemid).T("/icon")._PIC();
+                }
+                else
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(first.itemid).T("/icon")._PIC();
+                }
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.uname).SPAN(Buy.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q(o.uaddr, "uk-width-expand");
-                h.FOOTER_().CNY(o.pay, true).SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-width-1-3")._SPAN().SPAN_("uk-width-1-3").T(o.details.Length).SP().T("项商品")._SPAN().SPAN_("uk-margin-auto-left").CNY(o.pay)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

@@ -13,9 +13,10 @@ namespace ChainMart
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
             {STU_VOID, null},
-            {STU_CREATED, "已下单"},
-            {STU_ADAPTED, "已发货"},
-            {STU_OKED, "已收货"},
+            {STU_CREATED, "下单"},
+            {STU_ADAPTED, "发货"},
+            {STU_OKED, "收货"},
+            {STU_ABORTED, "撤单"},
         };
 
 

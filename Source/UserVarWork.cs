@@ -302,12 +302,12 @@ namespace ChainMart
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
-            short orgid = wc[-2];
+            var org = wc[-2].As<Org>();
             short id = wc[0];
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE users SET shpid = NULL, shply = 0 WHERE id = @1 AND shpid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204); // no content
         }
@@ -315,32 +315,18 @@ namespace ChainMart
 
     public class ShplyVipVarWork : UserVarWork
     {
-        [Ui(tip: "修改", icon: "pencil"), Tool(ButtonOpen)]
-        public async Task edit(WebContext wc)
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui(tip: "删除大客户身份", icon: "trash"), Tool(ButtonConfirm)]
+        public async Task rm(WebContext wc)
         {
-            short typ;
-            int id = wc[0];
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-                await dc.QueryTopAsync("SELECT typ FROM users WHERE id = @1", p => p.Set(id));
-                dc.Let(out typ);
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("设置专业类型");
-                    h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else
-            {
-                var f = (await wc.ReadAsync<Form>());
-                typ = f[nameof(typ)];
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET typ = @1 WHERE id = @2");
-                await dc.ExecuteAsync(p => p.Set(typ).Set(id));
-                wc.GivePane(200);
-            }
+            var org = wc[-2].As<Org>();
+            short id = wc[0];
+
+            using var dc = NewDbContext(); // NOTE array_length() of empty array is NULL
+            dc.Sql("UPDATE users SET vip = CASE WHEN array_length(array_remove(vip, @1), 1) IS NULL THEN NULL ELSE array_remove(vip, @1) END WHERE id = @2");
+            await dc.ExecuteAsync(p => p.Set(org.id).Set(id));
+
+            wc.Give(204); // no content
         }
     }
 }

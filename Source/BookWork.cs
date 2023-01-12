@@ -196,9 +196,9 @@ namespace ChainMart
                 h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN(Book.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q_("uk-width-expand").T(o.shpname)._Q();
-                h.FOOTER_().SPAN_("uk-width-1-3").T(o.created, time: 0)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

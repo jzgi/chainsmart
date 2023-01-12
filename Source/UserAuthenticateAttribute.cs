@@ -14,6 +14,9 @@ namespace ChainMart
     {
         const string WXAUTH = "wxauth";
 
+        const int COOKIE_MAXAGE = 3600 * 24 * 3; // 3 days
+
+
         public override bool Do(WebContext wc) => throw new NotImplementedException();
 
         public UserAuthenticateAttribute() : base(true)
@@ -42,7 +45,7 @@ namespace ChainMart
             }
 
             // wechat authenticate
-            string openid; 
+            string openid;
             if (wc.Cookies.TryGetValue(nameof(openid), out openid)) // a previously kept openid
             {
                 if (openid != null)
@@ -52,7 +55,7 @@ namespace ChainMart
             }
 
             string state = wc.Query[nameof(state)];
-            if (WXAUTH.Equals(state)) // if weixin auth
+            if (!WXAUTH.Equals(state)) // if not weixin auth
             {
                 // redirect to WeiXin auth
                 WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
@@ -81,11 +84,11 @@ namespace ChainMart
                 var prin = dc.ToObject<User>();
 
                 wc.Principal = prin; // set principal for afterwrads
-                wc.SetUserCookies(prin);
+                wc.SetUserCookies(prin, COOKIE_MAXAGE);
             }
             else // keep the acquired openid and signup
             {
-                wc.SetCookie(nameof(openid), openid);
+                wc.SetCookie(nameof(openid), openid, COOKIE_MAXAGE);
 
                 // new account
                 wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));

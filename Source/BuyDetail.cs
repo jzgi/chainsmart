@@ -46,9 +46,9 @@ namespace ChainMart
 
         public int Key => wareid;
 
-        public decimal Discounted => price - off;
+        public decimal RealPrice => price - off;
 
-        public decimal SubTotal => decimal.Round(Discounted * unitx * qty, 2);
+        public decimal SubTotal => decimal.Round(RealPrice * unitx * qty, 2);
 
 
         internal void SetupWithWare(Ware w, bool offed)

@@ -28,13 +28,28 @@ namespace ChainMart
                 h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().SPAN(o.uaddr)._DIV()._LI();
                 h.LI_().FIELD("卖方", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().LABEL("商品明细").TABLE(o.details, d => h.TD(d.name).TD2(d.qty, "件").TD(d.SubTotal, true))._LI();
-                h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
+
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
+
+                h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
+                h.LI_().TABLE(o.details, d =>
+                {
+                    h.TD_().T(d.name);
+                    if (d.unitx != 1)
+                    {
+                        h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
+                    }
+                    h._TD();
+                    h.TD_().CNY(d.RealPrice).SP().SUB(d.unit)._TD();
+                    h.TD2(d.qty, "件");
+                    h.TD(d.SubTotal, true);
+                });
+                h._LI();
+
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);

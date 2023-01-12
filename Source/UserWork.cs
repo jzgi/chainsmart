@@ -525,7 +525,7 @@ namespace ChainMart
                 {
                     h.FORM_();
 
-                    h.FIELDSUL_("查找用户账号");
+                    h.FIELDSUL_("查询用户账号");
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                     h._FIELDSUL();
 
@@ -537,16 +537,13 @@ namespace ChainMart
 
                         if (o != null)
                         {
-                            if (o.vip != null)
+                            if (o.IsVipOf(org.id))
                             {
-                                if (o.vip.Contains(org.id))
-                                {
-                                    h.LI_().FIELD("", "已经是本单位的大客户")._LI();
-                                }
-                                else if (o.vip.Length >= 4)
-                                {
-                                    h.LI_().FIELD("", "已经是４个商户的大客户，不能添加")._LI();
-                                }
+                                h.ALERT("该用户已经是大客户");
+                            }
+                            else if (o.HasVipMAx)
+                            {
+                                h.ALERT("该用户已经是４个商户的大客户");
                             }
                             else
                             {
@@ -554,6 +551,10 @@ namespace ChainMart
                                 h.FIELDSUL_().LI_().FIELD("用户名称", o.name)._LI()._FIELDSUL();
                                 h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                             }
+                        }
+                        else
+                        {
+                            h.ALERT("无此用户账号");
                         }
                     }
                     h._FORM();

@@ -119,6 +119,12 @@ namespace ChainMart
         public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
 
 
+        public bool IsVipOf(int orgid) => vip != null && vip.Contains(orgid);
+
+
+        public bool HasVipMAx => vip != null && vip.Length >= 4;
+
+
         /// <summary>
         /// admly, srcid + srcly, shpid + shply
         /// </summary>

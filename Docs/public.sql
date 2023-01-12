@@ -35,7 +35,7 @@ create table entities
 
 alter table entities owner to postgres;
 
-create table ldgs_
+create table _ldgs_
 (
     seq integer,
     acct varchar(20),
@@ -47,17 +47,17 @@ create table ldgs_
     stamp timestamp(0)
 );
 
-alter table ldgs_ owner to postgres;
+alter table _ldgs_ owner to postgres;
 
-create table peerldgs_
+create table _peerldgs_
 (
     peerid smallint
 )
-    inherits (ldgs_);
+    inherits (_ldgs_);
 
-alter table peerldgs_ owner to postgres;
+alter table _peerldgs_ owner to postgres;
 
-create table peers_
+create table _peers_
 (
     id smallint not null
         constraint peers__pk
@@ -67,16 +67,16 @@ create table peers_
 )
     inherits (entities);
 
-alter table peers_ owner to postgres;
+alter table _peers_ owner to postgres;
 
-create table accts_
+create table _accts_
 (
     no varchar(20),
     v integer
 )
     inherits (entities);
 
-alter table accts_ owner to postgres;
+alter table _accts_ owner to postgres;
 
 create table cats
 (
@@ -247,6 +247,9 @@ create table items
 
 alter table items owner to postgres;
 
+create index items_srcidstatus_idx
+    on items (srcid, status);
+
 create table lots
 (
     id serial not null
@@ -334,6 +337,9 @@ create unique index books_single_idx
 create index lots_nend_idx
     on lots (nend);
 
+create index lots_srcidstatus_idx
+    on lots (srcid, status);
+
 create table buys
 (
     id bigserial not null
@@ -371,36 +377,6 @@ create index buys_uidstatus_idx
 create index buys_shpidstatus_idx
     on buys (shpid, status);
 
-create table bookldgs
-(
-    orgid integer not null,
-    dt date,
-    orgname integer not null,
-    prtid integer not null,
-    ctrid integer not null,
-    trans integer,
-    amt money,
-    created timestamp(0),
-    creator varchar(12)
-);
-
-alter table bookldgs owner to postgres;
-
-create table buyldgs
-(
-    orgid integer not null,
-    dt date,
-    orgname integer not null,
-    prtid integer not null,
-    ctrid integer,
-    trans integer,
-    amt money,
-    created timestamp(0),
-    creator varchar(12)
-);
-
-alter table buyldgs owner to postgres;
-
 create table clears
 (
     id serial not null,
@@ -417,6 +393,42 @@ create table clears
     inherits (entities);
 
 alter table clears owner to postgres;
+
+create table buyldgs
+(
+    orgid integer not null,
+    acct integer not null,
+    dt date,
+    descr varchar(12),
+    trans integer,
+    qtyx numeric(8,1),
+    amt money,
+    created timestamp(0),
+    creator varchar(12)
+);
+
+alter table buyldgs owner to postgres;
+
+create unique index buyldgs_orgidacctdt_idx
+    on buyldgs (orgid, acct, dt);
+
+create table bookldgs
+(
+    orgid integer not null,
+    acct integer not null,
+    dt date,
+    descr varchar(12),
+    trans integer,
+    qtyx numeric(8,1),
+    amt money,
+    created timestamp(0),
+    creator varchar(12)
+);
+
+alter table bookldgs owner to postgres;
+
+create unique index bookldgs_orgidacctdt_idx
+    on bookldgs (orgid, acct, dt);
 
 create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
 SELECT o.typ,

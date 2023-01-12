@@ -151,20 +151,18 @@ namespace ChainMart
         }
 
 
-        const int COOKIE_MAXAGE = 3600 * 24 * 7; // 7 days
-
-        public static void SetUserCookies(this WebContext wc, User o)
+        public static void SetUserCookies(this WebContext wc, User o, int maxage = 3600 * 24 * 3)
         {
             // token cookie
             var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: COOKIE_MAXAGE, httponly: true);
+            var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, httponly: true);
 
             // cookie for vip, o means none
-            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: COOKIE_MAXAGE);
+            var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: maxage);
 
             // cookie for name and tel
             var nametel = o.name + ' ' + o.tel;
-            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: COOKIE_MAXAGE);
+            var nameTelStr = WebUtility.BuildSetCookie(nameof(nametel), (nametel), maxage: maxage);
 
             // multiple cookie
             wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameTelStr);

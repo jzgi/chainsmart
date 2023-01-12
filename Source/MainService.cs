@@ -75,6 +75,7 @@ namespace ChainMart
                 // successfully signed in
                 wc.Principal = prin;
                 wc.SetUserCookies(prin);
+
                 wc.GiveRedirect(url ?? "/");
             }
         }
