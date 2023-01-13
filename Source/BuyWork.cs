@@ -38,31 +38,43 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").H4(o.name)._HEADER();
+                    var shp = GrabObject<int, Org>(o.shpid);
+
+                    h.HEADER_("uk-card-header").H4(o.name).SP().ATEL(shp.tel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
+
                     h.UL_("uk-card-body uk-list uk-list-divider");
-                    h.LI_().T(o.created)._LI();
+
+                    h.LI_().T(o.uaddr).SP().T(o.utel).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
+
                     for (int i = 0; i < o?.details.Length; i++)
                     {
-                        var ln = o.details[i];
+                        var d = o.details[i];
+
                         h.LI_();
-                        if (ln.itemid > 0)
+
+                        h.PIC("/ware/", d.wareid, "/icon", css: "uk-width-micro");
+
+                        h.SPAN_("uk-width-expand").SP().T(d.name);
+                        if (d.unitx != 1)
                         {
-                            h.PIC("/item/", ln.itemid, "/icon", css: "uk-width-micro");
+                            h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
                         }
-                        else
-                        {
-                            h.PIC("/ware/", ln.itemid, "/icon", css: "uk-width-micro");
-                        }
-                        h.SPAN(ln.name, "uk-width-expand");
-                        h.SPAN(ln.qty, "uk-width-1-6");
+                        h._SPAN();
+
+                        h.SPAN_("uk-width-1-6 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
+                        h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T('件')._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
                         h._LI();
                     }
+                    h._LI();
+
                     h._UL();
-                    h.FOOTER_("uk-card-footer").T("合计：").T(o.topay)._FOOTER();
+
+                    h.NAVVAR(o.Key, css: "uk-card-footer uk-flex-right", status: o.status);
                 });
 
                 h.PAGINATION(arr?.Length > 10);
-            });
+            }, false, 4);
         }
     }
 
@@ -77,16 +89,10 @@ namespace ChainMart
             {
                 h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
-                // first detail line
-                var first = o.details[0];
-                if (first.itemid > 0)
-                {
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(first.itemid).T("/icon")._PIC();
-                }
-                else
-                {
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(first.itemid).T("/icon")._PIC();
-                }
+                // the first detail
+                var dtl = o.details[0];
+
+                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(dtl.wareid).T("/icon")._PIC();
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
@@ -117,9 +123,8 @@ namespace ChainMart
                     h.ALERT("尚无网单");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 4);
         }
 
         [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
@@ -139,9 +144,8 @@ namespace ChainMart
                     h.ALERT("尚无发货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 4);
         }
 
         [BizNotice(BUY_OKED)]
@@ -162,9 +166,8 @@ namespace ChainMart
                     h.ALERT("尚无收货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 4);
         }
 
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
@@ -184,9 +187,8 @@ namespace ChainMart
                     h.ALERT("尚无撤单");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 4);
         }
     }
 
@@ -199,8 +201,9 @@ namespace ChainMart
         {
             var mkt = wc[-1].As<Org>();
 
-            using var dc = NewDbContext();
             const short msk = Entity.MSK_EXTRA;
+
+            using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Buy.Empty, msk).T(" FROM buys WHERE mktid = @1 AND state >= 0 ORDER BY uid DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id), msk);
 

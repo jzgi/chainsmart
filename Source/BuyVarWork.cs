@@ -31,10 +31,6 @@ namespace ChainMart
 
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
 
-                if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
-
                 h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
                 h.LI_().TABLE(o.details, d =>
                 {
@@ -50,6 +46,10 @@ namespace ChainMart
                 });
                 h._LI();
 
+                if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
+
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -59,7 +59,7 @@ namespace ChainMart
 
     public class MyBuyVarWork : BuyVarWork
     {
-        [Ui("收货", "确认收货？", icon: "sign-in"), Tool(ButtonConfirm, status: STU_ADAPTED)]
+        [Ui("收货", "确认收货？"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];

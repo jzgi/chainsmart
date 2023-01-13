@@ -1848,9 +1848,10 @@ button.uk-button-secondary {
 
 
 .uk-button-small {
-    padding: 2px 12px;
+    padding: 4px 12px;
     font-size: 0.875rem;
     border: none;
+    background-color: #ededed;
 }
 
 .uk-button-large {

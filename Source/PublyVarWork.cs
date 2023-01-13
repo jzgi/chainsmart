@@ -114,10 +114,6 @@ namespace ChainMart
                     {
                         h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
                     }
-                    else if (o.itemid > 0)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    }
                     else
                     {
                         h.PIC("/void.webp", css: "uk-width-1-5");

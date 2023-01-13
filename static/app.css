@@ -35,8 +35,8 @@ mark.state-4 {
 .qtyselect {
     vertical-align: middle;
     display: inline-flex;
-    background-color: #666;
-    color: #fff;
+    background-color: #ddd;
+    color: #333;
     height: auto !important;
     box-sizing: border-box;
     padding: 4px;
@@ -56,8 +56,8 @@ mark.state-4 {
     width: 100%;
     max-width: 100%;
     height: 100%;
-    background-color: #666;
-    color: #fff;
+    background-color: #ddd;
+    color: #333;
 }
 
 .nametel {

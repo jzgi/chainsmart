@@ -25,7 +25,7 @@ namespace ChainMart
             {STU_CREATED, "下单"},
             {STU_ADAPTED, "发货"},
             {STU_OKED, "收货"},
-            {STU_ABORTED, "撤销"},
+            {STU_ABORTED, "撤单"},
         };
 
 

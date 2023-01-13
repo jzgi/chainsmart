@@ -36,7 +36,7 @@ namespace ChainMart
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
-            });
+            }, false, 4);
         }
 
         protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
@@ -76,17 +76,17 @@ namespace ChainMart
     {
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600 * 6);
+            await doimg(wc, nameof(icon), true, 3600 * 4);
         }
 
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), true, 3600 * 6);
+            await doimg(wc, nameof(pic), true, 3600 * 4);
         }
 
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, nameof(m) + sub, true, 3600 * 6);
+            await doimg(wc, nameof(m) + sub, true, 3600 * 4);
         }
     }
 
@@ -147,21 +147,21 @@ namespace ChainMart
         [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), false, 3);
+            await doimg(wc, nameof(icon), false, 4);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), false, 3);
+            await doimg(wc, nameof(pic), false, 4);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 6)]
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, "m" + sub, false, 3);
+            await doimg(wc, "m" + sub, false, 4);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]

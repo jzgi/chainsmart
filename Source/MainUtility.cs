@@ -104,7 +104,7 @@ namespace ChainMart
 
         public static HtmlBuilder ATEL(this HtmlBuilder h, string tel = null)
         {
-            h.T("<a class=\"uk-icon-link\" uk-icon=\"receiver\" href=\"tel:").T(tel).T("\"></a>");
+            h.T("<a class=\"uk-icon-link uk-circle\" uk-icon=\"receiver\" href=\"tel:").T(tel).T("\"></a>");
             return h;
         }
 

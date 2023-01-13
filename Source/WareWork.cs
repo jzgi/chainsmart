@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Entity;
@@ -23,6 +24,35 @@ namespace ChainMart
     [Ui("商品设置", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
+        protected static void MainGrid(HtmlBuilder h, Ware[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                if (o.icon)
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name);
+                if (o.unitx != 1)
+                {
+                    h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                }
+                h.SPAN(Ware.Statuses[o.status], "uk-badge");
+                h._HEADER();
+
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
         [Ui("在线商品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -41,39 +71,8 @@ namespace ChainMart
                     h.ALERT("暂无商品");
                     return;
                 }
-
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    if (o.itemid > 0)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
-                    }
-                    else if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                    {
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name);
-                    if (o.unitx != 1)
-                    {
-                        h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
-                    }
-                    h.SPAN(Ware.Statuses[o.status], "uk-badge");
-                    h._HEADER();
-
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            });
+                MainGrid(h, arr);
+            }, false, 4);
         }
 
         [Ui(icon: "ban", group: 2), Tool(Anchor)]
@@ -93,31 +92,8 @@ namespace ChainMart
                     h.ALERT("暂无商品");
                     return;
                 }
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                    if (o.itemid > 0)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
-                    }
-                    else if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                    {
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            });
+                MainGrid(h, arr);
+            }, false, 4);
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
@@ -220,9 +196,13 @@ namespace ChainMart
                 m.tip = item.tip;
 
                 // insert
-                using var dc = NewDbContext();
-                dc.Sql("INSERT INTO wares ").colset(Ware.Empty, msk)._VALUES_(Ware.Empty, msk);
-                await dc.ExecuteAsync(p => m.Write(p, msk));
+                using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+
+                dc.Sql("INSERT INTO wares ").colset(Ware.Empty, msk)._VALUES_(Ware.Empty, msk).T(" RETURNING id");
+                var wareid = (int) await dc.ScalarAsync(p => m.Write(p, msk));
+
+                dc.Sql("UPDATE wares SET (icon, pic) = (SELECT icon, pic FROM items WHERE id = @1) WHERE id = @2");
+                await dc.ExecuteAsync(p => p.Set(m.itemid).Set(wareid));
 
                 wc.GivePane(200); // close dialog
             }
