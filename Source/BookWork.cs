@@ -153,7 +153,6 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3] OR targs @> ARRAY[@4])");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid).Set(org.MarketId));
 
-
             wc.GivePage(200, h =>
             {
                 h.TOPBAR_().NAVBAR(nameof(@new), typ, cats)._TOPBAR();

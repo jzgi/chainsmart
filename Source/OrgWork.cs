@@ -20,9 +20,31 @@ namespace ChainMart
     {
     }
 
-    [Ui("管理下级机构", "业务")]
+    [Ui("盟主机构管理", "业务")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
+        protected static void MainGrid(HtmlBuilder h, Org[] arr, User prin, bool shply)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                if (o.icon)
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                }
+                else h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q2(o.Ext, o.tip, css: "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((shply ? "shply" : "/srcly/"), o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
 #if ZHNT
         [Ui("市场", group: 1), Tool(Anchor)]
 #else
@@ -39,27 +61,17 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 1);
-
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            }, false, 15);
+#if ZHNT
+                    h.ALERT("市场");
+#else
+                    h.ALERT("驿站");
+#endif
+                    return;
+                }
+                MainGrid(h, arr, prin, true);
+            }, false, 12);
         }
 
         [Ui("供区", group: 2), Tool(Anchor)]
@@ -74,26 +86,13 @@ namespace ChainMart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(subscript: 2);
-
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
-                    }
-                    else h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            }, false, 15);
+                    h.ALERT("供区");
+                    return;
+                }
+                MainGrid(h, arr, prin, true);
+            }, false, 12);
         }
 
         [Ui("新建", "新建下级机构", icon: "plus", group: 7), Tool(ButtonOpen)]
@@ -188,7 +187,7 @@ namespace ChainMart
                     else h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                     h._ASIDE();

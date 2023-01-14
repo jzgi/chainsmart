@@ -10,7 +10,7 @@ namespace ChainMart
 {
     public class WareVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
+        public virtual async Task @default(WebContext wc)
         {
             int wareid = wc[0];
             var org = wc[-2].As<Org>();
@@ -35,7 +35,7 @@ namespace ChainMart
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
-            }, false, 4);
+            }, false, 6);
         }
 
         protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
@@ -75,9 +75,42 @@ namespace ChainMart
 
     public class PublyWareVarWork : WareVarWork
     {
+        public override async Task @default(WebContext wc)
+        {
+            int wareid = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Ware>(p => p.Set(wareid));
+
+            wc.GivePane(200, h =>
+            {
+                h.ARTICLE_("uk-card uk-card-primary");
+                if (o.pic)
+                {
+                    h.PIC_().T("/ware/").T(o.id).T("/pic")._PIC();
+                }
+                h.H4("产品详情", "uk-card-header");
+
+                h.SECTION_("uk-card-body");
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+
+                h._UL();
+                h._SECTION();
+                h._ARTICLE();
+            }, true, 900);
+        }
+
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600 * 4);
+            await doimg(wc, nameof(icon), true, 3600 * 6);
+        }
+
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), true, 3600 * 6);
         }
     }
 
@@ -139,14 +172,14 @@ namespace ChainMart
         [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), false, 4);
+            await doimg(wc, nameof(icon), false, 6);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), false, 4);
+            await doimg(wc, nameof(pic), false, 6);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]

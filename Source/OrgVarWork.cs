@@ -236,7 +236,7 @@ namespace ChainMart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().SELECT("关联中控", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
 
-                    h._FIELDSUL()._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else // POST

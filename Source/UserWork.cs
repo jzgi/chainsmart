@@ -117,7 +117,31 @@ namespace ChainMart
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
-        [Ui("浏览", group: 1), Tool(Anchor)]
+        protected static void MainGrid(HtmlBuilder h, User[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                if (o.icon)
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                }
+                else
+                {
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+                }
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                h.Q(o.tel, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
+        [Ui("用户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             using var dc = NewDbContext();
@@ -126,14 +150,11 @@ namespace ChainMart
             {
                 h.TOOLBAR();
 
-                h.SECTION_("uk-card uk-card-primary");
-                h.H4("总用户数", "uk-card-header");
-                h.DIV_("uk-card-body").T(num)._DIV();
-                h._SECTION();
+                h.ALERT("平台用户总数： " + num);
             });
         }
 
-        [Ui(tip: "查询", icon: "search"), Tool(AnchorPrompt)]
+        [Ui(tip: "查询用户", icon: "search", group: 2), Tool(AnchorPrompt)]
         public async Task search(WebContext wc)
         {
             bool inner = wc.Query[nameof(inner)];
@@ -142,8 +163,8 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("查找用户");
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                    h.FORM_().FIELDSUL_("用户账号");
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }
@@ -158,26 +179,12 @@ namespace ChainMart
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    h.MAINGRID(arr, o =>
+                    if (arr == null)
                     {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                        if (o.icon)
-                        {
-                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                        }
-                        else
-                        {
-                            h.PIC("/void.webp", css: "uk-width-1-5");
-                        }
-
-                        h.ASIDE_();
-                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                        h.Q(o.tel, "uk-width-expand");
-                        h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                        h._ASIDE();
-
-                        h._A();
-                    });
+                        h.ALERT("无此用户");
+                        return;
+                    }
+                    MainGrid(h, arr);
                 }, false, 30);
             }
         }
@@ -440,7 +447,7 @@ namespace ChainMart
 
                 h.MAINGRID(arr, o =>
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
                     if (o.icon)
                     {
@@ -473,8 +480,8 @@ namespace ChainMart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("注册的用户账号");
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(search), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                    h.FORM_().FIELDSUL_("用户账号");
+                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
                     h._FIELDSUL()._FORM();
                 });
             }

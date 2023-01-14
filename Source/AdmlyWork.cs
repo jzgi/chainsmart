@@ -11,6 +11,13 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
+            CreateWork<AdmlySetgWork>("setg");
+
+            CreateWork<AdmlyAccessWork>("access");
+
+            CreateWork<AdmlyNodeWork>("node");
+
+
             CreateWork<AdmlyRegWork>("reg");
 
             CreateWork<AdmlyUserWork>("user");
@@ -25,13 +32,6 @@ namespace ChainMart
             CreateWork<AdmlyBuyClearWork>("buyclr");
 
             CreateWork<AdmlyBookClearWork>("bookclr");
-
-
-            CreateWork<AdmlySetgWork>("setg");
-
-            CreateWork<AdmlyAccessWork>("access");
-
-            CreateWork<AdmlyNodeWork>("node");
         }
 
         public void @default(WebContext wc)
@@ -57,7 +57,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(1)]
-    [Ui("平台信息和参数", "常规")]
+    [Ui("基本信息和参数", "常规")]
     public class AdmlySetgWork : WebWork
     {
         public static readonly decimal
