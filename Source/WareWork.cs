@@ -102,7 +102,7 @@ namespace ChainMart
 
                 h.DIV_("uk-col");
                 h.T("<output class=\"nametel\" name=\"nametel\" cookie=\"nametel\" onfix=\"this.value = event.detail;\"></output>");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" cookie=\"addr\" onfix=\"this.value = event.detail;\" required>");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" maxlength=\"30\" minlength=\"4\" cookie=\"addr\" onfix=\"this.value = event.detail;\" required>");
                 h._DIV();
 
                 h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
