@@ -24,10 +24,12 @@ namespace ChainMart
         internal decimal off;
         internal short min;
         internal short max;
-        internal short step;
+        internal decimal avail;
 
         internal bool icon;
         internal bool pic;
+
+        internal WareOp[] ops;
 
         public override void Read(ISource s, short msk = 255)
         {
@@ -50,12 +52,16 @@ namespace ChainMart
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
                 s.Get(nameof(max), ref max);
-                s.Get(nameof(step), ref step);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(avail), ref avail);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
+            }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Get(nameof(ops), ref ops);
             }
         }
 
@@ -80,17 +86,21 @@ namespace ChainMart
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
                 s.Put(nameof(max), max);
-                s.Put(nameof(step), step);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(avail), avail);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
+            }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Put(nameof(ops), ops);
             }
         }
 
         public int Key => id;
 
-        public decimal Discounted => price - off;
+        public decimal RealPrice => price - off;
     }
 }

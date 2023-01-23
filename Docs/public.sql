@@ -13,10 +13,21 @@ create type buydetail as
     unitx numeric(6,1),
     price money,
     "off" money,
-    qty smallint
+    qty numeric(6,1)
 );
 
 alter type buydetail owner to postgres;
+
+create type wareop as
+(
+    dt timestamp(0),
+    typ smallint,
+    remain numeric(6,1),
+    qty numeric(6,1),
+    by varchar(12)
+);
+
+alter type wareop owner to postgres;
 
 create table entities
 (
@@ -183,29 +194,6 @@ create index users_srcid_idx
 create index users_vip_idx
     on users (vip);
 
-create table wares
-(
-    id serial not null
-        constraint wares_pk
-            primary key,
-    shpid integer not null
-        constraint wares_shpid_fk
-            references orgs,
-    itemid integer,
-    unit varchar(4),
-    unitx numeric(6,1),
-    price money,
-    "off" money,
-    min smallint,
-    max smallint,
-    step smallint,
-    icon bytea,
-    pic bytea
-)
-    inherits (entities);
-
-alter table wares owner to postgres;
-
 create table tests
 (
     id serial not null
@@ -246,6 +234,32 @@ create table items
     inherits (entities);
 
 alter table items owner to postgres;
+
+create table wares
+(
+    id serial not null
+        constraint wares_pk
+            primary key,
+    shpid integer not null
+        constraint wares_shpid_fk
+            references orgs,
+    itemid integer
+        constraint wares_itemid_fk
+            references items,
+    unit varchar(4),
+    unitx numeric(6,1),
+    price money,
+    "off" money,
+    min smallint,
+    max smallint,
+    avail numeric(6,1) default 0.0 not null,
+    icon bytea,
+    pic bytea,
+    ops wareop[]
+)
+    inherits (entities);
+
+alter table wares owner to postgres;
 
 create index items_srcidstatus_idx
     on items (srcid, status);
@@ -356,7 +370,7 @@ create table buys
             references users,
     uname varchar(12),
     utel varchar(11),
-    uaddr varchar(20),
+    uaddr varchar(30),
     uim varchar(28),
     details buydetail[],
     topay money,
@@ -534,34 +548,6 @@ FROM orgs o;
 
 alter table orgs_vw owner to postgres;
 
-create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitx, price, "off", min, max, step, icon, pic) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.shpid,
-       o.itemid,
-       o.unit,
-       o.unitx,
-       o.price,
-       o.off,
-       o.min,
-       o.max,
-       o.step,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic
-FROM wares o;
-
-alter table wares_vw owner to postgres;
-
 create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential, admly, srcid, srcly, shpid, shply, vip, icon) as
 SELECT u.typ,
        u.state,
@@ -589,6 +575,35 @@ SELECT u.typ,
 FROM users u;
 
 alter table users_vw owner to postgres;
+
+create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, itemid, unit, unitx, price, "off", min, max, avail, icon, pic, ops) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.shpid,
+       o.itemid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.max,
+       o.avail,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.ops
+FROM wares o;
+
+alter table wares_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable

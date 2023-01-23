@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO.MemoryMappedFiles;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
+using Npgsql.TypeHandlers.NumericHandlers;
 using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
@@ -22,16 +24,18 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", o.name)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
-                h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
+                h.LI_().FIELD("商品名", o.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().FIELD("基本单位", o.unit).FIELD2("每件含量", o.unitx, o.unit)._LI();
+                h.LI_().FIELD("单价", o.price, money: true).FIELD("大客户立减", o.off, money: true)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
-                h.LI_().FIELD("递增", o.step)._LI();
-                h.LI_().FIELD("处理进展", o.status, Ware.Statuses).FIELD("应用状况", States[o.state])._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator, "&nbsp;")._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter, "&nbsp;")._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker, "&nbsp;")._LI();
+                h.LI_().FIELD2("当前库存", o.avail, o.unit)._LI();
+                h.LI_().FIELD("状态", Ware.Statuses[o.status])._LI();
+
+                if (o.creator != null) h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -117,11 +121,11 @@ namespace ChainMart
     public class ShplyWareVarWork : WareVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改货品信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int wareid = wc[0];
-            var src = wc[-2].As<Org>();
+            var shp = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
 
@@ -135,12 +139,11 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
-                    h.LI_().TEXT("产品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("货品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -161,12 +164,76 @@ namespace ChainMart
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, msk);
-                    p.Set(wareid).Set(src.id);
+                    p.Set(wareid).Set(shp.id);
                 });
 
                 wc.GivePane(200); // close dialog
             }
         }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        public async Task avail(WebContext wc)
+        {
+            int wareid = wc[0];
+            var shp = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+            var cats = Grab<short, Cat>();
+
+            short typ = 0;
+            decimal qty = 0.0M;
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+                dc.Sql("SELECT unit, avail, ops FROM wares_vw WHERE id = @1");
+                await dc.QueryTopAsync(p => p.Set(wareid));
+                dc.Let(out string unit);
+                dc.Let(out decimal avail);
+                dc.Let(out WareOp[] ops);
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_();
+
+                    h.LI_().SELECT("库存操作", nameof(typ), typ, WareOp.Typs, required: true).NUMBER("数量" + '（' + unit + '）', nameof(qty), qty, money: false)._LI();
+                    h.LI_("uk-flex-center").BUTTON("确认", nameof(avail))._LI();
+                    h._FIELDSUL()._FORM();
+
+                    h.TABLE(ops, o =>
+                    {
+                        h.TD_().T(o.dt, time: 1)._TD();
+                        h.TD(o.remain, right: true);
+                        h.TD(WareOp.Typs[o.typ]);
+                        h.TD(o.qty, right: true);
+                        h.TD(o.by);
+                    });
+                });
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                typ = f[nameof(typ)];
+                qty = f[nameof(qty)];
+
+                // update
+                using var dc = NewDbContext();
+
+                var now = DateTime.Now;
+                if (typ < 5) // add
+                {
+                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                }
+                else // reduce
+                {
+                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                }
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]

@@ -62,7 +62,7 @@ namespace ChainMart
                 dc.Let(out decimal topay);
 
                 // put a notice to the booker
-                NoticeBox.Put(shpid, Notice.BOOK_ADAPTED, 1, topay);
+                NoticeBot.Put(shpid, Notice.BOOK_ADAPTED, 1, topay);
             }
 
             wc.Give(204);
@@ -96,7 +96,7 @@ namespace ChainMart
                     }
 
                     // put a notice to the booker
-                    NoticeBox.Put(shpid, Notice.BOOK_ABORTED, 1, refund);
+                    NoticeBot.Put(shpid, Notice.BOOK_ABORTED, 1, refund);
                 }
             }
             catch (Exception)
@@ -129,7 +129,7 @@ namespace ChainMart
                 dc.Let(out decimal topay);
 
                 // put a notice to the processor
-                NoticeBox.Put(srcid, Notice.BOOK_OKED, 1, topay);
+                NoticeBot.Put(srcid, Notice.BOOK_OKED, 1, topay);
             }
 
             wc.Give(204);

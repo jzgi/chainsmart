@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -6,13 +7,39 @@ using static ChainFx.Fabric.Nodality;
 
 namespace ChainMart
 {
-    public abstract class RptWork : WebWork
+    public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<V>();
+        }
+
+        protected static void ClearTable(HtmlBuilder h, IEnumerable<Clear> arr)
+        {
+            h.TABLE_();
+            var last = 0;
+            foreach (var o in arr)
+            {
+                if (o.prtid != last)
+                {
+                    var spr = GrabObject<int, Org>(o.prtid);
+                    h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                }
+                h.TR_();
+                h.TD(o.till);
+                h.TD(o.name);
+                h._TR();
+
+                last = o.prtid;
+            }
+            h._TABLE();
+        }
     }
 
-    [AdmlyAuthorize(1)]
-    [Ui("供应链业务报表", "业务")]
-    public class AdmlyBookRptWork : RptWork
+
+    [AdmlyAuthorize(User.ROL_FIN)]
+    [Ui("供应链业务账表", "财务")]
+    public class AdmlyBookLdgWork : LdgWork<AdmlyLdgVarWork>
     {
         public void @default(WebContext wc, int page)
         {
@@ -20,9 +47,9 @@ namespace ChainMart
         }
     }
 
-    [AdmlyAuthorize(1)]
-    [Ui("消费业务报表", "业务")]
-    public class AdmlyBuyRptWork : RptWork
+    [AdmlyAuthorize(User.ROL_FIN)]
+    [Ui("消费业务账表", "财务")]
+    public class AdmlyBuyLdgWork : LdgWork<AdmlyLdgVarWork>
     {
         public void @default(WebContext wc, int page)
         {
@@ -32,7 +59,7 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
     [Ui("综合报表", "盟主")]
-    public class ZonlyRptWork : RptWork
+    public class ZonlyLdgWork : LdgWork<OrglyLdgVarWork>
     {
         public void @default(WebContext wc, int page)
         {
@@ -86,7 +113,7 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_SRC, User.ROL_)]
     [Ui("业务报表", "商户")]
-    public class SrclyRptWork : RptWork
+    public class SrclyLdgWork : LdgWork<OrglyLdgVarWork>
     {
         public async Task @default(WebContext wc, int page)
         {
@@ -95,17 +122,7 @@ namespace ChainMart
 
     [OrglyAuthorize(Org.TYP_DST, User.ROL_)]
     [Ui("业务报表", "中库")]
-    public class CtrlyRptWork : RptWork
-    {
-        [Ui("待收", group: 1), Tool(Modal.Anchor)]
-        public async Task @default(WebContext wc, int page)
-        {
-        }
-    }
-
-    [OrglyAuthorize(Org.TYP_SHP, User.ROL_)]
-    [Ui("业务报表", "商户")]
-    public class ShplyRptWork : RptWork
+    public class CtrlyLdgWork : LdgWork<OrglyLdgVarWork>
     {
         [Ui("待收", group: 1), Tool(Modal.Anchor)]
         public async Task @default(WebContext wc, int page)

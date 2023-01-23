@@ -75,7 +75,7 @@ namespace ChainMart
                     h.LI_().T("（暂无市场）")._LI();
                 }
                 h._FORM();
-            }, true, 900, title: Self.Name, onload: "fixAll();");
+            }, true, 720, title: Self.Name, onload: "fixAll();");
         }
 
 
@@ -122,7 +122,7 @@ namespace ChainMart
                         // War("update ok!");
 
                         // put a notice
-                        NoticeBox.Put(shpid, Notice.BUY_CREATED, 1, cash);
+                        NoticeBot.Put(shpid, Notice.BUY_CREATED, 1, cash);
                     }
                 }
             }

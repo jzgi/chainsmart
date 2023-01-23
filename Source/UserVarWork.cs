@@ -8,7 +8,7 @@ namespace ChainMart
 {
     public abstract class UserVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
+        public virtual async Task @default(WebContext wc)
         {
             int uid = wc[0];
 
@@ -25,11 +25,9 @@ namespace ChainMart
                 h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
-                h._UL();
-
-                h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD2("创建", o.creator, o.created)._LI();
-                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
+
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -38,12 +36,11 @@ namespace ChainMart
     }
 
 
-    [Ui("我的账号信息", "账号")]
-    public class MyInfoVarWork : WebWork
+    [Ui("我的账号信息", "账号功能")]
+    public class MyInfoVarWork : UserVarWork
     {
-        public void @default(WebContext wc)
+        public override async Task @default(WebContext wc)
         {
-            int uid = wc[-1];
             var o = (User) wc.Principal;
 
             wc.GivePane(200, h =>
@@ -54,42 +51,38 @@ namespace ChainMart
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
-                h._UL();
-
-                h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD2("创建", o.creator, o.created)._LI();
-                h.LI_().FIELD2("更改", o.adapter, o.adapted)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true);
-
-                // spr and rvr
-            }, false, 7);
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+            }, false, 6);
         }
 
-        [Ui("信息", icon: "pencil"), Tool(ButtonShow)]
+
+        [Ui("设置", icon: "pencil"), Tool(ButtonShow)]
         public async Task setg(WebContext wc)
         {
             const string PASSMASK = "t#0^0z4R4pX7";
             string name;
             string tel;
-            string password;
+            // string password;
             var prin = (User) wc.Principal;
             if (wc.IsGet)
             {
                 name = prin.name;
                 tel = prin.tel;
-                password = string.IsNullOrEmpty(prin.credential) ? null : PASSMASK;
+                // password = string.IsNullOrEmpty(prin.credential) ? null : PASSMASK;
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("基本信息");
-                    h.LI_().TEXT("姓名", nameof(name), name, max: 8, min: 2, required: true)._LI();
+                    h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true)._LI();
                     h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h._FIELDSUL().FIELDSUL_("操作密码（可选）");
-                    h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
-                    h._FIELDSUL()._FORM();
+                    // h._FIELDSUL();
+                    // h.FIELDSUL_("操作密码（可选）");
+                    // h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
+                    h._FIELDSUL().BOTTOM_BUTTON("确定", nameof(setg))._FORM();
 
-                    h.BOTTOM_BUTTON("确定", nameof(setg));
                 });
             }
             else // POST
@@ -97,14 +90,17 @@ namespace ChainMart
                 var f = await wc.ReadAsync<Form>();
                 name = f[nameof(name)];
                 tel = f[nameof(tel)];
-                password = f[nameof(password)];
-                string credential = string.IsNullOrEmpty(password) ? null :
-                    password == PASSMASK ? prin.credential : MainUtility.ComputeCredential(tel, password);
+                // password = f[nameof(password)];
+                // var credential =
+                //     string.IsNullOrEmpty(password) ? null :
+                //     password == PASSMASK ? prin.credential :
+                //     MainUtility.ComputeCredential(tel, password);
 
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);
-                prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
-                // refresh cookie
+                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2 WHERE id = @3 RETURNING ").collst(User.Empty);
+                prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(prin.id));
+
+                // refresh cookies
                 wc.SetUserCookies(prin);
 
                 wc.GivePane(200); // close
@@ -112,7 +108,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("我的身份权限", "账号")]
+    [Ui("我的身份权限", "账号功能")]
     public class MyAccessVarWork : WebWork
     {
         public void @default(WebContext wc)

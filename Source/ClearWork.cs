@@ -128,7 +128,7 @@ namespace ChainMart
 
     [AdmlyAuthorize(User.ROL_FIN)]
     [Ui("供应链订单结款", "财务")]
-    public class AdmlyBookClearWork : ClearWork<AdmlySupplyClearVarWork>
+    public class AdmlyBookClearWork : ClearWork<AdmlyBookClearVarWork>
     {
         [Ui("当前结款", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)

@@ -12,11 +12,11 @@ namespace ChainMart
         {
             if (clear)
             {
-                return NoticeBox.CheckAndClearPully(noticeId, slot);
+                return NoticeBot.CheckAndClearPully(noticeId, slot);
             }
             else
             {
-                return NoticeBox.CheckPully(noticeId, slot);
+                return NoticeBot.CheckPully(noticeId, slot);
             }
         }
     }

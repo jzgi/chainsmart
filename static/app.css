@@ -48,7 +48,10 @@ mark.state-4 {
     border-bottom-left-radius: 12px;
     text-align: right;
 }
-
+.qtyselect.uk-active {
+    color: #fff;
+    background-color: #f59604;
+}
 .qtydetail {
     flex: 1;
     min-width: 1px;

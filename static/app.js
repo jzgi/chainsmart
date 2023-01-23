@@ -82,9 +82,11 @@ function sumQtyDetails(trig, unitx) {
     // toggle visibility
     if (trig.value == 0) {
         span.classList.add("uk-invisible");
+        trig.classList.remove('uk-active');
     }
     else {
         span.classList.remove("uk-invisible");
+        trig.classList.add('uk-active');
     }
 
     // sum up topay
@@ -102,15 +104,11 @@ function sumQtyDetails(trig, unitx) {
 
 function qtyFill(trig, min, max, step) {
 
-    var n = 0;
-
-    for (var i = min; i <= max; i += (n >= 50 ? step * 10 : n >= 30 ? step * 5 : step)) {
+    for (var i = min; i <= max; i += (i >= 120 ? step * 5 : i >= 60 ? step * 2 : step)) {
         var opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' 件';
         trig.add(opt);
-
-        n++;
     }
 }
 

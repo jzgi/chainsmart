@@ -25,6 +25,12 @@ namespace ChainMart
             {STU_OKED, "上线"},
         };
 
+        public static readonly Map<short, string> Terms = new Map<short, string>
+        {
+            {0, "现货"},
+            {1, "预售（指定交货日期）"},
+        };
+
         internal int id;
         internal int srcid;
         internal string srcname;
@@ -69,6 +75,7 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(targs), ref targs);
                 s.Get(nameof(dated), ref dated);
                 s.Get(nameof(term), ref term);
                 s.Get(nameof(itemid), ref itemid);
@@ -84,7 +91,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(targs), ref targs);
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
                 s.Get(nameof(m1), ref m1);
@@ -110,6 +116,7 @@ namespace ChainMart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(targs), targs);
                 s.Put(nameof(dated), dated);
                 s.Put(nameof(term), term);
                 s.Put(nameof(itemid), itemid);
@@ -125,7 +132,6 @@ namespace ChainMart
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(targs), targs);
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
                 s.Put(nameof(m1), m1);

@@ -24,14 +24,15 @@ namespace ChainMart
 
             CreateWork<AdmlyOrgWork>("org");
 
-            CreateWork<AdmlyBuyRptWork>("buyrpt");
 
-            CreateWork<AdmlyBookRptWork>("bookrpt");
+            CreateWork<AdmlyBookLdgWork>("bookldg");
 
+            CreateWork<AdmlyBuyLdgWork>("buyldg");
+
+            CreateWork<AdmlyBookClearWork>("bookclr");
 
             CreateWork<AdmlyBuyClearWork>("buyclr");
 
-            CreateWork<AdmlyBookClearWork>("bookclr");
         }
 
         public void @default(WebContext wc)
@@ -42,7 +43,7 @@ namespace ChainMart
             {
                 h.TOPBARXL_();
 
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+                h.HEADER_("uk-width-expand uk-col uk-padding-left");
                 h.H2(Self.name);
                 h.P2(prin.name, User.Admly[wc.Role], brace: true);
                 h._HEADER();

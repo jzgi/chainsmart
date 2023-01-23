@@ -6,7 +6,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("我的碳积分", "账号")]
+    [Ui("我的碳积分", "账号功能")]
     public class MyCreditWork : CreditWork
     {
         public void @default(WebContext wc)

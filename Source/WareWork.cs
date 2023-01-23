@@ -87,7 +87,7 @@ namespace ChainMart
                     // FOOTER: price and qty select & detail
                     h.T($"<footer cookie= \"vip\" onfix=\"fixPrice(this,event,{o.price},{o.off});\">"); // pricing portion
                     h.SPAN_("uk-width-1-4").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.step});", onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short) 0, "0 件")._SELECT();
+                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.avail});", onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short) 0, "0 件")._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                     h._FOOTER();
 
@@ -154,7 +154,7 @@ namespace ChainMart
                     var ware = map[dtl.wareid];
                     if (ware != null)
                     {
-                        dtl.SetupWithWare(ware, offed: prin.vip?.Contains(shpid) ?? false);
+                        dtl.InitByWare(ware, offed: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 
@@ -244,13 +244,13 @@ namespace ChainMart
             });
         }
 
-        [Ui("在线商品", group: 1), Tool(Anchor)]
+        [Ui("上线商品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status > 0 ORDER BY status DESC, id");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY oked DESC");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -259,20 +259,20 @@ namespace ChainMart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无商品");
+                    h.ALERT("尚无上线商品");
                     return;
                 }
                 MainGrid(h, arr);
             }, false, 4);
         }
 
-        [Ui(icon: "ban", group: 2), Tool(Anchor)]
-        public async Task ban(WebContext wc)
+        [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
+        public async Task offln(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -280,7 +280,28 @@ namespace ChainMart
                 h.TOOLBAR(subscript: STA_VOID);
                 if (arr == null)
                 {
-                    h.ALERT("暂无商品");
+                    h.ALERT("尚无下线商品");
+                    return;
+                }
+                MainGrid(h, arr);
+            }, false, 4);
+        }
+
+        [Ui(tip: "作废商品", icon: "trash", group: 8), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var src = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: STA_VOID);
+                if (arr == null)
+                {
+                    h.ALERT("尚无作废商品");
                     return;
                 }
                 MainGrid(h, arr);
@@ -288,7 +309,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
-        [Ui("自创", "自创其它来源商品", icon: "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("自建", "自建其它来源商品", icon: "plus", group: 2), Tool(ButtonOpen)]
         public async Task def(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -307,12 +328,11 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
-                    h.LI_().TEXT("产品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("货品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
                 });
@@ -337,7 +357,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("引用", "引用供应链产品", icon: "cloud-download", group: 7), Tool(ButtonOpen)]
+        [Ui("引入", "引入供应链产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
         public async Task imp(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -355,7 +375,7 @@ namespace ChainMart
                     created = DateTime.Now,
                     creator = prin.name,
                     unitx = 1.0M,
-                    min = 1, max = 30, step = 1,
+                    min = 1, max = 30,
                 };
 
                 wc.GivePane(200, h =>
@@ -363,10 +383,9 @@ namespace ChainMart
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
                     h.LI_().SELECT("供应链产品", nameof(o.itemid), o.itemid, map, required: true)._LI();
-                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
                 });

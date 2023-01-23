@@ -7,7 +7,7 @@ namespace ChainMart
     {
     }
 
-    public class AdmlySupplyClearVarWork : ClearVarWork
+    public class AdmlyBookClearVarWork : ClearVarWork
     {
     }
 

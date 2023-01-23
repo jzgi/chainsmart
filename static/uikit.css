@@ -646,8 +646,13 @@ a.uk-link-reset:hover,
     border-top: 1px solid #f8f8f8;
 }
 
-.uk-card-body .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #ededed !important;
+ul.uk-card-body {
+    border-top: 1px solid #ededed;
+    border-bottom: 1px solid #ededed;
+}
+
+.uk-card-body.uk-list-divider>li:nth-child(n+2) {
+    border-top: 1px solid #ededed;
 }
 
 /*
@@ -1710,7 +1715,7 @@ select.uk-form-width-xsmall {
 
 button.uk-button-default {
     background-color: #999;
-    color: #f59604;
+    color: #fff;
     border-radius: 12px;
     border: 0;
 }
@@ -1774,25 +1779,17 @@ a.uk-button-primary.uk-active {
 }
 
 .uk-button-secondary {
-    color: #333;
-    border: 0;
-    background-color: transparent;
-    padding: 4px 8px;
-}
-
-button.uk-button-secondary {
-    border-radius: 12px;
-    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 0.875rem;
+    border: 1px solid #f59604;
+    border-radius: 25%;
+    color: #f59604;
 }
 
 .uk-button-secondary:hover,
-.uk-button-secondary:focus {
-    color: #f59604;
-}
-
+.uk-button-secondary:focus,
 .uk-button-secondary:active,
 .uk-button-secondary.uk-active {
-    color: #f59604;
     background-color: #ededed;
 }
 
@@ -1846,10 +1843,12 @@ button.uk-button-secondary {
 
 
 .uk-button-small {
-    padding: 4px 12px;
+    padding: 4px;
     font-size: 0.875rem;
     border: none;
-    background-color: #ededed;
+    border: 1px solid #f59604;
+    border-radius: 25%;
+    color: #f59604;
 }
 
 .uk-button-large {
@@ -2117,7 +2116,7 @@ main.uk-grid>li {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #ededed;
+    background-color: #f8f8f8;
 }
 
 .uk-circle-label {
@@ -3884,7 +3883,7 @@ ul.uk-nav-sub {
     position: absolute;
     z-index: 1010;
     right: 8px;
-    color: #f59604;
+    color: #fff;
 }
 
 
@@ -6975,24 +6974,23 @@ iframe.uk-cover {
 }
 
 .uk-padding {
-    padding: 8px;
+    padding: 6px;
 }
 
 .uk-padding-top {
-    padding-top: 8px;
+    padding-top: 6px;
 }
 
 .uk-padding-right {
-    padding-right: 8px;
+    padding-right: 6px;
 }
 
 .uk-padding-bottom {
-    padding-bottom: 8px;
+    padding-bottom: 6px;
 }
 
-
 .uk-padding-left {
-    padding-left: 8px;
+    padding-left: 6px;
 }
 
 .uk-padding-small-top {
@@ -7022,7 +7020,7 @@ iframe.uk-cover {
 }
 
 .uk-padding-large {
-    padding: 32px;
+    padding: 12px;
 }
 
 /* Desktop and bigger */

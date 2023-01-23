@@ -10,15 +10,15 @@ namespace ChainMart
 
         public string name;
 
-        public string unit;
+        public string unit; // basic unit
 
-        public decimal unitx;
+        public decimal unitx; // number of units per pack
 
         public decimal price;
 
         public decimal off;
 
-        public short qty;
+        public decimal qty;
 
         public void Read(ISource s, short msk = 0xff)
         {
@@ -48,10 +48,11 @@ namespace ChainMart
 
         public decimal RealPrice => price - off;
 
-        public decimal SubTotal => decimal.Round(RealPrice * unitx * qty, 2);
+        public decimal SubTotal => decimal.Round(RealPrice * qty, 2);
 
+        public short QtyX => (short) (qty / unitx);
 
-        internal void SetupWithWare(Ware w, bool offed)
+        internal void InitByWare(Ware w, bool offed)
         {
             name = w.name;
             itemid = w.itemid;

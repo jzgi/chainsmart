@@ -15,64 +15,90 @@ namespace ChainMart
         }
     }
 
-    [Ui("我的消费", "账号")]
+
+    [Ui("我的消费", "账号功能")]
     public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
+        static void MainGrid(HtmlBuilder h, Buy[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                var shp = GrabObject<int, Org>(o.shpid);
+
+                h.HEADER_("uk-card-header").ATEL(shp.tel).SP().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
+
+                h.UL_("uk-card-body uk-list uk-list-divider");
+
+                h.LI_().T(o.uname).SP().T(o.utel).SP().T(o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
+
+                for (int i = 0; i < o?.details.Length; i++)
+                {
+                    var d = o.details[i];
+
+                    h.LI_();
+
+                    h.PIC("/ware/", d.wareid, "/icon", css: "uk-width-micro");
+
+                    h.SPAN_("uk-width-expand").SP().T(d.name);
+                    if (d.unitx != 1)
+                    {
+                        h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
+                    }
+                    h._SPAN();
+
+                    h.SPAN_("uk-width-1-6 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
+                    h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T('件')._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
+                    h._LI();
+                }
+                h._LI();
+
+                h._UL();
+
+                h.VARPAD(o.Key, css: "uk-card-footer uk-flex-right", status: o.status);
+            });
+        }
+
+        [Ui("新订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(tip: prin.name);
-
+                h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无消费订单");
+                    h.ALERT("尚无当前消费订单");
                     return;
                 }
+                MainGrid(h, arr);
+                h.PAGINATION(arr?.Length > 10);
+            }, false, 4);
+        }
 
-                h.MAINGRID(arr, o =>
+        [Ui(tip: "历史订单", icon: "history", group: 2), Tool(Anchor)]
+        public async Task past(WebContext wc, int page)
+        {
+            var prin = (User) wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status >= 4 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
                 {
-                    var shp = GrabObject<int, Org>(o.shpid);
-
-                    h.HEADER_("uk-card-header").H4(o.name).SP().ATEL(shp.tel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
-
-                    h.UL_("uk-card-body uk-list uk-list-divider");
-
-                    h.LI_().T(o.uaddr).SP().T(o.utel).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
-
-                    for (int i = 0; i < o?.details.Length; i++)
-                    {
-                        var d = o.details[i];
-
-                        h.LI_();
-
-                        h.PIC("/ware/", d.wareid, "/icon", css: "uk-width-micro");
-
-                        h.SPAN_("uk-width-expand").SP().T(d.name);
-                        if (d.unitx != 1)
-                        {
-                            h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
-                        }
-                        h._SPAN();
-
-                        h.SPAN_("uk-width-1-6 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
-                        h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T('件')._SPAN();
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
-                        h._LI();
-                    }
-                    h._LI();
-
-                    h._UL();
-
-                    h.NAVVAR(o.Key, css: "uk-card-footer uk-flex-right", status: o.status);
-                });
-
+                    h.ALERT("尚无历史订单");
+                    return;
+                }
+                MainGrid(h, arr);
                 h.PAGINATION(arr?.Length > 10);
             }, false, 4);
         }
@@ -80,7 +106,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("消费订单", "商户")]
+    [Ui("线上消费订单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
         static void MainGrid(HtmlBuilder h, Buy[] arr)

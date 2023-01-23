@@ -25,11 +25,15 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("上线产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("限投放", o.targs, topOrgs, capt: v => v.Ext)._LI();
+                h.LI_().FIELD("交货条款", Lot.Terms[o.term]);
+                if (o.term > 0) h.FIELD("交货日期", o.dated);
+                h._LI();
+
+                h.LI_().FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
-                h.LI_().FIELD("单价", o.price).FIELD("立减", o.off)._LI();
+                h.LI_().FIELD("单价", o.price).FIELD("促销立减", o.off)._LI();
                 h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
                 h.LI_().FIELD("递增", o.step)._LI();
                 h.LI_().FIELD("总件数", o.cap).FIELD("剩余件数", o.avail)._LI();
@@ -202,6 +206,8 @@ namespace ChainMart
 
     public class SrclyLotVarWork : LotVarWork
     {
+        static readonly string[] Units = {"斤", "包", "箱", "桶"};
+
         [Ui(tip: "修改产品销售批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
@@ -221,13 +227,14 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产品销售批次信息");
+                    h.FORM_().FIELDSUL_("销售批次信息");
 
                     h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().DATE("预售交割", nameof(o.dated), o.dated)._LI();
-                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                    h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("促销立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
                     h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("可售件数", nameof(o.avail), o.avail)._LI();
@@ -267,60 +274,6 @@ namespace ChainMart
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, nameof(m) + sub, false, 3);
-        }
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("限域", icon: "crosshairs"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
-        public async Task targ(WebContext wc)
-        {
-            int lotid = wc[0];
-            var org = wc[-2].As<Org>();
-            var topOrgs = Grab<int, Org>();
-
-            int[] targs;
-
-            if (wc.IsGet)
-            {
-                using var dc = NewDbContext();
-
-                await dc.QueryTopAsync("SELECT targs FROM lots WHERE id = @1 AND srcid = @2", p => p.Set(lotid).Set(org.id));
-                dc.Let(out targs);
-
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_();
-
-                    h.FIELDSUL_("该批次限定销售区域");
-                    h.LI_().SELECT("销售区域", nameof(targs), targs, topOrgs, filter: (k, v) => v.EqCenter || v.EqMarket, capt: v => v.Ext, size: 12, required: false)._LI();
-                    h._FIELDSUL();
-
-                    h.BOTTOM_BUTTON("确认", nameof(targ));
-                    h._FORM();
-                });
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                targs = f[nameof(targs)];
-                targs = targs.RemovedOf(0);
-
-                // update
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE lots SET targs = @1 WHERE id = @2 AND srcid = @3");
-                await dc.ExecuteAsync(p =>
-                {
-                    if (targs == null || targs.Length == 0)
-                    {
-                        p.SetNull();
-                    }
-                    else
-                        p.Set(targs);
-
-                    p.Set(lotid).Set(org.id);
-                });
-
-                wc.GivePane(200); // close dialog
-            }
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
@@ -483,6 +436,9 @@ namespace ChainMart
 
     public class ShplyBookLotVarWork : LotVarWork
     {
+        //
+        // NOTE: this page is made publicly cacheable, though under variable path
+        //
         public override async Task @default(WebContext wc)
         {
             int lotid = wc[0];
@@ -542,7 +498,7 @@ namespace ChainMart
 
                 h._FORM();
                 h._BOTTOMBAR();
-            });
+            }, shared: true, maxage: 60);
         }
 
         public async Task book(WebContext wc, int cmd)
@@ -566,8 +522,10 @@ namespace ChainMart
                 {
                     typ = lot.typ,
                     name = lot.name,
+                    tip = lot.tip,
                     created = DateTime.Now,
                     creator = prin.name,
+
                     shpid = shp.id,
                     shpname = shp.Name,
                     mktid = shp.MarketId,
@@ -575,6 +533,7 @@ namespace ChainMart
                     srcname = lot.srcname,
                     zonid = lot.zonid,
                     ctrid = shp.ctrid,
+
                     itemid = lot.itemid,
                     lotid = lot.id,
                     unit = lot.unit,

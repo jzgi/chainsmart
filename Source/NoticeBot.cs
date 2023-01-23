@@ -6,7 +6,7 @@ using ChainFx.Fabric;
 
 namespace ChainMart
 {
-    public class NoticeBox
+    public class NoticeBot
     {
         static readonly ConcurrentDictionary<int, Notice> notices = new ConcurrentDictionary<int, Notice>();
 

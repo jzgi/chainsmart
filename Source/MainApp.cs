@@ -22,15 +22,14 @@ namespace ChainMart
         /// </summary>
         public static async Task Main(string[] args)
         {
-
             // start the concluder thead
             // cycler.Start();
 
             MapComposite<BuyDetail>();
+            MapComposite<WareOp>();
 
             CacheUp();
 
-            
             const string STATIC_ROOT = "static";
 
             WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
@@ -39,8 +38,8 @@ namespace ChainMart
 
             // CreateService<FedService>("fed", STATIC_ROOT);
 
-            NoticeBox.Start();
-            
+            NoticeBot.Start();
+
             await StartAsync();
         }
 

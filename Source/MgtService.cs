@@ -76,7 +76,7 @@ namespace ChainMart
                         // War("update ok!");
 
                         // put a notice to the accepter
-                        NoticeBox.Put(srcid, Notice.BOOK_CREATED, 1, cash);
+                        NoticeBot.Put(srcid, Notice.BOOK_CREATED, 1, cash);
                     }
                 }
             }

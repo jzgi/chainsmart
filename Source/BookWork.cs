@@ -68,9 +68,8 @@ namespace ChainMart
                     h.ALERT("尚无采购");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [BizNotice(BOOK_ADAPTED)]
@@ -91,9 +90,8 @@ namespace ChainMart
                     h.ALERT("尚无发货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
@@ -113,9 +111,8 @@ namespace ChainMart
                     h.ALERT("尚无收货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [BizNotice(BOOK_ABORTED)]
@@ -136,14 +133,13 @@ namespace ChainMart
                     h.ALERT("尚无撤单");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
         [Ui("下单", "供应链采购下单", "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int typ)
+        public async Task creation(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
             int ctrid = org.ctrid;
@@ -155,12 +151,12 @@ namespace ChainMart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3] OR targs @> ARRAY[@4])");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid).Set(org.MarketId));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid));
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().NAVBAR(nameof(@new), typ, cats)._TOPBAR();
+                h.TOPBAR_().NAVBAR(nameof(creation), typ, cats)._TOPBAR();
 
                 if (arr == null)
                 {
@@ -183,7 +179,7 @@ namespace ChainMart
 
                     h._A();
                 });
-            });
+            }, false, 120);
         }
     }
 
@@ -232,9 +228,8 @@ namespace ChainMart
                     h.ALERT("尚无销售");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
@@ -254,9 +249,8 @@ namespace ChainMart
                     h.ALERT("尚无发货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [BizNotice(BOOK_OKED)]
@@ -277,9 +271,8 @@ namespace ChainMart
                     h.ALERT("尚无收货");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
 
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
@@ -299,9 +292,8 @@ namespace ChainMart
                     h.ALERT("尚无撤单");
                     return;
                 }
-
                 MainGrid(h, arr);
-            });
+            }, false, 6);
         }
     }
 
@@ -340,7 +332,7 @@ namespace ChainMart
                 h._TABLE();
 
                 h.PAGINATION(n == 30);
-            });
+            }, false, 6);
         }
 
         [Ui(tip: "历史", icon: "history", group: 2), Tool(Anchor)]
@@ -363,7 +355,7 @@ namespace ChainMart
                     h._A();
                     h._TD();
                 });
-            });
+            }, false, 6);
         }
 
         [Ui("按商户", group: 4), Tool(Anchor)]
@@ -396,7 +388,7 @@ namespace ChainMart
                 h._TABLE();
 
                 h.PAGINATION(n == 30);
-            });
+            }, false, 6);
         }
     }
 
@@ -439,7 +431,7 @@ namespace ChainMart
                     last = mktid;
                 }
                 h._MAIN();
-            });
+            }, false, 6);
         }
 
         [Ui(icon: "history", group: 4), Tool(Anchor)]
@@ -482,7 +474,7 @@ namespace ChainMart
                     last = mktid;
                 }
                 h._MAIN();
-            });
+            }, false, 6);
         }
 
         [Ui(icon: "history", group: 16), Tool(Anchor)]

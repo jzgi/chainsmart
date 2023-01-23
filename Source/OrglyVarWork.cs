@@ -21,7 +21,7 @@ namespace ChainMart
 
                 string rol = wc.Dive ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+                h.HEADER_("uk-width-expand uk-col uk-padding-left");
                 h.H2(org.name);
                 if (org.IsParent) h.H4(org.Ext);
                 h.P2(prin.name, rol, brace: true);
@@ -32,7 +32,7 @@ namespace ChainMart
                     h.PIC_("uk-width-small", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
                 }
                 else
-                    h.PIC(org.EqZone ? "/zon.webp" : "/src.webp", circle: true, css: "uk-width-small");
+                    h.PIC(org.IsShop ? "/shp.webp" : org.EqCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 
@@ -64,7 +64,7 @@ namespace ChainMart
 
             CreateWork<SrclyBookWork>("sbook");
 
-            CreateWork<SrclyRptWork>("srpt");
+            CreateWork<SrclyLdgWork>("srpt");
 
             // zon
 
@@ -72,7 +72,7 @@ namespace ChainMart
 
             CreateWork<ZonlyTestWork>("ztest");
 
-            CreateWork<ZonlyRptWork>("zrpt");
+            CreateWork<ZonlyLdgWork>("zrpt");
 
             // ctr
 
@@ -80,7 +80,7 @@ namespace ChainMart
 
             CreateWork<CtrlyBookWork>("cbook");
 
-            CreateWork<CtrlyRptWork>("crpt");
+            CreateWork<CtrlyLdgWork>("crpt");
         }
     }
 
@@ -107,11 +107,11 @@ namespace ChainMart
 
             CreateWork<ShplyWareWork>("sware");
 
+            CreateWork<ShplyVipWork>("svip");
+
             CreateWork<ShplyBuyWork>("sbuy");
 
-            // CreateWork<ShplyPosWork>("spos");
-
-            CreateWork<ShplyVipWork>("svip");
+            CreateWork<ShplyPosWork>("spos");
 
             CreateWork<ShplyBookWork>("sbook");
 

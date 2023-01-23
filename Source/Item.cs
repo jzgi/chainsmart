@@ -3,7 +3,7 @@
 namespace ChainMart
 {
     /// <summary>
-    /// A product by certain source.
+    /// A product item from certain source.
     /// </summary>
     public class Item : Entity, IKeyable<int>
     {

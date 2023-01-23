@@ -72,24 +72,21 @@ namespace ChainMart
                 dc.Let(out int shpid);
                 dc.Let(out decimal pay);
 
-                NoticeBox.Put(shpid, Notice.BUY_OKED, 1, pay);
+                NoticeBot.Put(shpid, Notice.BUY_OKED, 1, pay);
             }
 
             wc.Give(200);
         }
 
 
-        [Ui("申诉", group: 2), Tool(ButtonOpen)]
-        public async Task compl(WebContext wc)
+        [Ui("意见", group: 2), Tool(ButtonOpen)]
+        public async Task note(WebContext wc)
         {
             int orderid = wc[0];
             var prin = (User) wc.Principal;
             short appeal;
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-                await dc.QueryTopAsync("SELECT compl FROM orders WHERE id = @1 AND uid = @2", p => p.Set(orderid).Set(prin.id));
-                dc.Let(out appeal);
                 wc.GivePane(200, h => { });
             }
             else
