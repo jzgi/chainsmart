@@ -43,7 +43,7 @@ namespace ChainMart
                     h.TD_().CNY(d.RealPrice).SP().SUB(d.unit)._TD();
                     h.TD2(d.qty, "件");
                     h.TD(d.SubTotal, true);
-                });
+                }, css: "uk-margin-remove");
                 h._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();

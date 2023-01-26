@@ -31,7 +31,6 @@ namespace ChainMart
                 h.LI_().FIELD("单价", o.price, money: true).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("件数", o.qty).FIELD("支付", o.pay, money: true)._LI();
                 h.LI_().FIELD("状态", o.status, Book.Statuses).FIELD("状况", Book.States[o.state])._LI();
-                h.LI_().FIELD2("下单", o.created, o.creator, "&nbsp;")._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();

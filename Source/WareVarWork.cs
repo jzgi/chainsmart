@@ -1,9 +1,7 @@
 ﻿using System;
-using System.IO.MemoryMappedFiles;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using Npgsql.TypeHandlers.NumericHandlers;
 using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
@@ -121,7 +119,7 @@ namespace ChainMart
     public class ShplyWareVarWork : WareVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改货品信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改商品信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int wareid = wc[0];
@@ -137,9 +135,9 @@ namespace ChainMart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产品和销售信息");
+                    h.FORM_().FIELDSUL_("商品信息");
 
-                    h.LI_().TEXT("货品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
@@ -170,6 +168,9 @@ namespace ChainMart
                 wc.GivePane(200); // close dialog
             }
         }
+
+
+        const int OPS_LIMIT = 25;
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
@@ -206,7 +207,7 @@ namespace ChainMart
                         h.TD(WareOp.Typs[o.typ]);
                         h.TD(o.qty, right: true);
                         h.TD(o.by);
-                    });
+                    }, reverse: true);
                 });
             }
             else // POST
@@ -221,8 +222,14 @@ namespace ChainMart
                 var now = DateTime.Now;
                 if (typ < 5) // add
                 {
-                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
+                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                    dc.Let(out int len);
+                    if (len > OPS_LIMIT) // shrink
+                    {
+                        dc.Sql("UPDATE wares SET ops = ops[10:] WHERE id = @1 AND shpid = @2");
+                        await dc.ExecuteAsync(p => p.Set(wareid).Set(shp.id));
+                    }
                 }
                 else // reduce
                 {

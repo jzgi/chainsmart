@@ -632,9 +632,9 @@ a.uk-link-reset:hover,
 * Nested lists
 */
 .uk-list {
-    margin: 0;
+    margin: 4px;
     list-style: none;
-    padding: 4px;
+    padding: 0;
 }
 
 .uk-list>li {
@@ -750,11 +750,11 @@ ul.uk-card-body {
     border-spacing: 0;
     width: -webkit-fill-available;
     overflow-x: auto;
-    margin: 0;
+    margin: 4px;
 }
 
 .uk-table tbody {
-    background-color: #f8f8f8;
+    background-color: #fff;
 }
 
 .uk-table th {
