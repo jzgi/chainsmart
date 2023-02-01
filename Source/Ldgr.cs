@@ -1,14 +1,14 @@
-﻿﻿using System;
+﻿using System;
 using ChainFx;
 
 namespace ChainMart
 {
     /// <summary>
-    /// A reportive record of daily transaction for goods.
+    /// An entry record of ledger.
     /// </summary>
-    public class Rptie : Entity
+    public class Ldgr : IData
     {
-        public static readonly Rptie Empty = new Rptie();
+        public static readonly Ldgr Empty = new Ldgr();
 
         public const short
             TYP_MRT = 1,
@@ -22,33 +22,37 @@ namespace ChainMart
 
         internal int orgid;
 
+        internal int acct;
+
         internal DateTime dt;
 
-        internal short itemid;
+        internal short prtid;
 
-        internal int count;
+        internal int trans;
+
+        internal decimal qty;
 
         internal decimal amt;
 
-        public override void Read(ISource s, short proj = 0xff)
+        public void Read(ISource s, short msk = 0xff)
         {
-            base.Read(s, proj);
-
             s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(acct), ref acct);
             s.Get(nameof(dt), ref dt);
-            s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(count), ref count);
+            s.Get(nameof(prtid), ref prtid);
+            s.Get(nameof(trans), ref trans);
+            s.Get(nameof(qty), ref qty);
             s.Get(nameof(amt), ref amt);
         }
 
-        public override void Write(ISink s, short proj = 0xff)
+        public void Write(ISink s, short msk = 0xff)
         {
-            base.Write(s, proj);
-
             s.Put(nameof(orgid), orgid);
+            s.Put(nameof(acct), acct);
             s.Put(nameof(dt), dt);
-            s.Put(nameof(itemid), itemid);
-            s.Put(nameof(count), count);
+            s.Put(nameof(prtid), prtid);
+            s.Put(nameof(trans), trans);
+            s.Put(nameof(qty), qty);
             s.Put(nameof(amt), amt);
         }
     }

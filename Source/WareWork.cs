@@ -85,9 +85,9 @@ namespace ChainMart
                     h.Q(o.tip, "uk-width-expand");
 
                     // FOOTER: price and qty select & detail
-                    h.T($"<footer cookie= \"vip\" onfix=\"fixPrice(this,event,{o.price},{o.off});\">"); // pricing portion
+                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.min},{o.max},{o.AvailX});\">"); // pricing portion
                     h.SPAN_("uk-width-1-4").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onfix: $"qtyFill(this,{o.min},{o.max},{o.avail});", onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short) 0, "0 件")._SELECT();
+                    h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short) 0, "0 件")._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                     h._FOOTER();
 
@@ -101,8 +101,8 @@ namespace ChainMart
                 h.BOTTOMBAR_(large: true);
 
                 h.DIV_("uk-col");
-                h.T("<output class=\"nametel\" name=\"nametel\" cookie=\"nametel\" onfix=\"this.value = event.detail;\"></output>");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" maxlength=\"30\" minlength=\"4\" cookie=\"addr\" onfix=\"this.value = event.detail;\" required>");
+                h.T("<output class=\"nametel\" name=\"nametel\" cookie=\"nametel\"></output>");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                 h._DIV();
 
                 h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -212,7 +212,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("商品设置", "商户")]
+    [Ui("商品管理", "商户")]
     public class ShplyWareWork : WareWork<ShplyWareVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, Ware[] arr)

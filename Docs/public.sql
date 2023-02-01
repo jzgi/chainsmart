@@ -22,8 +22,8 @@ create type wareop as
 (
     dt timestamp(0),
     typ smallint,
-    remain numeric(6,1),
     qty numeric(6,1),
+    avail numeric(6,1),
     by varchar(12)
 );
 
@@ -413,9 +413,9 @@ create table buyldgs
     orgid integer not null,
     acct integer not null,
     dt date,
-    descr varchar(12),
+    prtid integer,
     trans integer,
-    qtyx numeric(8,1),
+    qty numeric(8,1),
     amt money,
     created timestamp(0),
     creator varchar(12)
@@ -423,20 +423,18 @@ create table buyldgs
 
 alter table buyldgs owner to postgres;
 
-create unique index buyldgs_orgidacctdt_idx
-    on buyldgs (orgid, acct, dt);
-
 create table bookldgs
 (
     orgid integer not null,
     acct integer not null,
     dt date,
-    descr varchar(12),
+    prtid integer,
     trans integer,
-    qtyx numeric(8,1),
+    qty numeric(8,1),
     amt money,
     created timestamp(0),
-    creator varchar(12)
+    creator varchar(12),
+    ctrid integer
 );
 
 alter table bookldgs owner to postgres;
@@ -627,54 +625,6 @@ $$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
 
-create function postldgs(dt timestamp without time zone, opr character varying) returns void
-    language plpgsql
-as $$
-DECLARE
-
-    now timestamp(0);
-
-BEGIN
-
-    -- adjust parameters
-    dt = least(dt, localtimestamp(0));
-    dt = date_trunc('day', dt);
-    opr = coalesce(opr, 'SYS');
-
-    now = localtimestamp(0);
-
-    INSERT INTO bookldgs (orgid, dt, orgname, prtid, ctrid, trans, amt, created, creator)
-    SELECT srcid,
-           dt,
-           srcname,
-           zonid,
-           ctrid,
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
-    FROM books
-    WHERE status = 4 AND oked < dt GROUP BY srcid;
-
-
-    INSERT INTO buyldgs (orgid, dt, orgname, prtid, ctrid, trans, amt, created, creator)
-    SELECT shpid,
-           dt,
-           name,
-           mktid,
-           NULL,
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
-    FROM buys
-    WHERE status = 4 AND oked < dt GROUP BY shpid;
-
-END
-$$;
-
-alter function postldgs(timestamp, varchar) owner to postgres;
-
 create function clearsgen(till date, opr character varying) returns void
     language plpgsql
 as $$
@@ -722,6 +672,59 @@ END
 $$;
 
 alter function clearsgen(date, varchar) owner to postgres;
+
+create function postldgs(till date, opr character varying) returns void
+    language plpgsql
+as $$
+DECLARE
+
+    past date;
+    now timestamp(0) = localtimestamp(0);
+    tillstamp timestamp(0);
+    paststamp timestamp(0);
+BEGIN
+
+    tillstamp = (till + interval '1 day')::timestamp(0);
+
+    -- adjust parameters
+    opr = coalesce(opr, 'SYS');
+
+    SELECT coalesce(max(dt), '2000-01-01'::date) FROM bookldgs INTO past;
+    paststamp = (past + interval '1 day')::timestamp(0);
+
+    INSERT INTO bookldgs (orgid, acct, dt, prtid, ctrid, trans, amt, created, creator)
+    SELECT srcid,
+           itemid,
+           oked::date,
+           first(zonid),
+           first(ctrid),
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp GROUP BY srcid, itemid, oked::date;
+
+
+    SELECT coalesce(max(dt), '2000-01-01'::date) FROM buyldgs INTO past;
+    paststamp = (past + interval '1 day')::timestamp(0);
+
+    INSERT INTO buyldgs (orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT shpid,
+           typ,
+           oked::date,
+           first(mktid),
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM buys
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp GROUP BY shpid, typ, oked::date;
+
+END
+$$;
+
+alter function postldgs(date, varchar) owner to postgres;
 
 create aggregate first(anyelement) (
     sfunc = first_agg,

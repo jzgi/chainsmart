@@ -13,29 +13,25 @@ button output {
 }
 
 mark.state-0 {
-    color: #999;
-    border-color: #999;
+    background-color: #ddd;
 }
 
 mark.state-1 {
-    color: #f59604;
-    border-color: #f59604;
+    background-color: #f59604;
 }
 
 mark.state-2 {
-    color: #007aff;
-    border-color: #007aff;
+    background-color: #007aff;
 }
 
 mark.state-4 {
-    color: #7daa1d;
-    border-color: #7daa1d;
+    background-color: #7daa1d;
 }
 
 .qtyselect {
     vertical-align: middle;
     display: inline-flex;
-    background-color: #ededed;
+    background-color: #ddd;
     color: #333;
     height: auto !important;
     box-sizing: border-box;
@@ -79,6 +75,14 @@ mark.state-4 {
     padding: 4px;
 }
 
+.suffix {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 4px;
+    width: 48px;
+    height: 100%;
+}
 
 @page {
     size: A4;

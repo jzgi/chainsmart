@@ -82,7 +82,6 @@ namespace ChainMart
                     // h.FIELDSUL_("操作密码（可选）");
                     // h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确定", nameof(setg))._FORM();
-
                 });
             }
             else // POST
@@ -275,7 +274,7 @@ namespace ChainMart
         }
     }
 
-    public class SrclyAccessVarWork : UserVarWork
+    public class OrglyAccessVarWork : UserVarWork
     {
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
@@ -284,26 +283,11 @@ namespace ChainMart
             short orgid = wc[-2];
             short id = wc[0];
 
+            var shp = (bool) State;
+
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET srcid = NULL, srcly = 0 WHERE id = @1 AND srcid = @2");
+            dc.Sql("UPDATE users SET ").T(shp ? "shpid" : "srcid").T(" = NULL, ").T(shp ? "shply" : "srcly").T(" = 0 WHERE id = @1 AND ").T(shp ? "shpid" : "srcid").T(" = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
-
-            wc.Give(204); // no content
-        }
-    }
-
-    public class ShplyAccessVarWork : UserVarWork
-    {
-        [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
-        public async Task rm(WebContext wc)
-        {
-            var org = wc[-2].As<Org>();
-            short id = wc[0];
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET shpid = NULL, shply = 0 WHERE id = @1 AND shpid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204); // no content
         }

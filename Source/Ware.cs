@@ -102,5 +102,7 @@ namespace ChainMart
         public int Key => id;
 
         public decimal RealPrice => price - off;
+
+        public short AvailX => (short) (avail / unitx);
     }
 }

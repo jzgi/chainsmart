@@ -122,12 +122,12 @@ ins {
 
 mark {
     font-size: x-small;
-    color: #7daa1d;
-    background-color: inherit;
+    background-color: #999;
     margin: 0 4px;
-    padding: 2px;
-    border-top: 1px solid #7daa1d;
-    border-bottom: 1px solid #7daa1d;
+    color: #fff;
+    border-top-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding: 2px 8px;
 }
 
 q {
@@ -149,7 +149,7 @@ q::after {
 
 small,
 .uk-small {
-    font-size: x-small;
+    font-size: 11px;
 }
 
 sub,
@@ -793,8 +793,7 @@ ul.uk-card-body {
 }
 
 .uk-table-divider>tr:not(:first-child),
-
-.uk-table-divider> :first-child>tr:not(:first-child) {
+.uk-table-divider> tbody>tr:not(:first-child) {
     border-top: 1px solid #ededed;
 }
 

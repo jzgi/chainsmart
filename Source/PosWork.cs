@@ -24,31 +24,68 @@ namespace ChainMart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<int, Ware>(p => p.Set(org.id));
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
                 int wareid = 0;
-                decimal price = 0;
-                decimal qty = 0, qtyx = 0;
-                h.BOTTOMBAR_(large: true);
+                decimal qtyx = 0;
 
-                h.FORM_(css: "uk-width-expand").FIELDSUL_();
-                h.LI_().SELECT(null, nameof(wareid), wareid, arr, required: true).NUMBER(null, nameof(price), price)._LI();
-                h.LI_();
-                h.SELECT_(null, nameof(qtyx))._SELECT();
-                h.NUMBER(null, nameof(qty), qty);
+                h.FORM_().FIELDSUL_();
+                h.LI_().SELECT_(nameof(wareid), onchange: "posWareChange(this);").T("<option></option>");
+
+                for (var i = 0; i < arr?.Length; i++)
+                {
+                    var o = arr[i];
+
+                    h.T("<option value=\"").T(o.id).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
+                    h.T(o.name);
+                    if (o.unitx != 1)
+                    {
+                        h.SP().T(o.unitx).T(o.unit).T("件");
+                    }
+                    h.T("</option>");
+                }
+                h._SELECT();
+
+                h.SPAN_("uk-width-medium").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
                 h._LI();
-                h._FIELDSUL()._FORM();
 
+                decimal subtotal = 0;
                 decimal topay = 0;
 
-                h.BUTTON_("", css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+                h.LI_();
+                h.SELECT_(nameof(qtyx))._SELECT();
+                h.SPAN_("uk-width-1-1").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"数量\" onchange=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
+                h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal)._BUTTON();
+                h._LI();
+
+                h._FIELDSUL()._FORM();
+
+                // 
+                // details
+                //
+                h.FORM_();
+
+                h.TABLE_();
+                h.T("<thead>").TH("商品", css: "uk-width-1-2").TH("单价").TH("数量").TH("小计").T("</thead>");
+
+                h.T("<tbody id=\"details\">");
+                h.T("</tbody>");
+
+                h._TABLE();
+
+                h.BOTTOMBAR_();
+
+                h.T("<a class=\"uk-icon-button\" uk-icon=\"chevron-double-left\"></a>");
+                h.T("<button class=\"uk-button-default uk-width-medium\" onclick=\"return call_buy(this);\">").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+                h.T("<a class=\"uk-icon-button\" uk-icon=\"chevron-double-right\"></a>");
 
                 h._BOTTOMBAR();
-            }, false, 60);
+                h._FORM();
+            }, false, 60, onload: "fixAll();");
         }
 
         [Ui(tip: "消费记录", icon: "list", group: 2), Tool(Anchor)]

@@ -52,9 +52,11 @@ namespace ChainMart
 
             CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<SrclyAccessWork>("access");
+            CreateWork<OrglyAccessWork>("access", false); // false = source
 
             CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglyCreditWork>("credit");
 
             // src
 
@@ -64,7 +66,7 @@ namespace ChainMart
 
             CreateWork<SrclyBookWork>("sbook");
 
-            CreateWork<SrclyLdgWork>("srpt");
+            CreateWork<SrclyBookLdgWork>("sbookldg");
 
             // zon
 
@@ -72,15 +74,12 @@ namespace ChainMart
 
             CreateWork<ZonlyTestWork>("ztest");
 
-            CreateWork<ZonlyLdgWork>("zrpt");
 
             // ctr
 
             CreateWork<CtrlyLotWork>("clot");
 
             CreateWork<CtrlyBookWork>("cbook");
-
-            CreateWork<CtrlyLdgWork>("crpt");
         }
     }
 
@@ -99,9 +98,11 @@ namespace ChainMart
 
             CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<ShplyAccessWork>("access");
+            CreateWork<OrglyAccessWork>("access", true); // true = shop
 
             CreateWork<OrglyClearWork>("clear");
+
+            CreateWork<OrglyCreditWork>("credit");
 
             // shp
 
@@ -112,6 +113,8 @@ namespace ChainMart
             CreateWork<ShplyBuyWork>("sbuy");
 
             CreateWork<ShplyPosWork>("spos");
+
+            CreateWork<ShplyBuyLdgWork>("sbuyldg");
 
             CreateWork<ShplyBookWork>("sbook");
 

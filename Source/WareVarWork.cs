@@ -15,28 +15,38 @@ namespace ChainMart
             int wareid = wc[0];
             var org = wc[-2].As<Org>();
 
+            const short msk = 255 | MSK_EXTRA;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE id = @1 AND shpid = @2");
-            var o = await dc.QueryTopAsync<Ware>(p => p.Set(wareid).Set(org.id));
+            dc.Sql("SELECT ").collst(Ware.Empty, msk).T(" FROM wares_vw WHERE id = @1 AND shpid = @2");
+            var m = await dc.QueryTopAsync<Ware>(p => p.Set(wareid).Set(org.id), msk);
 
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商品名", o.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-                h.LI_().FIELD("基本单位", o.unit).FIELD2("每件含量", o.unitx, o.unit)._LI();
-                h.LI_().FIELD("单价", o.price, money: true).FIELD("大客户立减", o.off, money: true)._LI();
-                h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
-                h.LI_().FIELD2("当前库存", o.avail, o.unit)._LI();
-                h.LI_().FIELD("状态", Ware.Statuses[o.status])._LI();
+                h.LI_().FIELD("商品名", m.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
+                h.LI_().FIELD("基本单位", m.unit).FIELD2("每件含量", m.unitx, m.unit)._LI();
+                h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户立减", m.off, money: true)._LI();
+                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.max)._LI();
+                h.LI_().FIELD2("当前库存", m.avail, m.unit)._LI();
+                h.LI_().FIELD("状态", Ware.Statuses[m.status])._LI();
 
-                if (o.creator != null) h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                if (m.creator != null) h.LI_().FIELD2("创建", m.created, m.creator)._LI();
+                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter)._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TABLE(m.ops, o =>
+                {
+                    h.TD_().T(o.dt, time: 1)._TD();
+                    h.TD(o.qty, right: true);
+                    h.TD(WareOp.Typs[o.typ]);
+                    h.TD(o.avail, right: true);
+                    h.TD(o.by);
+                }, caption: "库存操作记录", reverse: true);
+
+                h.TOOLBAR(bottom: true, status: m.status, state: m.state);
             }, false, 6);
         }
 
@@ -170,7 +180,19 @@ namespace ChainMart
         }
 
 
-        const int OPS_LIMIT = 25;
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), false, 6);
+        }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), false, 6);
+        }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
@@ -179,35 +201,18 @@ namespace ChainMart
             int wareid = wc[0];
             var shp = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
-            var cats = Grab<short, Cat>();
 
             short typ = 0;
             decimal qty = 0.0M;
+
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT unit, avail, ops FROM wares_vw WHERE id = @1");
-                await dc.QueryTopAsync(p => p.Set(wareid));
-                dc.Let(out string unit);
-                dc.Let(out decimal avail);
-                dc.Let(out WareOp[] ops);
-
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_();
-
-                    h.LI_().SELECT("库存操作", nameof(typ), typ, WareOp.Typs, required: true).NUMBER("数量" + '（' + unit + '）', nameof(qty), qty, money: false)._LI();
-                    h.LI_("uk-flex-center").BUTTON("确认", nameof(avail))._LI();
-                    h._FIELDSUL()._FORM();
-
-                    h.TABLE(ops, o =>
-                    {
-                        h.TD_().T(o.dt, time: 1)._TD();
-                        h.TD(o.remain, right: true);
-                        h.TD(WareOp.Typs[o.typ]);
-                        h.TD(o.qty, right: true);
-                        h.TD(o.by);
-                    }, reverse: true);
+                    h.FORM_().FIELDSUL_("库存操作");
+                    h.LI_().SELECT("操作类型", nameof(typ), typ, WareOp.Typs, required: true)._LI();
+                    h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(avail))._FORM();
                 });
             }
             else // POST
@@ -222,52 +227,23 @@ namespace ChainMart
                 var now = DateTime.Now;
                 if (typ < 5) // add
                 {
-                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
+                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
                     await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
                     dc.Let(out int len);
-                    if (len > OPS_LIMIT) // shrink
+                    if (len > 16) // shrink
                     {
-                        dc.Sql("UPDATE wares SET ops = ops[10:] WHERE id = @1 AND shpid = @2");
+                        dc.Sql("UPDATE wares SET ops = ops[13:] WHERE id = @1 AND shpid = @2");
                         await dc.ExecuteAsync(p => p.Set(wareid).Set(shp.id));
                     }
                 }
                 else // reduce
                 {
-                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, avail, @3, @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
+                    dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
                     await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
                 }
 
                 wc.GivePane(200); // close dialog
             }
-        }
-
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
-        public async Task icon(WebContext wc)
-        {
-            await doimg(wc, nameof(icon), false, 6);
-        }
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
-        public async Task pic(WebContext wc)
-        {
-            await doimg(wc, nameof(pic), false, 6);
-        }
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确认删除此商品？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-        public async Task rm(WebContext wc)
-        {
-            int itemid = wc[0];
-            var org = wc[-2].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("DELETE FROM wares WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(itemid).Set(org.id));
-
-            wc.Give(204);
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
@@ -299,18 +275,26 @@ namespace ChainMart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("无效", "将商品设为无效", icon: "ban"), Tool(ButtonConfirm, status: STU_ADAPTED | STU_OKED)]
-        public async Task @void(WebContext wc)
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(tip: "确认删除或者作废？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task rm(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE wares SET status = 0 WHERE id = @1 AND shpid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            try
+            {
+                dc.Sql("DELETE FROM wares WHERE id = @1 AND shpid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
+            catch (Exception e)
+            {
+                dc.Sql("UPDATE wares SET status = 0 WHERE id = @1 AND shpid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
 
-            wc.Give(204); // no content
+            wc.Give(204);
         }
     }
 }

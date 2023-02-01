@@ -27,14 +27,14 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fixPrice(trig, evt, price, off) {
+function fillPriceAndQtySelect(trig, evt, price, off, min, max, availx) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
     var startp = url.lastIndexOf('/', endp - 1);
     var n = parseInt(url.substring(startp + 1, endp));
 
-    var vip = false;
+    var vip = false; // whether vip for current contet
     if (evt.detail) {
 
         // to-path matched
@@ -48,6 +48,8 @@ function fixPrice(trig, evt, price, off) {
     }
 
     // fill fprice
+    //
+
     var out_fprice = trig.querySelector('.fprice');
     if (vip) {
         out_fprice.value = (price - off).toFixed(2);
@@ -60,6 +62,24 @@ function fixPrice(trig, evt, price, off) {
     }
     else {
         out_fprice.value = price.toFixed(2);
+    }
+
+    // fill qty options
+    //
+
+    if (vip) {
+        min = 1;
+    }
+    if (availx < max) {
+        max = availx;
+    }
+
+    var sel_qtyselect = trig.querySelector('.qtyselect');
+    for (var i = min; i <= max; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+        var opt = document.createElement("option");
+        opt.value = i;
+        opt.text = i + ' 件';
+        sel_qtyselect.add(opt);
     }
 
 }
@@ -102,14 +122,74 @@ function sumQtyDetails(trig, unitx) {
 
 }
 
-function qtyFill(trig, min, max, step) {
 
-    for (var i = min; i <= max; i += (i >= 120 ? step * 5 : i >= 60 ? step * 2 : step)) {
-        var opt = document.createElement("option");
-        opt.value = i;
-        opt.text = i + ' 件';
-        trig.add(opt);
+function posWareChange(trig) {
+    var form = trig.form;
+
+    var v = trig.selectedOptions[0];
+    var id = v.value;
+    var unit = v.getAttribute('unit');
+    var unitx = parseFloat(v.getAttribute('unitx'));
+    var price = parseFloat(v.getAttribute('price'));
+    var avail = parseFloat(v.getAttribute('avail'));
+    var availx = avail / unitx;
+
+    // check local-storage price for selected ware
+    var local_price = window.localStorage.getItem('pos-price-' + id);
+    if (local_price) {
+        price = parseFloat(local_price);
     }
+    form['price'].value = price;
+    // set local datum name
+    form['price'].setAttribute('local', 'pos-price-' + id);
+
+    // re-fill the qtyx options
+    var qtyx = form['qtyx'];
+    qtyx.innerHTML = null; // clear all qtyx options
+    if (unitx != 1.0) {
+        for (var i = 0; i < availx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+            var opt = document.createElement("option");
+            opt.value = i;
+            opt.text = i + ' 件';
+            qtyx.add(opt);
+        }
+    }
+
+    // set unit
+    form['unit'].value = unit ? unit : '';
+
+    posRecalc(trig);
+}
+
+function posRecalc(trig) {
+    var form = trig.form;
+    var subtotal = form['subtotal'];
+    var price = form['price'];
+    var qty = form['qty'];
+    subtotal.value = (qty.value * price.value).toFixed(2);
+}
+
+function posAdd(trig) {
+
+    var form = trig.form;
+
+    if (!form || !form.reportValidity()) return;
+
+    var wareid = form['wareid'].value;
+    var price = parseFloat(form['price'].value);
+    var qty = parseFloat(form['qty'].value);
+    var subtotal = parseFloat(form['subtotal'].value);
+    var opt = form['wareid'].selectedOptions[0];
+
+    // target ul element
+    var tbody = document.getElementById('details');
+    var tr = document.createElement("tr");
+    tr.innerHTML = '<td>' + opt.innerText + '</td><td>￥' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td>￥' + subtotal.toFixed(2) + '</td>';
+    tbody.appendChild(tr);
+
+    // form['topay'].value = (parseFloat(form['topay'].value) + subtotal).toFixed(2);
+
+    form.reset();
 }
 
 function call_smsvcode(trig) {
@@ -262,9 +342,14 @@ function subscriptUri(uri, num) {
 }
 
 
+//
+// Content Fixing Extension
+//
+
 function fixAll() {
-    var cookies = {};
+
     // parse all cookies
+    var cookies = {};
     if (document.cookie && document.cookie != '') {
         var split = document.cookie.split(';');
         for (var i = 0; i < split.length; i++) {
@@ -273,23 +358,56 @@ function fixAll() {
             cookies[name_value[0]] = decodeURIComponent(name_value[1]);
         }
     }
-    // traverse
-    var elst = document.querySelectorAll("[onfix]");
-    for (var e of elst) {
-        var scpt = e.getAttribute("onfix");
 
-        var cookie_name = e.getAttribute('cookie');
-        var cookie_val = cookies[cookie_name];
-        if (cookie_val) {
-            // cookie
-            var evt = new CustomEvent('fix', { detail: cookie_val });
-            e.addEventListener('fix', new Function(scpt));
-            e.dispatchEvent(evt);
-        } else {
-            var evt = new CustomEvent('fix');
-            e.addEventListener('fix', new Function(scpt));
-            e.dispatchEvent(evt);
+    // traverse
+    var elst;
+
+    elst = document.querySelectorAll("[cookie]");
+    for (var e of elst) {
+        var name = e.getAttribute('cookie');
+        if (name) {
+            // handler of onchange
+            e.addEventListener('change', (event) => {
+                document.cookie = name + '=' + encodeURIComponent(e.value) + ';max-age=31104000';
+            });
+            // fixing of value
+            var scpt = e.getAttribute("onfix");
+            var val = cookies[name];
+            if (scpt) { // raise onfix event
+                var evt = new CustomEvent('fix', { detail: val });
+                e.addEventListener('fix', new Function(scpt));
+                e.dispatchEvent(evt);
+            }
+            else { // simple assignment
+                e.value = val;
+            }
         }
+    }
+
+    elst = document.querySelectorAll("[local]");
+    for (var e of elst) {
+        var name = e.getAttribute('local');
+        if (name) {
+            // fixing of value
+            var scpt = e.getAttribute("onfix");
+            var val = window.localStorage.getItem(name);
+            if (scpt) { // raise onfix event
+                var evt = new CustomEvent('fix', { detail: val });
+                e.addEventListener('fix', new Function(scpt));
+                e.dispatchEvent(evt);
+            }
+            else { // simple assignment
+                e.value = val;
+            }
+        }
+
+        // handler of onchange
+        e.addEventListener('change', (event) => {
+            name = e.getAttribute('local'); // get the name on the fly
+            if (name) {
+                window.localStorage.setItem(name, e.value);
+            }
+        });
     }
 }
 

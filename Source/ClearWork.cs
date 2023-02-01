@@ -240,7 +240,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("账户款项结算", "常规")]
+    [Ui("业务结款", "常规")]
     public class OrglyClearWork : ClearWork<OrglyClearVarWork>
     {
         public void @default(WebContext wc, int page)

@@ -38,7 +38,7 @@ namespace ChainMart
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
                 h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((shply ? "shply" : "/srcly/"), o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((shply ? "/shply/" : "/srcly/"), o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

@@ -15,7 +15,7 @@ namespace ChainMart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_ONLINE, "网上"},
+            {TYP_ONLINE, "线上"},
             {TYP_OFFLINE, "线下"},
         };
 
