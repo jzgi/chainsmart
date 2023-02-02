@@ -357,7 +357,7 @@ namespace ChainMart
             }
         }
 
-        [Ui("引入", "引入供应链产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
+        [Ui("引入", "引入供应产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
         public async Task imp(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -382,7 +382,7 @@ namespace ChainMart
                 {
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
-                    h.LI_().SELECT("供应链产品", nameof(o.itemid), o.itemid, map, required: true)._LI();
+                    h.LI_().SELECT("供应产品", nameof(o.itemid), o.itemid, map, required: true)._LI();
                     h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();

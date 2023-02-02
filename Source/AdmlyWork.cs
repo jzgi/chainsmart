@@ -25,14 +25,13 @@ namespace ChainMart
             CreateWork<AdmlyOrgWork>("org");
 
 
-            CreateWork<AdmlyBookLdgWork>("bookldg");
-
-            CreateWork<AdmlyBuyLdgWork>("buyldg");
+            CreateWork<AdmlyBuyClearWork>("buyclr");
 
             CreateWork<AdmlyBookClearWork>("bookclr");
 
-            CreateWork<AdmlyBuyClearWork>("buyclr");
+            CreateWork<AdmlyBuyAggWork>("buyagg");
 
+            CreateWork<AdmlyBookAggWork>("bookagg");
         }
 
         public void @default(WebContext wc)
@@ -86,7 +85,7 @@ namespace ChainMart
                 h.LI_().FIELD("消费派送基本费", rtlbasic)._LI();
                 h.LI_().FIELD("消费每单打理费", rtlfee)._LI();
                 h.LI_().FIELD("消费支付扣点", rtlpayrate)._LI();
-                h.LI_().FIELD("供应链支付扣点", suppayrate)._LI();
+                h.LI_().FIELD("供应支付扣点", suppayrate)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true);

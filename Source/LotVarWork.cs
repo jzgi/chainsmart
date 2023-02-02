@@ -276,20 +276,6 @@ namespace ChainMart
             await doimg(wc, nameof(m) + sub, false, 3);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "删除该产品批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED)]
-        public async Task rm(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-
-            wc.Give(204); // no content
-        }
-
         [OrglyAuthorize(0, User.ROL_RVW)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
@@ -416,15 +402,23 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("无效", "将批次设为无效", icon: "ban"), Tool(ButtonConfirm, status: STU_ADAPTED | STU_OKED)]
-        public async Task @void(WebContext wc)
+        [Ui(tip: "删除或者作废该批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task rm(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            try
+            {
+                dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
+            catch (Exception e)
+            {
+                dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
 
             wc.Give(204); // no content
         }

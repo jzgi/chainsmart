@@ -16,7 +16,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("供应链采购", "商户")]
+    [Ui("供应采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
         protected override void OnCreate()
@@ -51,7 +51,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("供应链采购", group: 1), Tool(Anchor)]
+        [Ui("供应采购", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -138,7 +138,7 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("下单", "供应链采购下单", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("下单", "供应采购下单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task creation(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -184,7 +184,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应链订单", "商户")]
+    [Ui("供应订单", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         static void MainGrid(HtmlBuilder h, Book[] arr)
@@ -211,7 +211,7 @@ namespace ChainMart
         }
 
         [BizNotice(BOOK_CREATED)]
-        [Ui("供应链订单"), Tool(Anchor)]
+        [Ui("供应订单"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -299,7 +299,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("供应链采购统一收货", "盟主")]
+    [Ui("供应采购统一收货", "盟主")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("按产品", group: 1), Tool(Anchor)]
@@ -393,7 +393,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("供应链订单统一发货", "中库")]
+    [Ui("供应订单统一发货", "中库")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

@@ -10,21 +10,21 @@ namespace ChainMart
         public const short
             TYP_PLAT = 1,
             TYP_GATEWAY = 2,
-            TYP_SRC = 3,
-            TYP_ZON = 4,
-            TYP_CTR = 5,
-            TYP_SHP = 7,
-            TYP_MKT = 8;
+            TYP_SHP = 3,
+            TYP_MKT = 4,
+            TYP_SRC = 5,
+            TYP_ZON = 6,
+            TYP_CTR = 7;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PLAT, "平台设施"},
+            {TYP_PLAT, "平台基础"},
             {TYP_GATEWAY, "支付网关"},
+            {TYP_SHP, "摊铺销售"},
+            {TYP_MKT, "市场盟主"},
             {TYP_SRC, "产源销售"},
             {TYP_ZON, "供区盟主"},
             {TYP_CTR, "中库服务"},
-            {TYP_SHP, "摊铺销售"},
-            {TYP_MKT, "市场盟主"},
         };
 
 
@@ -36,12 +36,11 @@ namespace ChainMart
         };
 
         internal int id;
-        internal DateTime till;
         internal int orgid;
-        internal int prtid;
+        internal DateTime till;
         internal short trans;
         internal decimal amt;
-        internal decimal rate;
+        internal short rate;
         internal decimal topay;
         internal decimal pay;
 
@@ -55,7 +54,6 @@ namespace ChainMart
             }
             s.Get(nameof(till), ref till);
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(prtid), ref prtid);
             s.Get(nameof(trans), ref trans);
             s.Get(nameof(amt), ref amt);
             s.Get(nameof(rate), ref rate);
@@ -73,7 +71,6 @@ namespace ChainMart
             }
             s.Put(nameof(till), till);
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(prtid), prtid);
             s.Put(nameof(trans), trans);
             s.Put(nameof(amt), amt);
             s.Put(nameof(rate), rate);

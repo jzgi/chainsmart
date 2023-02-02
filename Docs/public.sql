@@ -391,28 +391,23 @@ create index buys_uidstatus_idx
 create index buys_shpidstatus_idx
     on buys (shpid, status);
 
-create table clears
+create table global
 (
-    id serial not null,
-    orgid integer not null,
-    till date,
-    prtid integer not null,
-    ctrid integer not null,
-    trans integer,
-    amt money,
-    rate money,
-    topay integer,
-    pay money
-)
-    inherits (entities);
+    buysgen date,
+    booksgen date,
+    pk boolean not null
+        constraint global_pk
+            primary key
+);
 
-alter table clears owner to postgres;
+alter table global owner to postgres;
 
-create table buyldgs
+create table bookaggs
 (
+    typ smallint not null,
     orgid integer not null,
-    acct integer not null,
     dt date,
+    acct integer not null,
     prtid integer,
     trans integer,
     qty numeric(8,1),
@@ -421,26 +416,60 @@ create table buyldgs
     creator varchar(12)
 );
 
-alter table buyldgs owner to postgres;
+alter table bookaggs owner to postgres;
 
-create table bookldgs
+create index rpts_main_idx
+    on bookaggs (typ, orgid, dt);
+
+create table bookclrs
 (
+    id serial not null
+        constraint clears_pk
+            primary key,
     orgid integer not null,
-    acct integer not null,
+    till date,
+    trans integer,
+    amt money,
+    rate smallint,
+    topay money,
+    pay money
+)
+    inherits (entities);
+
+alter table bookclrs owner to postgres;
+
+create table buyaggs
+(
+    typ smallint not null,
+    orgid integer not null,
     dt date,
+    acct integer not null,
     prtid integer,
     trans integer,
     qty numeric(8,1),
     amt money,
     created timestamp(0),
-    creator varchar(12),
-    ctrid integer
+    creator varchar(12)
 );
 
-alter table bookldgs owner to postgres;
+alter table buyaggs owner to postgres;
 
-create unique index bookldgs_orgidacctdt_idx
-    on bookldgs (orgid, acct, dt);
+create table buyclrs
+(
+    id serial not null
+        constraint buyclrs_pk
+            primary key,
+    orgid integer not null,
+    till date,
+    trans integer,
+    amt money,
+    rate smallint,
+    topay money,
+    pay money
+)
+    inherits (entities);
+
+alter table buyclrs owner to postgres;
 
 create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
 SELECT o.typ,
@@ -625,92 +654,43 @@ $$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
 
-create function clearsgen(till date, opr character varying) returns void
+create function buysgen(till date, opr character varying) returns void
     language plpgsql
 as $$
 DECLARE
-
-    TYP_PLAT constant int = 1;
-    TYP_GATEWAY constant int = 2;
-    TYP_SRC constant int = 3;
-    TYP_ZON constant int = 4;
-    TYP_CTR constant int = 5;
-
---     rates in thousandth
-    BASE constant int = 1000;
-    RATE_PLAT constant int = 4;
-    RATE_GATEWAY constant int = 6;
-    RATE_SRC constant int = 970;
-    RATE_ZON constant int = 4;
-    RATE_CTR constant int = 16;
-
-    now timestamp(0);
-
-BEGIN
-
-    opr = coalesce(opr, 'SYS');
-
-    now = localtimestamp(0);
-
-    INSERT INTO clears (typ, name, created, creator, orgid, till, prtid, ctrid, trans, amt, rate, topay)
-    SELECT TYP_SRC,
-           orgname,
-           till,
-           opr,
-           orgid,
-           dt,
-           prtid,
-           ctrid,
-           sum(trans),
-           sum(amt),
-           RATE_SRC,
-           sum(amt * RATE_SRC / BASE)
-    FROM bookldgs
-    WHERE dt <= till GROUP BY orgid;
-
-END
-$$;
-
-alter function clearsgen(date, varchar) owner to postgres;
-
-create function postldgs(till date, opr character varying) returns void
-    language plpgsql
-as $$
-DECLARE
-
     past date;
     now timestamp(0) = localtimestamp(0);
     tillstamp timestamp(0);
     paststamp timestamp(0);
+
+    TYP_PLAT constant int = 1;
+    TYP_GATEWAY constant int = 2;
+    TYP_SHP constant int = 3;
+    TYP_MKT constant int = 4;
+
+    BASE constant int = 1000;
+    RATE_PLAT constant int = 4;
+    RATE_GATEWAY constant int = 6;
+    RATE_SHP constant int = 970;
+    RATE_MKT constant int = 20;
+
 BEGIN
+
+    -- adjust parameters
 
     tillstamp = (till + interval '1 day')::timestamp(0);
 
-    -- adjust parameters
     opr = coalesce(opr, 'SYS');
 
-    SELECT coalesce(max(dt), '2000-01-01'::date) FROM bookldgs INTO past;
+    SELECT coalesce(
+                   buysgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
     paststamp = (past + interval '1 day')::timestamp(0);
 
-    INSERT INTO bookldgs (orgid, acct, dt, prtid, ctrid, trans, amt, created, creator)
-    SELECT srcid,
-           itemid,
-           oked::date,
-           first(zonid),
-           first(ctrid),
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
-    FROM books
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp GROUP BY srcid, itemid, oked::date;
+    -- buys for shop
 
-
-    SELECT coalesce(max(dt), '2000-01-01'::date) FROM buyldgs INTO past;
-    paststamp = (past + interval '1 day')::timestamp(0);
-
-    INSERT INTO buyldgs (orgid, acct, dt, prtid, trans, amt, created, creator)
-    SELECT shpid,
+    INSERT INTO buyaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 1,
+           shpid,
            typ,
            oked::date,
            first(mktid),
@@ -719,12 +699,169 @@ BEGIN
            now,
            opr
     FROM buys
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp GROUP BY shpid, typ, oked::date;
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY shpid, typ, oked::date;
+
+    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_SHP,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_SHP,
+           sum(amt * RATE_SHP / BASE)
+    FROM buyaggs
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
+
+
+    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_MKT,
+           first(creator),
+           now,
+           opr,
+           prtid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_MKT,
+           sum(amt * RATE_MKT / BASE)
+    FROM buyaggs
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY prtid;
+
+
+
+    UPDATE global SET buysgen = till WHERE pk;
+END
+$$;
+
+alter function buysgen(date, varchar) owner to postgres;
+
+create function booksgen(till date, opr character varying) returns void
+    language plpgsql
+as $$
+DECLARE
+
+    past date;
+    now timestamp(0) = localtimestamp(0);
+    tillstamp timestamp(0);
+    paststamp timestamp(0);
+
+
+    TYP_PLAT constant int = 1;
+    TYP_GATEWAY constant int = 2;
+    TYP_SRC constant int = 5;
+    TYP_ZON constant int = 6;
+    TYP_CTR constant int = 7;
+
+--     rates in thousandth
+
+    BASE constant int = 1000;
+    RATE_PLAT constant int = 4;
+    RATE_GATEWAY constant int = 6;
+    RATE_SRC constant int = 970;
+    RATE_ZON constant int = 4;
+    RATE_CTR constant int = 16;
+
+BEGIN
+
+    opr = coalesce(opr, 'SYS');
+
+    SELECT coalesce(booksgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    tillstamp = (till + interval '1 day')::timestamp(0);
+
+    opr = coalesce(opr, 'SYS');
+
+    paststamp = (past + interval '1 day')::timestamp(0);
+
+
+
+    -- books for source
+
+    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 2,
+           srcid,
+           itemid,
+           oked::date,
+           first(zonid),
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY srcid, itemid, oked::date;
+
+    -- books for center
+
+    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 3,
+           ctrid,
+           itemid,
+           oked::date,
+           NULL,
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY ctrid, itemid, oked::date;
+
+
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_SRC,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_SRC,
+           sum(amt * RATE_SRC / BASE)
+    FROM bookaggs
+    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY orgid;
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_ZON,
+           first(creator),
+           now,
+           opr,
+           prtid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_ZON,
+           sum(amt * RATE_ZON / BASE)
+    FROM bookaggs
+    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY prtid;
+
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_CTR,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_CTR,
+           sum(amt * RATE_CTR / BASE)
+    FROM bookaggs
+    WHERE typ = 3 AND dt > past AND dt <= till GROUP BY orgid;
+
+
+    UPDATE global SET booksgen = till WHERE pk;
 
 END
 $$;
 
-alter function postldgs(date, varchar) owner to postgres;
+alter function booksgen(date, varchar) owner to postgres;
 
 create aggregate first(anyelement) (
     sfunc = first_agg,

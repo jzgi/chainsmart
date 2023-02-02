@@ -20,10 +20,10 @@ namespace ChainMart
 
         public static readonly Map<short, string> Slots = new Map<short, string>
         {
-            {BOOK_CREATED, "供应链新单"},
-            {BOOK_ADAPTED, "供应链发货"},
-            {BOOK_OKED, "供应链收货"},
-            {BOOK_ABORTED, "供应链撤单"},
+            {BOOK_CREATED, "供应新单"},
+            {BOOK_ADAPTED, "供应发货"},
+            {BOOK_OKED, "供应收货"},
+            {BOOK_ABORTED, "供应撤单"},
             {BUY_CREATED, "消费新单"},
             {BUY_ADAPTED, "消费发货"},
             {BUY_OKED, "消费收货"},

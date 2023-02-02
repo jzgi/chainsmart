@@ -54,8 +54,6 @@ namespace ChainMart
 
             CreateWork<OrglyAccessWork>("access", false); // false = source
 
-            CreateWork<OrglyClearWork>("clear");
-
             CreateWork<OrglyCreditWork>("credit");
 
             // src
@@ -66,7 +64,9 @@ namespace ChainMart
 
             CreateWork<SrclyBookWork>("sbook");
 
-            CreateWork<SrclyBookLdgWork>("sbookldg");
+            CreateWork<SrclyBookAggWork>("sbookldg");
+
+            CreateWork<SrclyBuyClearWork>("sclear");
 
             // zon
 
@@ -78,6 +78,8 @@ namespace ChainMart
             // ctr
 
             CreateWork<CtrlyLotWork>("clot");
+
+            CreateWork<CtrlyBookAggWork>("cbookrpt");
 
             CreateWork<CtrlyBookWork>("cbook");
         }
@@ -100,7 +102,7 @@ namespace ChainMart
 
             CreateWork<OrglyAccessWork>("access", true); // true = shop
 
-            CreateWork<OrglyClearWork>("clear");
+            CreateWork<SrclyBuyClearWork>("clear");
 
             CreateWork<OrglyCreditWork>("credit");
 
@@ -114,7 +116,7 @@ namespace ChainMart
 
             CreateWork<ShplyPosWork>("spos");
 
-            CreateWork<ShplyBuyLdgWork>("sbuyldg");
+            CreateWork<ShplyBuyAggWork>("sbuyrpt");
 
             CreateWork<ShplyBookWork>("sbook");
 

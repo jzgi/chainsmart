@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
@@ -16,23 +14,32 @@ namespace ChainMart
             CreateVarWork<V>();
         }
 
-        protected static void ClearTable(HtmlBuilder h, IEnumerable<Clear> arr)
+        protected static void MainTable(HtmlBuilder h, Clear[] arr, bool orgname)
         {
             h.TABLE_();
-            var last = 0;
+            DateTime last = default;
             foreach (var o in arr)
             {
-                if (o.prtid != last)
+                if (o.till != last)
                 {
-                    var spr = GrabObject<int, Org>(o.prtid);
-                    h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
+                    h.TR_().TD_("uk-padding-tiny-left", colspan: 4).T(o.till, time: 0)._TD()._TR();
                 }
                 h.TR_();
-                h.TD(o.till);
-                h.TD(o.name);
+                if (orgname)
+                {
+                    var org = GrabObject<int, Org>(o.orgid);
+                    h.TD(org.name);
+                }
+                h.TD(Clear.Typs[o.typ]);
+                h.TD_("uk-text-right").T(o.trans)._TD();
+                if (!orgname)
+                {
+                    h.TD_("uk-text-right").CNY(o.amt)._TD();
+                }
+                h.TD_("uk-text-right").CNY(o.topay)._TD();
                 h._TR();
 
-                last = o.prtid;
+                last = o.till;
             }
             h._TABLE();
         }
@@ -40,14 +47,14 @@ namespace ChainMart
 
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("消费订单结款", "财务")]
+    [Ui("消费业务结算", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
-        [Ui("当前结款", group: 1), Tool(Anchor)]
+        [Ui("消费业务结算", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN ").T(Clear.TYP_SHP).T(" AND ").T(Clear.TYP_MKT).T(" ANd status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM buyclrs WHERE status BETWEEN 1 AND 2 ORDER BY id LIMIT 40 OFFSET @1 * 40");
             var arr = await dc.QueryAsync<Clear>(p => p.Set(page));
 
             wc.GivePage(200, h =>
@@ -59,10 +66,10 @@ namespace ChainMart
                     return;
                 }
 
-                ClearTable(h, arr);
+                MainTable(h, arr, true);
 
                 h.PAGINATION(arr.Length == 40);
-            }, false, 3);
+            }, false, 60);
         }
 
         [Ui(tip: "已付款", icon: "credit-card", group: 2), Tool(Anchor)]
@@ -81,15 +88,15 @@ namespace ChainMart
                     return;
                 }
 
-                ClearTable(h, arr);
+                MainTable(h, arr, true);
 
                 h.PAGINATION(arr.Length == 40);
             }, false, 3);
         }
 
-        [AdmlyAuthorize(1)]
+        [AdmlyAuthorize(User.ROL_FIN)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
-        public async Task calc(WebContext wc)
+        public async Task gen(WebContext wc)
         {
             if (wc.IsGet)
             {
@@ -127,14 +134,14 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应链订单结款", "财务")]
+    [Ui("供应业务结算", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlyBookClearVarWork>
     {
-        [Ui("当前结款", group: 1), Tool(Anchor)]
+        [Ui("供应业务结算", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM bookclrs WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
             var arr = await dc.QueryAsync<Clear>();
 
             wc.GivePage(200, h =>
@@ -142,11 +149,11 @@ namespace ChainMart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无结款");
+                    h.ALERT("尚无结算");
                     return;
                 }
 
-                ClearTable(h, arr);
+                MainTable(h, arr, true);
 
                 h.PAGINATION(arr.Length == 40);
             }, false, 3);
@@ -179,31 +186,15 @@ namespace ChainMart
                     {
                         return;
                     }
-                    h.TABLE_();
-                    var last = 0;
-                    foreach (var o in arr)
-                    {
-                        if (o.prtid != last)
-                        {
-                            var spr = GrabObject<int, Org>(o.prtid);
-                            h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-                        }
-                        h.TR_();
-                        h.TD(o.till);
-                        h.TD(o.name);
-                        h._TR();
 
-                        last = o.prtid;
-                    }
-                    h._TABLE();
                     h.PAGINATION(arr.Length == 40);
                 }, false, 3);
             }
         }
 
-        [AdmlyAuthorize(1)]
+        [AdmlyAuthorize(User.ROL_FIN)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
-        public async Task calc(WebContext wc)
+        public async Task gen(WebContext wc)
         {
             if (wc.IsGet)
             {
@@ -240,57 +231,55 @@ namespace ChainMart
         }
     }
 
-    [Ui("业务结款", "常规")]
-    public class OrglyClearWork : ClearWork<OrglyClearVarWork>
+    [Ui("销售结款", "商户")]
+    public class SrclyBuyClearWork : ClearWork<OrglyClearVarWork>
     {
+        [Ui("销售结款", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE orgid = @1 AND status = 1 ORDER BY id LIMIT 40 OFFSET @2 * 40");
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM buyclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
             var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                h.TABLE(arr, o =>
+                if (arr == null)
                 {
-                    h.TDCHECK(o.Key);
-                    h.TD_().T(o.till, 3, 0)._TD();
-                    h.TD(Clear.Typs[o.typ]);
-                    h.TD(o.amt, money: true);
-                    h.TD(Clear.Statuses[((Entity) o).state]);
-                });
+                    h.ALERT("尚无结款");
+                    return;
+                }
+
+                MainTable(h, arr, false);
+
                 h.PAGINATION(arr?.Length == 20);
             }, false, 3);
         }
 
-        [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("统计", "时段统计"), Tool(ButtonOpen)]
-        public async Task sum(WebContext wc, int page)
+        [Ui(tip: "已支付", icon: "credit-card", group: 2), Tool(Anchor)]
+        public void oked(WebContext wc, int page)
         {
-            var prin = (User) wc.Principal;
-            short orgid = wc[-1];
-            DateTime date;
-            short typ = 0;
-            decimal amt = 0;
-            if (wc.IsGet)
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE orgid = @1 AND status = 4 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
+            var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
+
+            wc.GivePage(200, h =>
             {
-                wc.GivePane(200, h =>
+                h.TOOLBAR();
+                if (arr == null)
                 {
-                    h.FORM_().FIELDSUL_("指定统计区间");
-                    h.LI_().DATE("从日期", nameof(date), DateTime.Today, required: true)._LI();
-                    h.LI_().DATE("到日期", nameof(date), DateTime.Today, required: true)._LI();
-                    h._FIELDSUL()._FORM();
-                });
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                date = f[nameof(date)];
-                date = f[nameof(date)];
-                wc.GivePane(200); // close dialog
-            }
+                    h.ALERT("尚无结款");
+                    return;
+                }
+
+                MainTable(h, arr, false);
+
+                h.PAGINATION(arr?.Length == 20);
+            }, false, 3);
         }
     }
 }

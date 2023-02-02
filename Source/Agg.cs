@@ -6,19 +6,18 @@ namespace ChainMart
     /// <summary>
     /// An entry record of ledger.
     /// </summary>
-    public class Ldgr : IData
+    public class Agg : IData
     {
-        public static readonly Ldgr Empty = new Ldgr();
-
-        public const short
-            TYP_MRT = 1,
-            TYP_PRV = 2;
+        public static readonly Agg Empty = new Agg();
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_MRT, "市场"},
-            {TYP_PRV, "供给"},
+            {1, "摊铺"},
+            {2, "产源"},
+            {3, "中库"},
         };
+
+        internal short typ;
 
         internal int orgid;
 
@@ -36,6 +35,7 @@ namespace ChainMart
 
         public void Read(ISource s, short msk = 0xff)
         {
+            s.Get(nameof(typ), ref typ);
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(acct), ref acct);
             s.Get(nameof(dt), ref dt);
@@ -47,6 +47,7 @@ namespace ChainMart
 
         public void Write(ISink s, short msk = 0xff)
         {
+            s.Put(nameof(typ), typ);
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(acct), acct);
             s.Put(nameof(dt), dt);
