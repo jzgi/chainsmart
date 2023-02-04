@@ -15,7 +15,7 @@ namespace ChainMart
     {
     }
 
-    public class OrglyClearVarWork : ClearVarWork
+    public class PtylyClearVarWork : ClearVarWork
     {
         [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
         public async Task rcv(WebContext wc, int dt)

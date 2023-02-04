@@ -2,7 +2,7 @@
 
 namespace ChainMart
 {
-    public class Ware : Entity, IKeyable<int>
+    public class Ware : Entity, IKeyable<int>, IStockable
     {
         public static readonly Ware Empty = new Ware();
 
@@ -29,7 +29,7 @@ namespace ChainMart
         internal bool icon;
         internal bool pic;
 
-        internal WareOp[] ops;
+        internal StockOp[] ops;
 
         public override void Read(ISource s, short msk = 255)
         {
@@ -104,5 +104,7 @@ namespace ChainMart
         public decimal RealPrice => price - off;
 
         public short AvailX => (short) (avail / unitx);
+
+        public StockOp[] Ops => ops;
     }
 }

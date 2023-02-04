@@ -31,7 +31,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(ROL_MGT)]
-    [Ui("区域设置", "业务")]
+    [Ui("区域设置", "平台")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnCreate()

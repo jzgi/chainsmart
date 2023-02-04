@@ -56,6 +56,8 @@ namespace ChainMart
 
             CreateWork<OrglyCreditWork>("credit");
 
+            CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
+
             // src
 
             CreateWork<SrclyItemWork>("sitem");
@@ -66,14 +68,11 @@ namespace ChainMart
 
             CreateWork<SrclyBookAggWork>("sbookldg");
 
-            CreateWork<SrclyBuyClearWork>("sclear");
-
             // zon
 
             CreateWork<ZonlyOrgWork>("zorg");
 
             CreateWork<ZonlyTestWork>("ztest");
-
 
             // ctr
 
@@ -102,9 +101,9 @@ namespace ChainMart
 
             CreateWork<OrglyAccessWork>("access", true); // true = shop
 
-            CreateWork<SrclyBuyClearWork>("clear");
-
             CreateWork<OrglyCreditWork>("credit");
+
+            CreateWork<PtylyBuyClearWork>("buyclr", state: true);
 
             // shp
 
@@ -116,9 +115,10 @@ namespace ChainMart
 
             CreateWork<ShplyPosWork>("spos");
 
-            CreateWork<ShplyBuyAggWork>("sbuyrpt");
+            CreateWork<ShplyBuyAggWork>("sbuyagg");
 
             CreateWork<ShplyBookWork>("sbook");
+
 
             // mkt
 

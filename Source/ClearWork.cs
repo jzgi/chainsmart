@@ -11,7 +11,7 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<V>();
+            CreateVarWork<V>(state: State);
         }
 
         protected static void MainTable(HtmlBuilder h, Clear[] arr, bool orgname)
@@ -47,7 +47,7 @@ namespace ChainMart
 
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("消费业务结算", "财务")]
+    [Ui("消费业务结算管理", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
         [Ui("消费业务结算", group: 1), Tool(Anchor)]
@@ -134,7 +134,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应业务结算", "财务")]
+    [Ui("供应业务结算管理", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlyBookClearVarWork>
     {
         [Ui("供应业务结算", group: 1), Tool(Anchor)]
@@ -231,17 +231,30 @@ namespace ChainMart
         }
     }
 
-    [Ui("销售结款", "商户")]
-    public class SrclyBuyClearWork : ClearWork<OrglyClearVarWork>
+    [Ui("消费业务收入")]
+    public class PtylyBuyClearWork : ClearWork<PtylyClearVarWork>
     {
-        [Ui("销售结款", group: 1), Tool(Anchor)]
+        [Ui("业务收入", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            var org = wc[-1].As<Org>();
+            var isOrg = (bool) State;
+
+            var org = isOrg ? wc[-1].As<Org>() : null;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM buyclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-            var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
+            var arr = dc.Query<Clear>(p =>
+            {
+                if (org == null)
+                {
+                    p.SetNull();
+                }
+                else
+                {
+                    p.Set(org.id);
+                }
+                p.Set(page);
+            });
 
             wc.GivePage(200, h =>
             {
@@ -257,15 +270,32 @@ namespace ChainMart
                 h.PAGINATION(arr?.Length == 20);
             }, false, 3);
         }
+    }
 
-        [Ui(tip: "已支付", icon: "credit-card", group: 2), Tool(Anchor)]
-        public void oked(WebContext wc, int page)
+    [Ui("供应业务收入")]
+    public class PtylyBookClearWork : ClearWork<PtylyClearVarWork>
+    {
+        [Ui("业务收入", group: 1), Tool(Anchor)]
+        public void @default(WebContext wc, int page)
         {
-            var org = wc[-1].As<Org>();
+            var isOrg = (bool) State;
+
+            var org = isOrg ? wc[-1].As<Org>() : null;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE orgid = @1 AND status = 4 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-            var arr = dc.Query<Clear>(p => p.Set(org.id).Set(page));
+            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM bookclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
+            var arr = dc.Query<Clear>(p =>
+            {
+                if (org == null)
+                {
+                    p.SetNull();
+                }
+                else
+                {
+                    p.Set(org.id);
+                }
+                p.Set(page);
+            });
 
             wc.GivePage(200, h =>
             {

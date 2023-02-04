@@ -18,33 +18,45 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
 
+            const short msk = 255 | MSK_EXTRA;
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
-            var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
+            dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
+            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id), msk);
 
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("上线产品名", o.name)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("交货条款", Lot.Terms[o.term]);
-                if (o.term > 0) h.FIELD("交货日期", o.dated);
+                h.LI_().FIELD("上线产品名", m.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
+                h.LI_().FIELD("交货条款", Lot.Terms[m.term]);
+                if (m.term > 0) h.FIELD("交货日期", m.dated);
                 h._LI();
 
-                h.LI_().FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext)._LI();
-                h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
-                h.LI_().FIELD("单价", o.price).FIELD("促销立减", o.off)._LI();
-                h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
-                h.LI_().FIELD("递增", o.step)._LI();
-                h.LI_().FIELD("总件数", o.cap).FIELD("剩余件数", o.avail)._LI();
-                h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
-                h.LI_().FIELD("处理进展", o.status, Lot.Statuses).FIELD("应用状况", Lot.States[o.state])._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator, "&nbsp;")._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter, "&nbsp;")._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker, "&nbsp;")._LI();
+                h.LI_();
+                if (m.targs == null) h.FIELD("限域投放", "不限");
+                else h.FIELD("限域投放", m.targs, topOrgs, capt: v => v.Ext);
+                h._LI();
+                h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
+                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
+                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.max)._LI();
+                h.LI_().FIELD("批次总件数", m.cap).FIELD("剩余件数", m.AvailX)._LI();
+                h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
+                h.LI_().FIELD("处理状态", m.status, Lot.Statuses)._LI();
+                h.LI_().FIELD2("创建", m.created, m.creator, "&nbsp;")._LI();
+                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter, "&nbsp;")._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker, "&nbsp;")._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TABLE(m.ops, o =>
+                {
+                    h.TD_().T(o.dt, time: 1)._TD();
+                    h.TD(o.qty, right: true);
+                    h.TD(StockOp.Typs[o.typ]);
+                    h.TD(o.avail, right: true);
+                    h.TD(o.by);
+                }, caption: "库存操作记录", reverse: true);
+
+                h.TOOLBAR(bottom: true, status: m.status, state: m.state);
             });
         }
 
@@ -233,11 +245,10 @@ namespace ChainMart
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
-                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("促销立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("递增", nameof(o.step), o.step)._LI();
-                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("可售件数", nameof(o.avail), o.avail)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.avail), o.avail)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -371,7 +382,6 @@ namespace ChainMart
             }
         }
 
-
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
@@ -400,6 +410,53 @@ namespace ChainMart
 
             wc.Give(200);
         }
+
+        [OrglyAuthorize(0, User.ROL_LOG)]
+        [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED | STU_OKED)]
+        public async Task stock(WebContext wc)
+        {
+            int wareid = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User) wc.Principal;
+
+            short typ = 0;
+            decimal qty = 0.0M;
+
+            if (wc.IsGet)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("库存操作");
+                    h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
+                    h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
+                });
+            }
+            else // POST
+            {
+                var f = await wc.ReadAsync<Form>();
+                typ = f[nameof(typ)];
+                qty = f[nameof(qty)];
+
+                // update
+                using var dc = NewDbContext();
+
+                var now = DateTime.Now;
+                if (typ < 5) // add
+                {
+                    dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                }
+                else // reduce
+                {
+                    dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                }
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
 
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除或者作废该批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
@@ -459,7 +516,6 @@ namespace ChainMart
                 {
                     h.LI_().FIELD("生产基地", item.origin)._LI();
                 }
-                // h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.fully)._A()._LI();
                 h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
                 h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
                 h._UL();
@@ -469,23 +525,23 @@ namespace ChainMart
                 // bottom bar
                 //
                 decimal realprice = lot.RealPrice;
-                short qty = lot.min;
+                short qtyx = lot.min;
                 decimal unitx = lot.unitx;
-                decimal qtyx = qty * unitx;
-                decimal topay = decimal.Round(qtyx * lot.RealPrice, 2); // round to money 2 decimal digits
+                decimal qty = qtyx * unitx;
+                decimal topay = decimal.Round(qty * lot.RealPrice, 2); // round to money 2 decimal digits
 
                 h.BOTTOMBAR_();
-                h.FORM_("uk-flex uk-width-1-1", oninput: $"qtyx.value = (qty.value * {unitx}).toFixed(1); topay.value = ({realprice} * qtyx.value).toFixed(2);");
+                h.FORM_("uk-flex uk-width-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(1); topay.value = ({realprice} * qty.value).toFixed(2);");
 
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qty), css: "uk-width-small");
-                for (int i = lot.min; i < lot.max; i += lot.step)
+                for (int i = lot.min; i < lot.max; i += 1)
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
                 h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
-                h.OUTPUT(nameof(qtyx), qtyx).SP().T(lot.unit)._SPAN();
+                h.OUTPUT(nameof(qty), qty).SP().T(lot.unit)._SPAN();
 
                 // pay button
                 h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -504,7 +560,7 @@ namespace ChainMart
 
             // submitted values
             var f = await wc.ReadAsync<Form>();
-            short qty = f[nameof(qty)];
+            short qtyx = f[nameof(qtyx)];
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
@@ -534,8 +590,8 @@ namespace ChainMart
                     unitx = lot.unitx,
                     price = lot.price,
                     off = lot.off,
-                    qty = qty,
-                    topay = lot.RealPrice * qty * lot.unitx,
+                    qty = qtyx * lot.unitx,
+                    topay = lot.RealPrice * qtyx * lot.unitx,
                 };
 
                 // make use of any existing abandoned record

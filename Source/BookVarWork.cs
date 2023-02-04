@@ -29,7 +29,7 @@ namespace ChainMart
                 h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price, money: true).FIELD("立减", o.off)._LI();
-                h.LI_().FIELD("件数", o.qty).FIELD("支付", o.pay, money: true)._LI();
+                h.LI_().FIELD("件数", o.QtyX).FIELD("支付", o.pay, money: true)._LI();
                 h.LI_().FIELD("状态", o.status, Book.Statuses).FIELD("状况", Book.States[o.state])._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();

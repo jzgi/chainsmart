@@ -114,7 +114,7 @@ namespace ChainMart
 
 
     [AdmlyAuthorize(User.ROL_MGT)]
-    [Ui("用户管理", "业务")]
+    [Ui("用户管理", "平台")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, User[] arr)

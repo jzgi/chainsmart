@@ -32,7 +32,7 @@ namespace ChainMart
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
 
                 h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
-                h.LI_().TABLE(o.details, d =>
+                h.LI_().TABLE(o.lns, d =>
                 {
                     h.TD_().T(d.name);
                     if (d.unitx != 1)

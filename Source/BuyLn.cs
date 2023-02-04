@@ -2,7 +2,10 @@
 
 namespace ChainMart
 {
-    public class BuyDetail : IData, IKeyable<int>
+    /// <summary>
+    /// A detail line of buy.
+    /// </summary>
+    public class BuyLn : IData, IKeyable<int>
     {
         public int wareid;
 
@@ -52,14 +55,15 @@ namespace ChainMart
 
         public short QtyX => (short) (qty / unitx);
 
-        internal void InitByWare(Ware w, bool offed)
+        internal void Init(Ware w, bool discount)
         {
             name = w.name;
             itemid = w.itemid;
             unit = w.unit;
             unitx = w.unitx;
             price = w.price;
-            if (offed)
+            
+            if (discount)
             {
                 off = w.off;
             }

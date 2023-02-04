@@ -3,11 +3,11 @@ using ChainFx;
 
 namespace ChainMart
 {
-    public struct WareOp : IData, IKeyable<DateTime>
+    public struct StockOp : IData, IKeyable<DateTime>
     {
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {1, "采购＋"},
+            {1, "到货＋"},
             {2, "调拨＋"},
             {3, "盘盈＋"},
             {4, "其它＋"},

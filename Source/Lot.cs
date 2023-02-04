@@ -6,7 +6,7 @@ namespace ChainMart
     /// <summary>
     /// A product lot for booking.
     /// </summary>
-    public class Lot : Entity, IKeyable<int>
+    public class Lot : Entity, IKeyable<int>, IStockable
     {
         public static readonly Lot Empty = new Lot();
 
@@ -47,10 +47,9 @@ namespace ChainMart
         internal decimal price;
         internal decimal off;
         internal int cap;
-        internal int avail;
+        internal decimal avail;
         internal short min;
         internal short max;
-        internal short step;
 
         internal int nstart;
         internal int nend;
@@ -58,6 +57,8 @@ namespace ChainMart
         internal bool m2;
         internal bool m3;
         internal bool m4;
+
+        internal StockOp[] ops;
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -84,7 +85,6 @@ namespace ChainMart
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
-                s.Get(nameof(step), ref step);
                 s.Get(nameof(max), ref max);
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(avail), ref avail);
@@ -97,6 +97,10 @@ namespace ChainMart
                 s.Get(nameof(m2), ref m2);
                 s.Get(nameof(m3), ref m3);
                 s.Get(nameof(m4), ref m4);
+            }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Get(nameof(ops), ref ops);
             }
         }
 
@@ -125,7 +129,6 @@ namespace ChainMart
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
-                s.Put(nameof(step), step);
                 s.Put(nameof(max), max);
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(avail), avail);
@@ -139,6 +142,10 @@ namespace ChainMart
                 s.Put(nameof(m3), m3);
                 s.Put(nameof(m4), m4);
             }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Put(nameof(ops), ops);
+            }
         }
 
         public int Key => id;
@@ -149,6 +156,11 @@ namespace ChainMart
         {
             return targs == null || targs.Contains(mktid);
         }
+
+        public short AvailX => (short) (avail / unitx);
+
+
+        public StockOp[] Ops => ops;
 
         public override string ToString() => name;
     }

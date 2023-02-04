@@ -9,7 +9,6 @@ namespace ChainMart
 
         public const short
             TYP_PLAT = 1,
-            TYP_GATEWAY = 2,
             TYP_SHP = 3,
             TYP_MKT = 4,
             TYP_SRC = 5,
@@ -18,12 +17,11 @@ namespace ChainMart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_PLAT, "平台基础"},
-            {TYP_GATEWAY, "支付网关"},
-            {TYP_SHP, "摊铺销售"},
-            {TYP_MKT, "市场盟主"},
-            {TYP_SRC, "产源销售"},
-            {TYP_ZON, "供区盟主"},
+            {TYP_PLAT, "平台服务"},
+            {TYP_SHP, "线上销售"},
+            {TYP_MKT, "市场服务"},
+            {TYP_SRC, "线上销售"},
+            {TYP_ZON, "供区服务"},
             {TYP_CTR, "中库服务"},
         };
 

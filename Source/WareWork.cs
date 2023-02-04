@@ -122,8 +122,8 @@ namespace ChainMart
             var f = await wc.ReadAsync<Form>();
             string addr = f[nameof(addr)];
 
-            // detail list
-            var details = new List<BuyDetail>();
+            // detail lines
+            var lines = new List<BuyLn>();
             for (int i = 0; i < f.Count; i++)
             {
                 var ety = f.EntryAt(i);
@@ -135,7 +135,7 @@ namespace ChainMart
                     continue;
                 }
 
-                details.Add(new BuyDetail
+                lines.Add(new BuyLn
                 {
                     wareid = id,
                     qty = qty
@@ -145,16 +145,16 @@ namespace ChainMart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(details);
-                var map = await dc.QueryAsync<int, Ware>(p => p.Set(shpid).SetForIn(details));
+                dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(lines);
+                var map = await dc.QueryAsync<int, Ware>(p => p.Set(shpid).SetForIn(lines));
 
-                for (int i = 0; i < details.Count; i++)
+                for (int i = 0; i < lines.Count; i++)
                 {
-                    var dtl = details[i];
+                    var dtl = lines[i];
                     var ware = map[dtl.wareid];
                     if (ware != null)
                     {
-                        dtl.InitByWare(ware, offed: prin.vip?.Contains(shpid) ?? false);
+                        dtl.Init(ware, discount: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 
@@ -166,7 +166,7 @@ namespace ChainMart
                     creator = prin.name,
                     shpid = shp.id,
                     mktid = shp.MarketId,
-                    details = details.ToArray(),
+                    lns = lines.ToArray(),
                     uid = prin.id,
                     uname = prin.name,
                     utel = prin.tel,
@@ -330,8 +330,8 @@ namespace ChainMart
 
                     h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("计价单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();

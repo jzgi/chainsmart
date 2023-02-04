@@ -37,9 +37,10 @@ namespace ChainMart
         internal string utel;
         internal string uaddr;
         internal string uim;
-        internal BuyDetail[] details;
+        internal BuyLn[] lns; // detail lines
         internal decimal topay;
         internal decimal pay;
+        internal decimal ret;
         internal decimal refund;
 
         public override void Read(ISource s, short msk = 0xff)
@@ -59,12 +60,13 @@ namespace ChainMart
                 s.Get(nameof(utel), ref utel);
                 s.Get(nameof(uaddr), ref uaddr);
                 s.Get(nameof(uim), ref uim);
-                s.Get(nameof(details), ref details);
+                s.Get(nameof(lns), ref lns);
                 s.Get(nameof(topay), ref topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(pay), ref pay);
+                s.Get(nameof(ret), ref ret);
                 s.Get(nameof(refund), ref refund);
             }
         }
@@ -86,12 +88,13 @@ namespace ChainMart
                 s.Put(nameof(utel), utel);
                 s.Put(nameof(uaddr), uaddr);
                 s.Put(nameof(uim), uim);
-                s.Put(nameof(details), details);
+                s.Put(nameof(lns), lns);
                 s.Put(nameof(topay), topay);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(pay), pay);
+                s.Put(nameof(ret), ret);
                 s.Put(nameof(refund), refund);
             }
         }
@@ -99,11 +102,11 @@ namespace ChainMart
         public void SetToPay()
         {
             var sum = 0.00M;
-            if (details != null)
+            if (lns != null)
             {
-                for (int i = 0; i < details.Length; i++)
+                for (int i = 0; i < lns.Length; i++)
                 {
-                    var dtl = details[i];
+                    var dtl = lns[i];
                     sum += dtl.SubTotal;
                 }
             }

@@ -37,7 +37,7 @@ namespace ChainMart
         internal decimal unitx;
         internal decimal price;
         internal decimal off;
-        internal short qty;
+        internal decimal qty;
         internal decimal topay;
         internal decimal pay;
         internal decimal ret; // qty cut
@@ -120,9 +120,11 @@ namespace ChainMart
 
         public int Key => id;
 
+        public short QtyX => (short) (qty / unitx);
+
         public decimal RealPrice => price - off;
 
-        public decimal Total => decimal.Round(RealPrice * unitx * qty, 2);
+        public decimal Total => decimal.Round(RealPrice * qty, 2);
 
         public override string ToString() => shpname + "采购" + srcname + "产品" + name;
 

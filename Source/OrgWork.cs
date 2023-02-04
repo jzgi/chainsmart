@@ -20,7 +20,7 @@ namespace ChainMart
     {
     }
 
-    [Ui("盟主机构管理", "业务")]
+    [Ui("盟主机构管理", "平台")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, Org[] arr, User prin, bool shply)

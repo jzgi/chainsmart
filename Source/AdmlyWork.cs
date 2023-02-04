@@ -11,12 +11,19 @@ namespace ChainMart
     {
         protected override void OnCreate()
         {
+            // 
+
             CreateWork<AdmlySetgWork>("setg");
 
             CreateWork<AdmlyAccessWork>("access");
 
+            CreateWork<PtylyBuyClearWork>("pbuyclr", state: false);
+
+            CreateWork<PtylyBookClearWork>("pbookclr", state: false);
+
             CreateWork<AdmlyNodeWork>("node");
 
+            // biz
 
             CreateWork<AdmlyRegWork>("reg");
 
@@ -24,6 +31,7 @@ namespace ChainMart
 
             CreateWork<AdmlyOrgWork>("org");
 
+            // fin
 
             CreateWork<AdmlyBuyClearWork>("buyclr");
 
@@ -94,7 +102,7 @@ namespace ChainMart
     }
 
     [AdmlyAuthorize(1)]
-    [Ui("联盟网络管理", "常规", icon: "social")]
+    [Ui("网络管理", "常规", icon: "social")]
     public class AdmlyNodeWork : NodeWork
     {
     }

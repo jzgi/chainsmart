@@ -16,7 +16,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("供应采购", "商户")]
+    [Ui("线上供应采购", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
         protected override void OnCreate()
@@ -44,7 +44,7 @@ namespace ChainMart
                 }
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q_("uk-width-expand").T(o.srcname)._Q();
-                h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();
@@ -203,7 +203,7 @@ namespace ChainMart
                 }
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q_("uk-width-expand").T(o.shpname)._Q();
-                h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.qty).SP().T("件").SP().T(o.unitx * o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

@@ -25,10 +25,10 @@ namespace ChainMart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-                h.LI_().FIELD("基本单位", m.unit).FIELD2("每件含量", m.unitx, m.unit)._LI();
-                h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户立减", m.off, money: true)._LI();
+                h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
+                h.LI_().FIELD("基准单价", m.price, money: true).FIELD("优惠立减", m.off, money: true)._LI();
                 h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.max)._LI();
-                h.LI_().FIELD2("当前库存", m.avail, m.unit)._LI();
+                h.LI_().FIELD2("剩余库存", m.avail, m.unit)._LI();
                 h.LI_().FIELD("状态", Ware.Statuses[m.status])._LI();
 
                 if (m.creator != null) h.LI_().FIELD2("创建", m.created, m.creator)._LI();
@@ -41,7 +41,7 @@ namespace ChainMart
                 {
                     h.TD_().T(o.dt, time: 1)._TD();
                     h.TD(o.qty, right: true);
-                    h.TD(WareOp.Typs[o.typ]);
+                    h.TD(StockOp.Typs[o.typ]);
                     h.TD(o.avail, right: true);
                     h.TD(o.by);
                 }, caption: "库存操作记录", reverse: true);
@@ -196,10 +196,10 @@ namespace ChainMart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
-        public async Task avail(WebContext wc)
+        public async Task stock(WebContext wc)
         {
             int wareid = wc[0];
-            var shp = wc[-2].As<Org>();
+            var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
             short typ = 0;
@@ -210,9 +210,9 @@ namespace ChainMart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("库存操作");
-                    h.LI_().SELECT("操作类型", nameof(typ), typ, WareOp.Typs, required: true)._LI();
+                    h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(avail))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
                 });
             }
             else // POST
@@ -228,18 +228,18 @@ namespace ChainMart
                 if (typ < 5) // add
                 {
                     dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
-                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
                     dc.Let(out int len);
                     if (len > 16) // shrink
                     {
                         dc.Sql("UPDATE wares SET ops = ops[13:] WHERE id = @1 AND shpid = @2");
-                        await dc.ExecuteAsync(p => p.Set(wareid).Set(shp.id));
+                        await dc.ExecuteAsync(p => p.Set(wareid).Set(org.id));
                     }
                 }
                 else // reduce
                 {
                     dc.Sql("UPDATE wares SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(shp.id));
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog
