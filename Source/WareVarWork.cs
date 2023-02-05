@@ -31,9 +31,9 @@ namespace ChainMart
                 h.LI_().FIELD2("剩余库存", m.avail, m.unit)._LI();
                 h.LI_().FIELD("状态", Ware.Statuses[m.status])._LI();
 
-                if (m.creator != null) h.LI_().FIELD2("创建", m.created, m.creator)._LI();
-                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter)._LI();
-                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
+                if (m.creator != null) h.LI_().FIELD2("创建", m.creator, m.created)._LI();
+                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapter, m.adapted)._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oker, m.oked)._LI();
 
                 h._UL();
 
@@ -100,7 +100,7 @@ namespace ChainMart
                 h.ARTICLE_("uk-card uk-card-primary");
                 if (o.pic)
                 {
-                    h.PIC_().T("/ware/").T(o.id).T("/pic")._PIC();
+                    h.PIC("/ware/", o.id, "/pic");
                 }
                 h.H4("产品详情", "uk-card-header");
 

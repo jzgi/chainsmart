@@ -22,6 +22,10 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+body.uk-pane {
+    background-color: #fff;
+}
+
 form {
     display: block;
 }
@@ -643,7 +647,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #ededed;
 }
 
 ul.uk-card-body {
@@ -1178,7 +1182,8 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: inherit;
+    background-color: #ededed;
+    border-top: 1px solid #ddd;
 }
 
 .uk-bottom-bar.uk-large {
@@ -1201,7 +1206,7 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #7daa1d;
+    color: #000;
     min-height: 2.5rem;
     display: flex;
     align-items: center;
@@ -1211,7 +1216,6 @@ form legend {
 
 .uk-fieldset>ul {
     padding: 0;
-    background-color: #f8f8f8;
 }
 
 .uk-fieldset>ul>li {
@@ -1220,6 +1224,9 @@ form legend {
     display: flex;
     width: 100%;
     min-height: 2.5rem;
+} 
+
+.uk-fieldset>ul>li:nth-child(n+2) {
     border-top: 1px solid #ededed;
 }
 
@@ -1300,7 +1307,7 @@ select.uk-border-rounded {
     width: 100%;
     padding: 4px;
     color: #333;
-    background-color: #fff;
+    background-color: #f8f8f8;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;
@@ -1715,7 +1722,7 @@ select.uk-form-width-xsmall {
 button.uk-button-default {
     background-color: #999;
     color: #fff;
-    border-radius: 12px;
+    border-radius: 18px;
     border: 0;
 }
 
@@ -1778,11 +1785,11 @@ a.uk-button-primary.uk-active {
 }
 
 .uk-button-secondary {
-    padding: 4px;
+    padding: 4px 8px;
     font-size: 0.875rem;
-    border: 1px solid #f59604;
+    border: 1px solid #ddd;
     border-radius: 25%;
-    color: #f59604;
+    color: #333;
 }
 
 .uk-button-secondary:hover,
@@ -2600,7 +2607,7 @@ label>input[type="checkbox"] {
 }
 
 .uk-overlay {
-    padding: 16px 16px;
+    padding: 6px;
 }
 
 .uk-overlay> :last-child {
@@ -5833,6 +5840,7 @@ iframe.uk-cover {
 
 .uk-background-muted {
     background-color: #ededed !important;
+    border: 1px solid #ddd
 }
 
 .uk-background-primary {

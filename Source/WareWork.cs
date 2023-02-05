@@ -23,15 +23,26 @@ namespace ChainMart
     {
         public async Task @default(WebContext wc)
         {
-            int shpid = wc[0];
-            var shp = GrabObject<int, Org>(shpid);
+            int orgid = wc[0];
+            var org = GrabObject<int, Org>(orgid);
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Ware>(p => p.Set(shp.id));
+            var arr = await dc.QueryAsync<Ware>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
+                if (org.pic)
+                {
+                    h.PIC_("/org/", org.id, "/pic");
+                }
+                else
+                    h.PIC_("/void-shop.webp");
+
+                h.ATEL(org.tel, css: "uk-overlay uk-position-center-right");
+                h._PIC();
+
+
                 if (arr == null)
                 {
                     h.ALERT("暂无商品");
@@ -48,16 +59,12 @@ namespace ChainMart
 
                     // the cclickable icon
                     //
-                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
+                        h.PIC("/ware/", o.id, "/icon", css: "uk-width-1-5");
                     }
                     else
-                    {
                         h.PIC("/void.webp", css: "uk-width-1-5");
-                    }
-                    h._A();
 
                     h.ASIDE_();
 
@@ -78,7 +85,9 @@ namespace ChainMart
                             rank = item.state;
                         }
                     }
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
                     h.MARK(Item.States[rank], "state", rank);
+                    h._A();
                     h._SPAN();
                     h._HEADER();
 
@@ -110,7 +119,7 @@ namespace ChainMart
                 h._BOTTOMBAR();
 
                 h._FORM();
-            }, true, 300, title: shp.name, onload: "fixAll();");
+            }, true, 300, title: org.name, onload: "fixAll();");
         }
 
         public async Task buy(WebContext wc, int cmd)
@@ -222,7 +231,7 @@ namespace ChainMart
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                 if (o.icon)
                 {
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(o.id).T("/icon")._PIC();
+                    h.PIC(MainApp.WwwUrl, "/ware/", o.id, "/icon", css: "uk-width-1-5");
                 }
                 else
                     h.PIC("/void.webp", css: "uk-width-1-5");

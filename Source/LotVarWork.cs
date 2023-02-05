@@ -505,7 +505,7 @@ namespace ChainMart
                 h.ARTICLE_("uk-card uk-card-primary");
                 if (item.pic)
                 {
-                    h.PIC_().T(MainApp.WwwUrl).T("/item/").T(lot.itemid).T("/pic")._PIC();
+                    h.PIC_(MainApp.WwwUrl,"/item/",lot.itemid,"/pic")._PIC();
                 }
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");

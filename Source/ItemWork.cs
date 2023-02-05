@@ -53,9 +53,10 @@ namespace ChainMart
 
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                        h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
                     }
-                    else h.PIC("/void.webp", css: "uk-width-1-5");
+                    else
+                        h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
@@ -92,9 +93,10 @@ namespace ChainMart
 
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.id).T("/icon")._PIC();
+                        h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
                     }
-                    else h.PIC("/void.webp", css: "uk-width-1-5");
+                    else 
+                        h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();

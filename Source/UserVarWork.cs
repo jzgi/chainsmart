@@ -19,14 +19,16 @@ namespace ChainMart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
+                
                 h.LI_().FIELD("姓名", o.name)._LI();
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
                 h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
-                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapted, o.adapter)._LI();
+
+                if (o.oker != null) h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapter, o.adapted)._LI();
 
                 h._UL();
 

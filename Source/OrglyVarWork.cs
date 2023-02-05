@@ -29,7 +29,7 @@ namespace ChainMart
 
                 if (org.icon)
                 {
-                    h.PIC_("uk-width-small", circle: true).T(MainApp.WwwUrl).T("/org/").T(org.id).T("/icon")._PIC();
+                    h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
                 }
                 else
                     h.PIC(org.IsShop ? "/shp.webp" : org.EqCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");

@@ -19,8 +19,8 @@ namespace ChainMart
 
         public async Task @default(WebContext wc, int sec)
         {
-            int mktid = wc[0];
-            var mkt = GrabObject<int, Org>(mktid);
+            int orgid = wc[0];
+            var org = GrabObject<int, Org>(orgid);
             var regs = Grab<short, Reg>();
 
             Org[] arr;
@@ -28,21 +28,21 @@ namespace ChainMart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(mktid));
-                arr = arr.AddOf(mkt, first: true);
+                arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
+                arr = arr.AddOf(org, first: true);
             }
             else
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(mktid).Set(sec));
+                arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sec));
             }
 
             wc.GivePage(200, h =>
             {
                 h.NAVBAR(string.Empty, sec, regs, (k, v) => v.IsSection, "star");
 
-                if (arr == null)
+                if (sec != 0 && arr == null)
                 {
                     h.ALERT("尚无商户");
                     return;
@@ -74,7 +74,7 @@ namespace ChainMart
 
                     h._A();
                 });
-            }, shared: sec > 0, 900, mkt.Ext); // shared cache when no personal data
+            }, shared: sec > 0, 900, org.Ext); // shared cache when no personal data
         }
     }
 }
