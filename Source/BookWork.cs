@@ -16,7 +16,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("线上供应采购", "商户")]
+    [Ui("采购订单", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
         protected override void OnCreate()
@@ -34,7 +34,7 @@ namespace ChainMart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name);
@@ -51,7 +51,7 @@ namespace ChainMart
             });
         }
 
-        [Ui("供应采购", group: 1), Tool(Anchor)]
+        [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -138,8 +138,8 @@ namespace ChainMart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("下单", "供应采购下单", "plus", group: 1), Tool(ButtonOpen)]
-        public async Task creation(WebContext wc, int typ)
+        [Ui("新建", "新建线上采购订单", "plus", group: 1), Tool(ButtonOpen)]
+        public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
             int ctrid = org.ctrid;
@@ -156,7 +156,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().NAVBAR(nameof(creation), typ, cats)._TOPBAR();
+                h.TOPBAR_().NAVBAR(nameof(@new), typ, cats)._TOPBAR();
 
                 if (arr == null)
                 {
@@ -169,10 +169,10 @@ namespace ChainMart
                     // anchor to the lot sub work
                     h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                    h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
@@ -184,7 +184,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应订单", "商户")]
+    [Ui("线上销售", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         static void MainGrid(HtmlBuilder h, Book[] arr)
@@ -211,7 +211,7 @@ namespace ChainMart
         }
 
         [BizNotice(BOOK_CREATED)]
-        [Ui("供应订单"), Tool(Anchor)]
+        [Ui("销售订单"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -299,7 +299,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("供应采购统一收货", "盟主")]
+    [Ui("采购订单统一收货", "盟主")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("按产品", group: 1), Tool(Anchor)]
@@ -393,7 +393,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("供应订单统一发货", "中库")]
+    [Ui("线上销售统一发货", "中库")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

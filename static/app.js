@@ -161,12 +161,37 @@ function posWareChange(trig) {
     posRecalc(trig);
 }
 
+// recalculate as subtotal
 function posRecalc(trig) {
+
     var form = trig.form;
     var subtotal = form['subtotal'];
     var price = form['price'];
     var qty = form['qty'];
     subtotal.value = (qty.value * price.value).toFixed(2);
+
+}
+
+// resum as topay
+// round 1 = floor, 2 = ceil
+function posResum(form, round) {
+
+    var lst = form.querySelectorAll('.subtotal');
+    var sum = 0;
+    for (var i = 0; i < lst.length; i++) {
+        sum += parseFloat(lst[i].innerHTML);
+    }
+    var topay = form['topay'];
+
+    // round if applicable
+    if (round == 1) {
+        if (sum >= parseFloat(topay.value)) sum = Math.floor(sum);
+    } 
+    else if (round == 2) {
+        if (sum <= parseFloat(topay.value)) sum = Math.ceil(sum);
+    }
+
+    topay.value = sum.toFixed(2);
 }
 
 function posAdd(trig) {
@@ -182,14 +207,26 @@ function posAdd(trig) {
     var opt = form['wareid'].selectedOptions[0];
 
     // target ul element
-    var tbody = document.getElementById('details');
+    var tbody = document.getElementById('lns');
     var tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + opt.innerText + '</td><td>￥' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td>￥' + subtotal.toFixed(2) + '</td>';
+    tr.innerHTML = '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tbody.appendChild(tr);
 
-    // form['topay'].value = (parseFloat(form['topay'].value) + subtotal).toFixed(2);
+    // resum topay
+    posResum(form.nextElementSibling);
 
+    // reset form contents
     form.reset();
+}
+
+function posRemove(el) {
+    var tr = ancestorOf(el, 'tr');
+    var form = ancestorOf(el, 'form');
+
+    tr.remove();
+
+    // resum topay
+    posResum(form);
 }
 
 function call_smsvcode(trig) {
@@ -213,6 +250,34 @@ function call_smsvcode(trig) {
 
     return false;
 }
+
+function call_pos(trig) {
+
+    var method = 'post';
+    var action = trig.formAction || trig.name;
+    // validate form before submit
+    if (!trig.form || !trig.form.reportValidity()) return false;
+
+    trig.disabled = true;
+
+    // get prepare id
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            trig.disabled = false; // re-enable the button
+            var tbody = document.getElementById('lns');
+            tbody.innerHTML = ''; // clear the table of lines
+            trig.form.reset(); // reset the form
+        }
+    };
+
+    xhr.open(method, action, false);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(serialize(trig.form));
+
+    return false;
+}
+
 
 function call_buy(trig) {
 

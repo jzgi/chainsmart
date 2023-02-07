@@ -37,6 +37,12 @@ namespace ChainMart
                 h._TOPBARXL();
 
                 h.WORKBOARD(notice: org.id);
+
+                // qrcode
+                if (org.IsShop)
+                {
+                    h.NAV_(css: "uk-col uk-margin uk-flex-middle").QRCODE(MainApp.WwwUrl + "/" + org.MarketId + "/", css: " uk-width-small").SPAN("推荐市场")._NAV();
+                }
             }, false, 30, title: org.name);
         }
     }

@@ -110,7 +110,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("销售汇总表", "商户")]
+    [Ui("销售汇总", "商户")]
     public class ShplyBuyAggWork : AggWork<OrglyAggrVarWork>
     {
         public void @default(WebContext wc, int page)

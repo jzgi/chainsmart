@@ -1686,7 +1686,6 @@ select.uk-form-width-xsmall {
     position: relative;
     overflow: hidden;
     font-family: inuk-buttonherit;
-    font-size: inherit;
     cursor: pointer;
     outline: 0;
     -webkit-box-sizing: border-box;

@@ -10,13 +10,13 @@ namespace ChainMart
         public static readonly Buy Empty = new Buy();
 
         public const short
-            TYP_ONLINE = 1,
-            TYP_OFFLINE = 2;
+            TYP_OFFLINE = 0,
+            TYP_ONLINE = 1;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_ONLINE, "线上"},
             {TYP_OFFLINE, "线下"},
+            {TYP_ONLINE, "线上"},
         };
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>

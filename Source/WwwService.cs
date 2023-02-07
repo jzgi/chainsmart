@@ -36,8 +36,6 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.FORM_();
-
                 bool exist = false;
                 var last = 0;
 
@@ -54,9 +52,12 @@ namespace ChainMart
                         h._LI();
                         if (last != 0)
                         {
-                            h._FIELDSUL();
+                            h._UL();
+                            h._ARTICLE();
                         }
-                        h.FIELDSUL_(regs[o.regid]?.name);
+                        h.ARTICLE_("uk-card uk-card-primary");
+                        h.H4(regs[o.regid]?.name, "uk-card-header");
+                        h.UL_("uk-card-body");
                     }
 
                     h.LI_("uk-flex");
@@ -69,12 +70,15 @@ namespace ChainMart
                     exist = true;
                     last = o.regid;
                 }
-                h._FIELDSUL();
+                h._UL();
+                
                 if (!exist)
                 {
                     h.LI_().T("（暂无市场）")._LI();
                 }
-                h._FORM();
+
+                h._ARTICLE();
+
             }, true, 720, title: Self.Name, onload: "fixAll();");
         }
 
