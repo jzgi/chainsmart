@@ -44,7 +44,7 @@ namespace ChainMart
                 h.LI_().FIELD("处理状态", m.status, Lot.Statuses)._LI();
                 h.LI_().FIELD2("创建", m.created, m.creator, "&nbsp;")._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter, "&nbsp;")._LI();
-                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker, "&nbsp;")._LI();
+                if (m.ender != null) h.LI_().FIELD2("上线", m.ended, m.ender, "&nbsp;")._LI();
                 h._UL();
 
                 h.TABLE(m.ops, o =>
@@ -138,7 +138,7 @@ namespace ChainMart
                 if (o.nstart > 0 && o.nend > 0) h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                if (o.ender != null) h.LI_().FIELD2("上线", o.ended, o.ender)._LI();
                 h._UL();
                 h._ARTICLE();
 
@@ -178,7 +178,7 @@ namespace ChainMart
                 }
                 h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
                 h.LI_().FIELD2("创建", item.created, o.creator)._LI();
-                h.LI_().FIELD2("上线", item.oked, o.oker)._LI();
+                h.LI_().FIELD2("上线", item.ended, o.ender)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -391,7 +391,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
+            dc.Sql("UPDATE lots SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND srcid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.Give(200);
@@ -405,7 +405,7 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
+            dc.Sql("UPDATE lots SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(200);
@@ -517,7 +517,7 @@ namespace ChainMart
                     h.LI_().FIELD("生产基地", item.origin)._LI();
                 }
                 h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
-                h.LI_().FIELD2("上线", item.oked, lot.oker)._LI();
+                h.LI_().FIELD2("上线", item.ended, lot.ender)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();

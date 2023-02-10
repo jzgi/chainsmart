@@ -32,7 +32,7 @@ namespace ChainMart
                 h.LI_().FIELD("进展状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                if (o.ender != null) h.LI_().FIELD2("上线", o.ended, o.ender)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -173,7 +173,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
+            dc.Sql("UPDATE items SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND srcid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -187,7 +187,7 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2");
+            dc.Sql("UPDATE items SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

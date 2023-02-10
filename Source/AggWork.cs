@@ -175,7 +175,7 @@ namespace ChainMart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
+    [OrglyAuthorize(Org.TYP_CTR, 1)]
     [Ui("发货汇总表", "中库")]
     public class CtrlyBookAggWork : AggWork<OrglyAggrVarWork>
     {

@@ -108,7 +108,6 @@ namespace ChainMart
                 typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_ZON,
                 created = DateTime.Now,
                 creator = prin.name,
-                state = Entity.STA_FINE
             };
 
             if (wc.IsGet)
@@ -171,7 +170,7 @@ namespace ChainMart
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
 
-            wc.GivePane(200, h =>
+            wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
@@ -213,7 +212,6 @@ namespace ChainMart
                 prtid = zon.id,
                 created = DateTime.Now,
                 creator = prin.name,
-                state = Entity.STA_FINE
             };
             if (wc.IsGet)
             {
@@ -273,7 +271,7 @@ namespace ChainMart
                     {
                         h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
                     }
-                    else 
+                    else
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
@@ -326,7 +324,7 @@ namespace ChainMart
                         {
                             h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
                         }
-                        else 
+                        else
                             h.PIC("/void.webp", css: "uk-width-1-5");
 
                         h.ASIDE_();
@@ -388,7 +386,6 @@ namespace ChainMart
                 typ = (short) typ,
                 created = DateTime.Now,
                 creator = prin.name,
-                state = Entity.STA_FINE,
                 prtid = org.id,
                 ctrid = org.ctrid,
             };
@@ -428,7 +425,7 @@ namespace ChainMart
                         h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
-                        h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0)._LI();
+                        // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States, filter: (k, v) => k >= 0)._LI();
 
                         h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                     });

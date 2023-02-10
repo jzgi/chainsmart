@@ -49,7 +49,7 @@ namespace ChainMart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应和产源操作")]
+    [Ui("供区产源操作")]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()

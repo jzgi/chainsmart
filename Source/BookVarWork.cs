@@ -30,11 +30,11 @@ namespace ChainMart
                 h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
                 h.LI_().FIELD("单价", o.price, money: true).FIELD("立减", o.off)._LI();
                 h.LI_().FIELD("件数", o.QtyX).FIELD("支付", o.pay, money: true)._LI();
-                h.LI_().FIELD("状态", o.status, Book.Statuses).FIELD("状况", Book.States[o.state])._LI();
+                h.LI_().FIELD("状态", o.status, Book.Statuses)._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
+                if (o.ender != null) h.LI_().FIELD2("收货", o.ended, o.ender)._LI();
 
                 h._UL();
 
@@ -121,7 +121,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
+            dc.Sql("UPDATE books SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int srcid);

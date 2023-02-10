@@ -107,7 +107,6 @@ namespace ChainMart
                 var m = new User
                 {
                     typ = 0,
-                    state = STA_FINE,
                     name = name,
                     tel = tel,
                     im = openid,

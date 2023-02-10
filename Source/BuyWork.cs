@@ -116,9 +116,14 @@ namespace ChainMart
                 h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
                 // the first detail
-                var dtl = o.lns[0];
+                var ln = o.lns[0];
 
-                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/ware/").T(dtl.wareid).T("/icon")._PIC();
+                if (o.lns.Length == 1)
+                {
+                    h.PIC(MainApp.WwwUrl, "/ware/", ln.wareid, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();

@@ -137,7 +137,7 @@ mark {
 q {
     font-size: 0.8125rem;
     margin: 4px 0;
-    color: #666;
+    color: #999;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1714,8 +1714,9 @@ select.uk-form-width-xsmall {
 }
 
 .uk-button-default {
-    padding: 8px 16px;
+    padding: 6px 16px;
     margin: 4px;
+    font-size: .9375rem;
 }
 
 button.uk-button-default {
@@ -1735,6 +1736,7 @@ button.uk-button-default {
 
 button.uk-button-primary {
     color: #000;
+    font-size: .9375rem;
     padding: 6px;
     margin: 4px;
     border: 1px solid transparent;
@@ -2235,10 +2237,6 @@ a.uk-card-body {
     background-color: #fff;
 }
 
-.uk-card-primary.uk-card-hover:hover {
-    background-color: #fff;
-    box-shadow: 0 14px 25px rgba(0, 0, 0, 0.16);
-}
 
 /*
  * Secondary
@@ -2585,17 +2583,17 @@ label>input[type="checkbox"] {
 }
 
 .uk-label-success {
-    color: sienna;
-    padding: 2px 0;
-    font-size: 12px;
+    color: #fff;
+    background-color: #7daa1d;
+    padding: 4px 8px;
+    border: 2px solid #fff;
 }
 
 .uk-label-warning {
-    color: indigo;
-    background-color: inherit;
-    padding: 0;
-    border-top: 2px solid indigo;
-    border-bottom: 2px solid indigo;
+    color: #fff;
+    background-color: #f59604;
+    padding: 4px 8px;
+    border: 2px solid #fff;
 }
 
 .uk-label-danger {

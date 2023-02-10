@@ -10,12 +10,6 @@ namespace ChainMart
     {
         public static readonly Lot Empty = new Lot();
 
-        public new static readonly Map<short, string> States = new Map<short, string>
-        {
-            {STA_VOID, null},
-            {STA_FINE, "溯源"},
-        };
-
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {

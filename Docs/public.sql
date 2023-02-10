@@ -1,3 +1,34 @@
+create schema public;
+
+comment on schema public is 'standard public schema';
+
+alter schema public owner to postgres;
+
+create type buyln as
+(
+    wareid integer,
+    itemid integer,
+    name varchar(12),
+    unit varchar(4),
+    unitx numeric(6,1),
+    price money,
+    "off" money,
+    qty numeric(6,1)
+);
+
+alter type buyln owner to postgres;
+
+create type stockop as
+(
+    dt timestamp(0),
+    typ smallint,
+    qty numeric(6,1),
+    avail numeric(6,1),
+    by varchar(12)
+);
+
+alter type stockop owner to postgres;
+
 create table entities
 (
     typ smallint not null,
@@ -8,8 +39,8 @@ create table entities
     creator varchar(10),
     adapted timestamp(0),
     adapter varchar(10),
-    oked timestamp(0),
-    oker varchar(10),
+    ended timestamp(0),
+    ender varchar(10),
     status smallint default 1 not null
 );
 
@@ -335,7 +366,7 @@ create table buys
     mktid integer not null
         constraint buys_mkt_fk
             references orgs,
-    uid integer not null
+    uid integer
         constraint buys_uid_fk
             references users,
     uname varchar(12),
@@ -352,15 +383,15 @@ create table buys
 
 alter table buys owner to postgres;
 
-create unique index buys_single_idx
-    on buys (shpid, status)
-    where (status = 0);
-
 create index buys_uidstatus_idx
     on buys (uid, status);
 
 create index buys_shpidstatus_idx
     on buys (shpid, status);
+
+create unique index buys_single_idx
+    on buys (shpid, typ, status)
+    where ((typ = 1) AND (status = 0));
 
 create table global
 (
@@ -441,4 +472,447 @@ create table buyclrs
     inherits (entities);
 
 alter table buyclrs owner to postgres;
+
+create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.ended,
+       o.ender,
+       o.status,
+       o.id,
+       o.srcid,
+       o.origin,
+       o.store,
+       o.duration,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4,
+       o.m5 IS NOT NULL   AS m5,
+       o.m6 IS NOT NULL   AS m6
+FROM items o;
+
+alter table items_vw owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, ender, ended, status, id, prtid, ctrid, ext, legal, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.ender,
+       o.ended,
+       o.status,
+       o.id,
+       o.prtid,
+       o.ctrid,
+       o.ext,
+       o.legal,
+       o.regid,
+       o.addr,
+       o.x,
+       o.y,
+       o.tel,
+       o.trust,
+       o.link,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM orgs o;
+
+alter table orgs_vw owner to postgres;
+
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, tel, addr, im, credential, admly, srcid, srcly, shpid, shply, vip, icon) as
+SELECT u.typ,
+       u.state,
+       u.name,
+       u.tip,
+       u.created,
+       u.creator,
+       u.adapted,
+       u.adapter,
+       u.ended,
+       u.ender,
+       u.status,
+       u.id,
+       u.tel,
+       u.addr,
+       u.im,
+       u.credential,
+       u.admly,
+       u.srcid,
+       u.srcly,
+       u.shpid,
+       u.shply,
+       u.vip,
+       u.icon IS NOT NULL AS icon
+FROM users u;
+
+alter table users_vw owner to postgres;
+
+create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, shpid, itemid, unit, unitx, price, "off", min, max, avail, icon, pic, ops) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.ended,
+       o.ender,
+       o.status,
+       o.id,
+       o.shpid,
+       o.itemid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.max,
+       o.avail,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.ops
+FROM wares o;
+
+alter table wares_vw owner to postgres;
+
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, srcid, srcname, zonid, targs, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4, ops) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.ended,
+       o.ender,
+       o.status,
+       o.id,
+       o.srcid,
+       o.srcname,
+       o.zonid,
+       o.targs,
+       o.dated,
+       o.term,
+       o.itemid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.min,
+       o.step,
+       o.max,
+       o.cap,
+       o.avail,
+       o.nstart,
+       o.nend,
+       o.m1 IS NOT NULL AS m1,
+       o.m2 IS NOT NULL AS m2,
+       o.m3 IS NOT NULL AS m3,
+       o.m4 IS NOT NULL AS m4,
+       o.ops
+FROM lots o;
+
+alter table lots_vw owner to postgres;
+
+create function first_agg(anyelement, anyelement) returns anyelement
+    immutable
+    strict
+    parallel safe
+    language sql
+as $$
+SELECT $1
+$$;
+
+alter function first_agg(anyelement, anyelement) owner to postgres;
+
+create function last_agg(anyelement, anyelement) returns anyelement
+    immutable
+    strict
+    parallel safe
+    language sql
+as $$
+SELECT $2
+$$;
+
+alter function last_agg(anyelement, anyelement) owner to postgres;
+
+create function buysgen(till date, opr character varying) returns void
+    language plpgsql
+as $$
+DECLARE
+    past date;
+    now timestamp(0) = localtimestamp(0);
+    tillstamp timestamp(0);
+    paststamp timestamp(0);
+
+    TYP_PLAT constant int = 1;
+    TYP_GATEWAY constant int = 2;
+    TYP_SHP constant int = 3;
+    TYP_MKT constant int = 4;
+
+    BASE constant int = 1000;
+    RATE_PLAT constant int = 4;
+    RATE_GATEWAY constant int = 6;
+    RATE_SHP constant int = 970;
+    RATE_MKT constant int = 20;
+
+BEGIN
+
+    -- adjust parameters
+
+    tillstamp = (till + interval '1 day')::timestamp(0);
+
+    opr = coalesce(opr, 'SYS');
+
+    SELECT coalesce(
+                   buysgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    paststamp = (past + interval '1 day')::timestamp(0);
+
+    -- buys for shop
+
+    INSERT INTO buyaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 1,
+           shpid,
+           typ,
+           oked::date,
+           first(mktid),
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM buys
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY shpid, typ, oked::date;
+
+    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_SHP,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_SHP,
+           sum(amt * RATE_SHP / BASE)
+    FROM buyaggs
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
+
+
+    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_MKT,
+           first(creator),
+           now,
+           opr,
+           prtid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_MKT,
+           sum(amt * RATE_MKT / BASE)
+    FROM buyaggs
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY prtid;
+
+
+
+    UPDATE global SET buysgen = till WHERE pk;
+END
+$$;
+
+alter function buysgen(date, varchar) owner to postgres;
+
+create function booksgen(till date, opr character varying) returns void
+    language plpgsql
+as $$
+DECLARE
+
+    past date;
+    now timestamp(0) = localtimestamp(0);
+    tillstamp timestamp(0);
+    paststamp timestamp(0);
+
+
+    TYP_PLAT constant int = 1;
+    TYP_GATEWAY constant int = 2;
+    TYP_SRC constant int = 5;
+    TYP_ZON constant int = 6;
+    TYP_CTR constant int = 7;
+
+--     rates in thousandth
+
+    BASE constant int = 1000;
+    RATE_PLAT constant int = 4;
+    RATE_GATEWAY constant int = 6;
+    RATE_SRC constant int = 970;
+    RATE_ZON constant int = 4;
+    RATE_CTR constant int = 16;
+
+BEGIN
+
+    opr = coalesce(opr, 'SYS');
+
+    SELECT coalesce(booksgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    tillstamp = (till + interval '1 day')::timestamp(0);
+
+    opr = coalesce(opr, 'SYS');
+
+    paststamp = (past + interval '1 day')::timestamp(0);
+
+
+
+    -- books for source
+
+    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 2,
+           srcid,
+           itemid,
+           oked::date,
+           first(zonid),
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY srcid, itemid, oked::date;
+
+    -- books for center
+
+    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
+    SELECT 3,
+           ctrid,
+           itemid,
+           oked::date,
+           NULL,
+           count(pay),
+           sum(pay - coalesce(refund, 0::money)),
+           now,
+           opr
+    FROM books
+    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    GROUP BY ctrid, itemid, oked::date;
+
+
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_SRC,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_SRC,
+           sum(amt * RATE_SRC / BASE)
+    FROM bookaggs
+    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY orgid;
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_ZON,
+           first(creator),
+           now,
+           opr,
+           prtid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_ZON,
+           sum(amt * RATE_ZON / BASE)
+    FROM bookaggs
+    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY prtid;
+
+
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    SELECT TYP_CTR,
+           first(creator),
+           now,
+           opr,
+           orgid,
+           till,
+           sum(trans),
+           sum(amt),
+           RATE_CTR,
+           sum(amt * RATE_CTR / BASE)
+    FROM bookaggs
+    WHERE typ = 3 AND dt > past AND dt <= till GROUP BY orgid;
+
+
+    UPDATE global SET booksgen = till WHERE pk;
+
+END
+$$;
+
+alter function booksgen(date, varchar) owner to postgres;
+
+create function buys_trig_upd() returns trigger
+    language plpgsql
+as $$
+DECLARE
+    ln buyln;
+BEGIN
+    -- update ware avail values
+    IF (NEW.status = 4 AND (TG_OP = 'INSERT' OR OLD.status < 4)) THEN
+
+        FOREACH ln IN ARRAY NEW.lns LOOP -- oked
+        UPDATE wares SET avail = avail - ln.qty WHERE id = ln.wareid;
+            END LOOP;
+
+    ELSEIF (NEW.status = 8 AND (TG_OP = 'INSERT' OR OLD.status < 8)) THEN -- aborted
+
+        FOREACH ln IN ARRAY NEW.lns LOOP
+                UPDATE wares SET avail = avail + ln.qty WHERE id = ln.wareid;
+            END LOOP;
+
+    END IF;
+
+    RETURN NEW;
+END
+$$;
+
+alter function buys_trig_upd() owner to postgres;
+
+create trigger buys_trig
+    after insert or update
+    on buys
+    for each row
+    when (new.status = 4 OR new.status = 8)
+execute procedure buys_trig_upd();
+
+create aggregate first(anyelement) (
+    sfunc = first_agg,
+    stype = anyelement,
+    parallel = safe
+    );
+
+alter aggregate first(anyelement) owner to postgres;
+
+create aggregate last(anyelement) (
+    sfunc = last_agg,
+    stype = anyelement,
+    parallel = safe
+    );
+
+alter aggregate last(anyelement) owner to postgres;
 

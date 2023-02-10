@@ -117,7 +117,7 @@ namespace ChainMart
 
         [BizNotice(BOOK_ABORTED)]
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task cancelled(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -184,7 +184,7 @@ namespace ChainMart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("线上销售", "商户")]
+    [Ui("销售订单", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         static void MainGrid(HtmlBuilder h, Book[] arr)
@@ -193,7 +193,7 @@ namespace ChainMart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/item/").T(o.itemid).T("/icon")._PIC();
+                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name);

@@ -33,7 +33,10 @@ namespace ChainMart
             {TYP_CTR, "中控"},
         };
 
-        public new static readonly Map<short, string> States = new Map<short, string>
+        public const short
+            STA_VOID = 0, STA_PRE = 1, STA_FINE = 2, STA_TOP = 4;
+
+        public static readonly Map<short, string> States = new Map<short, string>
         {
             {STA_VOID, "停业"},
             {STA_PRE, "放假"},

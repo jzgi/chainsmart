@@ -23,6 +23,22 @@ namespace ChainMart
 
         public decimal qty;
 
+        public BuyLn()
+        {
+        }
+
+        public BuyLn(int wareid, string[] comp)
+        {
+            this.wareid = wareid;
+
+            itemid = int.Parse(comp[0]);
+            name = comp[1];
+            unit = comp[2];
+            unitx = decimal.Parse(comp[3]);
+            price = decimal.Parse(comp[4]);
+            qty = decimal.Parse(comp[5]);
+        }
+
         public void Read(ISource s, short msk = 0xff)
         {
             s.Get(nameof(wareid), ref wareid);
@@ -62,7 +78,7 @@ namespace ChainMart
             unit = w.unit;
             unitx = w.unitx;
             price = w.price;
-            
+
             if (discount)
             {
                 off = w.off;

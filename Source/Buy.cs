@@ -10,13 +10,17 @@ namespace ChainMart
         public static readonly Buy Empty = new Buy();
 
         public const short
-            TYP_OFFLINE = 0,
-            TYP_ONLINE = 1;
+            TYP_PLAT = 1,
+            TYP_CASH = 2,
+            TYP_QRCODE = 3,
+            TYP_BANK = 4;
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {TYP_OFFLINE, "线下"},
-            {TYP_ONLINE, "线上"},
+            {TYP_PLAT, "平台"},
+            {TYP_CASH, "现金"},
+            {TYP_QRCODE, "扫码"},
+            {TYP_BANK, "银行"},
         };
 
         public new static readonly Map<short, string> Statuses = new Map<short, string>
@@ -83,7 +87,10 @@ namespace ChainMart
             {
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(mktid), mktid);
-                s.Put(nameof(uid), uid);
+
+                if (uid > 0) s.Put(nameof(uid), uid);
+                else s.PutNull(nameof(uid));
+
                 s.Put(nameof(uname), uname);
                 s.Put(nameof(utel), utel);
                 s.Put(nameof(uaddr), uaddr);

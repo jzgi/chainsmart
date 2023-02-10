@@ -272,7 +272,7 @@ namespace ChainMart
         }
     }
 
-    [Ui("供应业务收入")]
+    [Ui("供应业务结款")]
     public class PtylyBookClearWork : ClearWork<PtylyClearVarWork>
     {
         [Ui("业务收入", group: 1), Tool(Anchor)]

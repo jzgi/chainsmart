@@ -27,12 +27,17 @@ namespace ChainMart
 
                 h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().SPAN(o.uaddr)._DIV()._LI();
                 h.LI_().FIELD("卖方", o.name)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
+                // h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
 
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
+                if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
+                if (o.ender != null) h.LI_().FIELD2(o.IsCancelled ? "撤销" : "收货", o.ended, o.ender)._LI();
 
-                h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
-                h.LI_().TABLE(o.lns, d =>
+                h._UL();
+
+                h.TABLE(o.lns, d =>
                 {
                     h.TD_().T(d.name);
                     if (d.unitx != 1)
@@ -40,17 +45,10 @@ namespace ChainMart
                         h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
                     }
                     h._TD();
-                    h.TD_().CNY(d.RealPrice).SP().SUB(d.unit)._TD();
-                    h.TD2(d.qty, "件");
-                    h.TD(d.SubTotal, true);
-                }, css: "uk-margin-remove");
-                h._LI();
-
-                if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
-
-                h._UL();
+                    h.TD_(css: "uk-text-right").CNY(d.RealPrice).SP().SUB(d.unit)._TD();
+                    h.TD2(d.qty, "件", css: "uk-text-right");
+                    h.TD(d.SubTotal, true, true);
+                });
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
             });
@@ -66,7 +64,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
+            dc.Sql("UPDATE buys SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(prin.id)))
             {
                 dc.Let(out int shpid);
@@ -132,7 +130,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
+            dc.Sql("UPDATE buys SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);

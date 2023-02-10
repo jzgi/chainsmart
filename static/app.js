@@ -181,17 +181,17 @@ function posResum(form, round) {
     for (var i = 0; i < lst.length; i++) {
         sum += parseFloat(lst[i].innerHTML);
     }
-    var topay = form['topay'];
+    var pay = form['pay'];
 
     // round if applicable
     if (round == 1) {
-        if (sum >= parseFloat(topay.value)) sum = Math.floor(sum);
+        if (sum >= parseFloat(pay.value)) sum = Math.floor(sum);
     } 
     else if (round == 2) {
-        if (sum <= parseFloat(topay.value)) sum = Math.ceil(sum);
+        if (sum <= parseFloat(pay.value)) sum = Math.ceil(sum);
     }
 
-    topay.value = sum.toFixed(2);
+    pay.value = sum.toFixed(2);
 }
 
 function posAdd(trig) {
@@ -201,15 +201,24 @@ function posAdd(trig) {
     if (!form || !form.reportValidity()) return;
 
     var wareid = form['wareid'].value;
+
+    var opt = form['wareid'].selectedOptions[0];
+
+    var itemid = parseInt(opt.getAttribute('itemid'));
+    var name = opt.getAttribute('name');
+    var unit = opt.getAttribute('unit');
+    var unitx = opt.getAttribute('unitx');
     var price = parseFloat(form['price'].value);
     var qty = parseFloat(form['qty'].value);
+
     var subtotal = parseFloat(form['subtotal'].value);
-    var opt = form['wareid'].selectedOptions[0];
 
     // target ul element
     var tbody = document.getElementById('lns');
     var tr = document.createElement("tr");
-    tr.innerHTML = '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    var html = '<input type="hidden" name="' + wareid + '" value="' + itemid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
+    html += '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    tr.innerHTML = html;
     tbody.appendChild(tr);
 
     // resum topay
@@ -225,7 +234,7 @@ function posRemove(el) {
 
     tr.remove();
 
-    // resum topay
+    // resum pay
     posResum(form);
 }
 

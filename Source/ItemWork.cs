@@ -14,6 +14,29 @@ namespace ChainMart
         {
             CreateVarWork<V>();
         }
+
+        protected static void MainGrid(HtmlBuilder h, Item[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                if (o.icon)
+                {
+                    h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
     }
 
     public class PublyItemWork : ItemWork<PublyItemVarWork>
@@ -34,12 +57,12 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status BETWEEN 1 AND 4 ORDER BY status DESC, id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4 ORDER BY ended DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_FINE);
+                h.TOOLBAR();
 
                 if (arr == null)
                 {
@@ -47,70 +70,56 @@ namespace ChainMart
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    if (o.icon)
-                    {
-                        h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            });
+                MainGrid(h, arr);
+            }, false, 6);
         }
 
-        [Ui(icon: "ban", group: 2), Tool(Anchor)]
-        public async Task ban(WebContext wc)
+        [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
+        public async Task off(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_VOID);
+                h.TOOLBAR();
 
                 if (arr == null)
                 {
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
+                MainGrid(h, arr);
+            }, false, 6);
+        }
+
+        [Ui(icon: "trash", group: 4), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var src = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 8 ORDER BY ended DESC");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    return;
+                }
 
-                    if (o.icon)
-                    {
-                        h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else 
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            });
+                MainGrid(h, arr);
+            }, false, 6);
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("新建", "新建产品", icon: "plus", group: 7), Tool(ButtonOpen)]
+        [Ui("新建", "新建产品", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();

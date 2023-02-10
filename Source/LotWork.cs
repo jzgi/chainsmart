@@ -14,6 +14,24 @@ namespace ChainMart
         {
             CreateVarWork<V>();
         }
+
+        protected static void MainGrid(HtmlBuilder h, Lot[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
     }
 
     public class PublyLotWork : LotWork<PublyLotVarWork>
@@ -31,7 +49,7 @@ namespace ChainMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status BETWEEN 1 AND 4 ORDER BY status DESC, id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -44,58 +62,61 @@ namespace ChainMart
                     return;
                 }
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            });
+                MainGrid(h, arr);
+            }, false, 12);
         }
 
-        [Ui(icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
+        public async Task off(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("暂无销售批次");
+                    return;
+                }
 
-                    h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+                MainGrid(h, arr);
+            }, false, 12);
+        }
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
-                    h._ASIDE();
+        [Ui(icon: "trash", group: 4), Tool(Anchor)]
+        public async Task aborted(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
 
-                    h._A();
-                });
-            });
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE srcid = @1 AND status = 8 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null)
+                {
+                    h.ALERT("暂无销售批次");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            }, false, 12);
         }
 
         static readonly string[] Units = {"斤", "包", "箱", "桶"};
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建产品销售批次", icon: "plus", group: 3), Tool(ButtonOpen)]
+        [Ui("新建", "新建销售批次", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();

@@ -35,7 +35,7 @@ namespace ChainMart
                 h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.creator, o.created)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oker, o.oked)._LI();
+                if (o.ender != null) h.LI_().FIELD2("上线", o.ender, o.ended)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -123,7 +123,7 @@ namespace ChainMart
                 h.LI_().FIELD("进度状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+                if (o.ender != null) h.LI_().FIELD2("上线", o.ended, o.ender)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -354,7 +354,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
 
             wc.GivePane(200);
@@ -480,7 +480,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -597,7 +597,7 @@ namespace ChainMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -611,7 +611,7 @@ namespace ChainMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

@@ -169,7 +169,7 @@ namespace ChainMart
 
                 var m = new Buy
                 {
-                    typ = Buy.TYP_ONLINE,
+                    typ = Buy.TYP_PLAT,
                     name = shp.Name,
                     created = DateTime.Now,
                     creator = prin.name,
@@ -246,7 +246,7 @@ namespace ChainMart
                 h._HEADER();
 
                 h.Q(o.tip, "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN2("剩余", o.avail).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();
@@ -259,12 +259,12 @@ namespace ChainMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY oked DESC");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY ended DESC");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_FINE);
+                h.TOOLBAR();
 
                 if (arr == null)
                 {
@@ -276,7 +276,7 @@ namespace ChainMart
         }
 
         [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
-        public async Task offln(WebContext wc)
+        public async Task off(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
@@ -286,7 +286,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_VOID);
+                h.TOOLBAR();
                 if (arr == null)
                 {
                     h.ALERT("尚无下线商品");
@@ -296,7 +296,7 @@ namespace ChainMart
             }, false, 4);
         }
 
-        [Ui(tip: "作废商品", icon: "trash", group: 8), Tool(Anchor)]
+        [Ui(tip: "已作废", icon: "trash", group: 8), Tool(Anchor)]
         public async Task aborted(WebContext wc)
         {
             var src = wc[-1].As<Org>();
@@ -307,7 +307,7 @@ namespace ChainMart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: STA_VOID);
+                h.TOOLBAR();
                 if (arr == null)
                 {
                     h.ALERT("尚无作废商品");
