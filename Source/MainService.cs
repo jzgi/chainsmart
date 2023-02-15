@@ -6,7 +6,7 @@ using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Entity;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class MainService : WebService
     {

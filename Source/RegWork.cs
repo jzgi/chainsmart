@@ -2,12 +2,12 @@ using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainMart.User;
+using static ChainSMart.User;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class RegWork : WebWork
     {

@@ -7,7 +7,7 @@ using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class BookVarWork : WebWork
     {

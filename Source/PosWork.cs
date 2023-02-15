@@ -7,7 +7,7 @@ using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class PosWork<V> : WebWork where V : PosVarWork, new()
     {

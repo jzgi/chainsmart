@@ -1,6 +1,6 @@
 ﻿using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public class Ware : Entity, IKeyable<int>, IStockable
     {

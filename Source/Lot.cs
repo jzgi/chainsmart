@@ -1,7 +1,7 @@
 ﻿using System;
 using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// A product lot for booking.

@@ -1,6 +1,6 @@
 ﻿using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public class CreditWork : WebWork
     {

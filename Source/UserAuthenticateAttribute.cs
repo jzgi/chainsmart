@@ -4,7 +4,7 @@ using System.Web;
 using ChainFx.Fabric;
 using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// To establish principal identity. 

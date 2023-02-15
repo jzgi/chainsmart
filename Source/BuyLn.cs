@@ -1,6 +1,6 @@
 ﻿using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// A detail line of buy.
@@ -25,6 +25,12 @@ namespace ChainMart
 
         public BuyLn()
         {
+        }
+
+        public BuyLn(int wareid, decimal qty)
+        {
+            this.wareid = wareid;
+            this.qty = qty;
         }
 
         public BuyLn(int wareid, string[] comp)

@@ -3,7 +3,7 @@ using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     [UserAuthenticate, AdmlyAuthorize(1)]
     [Ui("平台管理")]

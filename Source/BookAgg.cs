@@ -1,6 +1,6 @@
 using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// A product booking record & process.

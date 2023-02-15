@@ -3,9 +3,9 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
-using static ChainMart.Notice;
+using static ChainSMart.Notice;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     {

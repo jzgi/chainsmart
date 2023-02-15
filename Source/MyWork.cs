@@ -4,7 +4,7 @@ using ChainFx.Fabric;
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     [UserAuthenticate]
     public class MyWork : WebWork

@@ -4,7 +4,7 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class RegVarWork : WebWork
     {

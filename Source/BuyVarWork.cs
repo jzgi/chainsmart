@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
-using static ChainMart.WeixinUtility;
+using static ChainSMart.WeixinUtility;
 using static ChainFx.Application;
 using static ChainFx.Entity;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class BuyVarWork : WebWork
     {

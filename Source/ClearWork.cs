@@ -5,7 +5,7 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
     {

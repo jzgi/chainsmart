@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using ChainFx;
 using static System.Data.IsolationLevel;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public class MainApp : Application
     {

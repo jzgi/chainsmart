@@ -2,7 +2,7 @@
 using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class TagWork : WebWork
     {

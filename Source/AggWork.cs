@@ -6,7 +6,7 @@ using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.Modal;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
     {

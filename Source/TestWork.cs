@@ -1,6 +1,6 @@
 ﻿using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     {

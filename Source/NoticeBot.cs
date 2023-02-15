@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using ChainFx.Fabric;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public class NoticeBot
     {

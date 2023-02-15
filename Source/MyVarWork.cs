@@ -1,6 +1,6 @@
 using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     [MyAuthorize]
     [Ui("我的个人账号")]

@@ -4,7 +4,7 @@ using ChainFx.Web;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// 
     /// The home for a certain market

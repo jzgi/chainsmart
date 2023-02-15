@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// A notice pertaining to a particular org.

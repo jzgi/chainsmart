@@ -1,7 +1,7 @@
 ﻿using System;
 using ChainFx;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public struct StockOp : IData, IKeyable<DateTime>
     {

@@ -6,7 +6,7 @@ using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
     {

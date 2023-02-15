@@ -12,7 +12,7 @@ using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
 using WebUtility = System.Net.WebUtility;
 
-namespace ChainMart
+namespace ChainSMart
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.

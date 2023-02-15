@@ -9,7 +9,7 @@ using static ChainFx.Web.Modal;
 using static ChainFx.Fabric.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class WareWork<V> : WebWork where V : WareVarWork, new()
     {
@@ -144,11 +144,7 @@ namespace ChainMart
                     continue;
                 }
 
-                lines.Add(new BuyLn
-                {
-                    wareid = id,
-                    qty = qty
-                });
+                lines.Add(new BuyLn(id, qty));
             }
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
@@ -186,7 +182,7 @@ namespace ChainMart
 
                 // NOTE single unsubmitted record
                 const short msk = MSK_BORN | MSK_EDIT;
-                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, typ, status) WHERE typ = 1 AND status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
                 await dc.QueryTopAsync(p => m.Write(p, msk));
                 dc.Let(out int buyid);
                 dc.Let(out decimal topay);

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public abstract class AggVarWork : WebWork
     {

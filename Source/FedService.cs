@@ -1,7 +1,7 @@
 ﻿using ChainFx.Fabric;
 using ChainFx.Web;
 
-namespace ChainMart
+namespace ChainSMart
 {
     public class FedService : NodeService
     {
