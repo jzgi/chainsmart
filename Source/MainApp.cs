@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ChainFx;
+using ChainFX;
 using static System.Data.IsolationLevel;
 
 namespace ChainSMart

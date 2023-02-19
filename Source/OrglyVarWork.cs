@@ -1,4 +1,4 @@
-﻿using ChainFx.Web;
+﻿using ChainFX.Web;
 
 namespace ChainSMart
 {
@@ -65,8 +65,6 @@ namespace ChainSMart
             CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
 
             // src
-
-            CreateWork<SrclyItemWork>("sitem");
 
             CreateWork<SrclyLotWork>("slot");
 

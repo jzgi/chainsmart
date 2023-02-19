@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 using static ChainSMart.Notice;
 
 namespace ChainSMart

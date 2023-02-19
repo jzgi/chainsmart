@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSMart
 {
@@ -255,7 +255,7 @@ namespace ChainSMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY ended DESC");
+            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
             var arr = await dc.QueryAsync<Ware>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>

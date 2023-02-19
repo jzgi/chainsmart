@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using ChainFx;
+using ChainFX;
 
 namespace ChainSMart
 {

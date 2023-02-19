@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
+using ChainFX;
+using ChainFX.Web;
 using static ChainSMart.WeixinUtility;
-using static ChainFx.Fabric.Nodality;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSMart
 {

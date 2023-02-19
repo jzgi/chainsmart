@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSMart
 {
@@ -35,7 +35,7 @@ namespace ChainSMart
                 h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.creator, o.created)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
-                if (o.ender != null) h.LI_().FIELD2("上线", o.ender, o.ended)._LI();
+                if (o.fixer != null) h.LI_().FIELD2("上线", o.fixer, o.@fixed)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -123,7 +123,7 @@ namespace ChainSMart
                 h.LI_().FIELD("进度状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.ender != null) h.LI_().FIELD2("上线", o.ended, o.ender)._LI();
+                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -354,7 +354,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3");
+            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
 
             wc.GivePane(200);
@@ -480,7 +480,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -597,7 +597,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -611,7 +611,7 @@ namespace ChainSMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

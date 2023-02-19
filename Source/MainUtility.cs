@@ -1,7 +1,7 @@
 using System;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.CryptoUtility;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.CryptoUtility;
 
 namespace ChainSMart
 {

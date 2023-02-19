@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSMart
 {
@@ -122,7 +122,7 @@ namespace ChainSMart
                 {
                     h.TD_().T(o.created, 2, 2)._TD();
                     h.TD(o.pay);
-                    h.TD(o.ender);
+                    h.TD(o.fixer);
                 });
             }, false, 6);
         }
@@ -210,8 +210,8 @@ namespace ChainSMart
                 creator = prin.name,
                 lns = lst.ToArray(),
                 status = STU_OKED,
-                ended = now,
-                ender = prin.name,
+                @fixed = now,
+                fixer = prin.name,
                 pay = pay,
             };
             m.SetToPay();

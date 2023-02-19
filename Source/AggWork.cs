@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSMart
 {

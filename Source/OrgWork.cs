@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSMart
 {
@@ -20,7 +20,8 @@ namespace ChainSMart
     {
     }
 
-    [Ui("盟主机构管理", "平台")]
+    [AdmlyAuthorize(User.ROL_OPN)]
+    [Ui("机构管理", "业务")]
     public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, Org[] arr, User prin, bool shply)

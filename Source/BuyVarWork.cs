@@ -1,13 +1,13 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
 using static ChainSMart.WeixinUtility;
-using static ChainFx.Application;
-using static ChainFx.Entity;
-using static ChainFx.Fabric.Nodality;
+using static ChainFX.Application;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSMart
 {
@@ -33,7 +33,7 @@ namespace ChainSMart
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.ender != null) h.LI_().FIELD2(o.IsCancelled ? "撤销" : "收货", o.ended, o.ender)._LI();
+                if (o.fixer != null) h.LI_().FIELD2(o.IsCancelled ? "撤销" : "收货", o.@fixed, o.fixer)._LI();
 
                 h._UL();
 
@@ -64,7 +64,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
+            dc.Sql("UPDATE buys SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(prin.id)))
             {
                 dc.Let(out int shpid);
@@ -130,7 +130,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
+            dc.Sql("UPDATE buys SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);

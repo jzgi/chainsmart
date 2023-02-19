@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSMart
 {
@@ -33,7 +33,7 @@ namespace ChainSMart
 
                 if (m.creator != null) h.LI_().FIELD2("创建", m.creator, m.created)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapter, m.adapted)._LI();
-                if (m.ender != null) h.LI_().FIELD2("上线", m.ender, m.ended)._LI();
+                if (m.fixer != null) h.LI_().FIELD2("上线", m.fixer, m.@fixed)._LI();
 
                 h._UL();
 
@@ -255,7 +255,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE wares SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND shpid = @4");
+            dc.Sql("UPDATE wares SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND shpid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -269,7 +269,7 @@ namespace ChainSMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE wares SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND shpid = @2");
+            dc.Sql("UPDATE wares SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND shpid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

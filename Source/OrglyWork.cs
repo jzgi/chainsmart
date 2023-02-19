@@ -1,6 +1,6 @@
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Fabric.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSMart
 {

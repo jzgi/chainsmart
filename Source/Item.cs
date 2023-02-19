@@ -1,4 +1,4 @@
-﻿using ChainFx;
+﻿using ChainFX;
 
 namespace ChainSMart
 {
@@ -41,8 +41,8 @@ namespace ChainSMart
 
         internal int id;
 
-        internal int srcid;
-        internal string origin;
+        internal int defid;
+        internal string reserve;
         internal short store;
         internal short duration;
         internal JObj specs;
@@ -66,11 +66,11 @@ namespace ChainSMart
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(srcid), ref srcid);
+                s.Get(nameof(defid), ref defid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(origin), ref origin);
+                s.Get(nameof(reserve), ref reserve);
                 s.Get(nameof(store), ref store);
                 s.Get(nameof(duration), ref duration);
                 s.Get(nameof(specs), ref specs);
@@ -99,11 +99,11 @@ namespace ChainSMart
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Put(nameof(srcid), srcid);
+                s.Put(nameof(defid), defid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(origin), origin);
+                s.Put(nameof(reserve), reserve);
                 s.Put(nameof(store), store);
                 s.Put(nameof(duration), duration);
                 s.Put(nameof(specs), specs);

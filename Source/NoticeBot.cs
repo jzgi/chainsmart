@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Text;
 using System.Threading;
-using ChainFx.Fabric;
+using ChainFX.Nodal;
 
 namespace ChainSMart
 {

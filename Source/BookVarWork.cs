@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Application;
-using static ChainFx.Entity;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Application;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSMart
 {
@@ -34,7 +34,7 @@ namespace ChainSMart
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.ender != null) h.LI_().FIELD2("收货", o.ended, o.ender)._LI();
+                if (o.fixer != null) h.LI_().FIELD2("收货", o.@fixed, o.fixer)._LI();
 
                 h._UL();
 
@@ -121,7 +121,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET ended = @1, ender = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
+            dc.Sql("UPDATE books SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int srcid);

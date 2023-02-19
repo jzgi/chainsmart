@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
+using ChainFX;
+using ChainFX.Web;
 using static ChainSMart.User;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSMart
 {
@@ -30,8 +30,8 @@ namespace ChainSMart
         }
     }
 
-    [AdmlyAuthorize(ROL_MGT)]
-    [Ui("区域设置", "平台")]
+    [AdmlyAuthorize(User.ROL_MGT)]
+    [Ui("区域设置", "业务")]
     public class AdmlyRegWork : RegWork
     {
         protected override void OnCreate()

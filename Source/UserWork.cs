@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSMart
 {
@@ -113,8 +113,8 @@ namespace ChainSMart
     }
 
 
-    [AdmlyAuthorize(User.ROL_MGT)]
-    [Ui("用户管理", "平台")]
+    [AdmlyAuthorize(User.ROL_OPN)]
+    [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, User[] arr)

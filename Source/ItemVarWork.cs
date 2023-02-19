@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSMart
 {
@@ -26,13 +26,13 @@ namespace ChainSMart
                 h.LI_().FIELD("常用名", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, cats)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("基地", o.origin)._LI();
+                h.LI_().FIELD("基地", o.reserve)._LI();
                 h.LI_().FIELD("贮藏方法", o.store, Item.Stores).FIELD2("保存天数", o.duration, "天")._LI();
                 h.LI_().FIELD("规格参数", o.specs)._LI();
                 h.LI_().FIELD("进展状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.ender != null) h.LI_().FIELD2("上线", o.ended, o.ender)._LI();
+                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -90,7 +90,7 @@ namespace ChainSMart
         }
     }
 
-    public class SrclyItemVarWork : ItemVarWork
+    public class AdmlyItemVarWork : ItemVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
@@ -113,7 +113,7 @@ namespace ChainSMart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().TEXT("基地", nameof(o.reserve), o.reserve, tip: "自产可不填")._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
@@ -173,7 +173,7 @@ namespace ChainSMart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 4, ended = @1, ender = @2 WHERE id = @3 AND srcid = @4");
+            dc.Sql("UPDATE items SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND srcid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -187,7 +187,7 @@ namespace ChainSMart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 2, ended = NULL, ender = NULL WHERE id = @1 AND srcid = @2");
+            dc.Sql("UPDATE items SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND srcid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Fabric.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSMart
 {
@@ -47,18 +47,16 @@ namespace ChainSMart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品设置", "商户")]
-    public class SrclyItemWork : ItemWork<SrclyItemVarWork>
+    [AdmlyAuthorize(User.ROL_OPN)]
+    [Ui("品目设置", "业务")]
+    public class AdmlyItemWork : ItemWork<AdmlyItemVarWork>
     {
         [Ui("在线产品", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            var src = wc[-1].As<Org>();
-
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 4 ORDER BY ended DESC");
-            var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE status = 4 ORDER BY fixed DESC");
+            var arr = await dc.QueryAsync<Item>();
 
             wc.GivePage(200, h =>
             {
@@ -102,7 +100,7 @@ namespace ChainSMart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 8 ORDER BY ended DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE srcid = @1 AND status = 8 ORDER BY fixed DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -140,7 +138,7 @@ namespace ChainSMart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基地", nameof(o.origin), o.origin, tip: "自产可不填")._LI();
+                    h.LI_().TEXT("基地", nameof(o.reserve), o.reserve, tip: "自产可不填")._LI();
                     h.LI_().SELECT("贮藏方法", nameof(o.store), o.store, Item.Stores, required: true).NUMBER("保存天数", nameof(o.duration), o.duration, min: 1, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
@@ -153,7 +151,7 @@ namespace ChainSMart
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Item
                 {
-                    srcid = org.id,
+                    defid = org.id,
                     created = DateTime.Now,
                     creator = prin.name,
                 });
