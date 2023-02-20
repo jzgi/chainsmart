@@ -111,7 +111,7 @@ namespace ChainSmart
 
             // shp
 
-            CreateWork<ShplyItemWork>("sware");
+            CreateWork<ShplyItemWork>("sitem");
 
             CreateWork<ShplyVipWork>("svip");
 

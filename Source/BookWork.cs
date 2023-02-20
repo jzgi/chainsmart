@@ -414,7 +414,7 @@ namespace ChainSmart
                 while (dc.Next())
                 {
                     dc.Let(out int mktid);
-                    dc.Let(out int wareid);
+                    dc.Let(out int itemid);
                     dc.Let(out string name);
                     dc.Let(out decimal qty
                     );
@@ -446,7 +446,7 @@ namespace ChainSmart
             var topOrgs = Grab<int, Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT mktid, wareid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = 4 GROUP BY mktid, wareid ORDER BY mktid");
+            dc.Sql("SELECT mktid, itemid, last(name), sum(qty - qtyre) AS qty FROM books WHERE ctrid = @1 AND status = 4 GROUP BY mktid, itemid ORDER BY mktid");
             await dc.QueryAsync(p => p.Set(ctr.id));
 
             wc.GivePage(200, h =>
@@ -457,7 +457,7 @@ namespace ChainSmart
                 while (dc.Next())
                 {
                     dc.Let(out int mktid);
-                    dc.Let(out int wareid);
+                    dc.Let(out int itemid);
                     dc.Let(out string name);
                     dc.Let(out decimal qty
                     );

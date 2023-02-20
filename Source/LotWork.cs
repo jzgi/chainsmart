@@ -21,7 +21,7 @@ namespace ChainSmart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC(MainApp.WwwUrl, "/item/", o.assetid, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/lot/", o.assetid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();

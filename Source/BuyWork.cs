@@ -37,7 +37,7 @@ namespace ChainSmart
 
                     h.LI_();
 
-                    h.PIC("/ware/", d.wareid, "/icon", css: "uk-width-micro");
+                    h.PIC("/item/", d.itemid, "/icon", css: "uk-width-micro");
 
                     h.SPAN_("uk-width-expand").SP().T(d.name);
                     if (d.unitx != 1)
@@ -120,7 +120,7 @@ namespace ChainSmart
 
                 if (o.lns.Length == 1)
                 {
-                    h.PIC(MainApp.WwwUrl, "/ware/", ln.wareid, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/item/", ln.itemid, "/icon", css: "uk-width-1-5");
                 }
                 else
                     h.PIC("/void.webp", css: "uk-width-1-5");

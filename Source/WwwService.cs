@@ -18,9 +18,9 @@ namespace ChainSmart
 
             CreateWork<PublyOrgWork>("org");
 
-            CreateWork<PublyAssetWork>("item");
+            CreateWork<PublyAssetWork>("asset");
 
-            CreateWork<PublyItemWork>("ware");
+            CreateWork<PublyItemWork>("item");
 
             CreateWork<MyWork>("my");
         }

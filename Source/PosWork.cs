@@ -27,21 +27,21 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
-                int wareid = 0;
+                int itemid = 0;
                 decimal qtyx = 0;
 
                 //
                 // form input
 
                 h.FORM_().FIELDSUL_();
-                h.LI_().SELECT_(nameof(wareid), onchange: "posWareChange(this);").T("<option></option>");
+                h.LI_().SELECT_(nameof(itemid), onchange: "posWareChange(this);").T("<option></option>");
 
                 for (var i = 0; i < arr?.Length; i++)
                 {
@@ -187,14 +187,14 @@ namespace ChainSmart
             for (var i = 0; i < frm.Count; i++)
             {
                 var ety = frm.EntryAt(i);
-                int wareid = ety.Key.ToInt();
-                if (wareid == 0)
+                int itemid = ety.Key.ToInt();
+                if (itemid == 0)
                 {
                     continue;
                 }
                 var comp = ((string) ety.Value).Split('-');
 
-                lst.Add(new BuyLn(wareid, comp));
+                lst.Add(new BuyLn(itemid, comp));
             }
 
             if (lst.Count == 0) return;

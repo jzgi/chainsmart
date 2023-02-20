@@ -89,18 +89,18 @@ namespace ChainSmart
     {
         public override async Task @default(WebContext wc)
         {
-            int wareid = wc[0];
+            int itemid = wc[0];
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
-            var o = await dc.QueryTopAsync<Item>(p => p.Set(wareid));
+            var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
             wc.GivePane(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
                 if (o.pic)
                 {
-                    h.PIC("/ware/", o.id, "/pic");
+                    h.PIC("/item/", o.id, "/pic");
                 }
                 h.H4("产品详情", "uk-card-header");
 
@@ -132,7 +132,7 @@ namespace ChainSmart
         [Ui(tip: "修改商品信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
-            int wareid = wc[0];
+            int itemid = wc[0];
             var shp = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
             var cats = Grab<short, Cat>();
@@ -141,7 +141,7 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
-                var o = dc.QueryTop<Item>(p => p.Set(wareid));
+                var o = dc.QueryTop<Item>(p => p.Set(itemid));
 
                 wc.GivePane(200, h =>
                 {
@@ -172,7 +172,7 @@ namespace ChainSmart
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, msk);
-                    p.Set(wareid).Set(shp.id);
+                    p.Set(itemid).Set(shp.id);
                 });
 
                 wc.GivePane(200); // close dialog
@@ -198,7 +198,7 @@ namespace ChainSmart
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task stock(WebContext wc)
         {
-            int wareid = wc[0];
+            int itemid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
@@ -228,18 +228,18 @@ namespace ChainSmart
                 if (typ < 5) // add
                 {
                     dc.Sql("UPDATE items SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
-                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                     dc.Let(out int len);
                     if (len > 16) // shrink
                     {
                         dc.Sql("UPDATE items SET ops = ops[13:] WHERE id = @1 AND shpid = @2");
-                        await dc.ExecuteAsync(p => p.Set(wareid).Set(org.id));
+                        await dc.ExecuteAsync(p => p.Set(itemid).Set(org.id));
                     }
                 }
                 else // reduce
                 {
                     dc.Sql("UPDATE items SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog

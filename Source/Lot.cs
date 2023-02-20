@@ -18,15 +18,14 @@ namespace ChainSmart
             {STU_ADAPTED, "调整"},
             {STU_OKED, "上线"},
         };
-        
-        
+
+
         public static readonly Map<short, string> Stores = new Map<short, string>
         {
             {0, "常规"},
             {1, "冷藏"},
             {2, "冷冻"},
         };
-
 
 
         public static readonly Map<short, string> Terms = new Map<short, string>
@@ -58,6 +57,8 @@ namespace ChainSmart
 
         internal int nstart;
         internal int nend;
+        internal bool icon;
+        internal bool pic;
         internal bool m1;
         internal bool m2;
         internal bool m3;
@@ -98,6 +99,8 @@ namespace ChainSmart
             {
                 s.Get(nameof(nstart), ref nstart);
                 s.Get(nameof(nend), ref nend);
+                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
                 s.Get(nameof(m2), ref m2);
                 s.Get(nameof(m3), ref m3);
@@ -142,6 +145,8 @@ namespace ChainSmart
             {
                 s.Put(nameof(nstart), nstart);
                 s.Put(nameof(nend), nend);
+                s.Put(nameof(icon), icon);
+                s.Put(nameof(pic), pic);
                 s.Put(nameof(m1), m1);
                 s.Put(nameof(m2), m2);
                 s.Put(nameof(m3), m3);

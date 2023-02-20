@@ -113,15 +113,15 @@ namespace ChainSmart
                     return;
                 }
 
-                var item = GrabObject<int, Asset>(o.assetid);
+                // var asset = GrabObject<int, Asset>(o.assetid);
 
                 var src = GrabObject<int, Org>(o.srcid);
 
                 h.TOPBARXL_();
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(item.name)._HEADER();
-                if (item.icon)
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.name)._HEADER();
+                if (o.icon)
                 {
-                    h.PIC("/item/", item.id, "/icon", circle: true, css: "uk-width-small");
+                    h.PIC("/lot/", o.id, "/icon", circle: true, css: "uk-width-small");
                 }
                 else
                     h.PIC("/void.webp", circle: true, css: "uk-width-small");
@@ -134,6 +134,7 @@ namespace ChainSmart
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
                 h.LI_().FIELD("总件数", o.cap)._LI();
                 h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
+                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
 
                 if (o.nstart > 0 && o.nend > 0) h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
@@ -162,52 +163,21 @@ namespace ChainSmart
                 }
                 h._ARTICLE();
 
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("产品详情", "uk-card-header");
-                h.SECTION_("uk-card-body");
-                if (item.pic)
-                {
-                    h.PIC("/item/", o.assetid, "/pic", css: "uk-width-1-1");
-                }
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", item.name)._LI();
-                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
-                if (!string.IsNullOrEmpty(item.reserve))
-                {
-                    h.LI_().FIELD("生产基地", item.reserve)._LI();
-                }
-                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
-                h.LI_().FIELD2("创建", item.created, o.creator)._LI();
-                h.LI_().FIELD2("上线", item.@fixed, o.fixer)._LI();
-                h._UL();
-                h._SECTION();
-                h._ARTICLE();
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("产品证照", "uk-card-header");
-                if (item.m1)
-                {
-                    h.PIC("/item/", item.id, "/m-1", css: "uk-width-1-1 uk-card-body");
-                }
-                if (item.m2)
-                {
-                    h.PIC("/item/", item.id, "/m-2", css: "uk-width-1-1 uk-card-body");
-                }
-                if (item.m3)
-                {
-                    h.PIC("/item/", item.id, "/m-3", css: "uk-width-1-1 uk-card-body");
-                }
-                if (item.m4)
-                {
-                    h.PIC("/item/", item.id, "/m-4", css: "uk-width-1-1 uk-card-body");
-                }
-                h._ARTICLE();
-
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
                 h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
                 h._FOOTER();
             }, true, 3600, title: "中惠农通产品溯源信息");
+        }
+
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), true, 3600 * 6);
+        }
+
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), true, 3600 * 6);
         }
 
         public async Task m(WebContext wc, int sub)
@@ -418,7 +388,7 @@ namespace ChainSmart
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED | STU_OKED)]
         public async Task stock(WebContext wc)
         {
-            int wareid = wc[0];
+            int itemid = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
 
@@ -448,12 +418,12 @@ namespace ChainSmart
                 if (typ < 5) // add
                 {
                     dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                 }
                 else // reduce
                 {
                     dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(wareid).Set(org.id));
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog
@@ -508,7 +478,7 @@ namespace ChainSmart
                 h.ARTICLE_("uk-card uk-card-primary");
                 if (item.pic)
                 {
-                    h.PIC_(MainApp.WwwUrl,"/item/",lot.assetid,"/pic")._PIC();
+                    h.PIC_(MainApp.WwwUrl, "/item/", lot.assetid, "/pic")._PIC();
                 }
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");

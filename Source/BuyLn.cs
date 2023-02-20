@@ -7,9 +7,9 @@ namespace ChainSmart
     /// </summary>
     public class BuyLn : IData, IKeyable<int>
     {
-        public int wareid;
-
         public int itemid;
+
+        public int lotid;
 
         public string name;
 
@@ -27,15 +27,15 @@ namespace ChainSmart
         {
         }
 
-        public BuyLn(int wareid, decimal qty)
+        public BuyLn(int itemid, decimal qty)
         {
-            this.wareid = wareid;
+            this.itemid = itemid;
             this.qty = qty;
         }
 
-        public BuyLn(int wareid, string[] comp)
+        public BuyLn(int itemid, string[] comp)
         {
-            this.wareid = wareid;
+            this.itemid = itemid;
 
             itemid = int.Parse(comp[0]);
             name = comp[1];
@@ -47,7 +47,7 @@ namespace ChainSmart
 
         public void Read(ISource s, short msk = 0xff)
         {
-            s.Get(nameof(wareid), ref wareid);
+            s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(name), ref name);
             s.Get(nameof(unit), ref unit);
@@ -59,7 +59,7 @@ namespace ChainSmart
 
         public void Write(ISink s, short msk = 0xff)
         {
-            s.Put(nameof(wareid), wareid);
+            s.Put(nameof(itemid), itemid);
             s.Put(nameof(name), name);
             s.Put(nameof(itemid), itemid);
             s.Put(nameof(unit), unit);
@@ -69,7 +69,7 @@ namespace ChainSmart
             s.Put(nameof(qty), qty);
         }
 
-        public int Key => wareid;
+        public int Key => itemid;
 
         public decimal RealPrice => price - off;
 

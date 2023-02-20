@@ -71,7 +71,7 @@ namespace ChainSmart
             // indivisual working items
             CacheObject<int, Asset>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(ChainSmart.Asset.Empty).T(" FROM items_vw WHERE id = @1");
+                    dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1");
                     return dc.QueryTop<Asset>(p => p.Set(id));
                 }, 60 * 60
             );

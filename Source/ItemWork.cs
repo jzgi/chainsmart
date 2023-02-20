@@ -27,7 +27,7 @@ namespace ChainSmart
             var org = GrabObject<int, Org>(orgid);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -61,7 +61,7 @@ namespace ChainSmart
                     //
                     if (o.icon)
                     {
-                        h.PIC("/ware/", o.id, "/icon", css: "uk-width-1-5");
+                        h.PIC("/item/", o.id, "/icon", css: "uk-width-1-5");
                     }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
@@ -150,16 +150,16 @@ namespace ChainSmart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares WHERE shpid = @1 AND id ")._IN_(lines);
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND id ")._IN_(lines);
                 var map = await dc.QueryAsync<int, Item>(p => p.Set(shpid).SetForIn(lines));
 
                 for (int i = 0; i < lines.Count; i++)
                 {
                     var dtl = lines[i];
-                    var ware = map[dtl.wareid];
-                    if (ware != null)
+                    var item = map[dtl.itemid];
+                    if (item != null)
                     {
-                        dtl.Init(ware, discount: prin.vip?.Contains(shpid) ?? false);
+                        dtl.Init(item, discount: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 
@@ -227,7 +227,7 @@ namespace ChainSmart
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
                 if (o.icon)
                 {
-                    h.PIC(MainApp.WwwUrl, "/ware/", o.id, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
                 }
                 else
                     h.PIC("/void.webp", css: "uk-width-1-5");
@@ -255,7 +255,7 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -277,7 +277,7 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -298,7 +298,7 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -355,7 +355,7 @@ namespace ChainSmart
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO wares ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
+                dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog
@@ -413,11 +413,11 @@ namespace ChainSmart
                 // insert
                 using var dc = NewDbContext(IsolationLevel.ReadCommitted);
 
-                dc.Sql("INSERT INTO wares ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
-                var wareid = (int) await dc.ScalarAsync(p => m.Write(p, msk));
+                dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
+                var itemid = (int) await dc.ScalarAsync(p => m.Write(p, msk));
 
-                dc.Sql("UPDATE wares SET (icon, pic) = (SELECT icon, pic FROM items WHERE id = @1) WHERE id = @2");
-                await dc.ExecuteAsync(p => p.Set(m.itemid).Set(wareid));
+                dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM items WHERE id = @1) WHERE id = @2");
+                await dc.ExecuteAsync(p => p.Set(m.itemid).Set(itemid));
 
                 wc.GivePane(200); // close dialog
             }
