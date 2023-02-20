@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
     {
@@ -159,7 +159,7 @@ namespace ChainSMart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    var item = GrabObject<int, Item>(o.acct);
+                    var item = GrabObject<int, Asset>(o.acct);
                     h.TD(item.name);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
@@ -192,7 +192,7 @@ namespace ChainSMart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    var item = GrabObject<int, Item>(o.acct);
+                    var item = GrabObject<int, Asset>(o.acct);
                     h.TD(item.name);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();

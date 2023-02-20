@@ -1,6 +1,6 @@
-﻿﻿using ChainFX;
+﻿﻿using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// The data modal for an standard category.

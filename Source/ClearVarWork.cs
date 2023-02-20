@@ -1,7 +1,7 @@
 ﻿﻿using System.Threading.Tasks;
-using ChainFX.Web;
+using ChainFx.Web;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class ClearVarWork : WebWork
     {

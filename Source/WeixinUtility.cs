@@ -5,14 +5,14 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Nodal;
-using ChainFX.Web;
-using static ChainFX.CryptoUtility;
-using static ChainFX.Application;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
+using static ChainFx.CryptoUtility;
+using static ChainFx.Application;
 using WebUtility = System.Net.WebUtility;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// A hub of operation that has its own weixin official acount.
@@ -47,7 +47,7 @@ namespace ChainSMart
 
         static WeixinUtility()
         {
-            var s = Prog;
+            var s = Application.Prog;
             s.Get(nameof(appid), ref appid);
             s.Get(nameof(appsecret), ref appsecret);
             s.Get(nameof(supmchid), ref supmchid);

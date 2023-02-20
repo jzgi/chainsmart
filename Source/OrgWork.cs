@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Web.Modal;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.ToolAttribute;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
     {

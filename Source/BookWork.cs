@@ -1,11 +1,11 @@
 using System.Threading.Tasks;
-using ChainFX.Web;
-using static ChainFX.Web.Modal;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.ToolAttribute;
-using static ChainSMart.Notice;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.ToolAttribute;
+using static ChainSmart.Notice;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class BookWork<V> : WebWork where V : BookVarWork, new()
     {
@@ -169,7 +169,7 @@ namespace ChainSMart
                     // anchor to the lot sub work
                     h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/item/", o.assetid, "/icon", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();

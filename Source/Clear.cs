@@ -1,7 +1,7 @@
 ﻿using System;
-using ChainFX;
+using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class Clear : Entity, IKeyable<int>
     {

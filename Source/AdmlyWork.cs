@@ -1,9 +1,9 @@
-using ChainFX;
-using ChainFX.Nodal;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     [UserAuthenticate, AdmlyAuthorize(1)]
     [Ui("平台管理")]
@@ -26,8 +26,6 @@ namespace ChainSMart
             // biz
 
             CreateWork<AdmlyRegWork>("reg");
-
-            CreateWork<AdmlyItemWork>("item");
 
             CreateWork<AdmlyUserWork>("user");
 

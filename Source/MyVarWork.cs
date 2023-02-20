@@ -1,6 +1,6 @@
-using ChainFX.Web;
+using ChainFx.Web;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     [MyAuthorize]
     [Ui("我的个人账号")]

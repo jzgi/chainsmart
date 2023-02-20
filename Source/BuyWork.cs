@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
-using static ChainSMart.Notice;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
+using static ChainSmart.Notice;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     {

@@ -1,7 +1,7 @@
 ﻿using System;
-using ChainFX;
+using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// An entry record of ledger.

@@ -1,7 +1,7 @@
 ﻿using System;
-using ChainFX.Web;
+using ChainFx.Web;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
     public class OrglyAuthorizeAttribute : AuthorizeAttribute

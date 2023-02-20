@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Text;
 using System.Threading;
-using ChainFX.Nodal;
+using ChainFx.Nodal;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class NoticeBot
     {

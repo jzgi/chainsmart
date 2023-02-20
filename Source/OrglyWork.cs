@@ -1,8 +1,8 @@
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class OrglyWork : WebWork
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
-using ChainFX;
-using ChainFX.Nodal;
-using ChainFX.Web;
-using static ChainFX.Entity;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
+using static ChainFx.Entity;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class MainService : WebService
     {

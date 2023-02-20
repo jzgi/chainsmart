@@ -1,32 +1,32 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Application;
-using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Application;
+using static ChainFx.Entity;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class LotVarWork : WebWork
     {
         public virtual async Task @default(WebContext wc)
         {
-            int lotid = wc[0];
+            int id = wc[0];
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
 
             const short msk = 255 | MSK_EXTRA;
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
-            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id), msk);
+            var m = await dc.QueryTopAsync<Lot>(p => p.Set(id).Set(org.id), msk);
 
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("上线产品名", m.name)._LI();
+                h.LI_().FIELD("产品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
                 h.LI_().FIELD("交货条款", Lot.Terms[m.term]);
                 if (m.term > 0) h.FIELD("交货日期", m.dated);
@@ -113,7 +113,7 @@ namespace ChainSMart
                     return;
                 }
 
-                var item = GrabObject<int, Item>(o.itemid);
+                var item = GrabObject<int, Asset>(o.assetid);
 
                 var src = GrabObject<int, Org>(o.srcid);
 
@@ -167,7 +167,7 @@ namespace ChainSMart
                 h.SECTION_("uk-card-body");
                 if (item.pic)
                 {
-                    h.PIC("/item/", o.itemid, "/pic", css: "uk-width-1-1");
+                    h.PIC("/item/", o.assetid, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", item.name)._LI();
@@ -220,12 +220,13 @@ namespace ChainSMart
     {
         static readonly string[] Units = {"斤", "包", "箱", "桶"};
 
-        [Ui(tip: "修改产品销售批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改产品批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
+            var cats = Grab<short, Cat>();
             var prin = (User) wc.Principal;
 
             if (wc.IsGet)
@@ -234,21 +235,23 @@ namespace ChainSMart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                await dc.QueryAsync("SELECT id, name FROM items_vw WHERE srcid = @1 AND status = 4", p => p.Set(org.id));
-                var items = dc.ToIntMap();
+                await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
+                var assets = dc.ToIntMap();
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("销售批次信息");
+                    h.FORM_().FIELDSUL_();
 
-                    h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                    h.LI_().SELECT("相关设施", nameof(o.assetid), o.assetid, assets, required: true)._LI();
+                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: true)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap).NUMBER("剩余件数", nameof(o.avail), o.avail)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -263,7 +266,7 @@ namespace ChainSMart
                     adapter = prin.name,
                 });
 
-                var item = GrabObject<int, Item>(o.itemid);
+                var item = GrabObject<int, Asset>(o.assetid);
                 o.name = item.name;
                 o.typ = item.typ;
 
@@ -313,7 +316,7 @@ namespace ChainSMart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                var item = GrabObject<int, Item>(o.itemid);
+                var item = GrabObject<int, Asset>(o.assetid);
 
                 if (cmd == 1)
                 {
@@ -346,7 +349,7 @@ namespace ChainSMart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Item.States[item.state], "uk-margin-auto-left")._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.States[item.state], "uk-margin-auto-left")._H6();
 
                             h._LI();
 
@@ -498,14 +501,14 @@ namespace ChainSMart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-            var item = GrabObject<int, Item>(lot.itemid);
+            var item = GrabObject<int, Asset>(lot.assetid);
 
             wc.GivePane(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
                 if (item.pic)
                 {
-                    h.PIC_(MainApp.WwwUrl,"/item/",lot.itemid,"/pic")._PIC();
+                    h.PIC_(MainApp.WwwUrl,"/item/",lot.assetid,"/pic")._PIC();
                 }
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");
@@ -584,7 +587,7 @@ namespace ChainSMart
                     zonid = lot.zonid,
                     ctrid = shp.ctrid,
 
-                    itemid = lot.itemid,
+                    itemid = lot.assetid,
                     lotid = lot.id,
                     unit = lot.unit,
                     unitx = lot.unitx,

@@ -1,9 +1,9 @@
 using System;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.CryptoUtility;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.CryptoUtility;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public static class MainUtility
     {
@@ -47,7 +47,7 @@ namespace ChainSMart
         }
 
 
-        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Ware> opts, Map<short, Cat> cats, Func<Ware, bool> filter = null, bool required = false)
+        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Item> opts, Map<short, Cat> cats, Func<Item, bool> filter = null, bool required = false)
         {
             h.SELECT_(label, name, false, required);
             if (opts != null)

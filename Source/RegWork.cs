@@ -1,13 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainSMart.User;
-using static ChainFX.Web.Modal;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.ToolAttribute;
+using ChainFx;
+using ChainFx.Web;
+using static ChainSmart.User;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class RegWork : WebWork
     {
@@ -20,7 +20,7 @@ namespace ChainSMart
                 h.PIC("/void.webp", css: "uk-width-1-5");
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN(Ware.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
                 h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                 h._ASIDE();
@@ -113,7 +113,7 @@ namespace ChainSMart
 
                 o = await wc.ReadObjectAsync(msk, instance: o);
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO regs ").colset(Reg.Empty, msk)._VALUES_(Ware.Empty, msk);
+                dc.Sql("INSERT INTO regs ").colset(Reg.Empty, msk)._VALUES_(Item.Empty, msk);
                 await dc.ExecuteAsync(p => o.Write(p, msk));
 
                 wc.GivePane(200); // close dialog

@@ -1,38 +1,14 @@
-﻿using ChainFX;
+﻿using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
-    /// <summary>
-    /// A product item from certain source.
-    /// </summary>
-    public class Item : Entity, IKeyable<int>
+    public class Item : Entity, IKeyable<int>, IStockable
     {
         public static readonly Item Empty = new Item();
 
-        public const short
-            STA_VOID = 0,
-            STA_PRE = 1,
-            STA_FINE = 2,
-            STA_TOP = 4;
-
-        public static readonly Map<short, string> States = new Map<short, string>
-        {
-            {STA_VOID, "其它"},
-            {STA_PRE, "通货"},
-            {STA_FINE, "进口"},
-            {STA_TOP, "特品"},
-        };
-
-        public static readonly Map<short, string> Stores = new Map<short, string>
-        {
-            {0, "常规"},
-            {1, "冷藏"},
-            {2, "冷冻"},
-        };
-
         public new static readonly Map<short, string> Statuses = new Map<short, string>
         {
-            {STU_VOID, "无效"},
+            {STU_VOID, "封存"},
             {STU_CREATED, "创建"},
             {STU_ADAPTED, "调整"},
             {STU_OKED, "上线"},
@@ -40,22 +16,22 @@ namespace ChainSMart
 
 
         internal int id;
+        internal int shpid;
+        internal int itemid;
+        internal string unit;
+        internal decimal unitx;
+        internal decimal price;
+        internal decimal off;
+        internal short min;
+        internal short max;
+        internal decimal avail;
 
-        internal int defid;
-        internal string reserve;
-        internal short store;
-        internal short duration;
-        internal JObj specs;
         internal bool icon;
         internal bool pic;
-        internal bool m1;
-        internal bool m2;
-        internal bool m3;
-        internal bool m4;
-        internal bool m5;
-        internal bool m6;
 
-        public override void Read(ISource s, short msk = 0xff)
+        internal StockOp[] ops;
+
+        public override void Read(ISource s, short msk = 255)
         {
             base.Read(s, msk);
 
@@ -63,32 +39,33 @@ namespace ChainSMart
             {
                 s.Get(nameof(id), ref id);
             }
-
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(defid), ref defid);
+                s.Get(nameof(shpid), ref shpid);
+                s.Get(nameof(itemid), ref itemid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(reserve), ref reserve);
-                s.Get(nameof(store), ref store);
-                s.Get(nameof(duration), ref duration);
-                s.Get(nameof(specs), ref specs);
+                s.Get(nameof(unit), ref unit);
+                s.Get(nameof(unitx), ref unitx);
+                s.Get(nameof(price), ref price);
+                s.Get(nameof(off), ref off);
+                s.Get(nameof(min), ref min);
+                s.Get(nameof(max), ref max);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(avail), ref avail);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
-                s.Get(nameof(m1), ref m1);
-                s.Get(nameof(m2), ref m2);
-                s.Get(nameof(m3), ref m3);
-                s.Get(nameof(m4), ref m4);
-                s.Get(nameof(m5), ref m5);
-                s.Get(nameof(m6), ref m6);
+            }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Get(nameof(ops), ref ops);
             }
         }
 
-        public override void Write(ISink s, short msk = 0xff)
+        public override void Write(ISink s, short msk = 255)
         {
             base.Write(s, msk);
 
@@ -96,33 +73,38 @@ namespace ChainSMart
             {
                 s.Put(nameof(id), id);
             }
-
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Put(nameof(defid), defid);
+                s.Put(nameof(shpid), shpid);
+                s.Put(nameof(itemid), itemid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(reserve), reserve);
-                s.Put(nameof(store), store);
-                s.Put(nameof(duration), duration);
-                s.Put(nameof(specs), specs);
+                s.Put(nameof(unit), unit);
+                s.Put(nameof(unitx), unitx);
+                s.Put(nameof(price), price);
+                s.Put(nameof(off), off);
+                s.Put(nameof(min), min);
+                s.Put(nameof(max), max);
             }
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(avail), avail);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
-                s.Put(nameof(m1), m1);
-                s.Put(nameof(m2), m2);
-                s.Put(nameof(m3), m3);
-                s.Put(nameof(m4), m4);
-                s.Put(nameof(m5), m5);
-                s.Put(nameof(m6), m6);
+            }
+            if ((msk & MSK_EXTRA) == MSK_EXTRA)
+            {
+                s.Put(nameof(ops), ops);
             }
         }
 
         public int Key => id;
 
-        public override string ToString() => name;
+        public decimal RealPrice => price - off;
+
+        public short AvailX => (short) (avail / unitx);
+
+        public StockOp[] Ops => ops;
     }
 }

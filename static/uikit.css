@@ -990,7 +990,7 @@ button.uk-icon:not(:disabled) {
 
 .uk-icon-button:hover,
 .uk-icon-button:focus {
-    background-color: #f2f2f2;
+    background-color: #ededed;
     color: #f59604;
     outline: none;
 }

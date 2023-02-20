@@ -1,6 +1,6 @@
-﻿using ChainFX;
+﻿using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// A detail line of buy.
@@ -77,7 +77,7 @@ namespace ChainSMart
 
         public short QtyX => (short) (qty / unitx);
 
-        internal void Init(Ware w, bool discount)
+        internal void Init(Item w, bool discount)
         {
             name = w.name;
             itemid = w.itemid;

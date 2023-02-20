@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFX.Web;
-using static ChainFX.Web.Modal;
-using static ChainFX.Nodal.Nodality;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
     {

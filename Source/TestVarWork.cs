@@ -1,6 +1,6 @@
-﻿using ChainFX.Web;
+﻿using ChainFx.Web;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class TestVarWork : WebWork
     {

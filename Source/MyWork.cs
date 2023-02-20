@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Nodal;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using ChainFx;
+using ChainFx.Nodal;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     [UserAuthenticate]
     public class MyWork : WebWork

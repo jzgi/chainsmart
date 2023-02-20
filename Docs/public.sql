@@ -39,14 +39,14 @@ create table entities
     creator varchar(10),
     adapted timestamp(0),
     adapter varchar(10),
-    ended timestamp(0),
-    ender varchar(10),
+    fixed timestamp(0),
+    fixer varchar(10),
     status smallint default 1 not null
 );
 
 alter table entities owner to postgres;
 
-create table _ldgs_
+create table _ledgs
 (
     seq integer,
     acct varchar(20),
@@ -58,36 +58,7 @@ create table _ldgs_
     stamp timestamp(0)
 );
 
-alter table _ldgs_ owner to postgres;
-
-create table _peerldgs_
-(
-    peerid smallint
-)
-    inherits (_ldgs_);
-
-alter table _peerldgs_ owner to postgres;
-
-create table _peers_
-(
-    id smallint not null
-        constraint peers__pk
-            primary key,
-    weburl varchar(50),
-    secret varchar(16)
-)
-    inherits (entities);
-
-alter table _peers_ owner to postgres;
-
-create table _accts_
-(
-    no varchar(20),
-    v integer
-)
-    inherits (entities);
-
-alter table _accts_ owner to postgres;
+alter table _ledgs owner to postgres;
 
 create table cats
 (
@@ -208,17 +179,15 @@ create table tests
 
 alter table tests owner to postgres;
 
-create table items
+create table assets
 (
     id serial not null
-        constraint items_pk
+        constraint assets_pk
             primary key,
-    srcid integer
-        constraint items_srcid_fk
-            references orgs,
-    origin varchar(12),
-    store smallint,
-    duration smallint,
+    orgid integer,
+    reserve varchar(12),
+    x double precision,
+    y double precision,
     specs jsonb,
     icon bytea,
     pic bytea,
@@ -226,26 +195,24 @@ create table items
     m2 bytea,
     m3 bytea,
     m4 bytea,
-    m5 bytea,
-    m6 bytea,
-    constraint items_typ_fk
+    constraint assets_typ_fk
         foreign key (typ) references cats
 )
     inherits (entities);
 
-alter table items owner to postgres;
+alter table assets owner to postgres;
 
-create table wares
+create table items
 (
     id serial not null
-        constraint wares_pk
+        constraint items_pk
             primary key,
     shpid integer not null
-        constraint wares_shpid_fk
+        constraint items_shpid_fk
             references orgs,
     itemid integer
-        constraint wares_itemid_fk
-            references items,
+        constraint items_itemid_fk
+            references assets (id),
     unit varchar(4),
     unitx numeric(6,1),
     price money,
@@ -259,10 +226,7 @@ create table wares
 )
     inherits (entities);
 
-alter table wares owner to postgres;
-
-create index items_srcidstatus_idx
-    on items (srcid, status);
+alter table items owner to postgres;
 
 create table lots
 (
@@ -277,9 +241,9 @@ create table lots
     targs integer[],
     dated date,
     term smallint,
-    itemid integer
+    assetid integer
         constraint lots_itemid_fk
-            references items,
+            references assets (id),
     unit varchar(4),
     unitx numeric(6,1),
     price money,
@@ -327,7 +291,7 @@ create table books
             references orgs,
     itemid integer
         constraint books_itemid_fk
-            references items,
+            references assets (id),
     lotid integer
         constraint books_lotid_fk
             references lots,
@@ -473,7 +437,29 @@ create table buyclrs
 
 alter table buyclrs owner to postgres;
 
-create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, srcid, origin, store, duration, specs, icon, pic, m1, m2, m3, m4, m5, m6) as
+create table _accts
+(
+    no varchar(18),
+    balance money
+)
+    inherits (entities);
+
+alter table _accts owner to postgres;
+
+create table _asks
+(
+    acct varchar(20),
+    name varchar(12),
+    amt integer,
+    bal integer,
+    cs uuid,
+    blockcs uuid,
+    stamp timestamp(0)
+);
+
+alter table _asks owner to postgres;
+
+create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, fixer, fixed, status, id, prtid, ctrid, ext, legal, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -482,38 +468,8 @@ SELECT o.typ,
        o.creator,
        o.adapted,
        o.adapter,
-       o.ended,
-       o.ender,
-       o.status,
-       o.id,
-       o.srcid,
-       o.origin,
-       o.store,
-       o.duration,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4,
-       o.m5 IS NOT NULL   AS m5,
-       o.m6 IS NOT NULL   AS m6
-FROM items o;
-
-alter table items_vw owner to postgres;
-
-create view orgs_vw(typ, state, name, tip, created, creator, adapted, adapter, ender, ended, status, id, prtid, ctrid, ext, legal, regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4) as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.ender,
-       o.ended,
+       o.fixer,
+       o.fixed,
        o.status,
        o.id,
        o.prtid,
@@ -538,7 +494,7 @@ FROM orgs o;
 
 alter table orgs_vw owner to postgres;
 
-create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, tel, addr, im, credential, admly, srcid, srcly, shpid, shply, vip, icon) as
+create view users_vw(typ, state, name, tip, created, creator, adapted, adapter, fixed, fixer, status, id, tel, addr, im, credential, admly, srcid, srcly, shpid, shply, vip, icon) as
 SELECT u.typ,
        u.state,
        u.name,
@@ -547,8 +503,8 @@ SELECT u.typ,
        u.creator,
        u.adapted,
        u.adapter,
-       u.ended,
-       u.ender,
+       u.fixed,
+       u.fixer,
        u.status,
        u.id,
        u.tel,
@@ -566,7 +522,7 @@ FROM users u;
 
 alter table users_vw owner to postgres;
 
-create view wares_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, shpid, itemid, unit, unitx, price, "off", min, max, avail, icon, pic, ops) as
+create view items_vw(typ, state, name, tip, created, creator, adapted, adapter, fixed, fixer, status, id, shpid, itemid, unit, unitx, price, "off", min, max, avail, icon, pic, ops) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -575,8 +531,8 @@ SELECT o.typ,
        o.creator,
        o.adapted,
        o.adapter,
-       o.ended,
-       o.ender,
+       o.fixed,
+       o.fixer,
        o.status,
        o.id,
        o.shpid,
@@ -591,11 +547,11 @@ SELECT o.typ,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic,
        o.ops
-FROM wares o;
+FROM items o;
 
-alter table wares_vw owner to postgres;
+alter table items_vw owner to postgres;
 
-create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, ended, ender, status, id, srcid, srcname, zonid, targs, dated, term, itemid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4, ops) as
+create view lots_vw(typ, state, name, tip, created, creator, adapted, adapter, fixed, fixer, status, id, srcid, srcname, zonid, targs, dated, term, assetid, unit, unitx, price, "off", min, step, max, cap, avail, nstart, nend, m1, m2, m3, m4, ops) as
 SELECT o.typ,
        o.state,
        o.name,
@@ -604,8 +560,8 @@ SELECT o.typ,
        o.creator,
        o.adapted,
        o.adapter,
-       o.ended,
-       o.ender,
+       o.fixed,
+       o.fixer,
        o.status,
        o.id,
        o.srcid,
@@ -614,7 +570,7 @@ SELECT o.typ,
        o.targs,
        o.dated,
        o.term,
-       o.itemid,
+       o.itemid         AS assetid,
        o.unit,
        o.unitx,
        o.price,
@@ -634,6 +590,34 @@ SELECT o.typ,
 FROM lots o;
 
 alter table lots_vw owner to postgres;
+
+create view assets_vw(typ, state, name, tip, created, creator, adapted, adapter, fixed, fixer, status, id, orgid, reserve, x, y, specs, icon, pic, m1, m2, m3, m4) as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.fixed,
+       o.fixer,
+       o.status,
+       o.id,
+       o.orgid,
+       o.reserve,
+       o.x,
+       o.y,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM assets o;
+
+alter table assets_vw owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
@@ -897,7 +881,7 @@ create trigger buys_trig
     after insert or update
     on buys
     for each row
-    when (new.status = 4 OR new.status = 8)
+    when (new.status = 1 OR new.status = 4 OR new.status = 8)
 execute procedure buys_trig_upd();
 
 create aggregate first(anyelement) (

@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainSMart.WeixinUtility;
-using static ChainFX.Nodal.Nodality;
+using ChainFx;
+using ChainFx.Web;
+using static ChainSmart.WeixinUtility;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class MgtService : MainService
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Entity;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class PosWork<V> : WebWork where V : PosVarWork, new()
     {
@@ -27,8 +27,8 @@ namespace ChainSMart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ware.Empty).T(" FROM wares WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Ware>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM wares WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -157,7 +157,7 @@ namespace ChainSMart
 
             if (wc.IsGet)
             {
-                var o = new Item
+                var o = new Asset
                 {
                     created = DateTime.Now,
                     state = (short) state,

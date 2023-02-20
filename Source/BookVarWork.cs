@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFX.Web;
-using static ChainFX.Application;
-using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
+using ChainFx.Web;
+using static ChainFx.Application;
+using static ChainFx.Entity;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class BookVarWork : WebWork
     {

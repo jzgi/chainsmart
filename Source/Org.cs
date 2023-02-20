@@ -1,6 +1,6 @@
-﻿using ChainFX;
+﻿using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// An organizational unit.

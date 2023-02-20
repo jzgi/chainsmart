@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.ToolAttribute;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// 
     /// The home for a certain market
@@ -14,7 +14,7 @@ namespace ChainSMart
     {
         protected override void OnCreate()
         {
-            CreateVarWork<PublyWareWork>(); // home for one shop
+            CreateVarWork<PublyItemWork>(); // home for one shop
         }
 
         public async Task @default(WebContext wc, int sec)

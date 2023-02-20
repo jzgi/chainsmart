@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using ChainFX;
-using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
-using static ChainFX.Web.Modal;
-using static ChainFX.Web.ToolAttribute;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
+using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
     {
@@ -21,7 +21,7 @@ namespace ChainSMart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/item/", o.assetid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
@@ -40,10 +40,10 @@ namespace ChainSMart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售批次", "商户")]
+    [Ui("产品批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
-        [Ui("在线销售批次", group: 1), Tool(Anchor)]
+        [Ui("产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -58,7 +58,7 @@ namespace ChainSMart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无销售批次");
+                    h.ALERT("暂无产品批次");
                     return;
                 }
 
@@ -81,7 +81,7 @@ namespace ChainSMart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无销售批次");
+                    h.ALERT("暂无产品批次");
                     return;
                 }
 
@@ -104,7 +104,7 @@ namespace ChainSMart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无销售批次");
+                    h.ALERT("暂无产品批次");
                     return;
                 }
 
@@ -116,12 +116,13 @@ namespace ChainSMart
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建销售批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
             var topOrgs = Grab<int, Org>();
+            var cats = Grab<short, Cat>();
 
             var zon = org.prtid == 0 ? org : topOrgs[org.prtid];
 
@@ -142,21 +143,17 @@ namespace ChainSMart
             {
                 using var dc = NewDbContext();
 
-                await dc.QueryAsync("SELECT id, name FROM items_vw WHERE srcid = @1 AND status = 4", p => p.Set(org.id));
-                var items = dc.ToIntMap();
-
-                if (items == null)
-                {
-                    wc.GivePane(200, h => h.ALERT("尚无上线的产品"));
-                    return;
-                }
+                await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
+                var assets = dc.ToIntMap();
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("销售批次信息");
+                    h.FORM_().FIELDSUL_();
 
-                    h.LI_().SELECT("已上线产品", nameof(o.itemid), o.itemid, items, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
+                    h.LI_().SELECT("相关设施", nameof(o.assetid), o.assetid, assets, required: true)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: true)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
@@ -177,7 +174,7 @@ namespace ChainSMart
                 // populate 
                 await wc.ReadObjectAsync(msk, instance: o);
 
-                var item = GrabObject<int, Item>(o.itemid);
+                var item = GrabObject<int, Asset>(o.assetid);
                 o.name = item.name;
                 o.typ = item.typ;
 

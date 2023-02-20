@@ -1,7 +1,7 @@
 ﻿using System;
-using ChainFX;
+using ChainFx;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     /// <summary>
     /// A product lot for booking.
@@ -18,6 +18,16 @@ namespace ChainSMart
             {STU_ADAPTED, "调整"},
             {STU_OKED, "上线"},
         };
+        
+        
+        public static readonly Map<short, string> Stores = new Map<short, string>
+        {
+            {0, "常规"},
+            {1, "冷藏"},
+            {2, "冷冻"},
+        };
+
+
 
         public static readonly Map<short, string> Terms = new Map<short, string>
         {
@@ -35,7 +45,8 @@ namespace ChainSMart
         internal short term;
 
         // individual order relevant
-        internal int itemid;
+        internal int assetid;
+
         internal string unit;
         internal decimal unitx;
         internal decimal price;
@@ -73,7 +84,7 @@ namespace ChainSMart
                 s.Get(nameof(targs), ref targs);
                 s.Get(nameof(dated), ref dated);
                 s.Get(nameof(term), ref term);
-                s.Get(nameof(itemid), ref itemid);
+                s.Get(nameof(assetid), ref assetid);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
@@ -117,7 +128,7 @@ namespace ChainSMart
                 s.Put(nameof(targs), targs);
                 s.Put(nameof(dated), dated);
                 s.Put(nameof(term), term);
-                s.Put(nameof(itemid), itemid);
+                s.Put(nameof(assetid), assetid);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);

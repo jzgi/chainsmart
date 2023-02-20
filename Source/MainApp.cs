@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ChainFX;
+using ChainFx;
 using static System.Data.IsolationLevel;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public class MainApp : Application
     {
@@ -69,10 +69,10 @@ namespace ChainSMart
             );
 
             // indivisual working items
-            CacheObject<int, Item>((dc, id) =>
+            CacheObject<int, Asset>((dc, id) =>
                 {
-                    dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
-                    return dc.QueryTop<Item>(p => p.Set(id));
+                    dc.Sql("SELECT ").collst(ChainSmart.Asset.Empty).T(" FROM items_vw WHERE id = @1");
+                    return dc.QueryTop<Asset>(p => p.Set(id));
                 }, 60 * 60
             );
 

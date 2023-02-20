@@ -1,6 +1,6 @@
-﻿using ChainFX.Web;
+﻿using ChainFx.Web;
 
-namespace ChainSMart
+namespace ChainSmart
 {
     public abstract class OrglyVarWork : WebWork
     {
@@ -60,6 +60,8 @@ namespace ChainSMart
 
             CreateWork<OrglyAccessWork>("access", false); // false = source
 
+            CreateWork<OrglyAssetWork>("asset");
+
             CreateWork<OrglyCreditWork>("credit");
 
             CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
@@ -90,11 +92,7 @@ namespace ChainSMart
 
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-#if ZHNT
-    [Ui("市场和商户操作")]
-#else
-    [Ui("驿站和商户操作")]
-#endif
+    [Ui("市场操作")]
     public class ShplyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
@@ -105,13 +103,15 @@ namespace ChainSMart
 
             CreateWork<OrglyAccessWork>("access", true); // true = shop
 
+            CreateWork<OrglyAssetWork>("asset");
+
             CreateWork<OrglyCreditWork>("credit");
 
             CreateWork<PtylyBuyClearWork>("buyclr", state: true);
 
             // shp
 
-            CreateWork<ShplyWareWork>("sware");
+            CreateWork<ShplyItemWork>("sware");
 
             CreateWork<ShplyVipWork>("svip");
 
