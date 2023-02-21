@@ -158,10 +158,10 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("盟友产源管理", "盟主")]
+    [Ui("联盟商户管理", "盟主")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("盟友产源"), Tool(Anchor)]
+        [Ui("联盟商户"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -201,7 +201,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建盟友产源", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟商户", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -247,10 +247,10 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("盟友摊铺管理", "盟主")]
+    [Ui("联盟商户管理", "盟主")]
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
-        [Ui("盟友摊铺", group: 1), Tool(Anchor)]
+        [Ui("联盟商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
@@ -375,7 +375,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建盟友摊铺", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟商户", icon: "plus", group: 1 | 4), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();

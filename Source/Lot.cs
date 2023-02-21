@@ -19,6 +19,14 @@ namespace ChainSmart
             {STU_OKED, "上线"},
         };
 
+        public static readonly Map<short, string> States = new Map<short, string>
+        {
+            {0, "通货"},
+            {1, "进口"},
+            {2, "零添"},
+            {4, "特品"},
+        };
+
 
         public static readonly Map<short, string> Stores = new Map<short, string>
         {
@@ -130,7 +138,8 @@ namespace ChainSmart
                 s.Put(nameof(targs), targs);
                 s.Put(nameof(dated), dated);
                 s.Put(nameof(term), term);
-                s.Put(nameof(assetid), assetid);
+                if (assetid > 0) s.Put(nameof(assetid), assetid);
+                else s.PutNull(nameof(assetid));
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);

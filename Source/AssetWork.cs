@@ -47,10 +47,10 @@ namespace ChainSmart
         }
     }
 
-    [Ui("产基设施管理", "常规")]
+    [Ui("生产设施管理", "常规")]
     public class OrglyAssetWork : AssetWork<OrglyAssetVarWork>
     {
-        [Ui("产基设施", group: 1), Tool(Anchor)]
+        [Ui("生产设施", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -65,7 +65,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无产基设施");
+                    h.ALERT("尚无生产设施");
                     return;
                 }
 
@@ -118,7 +118,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("新建", "新建产基设施", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建生产设施", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();

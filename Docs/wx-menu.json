@@ -10,18 +10,18 @@
       "sub_button": [
         {
           "type": "view",
-          "name": "供区产源操作 🔒",
+          "name": "供应操作　　　　　🔒",
           "url": "http://jx.zhnt-x.com:81/srcly//"
         },
         {
           "type": "view",
-          "name": "市场摊铺操作 🔒",
+          "name": "市场操作　　　　　🔒",
           "url": "http://jx.zhnt-x.com:81/shply//"
         },
         {
           "type": "view",
-          "name": "关于",
-          "url": "http://jx.zhnt-x.com/about.html"
+          "name": "产品批次溯源查询　\uD83D\uDD0E",
+          "url": "http://jx.zhnt-x.com/lot/"
         },
         {
           "type": "view",

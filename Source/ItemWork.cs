@@ -86,7 +86,7 @@ namespace ChainSmart
                         }
                     }
                     h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
-                    h.MARK(Asset.States[rank], "state", rank);
+                    h.MARK(Lot.States[rank], "state", rank);
                     h._A();
                     h._SPAN();
                     h._HEADER();

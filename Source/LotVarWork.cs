@@ -148,7 +148,7 @@ namespace ChainSmart
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
                 h.LI_().FIELD("总件数", o.cap)._LI();
-                h.LI_().LABEL("产基／设施");
+                h.LI_().LABEL("生产设施");
                 if (asset != null)
                     h.A_("/asset/", o.assetid, "/", css: "uk-button-link uk-active").T(asset.name)._A()._LI();
                 else
@@ -172,7 +172,7 @@ namespace ChainSmart
                 h._ARTICLE();
 
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("检验信息", "uk-card-header");
+                h.H4("批次检验", "uk-card-header");
                 if (o.m1)
                 {
                     h.PIC("/lot/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
@@ -240,11 +240,11 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("产基／设施", nameof(o.assetid), o.assetid, assets)._LI();
-                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: true)._LI();
+                    h.LI_().SELECT("生产设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
@@ -264,10 +264,6 @@ namespace ChainSmart
                     adapter = prin.name,
                 });
 
-                var item = GrabObject<int, Asset>(o.assetid);
-                o.name = item.name;
-                o.typ = item.typ;
-
                 // update
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE lots ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
@@ -279,6 +275,20 @@ namespace ChainSmart
 
                 wc.GivePane(200); // close dialog
             }
+        }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        public async Task icon(WebContext wc)
+        {
+            await doimg(wc, nameof(icon), false, 4);
+        }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        public async Task pic(WebContext wc)
+        {
+            await doimg(wc, nameof(pic), false, 4);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
@@ -347,7 +357,7 @@ namespace ChainSmart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.States[item.state], "uk-margin-auto-left")._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Lot.States[o.state], "uk-margin-auto-left")._H6();
 
                             h._LI();
 
@@ -513,10 +523,6 @@ namespace ChainSmart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", item.name)._LI();
                 h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
-                if (!string.IsNullOrEmpty(item.reserve))
-                {
-                    h.LI_().FIELD("生产基地", item.reserve)._LI();
-                }
                 h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
                 h.LI_().FIELD2("上线", item.@fixed, lot.fixer)._LI();
                 h._UL();
