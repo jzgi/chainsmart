@@ -14,7 +14,6 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var cats = Grab<short, Cat>();
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1 AND orgid = @2");
@@ -24,7 +23,7 @@ namespace ChainSmart
             {
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("类别", o.typ, cats)._LI();
+                h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("基地", o.reserve)._LI();
                 h.LI_().FIELD("规格参数", o.specs)._LI();

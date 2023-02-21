@@ -47,7 +47,7 @@ namespace ChainSmart
                 {
                     var o = arr[i];
 
-                    h.T("<option value=\"").T(o.id).T("\" itemid=\"").T(o.itemid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
+                    h.T("<option value=\"").T(o.id).T("\" itemid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
                     h.T(o.name);
                     if (o.unitx != 1)
                     {

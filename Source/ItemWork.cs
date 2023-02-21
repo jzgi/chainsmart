@@ -77,9 +77,9 @@ namespace ChainSmart
                     h.SPAN_(css: "uk-badge");
                     // ran mark
                     short rank = 0;
-                    if (o.itemid > 0)
+                    if (o.lotid > 0)
                     {
-                        var item = GrabObject<int, Asset>(o.itemid);
+                        var item = GrabObject<int, Asset>(o.lotid);
                         if (item.state > 0)
                         {
                             rank = item.state;
@@ -387,7 +387,7 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_("产品和销售信息");
 
-                    h.LI_().SELECT("供应产品", nameof(o.itemid), o.itemid, map, required: true)._LI();
+                    h.LI_().SELECT("供应产品", nameof(o.lotid), o.lotid, map, required: true)._LI();
                     h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
@@ -405,7 +405,7 @@ namespace ChainSmart
                     created = DateTime.Now,
                     creator = prin.name,
                 });
-                var item = GrabObject<int, Asset>(m.itemid);
+                var item = GrabObject<int, Asset>(m.lotid);
                 m.typ = item.typ;
                 m.name = item.name;
                 m.tip = item.tip;
@@ -417,7 +417,7 @@ namespace ChainSmart
                 var itemid = (int) await dc.ScalarAsync(p => m.Write(p, msk));
 
                 dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM items WHERE id = @1) WHERE id = @2");
-                await dc.ExecuteAsync(p => p.Set(m.itemid).Set(itemid));
+                await dc.ExecuteAsync(p => p.Set(m.lotid).Set(itemid));
 
                 wc.GivePane(200); // close dialog
             }

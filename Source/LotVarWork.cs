@@ -99,11 +99,11 @@ namespace ChainSmart
     {
         public override async Task @default(WebContext wc)
         {
-            int lotid = wc[0];
+            int id = wc[0];
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-            var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
 
             wc.GivePage(200, h =>
             {
@@ -116,6 +116,7 @@ namespace ChainSmart
                 // var asset = GrabObject<int, Asset>(o.assetid);
 
                 var src = GrabObject<int, Org>(o.srcid);
+                var asset = o.assetid > 0 ? GrabObject<int, Asset>(o.assetid) : null;
 
                 h.TOPBARXL_();
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.name)._HEADER();
@@ -128,23 +129,50 @@ namespace ChainSmart
                 h._TOPBARXL();
 
                 h.ARTICLE_("uk-card uk-card-primary");
+                h.H4("产品信息", "uk-card-header");
+                h.SECTION_("uk-card-body");
+                if (o.pic)
+                {
+                    h.PIC("/lot/", o.id, "/pic", css: "uk-width-1-1");
+                }
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().LABEL("供应／产源").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
+                h._UL();
+                h._SECTION();
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card uk-card-primary");
                 h.H4("批次信息", "uk-card-header");
                 h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", o.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-                h.LI_().FIELD("总件数", o.cap)._LI();
                 h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
-                h.LI_().LABEL("产源／供应").A_("/org/", src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
+                h.LI_().FIELD("总件数", o.cap)._LI();
+                h.LI_().LABEL("产基／设施");
+                if (asset != null)
+                    h.A_("/asset/", o.assetid, "/", css: "uk-button-link uk-active").T(asset.name)._A()._LI();
+                else
+                    h.SPAN("未知", css: "uk-static");
+                h._LI();
 
-                if (o.nstart > 0 && o.nend > 0) h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+                if (o.nstart > 0 && o.nend > 0)
+                {
+                    h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+                }
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
-                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                if (o.adapter != null)
+                {
+                    h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
+                }
+                if (o.fixer != null)
+                {
+                    h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                }
                 h._UL();
                 h._ARTICLE();
 
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("批次检验", "uk-card-header");
+                h.H4("检验信息", "uk-card-header");
                 if (o.m1)
                 {
                     h.PIC("/lot/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
@@ -215,7 +243,7 @@ namespace ChainSmart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("相关设施", nameof(o.assetid), o.assetid, assets, required: true)._LI();
+                    h.LI_().SELECT("产基／设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: true)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();

@@ -27,7 +27,6 @@ namespace ChainSmart
             {2, "冷冻"},
         };
 
-
         public static readonly Map<short, string> Terms = new Map<short, string>
         {
             {0, "现货"},

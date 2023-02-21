@@ -80,7 +80,7 @@ namespace ChainSmart
         internal void Init(Item w, bool discount)
         {
             name = w.name;
-            itemid = w.itemid;
+            itemid = w.lotid;
             unit = w.unit;
             unitx = w.unitx;
             price = w.price;

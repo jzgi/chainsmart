@@ -9,6 +9,15 @@ namespace ChainSmart
     {
         public static readonly Asset Empty = new Asset();
 
+        public static readonly Map<short, string> Typs = new Map<short, string>
+        {
+            {1, "地块"},
+            {2, "养殖场"},
+            {3, "厂房"},
+            {7, "车辆"},
+        };
+
+
         public const short
             STA_VOID = 0,
             STA_PRE = 1,

@@ -23,7 +23,7 @@ namespace ChainSmart
 
                 if (o.icon)
                 {
-                    h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/asset/", o.id, "/icon", css: "uk-width-1-5");
                 }
                 else
                     h.PIC("/void.webp", css: "uk-width-1-5");
@@ -47,10 +47,10 @@ namespace ChainSmart
         }
     }
 
-    [Ui("设施管理", "常规")]
+    [Ui("产基设施管理", "常规")]
     public class OrglyAssetWork : AssetWork<OrglyAssetVarWork>
     {
-        [Ui("当前设施", group: 1), Tool(Anchor)]
+        [Ui("产基设施", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -65,7 +65,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无产品");
+                    h.ALERT("尚无产基设施");
                     return;
                 }
 
@@ -118,29 +118,28 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(Org.TYP_SRC, User.ROL_OPN)]
-        [Ui("新建", "新建产品", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建产基设施", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
             var prin = (User) wc.Principal;
-            var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
             {
-                var o = new Asset
+                var m = new Asset
                 {
                     created = DateTime.Now,
                     state = (short) state,
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("填写产品资料");
+                    h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基地", nameof(o.reserve), o.reserve, tip: "自产可不填")._LI();
-                    h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(m.typ), m.typ, Asset.Typs, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().TEXTAREA("规格参数", nameof(m.specs), m.specs, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });

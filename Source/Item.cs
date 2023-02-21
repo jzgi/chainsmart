@@ -17,7 +17,7 @@ namespace ChainSmart
 
         internal int id;
         internal int shpid;
-        internal int itemid;
+        internal int lotid;
         internal string unit;
         internal decimal unitx;
         internal decimal price;
@@ -42,7 +42,7 @@ namespace ChainSmart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
-                s.Get(nameof(itemid), ref itemid);
+                s.Get(nameof(lotid), ref lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
@@ -76,7 +76,7 @@ namespace ChainSmart
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
-                s.Put(nameof(itemid), itemid);
+                s.Put(nameof(lotid), lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
