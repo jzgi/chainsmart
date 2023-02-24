@@ -30,7 +30,6 @@ namespace ChainSmart
         internal string srcname;
         internal int zonid; // zone
 
-        internal int itemid;
         internal int lotid;
 
         internal string unit;
@@ -43,6 +42,31 @@ namespace ChainSmart
         internal decimal ret; // qty cut
         internal decimal refund; // pay refunded
 
+
+        public Book()
+        {
+        }
+
+        public Book(Lot lot, Org shp)
+        {
+            typ = lot.typ;
+            name = lot.name;
+            tip = lot.tip;
+
+            shpid = shp.id;
+            shpname = shp.Name;
+            mktid = shp.MarketId;
+            srcid = lot.srcid;
+            srcname = lot.srcname;
+            zonid = lot.zonid;
+            ctrid = shp.ctrid;
+
+            lotid = lot.id;
+            unit = lot.unit;
+            unitx = lot.unitx;
+            price = lot.price;
+            off = lot.off;
+        }
 
         public override void Read(ISource s, short msk = 0xff)
         {
@@ -61,7 +85,6 @@ namespace ChainSmart
                 s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
-                s.Get(nameof(itemid), ref itemid);
                 s.Get(nameof(lotid), ref lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
@@ -98,7 +121,6 @@ namespace ChainSmart
                 s.Put(nameof(zonid), zonid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
-                s.Put(nameof(itemid), itemid);
                 s.Put(nameof(lotid), lotid);
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)

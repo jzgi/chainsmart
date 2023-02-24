@@ -15,7 +15,7 @@ namespace ChainSmart
             int id = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT id FROM lots WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
+            dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
             if (await dc.QueryTopAsync(p => p.Set(id)))
             {
                 dc.Let(out int lotid);

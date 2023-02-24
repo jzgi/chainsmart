@@ -56,7 +56,7 @@ namespace ChainSmart
                             h._ARTICLE();
                         }
                         h.ARTICLE_("uk-card uk-card-primary");
-                        h.H4(regs[o.regid]?.name, "uk-card-header");
+                        h.H3(regs[o.regid]?.name, "uk-card-header");
                         h.UL_("uk-card-body");
                     }
 

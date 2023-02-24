@@ -47,38 +47,6 @@ namespace ChainSmart
         }
 
 
-        public static HtmlBuilder SELECT_ITEM(this HtmlBuilder h, string label, string name, short v, Map<short, Item> opts, Map<short, Cat> cats, Func<Item, bool> filter = null, bool required = false)
-        {
-            h.SELECT_(label, name, false, required);
-            if (opts != null)
-            {
-                short last = 0; // last typ
-                for (int i = 0; i < opts.Count; i++)
-                {
-                    var it = opts.ValueAt(i);
-                    if (filter != null && !filter(it))
-                    {
-                        continue;
-                    }
-                    if (it.typ != last)
-                    {
-                        if (last > 0)
-                        {
-                            h.T("</optgroup>");
-                        }
-                        h.T("<optgroup label=\"").T(cats[it.typ].name).T("\">");
-                    }
-                    h.OPTION(it.id, it.name);
-
-                    last = it.typ;
-                }
-                h.T("</optgroup>");
-            }
-            h._SELECT();
-            return h;
-        }
-
-
         public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
         {
             h.T("<a class=\"uk-icon-button uk-light\" href=\"tel:").T(tel).T("\" uk-icon=\"icon: receiver\"></a>");

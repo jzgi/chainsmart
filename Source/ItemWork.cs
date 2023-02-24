@@ -76,17 +76,8 @@ namespace ChainSmart
                     // top right corner span
                     h.SPAN_(css: "uk-badge");
                     // ran mark
-                    short rank = 0;
-                    if (o.lotid > 0)
-                    {
-                        var item = GrabObject<int, Asset>(o.lotid);
-                        if (item.state > 0)
-                        {
-                            rank = item.state;
-                        }
-                    }
                     h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
-                    h.MARK(Lot.States[rank], "state", rank);
+                    h.ICON("question");
                     h._A();
                     h._SPAN();
                     h._HEADER();

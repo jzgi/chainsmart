@@ -34,7 +34,7 @@ namespace ChainSmart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/lot/", o.lotid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name);
@@ -138,7 +138,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("新建", "新建线上采购订单", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -151,7 +151,7 @@ namespace ChainSmart
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid));
 
             wc.GivePage(200, h =>
@@ -169,7 +169,7 @@ namespace ChainSmart
                     // anchor to the lot sub work
                     h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                    h.PIC(MainApp.WwwUrl, "/item/", o.assetid, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
                     h.ASIDE_();
                     h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
@@ -193,7 +193,7 @@ namespace ChainSmart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC(MainApp.WwwUrl, "/item/", o.itemid, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/lot/", o.lotid, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name);

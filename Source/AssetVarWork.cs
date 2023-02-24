@@ -25,7 +25,7 @@ namespace ChainSmart
                 h.LI_().FIELD("常用名", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("基地", o.reserve)._LI();
+                h.LI_().FIELD("基地", o.cern)._LI();
                 h.LI_().FIELD("规格参数", o.specs)._LI();
                 h.LI_().FIELD("进展状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
@@ -111,7 +111,7 @@ namespace ChainSmart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基地", nameof(o.reserve), o.reserve, tip: "自产可不填")._LI();
+                    h.LI_().TEXT("基地", nameof(o.cern), o.cern, tip: "自产可不填")._LI();
                     // h.LI_().SELECT("贮藏方法", nameof(o.x), o.x, Lot.Stores, required: true).NUMBER("保存天数", nameof(o.y), o.y, min: 1, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 

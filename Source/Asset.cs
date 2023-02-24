@@ -3,7 +3,7 @@
 namespace ChainSmart
 {
     /// <summary>
-    /// An asset data modal.
+    /// An asset such as land or truck.
     /// </summary>
     public class Asset : Entity, IKeyable<int>
     {
@@ -14,6 +14,14 @@ namespace ChainSmart
             {1, "地块"},
             {2, "养殖场"},
             {7, "车辆"},
+        };
+
+        public static readonly Map<short, string> States = new Map<short, string>
+        {
+            {0, null},
+            {1, "达标"},
+            {2, "健康"},
+            {4, "生态"},
         };
 
         public const short
@@ -34,7 +42,9 @@ namespace ChainSmart
         internal short id;
 
         internal int orgid;
-        internal string reserve;
+        internal int cap;
+        internal string cern; // carbon emission reduction number
+        internal double factor;
         internal double x;
         internal double y;
         internal JObj specs;
@@ -60,7 +70,9 @@ namespace ChainSmart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(reserve), ref reserve);
+                s.Get(nameof(cap), ref cap);
+                s.Get(nameof(cern), ref cern);
+                s.Get(nameof(factor), ref factor);
                 s.Get(nameof(x), ref x);
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(specs), ref specs);
@@ -91,7 +103,9 @@ namespace ChainSmart
             }
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(reserve), reserve);
+                s.Put(nameof(cap), cap);
+                s.Put(nameof(cern), cern);
+                s.Put(nameof(factor), factor);
                 s.Put(nameof(x), x);
                 s.Put(nameof(y), y);
                 s.Put(nameof(specs), specs);

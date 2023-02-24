@@ -42,7 +42,7 @@ namespace ChainSmart
                 h.LI_().FIELD("批次总件数", m.cap).FIELD("剩余件数", m.AvailX)._LI();
                 h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
                 h.LI_().FIELD("处理状态", m.status, Lot.Statuses)._LI();
-                h.LI_().FIELD2("创建", m.created, m.creator, "&nbsp;")._LI();
+                h.LI_().FIELD2("创建", m.created, m.creator)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter, "&nbsp;")._LI();
                 if (m.fixer != null) h.LI_().FIELD2("上线", m.@fixed, m.fixer, "&nbsp;")._LI();
                 h._UL();
@@ -148,7 +148,7 @@ namespace ChainSmart
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
                 h.LI_().FIELD("总件数", o.cap)._LI();
-                h.LI_().LABEL("生产设施");
+                h.LI_().LABEL("资源设施");
                 if (asset != null)
                     h.A_("/asset/", o.assetid, "/", css: "uk-button-link uk-active").T(asset.name)._A()._LI();
                 else
@@ -243,7 +243,7 @@ namespace ChainSmart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("生产设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("资源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
@@ -321,7 +321,7 @@ namespace ChainSmart
                 }
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1 AND srcid = @2");
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
                 var item = GrabObject<int, Asset>(o.assetid);
@@ -506,25 +506,23 @@ namespace ChainSmart
             int lotid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
-
-            var item = GrabObject<int, Asset>(lot.assetid);
 
             wc.GivePane(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
-                if (item.pic)
+                if (lot.pic)
                 {
-                    h.PIC_(MainApp.WwwUrl, "/item/", lot.assetid, "/pic")._PIC();
+                    h.PIC_(MainApp.WwwUrl, "/lot/", lot.id, "/pic")._PIC();
                 }
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", item.name)._LI();
-                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(item.tip) ? "无" : item.tip)._LI();
-                h.LI_().FIELD2("创建", item.created, lot.creator)._LI();
-                h.LI_().FIELD2("上线", item.@fixed, lot.fixer)._LI();
+                h.LI_().FIELD("产品名", lot.name)._LI();
+                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
+                h.LI_().FIELD2("创建", lot.created, lot.creator)._LI();
+                h.LI_().FIELD2("上线", lot.@fixed, lot.fixer)._LI();
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -542,7 +540,7 @@ namespace ChainSmart
 
                 h.HIDDEN(nameof(realprice), realprice);
 
-                h.SELECT_(null, nameof(qty), css: "uk-width-small");
+                h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
                 for (int i = lot.min; i < lot.max; i += 1)
                 {
                     h.OPTION_(i).T(i)._OPTION();
@@ -572,33 +570,17 @@ namespace ChainSmart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE id = @1");
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
                 var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-                var m = new Book
+                var qty = qtyx * lot.unitx;
+
+                var m = new Book(lot, shp)
                 {
-                    typ = lot.typ,
-                    name = lot.name,
-                    tip = lot.tip,
                     created = DateTime.Now,
                     creator = prin.name,
-
-                    shpid = shp.id,
-                    shpname = shp.Name,
-                    mktid = shp.MarketId,
-                    srcid = lot.srcid,
-                    srcname = lot.srcname,
-                    zonid = lot.zonid,
-                    ctrid = shp.ctrid,
-
-                    itemid = lot.assetid,
-                    lotid = lot.id,
-                    unit = lot.unit,
-                    unitx = lot.unitx,
-                    price = lot.price,
-                    off = lot.off,
-                    qty = qtyx * lot.unitx,
-                    topay = lot.RealPrice * qtyx * lot.unitx,
+                    qty = qty,
+                    topay = lot.RealPrice * qty,
                 };
 
                 // make use of any existing abandoned record
