@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using ChainFx;
+using ChainFx.Nodal;
 using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Web.Modal;
@@ -10,33 +11,6 @@ namespace ChainSmart
 {
     public abstract class AssetVarWork : WebWork
     {
-        public async Task @default(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1 AND orgid = @2");
-            var o = await dc.QueryTopAsync<Asset>(p => p.Set(id).Set(org.id));
-
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("常用名", o.name)._LI();
-                h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
-                h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("基地", o.cern)._LI();
-                h.LI_().FIELD("规格参数", o.specs)._LI();
-                h.LI_().FIELD("进展状态", o.status, Org.Statuses)._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
-                h._UL();
-
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
-            }, false, 4);
-        }
-
         protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
         {
             int id = wc[0];
@@ -72,6 +46,56 @@ namespace ChainSmart
 
     public class PublyAssetVarWork : AssetVarWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Asset>(p => p.Set(id));
+
+            wc.GivePage(200, h =>
+            {
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H4("产源设施", "uk-card-header");
+                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.LI_().FIELD("名称", o.name)._LI();
+                h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("碳减排项目", o.cern)._LI();
+                h.LI_().FIELD("规格参数", o.specs)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null)
+                {
+                    h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
+                }
+                if (o.fixer != null)
+                {
+                    h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                }
+                h._UL();
+
+                if (o.m1)
+                {
+                    h.PIC("/asset/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                }
+                if (o.m2)
+                {
+                    h.PIC("/asset/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                }
+                if (o.m3)
+                {
+                    h.PIC("/asset/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                }
+                if (o.m4)
+                {
+                    h.PIC("/asset/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                }
+                h._ARTICLE();
+            }, true, 900, o.name);
+        }
+
+
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), true, 3600 * 4);
@@ -90,30 +114,57 @@ namespace ChainSmart
 
     public class OrglyAssetVarWork : AssetVarWork
     {
+        public async Task @default(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1");
+            var o = await dc.QueryTopAsync<Asset>(p => p.Set(id));
+
+            wc.GivePane(200, h =>
+            {
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("名称", o.name)._LI();
+                h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
+                h.LI_().FIELD("简介", o.tip)._LI();
+                h.LI_().FIELD("碳减排项目", o.cern)._LI();
+                h.LI_().FIELD("规格参数", o.specs)._LI();
+                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
+
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                h._UL();
+
+                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+            }, false, 4);
+        }
+
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改产品资料", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
-            int itemid = wc[0];
+            int id = wc[0];
             var src = wc[-2].As<Org>();
             var prin = (User) wc.Principal;
-            var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets WHERE id = @1");
-                var o = dc.QueryTop<Asset>(p => p.Set(itemid));
+                var o = dc.QueryTop<Asset>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("修改产品资料");
+                    h.FORM_().FIELDSUL_();
 
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Asset.Typs, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基地", nameof(o.cern), o.cern, tip: "自产可不填")._LI();
-                    // h.LI_().SELECT("贮藏方法", nameof(o.x), o.x, Lot.Stores, required: true).NUMBER("保存天数", nameof(o.y), o.y, min: 1, required: true)._LI();
+                    h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
+                    h.LI_().SELECT("碳减排项目", nameof(o.cern), o.cern, Cern.Typs)._LI();
+                    // h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
                 });
@@ -130,11 +181,11 @@ namespace ChainSmart
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE assets ")._SET_(Asset.Empty, msk).T(" WHERE id = @1 AND srcid = @2");
+                dc.Sql("UPDATE assets ")._SET_(Asset.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
                 await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, msk);
-                    p.Set(itemid).Set(src.id);
+                    p.Set(id).Set(src.id);
                 });
 
                 wc.GivePane(200); // close dialog
@@ -171,7 +222,7 @@ namespace ChainSmart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE assets SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND srcid = @4");
+            dc.Sql("UPDATE assets SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND orgid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -185,7 +236,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE assets SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND srcid = @2");
+            dc.Sql("UPDATE assets SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -201,12 +252,12 @@ namespace ChainSmart
             using var dc = NewDbContext();
             try
             {
-                dc.Sql("DELETE FROM assets WHERE id = @1 AND srcid = @2");
+                dc.Sql("DELETE FROM assets WHERE id = @1 AND orgid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
             }
             catch (Exception e)
             {
-                dc.Sql("UPDATE assets SET status = 0 WHERE id = @1 AND srcid = @2");
+                dc.Sql("UPDATE assets SET status = 0 WHERE id = @1 AND orgid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
             }
 

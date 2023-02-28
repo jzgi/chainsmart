@@ -208,7 +208,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_SHP, 1)]
-    [Ui("商品管理", "商户")]
+    [Ui("商品", "商户")]
     public class ShplyItemWork : ItemWork<ShplyItemVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, Item[] arr)
@@ -322,7 +322,7 @@ namespace ChainSmart
                 };
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("商品信息");
+                    h.FORM_().FIELDSUL_();
 
                     h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
@@ -353,7 +353,7 @@ namespace ChainSmart
             }
         }
 
-        [Ui("引入", "引入供应产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
+        [Ui("引入", "引入供应采购产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
         public async Task imp(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -362,7 +362,7 @@ namespace ChainSmart
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT DISTINCT itemid, concat(srcname, ' ', name), id FROM books WHERE shpid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
+                dc.Sql("SELECT DISTINCT lotid, concat(srcname, ' ', name), id FROM books WHERE shpid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
                 await dc.QueryAsync(p => p.Set(org.id));
                 var map = dc.ToIntMap();
 
@@ -376,7 +376,7 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产品和销售信息");
+                    h.FORM_().FIELDSUL_();
 
                     h.LI_().SELECT("供应产品", nameof(o.lotid), o.lotid, map, required: true)._LI();
                     h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();

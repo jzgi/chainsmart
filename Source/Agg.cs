@@ -12,8 +12,8 @@ namespace ChainSmart
 
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {1, "摊铺"},
-            {2, "产源"},
+            {1, "商户"},
+            {2, "供源"},
             {3, "中库"},
         };
 

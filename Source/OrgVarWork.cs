@@ -504,7 +504,7 @@ namespace ChainSmart
     public class ZonlyOrgVarWork : OrgVarWork
     {
         [OrglyAuthorize(Org.TYP_ZON, User.ROL_OPN)]
-        [Ui(tip: "修改成员产源信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改供源信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -519,9 +519,9 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产源信息");
+                    h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
@@ -576,7 +576,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确定删除此产源", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "确定删除此供源", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];

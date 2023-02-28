@@ -143,7 +143,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售汇总表", "商户")]
+    [Ui("销售汇总表", "供源")]
     public class SrclyBookAggWork : AggWork<OrglyAggrVarWork>
     {
         public async Task @default(WebContext wc, int page)

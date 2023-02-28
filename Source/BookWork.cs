@@ -184,7 +184,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售订单", "商户")]
+    [Ui("销售订单", "供源")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         static void MainGrid(HtmlBuilder h, Book[] arr)

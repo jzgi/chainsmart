@@ -158,10 +158,10 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_ZON, 1)]
-    [Ui("联盟商户管理", "盟主")]
+    [Ui("联盟供源管理", "盟主")]
     public class ZonlyOrgWork : OrgWork<ZonlyOrgVarWork>
     {
-        [Ui("联盟商户"), Tool(Anchor)]
+        [Ui("联盟供源"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -201,7 +201,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建联盟商户", icon: "plus"), Tool(ButtonOpen)]
+        [Ui("新建", "新建联盟供源", icon: "plus"), Tool(ButtonOpen)]
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
@@ -218,9 +218,9 @@ namespace ChainSmart
             {
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("产源信息");
+                    h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().TEXT("常用名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
@@ -247,7 +247,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("联盟商户管理", "盟主")]
+    [Ui("联盟商户", "盟主")]
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         [Ui("联盟商户", group: 1), Tool(Anchor)]

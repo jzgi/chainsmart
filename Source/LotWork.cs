@@ -40,7 +40,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品批次", "商户")]
+    [Ui("产品批次", "供源")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
         [Ui("产品批次", group: 1), Tool(Anchor)]
@@ -153,7 +153,7 @@ namespace ChainSmart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("资源设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();

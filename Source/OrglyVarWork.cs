@@ -49,7 +49,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供区产源操作")]
+    [Ui("供应操作")]
     public class SrclyVarWork : OrglyVarWork
     {
         protected override void OnCreate()
@@ -102,8 +102,6 @@ namespace ChainSmart
             CreateWork<OrglySetgWork>("setg");
 
             CreateWork<OrglyAccessWork>("access", true); // true = shop
-
-            CreateWork<OrglyAssetWork>("asset");
 
             CreateWork<OrglyCreditWork>("credit");
 

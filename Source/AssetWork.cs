@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using ChainFx.Nodal;
 using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Web.Modal;
@@ -47,10 +48,10 @@ namespace ChainSmart
         }
     }
 
-    [Ui("资源设施", "常规")]
+    [Ui("产源设施", "常规")]
     public class OrglyAssetWork : AssetWork<OrglyAssetVarWork>
     {
-        [Ui("资源设施", group: 1), Tool(Anchor)]
+        [Ui("产源设施", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -65,7 +66,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无资源设施");
+                    h.ALERT("尚无产源设施");
                     return;
                 }
 
@@ -118,7 +119,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建资源设施", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建产源设施", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
@@ -126,7 +127,7 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                var m = new Asset
+                var o = new Asset
                 {
                     created = DateTime.Now,
                     state = (short) state,
@@ -135,11 +136,13 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12)._LI();
-                    h.LI_().SELECT("类别", nameof(m.typ), m.typ, Asset.Typs, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().TEXTAREA("规格参数", nameof(m.specs), m.specs, max: 100)._LI();
+                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, Asset.Typs, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
+                    h.LI_().SELECT("碳减排项目", nameof(o.cern), o.cern, Cern.Typs)._LI();
+                    // h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });
@@ -157,7 +160,7 @@ namespace ChainSmart
 
                 // insert
                 using var dc = NewDbContext();
-                dc.Sql("INSERT INTO progs ").colset(Asset.Empty, msk)._VALUES_(Asset.Empty, msk);
+                dc.Sql("INSERT INTO assets ").colset(Asset.Empty, msk)._VALUES_(Asset.Empty, msk);
                 await dc.ExecuteAsync(p => m.Write(p, msk));
 
                 wc.GivePane(200); // close dialog

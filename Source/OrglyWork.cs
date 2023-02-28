@@ -12,7 +12,7 @@ namespace ChainSmart
     /// Works for zones and sources.
     /// 
     [UserAuthenticate]
-    [Ui("供区产源操作")]
+    [Ui("供应操作")]
     public class SrclyWork : OrglyWork
     {
         protected override void OnCreate()
