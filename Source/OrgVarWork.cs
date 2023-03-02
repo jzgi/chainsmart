@@ -13,7 +13,7 @@ namespace ChainSmart
         public virtual async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int) wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -84,7 +84,7 @@ namespace ChainSmart
         public override async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int) wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -174,7 +174,7 @@ namespace ChainSmart
         public async Task setg(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -213,7 +213,7 @@ namespace ChainSmart
         public async Task edit(WebContext wc)
         {
             short id = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var regs = Grab<short, Reg>();
             var orgs = Grab<int, Org>();
 
@@ -351,7 +351,7 @@ namespace ChainSmart
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3");
@@ -401,12 +401,7 @@ namespace ChainSmart
                         h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
-#if ZHNT
                         h.LI_().TEXT("摊铺编号", nameof(o.addr), o.addr, max: 4)._LI();
-#else
-                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-#endif
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
                     }
                     else // brand
@@ -477,7 +472,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
@@ -509,7 +504,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -594,7 +589,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");

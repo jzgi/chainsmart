@@ -507,49 +507,56 @@ namespace ChainSmart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            var m = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             wc.GivePane(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
-                if (lot.pic)
+                if (m.pic)
                 {
-                    h.PIC_(MainApp.WwwUrl, "/lot/", lot.id, "/pic")._PIC();
+                    h.PIC_(MainApp.WwwUrl, "/lot/", m.id, "/pic")._PIC();
                 }
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", lot.name)._LI();
-                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
-                h.LI_().FIELD2("创建", lot.created, lot.creator)._LI();
-                h.LI_().FIELD2("上线", lot.@fixed, lot.fixer)._LI();
+                h.LI_().FIELD("产品名", m.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
+
+                h.LI_().FIELD("交货条款", Lot.Terms[m.term]);
+                if (m.term > 0) h.FIELD("交货日期", m.dated);
+                h._LI();
+
+                h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
+                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
+                h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
+
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
 
                 // bottom bar
                 //
-                decimal realprice = lot.RealPrice;
-                short qtyx = lot.min;
-                decimal unitx = lot.unitx;
+                decimal realprice = m.RealPrice;
+                short qtyx = m.min;
+                decimal unitx = m.unitx;
                 decimal qty = qtyx * unitx;
-                decimal topay = decimal.Round(qty * lot.RealPrice, 2); // round to money 2 decimal digits
+                decimal topay = decimal.Round(qty * m.RealPrice, 2); // round to money 2 decimal digits
 
                 h.BOTTOMBAR_();
-                h.FORM_("uk-flex uk-width-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(1); topay.value = ({realprice} * qty.value).toFixed(2);");
+                h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(1); topay.value = ({realprice} * qty.value).toFixed(2);");
 
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = lot.min; i < lot.max; i += 1)
+                for (int i = m.min; i < m.max; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
                 h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
-                h.OUTPUT(nameof(qty), qty).SP().T(lot.unit)._SPAN();
+                h.OUTPUT(nameof(qty), qty).SP().T(m.unit)._SPAN();
 
                 // pay button
-                h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+                h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
                 h._FORM();
                 h._BOTTOMBAR();

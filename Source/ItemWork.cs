@@ -77,7 +77,7 @@ namespace ChainSmart
                     h.SPAN_(css: "uk-badge");
                     // ran mark
                     h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
-                    h.ICON("question");
+                    h.ICON("question", css: "uk-icon-link");
                     h._A();
                     h._SPAN();
                     h._HEADER();

@@ -47,14 +47,10 @@ namespace ChainSmart
             });
         }
 
-#if ZHNT
         [Ui("市场", group: 1), Tool(Anchor)]
-#else
-        [Ui("驿站", group: 1), Tool(Anchor)]
-#endif
         public async Task @default(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ = ").T(Org.TYP_MKT).T(" ORDER BY regid, status DESC");
@@ -79,7 +75,7 @@ namespace ChainSmart
         [Ui("供区", group: 2), Tool(Anchor)]
         public async Task zon(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ IN (").T(Org.TYP_ZON).T(",").T(Org.TYP_CTR).T(") ORDER BY typ, status DESC");
@@ -100,7 +96,7 @@ namespace ChainSmart
         [Ui("新建", "新建下级机构", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int cmd)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var regs = Grab<short, Reg>();
             var orgs = Grab<int, Org>();
 
@@ -117,15 +113,7 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(cmd == 1
-                        ?
-#if ZHNT
-                        "市场/／体验中心信息"
-#else
-                        "驿站资料"
-#endif
-                        : "供区／品控中心信息"
-                    );
+                    h.FORM_().FIELDSUL_(cmd == 1 ? "市场/／体验中心信息" : "供区／品控中心信息");
                     if (cmd == 2)
                     {
                         h.LI_().SELECT("机构类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => k >= 10, required: true)._LI();
@@ -165,7 +153,7 @@ namespace ChainSmart
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
@@ -205,7 +193,7 @@ namespace ChainSmart
         public async Task @new(WebContext wc)
         {
             var zon = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var regs = Grab<short, Reg>();
             var m = new Org
             {
@@ -254,7 +242,7 @@ namespace ChainSmart
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY id DESC LIMIT 20 OFFSET @2 * 20");
@@ -292,7 +280,7 @@ namespace ChainSmart
         public async Task search(WebContext wc)
         {
             var regs = Grab<short, Reg>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             bool inner = wc.Query[nameof(inner)];
             short regid = 0;
@@ -344,7 +332,7 @@ namespace ChainSmart
         public async Task star(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND typ = 0 ORDER BY id DESC");
@@ -379,12 +367,12 @@ namespace ChainSmart
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             var regs = Grab<short, Reg>();
             var o = new Org
             {
-                typ = (short) typ,
+                typ = (short)typ,
                 created = DateTime.Now,
                 creator = prin.name,
                 prtid = org.id,
@@ -405,12 +393,9 @@ namespace ChainSmart
                         h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                         h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
-#if ZHNT
                         h.LI_().TEXT("摊铺编号", nameof(o.addr), o.addr, max: 4)._LI();
-#else
-                    h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
-                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-#endif
+                        // h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
+                        // h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
 
                         h._FIELDSUL()._FORM();
