@@ -7,21 +7,21 @@ namespace ChainSmart
     /// </summary>
     public class Asset : Entity, IKeyable<int>
     {
-        public static readonly Asset Empty = new Asset();
+        public static readonly Asset Empty = new();
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            {1, "田园地块"},
-            {2, "养殖屠宰"},
-            {7, "运输车辆"},
+            { 1, "田园地块" },
+            { 2, "养殖屠宰" },
+            { 7, "运输车辆" },
         };
 
-        public static readonly Map<short, string> States = new Map<short, string>
+        public static readonly Map<short, string> States = new()
         {
-            {0, null},
-            {1, "达标"},
-            {2, "健康"},
-            {4, "生态"},
+            { 0, null },
+            { 1, "达标" },
+            { 2, "健康" },
+            { 4, "生态" },
         };
 
         public const short
@@ -30,12 +30,12 @@ namespace ChainSmart
             STA_FINE = 2,
             STA_TOP = 4;
 
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_VOID, "无效"},
-            {STU_CREATED, "创建"},
-            {STU_ADAPTED, "调整"},
-            {STU_OKED, "上线"},
+            { STU_VOID, "无效" },
+            { STU_CREATED, "创建" },
+            { STU_ADAPTED, "调整" },
+            { STU_OKED, "上线" },
         };
 
 
@@ -68,6 +68,7 @@ namespace ChainSmart
             {
                 s.Get(nameof(orgid), ref orgid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(cap), ref cap);
@@ -77,6 +78,7 @@ namespace ChainSmart
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(specs), ref specs);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(icon), ref icon);
@@ -101,6 +103,7 @@ namespace ChainSmart
             {
                 s.Put(nameof(orgid), orgid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(cap), cap);
@@ -110,6 +113,7 @@ namespace ChainSmart
                 s.Put(nameof(y), y);
                 s.Put(nameof(specs), specs);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(icon), icon);

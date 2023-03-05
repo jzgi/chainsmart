@@ -5,18 +5,18 @@ namespace ChainSmart
     /// <summary>
     /// An event logged targeted to certain org
     /// </summary>
-    public class Test : Entity
+    public class Coupon : Entity
     {
-        public static readonly Test Empty = new Test();
+        public static readonly Coupon Empty = new();
 
         public const short
             TYP_MRT = 1,
             TYP_PRV = 2;
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            {TYP_MRT, "市场"},
-            {TYP_PRV, "供给"},
+            { TYP_MRT, "市场" },
+            { TYP_PRV, "供给" },
         };
 
         internal int id;
@@ -31,6 +31,7 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(orgid), ref orgid);
@@ -46,6 +47,7 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(orgid), orgid);

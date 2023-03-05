@@ -16,6 +16,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             const short msk = 255 | MSK_EXTRA;
+
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND shpid = @2");
             var m = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
@@ -39,9 +40,9 @@ namespace ChainSmart
 
                 h.TABLE(m.ops, o =>
                 {
-                    h.TD_().T(o.dt, time: 1)._TD();
+                    h.TD_().T(o.dt, date: 2, time: 1)._TD();
+                    h.TD_("uk-text-right").T(o.tip).SP().T(StockOp.Typs[o.typ])._TD();
                     h.TD(o.qty, right: true);
-                    h.TD(StockOp.Typs[o.typ]);
                     h.TD(o.avail, right: true);
                     h.TD(o.by);
                 }, caption: "库存操作记录", reverse: true);
@@ -57,7 +58,7 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").T(col).T(" FROM items WHERE id = @1");
-                if (dc.QueryTop(p => p.Set(id)))
+                if (await dc.QueryTopAsync(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
@@ -98,19 +99,21 @@ namespace ChainSmart
             wc.GivePane(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
+
                 if (o.pic)
                 {
                     h.PIC("/item/", o.id, "/pic");
                 }
+
                 h.H4("产品详情", "uk-card-header");
 
                 h.SECTION_("uk-card-body");
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
-                h.LI_().FIELD("产品描述", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
                 h._UL();
                 h._SECTION();
+
                 h._ARTICLE();
             }, true, 900);
         }
@@ -134,7 +137,7 @@ namespace ChainSmart
         {
             int itemid = wc[0];
             var shp = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
@@ -200,10 +203,11 @@ namespace ChainSmart
         {
             int itemid = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             short typ = 0;
             decimal qty = 0.0M;
+            string tip = null;
 
             if (wc.IsGet)
             {
@@ -212,6 +216,7 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_("库存操作");
                     h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
+                    h.LI_().TEXT("注释", nameof(tip), tip, max: 20)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
                 });
             }
@@ -220,6 +225,7 @@ namespace ChainSmart
                 var f = await wc.ReadAsync<Form>();
                 typ = f[nameof(typ)];
                 qty = f[nameof(qty)];
+                tip = f[nameof(tip)];
 
                 // update
                 using var dc = NewDbContext();
@@ -227,19 +233,13 @@ namespace ChainSmart
                 var now = DateTime.Now;
                 if (typ < 5) // add
                 {
-                    dc.Sql("UPDATE items SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6 RETURNING array_length(ops,1)");
-                    await dc.QueryTopAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
-                    dc.Let(out int len);
-                    if (len > 16) // shrink
-                    {
-                        dc.Sql("UPDATE items SET ops = ops[13:] WHERE id = @1 AND shpid = @2");
-                        await dc.ExecuteAsync(p => p.Set(itemid).Set(org.id));
-                    }
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3::NUMERIC(8,1)), @4, @5)::StockOp, avail = avail + @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
                 }
                 else // reduce
                 {
-                    dc.Sql("UPDATE items SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND shpid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3::NUMERIC(8,1)), @4, @5)::StockOp, avail = avail - @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog
@@ -252,7 +252,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE items SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND shpid = @4");
@@ -288,7 +288,7 @@ namespace ChainSmart
                 dc.Sql("DELETE FROM items WHERE id = @1 AND shpid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND shpid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(org.id));

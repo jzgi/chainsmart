@@ -48,49 +48,6 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("供应操作")]
-    public class SrclyVarWork : OrglyVarWork
-    {
-        protected override void OnCreate()
-        {
-            // org
-
-            CreateWork<OrglySetgWork>("setg");
-
-            CreateWork<OrglyAccessWork>("access", false); // false = source
-
-            CreateWork<OrglyAssetWork>("asset");
-
-            CreateWork<OrglyCreditWork>("credit");
-
-            CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
-
-            // src
-
-            CreateWork<SrclyLotWork>("slot");
-
-            CreateWork<SrclyBookWork>("sbook");
-
-            CreateWork<SrclyBookAggWork>("sbookldg");
-
-            // zon
-
-            CreateWork<ZonlyOrgWork>("zorg");
-
-            CreateWork<ZonlyTestWork>("ztest");
-
-            // ctr
-
-            CreateWork<CtrlyLotWork>("clot");
-
-            CreateWork<CtrlyBookAggWork>("cbookrpt");
-
-            CreateWork<CtrlyBookWork>("cbook");
-        }
-    }
-
-
     [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("市场操作")]
     public class ShplyVarWork : OrglyVarWork
@@ -131,6 +88,47 @@ namespace ChainSmart
             CreateWork<MktlyBuyWork>("mbuy");
 
             CreateWork<MktlyBookWork>("mbook");
+        }
+    }
+
+
+    [OrglyAuthorize(Org.TYP_SRC, 1)]
+    [Ui("供应操作")]
+    public class SrclyVarWork : OrglyVarWork
+    {
+        protected override void OnCreate()
+        {
+            // org
+
+            CreateWork<OrglySetgWork>("setg");
+
+            CreateWork<OrglyAccessWork>("access", false); // false = source
+
+            CreateWork<OrglyCreditWork>("credit");
+
+            CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
+
+            // src
+
+            CreateWork<SrclyAssetWork>("sasset");
+
+            CreateWork<SrclyLotWork>("slot");
+
+            CreateWork<SrclyBookWork>("sbook");
+
+            CreateWork<SrclyBookAggWork>("sbookldg");
+
+            // ctr
+
+            CreateWork<CtrlyOrgWork>("corg");
+
+            CreateWork<CtrlyTestWork>("ztest");
+
+            CreateWork<CtrlyLotWork>("clot");
+
+            CreateWork<CtrlyBookAggWork>("cbookrpt");
+
+            CreateWork<CtrlyBookWork>("cbook");
         }
     }
 }

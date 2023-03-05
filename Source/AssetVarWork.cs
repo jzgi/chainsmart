@@ -57,7 +57,7 @@ namespace ChainSmart
             wc.GivePage(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("产源设施", "uk-card-header");
+                h.H4("资源设施", "uk-card-header");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("名称", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
@@ -142,7 +142,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改资源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];

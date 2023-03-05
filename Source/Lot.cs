@@ -8,43 +8,33 @@ namespace ChainSmart
     /// </summary>
     public class Lot : Entity, IKeyable<int>, IStockable
     {
-        public static readonly Lot Empty = new Lot();
+        public static readonly Lot Empty = new();
 
-
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_VOID, "无效"},
-            {STU_CREATED, "创建"},
-            {STU_ADAPTED, "调整"},
-            {STU_OKED, "上线"},
+            { STU_VOID, "无效" },
+            { STU_CREATED, "创建" },
+            { STU_ADAPTED, "调整" },
+            { STU_OKED, "上线" },
         };
 
-        public static readonly Map<short, string> States = new Map<short, string>
+        public static readonly Map<short, string> States = new()
         {
-            {0, "通货"},
-            {1, "进口"},
-            {2, "零添"},
-            {4, "特品"},
+            { 0, "通货" },
+            { 1, "进口" },
+            { 2, "零添" },
+            { 4, "特品" },
         };
 
-
-        public static readonly Map<short, string> Stores = new Map<short, string>
+        public static readonly Map<short, string> Terms = new()
         {
-            {0, "常规"},
-            {1, "冷藏"},
-            {2, "冷冻"},
-        };
-
-        public static readonly Map<short, string> Terms = new Map<short, string>
-        {
-            {0, "现货"},
-            {1, "预售（指定交货日期）"},
+            { 0, "现货" },
+            { 1, "预售（指定交货日期）" },
         };
 
         internal int id;
         internal int srcid;
         internal string srcname;
-        internal int zonid;
 
         internal int[] targs; // (optional) targeted centers or markets
         internal DateTime dated;
@@ -54,11 +44,11 @@ namespace ChainSmart
         internal int assetid;
 
         internal string unit;
-        internal decimal unitx;
+        internal short unitx;
         internal decimal price;
         internal decimal off;
         internal int cap;
-        internal decimal avail;
+        internal int avail;
         internal short min;
         internal short max;
 
@@ -81,18 +71,19 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
-                s.Get(nameof(zonid), ref zonid);
+                s.Get(nameof(assetid), ref assetid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(targs), ref targs);
                 s.Get(nameof(dated), ref dated);
                 s.Get(nameof(term), ref term);
-                s.Get(nameof(assetid), ref assetid);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
@@ -102,6 +93,7 @@ namespace ChainSmart
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(avail), ref avail);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(nstart), ref nstart);
@@ -113,6 +105,7 @@ namespace ChainSmart
                 s.Get(nameof(m3), ref m3);
                 s.Get(nameof(m4), ref m4);
             }
+
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Get(nameof(ops), ref ops);
@@ -127,19 +120,20 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
-                s.Put(nameof(zonid), zonid);
+                if (assetid > 0) s.Put(nameof(assetid), assetid);
+                else s.PutNull(nameof(assetid));
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(targs), targs);
                 s.Put(nameof(dated), dated);
                 s.Put(nameof(term), term);
-                if (assetid > 0) s.Put(nameof(assetid), assetid);
-                else s.PutNull(nameof(assetid));
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
@@ -149,6 +143,7 @@ namespace ChainSmart
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(avail), avail);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(nstart), nstart);
@@ -160,6 +155,7 @@ namespace ChainSmart
                 s.Put(nameof(m3), m3);
                 s.Put(nameof(m4), m4);
             }
+
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Put(nameof(ops), ops);
@@ -175,8 +171,7 @@ namespace ChainSmart
             return targs == null || targs.Contains(mktid);
         }
 
-        public short AvailX => (short) (avail / unitx);
-
+        public int AvailX => avail / unitx;
 
         public StockOp[] Ops => ops;
 

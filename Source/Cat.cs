@@ -1,4 +1,4 @@
-﻿﻿using ChainFx;
+﻿using ChainFx;
 
 namespace ChainSmart
 {
@@ -7,7 +7,7 @@ namespace ChainSmart
     /// </summary>
     public class Cat : Entity, IKeyable<short>, IFolderable
     {
-        public static readonly Cat Empty = new Cat();
+        public static readonly Cat Empty = new();
 
         internal short idx;
 

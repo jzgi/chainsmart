@@ -4,14 +4,14 @@ namespace ChainSmart
 {
     public class Item : Entity, IKeyable<int>, IStockable
     {
-        public static readonly Item Empty = new Item();
+        public static readonly Item Empty = new();
 
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_VOID, "封存"},
-            {STU_CREATED, "创建"},
-            {STU_ADAPTED, "调整"},
-            {STU_OKED, "上线"},
+            { STU_VOID, "封存" },
+            { STU_CREATED, "创建" },
+            { STU_ADAPTED, "调整" },
+            { STU_OKED, "上线" },
         };
 
 
@@ -19,12 +19,12 @@ namespace ChainSmart
         internal int shpid;
         internal int lotid;
         internal string unit;
-        internal decimal unitx;
+        internal short unitx;
         internal decimal price;
         internal decimal off;
         internal short min;
         internal short max;
-        internal decimal avail;
+        internal int avail;
 
         internal bool icon;
         internal bool pic;
@@ -39,11 +39,13 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(lotid), ref lotid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(unit), ref unit);
@@ -53,12 +55,14 @@ namespace ChainSmart
                 s.Get(nameof(min), ref min);
                 s.Get(nameof(max), ref max);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(avail), ref avail);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
             }
+
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Get(nameof(ops), ref ops);
@@ -73,11 +77,14 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
-                s.Put(nameof(lotid), lotid);
+                if (lotid > 0) s.Put(nameof(lotid), lotid);
+                else s.PutNull(nameof(lotid));
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(unit), unit);
@@ -87,12 +94,14 @@ namespace ChainSmart
                 s.Put(nameof(min), min);
                 s.Put(nameof(max), max);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(avail), avail);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
             }
+
             if ((msk & MSK_EXTRA) == MSK_EXTRA)
             {
                 s.Put(nameof(ops), ops);
@@ -103,7 +112,7 @@ namespace ChainSmart
 
         public decimal RealPrice => price - off;
 
-        public short AvailX => (short) (avail / unitx);
+        public int AvailX => avail / unitx;
 
         public StockOp[] Ops => ops;
     }

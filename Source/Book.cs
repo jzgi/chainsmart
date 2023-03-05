@@ -7,16 +7,15 @@ namespace ChainSmart
     /// </summary>
     public class Book : Entity, IKeyable<int>
     {
-        public static readonly Book Empty = new Book();
+        public static readonly Book Empty = new();
 
-
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_VOID, null},
-            {STU_CREATED, "下单"},
-            {STU_ADAPTED, "发货"},
-            {STU_OKED, "收货"},
-            {STU_ABORTED, "撤单"},
+            { STU_VOID, null },
+            { STU_CREATED, "下单" },
+            { STU_ADAPTED, "发货" },
+            { STU_OKED, "收货" },
+            { STU_ABORTED, "撤单" },
         };
 
 
@@ -28,7 +27,6 @@ namespace ChainSmart
         internal int ctrid; // center
         internal int srcid; // source
         internal string srcname;
-        internal int zonid; // zone
 
         internal int lotid;
 
@@ -58,7 +56,6 @@ namespace ChainSmart
             mktid = shp.MarketId;
             srcid = lot.srcid;
             srcname = lot.srcname;
-            zonid = lot.zonid;
             ctrid = shp.ctrid;
 
             lotid = lot.id;
@@ -76,17 +73,18 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(shpname), ref shpname);
                 s.Get(nameof(mktid), ref mktid);
                 s.Get(nameof(ctrid), ref ctrid);
-                s.Get(nameof(zonid), ref zonid);
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
                 s.Get(nameof(lotid), ref lotid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(unit), ref unit);
@@ -96,6 +94,7 @@ namespace ChainSmart
                 s.Get(nameof(qty), ref qty);
                 s.Get(nameof(topay), ref topay);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(pay), ref pay);
@@ -112,17 +111,18 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(shpname), shpname);
                 s.Put(nameof(mktid), mktid);
                 s.Put(nameof(ctrid), ctrid);
-                s.Put(nameof(zonid), zonid);
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
                 s.Put(nameof(lotid), lotid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(unit), unit);
@@ -132,6 +132,7 @@ namespace ChainSmart
                 s.Put(nameof(qty), qty);
                 s.Put(nameof(topay), topay);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(pay), pay);
@@ -142,7 +143,7 @@ namespace ChainSmart
 
         public int Key => id;
 
-        public short QtyX => (short) (qty / unitx);
+        public short QtyX => (short)(qty / unitx);
 
         public decimal RealPrice => price - off;
 

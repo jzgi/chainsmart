@@ -6,7 +6,7 @@ namespace ChainSmart
     {
     }
 
-    public class ZonlyTestVarWork : TestVarWork
+    public class CtrlyTestVarWork : TestVarWork
     {
     }
 

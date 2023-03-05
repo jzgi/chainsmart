@@ -40,7 +40,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("产品批次", "供源")]
+    [Ui("产品批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
         [Ui("产品批次", group: 1), Tool(Anchor)]
@@ -112,7 +112,7 @@ namespace ChainSmart
             }, false, 12);
         }
 
-        static readonly string[] Units = {"斤", "包", "箱", "桶"};
+        static readonly string[] UNITS = { "斤", "包", "箱", "桶" };
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
@@ -120,19 +120,16 @@ namespace ChainSmart
         public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var topOrgs = Grab<int, Org>();
             var cats = Grab<short, Cat>();
-
-            var zon = org.prtid == 0 ? org : topOrgs[org.prtid];
 
             var o = new Lot
             {
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
-                zonid = zon.id,
-                unitx = 1.0M,
+                unitx = 1,
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1,
@@ -153,10 +150,10 @@ namespace ChainSmart
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("资源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
                     h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
@@ -185,7 +182,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("销售批次统一盘存", "中库")]
+    [Ui("销售批次统一盘存", "机构")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
     }

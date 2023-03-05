@@ -26,7 +26,7 @@ namespace ChainSmart
                     h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                    h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
+                    h.LI_().NUMBER("子项数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
                     // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States)._LI();
                     h._FIELDSUL()._FORM();
 
@@ -62,7 +62,7 @@ namespace ChainSmart
                     h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                     h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                    h.LI_().NUMBER("资源数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
+                    h.LI_().NUMBER("子项数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
                     // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States)._LI();
                     h._FIELDSUL()._FORM();
                 });

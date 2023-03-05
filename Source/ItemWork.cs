@@ -71,8 +71,9 @@ namespace ChainSmart
                     h.HEADER_().H4(o.name);
                     if (o.unitx != 1)
                     {
-                        h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                        h.SMALL_().T('（').T(o.unitx).T(o.unit).T("）")._SMALL();
                     }
+
                     // top right corner span
                     h.SPAN_(css: "uk-badge");
                     // ran mark
@@ -87,7 +88,7 @@ namespace ChainSmart
                     // FOOTER: price and qty select & detail
                     h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.min},{o.max},{o.AvailX});\">"); // pricing portion
                     h.SPAN_("uk-width-1-4").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short) 0, "0 件")._SELECT();
+                    h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short)0, "0 件")._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                     h._FOOTER();
 
@@ -117,13 +118,13 @@ namespace ChainSmart
         {
             int shpid = wc[-1];
             var shp = GrabObject<int, Org>(shpid);
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             var f = await wc.ReadAsync<Form>();
             string addr = f[nameof(addr)];
 
-            // detail lines
-            var lines = new List<BuyLn>();
+            // lines of detail
+            var lst = new List<BuyLn>();
             for (int i = 0; i < f.Count; i++)
             {
                 var ety = f.EntryAt(i);
@@ -135,38 +136,28 @@ namespace ChainSmart
                     continue;
                 }
 
-                lines.Add(new BuyLn(id, qty));
+                lst.Add(new BuyLn(id, qty));
             }
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND id ")._IN_(lines);
-                var map = await dc.QueryAsync<int, Item>(p => p.Set(shpid).SetForIn(lines));
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND id ")._IN_(lst);
+                var map = await dc.QueryAsync<int, Item>(p => p.Set(shpid).SetForIn(lst));
 
-                for (int i = 0; i < lines.Count; i++)
+                foreach (var ln in lst)
                 {
-                    var dtl = lines[i];
-                    var item = map[dtl.itemid];
+                    var item = map[ln.itemid];
                     if (item != null)
                     {
-                        dtl.Init(item, discount: prin.vip?.Contains(shpid) ?? false);
+                        ln.Init(item, discount: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 
-                var m = new Buy
+                var m = new Buy(prin, shp, lst.ToArray())
                 {
-                    typ = Buy.TYP_PLAT,
-                    name = shp.Name,
                     created = DateTime.Now,
                     creator = prin.name,
-                    shpid = shp.id,
-                    mktid = shp.MarketId,
-                    lns = lines.ToArray(),
-                    uid = prin.id,
-                    uname = prin.name,
-                    utel = prin.tel,
-                    uim = prin.im,
                     uaddr = addr,
                 };
                 m.SetToPay();
@@ -229,6 +220,7 @@ namespace ChainSmart
                 {
                     h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
                 }
+
                 h.SPAN(Item.Statuses[o.status], "uk-badge");
                 h._HEADER();
 
@@ -246,7 +238,8 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
+            dc.Sql("SELECT ").collst(Item.Empty)
+                .T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -258,6 +251,7 @@ namespace ChainSmart
                     h.ALERT("尚无上线商品");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
@@ -268,7 +262,8 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+            dc.Sql("SELECT ").collst(Item.Empty)
+                .T(" FROM items_vw WHERE shpid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -279,6 +274,7 @@ namespace ChainSmart
                     h.ALERT("尚无下线商品");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
@@ -289,7 +285,8 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
+            dc.Sql("SELECT ").collst(Item.Empty)
+                .T(" FROM items_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -300,17 +297,18 @@ namespace ChainSmart
                     h.ALERT("尚无作废商品");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
 
-        [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
-        [Ui("自建", "自建其它来源商品", icon: "plus", group: 2), Tool(ButtonOpen)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("自创", "自创非供应商品", icon: "plus", group: 2), Tool(ButtonOpen)]
         public async Task def(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
 
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
@@ -318,7 +316,7 @@ namespace ChainSmart
                 var o = new Item
                 {
                     created = DateTime.Now,
-                    state = (short) state,
+                    state = (short)state,
                 };
                 wc.GivePane(200, h =>
                 {
@@ -327,7 +325,7 @@ namespace ChainSmart
                     h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
@@ -353,11 +351,12 @@ namespace ChainSmart
             }
         }
 
-        [Ui("引入", "引入供应采购产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("导入", "导入供应产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
         public async Task imp(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -370,8 +369,9 @@ namespace ChainSmart
                 {
                     created = DateTime.Now,
                     creator = prin.name,
-                    unitx = 1.0M,
-                    min = 1, max = 30,
+                    unitx = 1,
+                    min = 1,
+                    max = 30,
                 };
 
                 wc.GivePane(200, h =>
@@ -396,18 +396,18 @@ namespace ChainSmart
                     created = DateTime.Now,
                     creator = prin.name,
                 });
-                var item = GrabObject<int, Asset>(m.lotid);
-                m.typ = item.typ;
-                m.name = item.name;
-                m.tip = item.tip;
+                var lot = GrabObject<int, Lot>(m.lotid);
+                m.typ = lot.typ;
+                m.name = lot.name;
+                m.tip = lot.tip;
 
                 // insert
                 using var dc = NewDbContext(IsolationLevel.ReadCommitted);
 
                 dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
-                var itemid = (int) await dc.ScalarAsync(p => m.Write(p, msk));
+                var itemid = (int)await dc.ScalarAsync(p => m.Write(p, msk));
 
-                dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM items WHERE id = @1) WHERE id = @2");
+                dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM lots WHERE id = @1) WHERE id = @2");
                 await dc.ExecuteAsync(p => p.Set(m.lotid).Set(itemid));
 
                 wc.GivePane(200); // close dialog

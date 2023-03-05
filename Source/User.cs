@@ -4,14 +4,14 @@ namespace ChainSmart
 {
     public class User : Entity, IKeyable<int>
     {
-        public static readonly User Empty = new User();
+        public static readonly User Empty = new();
 
         // pro types
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            {0, "普通"},
-            {1, "市场运营师"},
-            {2, "健康管理师"},
+            { 0, "普通" },
+            { 1, "市场运营师" },
+            { 2, "健康管理师" },
         };
 
         public const short
@@ -23,25 +23,25 @@ namespace ChainSmart
             // suppliement
             ROL_RVW = 0b0100001; // review
 
-        public static readonly Map<short, string> Admly = new Map<short, string>
+        public static readonly Map<short, string> Admly = new()
         {
-            {ROL_OPN, "业务"},
-            {ROL_LOG, "物流"},
-            {ROL_FIN, "财务"},
-            {ROL_MGT, "管理"},
+            { ROL_OPN, "业务" },
+            { ROL_LOG, "物流" },
+            { ROL_FIN, "财务" },
+            { ROL_MGT, "管理" },
             // suppliement
-            {ROL_RVW, "审核"},
+            { ROL_RVW, "审核" },
         };
 
-        public static readonly Map<short, string> Orgly = new Map<short, string>
+        public static readonly Map<short, string> Orgly = new()
         {
-            {ROL_OPN, "业务"},
-            {ROL_LOG, "物流"},
-            {ROL_FIN, "财务"},
-            {ROL_MGT, "管理"},
-            {ROL_RVW, "审核"},
+            { ROL_OPN, "业务" },
+            { ROL_LOG, "物流" },
+            { ROL_FIN, "财务" },
+            { ROL_MGT, "管理" },
+            { ROL_RVW, "审核" },
 
-            {ROL_MGT | ROL_RVW, "管理审核"},
+            { ROL_MGT | ROL_RVW, "管理审核" },
         };
 
         internal int id;
@@ -67,11 +67,13 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(im), ref im);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(addr), ref addr);
@@ -94,6 +96,7 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             s.Put(nameof(tel), tel);
             s.Put(nameof(im), im);
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -150,6 +153,7 @@ namespace ChainSmart
                     {
                         role = admly;
                     }
+
                     if ((admly & ROL_MGT) == ROL_MGT)
                     {
                         role |= ROL_RVW;
@@ -161,11 +165,13 @@ namespace ChainSmart
                     {
                         role = orgly_;
                     }
+
                     if ((orgly_ & ROL_MGT) == ROL_MGT)
                     {
                         role |= ROL_RVW;
                     }
                 }
+
                 dive = true;
             }
 

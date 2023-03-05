@@ -7,49 +7,38 @@ namespace ChainSmart
     /// </summary>
     public class Org : Entity, IKeyable<int>
     {
-        public static readonly Org Empty = new Org();
-
+        public static readonly Org Empty = new();
 
         public const short
-            TYP_BRD = 0b00000, // virtual
-            TYP_PRT = 0b01000, // parent or leader
+            TYP_BRD = 0b00000, // brand
+            TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
-            TYP_DST = 0b00100, // distributor
+            TYP_LOG = 0b00100, // logistic
             TYP_MKT = TYP_PRT | TYP_SHP, // market
-            TYP_ZON = TYP_PRT | TYP_SRC, // zone
-            TYP_CTR = TYP_PRT | TYP_SRC | TYP_DST; // center
+            TYP_CTR = TYP_PRT | TYP_SRC | TYP_LOG; // center
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
-        {
-            {TYP_SHP, "商户"},
-            {TYP_SRC, "供源"},
-#if ZHNT
-            {TYP_MKT, "市场"},
-#else
-            {TYP_SHP, "驿站"},
-#endif
-            {TYP_ZON, "供区"},
-            {TYP_CTR, "中控"},
-        };
 
         public const short
-            STA_VOID = 0, STA_PRE = 1, STA_FINE = 2, STA_TOP = 4;
+            STA_VOID = 0,
+            STA_PRE = 1,
+            STA_FINE = 2,
+            STA_TOP = 4;
 
-        public static readonly Map<short, string> States = new Map<short, string>
+        public static readonly Map<short, string> States = new()
         {
-            {STA_VOID, "停业"},
-            {STA_PRE, "放假"},
-            {STA_FINE, "正常"},
-            {STA_TOP, "满负"},
+            { STA_VOID, "停业" },
+            { STA_PRE, "放假" },
+            { STA_FINE, "正常" },
+            { STA_TOP, "满负" },
         };
 
 
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_CREATED, "新建"},
-            {STU_ADAPTED, "调整"},
-            {STU_OKED, "上线"},
+            { STU_CREATED, "新建" },
+            { STU_ADAPTED, "修改" },
+            { STU_OKED, "上线" },
         };
 
 
@@ -88,11 +77,13 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 s.Get(nameof(prtid), ref prtid);
                 s.Get(nameof(ctrid), ref ctrid);
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(ext), ref ext);
@@ -106,6 +97,7 @@ namespace ChainSmart
                 s.Get(nameof(link), ref link);
                 s.Get(nameof(specs), ref specs);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(icon), ref icon);
@@ -125,6 +117,7 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             if ((msk & MSK_BORN) == MSK_BORN)
             {
                 if (prtid > 0) s.Put(nameof(prtid), prtid);
@@ -133,6 +126,7 @@ namespace ChainSmart
                 if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
                 else s.PutNull(nameof(ctrid));
             }
+
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(ext), ext);
@@ -147,6 +141,7 @@ namespace ChainSmart
                 s.Put(nameof(link), link);
                 s.Put(nameof(specs), specs);
             }
+
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(icon), icon);
@@ -165,15 +160,9 @@ namespace ChainSmart
 
         public int MarketId => EqMarket ? id : IsShop ? prtid : 0;
 
-        public int ZoneId => EqZone ? id : IsSource ? prtid : 0;
-
         public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
         public bool EqBrand => typ == TYP_BRD;
-
-        public bool EqZone => typ == TYP_ZON;
-
-        public bool IsZone => (typ & TYP_ZON) == TYP_ZON;
 
         public bool EqSource => typ == TYP_SRC;
 

@@ -184,7 +184,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售订单", "供源")]
+    [Ui("销售订单", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         static void MainGrid(HtmlBuilder h, Book[] arr)
@@ -299,7 +299,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("采购订单统一收货", "盟主")]
+    [Ui("采购订单统一收货", "机构")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("按产品", group: 1), Tool(Anchor)]
@@ -393,7 +393,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("线上销售统一发货", "中库")]
+    [Ui("线上销售统一发货", "机构")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]

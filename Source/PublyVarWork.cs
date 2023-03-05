@@ -7,7 +7,7 @@ using static ChainFx.Web.ToolAttribute;
 namespace ChainSmart
 {
     /// 
-    /// The home for a certain market
+    /// The home for a market
     ///
     [UserAuthenticate]
     public class PublyVarWork : WebWork

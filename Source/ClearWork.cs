@@ -170,7 +170,7 @@ namespace ChainSmart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("按供应版块");
-                    h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.EqZone, required: true);
+                    // h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.EqZone, required: true);
                     h._FIELDSUL()._FORM();
                 });
             }

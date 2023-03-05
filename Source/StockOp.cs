@@ -7,14 +7,14 @@ namespace ChainSmart
     {
         public static readonly Map<short, string> Typs = new Map<short, string>
         {
-            {1, "到货＋"},
-            {2, "调拨＋"},
-            {3, "盘盈＋"},
-            {4, "其它＋"},
-            {5, "损耗－"},
-            {6, "调拨－"},
-            {7, "盘亏－"},
-            {8, "其它－"},
+            { 1, "到货＋" },
+            { 2, "返库＋" },
+            { 3, "调拨＋" },
+            { 4, "盘盈＋" },
+            { 5, "提库－" },
+            { 6, "损耗－" },
+            { 7, "调拨－" },
+            { 8, "盘亏－" },
         };
 
 
@@ -22,17 +22,19 @@ namespace ChainSmart
 
         public short typ;
 
-        public decimal qty;
+        public string tip;
 
-        public decimal avail;
+        public int qty;
+
+        public int avail;
 
         public string by;
-
 
         public void Read(ISource s, short msk = 0xff)
         {
             s.Get(nameof(dt), ref dt);
             s.Get(nameof(typ), ref typ);
+            s.Get(nameof(tip), ref tip);
             s.Get(nameof(qty), ref qty);
             s.Get(nameof(avail), ref avail);
             s.Get(nameof(by), ref by);
@@ -42,6 +44,7 @@ namespace ChainSmart
         {
             s.Put(nameof(dt), dt);
             s.Put(nameof(typ), typ);
+            s.Put(nameof(tip), tip);
             s.Put(nameof(qty), qty);
             s.Put(nameof(avail), avail);
             s.Put(nameof(by), by);

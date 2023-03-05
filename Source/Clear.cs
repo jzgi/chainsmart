@@ -5,7 +5,7 @@ namespace ChainSmart
 {
     public class Clear : Entity, IKeyable<int>
     {
-        public static readonly Clear Empty = new Clear();
+        public static readonly Clear Empty = new();
 
         public const short
             TYP_PLAT = 1,
@@ -15,22 +15,20 @@ namespace ChainSmart
             TYP_ZON = 6,
             TYP_CTR = 7;
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            {TYP_PLAT, "平台服务"},
-            {TYP_SHP, "线上销售"},
-            {TYP_MKT, "市场服务"},
-            {TYP_SRC, "线上销售"},
-            {TYP_ZON, "供区服务"},
-            {TYP_CTR, "中库服务"},
+            { TYP_PLAT, "平台服务" },
+            { TYP_SHP, "线上销售" },
+            { TYP_MKT, "市场服务" },
+            { TYP_SRC, "线上销售" },
+            { TYP_CTR, "中库服务" },
         };
 
-
-        public new static readonly Map<short, string> Statuses = new Map<short, string>
+        public new static readonly Map<short, string> Statuses = new()
         {
-            {STU_CREATED, "结算"},
-            {STU_ADAPTED, "确认"},
-            {STU_OKED, "支付"},
+            { STU_CREATED, "结算" },
+            { STU_ADAPTED, "确认" },
+            { STU_OKED, "支付" },
         };
 
         internal int id;
@@ -50,6 +48,7 @@ namespace ChainSmart
             {
                 s.Get(nameof(id), ref id);
             }
+
             s.Get(nameof(till), ref till);
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(trans), ref trans);
@@ -67,6 +66,7 @@ namespace ChainSmart
             {
                 s.Put(nameof(id), id);
             }
+
             s.Put(nameof(till), till);
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(trans), trans);

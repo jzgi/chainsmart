@@ -8,9 +8,22 @@ namespace ChainSmart
     {
     }
 
-    /// 
-    /// Works for zones and sources.
-    /// 
+    [Ui("市场操作")]
+    [UserAuthenticate]
+    public class ShplyWork : OrglyWork
+    {
+        protected override void OnCreate()
+        {
+            // id of either current user or the specified
+            CreateVarWork<ShplyVarWork>((prin, key) =>
+                {
+                    var orgid = key?.ToInt() ?? ((User)prin).shpid;
+                    return GrabObject<int, Org>(orgid);
+                }
+            );
+        }
+    }
+
     [UserAuthenticate]
     [Ui("供应操作")]
     public class SrclyWork : OrglyWork
@@ -20,30 +33,7 @@ namespace ChainSmart
             // id of either current user or the specified
             CreateVarWork<SrclyVarWork>((prin, key) =>
                 {
-                    var orgid = key?.ToInt() ?? ((User) prin).srcid;
-                    return GrabObject<int, Org>(orgid);
-                }
-            );
-        }
-    }
-
-    /// 
-    /// Works for markets and shops.
-    /// 
-#if ZHNT
-    [Ui("市场商户操作")]
-#else
-    [Ui("驿站商户操作")]
-#endif
-    [UserAuthenticate]
-    public class ShplyWork : OrglyWork
-    {
-        protected override void OnCreate()
-        {
-            // id of either current user or the specified
-            CreateVarWork<ShplyVarWork>((prin, key) =>
-                {
-                    var orgid = key?.ToInt() ?? ((User) prin).shpid;
+                    var orgid = key?.ToInt() ?? ((User)prin).srcid;
                     return GrabObject<int, Org>(orgid);
                 }
             );

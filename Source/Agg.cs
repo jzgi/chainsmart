@@ -8,13 +8,13 @@ namespace ChainSmart
     /// </summary>
     public class Agg : IData
     {
-        public static readonly Agg Empty = new Agg();
+        public static readonly Agg Empty = new();
 
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            {1, "商户"},
-            {2, "供源"},
-            {3, "中库"},
+            { 1, "商户" },
+            { 2, "供源" },
+            { 3, "中库" },
         };
 
         internal short typ;

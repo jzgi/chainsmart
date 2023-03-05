@@ -224,7 +224,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("销售订单统一送货", "盟主")]
+    [Ui("销售订单统一送货", "机构")]
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
         [Ui("消费订单", group: 1), Tool(Anchor)]
