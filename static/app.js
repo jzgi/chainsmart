@@ -94,7 +94,7 @@ function sumQtyDetails(trig, unitx) {
 
     var fprice = parseFloat(output_fprice.value);
 
-    output_qtyx.value = (unitx * trig.value).toFixed(1);
+    output_qtyx.value = (unitx * trig.value);
     output_subtotal.value = (unitx * trig.value * fprice).toFixed(2);
 
     var span = footer.querySelector('.qtydetail');
@@ -200,11 +200,11 @@ function posAdd(trig) {
 
     if (!form || !form.reportValidity()) return;
 
-    var wareid = form['wareid'].value;
+    var itemid = form['itemid'].value;
 
-    var opt = form['wareid'].selectedOptions[0];
+    var opt = form['itemid'].selectedOptions[0];
 
-    var itemid = parseInt(opt.getAttribute('itemid'));
+    var lotid = parseInt(opt.getAttribute('lotid'));
     var name = opt.getAttribute('name');
     var unit = opt.getAttribute('unit');
     var unitx = opt.getAttribute('unitx');
@@ -216,8 +216,8 @@ function posAdd(trig) {
     // target ul element
     var tbody = document.getElementById('lns');
     var tr = document.createElement("tr");
-    var html = '<input type="hidden" name="' + wareid + '" value="' + itemid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
-    html += '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty.toFixed(1) + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
+    html += '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
 

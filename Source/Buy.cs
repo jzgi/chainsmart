@@ -39,7 +39,8 @@ namespace ChainSmart
         internal int uid;
         internal string uname;
         internal string utel;
-        internal string uaddr;
+        internal string ucom; // community
+        internal string uaddr; // address
         internal string uim;
         internal BuyLn[] lns; // detail lines
         internal decimal topay;
@@ -80,6 +81,7 @@ namespace ChainSmart
                 s.Get(nameof(uid), ref uid);
                 s.Get(nameof(uname), ref uname);
                 s.Get(nameof(utel), ref utel);
+                s.Get(nameof(ucom), ref ucom);
                 s.Get(nameof(uaddr), ref uaddr);
                 s.Get(nameof(uim), ref uim);
                 s.Get(nameof(lns), ref lns);
@@ -113,6 +115,7 @@ namespace ChainSmart
 
                 s.Put(nameof(uname), uname);
                 s.Put(nameof(utel), utel);
+                s.Put(nameof(ucom), ucom);
                 s.Put(nameof(uaddr), uaddr);
                 s.Put(nameof(uim), uim);
                 s.Put(nameof(lns), lns);
@@ -132,10 +135,9 @@ namespace ChainSmart
             var sum = 0.00M;
             if (lns != null)
             {
-                for (int i = 0; i < lns.Length; i++)
+                foreach (var ln in lns)
                 {
-                    var dtl = lns[i];
-                    sum += dtl.SubTotal;
+                    sum += ln.SubTotal;
                 }
             }
 

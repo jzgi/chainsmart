@@ -1189,7 +1189,6 @@ button.uk-icon:not(:disabled) {
 .uk-bottom-bar.uk-large {
     height: 4rem;
     min-height: 4rem;
-    background-color: inherit;
     border-top: 1px solid #ddd;
 }
 
@@ -2559,7 +2558,7 @@ a.uk-card-body {
 .uk-label {
     text-transform: uppercase;
     white-space: nowrap;
-    color: #666;
+    color: #7daa1d;
     display: flex;
     align-items: center;
 }
@@ -5098,8 +5097,8 @@ ul.uk-nav-sub {
 }
 
 .uk-width-medium {
-    width: 7.5rem !important;
-    min-width: 7.5rem !important;
+    width: 7.25rem !important;
+    min-width: 7.25rem !important;
 }
 
 .uk-width-large {

@@ -42,7 +42,6 @@ namespace ChainSmart
                 h.ATEL(org.tel, css: "uk-overlay uk-position-center-right");
                 h._PIC();
 
-
                 if (arr == null)
                 {
                     h.ALERT("暂无商品");
@@ -99,14 +98,20 @@ namespace ChainSmart
 
                 var topay = 0.00M;
 
-                h.BOTTOMBAR_(large: true);
+                h.BOTTOMBAR_(large: true, css: "uk-col");
 
-                h.DIV_("uk-col");
-                h.T("<output class=\"nametel\" name=\"nametel\" cookie=\"nametel\"></output>");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"请填收货地址（限离市场２公里内）\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+                string com;
+
+                h.DIV_("uk-flex uk-width-1-1");
+                h.SELECT_SPEC(nameof(com), org.specs, css: "uk-width-medium");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                 h._DIV();
 
-                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+                h.DIV_("uk-flex uk-width-1-1 uk-background-default");
+                h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>").T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
+                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-flex-right uk-margin-auto-left", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+
+                h._DIV();
 
                 h._BOTTOMBAR();
 

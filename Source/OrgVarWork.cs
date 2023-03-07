@@ -13,7 +13,7 @@ namespace ChainSmart
         public virtual async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int) wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -30,6 +30,7 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD("范围延展名", o.ext)._LI();
                 }
+
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("联系地址", o.addr)._LI();
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
@@ -41,10 +42,12 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
                 }
+
                 if (o.fixer != null)
                 {
                     h.LI_().FIELD2("上线", o.fixer, o.@fixed)._LI();
                 }
+
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -60,7 +63,7 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").T(col).T(" FROM orgs WHERE id = @1");
-                if (dc.QueryTop(p => p.Set(id)))
+                if (await dc.QueryTopAsync(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
@@ -93,7 +96,7 @@ namespace ChainSmart
         public override async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int) wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -110,6 +113,7 @@ namespace ChainSmart
                 }
                 else
                     h.PIC("/void.webp", circle: true, css: "uk-width-small");
+
                 h._TOPBARXL();
 
                 h.ARTICLE_("uk-card uk-card-primary");
@@ -119,6 +123,7 @@ namespace ChainSmart
                 {
                     h.PIC("/org/", m.id, "/pic", css: "uk-width-1-1");
                 }
+
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名", m.name)._LI();
                 h.LI_().FIELD("简介", m.tip)._LI();
@@ -126,6 +131,7 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD("范围延展名", m.Ext)._LI();
                 }
+
                 h.LI_().FIELD("工商登记名", m.legal)._LI();
                 h.LI_().FIELD("联系电话", m.tel).FIELD("区域", regs[m.regid])._LI();
                 h.LI_().FIELD("地址／场地", m.addr)._LI();
@@ -138,10 +144,12 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
                 }
+
                 if (m.fixer != null)
                 {
                     h.LI_().FIELD2("上线", m.@fixed, m.fixer)._LI();
                 }
+
                 h._UL();
                 h._SECTION();
                 h._ARTICLE();
@@ -152,18 +160,22 @@ namespace ChainSmart
                 {
                     h.PIC("/org/", m.id, "/m-1", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (m.m2)
                 {
                     h.PIC("/org/", m.id, "/m-2", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (m.m3)
                 {
                     h.PIC("/org/", m.id, "/m-3", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (m.m4)
                 {
                     h.PIC("/org/", m.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
+
                 h._ARTICLE();
             }, false, 900, title: "机构信息");
         }
@@ -192,7 +204,7 @@ namespace ChainSmart
         public async Task setg(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -231,7 +243,7 @@ namespace ChainSmart
         public async Task edit(WebContext wc)
         {
             short id = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var regs = Grab<short, Reg>();
             var orgs = Grab<int, Org>();
 
@@ -312,11 +324,13 @@ namespace ChainSmart
                             {
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
+
                             h._FIELDSUL();
 
                             h.BOTTOMBAR_().BUTTON("确认", nameof(mgr), 2)._BOTTOMBAR();
                         }
                     }
+
                     h._FORM();
                 });
             }
@@ -372,7 +386,7 @@ namespace ChainSmart
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3");
@@ -493,7 +507,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
@@ -525,7 +539,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var regs = Grab<short, Reg>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -610,7 +624,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");

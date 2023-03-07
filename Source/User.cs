@@ -57,6 +57,7 @@ namespace ChainSmart
         internal int shpid;
         internal short shply;
         internal int[] vip;
+        internal int refer;
         internal bool icon;
 
         public override void Read(ISource s, short msk = 0xff)
@@ -84,6 +85,7 @@ namespace ChainSmart
                 s.Get(nameof(shpid), ref shpid);
                 s.Get(nameof(shply), ref shply);
                 s.Get(nameof(vip), ref vip);
+                s.Get(nameof(refer), ref refer);
                 s.Get(nameof(icon), ref icon);
             }
         }
@@ -109,6 +111,7 @@ namespace ChainSmart
                 s.Put(nameof(shpid), shpid);
                 s.Put(nameof(shply), shply);
                 s.Put(nameof(vip), vip);
+                s.Put(nameof(refer), refer);
                 s.Put(nameof(icon), icon);
             }
         }

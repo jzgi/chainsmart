@@ -63,13 +63,20 @@ namespace ChainSmart
             // upper level orgs
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_LOG)
-                        .T(" ORDER BY regid");
+                    dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_LOG).T(" ORDER BY regid");
                     return dc.Query<int, Org>();
                 }, 60 * 15
             );
 
-            // indivisual working items
+            // indivisual assets (n < 5000)
+            CacheObject<int, Asset>((dc, id) =>
+                {
+                    dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM assets_vw WHERE id = @1");
+                    return dc.QueryTop<Asset>(p => p.Set(id));
+                }, 60 * 30
+            );
+
+            // indivisual lots (n < 2000)
             CacheObject<int, Lot>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
@@ -77,7 +84,7 @@ namespace ChainSmart
                 }, 60 * 30
             );
 
-            // individual working orgs
+            // individual orgs (n < 8000)
             CacheObject<int, Org>((dc, id) =>
                 {
                     dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");

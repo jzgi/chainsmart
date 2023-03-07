@@ -61,7 +61,7 @@ namespace ChainSmart
 
                     if (o.icon)
                     {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/org/").T(o.id).T("/icon")._PIC();
+                        h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
                     }
                     else
                         h.PIC("/void.webp", css: "uk-width-1-5");
