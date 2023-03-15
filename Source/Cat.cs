@@ -9,6 +9,8 @@ namespace ChainSmart
     {
         public static readonly Cat Empty = new();
 
+        internal short id;
+
         internal short idx;
 
         internal short size; // number of items
@@ -19,6 +21,7 @@ namespace ChainSmart
         {
             base.Read(s, proj);
 
+            s.Get(nameof(id), ref id);
             s.Get(nameof(idx), ref idx);
             s.Get(nameof(size), ref size);
         }
@@ -27,11 +30,12 @@ namespace ChainSmart
         {
             base.Write(s, proj);
 
+            s.Put(nameof(id), id);
             s.Put(nameof(idx), idx);
             s.Put(nameof(size), size);
         }
 
-        public short Key => typ;
+        public short Key => id;
 
         public override string ToString() => name;
 

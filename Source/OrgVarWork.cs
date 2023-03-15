@@ -43,9 +43,9 @@ namespace ChainSmart
                     h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
                 }
 
-                if (o.fixer != null)
+                if (o.oker != null)
                 {
-                    h.LI_().FIELD2("上线", o.fixer, o.@fixed)._LI();
+                    h.LI_().FIELD2("上线", o.oker, o.oked)._LI();
                 }
 
                 h._UL();
@@ -145,9 +145,9 @@ namespace ChainSmart
                     h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
                 }
 
-                if (m.fixer != null)
+                if (m.oker != null)
                 {
-                    h.LI_().FIELD2("上线", m.@fixed, m.fixer)._LI();
+                    h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
                 }
 
                 h._UL();
@@ -389,7 +389,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
 
             wc.GivePane(200);
@@ -510,7 +510,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -627,7 +627,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -641,7 +641,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

@@ -28,20 +28,20 @@ namespace ChainSmart
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
                 h.LI_().FIELD("基准单价", m.price, money: true).FIELD("优惠立减", m.off, money: true)._LI();
-                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.max)._LI();
-                h.LI_().FIELD2("剩余库存", m.avail, m.unit)._LI();
+                h.LI_().FIELD("起订件数", m.min)._LI();
+                h.LI_().FIELD2("可下单量", m.avail, m.unit).FIELD("库存量", m.stock)._LI();
                 h.LI_().FIELD("状态", Item.Statuses[m.status])._LI();
 
                 if (m.creator != null) h.LI_().FIELD2("创建", m.creator, m.created)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapter, m.adapted)._LI();
-                if (m.fixer != null) h.LI_().FIELD2("上线", m.fixer, m.@fixed)._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oker, m.oked)._LI();
 
                 h._UL();
 
                 h.TABLE(m.ops, o =>
                 {
                     h.TD_().T(o.dt, date: 2, time: 1)._TD();
-                    h.TD_("uk-text-right").T(o.tip).SP().T(StockOp.Typs[o.typ])._TD();
+                    h.TD_("uk-text-right").T(o.tip)._TD();
                     h.TD(o.qty, right: true);
                     h.TD(o.avail, right: true);
                     h.TD(o.by);
@@ -152,9 +152,9 @@ namespace ChainSmart
 
                     h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -255,7 +255,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND shpid = @4");
+            dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND shpid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -269,7 +269,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND shpid = @2");
+            dc.Sql("UPDATE items SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND shpid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

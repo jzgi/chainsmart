@@ -7,7 +7,7 @@ namespace ChainSmart
         public void @default(WebContext wc)
         {
             var org = wc[0].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             wc.GivePage(200, h =>
             {
@@ -122,13 +122,11 @@ namespace ChainSmart
 
             CreateWork<CtrlyOrgWork>("corg");
 
-            CreateWork<CtrlyTestWork>("ztest");
-
-            CreateWork<CtrlyLotWork>("clot");
-
-            CreateWork<CtrlyBookAggWork>("cbookrpt");
+            CreateWork<CtrlyBookAggWork>("cbookagg");
 
             CreateWork<CtrlyBookWork>("cbook");
+
+            CreateWork<CtrlyLotWork>("clot");
         }
     }
 }

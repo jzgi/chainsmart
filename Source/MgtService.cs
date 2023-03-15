@@ -56,7 +56,7 @@ namespace ChainSmart
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                if (await dc.QueryTopAsync("SELECT srcid, lotid, qty, topay FROM books WHERE id = @1 AND status = 0", p => p.Set(bookid)))
+                if (await dc.QueryTopAsync("SELECT srcid, lotid, qty, topay FROM books WHERE id = @1 AND status = -1", p => p.Set(bookid)))
                 {
                     dc.Let(out int srcid);
                     dc.Let(out int lotid);
@@ -70,7 +70,7 @@ namespace ChainSmart
                     if (topay == cash) // update data
                     {
                         // the book and the lot updates
-                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = 0; UPDATE lots SET avail = avail - @3 WHERE id = @4");
+                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = -1; UPDATE lots SET avail = avail - @3 WHERE id = @4");
                         await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty).Set(lotid));
 
                         // War("update ok!");

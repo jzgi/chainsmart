@@ -53,7 +53,7 @@ namespace ChainSmart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short) o.acct]);
+                    h.TD(Buy.Typs[(short)o.acct]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -81,7 +81,7 @@ namespace ChainSmart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short) o.acct]);
+                    h.TD(Buy.Typs[(short)o.acct]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -124,7 +124,7 @@ namespace ChainSmart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short) o.acct]);
+                    h.TD(Buy.Typs[(short)o.acct]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -141,7 +141,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售汇总表", "商户")]
+    [Ui("销售报表", "商户")]
     public class SrclyBookAggWork : AggWork<OrglyAggrVarWork>
     {
         public async Task @default(WebContext wc, int page)
@@ -174,7 +174,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("发货汇总表", "机构")]
+    [Ui("销售报表", "机构")]
     public class CtrlyBookAggWork : AggWork<OrglyAggrVarWork>
     {
         public async Task @default(WebContext wc, int page)
@@ -182,7 +182,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM rpts WHERE typ = 3 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT * FROM bookaggs WHERE typ = 3 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Agg>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>

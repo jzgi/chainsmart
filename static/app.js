@@ -477,9 +477,10 @@ function fixAll() {
 
         // handler of onchange
         e.addEventListener('change', (event) => {
-            name = e.getAttribute('local'); // get the name on the fly
+            var trig = event.target;
+            name = trig.getAttribute('local'); // get the name on the fly
             if (name) {
-                window.localStorage.setItem(name, e.value);
+                window.localStorage.setItem(name, trig.value);
             }
         });
     }

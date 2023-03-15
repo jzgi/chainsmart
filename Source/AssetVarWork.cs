@@ -57,7 +57,7 @@ namespace ChainSmart
             wc.GivePage(200, h =>
             {
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("资源设施", "uk-card-header");
+                h.H4("产源设施", "uk-card-header");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("名称", o.name)._LI();
                 h.LI_().FIELD("类别", o.typ, Asset.Typs)._LI();
@@ -69,9 +69,9 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
                 }
-                if (o.fixer != null)
+                if (o.oker != null)
                 {
-                    h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                    h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 }
                 h._UL();
 
@@ -134,7 +134,7 @@ namespace ChainSmart
 
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                if (o.fixer != null) h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
                 h.TOOLBAR(bottom: true, status: o.status, state: o.state);
@@ -142,7 +142,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改资源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -222,7 +222,7 @@ namespace ChainSmart
             var prin = (User) wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE assets SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND orgid = @4");
+            dc.Sql("UPDATE assets SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -236,7 +236,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE assets SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE assets SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);

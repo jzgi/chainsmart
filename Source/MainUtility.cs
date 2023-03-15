@@ -50,7 +50,7 @@ namespace ChainSmart
 
         public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string css = null)
         {
-            h.SELECT_(name, cookie: name, css: css);
+            h.SELECT_(name, local: name, css: css);
 
             for (int i = 0; i < specs.Count; i++)
             {

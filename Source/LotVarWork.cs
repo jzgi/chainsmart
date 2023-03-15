@@ -28,8 +28,8 @@ namespace ChainSmart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-                h.LI_().FIELD("交货条款", Lot.Terms[m.term]);
-                if (m.term > 0) h.FIELD("交货日期", m.dated);
+                h.LI_().FIELD("交易类型", Lot.Typs[m.typ]);
+                if (m.typ == 2) h.FIELD("交货日期", m.dated);
                 h._LI();
 
                 h.LI_();
@@ -38,20 +38,20 @@ namespace ChainSmart
                 h._LI();
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
                 h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
-                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.max)._LI();
-                h.LI_().FIELD("批次总件数", m.cap).FIELD("剩余件数", m.AvailX)._LI();
+                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.cap)._LI();
+                h.LI_().FIELD("批次总件数", m.stock).FIELD("剩余件数", m.AvailX)._LI();
                 h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
-                h.LI_().FIELD("处理状态", m.status, Lot.Statuses)._LI();
+                h.LI_().FIELD("处理状态", m.status, Statuses)._LI();
                 h.LI_().FIELD2("创建", m.created, m.creator)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter, "&nbsp;")._LI();
-                if (m.fixer != null) h.LI_().FIELD2("上线", m.@fixed, m.fixer, "&nbsp;")._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker, "&nbsp;")._LI();
                 h._UL();
 
                 h.TABLE(m.ops, o =>
                 {
                     h.TD_().T(o.dt, time: 1)._TD();
+                    h.TD(o.tip);
                     h.TD(o.qty, right: true);
-                    h.TD(StockOp.Typs[o.typ]);
                     h.TD(o.avail, right: true);
                     h.TD(o.by);
                 }, caption: "库存操作记录", reverse: true);
@@ -67,7 +67,7 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").T(col).T(" FROM lots WHERE id = @1");
-                if (dc.QueryTop(p => p.Set(id)))
+                if (await dc.QueryTopAsync(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
@@ -126,6 +126,7 @@ namespace ChainSmart
                 }
                 else
                     h.PIC("/void.webp", circle: true, css: "uk-width-small");
+
                 h._TOPBARXL();
 
                 h.ARTICLE_("uk-card uk-card-primary");
@@ -135,6 +136,7 @@ namespace ChainSmart
                 {
                     h.PIC("/lot/", o.id, "/pic", css: "uk-width-1-1");
                 }
+
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("产品描述", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
@@ -147,8 +149,8 @@ namespace ChainSmart
                 h.H4("批次信息", "uk-card-header");
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
-                h.LI_().FIELD("总件数", o.cap)._LI();
-                h.LI_().LABEL("资源设施");
+                h.LI_().FIELD("总件数", o.stock)._LI();
+                h.LI_().LABEL("产源设施");
                 if (asset != null)
                     h.A_("/asset/", o.assetid, "/", css: "uk-button-link uk-active").T(asset.name)._A()._LI();
                 else
@@ -159,15 +161,18 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
                 }
+
                 h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null)
                 {
                     h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
                 }
-                if (o.fixer != null)
+
+                if (o.oker != null)
                 {
-                    h.LI_().FIELD2("上线", o.@fixed, o.fixer)._LI();
+                    h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 }
+
                 h._UL();
                 h._ARTICLE();
 
@@ -177,18 +182,22 @@ namespace ChainSmart
                 {
                     h.PIC("/lot/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m2)
                 {
                     h.PIC("/lot/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m3)
                 {
                     h.PIC("/lot/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m4)
                 {
                     h.PIC("/lot/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
+
                 h._ARTICLE();
 
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
@@ -216,7 +225,7 @@ namespace ChainSmart
 
     public class SrclyLotVarWork : LotVarWork
     {
-        static readonly string[] Units = {"斤", "包", "箱", "桶"};
+        static readonly string[] UNITS = { "斤", "两", "包", "箱", "桶" };
 
         [Ui(tip: "修改产品批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
@@ -225,7 +234,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
             var topOrgs = Grab<int, Org>();
             var cats = Grab<short, Cat>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -241,15 +250,19 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_();
 
                     h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("资源设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: Units).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    if (o.IsFuture)
+                    {
+                        h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                    }
+
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.cap), o.cap, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.stock), o.stock)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -292,7 +305,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4, status: STU_CREATED | STU_ADAPTED)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, nameof(m) + sub, false, 3);
@@ -304,7 +317,7 @@ namespace ChainSmart
         {
             int lotid = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -324,7 +337,7 @@ namespace ChainSmart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                var item = GrabObject<int, Asset>(o.assetid);
+                var asset = GrabObject<int, Asset>(o.assetid);
 
                 if (cmd == 1)
                 {
@@ -357,18 +370,19 @@ namespace ChainSmart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Lot.States[o.state], "uk-margin-auto-left")._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.States[asset.state], "uk-margin-auto-left")._H6();
 
                             h._LI();
 
-                            if (++idx >= o.cap)
+                            if (++idx >= o.stock)
                             {
                                 break;
                             }
                         }
+
                         h._UL();
 
-                        h.PAGINATION(idx < o.cap, begin: 2, print: true);
+                        h.PAGINATION(idx < o.stock, begin: 2, print: true);
                     });
                 }
             }
@@ -399,10 +413,10 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 4, fixed = @1, fixer = @2 WHERE id = @3 AND srcid = @4");
+            dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.Give(200);
@@ -416,7 +430,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET status = 2, fixed = NULL, fixer = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
+            dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND srcid = @2")._MEET_(wc);
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(200);
@@ -428,7 +442,7 @@ namespace ChainSmart
         {
             int itemid = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             short typ = 0;
             decimal qty = 0.0M;
@@ -468,7 +482,6 @@ namespace ChainSmart
             }
         }
 
-
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除或者作废该批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task rm(WebContext wc)
@@ -486,6 +499,26 @@ namespace ChainSmart
             {
                 dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
                 await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
+
+            wc.Give(204); // no content
+        }
+
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui(tip: "恢复", icon: "reply"), Tool(ButtonConfirm, status: 0)]
+        public async Task restore(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+
+            using var dc = NewDbContext();
+            try
+            {
+                dc.Sql("UPDATE lots SET status = CASE WHEN adapter IS NULL 2 ELSE 1 END WHERE id = @1 AND srcid = @2");
+                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            }
+            catch (Exception e)
+            {
             }
 
             wc.Give(204); // no content
@@ -516,14 +549,15 @@ namespace ChainSmart
                 {
                     h.PIC_(MainApp.WwwUrl, "/lot/", m.id, "/pic")._PIC();
                 }
+
                 h.H4("产品详情", "uk-card-header");
                 h.SECTION_("uk-card-body");
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
 
-                h.LI_().FIELD("交货条款", Lot.Terms[m.term]);
-                if (m.term > 0) h.FIELD("交货日期", m.dated);
+                h.LI_().FIELD("交易类型", Lot.Typs[m.typ]);
+                if (m.IsFuture) h.FIELD("交货日期", m.dated);
                 h._LI();
 
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
@@ -548,10 +582,11 @@ namespace ChainSmart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = m.min; i < m.max; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+                for (int i = m.min; i < m.cap; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
+
                 h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
                 h.OUTPUT(nameof(qty), qty).SP().T(m.unit)._SPAN();
 
@@ -568,7 +603,7 @@ namespace ChainSmart
             var shp = wc[-3].As<Org>();
             int lotid = wc[0];
 
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             // submitted values
             var f = await wc.ReadAsync<Form>();
@@ -588,11 +623,12 @@ namespace ChainSmart
                     creator = prin.name,
                     qty = qty,
                     topay = lot.RealPrice * qty,
+                    status = -1
                 };
 
                 // make use of any existing abandoned record
-                const short msk = MSK_BORN | MSK_EDIT;
-                dc.Sql("INSERT INTO books ").colset(Book.Empty, msk)._VALUES_(Book.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = 0 DO UPDATE ")._SET_(Book.Empty, msk).T(" RETURNING id, topay");
+                const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
+                dc.Sql("INSERT INTO books ").colset(Book.Empty, msk)._VALUES_(Book.Empty, msk).T(" ON CONFLICT (shpid, status) WHERE status = -1 DO UPDATE ")._SET_(Book.Empty, msk).T(" RETURNING id, topay");
                 await dc.QueryTopAsync(p => m.Write(p));
                 dc.Let(out int bookid);
                 dc.Let(out decimal topay);

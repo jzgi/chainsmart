@@ -344,6 +344,29 @@ namespace ChainSmart
     [Ui("成员商户", "机构")]
     public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
     {
+        static void MainGrid(HtmlBuilder h, Org[] arr, User prin)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                if (o.icon)
+                {
+                    h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
         [Ui("成员商户"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
@@ -351,35 +374,65 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 ORDER BY status DESC, name");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND status = 4 ORDER BY oked DESC");
             var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
-                if (arr == null) return;
-
-
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无上线商户");
+                    return;
+                }
 
-                    if (o.icon)
-                    {
-                        h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                MainGrid(h, arr, prin);
+            }, false, 12);
+        }
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                    h._ASIDE();
+        [Ui(tip: "已下线", icon: "cloud-download"), Tool(Anchor)]
+        public async Task down(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User)wc.Principal;
 
-                    h._A();
-                });
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND status BETWEEN 1 AND 2 ORDER BY oked DESC");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无下线商户");
+                    return;
+                }
+
+                MainGrid(h, arr, prin);
+            }, false, 15);
+        }
+
+        [Ui(tip: "已删除", icon: "trash"), Tool(Anchor)]
+        public async Task @void(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User)wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND status = 0 ORDER BY adapted DESC");
+            var arr = await dc.QueryAsync<Org>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无删除商户");
+                    return;
+                }
+
+                MainGrid(h, arr, prin);
             }, false, 15);
         }
 

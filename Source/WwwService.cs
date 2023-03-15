@@ -55,9 +55,10 @@ namespace ChainSmart
                             h._UL();
                             h._ARTICLE();
                         }
+
                         h.ARTICLE_("uk-card uk-card-primary");
                         h.H3(regs[o.regid]?.name, "uk-card-header");
-                        h.UL_("uk-card-body");
+                        h.UL_("uk-card-body uk-list-divider");
                     }
 
                     h.LI_("uk-flex");
@@ -70,15 +71,15 @@ namespace ChainSmart
                     exist = true;
                     last = o.regid;
                 }
+
                 h._UL();
-                
+
                 if (!exist)
                 {
                     h.LI_().T("（暂无市场）")._LI();
                 }
 
                 h._ARTICLE();
-
             }, true, 720, title: Self.Name, onload: "fixAll();");
         }
 
@@ -110,7 +111,7 @@ namespace ChainSmart
                 // NOTE: WCPay may send notification more than once
                 using var dc = NewDbContext();
                 // verify that the ammount is correct
-                if (await dc.QueryTopAsync("SELECT shpid, topay FROM buys WHERE id = @1 AND status = 0", p => p.Set(buyid)))
+                if (await dc.QueryTopAsync("SELECT shpid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
                 {
                     dc.Let(out int shpid);
                     dc.Let(out decimal topay);
@@ -120,7 +121,7 @@ namespace ChainSmart
                     if (topay == cash) // update data
                     {
                         // the book and the lot updates
-                        dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = 0");
+                        dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1");
                         await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
 
                         // War("update ok!");

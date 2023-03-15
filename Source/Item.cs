@@ -23,8 +23,8 @@ namespace ChainSmart
         internal decimal price;
         internal decimal off;
         internal short min;
-        internal short max;
-        internal int avail;
+        internal short stock;
+        internal short avail;
 
         internal bool icon;
         internal bool pic;
@@ -53,7 +53,7 @@ namespace ChainSmart
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
-                s.Get(nameof(max), ref max);
+                s.Get(nameof(stock), ref stock);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -92,7 +92,7 @@ namespace ChainSmart
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
-                s.Put(nameof(max), max);
+                s.Put(nameof(stock), stock);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)

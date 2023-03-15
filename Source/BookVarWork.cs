@@ -33,8 +33,8 @@ namespace ChainSmart
                 h.LI_().FIELD("状态", o.status, Book.Statuses)._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.fixer != null) h.LI_().FIELD2("收货", o.@fixed, o.fixer)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "发货", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
 
                 h._UL();
 
@@ -51,7 +51,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE books SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING shpid, topay");
@@ -73,12 +73,12 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("UPDATE books SET refund = pay, status = 8, adapted = @1, adapter = @2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING shpid, topay, refund");
+                dc.Sql("UPDATE books SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING shpid, topay, refund");
                 if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
                     dc.Let(out int shpid);
@@ -118,10 +118,10 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
+            dc.Sql("UPDATE books SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int srcid);

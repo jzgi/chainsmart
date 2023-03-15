@@ -11,33 +11,19 @@ namespace ChainSmart
 
         public static readonly Map<short, string> Typs = new()
         {
-            { 1, "田园地块" },
-            { 2, "养殖屠宰" },
-            { 7, "运输车辆" },
+            { 1, "地块" },
+            { 2, "养殖" },
+            { 4, "屠宰" },
+            { 8, "进口" },
         };
 
         public static readonly Map<short, string> States = new()
         {
-            { 0, null },
-            { 1, "达标" },
-            { 2, "健康" },
-            { 4, "生态" },
+            { 0, "通货" },
+            { 1, "零添" },
+            { 2, "特品" },
+            { 4, "进口" },
         };
-
-        public const short
-            STA_VOID = 0,
-            STA_PRE = 1,
-            STA_FINE = 2,
-            STA_TOP = 4;
-
-        public new static readonly Map<short, string> Statuses = new()
-        {
-            { STU_VOID, "无效" },
-            { STU_CREATED, "创建" },
-            { STU_ADAPTED, "调整" },
-            { STU_OKED, "上线" },
-        };
-
 
         internal short id;
 

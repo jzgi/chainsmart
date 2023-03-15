@@ -5,26 +5,20 @@ namespace ChainSmart
 {
     public struct StockOp : IData, IKeyable<DateTime>
     {
-        public static readonly Map<short, string> Typs = new Map<short, string>
+        public static readonly Map<short, string> Typs = new()
         {
-            { 1, "到货＋" },
-            { 2, "返库＋" },
-            { 3, "调拨＋" },
-            { 4, "盘盈＋" },
-            { 5, "提库－" },
-            { 6, "损耗－" },
-            { 7, "调拨－" },
-            { 8, "盘亏－" },
+            { 1, "＋" },
+            { 2, "－" },
         };
+
+        public static readonly string[] Tips = { "到货", "返库", "调拨", "盘点", "损耗" };
 
 
         public DateTime dt;
 
-        public short typ;
-
         public string tip;
 
-        public int qty;
+        public int qty; // can be negative
 
         public int avail;
 
@@ -33,7 +27,6 @@ namespace ChainSmart
         public void Read(ISource s, short msk = 0xff)
         {
             s.Get(nameof(dt), ref dt);
-            s.Get(nameof(typ), ref typ);
             s.Get(nameof(tip), ref tip);
             s.Get(nameof(qty), ref qty);
             s.Get(nameof(avail), ref avail);
@@ -43,7 +36,6 @@ namespace ChainSmart
         public void Write(ISink s, short msk = 0xff)
         {
             s.Put(nameof(dt), dt);
-            s.Put(nameof(typ), typ);
             s.Put(nameof(tip), tip);
             s.Put(nameof(qty), qty);
             s.Put(nameof(avail), avail);

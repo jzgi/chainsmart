@@ -37,7 +37,7 @@ namespace ChainSmart
         {
             this.itemid = itemid;
 
-            itemid = int.Parse(comp[0]);
+            lotid = int.Parse(comp[0]);
             name = comp[1];
             unit = comp[2];
             unitx = decimal.Parse(comp[3]);
@@ -48,7 +48,7 @@ namespace ChainSmart
         public void Read(ISource s, short msk = 0xff)
         {
             s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(itemid), ref itemid);
+            s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(name), ref name);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
@@ -60,8 +60,8 @@ namespace ChainSmart
         public void Write(ISink s, short msk = 0xff)
         {
             s.Put(nameof(itemid), itemid);
+            s.Put(nameof(lotid), lotid);
             s.Put(nameof(name), name);
-            s.Put(nameof(itemid), itemid);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
@@ -75,19 +75,19 @@ namespace ChainSmart
 
         public decimal SubTotal => decimal.Round(RealPrice * qty, 2);
 
-        public short QtyX => (short) (qty / unitx);
+        public short QtyX => (short)(qty / unitx);
 
-        internal void Init(Item w, bool discount)
+        internal void Init(Item m, bool discount)
         {
-            name = w.name;
-            itemid = w.lotid;
-            unit = w.unit;
-            unitx = w.unitx;
-            price = w.price;
+            name = m.name;
+            lotid = m.lotid;
+            unit = m.unit;
+            unitx = m.unitx;
+            price = m.price;
 
             if (discount)
             {
-                off = w.off;
+                off = m.off;
             }
         }
     }

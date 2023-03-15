@@ -85,8 +85,8 @@ namespace ChainSmart
                     h.Q(o.tip, "uk-width-expand");
 
                     // FOOTER: price and qty select & detail
-                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.min},{o.max},{o.AvailX});\">"); // pricing portion
-                    h.SPAN_("uk-width-1-4").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
+                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.min},{o.stock},{o.AvailX});\">"); // pricing portion
+                    h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                     h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ").OPTION((short)0, "0 件")._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                     h._FOOTER();
@@ -98,7 +98,14 @@ namespace ChainSmart
 
                 var topay = 0.00M;
 
-                h.BOTTOMBAR_(large: true, css: "uk-col");
+                h.BOTTOMBAR_(large: true);
+
+                h.DIV_(css: "uk-col");
+
+                h.DIV_("uk-flex uk-width-1-1");
+                h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
+                h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
+                h._DIV();
 
                 string com;
 
@@ -107,11 +114,9 @@ namespace ChainSmart
                 h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                 h._DIV();
 
-                h.DIV_("uk-flex uk-width-1-1 uk-background-default");
-                h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>").T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
-                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-flex-right uk-margin-auto-left", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
-
                 h._DIV();
+
+                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
                 h._BOTTOMBAR();
 
@@ -126,6 +131,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             var f = await wc.ReadAsync<Form>();
+            string com = f[nameof(com)];
             string addr = f[nameof(addr)];
 
             // lines of detail
@@ -147,7 +153,7 @@ namespace ChainSmart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND id ")._IN_(lst);
+                dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND id ")._IN_(lst);
                 var map = await dc.QueryAsync<int, Item>(p => p.Set(shpid).SetForIn(lst));
 
                 foreach (var ln in lst)
@@ -163,13 +169,15 @@ namespace ChainSmart
                 {
                     created = DateTime.Now,
                     creator = prin.name,
+                    ucom = com,
                     uaddr = addr,
+                    status = -1, // before confirmed of payment
                 };
                 m.SetToPay();
 
                 // NOTE single unsubmitted record
-                const short msk = MSK_BORN | MSK_EDIT;
-                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, typ, status) WHERE typ = 1 AND status = 0 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
+                const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (shpid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
                 await dc.QueryTopAsync(p => m.Write(p, msk));
                 dc.Let(out int buyid);
                 dc.Let(out decimal topay);
@@ -243,8 +251,7 @@ namespace ChainSmart
             var src = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty)
-                .T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY fixed DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY oked DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -291,7 +298,7 @@ namespace ChainSmart
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Item.Empty)
-                .T(" FROM items_vw WHERE shpid = @1 AND status = 8 ORDER BY adapted DESC");
+                .T(" FROM items_vw WHERE shpid = @1 AND status = 0 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(src.id));
 
             wc.GivePage(200, h =>
@@ -331,7 +338,7 @@ namespace ChainSmart
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
                 });
@@ -376,7 +383,7 @@ namespace ChainSmart
                     creator = prin.name,
                     unitx = 1,
                     min = 1,
-                    max = 30,
+                    stock = 30,
                 };
 
                 wc.GivePane(200, h =>
@@ -384,9 +391,9 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_();
 
                     h.LI_().SELECT("供应产品", nameof(o.lotid), o.lotid, map, required: true)._LI();
-                    h.LI_().TEXT("基本单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
                 });

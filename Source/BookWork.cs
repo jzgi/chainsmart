@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -42,6 +43,7 @@ namespace ChainSmart
                 {
                     h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
                 }
+
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q_("uk-width-expand").T(o.srcname)._Q();
                 h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
@@ -68,6 +70,7 @@ namespace ChainSmart
                     h.ALERT("尚无采购");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -90,6 +93,7 @@ namespace ChainSmart
                     h.ALERT("尚无发货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -111,6 +115,7 @@ namespace ChainSmart
                     h.ALERT("尚无收货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -122,7 +127,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -133,12 +138,13 @@ namespace ChainSmart
                     h.ALERT("尚无撤单");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-        [Ui("新建", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("采购", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
@@ -187,6 +193,19 @@ namespace ChainSmart
     [Ui("销售订单", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
+        // timer that automatically transfers booking orders 
+        const uint FIVE_MINUTES = 1000 * 300;
+
+        static readonly Timer TIMER = new Timer(AutoProcess, null, FIVE_MINUTES, FIVE_MINUTES);
+
+        static async void AutoProcess(object x)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("");
+            await dc.ExecuteAsync();
+        }
+
+
         static void MainGrid(HtmlBuilder h, Book[] arr)
         {
             h.MAINGRID(arr, o =>
@@ -201,6 +220,7 @@ namespace ChainSmart
                 {
                     h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
                 }
+
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q_("uk-width-expand").T(o.shpname)._Q();
                 h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
@@ -228,6 +248,7 @@ namespace ChainSmart
                     h.ALERT("尚无销售");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -249,6 +270,7 @@ namespace ChainSmart
                     h.ALERT("尚无发货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -271,6 +293,7 @@ namespace ChainSmart
                     h.ALERT("尚无收货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -281,7 +304,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -292,6 +315,7 @@ namespace ChainSmart
                     h.ALERT("尚无撤单");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 6);
         }
@@ -299,7 +323,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("采购订单统一收货", "机构")]
+    [Ui("采购订单集中收货", "机构")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
         [Ui("按产品", group: 1), Tool(Anchor)]
@@ -329,6 +353,7 @@ namespace ChainSmart
                     h._TR();
                     n++;
                 }
+
                 h._TABLE();
 
                 h.PAGINATION(n == 30);
@@ -385,6 +410,7 @@ namespace ChainSmart
                     h._TR();
                     n++;
                 }
+
                 h._TABLE();
 
                 h.PAGINATION(n == 30);
@@ -393,7 +419,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("线上销售统一发货", "机构")]
+    [Ui("销售订单集中发货", "机构")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {
         [Ui("按批次", group: 2), Tool(Anchor)]
@@ -423,6 +449,7 @@ namespace ChainSmart
                         var spr = topOrgs[mktid];
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
+
                     h.TR_();
                     h.TD(name);
                     h.TD_("uk-visible@l").T(qty)._TD();
@@ -430,6 +457,7 @@ namespace ChainSmart
 
                     last = mktid;
                 }
+
                 h._MAIN();
             }, false, 6);
         }
@@ -466,6 +494,7 @@ namespace ChainSmart
                         var spr = topOrgs[mktid];
                         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
+
                     h.TR_();
                     h.TD(name);
                     h.TD_("uk-visible@l").T(qty)._TD();
@@ -473,6 +502,7 @@ namespace ChainSmart
 
                     last = mktid;
                 }
+
                 h._MAIN();
             }, false, 6);
         }
@@ -485,7 +515,7 @@ namespace ChainSmart
         [Ui("发出", group: 255), Tool(ButtonOpen)]
         public async Task rev(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             short orgid = wc[-1];
             short typ = 0;
             decimal amt = 0;
@@ -506,7 +536,7 @@ namespace ChainSmart
         [Ui("取消发出", group: 2), Tool(ButtonOpen)]
         public async Task unrcv(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             short orgid = wc[-1];
             short typ = 0;
             decimal amt = 0;

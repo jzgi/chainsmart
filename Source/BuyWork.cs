@@ -44,6 +44,7 @@ namespace ChainSmart
                     {
                         h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
                     }
+
                     h._SPAN();
 
                     h.SPAN_("uk-width-1-6 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
@@ -51,6 +52,7 @@ namespace ChainSmart
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
                     h._LI();
                 }
+
                 h._LI();
 
                 h._UL();
@@ -62,7 +64,7 @@ namespace ChainSmart
         [Ui("新订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
@@ -76,6 +78,7 @@ namespace ChainSmart
                     h.ALERT("尚无当前消费订单");
                     return;
                 }
+
                 MainGrid(h, arr);
                 h.PAGINATION(arr?.Length > 10);
             }, false, 4);
@@ -84,7 +87,7 @@ namespace ChainSmart
         [Ui(tip: "历史订单", icon: "history", group: 2), Tool(Anchor)]
         public async Task past(WebContext wc, int page)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status >= 4 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
@@ -98,6 +101,7 @@ namespace ChainSmart
                     h.ALERT("尚无历史订单");
                     return;
                 }
+
                 MainGrid(h, arr);
                 h.PAGINATION(arr?.Length > 10);
             }, false, 4);
@@ -120,7 +124,7 @@ namespace ChainSmart
 
                 if (o.lns.Length == 1)
                 {
-                    h.PIC(MainApp.WwwUrl, "/item/", ln.itemid, "/icon", css: "uk-width-1-5");
+                    h.PIC(MainApp.WwwUrl, "/lot/", ln.lotid, "/icon", css: "uk-width-1-5");
                 }
                 else
                     h.PIC("/void.webp", css: "uk-width-1-5");
@@ -154,6 +158,7 @@ namespace ChainSmart
                     h.ALERT("尚无网单");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
@@ -175,6 +180,7 @@ namespace ChainSmart
                     h.ALERT("尚无发货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
@@ -197,6 +203,7 @@ namespace ChainSmart
                     h.ALERT("尚无收货");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
@@ -207,7 +214,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -218,16 +225,17 @@ namespace ChainSmart
                     h.ALERT("尚无撤单");
                     return;
                 }
+
                 MainGrid(h, arr);
             }, false, 4);
         }
     }
 
     [OrglyAuthorize(Org.TYP_MKT, 1)]
-    [Ui("销售订单统一送货", "机构")]
+    [Ui("销售订单统一发货", "机构")]
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {
-        [Ui("消费订单", group: 1), Tool(Anchor)]
+        [Ui("待发货", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var mkt = wc[-1].As<Org>();
@@ -235,12 +243,15 @@ namespace ChainSmart
             const short msk = Entity.MSK_EXTRA;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty, msk).T(" FROM buys WHERE mktid = @1 AND state >= 0 ORDER BY uid DESC");
+            // group by commuity 
+            dc.Sql("SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 2 GROUP BY ucom");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id), msk);
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+
+                if (arr == null) return;
 
                 h.MAIN_(grid: true);
 
@@ -255,10 +266,12 @@ namespace ChainSmart
                         h.UL_("uk-card-body");
                         // h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
+
                     h.LI_().T(o.name)._LI();
 
                     last = o.uid;
                 }
+
                 h._UL();
                 h._FORM();
 
@@ -266,18 +279,20 @@ namespace ChainSmart
             });
         }
 
-        [Ui(tip: "历史", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc)
+        [Ui(tip: "个人发货任务", icon: "user", group: 2), Tool(Anchor)]
+        public async Task wait(WebContext wc)
         {
             var mkt = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND state >= 0 ORDER BY uid DESC");
+            dc.Sql("SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status BETWEEN 1 AND 2 GROUP BY ucom");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
+
+                if (arr == null) return;
 
                 h.MAIN_(grid: true);
 
@@ -292,15 +307,68 @@ namespace ChainSmart
                         h.UL_("uk-card-body");
                         // h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
                     }
+
                     h.LI_().T(o.name)._LI();
 
                     last = o.uid;
                 }
+
                 h._UL();
                 h._FORM();
 
                 h._MAIN();
             });
+        }
+
+        [Ui(tip: "社区查询", icon: "search"), Tool(AnchorPrompt)]
+        public async Task search(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            bool inner = wc.Query[nameof(inner)];
+            string com = null;
+            if (inner)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("选择社区");
+                    h.LI_().SELECT_SPEC(nameof(com), org.specs)._LI();
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // OUTER
+            {
+                com = wc.Query[nameof(com)];
+
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ucom, oked, first(oker), count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 4 AND ucom = @2 GROUP BY oked DESC");
+                
+                var arr = await dc.QueryAsync<User>(p => p.Set(org.id).Set(com));
+
+                wc.GivePage(200, h =>
+                {
+                    h.TOOLBAR();
+                    h.MAINGRID(arr, o =>
+                    {
+                        h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
+
+                        if (o.icon)
+                        {
+                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                        }
+                        else
+                            h.PIC("/void.webp", css: "uk-width-1-5");
+
+                        h.ASIDE_();
+                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                        h.Q(o.tel, "uk-width-expand");
+                        h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                        h._ASIDE();
+
+                        h._A();
+                    });
+                }, false, 30);
+            }
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -122,7 +122,7 @@ namespace ChainSmart
                 {
                     h.TD_().T(o.created, 2, 2)._TD();
                     h.TD(o.pay);
-                    h.TD(o.fixer);
+                    h.TD(o.oker);
                 });
             }, false, 6);
         }
@@ -133,7 +133,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND typ >= 2 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND typ >= 2 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -210,8 +210,8 @@ namespace ChainSmart
                 creator = prin.name,
                 lns = lst.ToArray(),
                 status = STU_OKED,
-                @fixed = now,
-                fixer = prin.name,
+                oked = now,
+                oker = prin.name,
                 pay = pay,
             };
             m.SetToPay();

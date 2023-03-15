@@ -32,8 +32,8 @@ namespace ChainSmart
 
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.status == STU_ABORTED ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.fixer != null) h.LI_().FIELD2(o.IsCancelled ? "撤销" : "收货", o.@fixed, o.fixer)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "发货", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "收货", o.oked, o.oker)._LI();
 
                 h._UL();
 
@@ -44,6 +44,7 @@ namespace ChainSmart
                     {
                         h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
                     }
+
                     h._TD();
                     h.TD_(css: "uk-text-right").CNY(d.RealPrice).SP().SUB(d.unit)._TD();
                     h.TD2(d.qty, "件", css: "uk-text-right");
@@ -61,10 +62,10 @@ namespace ChainSmart
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING shpid, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(prin.id)))
             {
                 dc.Let(out int shpid);
@@ -81,7 +82,7 @@ namespace ChainSmart
         public async Task note(WebContext wc)
         {
             int orderid = wc[0];
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             short appeal;
             if (wc.IsGet)
             {
@@ -106,7 +107,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, pay");
@@ -127,10 +128,10 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET fixed = @1, fixer = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);
@@ -149,12 +150,12 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("UPDATE buys SET refund = pay, status = 8, adapted = @1, adapter = @2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, topay, refund");
+                dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, topay, refund");
                 if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
                     dc.Let(out string uim);
@@ -187,5 +188,15 @@ namespace ChainSmart
 
     public class MktlyBuyVarWork : BuyVarWork
     {
+        public new async Task @default(WebContext wc)
+        {
+            string com = wc[0];
+            var org = wc[-2].As<Org>();
+
+            const short msk = 255 | MSK_EXTRA;
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty, msk).T(" FROM buys WHERE shpid = @1 AND ucom = @2 ORDER BY uid");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(com), msk);
+        }
     }
 }

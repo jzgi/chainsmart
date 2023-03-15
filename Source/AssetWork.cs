@@ -48,16 +48,16 @@ namespace ChainSmart
         }
     }
 
-    [Ui("资源设施", "商户")]
+    [Ui("产源设施", "商户")]
     public class SrclyAssetWork : AssetWork<OrglyAssetVarWork>
     {
-        [Ui("资源设施", group: 1), Tool(Anchor)]
+        [Ui("产源设施", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE orgid = @1 AND status = 4 ORDER BY fixed DESC");
+            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
             var arr = await dc.QueryAsync<Asset>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -66,7 +66,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无资源设施");
+                    h.ALERT("尚无产源设施");
                     return;
                 }
 
@@ -102,7 +102,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE orgid = @1 AND status = 8 ORDER BY fixed DESC");
+            dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
             var arr = await dc.QueryAsync<Asset>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -119,7 +119,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建资源设施", icon: "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("新建", "新建产源设施", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();

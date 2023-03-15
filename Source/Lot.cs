@@ -10,26 +10,10 @@ namespace ChainSmart
     {
         public static readonly Lot Empty = new();
 
-        public new static readonly Map<short, string> Statuses = new()
+        public static readonly Map<short, string> Typs = new()
         {
-            { STU_VOID, "无效" },
-            { STU_CREATED, "创建" },
-            { STU_ADAPTED, "调整" },
-            { STU_OKED, "上线" },
-        };
-
-        public static readonly Map<short, string> States = new()
-        {
-            { 0, "通货" },
-            { 1, "进口" },
-            { 2, "零添" },
-            { 4, "特品" },
-        };
-
-        public static readonly Map<short, string> Terms = new()
-        {
-            { 0, "现货" },
-            { 1, "预售（指定交货日期）" },
+            { 1, "现货" },
+            { 2, "预售" },
         };
 
         internal int id;
@@ -37,8 +21,8 @@ namespace ChainSmart
         internal string srcname;
 
         internal int[] targs; // (optional) targeted centers or markets
+        internal short catid;
         internal DateTime dated;
-        internal short term;
 
         // individual order relevant
         internal int assetid;
@@ -47,10 +31,10 @@ namespace ChainSmart
         internal short unitx;
         internal decimal price;
         internal decimal off;
-        internal int cap;
-        internal int avail;
         internal short min;
-        internal short max;
+        internal short cap;
+        internal int stock;
+        internal int avail;
 
         internal int nstart;
         internal int nend;
@@ -82,15 +66,15 @@ namespace ChainSmart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Get(nameof(targs), ref targs);
+                s.Get(nameof(catid), ref catid);
                 s.Get(nameof(dated), ref dated);
-                s.Get(nameof(term), ref term);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(min), ref min);
-                s.Get(nameof(max), ref max);
                 s.Get(nameof(cap), ref cap);
+                s.Get(nameof(stock), ref stock);
                 s.Get(nameof(avail), ref avail);
             }
 
@@ -132,15 +116,15 @@ namespace ChainSmart
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
                 s.Put(nameof(targs), targs);
+                s.Put(nameof(catid), catid);
                 s.Put(nameof(dated), dated);
-                s.Put(nameof(term), term);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
                 s.Put(nameof(off), off);
                 s.Put(nameof(min), min);
-                s.Put(nameof(max), max);
                 s.Put(nameof(cap), cap);
+                s.Put(nameof(stock), stock);
                 s.Put(nameof(avail), avail);
             }
 
@@ -174,6 +158,10 @@ namespace ChainSmart
         public int AvailX => avail / unitx;
 
         public StockOp[] Ops => ops;
+
+        public bool IsSpot => typ == 1;
+
+        public bool IsFuture => typ == 2;
 
         public override string ToString() => name;
     }

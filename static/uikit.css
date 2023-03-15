@@ -8,7 +8,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #ededed;
+    background-color: #fff;
     font-size: 0.9375rem;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -48,7 +48,7 @@ span {
 }
 
 aside {
-    padding-left: 4px;
+    padding-left: 6px;
     height: 100%;
     width: 100%;
     min-width: 1px;
@@ -647,16 +647,11 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
-}
-
-ul.uk-card-body {
-    border-top: 1px solid #ededed;
-    border-bottom: 1px solid #ededed;
+    border-top: 1px solid #f8f8f8;
 }
 
 .uk-card-body.uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
+    border-top: 1px solid #fff;
 }
 
 /*
@@ -1135,7 +1130,7 @@ button.uk-icon:not(:disabled) {
     min-height: 3rem;
     width: 100%;
     top: 0;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     color: #333;
     z-index: 9;
     display: flex;
@@ -1148,7 +1143,7 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
-    background-color: inherit;
+    background-color: #ededed;
     border-bottom: 1px solid #ddd;
 }
 
@@ -1182,14 +1177,12 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #ededed;
-    border-top: 1px solid #ddd;
+    background-color: #f8f8f8;
 }
 
 .uk-bottom-bar.uk-large {
     height: 4rem;
     min-height: 4rem;
-    border-top: 1px solid #ddd;
 }
 
 .uk-bottom-placeholder.uk-large {
@@ -1780,7 +1773,7 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    background-color: #ededed;
+    background-color: #fff;
     border-top: 2px solid #f59604;
 }
 
@@ -1908,7 +1901,7 @@ a.uk-button-primary.uk-active {
 .uk-button-link {
     background-color: inherit;
     border: 0;
-    color: #333;
+    color: #f59604;
     display: flex;
     justify-content: start;
     align-items: center;
@@ -1918,13 +1911,11 @@ a.uk-button-primary.uk-active {
 }
 
 .uk-button-link:hover,
-.uk-button-link:focus {
-    color: #f59604;
-}
-
+.uk-button-link:focus,
 .uk-button-link:active,
 .uk-button-link.uk-active {
     color: #f59604;
+    background-color: #ededed;
 }
 
 .uk-button-link:disabled {
@@ -2161,7 +2152,7 @@ main.uk-grid>li {
 .uk-card-body {
 
     padding: 4px 6px;
-    background-color: #fff;
+    background-color: #f8f8f8;
     width: -webkit-fill-available;
 }
 
@@ -3088,7 +3079,7 @@ ul.uk-nav-sub {
 .uk-subnav> :focus,
 .uk-subnav>.uk-active {
     color: #000;
-    background-color: #ededed;
+    background-color: #fff;
     border-top: 2px solid #f59604;
     border-top-right-radius: 24px;
     border-bottom-right-radius: 24px;

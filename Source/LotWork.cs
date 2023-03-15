@@ -24,7 +24,7 @@ namespace ChainSmart
                 h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
                 h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                 h._ASIDE();
@@ -95,7 +95,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE srcid = @1 AND status = 8 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -117,7 +117,7 @@ namespace ChainSmart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("新建", "新建产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc)
+        public async Task @new(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
@@ -126,6 +126,7 @@ namespace ChainSmart
 
             var o = new Lot
             {
+                typ = (short)typ,
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
@@ -133,11 +134,24 @@ namespace ChainSmart
                 created = DateTime.Now,
                 creator = prin.name,
                 min = 1,
-                max = 200,
+                cap = 200,
             };
 
             if (wc.IsGet)
             {
+                if (typ == 0)
+                {
+                    wc.GivePane(200, h =>
+                    {
+                        h.UL_("uk-card- uk-card-primary uk-card-body uk-list uk-list-divider");
+                        h.LI_().AGOTO("现货交易", "new-1")._LI();
+                        h.LI_().AGOTO("预售交易", "new-2")._LI();
+                        h._UL();
+                    });
+
+                    return;
+                }
+
                 using var dc = NewDbContext();
 
                 await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
@@ -145,18 +159,22 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_();
+                    h.FORM_().FIELDSUL_(Lot.Typs[(short)typ]);
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                    h.LI_().SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                    h.LI_().SELECT("资源设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().SELECT("交货条款", nameof(o.term), o.term, Lot.Terms, required: true).DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                    if (typ == 2)
+                    {
+                        h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                    }
+
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.cap), o.cap, min: 1, max: 1000)._LI();
+                    h.LI_().NUMBER("批次总件数", nameof(o.stock), o.stock)._LI();
 
                     h._FIELDSUL();
 
@@ -182,9 +200,31 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR, 1)]
-    [Ui("销售批次统一盘存", "机构")]
+    [Ui("产品批次集中盘库", "机构")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {
+        [Ui("统一盘库", group: 1), Tool(Anchor)]
+        public async Task @default(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE srcid = @1 AND status = 4 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null)
+                {
+                    h.ALERT("暂无产品批次");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            }, false, 12);
+        }
     }
 
     public class ShplyBookLotWork : LotWork<ShplyBookLotVarWork>

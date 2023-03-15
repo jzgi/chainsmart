@@ -9,13 +9,18 @@ namespace ChainSmart
     {
         public static readonly Book Empty = new();
 
+        public static readonly Map<short, string> Typs = new()
+        {
+            { 1, "现货" },
+            { 2, "预售" },
+        };
+
         public new static readonly Map<short, string> Statuses = new()
         {
-            { STU_VOID, null },
+            { STU_VOID, "撤单" },
             { STU_CREATED, "下单" },
-            { STU_ADAPTED, "发货" },
-            { STU_OKED, "收货" },
-            { STU_ABORTED, "撤单" },
+            { STU_ADAPTED, "待发" },
+            { STU_OKED, "发货" },
         };
 
 

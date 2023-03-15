@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/ChainMart.csproj"
+                "${workspaceFolder}/ChainSmart.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
