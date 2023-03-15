@@ -38,23 +38,25 @@ namespace ChainSmart
                 h._LI();
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
                 h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
-                h.LI_().FIELD("起订件数", m.min).FIELD("限订件数", m.cap)._LI();
-                h.LI_().FIELD("批次总件数", m.stock).FIELD("剩余件数", m.AvailX)._LI();
+                h.LI_().FIELD("起订件数", m.min).FIELD("批次总量", m.cap)._LI();
+                h.LI_().FIELD("库存量", m.stock).FIELD("可分配量", m.avail)._LI();
                 h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
-                h.LI_().FIELD("处理状态", m.status, Statuses)._LI();
                 h.LI_().FIELD2("创建", m.created, m.creator)._LI();
-                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter, "&nbsp;")._LI();
-                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker, "&nbsp;")._LI();
+                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapted, m.adapter)._LI();
+                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
                 h._UL();
 
                 h.TABLE(m.ops, o =>
-                {
-                    h.TD_().T(o.dt, time: 1)._TD();
-                    h.TD(o.tip);
-                    h.TD(o.qty, right: true);
-                    h.TD(o.avail, right: true);
-                    h.TD(o.by);
-                }, caption: "库存操作记录", reverse: true);
+                    {
+                        h.TD_().T(o.dt, time: 1)._TD();
+                        h.TD(o.tip);
+                        h.TD(o.qty, right: true);
+                        h.TD(o.avail, right: true);
+                        h.TD(o.by);
+                    },
+                    thead: () => h.TH("操作时间").TH("摘要").TH("数量").TH("余量").TH("操作"),
+                    reverse: true
+                );
 
                 h.TOOLBAR(bottom: true, status: m.status, state: m.state);
             });
@@ -260,9 +262,8 @@ namespace ChainSmart
                     }
 
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("限订件数", nameof(o.cap), o.cap, min: 1, max: 1000)._LI();
-                    h.LI_().NUMBER("批次总件数", nameof(o.stock), o.stock)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).LI_().NUMBER("批次总量", nameof(o.stock), o.stock)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -298,14 +299,14 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 4);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4, status: STU_CREATED | STU_ADAPTED)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, nameof(m) + sub, false, 3);
@@ -440,12 +441,13 @@ namespace ChainSmart
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED | STU_OKED)]
         public async Task stock(WebContext wc)
         {
-            int itemid = wc[0];
+            int id = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User)wc.Principal;
 
             short typ = 0;
-            decimal qty = 0.0M;
+            string tip = null;
+            int qty = 0;
 
             if (wc.IsGet)
             {
@@ -453,7 +455,8 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_("库存操作");
                     h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
-                    h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
+                    h.LI_().TEXT("摘要", nameof(tip), tip, datalst: StockOp.Tips)._LI();
+                    h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
                 });
             }
@@ -461,22 +464,18 @@ namespace ChainSmart
             {
                 var f = await wc.ReadAsync<Form>();
                 typ = f[nameof(typ)];
+                tip = f[nameof(tip)];
                 qty = f[nameof(qty)];
 
                 // update
-                using var dc = NewDbContext();
+                if (typ > 1)
+                {
+                    qty = -qty;
+                }
 
-                var now = DateTime.Now;
-                if (typ < 5) // add
-                {
-                    dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail + @3::NUMERIC(6,1)), @4), avail = avail + @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
-                }
-                else // reduce
-                {
-                    dc.Sql("UPDATE lots SET ops[coalesce(array_length(ops,1),0) + 1] = ROW(@1, @2, @3, (avail - @3::NUMERIC(6,1)), @4), avail = avail - @3::NUMERIC(6,1) WHERE id = @5 AND srcid = @6");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
-                }
+                using var dc = NewDbContext();
+                dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND srcid = @6");
+                await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(tip).Set(qty).Set(prin.name).Set(id).Set(org.id));
 
                 wc.GivePane(200); // close dialog
             }
@@ -490,16 +489,8 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            try
-            {
-                dc.Sql("DELETE FROM lots WHERE id = @1 AND srcid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
-            catch (Exception e)
-            {
-                dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
+            dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND srcid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204); // no content
         }

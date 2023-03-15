@@ -233,7 +233,7 @@ namespace ChainSmart
                 var now = DateTime.Now;
                 if (typ < 5) // add
                 {
-                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3::NUMERIC(8,1)), @4, @5)::StockOp, avail = avail + @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4, @5)::StockOp, avail = avail + @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
                     await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
                 }
                 else // reduce

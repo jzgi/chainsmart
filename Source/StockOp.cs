@@ -11,7 +11,10 @@ namespace ChainSmart
             { 2, "－" },
         };
 
-        public static readonly string[] Tips = { "到货", "返库", "调拨", "盘点", "损耗" };
+        public static readonly string[] Tips =
+        {
+            "到货", "返库", "损耗", "盘点", "冲正"
+        };
 
 
         public DateTime dt;

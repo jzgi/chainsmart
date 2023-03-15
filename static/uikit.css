@@ -23,7 +23,7 @@ body::-webkit-scrollbar {
 }
 
 body.uk-pane {
-    background-color: #fff;
+    background-color: #f8f8f8;
 }
 
 form {
@@ -647,7 +647,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid #fff;
 }
 
 .uk-card-body.uk-list-divider>li:nth-child(n+2) {
@@ -1177,12 +1177,13 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #f8f8f8;
+    background-color: #ededed;
 }
 
 .uk-bottom-bar.uk-large {
     height: 4rem;
     min-height: 4rem;
+    background-color: #f8f8f8;
 }
 
 .uk-bottom-placeholder.uk-large {
@@ -1219,7 +1220,7 @@ form legend {
 } 
 
 .uk-fieldset>ul>li:nth-child(n+2) {
-    border-top: 1px solid #ededed;
+    border-top: 1px solid #fff;
 }
 
 .uk-radio,
@@ -1299,7 +1300,7 @@ select.uk-border-rounded {
     width: 100%;
     padding: 4px;
     color: #333;
-    background-color: #f8f8f8;
+    background-color: #f2f2f2;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;
