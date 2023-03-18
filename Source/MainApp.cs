@@ -48,7 +48,7 @@ namespace ChainSmart
         {
             Cache(dc =>
                 {
-                    dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY idx");
+                    dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY id");
                     return dc.Query<short, Cat>();
                 }, 60 * 60 * 12
             );

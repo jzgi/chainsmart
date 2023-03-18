@@ -141,7 +141,7 @@ namespace ChainSmart
 
 
         [BizNotice(BUY_CREATED)]
-        [Ui("销售订单", group: 1), Tool(Anchor)]
+        [Ui("新销售订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -155,7 +155,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无网单");
+                    h.ALERT("尚无新销售订单");
                     return;
                 }
 
@@ -163,7 +163,7 @@ namespace ChainSmart
             }, false, 4);
         }
 
-        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        [Ui(tip: "已集中", icon: "pull", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -177,7 +177,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无发货");
+                    h.ALERT("尚无已集中订单");
                     return;
                 }
 
@@ -186,7 +186,7 @@ namespace ChainSmart
         }
 
         [BizNotice(BUY_OKED)]
-        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -200,7 +200,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无收货");
+                    h.ALERT("尚无已发货订单");
                     return;
                 }
 
@@ -209,7 +209,7 @@ namespace ChainSmart
         }
 
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -222,7 +222,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无撤单");
+                    h.ALERT("尚无已撤销订单");
                     return;
                 }
 
@@ -342,7 +342,7 @@ namespace ChainSmart
 
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ucom, oked, first(oker), count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 4 AND ucom = @2 GROUP BY oked DESC");
-                
+
                 var arr = await dc.QueryAsync<User>(p => p.Set(org.id).Set(com));
 
                 wc.GivePage(200, h =>

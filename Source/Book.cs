@@ -9,10 +9,14 @@ namespace ChainSmart
     {
         public static readonly Book Empty = new();
 
+        public const short
+            TYP_SPOT = 1,
+            TYP_FUTURE = 2;
+
         public static readonly Map<short, string> Typs = new()
         {
-            { 1, "现货" },
-            { 2, "预售" },
+            { TYP_SPOT, "现货订单" },
+            { TYP_FUTURE, "助农订单" },
         };
 
         public new static readonly Map<short, string> Statuses = new()

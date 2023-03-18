@@ -24,7 +24,7 @@ namespace ChainSmart
                 h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.name).SPAN(Lot.Typs[o.typ], "uk-badge")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
                 h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                 h._ASIDE();
@@ -43,7 +43,7 @@ namespace ChainSmart
     [Ui("产品批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
-        [Ui("产品批次", group: 1), Tool(Anchor)]
+        [Ui("上线产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -58,7 +58,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无产品批次");
+                    h.ALERT("暂无上线产品批次");
                     return;
                 }
 
@@ -66,7 +66,7 @@ namespace ChainSmart
             }, false, 12);
         }
 
-        [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
+        [Ui(tip: "已下线", icon: "cloud-download", group: 2), Tool(Anchor)]
         public async Task off(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -81,7 +81,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无产品批次");
+                    h.ALERT("暂无已下线产品批次");
                     return;
                 }
 
@@ -89,8 +89,8 @@ namespace ChainSmart
             }, false, 12);
         }
 
-        [Ui(icon: "trash", group: 4), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        [Ui(tip: "已删除", icon: "trash", group: 4), Tool(Anchor)]
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -104,7 +104,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("暂无产品批次");
+                    h.ALERT("暂无已删除产品批次");
                     return;
                 }
 
@@ -116,8 +116,8 @@ namespace ChainSmart
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("新建", "新建产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int typ)
+        [Ui("现货", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+        public async Task newspot(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
@@ -126,7 +126,7 @@ namespace ChainSmart
 
             var o = new Lot
             {
-                typ = (short)typ,
+                typ = Lot.TYP_SPOT,
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
@@ -139,19 +139,6 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                if (typ == 0)
-                {
-                    wc.GivePane(200, h =>
-                    {
-                        h.UL_("uk-card- uk-card-primary uk-card-body uk-list uk-list-divider");
-                        h.LI_().AGOTO("现货交易", "new-1")._LI();
-                        h.LI_().AGOTO("预售交易", "new-2")._LI();
-                        h._UL();
-                    });
-
-                    return;
-                }
-
                 using var dc = NewDbContext();
 
                 await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
@@ -159,25 +146,20 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(Lot.Typs[(short)typ]);
+                    h.FORM_().FIELDSUL_("现货产品批次（先入品控库后接单）");
 
                     h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    if (typ == 2)
-                    {
-                        h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
-                    }
-
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
                     h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("批次总件数", nameof(o.stock), o.stock)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL();
 
-                    h.BOTTOM_BUTTON("确认", nameof(@new));
+                    h.BOTTOM_BUTTON("确认", nameof(newspot));
 
                     h._FORM();
                 });
@@ -187,6 +169,72 @@ namespace ChainSmart
                 const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
                 // populate 
                 await wc.ReadObjectAsync(msk, instance: o);
+
+                // db insert
+                using var dc = NewDbContext();
+                dc.Sql("INSERT INTO lots ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
+                await dc.ExecuteAsync(p => o.Write(p, msk));
+
+                wc.GivePane(200); // close dialog
+            }
+        }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("助农", "新建助农产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+        public async Task newlift(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User)wc.Principal;
+            var topOrgs = Grab<int, Org>();
+            var cats = Grab<short, Cat>();
+
+            var o = new Lot
+            {
+                typ = Lot.TYP_LIFT,
+                status = Entity.STU_CREATED,
+                srcid = org.id,
+                srcname = org.name,
+                unitx = 1,
+                created = DateTime.Now,
+                creator = prin.name,
+                min = 1,
+                cap = 200,
+            };
+
+            if (wc.IsGet)
+            {
+                using var dc = NewDbContext();
+
+                await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
+                var assets = dc.ToIntMap();
+
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("助农产品批次（先接单后入品控库）");
+
+                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
+                    h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
+                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                    h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
+
+                    h._FIELDSUL();
+
+                    h.BOTTOM_BUTTON("确认", nameof(newlift));
+
+                    h._FORM();
+                });
+            }
+            else // POST
+            {
+                const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+                // populate 
+                await wc.ReadObjectAsync(msk, instance: o);
+                o.avail = o.cap; // initial available
 
                 // db insert
                 using var dc = NewDbContext();

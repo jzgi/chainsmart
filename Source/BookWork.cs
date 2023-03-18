@@ -53,7 +53,7 @@ namespace ChainSmart
             });
         }
 
-        [Ui("采购订单", group: 1), Tool(Anchor)]
+        [Ui("新采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -67,7 +67,7 @@ namespace ChainSmart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无采购");
+                    h.ALERT("尚无新采购订单");
                     return;
                 }
 
@@ -76,7 +76,7 @@ namespace ChainSmart
         }
 
         [BizNotice(BOOK_ADAPTED)]
-        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        [Ui(tip: "已确收", icon: "check", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -90,7 +90,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无发货");
+                    h.ALERT("尚无已确收订单");
                     return;
                 }
 
@@ -98,7 +98,7 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -112,7 +112,7 @@ namespace ChainSmart
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无收货");
+                    h.ALERT("尚无已发货订单");
                     return;
                 }
 
@@ -122,7 +122,7 @@ namespace ChainSmart
 
         [BizNotice(BOOK_ABORTED)]
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
-        public async Task cancelled(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -145,24 +145,24 @@ namespace ChainSmart
 
         [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
         [Ui("采购", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int typ)
+        public async Task @new(WebContext wc, int catid)
         {
             var org = wc[-1].As<Org>();
             int ctrid = org.ctrid;
             var cats = Grab<short, Cat>();
 
-            if (typ == 0)
+            if (catid == 0)
             {
-                wc.Subscript = typ = cats.KeyAt(0);
+                wc.Subscript = catid = cats.KeyAt(0);
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND typ = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(typ).Set(org.ctrid));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND catid = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(catid).Set(org.ctrid));
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().NAVBAR(nameof(@new), typ, cats)._TOPBAR();
+                h.TOPBAR_().NAVBAR(nameof(@new), catid, cats)._TOPBAR();
 
                 if (arr == null)
                 {
@@ -185,12 +185,11 @@ namespace ChainSmart
 
                     h._A();
                 });
-            }, false, 120);
+            }, false, 60);
         }
     }
 
     [OrglyAuthorize(Org.TYP_SRC, 1)]
-    [Ui("销售订单", "商户")]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         // timer that automatically transfers booking orders 
@@ -204,7 +203,6 @@ namespace ChainSmart
             dc.Sql("");
             await dc.ExecuteAsync();
         }
-
 
         static void MainGrid(HtmlBuilder h, Book[] arr)
         {
@@ -230,22 +228,25 @@ namespace ChainSmart
             });
         }
 
+
+        short Typ => (short)State;
+
         [BizNotice(BOOK_CREATED)]
-        [Ui("销售订单"), Tool(Anchor)]
+        [Ui("新销售订单"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 1 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 1 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无销售");
+                    h.ALERT("尚无新销售订单");
                     return;
                 }
 
@@ -253,21 +254,21 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [Ui(tip: "已发货", icon: "sign-out", group: 2), Tool(Anchor)]
+        [Ui(tip: "已授意", icon: "check", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 2 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 2 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无发货");
+                    h.ALERT("尚无已授意订单");
                     return;
                 }
 
@@ -276,21 +277,21 @@ namespace ChainSmart
         }
 
         [BizNotice(BOOK_OKED)]
-        [Ui(tip: "已收货", icon: "sign-in", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 4 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 4 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无收货");
+                    h.ALERT("尚无已发货订单");
                     return;
                 }
 
@@ -304,15 +305,15 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND status = 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无撤单");
+                    h.ALERT("尚无撤销的订单");
                     return;
                 }
 

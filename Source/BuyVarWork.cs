@@ -102,7 +102,7 @@ namespace ChainSmart
     public class ShplyBuyVarWork : BuyVarWork
     {
         [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("发货", "确认发货？", icon: "sign-out"), Tool(ButtonConfirm, status: STU_CREATED)]
+        [Ui("集中", "确认集中统一发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 1)]
         public async Task adapt(WebContext wc)
         {
             int id = wc[0];
@@ -123,7 +123,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("收货", "确认收货？", icon: "sign-in"), Tool(ButtonConfirm, status: STU_ADAPTED)]
+        [Ui("发货", "确认自行发货？", icon: "sign-out"), Tool(ButtonConfirm, status: 3)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -131,7 +131,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING uim, pay");
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status BETWEEN 1 AND 2 RETURNING uim, pay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);
@@ -145,8 +145,8 @@ namespace ChainSmart
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED)]
-        public async Task abort(WebContext wc)
+        [Ui("撤单", "确认撤单退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+        public async Task @void(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
@@ -155,7 +155,7 @@ namespace ChainSmart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, topay, refund");
+                dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND shpid = @4 AND status BETWEEN 1 AND 2 RETURNING uim, topay, refund");
                 if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
                     dc.Let(out string uim);

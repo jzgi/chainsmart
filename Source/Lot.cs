@@ -10,10 +10,14 @@ namespace ChainSmart
     {
         public static readonly Lot Empty = new();
 
+        public const short
+            TYP_SPOT = 1,
+            TYP_LIFT = 2;
+
         public static readonly Map<short, string> Typs = new()
         {
-            { 1, "现货" },
-            { 2, "预售" },
+            { TYP_SPOT, "现货" },
+            { TYP_LIFT, "助农" },
         };
 
         internal int id;
@@ -32,7 +36,7 @@ namespace ChainSmart
         internal decimal price;
         internal decimal off;
         internal short min;
-        internal short cap;
+        internal int cap;
         internal int stock;
         internal int avail;
 
@@ -162,6 +166,8 @@ namespace ChainSmart
         public bool IsSpot => typ == 1;
 
         public bool IsFuture => typ == 2;
+
+        public int MaxForSingleBook => Math.Min(avail, 200);
 
         public override string ToString() => name;
     }

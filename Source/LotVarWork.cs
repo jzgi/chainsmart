@@ -573,13 +573,13 @@ namespace ChainSmart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = m.min; i < m.cap; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+                for (int i = m.min; i < m.MaxForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
 
-                h._SELECT().SP().SPAN_("uk-width-expand").T("件，共").SP();
-                h.OUTPUT(nameof(qty), qty).SP().T(m.unit)._SPAN();
+                h._SELECT().SP();
+                h.SPAN_("uk-width-expand").T("件，共").SP().OUTPUT(nameof(qty), qty).SP().T(m.unit)._SPAN();
 
                 // pay button
                 h.BUTTON_(nameof(book), onclick: "return call_book(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
