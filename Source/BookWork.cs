@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Nodal.Nodality;
@@ -16,7 +17,6 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("采购订单", "商户")]
     public class ShplyBookWork : BookWork<ShplyBookVarWork>
     {
@@ -143,7 +143,7 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("采购", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int catid)
         {
@@ -178,7 +178,7 @@ namespace ChainSmart
                     h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(Lot.Statuses[o.status], "uk-badge")._HEADER();
+                    h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
                     h.Q(o.tip, "uk-width-expand");
                     h.FOOTER_().T("每件").SP().T(o.unitx).SP().T(o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                     h._ASIDE();
@@ -189,13 +189,12 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
     public class SrclyBookWork : BookWork<SrclyBookVarWork>
     {
         // timer that automatically transfers booking orders 
         const uint FIVE_MINUTES = 1000 * 300;
 
-        static readonly Timer TIMER = new Timer(AutoProcess, null, FIVE_MINUTES, FIVE_MINUTES);
+        static readonly Timer TIMER = new(AutoProcess, null, FIVE_MINUTES, FIVE_MINUTES);
 
         static async void AutoProcess(object x)
         {
@@ -232,7 +231,7 @@ namespace ChainSmart
         short Typ => (short)State;
 
         [BizNotice(BOOK_CREATED)]
-        [Ui("新销售订单"), Tool(Anchor)]
+        [Ui("新订单"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -246,7 +245,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无新销售订单");
+                    h.ALERT("尚无新订单");
                     return;
                 }
 
@@ -300,7 +299,7 @@ namespace ChainSmart
         }
 
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -323,7 +322,7 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT)]
     [Ui("采购订单集中收货", "机构")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
@@ -419,7 +418,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR)]
     [Ui("销售订单集中发货", "机构")]
     public class CtrlyBookWork : BookWork<CtrlyBookVarWork>
     {

@@ -10,26 +10,27 @@ namespace ChainSmart
     public class AdmlyAuthorizeAttribute : AuthorizeAttribute
     {
         // platform admin role requirement (bitwise)
-        readonly short admly;
+        readonly short role;
 
 
-        public AdmlyAuthorizeAttribute(short admly = 0)
+        public AdmlyAuthorizeAttribute(short role = 1)
         {
-            this.admly = admly;
+            this.role = role;
         }
 
         public override bool Do(WebContext wc, bool mock)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             // admly required
-            if (admly > 0)
+            if (role > 0)
             {
                 if (!mock)
                 {
                     wc.Role = prin.admly;
                 }
-                return (prin.admly & admly) == admly;
+
+                return (prin.admly & role) == role;
             }
 
             return false;

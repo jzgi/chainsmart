@@ -1,8 +1,5 @@
-using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Nodal;
 using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart
 {
@@ -12,7 +9,7 @@ namespace ChainSmart
         protected override void OnCreate()
         {
             // id of either current user or the specified
-            CreateVarWork<MyVarWork>((prin, key) => key?.ToInt() ?? ((User) prin).id);
+            CreateVarWork<MyVarWork>((prin, key) => key?.ToInt() ?? ((User)prin).id);
         }
     }
 }

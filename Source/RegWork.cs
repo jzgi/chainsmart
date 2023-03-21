@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using static ChainSmart.User;
 using static ChainFx.Web.Modal;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
@@ -87,10 +86,10 @@ namespace ChainSmart
         [Ui("新建", "新建区域", icon: "plus", group: 7), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int typ)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var o = new Reg
             {
-                typ = (short) typ,
+                typ = (short)typ,
                 created = DateTime.Now,
                 creator = prin.name,
             };

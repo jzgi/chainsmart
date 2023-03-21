@@ -19,9 +19,7 @@ namespace ChainSmart
             ROL_OPN = 0b0000011, // operation
             ROL_LOG = 0b0000101, // logistic
             ROL_FIN = 0b0001001, // finance
-            ROL_MGT = 0b0011111, // management
-            // suppliement
-            ROL_RVW = 0b0100001; // review
+            ROL_MGT = 0b0011111; // management
 
         public static readonly Map<short, string> Admly = new()
         {
@@ -29,8 +27,6 @@ namespace ChainSmart
             { ROL_LOG, "物流" },
             { ROL_FIN, "财务" },
             { ROL_MGT, "管理" },
-            // suppliement
-            { ROL_RVW, "审核" },
         };
 
         public static readonly Map<short, string> Orgly = new()
@@ -39,10 +35,8 @@ namespace ChainSmart
             { ROL_LOG, "物流" },
             { ROL_FIN, "财务" },
             { ROL_MGT, "管理" },
-            { ROL_RVW, "审核" },
-
-            { ROL_MGT | ROL_RVW, "管理审核" },
         };
+
 
         internal int id;
         internal string tel;
@@ -134,57 +128,52 @@ namespace ChainSmart
         /// <summary>
         /// admly, srcid + srcly, shpid + shply
         /// </summary>
-        public (bool dive, short role ) GetRoleForOrg(Org org, short orgtyp = 0)
+        public short GetRoleForOrg(Org org, out bool super, out int ulevel)
         {
-            bool dive;
-            short role = 0;
+            short ret = 0;
 
-            var orgid_ = org.IsSource ? srcid : shpid;
-            var orgly_ = org.IsSource ? srcly : shply;
+            super = false;
+            ulevel = 0;
+
+            var src = org.IsSource;
+            var orgid = src ? srcid : shpid;
+            var orgly = src ? srcly : shply;
 
             // is of any role for the org
-            if (org.id == orgid_)
+            if (org.id == orgid)
             {
-                role = orgly_;
-                dive = false;
+                ret = orgly;
+                ulevel = org.IsTopOrg ? 2 : 4;
             }
             else //  diving role
             {
-                if (org.IsTopOrg && admly > 0)
+                if (org.IsTopOrg)
                 {
-                    if (org.trust)
+                    if (org.trust && admly > 0)
                     {
-                        role = admly;
-                    }
-
-                    if ((admly & ROL_MGT) == ROL_MGT)
-                    {
-                        role |= ROL_RVW;
+                        ret = admly;
+                        super = true;
+                        ulevel = 1;
                     }
                 }
-                else if (!org.IsTopOrg && orgid_ == org.prtid && (orgly_ > 0 && orgid_ > 0))
+                else
                 {
-                    if (org.trust)
+                    if (org.trust && orgid == org.prtid && (orgly > 0 && orgid > 0))
                     {
-                        role = orgly_;
-                    }
-
-                    if ((orgly_ & ROL_MGT) == ROL_MGT)
-                    {
-                        role |= ROL_RVW;
+                        ret = orgly;
+                        super = true;
+                        ulevel = 2;
                     }
                 }
-
-                dive = true;
             }
 
-            return (dive, role);
+            return ret;
         }
 
-        public bool CanDive(Org org)
+        public bool CanSupervize(Org org)
         {
-            var (div, role) = GetRoleForOrg(org);
-            return div && role > 0;
+            var role = GetRoleForOrg(org, out var super, out _);
+            return super && role > 0;
         }
 
         public override string ToString() => name;

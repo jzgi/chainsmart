@@ -211,7 +211,6 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("商品", "商户")]
     public class ShplyItemWork : ItemWork<ShplyItemVarWork>
     {

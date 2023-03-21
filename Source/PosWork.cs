@@ -17,7 +17,6 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SHP, User.ROL_OPN)]
     [Ui("零售终端", "商户")]
     public class ShplyPosWork : PosWork<ShplyPosVarWork>
     {

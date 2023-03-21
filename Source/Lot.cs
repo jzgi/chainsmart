@@ -12,12 +12,12 @@ namespace ChainSmart
 
         public const short
             TYP_SPOT = 1,
-            TYP_LIFT = 2;
+            TYP_OPEN = 2;
 
         public static readonly Map<short, string> Typs = new()
         {
             { TYP_SPOT, "现货" },
-            { TYP_LIFT, "助农" },
+            { TYP_OPEN, "助农" },
         };
 
         internal int id;
@@ -26,7 +26,8 @@ namespace ChainSmart
 
         internal int[] targs; // (optional) targeted centers or markets
         internal short catid;
-        internal DateTime dated;
+        internal DateTime started;
+        internal short transfs;
 
         // individual order relevant
         internal int assetid;
@@ -34,8 +35,7 @@ namespace ChainSmart
         internal string unit;
         internal short unitx;
         internal decimal price;
-        internal decimal off;
-        internal short min;
+        internal short minx;
         internal int cap;
         internal int stock;
         internal int avail;
@@ -71,12 +71,12 @@ namespace ChainSmart
             {
                 s.Get(nameof(targs), ref targs);
                 s.Get(nameof(catid), ref catid);
-                s.Get(nameof(dated), ref dated);
+                s.Get(nameof(started), ref started);
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
-                s.Get(nameof(off), ref off);
-                s.Get(nameof(min), ref min);
+                s.Get(nameof(transfs), ref transfs);
+                s.Get(nameof(minx), ref minx);
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(stock), ref stock);
                 s.Get(nameof(avail), ref avail);
@@ -121,12 +121,12 @@ namespace ChainSmart
             {
                 s.Put(nameof(targs), targs);
                 s.Put(nameof(catid), catid);
-                s.Put(nameof(dated), dated);
+                s.Put(nameof(started), started);
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
-                s.Put(nameof(off), off);
-                s.Put(nameof(min), min);
+                s.Put(nameof(transfs), transfs);
+                s.Put(nameof(minx), minx);
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(stock), stock);
                 s.Put(nameof(avail), avail);
@@ -152,7 +152,7 @@ namespace ChainSmart
 
         public int Key => id;
 
-        public decimal RealPrice => price - off;
+        public decimal RealPrice => price - transfs;
 
         public bool IsAvailableFor(int mktid)
         {

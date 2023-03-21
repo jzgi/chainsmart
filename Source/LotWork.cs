@@ -21,7 +21,12 @@ namespace ChainSmart
             {
                 h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-                h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
+                if (o.icon)
+                {
+                    h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Lot.Typs[o.typ], "uk-badge")._HEADER();
@@ -39,11 +44,10 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("产品批次", "商户")]
     public class SrclyLotWork : LotWork<SrclyLotVarWork>
     {
-        [Ui("上线产品批次", group: 1), Tool(Anchor)]
+        [Ui("产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -130,10 +134,11 @@ namespace ChainSmart
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
+                transfs = 1,
                 unitx = 1,
                 created = DateTime.Now,
                 creator = prin.name,
-                min = 1,
+                minx = 1,
                 cap = 200,
             };
 
@@ -146,16 +151,16 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("现货产品批次（先入品控库后接单）");
+                    h.FORM_().FIELDSUL_("现货产品批次（输运入品控库之后再销售）");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                    h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.transfs), o.transfs, min: 1, max: 100)._LI();
 
                     h._FIELDSUL();
 
@@ -190,14 +195,16 @@ namespace ChainSmart
 
             var o = new Lot
             {
-                typ = Lot.TYP_LIFT,
+                typ = Lot.TYP_OPEN,
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
+                started = DateTime.Today.AddDays(14),
+                transfs = 1,
                 unitx = 1,
                 created = DateTime.Now,
                 creator = prin.name,
-                min = 1,
+                minx = 1,
                 cap = 200,
             };
 
@@ -210,17 +217,17 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("助农产品批次（先接单后入品控库）");
+                    h.FORM_().FIELDSUL_("助农产品批次（输运入品控库之前先销售）");
 
-                    h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                    h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).NUMBER("批次总件数", nameof(o.cap), o.cap)._LI();
+                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.transfs), o.transfs, min: 1, max: 100)._LI();
+                    h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
 
                     h._FIELDSUL();
 
@@ -246,7 +253,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR)]
     [Ui("产品批次集中盘库", "机构")]
     public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     {

@@ -40,7 +40,7 @@ namespace ChainSmart
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
                 h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((shply ? "/shply/" : "/srcly/"), o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((shply ? "/shply/" : "/srcly/"), o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();
@@ -117,12 +117,12 @@ namespace ChainSmart
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("范围延展名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
-                    h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsCity, required: true)._LI();
+                    h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (cmd == 1)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
                     }
 
                     h._FIELDSUL()._FORM();
@@ -143,10 +143,33 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT)]
     [Ui("成员商户", "机构")]
     public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
+        static void MainGrid(HtmlBuilder h, Org[] arr, User prin)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/-", o.typ, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                if (o.icon)
+                {
+                    h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name).SPAN("")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
         [Ui("成员商户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
@@ -161,27 +184,15 @@ namespace ChainSmart
             {
                 h.TOOLBAR(subscript: Org.TYP_SHP);
 
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/-", Org.TYP_SHP, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无成员商户");
+                    return;
+                }
 
-                    if (o.icon)
-                    {
-                        h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                MainGrid(h, arr, prin);
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-
-                h.PAGINATION(arr?.Length == 20);
+                h.PAGINATION(arr.Length == 20);
             }, false, 15);
         }
 
@@ -214,25 +225,13 @@ namespace ChainSmart
                 {
                     h.TOOLBAR();
 
-                    h.MAINGRID(arr, o =>
+                    if (arr == null)
                     {
-                        h.ADIALOG_(o.Key, "/-", o.typ, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                        h.ALERT("尚无该组成员");
+                        return;
+                    }
 
-                        if (o.icon)
-                        {
-                            h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
-                        }
-                        else
-                            h.PIC("/void.webp", css: "uk-width-1-5");
-
-                        h.ASIDE_();
-                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                        h.Q(o.tip, "uk-width-expand");
-                        h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                        h._ASIDE();
-
-                        h._A();
-                    });
+                    MainGrid(h, arr, prin);
                 }, false, 15);
             }
         }
@@ -251,23 +250,13 @@ namespace ChainSmart
             {
                 h.TOOLBAR(subscript: Org.TYP_BRD);
 
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/-", Org.TYP_BRD, MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无成员品牌");
+                    return;
+                }
 
-                    if (o.icon)
-                        h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/shply/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr, prin);
             }, false, 15);
         }
 
@@ -301,7 +290,7 @@ namespace ChainSmart
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                        h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
+                        h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSection)._LI();
                         h.LI_().TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
                         // h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 20)._LI();
                         // h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -340,7 +329,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR)]
     [Ui("成员商户", "机构")]
     public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
     {
@@ -360,7 +349,7 @@ namespace ChainSmart
                 h.ASIDE_();
                 h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanDive(o))._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/srcly/", o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();
@@ -459,7 +448,7 @@ namespace ChainSmart
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);

@@ -30,7 +30,7 @@ namespace ChainSmart
                     h.PIC("/void.webp", css: "uk-width-1-5");
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN(Asset.Statuses[o.status], "uk-badge")._HEADER();
+                h.HEADER_().H4(o.name).SPAN(Statuses[o.status], "uk-badge")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
                 h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                 h._ASIDE();
@@ -123,14 +123,14 @@ namespace ChainSmart
         public async Task @new(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
                 var o = new Asset
                 {
                     created = DateTime.Now,
-                    state = (short) state,
+                    state = (short)state,
                 };
                 wc.GivePane(200, h =>
                 {

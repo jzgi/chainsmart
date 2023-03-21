@@ -5,7 +5,7 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart
 {
-    [UserAuthenticate, AdmlyAuthorize(1)]
+    [UserAuthenticate, AdmlyAuthorize]
     [Ui("平台管理")]
     public class AdmlyWork : WebWork
     {
@@ -44,7 +44,7 @@ namespace ChainSmart
 
         public void @default(WebContext wc)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             wc.GivePage(200, h =>
             {
@@ -52,7 +52,7 @@ namespace ChainSmart
 
                 h.HEADER_("uk-width-expand uk-col uk-padding-left");
                 h.H2(Self.name);
-                h.P2(prin.name, User.Admly[wc.Role], brace: true);
+                h.P2(prin.name, User.Orgly[wc.Role], brace: true);
                 h._HEADER();
 
                 h.PIC("/logo.webp", circle: true, css: "uk-width-small");
@@ -64,7 +64,6 @@ namespace ChainSmart
         }
     }
 
-    [AdmlyAuthorize(1)]
     [Ui("基本信息和参数", "常规")]
     public class AdmlySetgWork : WebWork
     {
@@ -101,7 +100,6 @@ namespace ChainSmart
         }
     }
 
-    [AdmlyAuthorize(1)]
     [Ui("碳交易网络", "常规", icon: "social")]
     public class AdmlyNodeWork : NodeWork
     {

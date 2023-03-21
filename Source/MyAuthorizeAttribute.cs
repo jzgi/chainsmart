@@ -20,9 +20,9 @@ namespace ChainSmart
 
         public override bool Do(WebContext wc, bool mock)
         {
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
-            // if meet spedified typ
+            // if meet typ
             if (typ == 0 || (prin.typ & typ) == typ)
             {
                 return true;

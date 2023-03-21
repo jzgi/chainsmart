@@ -14,7 +14,7 @@ namespace ChainSmart
     {
         const string WXAUTH = "wxauth";
 
-        const int COOKIE_MAXAGE = 3600 * 24 * 3; // 3 days
+        const int MAXAGE = 3600 * 24 * 3; // 3 days
 
 
         public override bool Do(WebContext wc) => throw new NotImplementedException();
@@ -84,11 +84,11 @@ namespace ChainSmart
                 var prin = dc.ToObject<User>();
 
                 wc.Principal = prin; // set principal for afterwrads
-                wc.SetUserCookies(prin, COOKIE_MAXAGE);
+                wc.SetUserCookies(prin, MAXAGE);
             }
             else // keep the acquired openid and signup
             {
-                wc.SetCookie(nameof(openid), openid, COOKIE_MAXAGE);
+                wc.SetCookie(nameof(openid), openid, MAXAGE);
 
                 // new account
                 wc.GiveRedirect("/signup?url=" + HttpUtility.UrlEncode(wc.Url));

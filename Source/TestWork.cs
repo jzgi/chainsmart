@@ -10,7 +10,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT)]
     [Ui("检测报告", "机构")]
     public class MktlyTestWork : TestWork<MktlyTestVarWork>
     {
@@ -20,7 +20,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR)]
     [Ui("检测报告", "机构")]
     public class CtrlyTestWork : TestWork<CtrlyTestVarWork>
     {

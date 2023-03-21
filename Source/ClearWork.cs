@@ -24,23 +24,27 @@ namespace ChainSmart
                 {
                     h.TR_().TD_("uk-padding-tiny-left", colspan: 4).T(o.till, time: 0)._TD()._TR();
                 }
+
                 h.TR_();
                 if (orgname)
                 {
                     var org = GrabObject<int, Org>(o.orgid);
                     h.TD(org.name);
                 }
+
                 h.TD(Clear.Typs[o.typ]);
                 h.TD_("uk-text-right").T(o.trans)._TD();
                 if (!orgname)
                 {
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }
+
                 h.TD_("uk-text-right").CNY(o.topay)._TD();
                 h._TR();
 
                 last = o.till;
             }
+
             h._TABLE();
         }
     }
@@ -94,7 +98,7 @@ namespace ChainSmart
             }, false, 3);
         }
 
-        [AdmlyAuthorize(User.ROL_FIN)]
+        [OrglyAuthorize(0, User.ROL_FIN)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
         public async Task gen(WebContext wc)
         {
@@ -192,7 +196,7 @@ namespace ChainSmart
             }
         }
 
-        [AdmlyAuthorize(User.ROL_FIN)]
+        [OrglyAuthorize(0, User.ROL_FIN)]
         [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
         public async Task gen(WebContext wc)
         {
@@ -237,7 +241,7 @@ namespace ChainSmart
         [Ui("业务收入", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            var isOrg = (bool) State;
+            var isOrg = (bool)State;
 
             var org = isOrg ? wc[-1].As<Org>() : null;
 
@@ -253,6 +257,7 @@ namespace ChainSmart
                 {
                     p.Set(org.id);
                 }
+
                 p.Set(page);
             });
 
@@ -278,7 +283,7 @@ namespace ChainSmart
         [Ui("业务收入", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            var isOrg = (bool) State;
+            var isOrg = (bool)State;
 
             var org = isOrg ? wc[-1].As<Org>() : null;
 
@@ -294,6 +299,7 @@ namespace ChainSmart
                 {
                     p.Set(org.id);
                 }
+
                 p.Set(page);
             });
 

@@ -19,7 +19,7 @@ namespace ChainSmart
                     h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
                 }
 
-                string rol = wc.Dive ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+                string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
                 h.HEADER_("uk-width-expand uk-col uk-padding-left");
                 h.H2(org.name);
@@ -48,7 +48,7 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
+    [OrglyAuthorize(Org.TYP_SHP)]
     [Ui("市场操作")]
     public class ShplyVarWork : OrglyVarWork
     {
@@ -92,7 +92,7 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
+    [OrglyAuthorize(Org.TYP_SRC)]
     [Ui("供应操作")]
     public class SrclyVarWork : OrglyVarWork
     {
@@ -116,7 +116,7 @@ namespace ChainSmart
 
             CreateWork<SrclyBookWork>("sbooks", state: Book.TYP_SPOT, ui: new("销售订单-现货", "商户"));
 
-            CreateWork<SrclyBookWork>("sbookf", state: Book.TYP_FUTURE, ui: new("销售订单-预售", "商户"));
+            CreateWork<SrclyBookWork>("sbookf", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
 
             CreateWork<SrclyBookAggWork>("sbookldg");
 

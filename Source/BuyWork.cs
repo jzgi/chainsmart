@@ -47,7 +47,7 @@ namespace ChainSmart
 
                     h._SPAN();
 
-                    h.SPAN_("uk-width-1-6 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
                     h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T('件')._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
                     h._LI();
@@ -109,7 +109,6 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("销售订单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
@@ -141,7 +140,7 @@ namespace ChainSmart
 
 
         [BizNotice(BUY_CREATED)]
-        [Ui("新销售订单", group: 1), Tool(Anchor)]
+        [Ui("销售订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -231,7 +230,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_MKT, 1)]
+    [OrglyAuthorize(Org.TYP_MKT)]
     [Ui("销售订单统一发货", "机构")]
     public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
     {

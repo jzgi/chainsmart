@@ -135,8 +135,8 @@ mark {
 }
 
 q {
-    font-size: 0.8125rem;
-    margin: 4px 0;
+    font-size: 0.8rem;
+    margin: 2px 0;
     color: #999;
     white-space: nowrap;
     overflow: hidden;
@@ -1908,7 +1908,7 @@ a.uk-button-primary.uk-active {
     align-items: center;
     font-weight: normal;
     align-items: center;
-    padding: 6px;
+    padding: 2px;
 }
 
 .uk-button-link:hover,

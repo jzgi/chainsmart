@@ -36,6 +36,7 @@ namespace ChainSmart
     }
 
 
+    [AdmlyAuthorize(User.ROL_FIN)]
     [Ui("消费业务汇总表", "财务")]
     public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
     {
@@ -107,7 +108,6 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("销售汇总", "商户")]
     public class ShplyBuyAggWork : AggWork<OrglyAggrVarWork>
     {
@@ -140,7 +140,6 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SRC, 1)]
     [Ui("销售报表", "商户")]
     public class SrclyBookAggWork : AggWork<OrglyAggrVarWork>
     {
@@ -173,7 +172,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_CTR, 1)]
+    [OrglyAuthorize(Org.TYP_CTR)]
     [Ui("销售报表", "机构")]
     public class CtrlyBookAggWork : AggWork<OrglyAggrVarWork>
     {

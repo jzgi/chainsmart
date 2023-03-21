@@ -23,7 +23,6 @@ alter type buyln owner to postgres;
 create type stockop as
 (
     dt    timestamp(0),
-    typ   smallint,
     tip   varchar(20),
     qty   integer,
     avail integer,
@@ -342,12 +341,12 @@ create table lots
     catid   smallint
         constraint lots_catsid_fk
             references cats,
-    dated   date,
+    started date,
     unit    varchar(4),
     unitx   smallint,
     price   money,
-    "off"   money,
-    min     integer,
+    transfs smallint,
+    minx    smallint,
     cap     integer,
     stock   integer,
     avail   integer,
@@ -359,7 +358,9 @@ create table lots
     m1      bytea,
     m2      bytea,
     m3      bytea,
-    m4      bytea
+    m4      bytea,
+    constraint typ_chk
+        check ((typ >= 1) AND (typ <= 2))
 )
     inherits (entities);
 
@@ -389,9 +390,7 @@ create table items
     ops   stockop[]
 )
     tablespace rtl inherits
-(
-    entities
-);
+    ( entities);
 
 alter table items
     owner to postgres;
@@ -428,12 +427,12 @@ create table books
     topay   money,
     pay     money,
     ret     numeric(6, 1),
-    refund  money
+    refund  money,
+    constraint typ_chk
+        check ((typ >= 1) AND (typ <= 2))
 )
     tablespace sup inherits
-(
-    entities
-);
+    ( entities);
 
 alter table books
     owner to postgres;
@@ -471,12 +470,12 @@ create table buys
     topay  money,
     pay    money,
     ret    numeric(6, 1),
-    refund money
+    refund money,
+    constraint typ_chk
+        check ((typ >= 1) AND (typ <= 4))
 )
     tablespace rtl inherits
-(
-    entities
-);
+    ( entities);
 
 alter table buys
     owner to postgres;
@@ -566,51 +565,6 @@ FROM assets o;
 alter table assets_vw
     owner to postgres;
 
-create view lots_vw
-            (typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, assetid,
-             targs, catid, dated, unit, unitx, price, "off", min, cap, stock, avail, nstart, nend, icon, pic, m1, m2,
-             m3, m4, ops)
-as
-SELECT o.typ,
-       o.state,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.srcid,
-       o.srcname,
-       o.assetid,
-       o.targs,
-       o.catid,
-       o.dated,
-       o.unit,
-       o.unitx,
-       o.price,
-       o.off,
-       o.min,
-       o.cap,
-       o.stock,
-       o.avail,
-       o.nstart,
-       o.nend,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4,
-       o.ops
-FROM lots o;
-
-alter table lots_vw
-    owner to postgres;
-
 create view users_vw
             (typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im,
              credential, admly, srcid, srcly, shpid, shply, vip, refer, icon)
@@ -677,13 +631,60 @@ FROM items o;
 alter table items_vw
     owner to postgres;
 
+create view lots_vw
+            (typ, state, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, assetid,
+             targs, catid, started, transfs, unit, unitx, price, minx, cap, stock, avail, nstart, nend, icon, pic, m1,
+             m2, m3, m4, ops)
+as
+SELECT o.typ,
+       o.state,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.srcid,
+       o.srcname,
+       o.assetid,
+       o.targs,
+       o.catid,
+       o.started,
+       o.transfs,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.minx,
+       o.cap,
+       o.stock,
+       o.avail,
+       o.nstart,
+       o.nend,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4,
+       o.ops
+FROM lots o;
+
+alter table lots_vw
+    owner to postgres;
+
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
     parallel safe
     language sql
 as
-$$SELECT $1$$;
+$$
+SELECT $1
+$$;
 
 alter function first_agg(anyelement, anyelement) owner to postgres;
 
@@ -693,7 +694,9 @@ create function last_agg(anyelement, anyelement) returns anyelement
     parallel safe
     language sql
 as
-$$SELECT $2$$;
+$$
+SELECT $2
+$$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
 
@@ -702,21 +705,19 @@ create function buysgen(till date, opr character varying) returns void
 as
 $$
 DECLARE
-    past date;
-    now timestamp(0) = localtimestamp(0);
-    tillstamp timestamp(0);
-    paststamp timestamp(0);
-
-    TYP_PLAT constant int = 1;
-    TYP_GATEWAY constant int = 2;
-    TYP_SHP constant int = 3;
-    TYP_MKT constant int = 4;
-
-    BASE constant int = 1000;
-    RATE_PLAT constant int = 4;
-    RATE_GATEWAY constant int = 6;
-    RATE_SHP constant int = 970;
-    RATE_MKT constant int = 20;
+    past                  date;
+    now                   timestamp(0) = localtimestamp(0);
+    tillstamp             timestamp(0);
+    paststamp             timestamp(0);
+    TYP_PLAT     constant int          = 1;
+    TYP_GATEWAY  constant int          = 2;
+    TYP_SHP      constant int          = 3;
+    TYP_MKT      constant int          = 4;
+    BASE         constant int          = 1000;
+    RATE_PLAT    constant int          = 4;
+    RATE_GATEWAY constant int          = 6;
+    RATE_SHP     constant int          = 970;
+    RATE_MKT     constant int          = 20;
 
 BEGIN
 
@@ -727,7 +728,10 @@ BEGIN
     opr = coalesce(opr, 'SYS');
 
     SELECT coalesce(
-                   buysgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+                   buysgen, '2000-01-01'::date)
+    FROM global
+    WHERE pk
+    INTO past;
     paststamp = (past + interval '1 day')::timestamp(0);
 
     -- buys for shop
@@ -743,7 +747,9 @@ BEGIN
            now,
            opr
     FROM buys
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    WHERE status = 4
+      AND oked >= paststamp
+      AND oked < tillstamp
     GROUP BY shpid, typ, oked::date;
 
     INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
@@ -758,7 +764,10 @@ BEGIN
            RATE_SHP,
            sum(amt * RATE_SHP / BASE)
     FROM buyaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
+    WHERE typ = 1
+      AND dt > past
+      AND dt <= till
+    GROUP BY orgid;
 
 
     INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
@@ -773,8 +782,10 @@ BEGIN
            RATE_MKT,
            sum(amt * RATE_MKT / BASE)
     FROM buyaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY prtid;
-
+    WHERE typ = 1
+      AND dt > past
+      AND dt <= till
+    GROUP BY prtid;
 
 
     UPDATE global SET buysgen = till WHERE pk;
@@ -789,38 +800,35 @@ as
 $$
 DECLARE
 
-    past date;
-    now timestamp(0) = localtimestamp(0);
-    tillstamp timestamp(0);
-    paststamp timestamp(0);
-
-
-    TYP_PLAT constant int = 1;
-    TYP_GATEWAY constant int = 2;
-    TYP_SRC constant int = 5;
-    TYP_ZON constant int = 6;
-    TYP_CTR constant int = 7;
+    past                  date;
+    now                   timestamp(0) = localtimestamp(0);
+    tillstamp             timestamp(0);
+    paststamp             timestamp(0);
+    TYP_PLAT     constant int          = 1;
+    TYP_GATEWAY  constant int          = 2;
+    TYP_SRC      constant int          = 5;
+    TYP_ZON      constant int          = 6;
+    TYP_CTR      constant int          = 7;
 
 --     rates in thousandth
 
-    BASE constant int = 1000;
-    RATE_PLAT constant int = 4;
-    RATE_GATEWAY constant int = 6;
-    RATE_SRC constant int = 970;
-    RATE_ZON constant int = 4;
-    RATE_CTR constant int = 16;
+    BASE         constant int          = 1000;
+    RATE_PLAT    constant int          = 4;
+    RATE_GATEWAY constant int          = 6;
+    RATE_SRC     constant int          = 970;
+    RATE_ZON     constant int          = 4;
+    RATE_CTR     constant int          = 16;
 
 BEGIN
 
     opr = coalesce(opr, 'SYS');
 
-    SELECT coalesce(booksgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    SELECT coalesce(booksgen, '2000-01-01'::date) FROM global WHERE pk INTO past;
     tillstamp = (till + interval '1 day')::timestamp(0);
 
     opr = coalesce(opr, 'SYS');
 
     paststamp = (past + interval '1 day')::timestamp(0);
-
 
 
     -- books for source
@@ -836,7 +844,9 @@ BEGIN
            now,
            opr
     FROM books
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    WHERE status = 4
+      AND oked >= paststamp
+      AND oked < tillstamp
     GROUP BY srcid, itemid, oked::date;
 
     -- books for center
@@ -852,9 +862,10 @@ BEGIN
            now,
            opr
     FROM books
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
+    WHERE status = 4
+      AND oked >= paststamp
+      AND oked < tillstamp
     GROUP BY ctrid, itemid, oked::date;
-
 
 
     INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
@@ -869,7 +880,10 @@ BEGIN
            RATE_SRC,
            sum(amt * RATE_SRC / BASE)
     FROM bookaggs
-    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY orgid;
+    WHERE typ = 2
+      AND dt > past
+      AND dt <= till
+    GROUP BY orgid;
 
     INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_ZON,
@@ -883,7 +897,10 @@ BEGIN
            RATE_ZON,
            sum(amt * RATE_ZON / BASE)
     FROM bookaggs
-    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY prtid;
+    WHERE typ = 2
+      AND dt > past
+      AND dt <= till
+    GROUP BY prtid;
 
 
     INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
@@ -898,7 +915,10 @@ BEGIN
            RATE_CTR,
            sum(amt * RATE_CTR / BASE)
     FROM bookaggs
-    WHERE typ = 3 AND dt > past AND dt <= till GROUP BY orgid;
+    WHERE typ = 3
+      AND dt > past
+      AND dt <= till
+    GROUP BY orgid;
 
 
     UPDATE global SET booksgen = till WHERE pk;
@@ -918,13 +938,16 @@ BEGIN
     -- update ware avail values
     IF (NEW.status = 4 AND (TG_OP = 'INSERT' OR OLD.status < 4)) THEN
 
-        FOREACH ln IN ARRAY NEW.lns LOOP -- oked
-        UPDATE wares SET avail = avail - ln.qty WHERE id = ln.wareid;
+        FOREACH ln IN ARRAY NEW.lns
+            LOOP
+                -- oked
+                UPDATE wares SET avail = avail - ln.qty WHERE id = ln.wareid;
             END LOOP;
 
     ELSEIF (NEW.status = 8 AND (TG_OP = 'INSERT' OR OLD.status < 8)) THEN -- aborted
 
-        FOREACH ln IN ARRAY NEW.lns LOOP
+        FOREACH ln IN ARRAY NEW.lns
+            LOOP
                 UPDATE wares SET avail = avail + ln.qty WHERE id = ln.wareid;
             END LOOP;
 

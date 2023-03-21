@@ -13,6 +13,35 @@ namespace ChainSmart
         {
             CreateVarWork<V>(state: State);
         }
+
+        protected static void MainGrid(HtmlBuilder h, User[] arr, bool? shp)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+                if (o.icon)
+                {
+                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+
+                h.HEADER_().H4(o.name);
+                var role = shp.HasValue ? shp.Value ? User.Orgly[o.shply] : User.Orgly[o.srcly] : User.Admly[o.admly];
+                h.SPAN(role, "uk-badge");
+
+                h._HEADER();
+
+                h.Q(o.tel, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
     }
 
     [Ui("人员权限", "常规")]
@@ -21,35 +50,15 @@ namespace ChainSmart
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
-            int orgid = wc[-1];
-
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE admly > 0");
-            var arr = await dc.QueryAsync<User>(p => p.Set(orgid));
+            var arr = await dc.QueryAsync<User>();
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
 
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(User.Admly[o.admly], "uk-badge")._HEADER();
-                    h.Q(o.tel, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr, null);
             }, false, 12);
         }
 
@@ -90,11 +99,13 @@ namespace ChainSmart
                             {
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
-                            h.LI_().SELECT("权限", nameof(admly), admly, User.Admly, filter: (k, v) => k > 0)._LI();
+
+                            h.LI_().SELECT("权限", nameof(admly), admly, User.Orgly, filter: (k, v) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
                     }
+
                     h._FORM();
                 });
             }
@@ -105,7 +116,7 @@ namespace ChainSmart
                 admly = f[nameof(admly)];
 
                 using var dc = NewDbContext();
-                dc.Execute("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET admly = @1 WHERE id = @2", p => p.Set(admly).Set(id));
 
                 wc.GivePane(200); // ok
             }
@@ -117,35 +128,11 @@ namespace ChainSmart
     [Ui("用户管理", "业务")]
     public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     {
-        protected static void MainGrid(HtmlBuilder h, User[] arr)
-        {
-            h.MAINGRID(arr, o =>
-            {
-                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-                if (o.icon)
-                {
-                    h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                }
-                else
-                {
-                    h.PIC("/void.webp", css: "uk-width-1-5");
-                }
-
-                h.ASIDE_();
-                h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                h.Q(o.tel, "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                h._ASIDE();
-
-                h._A();
-            });
-        }
-
         [Ui("用户", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             using var dc = NewDbContext();
-            var num = (int) (await dc.ScalarAsync("SELECT count(*)::int FROM users"));
+            var num = (int)(await dc.ScalarAsync("SELECT count(*)::int FROM users"));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -184,7 +171,8 @@ namespace ChainSmart
                         h.ALERT("无此用户");
                         return;
                     }
-                    MainGrid(h, arr);
+
+                    MainGrid(h, arr, null);
                 }, false, 30);
             }
         }
@@ -198,7 +186,7 @@ namespace ChainSmart
         {
             var org = wc[-1].As<Org>();
 
-            var shp = (bool) State;
+            var shp = (bool)State;
 
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(shp ? "shpid" : "srcid").T(" = @1 AND ").T(shp ? "shply" : "srcly").T(" > 0");
@@ -208,25 +196,13 @@ namespace ChainSmart
             {
                 h.TOOLBAR();
 
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("无此用户");
+                    return;
+                }
 
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN(User.Orgly[o.srcly], "uk-badge")._HEADER();
-                    h.Q(o.tel, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
+                MainGrid(h, arr, shp);
             }, false, 6);
         }
 
@@ -236,7 +212,7 @@ namespace ChainSmart
         {
             var org = wc[-1].As<Org>();
 
-            var shp = (bool) State;
+            var shp = (bool)State;
 
             string password = null;
 
@@ -245,7 +221,7 @@ namespace ChainSmart
             {
                 string tel = wc.Query[nameof(tel)];
 
-                wc.GivePane(200, async h =>
+                wc.GivePane(200, h =>
                 {
                     h.FORM_();
 
@@ -283,15 +259,18 @@ namespace ChainSmart
                             {
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
+
                             if (yes)
                             {
                                 h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
+
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
                         }
                     }
+
                     h._FORM();
                 });
             }
@@ -315,7 +294,6 @@ namespace ChainSmart
     }
 
 
-    [OrglyAuthorize(Org.TYP_SHP, 1)]
     [Ui("大客户", "商户")]
     public class ShplyVipWork : UserWork<ShplyVipVarWork>
     {
@@ -332,27 +310,15 @@ namespace ChainSmart
             {
                 h.TOOLBAR();
 
-                h.MAINGRID(arr, o =>
+                if (arr == null)
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                    h.ALERT("尚无大客户");
+                    return;
+                }
 
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                MainGrid(h, arr, true);
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q(o.tel, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-
-                h.PAGINATION(arr?.Length == 20);
+                h.PAGINATION(arr.Length == 20);
             });
         }
 
@@ -383,30 +349,18 @@ namespace ChainSmart
                 wc.GivePage(200, h =>
                 {
                     h.TOOLBAR();
-                    h.MAINGRID(arr, o =>
+                    if (arr == null)
                     {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
+                        h.ALERT("没有找到");
+                        return;
+                    }
 
-                        if (o.icon)
-                        {
-                            h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                        }
-                        else
-                            h.PIC("/void.webp", css: "uk-width-1-5");
-
-                        h.ASIDE_();
-                        h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                        h.Q(o.tel, "uk-width-expand");
-                        h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                        h._ASIDE();
-
-                        h._A();
-                    });
+                    MainGrid(h, arr, true);
                 }, false, 30);
             }
         }
 
-        [OrglyAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
         public async Task add(WebContext wc, int cmd)
         {
@@ -451,6 +405,7 @@ namespace ChainSmart
                             h.ALERT("无此用户账号");
                         }
                     }
+
                     h._FORM();
                 });
             }
@@ -460,7 +415,7 @@ namespace ChainSmart
                 int id = f[nameof(id)];
 
                 using var dc = NewDbContext();
-                dc.Execute("UPDATE users SET vip = array_append(vip, @1) WHERE id = @2", p => p.Set(org.id).Set(id));
+                await dc.ExecuteAsync("UPDATE users SET vip = array_append(vip, @1) WHERE id = @2", p => p.Set(org.id).Set(id));
 
                 wc.GivePane(200); // ok
             }

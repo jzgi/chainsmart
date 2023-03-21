@@ -11,12 +11,12 @@ namespace ChainSmart
 
         public const short
             TYP_SPOT = 1,
-            TYP_FUTURE = 2;
+            TYP_LIFT = 2;
 
         public static readonly Map<short, string> Typs = new()
         {
             { TYP_SPOT, "现货订单" },
-            { TYP_FUTURE, "助农订单" },
+            { TYP_LIFT, "助农订单" },
         };
 
         public new static readonly Map<short, string> Statuses = new()
@@ -71,7 +71,7 @@ namespace ChainSmart
             unit = lot.unit;
             unitx = lot.unitx;
             price = lot.price;
-            off = lot.off;
+            off = lot.transfs;
         }
 
         public override void Read(ISource s, short msk = 0xff)

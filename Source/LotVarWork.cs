@@ -29,7 +29,7 @@ namespace ChainSmart
                 h.LI_().FIELD("产品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
                 h.LI_().FIELD("交易类型", Lot.Typs[m.typ]);
-                if (m.typ == 2) h.FIELD("交货日期", m.dated);
+                if (m.typ == 2) h.FIELD("交货日期", m.started);
                 h._LI();
 
                 h.LI_();
@@ -37,8 +37,8 @@ namespace ChainSmart
                 else h.FIELD("限域投放", m.targs, topOrgs, capt: v => v.Ext);
                 h._LI();
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
-                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
-                h.LI_().FIELD("起订件数", m.min).FIELD("批次总量", m.cap)._LI();
+                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.transfs, true)._LI();
+                h.LI_().FIELD("起订件数", m.minx).FIELD("批次总量", m.cap)._LI();
                 h.LI_().FIELD("库存量", m.stock).FIELD("可分配量", m.avail)._LI();
                 h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
                 h.LI_().FIELD2("创建", m.created, m.creator)._LI();
@@ -229,6 +229,7 @@ namespace ChainSmart
     {
         static readonly string[] UNITS = { "斤", "两", "包", "箱", "桶" };
 
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "修改产品批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {
@@ -258,12 +259,12 @@ namespace ChainSmart
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     if (o.IsFuture)
                     {
-                        h.LI_().DATE("交货日期", nameof(o.dated), o.dated)._LI();
+                        h.LI_().DATE("交货日期", nameof(o.started), o.started)._LI();
                     }
 
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min).LI_().NUMBER("批次总量", nameof(o.stock), o.stock)._LI();
+                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("尾货立减", nameof(o.transfs), o.transfs, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx).LI_().NUMBER("批次总量", nameof(o.stock), o.stock)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -312,7 +313,7 @@ namespace ChainSmart
             await doimg(wc, nameof(m) + sub, false, 3);
         }
 
-        [OrglyAuthorize(0, User.ROL_RVW)]
+        [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
         [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task tag(WebContext wc, int cmd)
         {
@@ -437,7 +438,7 @@ namespace ChainSmart
             wc.Give(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_LOG)]
+        [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
         [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED | STU_OKED)]
         public async Task stock(WebContext wc)
         {
@@ -548,11 +549,11 @@ namespace ChainSmart
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
 
                 h.LI_().FIELD("交易类型", Lot.Typs[m.typ]);
-                if (m.IsFuture) h.FIELD("交货日期", m.dated);
+                if (m.IsFuture) h.FIELD("交货日期", m.started);
                 h._LI();
 
                 h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
-                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.off, true)._LI();
+                h.LI_().FIELD("基准单价", m.price, true).FIELD("促销立减", m.transfs, true)._LI();
                 h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
 
                 h._UL();
@@ -562,7 +563,7 @@ namespace ChainSmart
                 // bottom bar
                 //
                 decimal realprice = m.RealPrice;
-                short qtyx = m.min;
+                short qtyx = m.minx;
                 decimal unitx = m.unitx;
                 decimal qty = qtyx * unitx;
                 decimal topay = decimal.Round(qty * m.RealPrice, 2); // round to money 2 decimal digits
@@ -573,7 +574,7 @@ namespace ChainSmart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = m.min; i < m.MaxForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+                for (int i = m.minx; i < m.MaxForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
