@@ -17,7 +17,7 @@ namespace ChainSmart
             { 8, "进口" },
         };
 
-        public static readonly Map<short, string> States = new()
+        public static readonly Map<short, string> Ranks = new()
         {
             { 0, "通货" },
             { 1, "零添" },
@@ -28,6 +28,7 @@ namespace ChainSmart
         internal short id;
 
         internal int orgid;
+        internal short rank;
         internal int cap;
         internal string cern; // carbon emission reduction number
         internal double factor;
@@ -57,6 +58,7 @@ namespace ChainSmart
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(rank), ref rank);
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(cern), ref cern);
                 s.Get(nameof(factor), ref factor);
@@ -92,6 +94,7 @@ namespace ChainSmart
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(rank), rank);
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(cern), cern);
                 s.Put(nameof(factor), factor);

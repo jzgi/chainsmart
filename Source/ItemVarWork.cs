@@ -47,7 +47,7 @@ namespace ChainSmart
                     h.TD(o.by);
                 }, caption: "库存操作记录", reverse: true);
 
-                h.TOOLBAR(bottom: true, status: m.status, state: m.state);
+                h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
             }, false, 6);
         }
 

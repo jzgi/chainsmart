@@ -58,7 +58,7 @@ namespace ChainSmart
                     reverse: true
                 );
 
-                h.TOOLBAR(bottom: true, status: m.status, state: m.state);
+                h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
             });
         }
 
@@ -256,7 +256,7 @@ namespace ChainSmart
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
-                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                    h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     if (o.IsFuture)
                     {
                         h.LI_().DATE("交货日期", nameof(o.started), o.started)._LI();
@@ -372,7 +372,7 @@ namespace ChainSmart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.States[asset.state], "uk-margin-auto-left")._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.Ranks[asset.rank], "uk-margin-auto-left")._H6();
 
                             h._LI();
 

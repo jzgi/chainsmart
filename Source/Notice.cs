@@ -12,22 +12,22 @@ namespace ChainSmart
             BOOK_CREATED = 1,
             BOOK_ADAPTED = 2,
             BOOK_OKED = 3,
-            BOOK_ABORTED = 4,
+            BOOK_VOID = 4,
             BUY_CREATED = 5,
             BUY_ADAPTED = 6,
             BUY_OKED = 7,
-            BUY_ABORTED = 8;
+            BUY_VOID = 8;
 
         public static readonly Map<short, string> Slots = new()
         {
             { BOOK_CREATED, "供应新单" },
             { BOOK_ADAPTED, "供应发货" },
             { BOOK_OKED, "供应收货" },
-            { BOOK_ABORTED, "供应撤单" },
+            { BOOK_VOID, "供应撤单" },
             { BUY_CREATED, "消费新单" },
             { BUY_ADAPTED, "消费发货" },
             { BUY_OKED, "消费收货" },
-            { BUY_ABORTED, "消费撤单" },
+            { BUY_VOID, "消费撤单" },
         };
 
 

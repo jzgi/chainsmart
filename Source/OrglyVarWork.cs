@@ -32,14 +32,14 @@ namespace ChainSmart
                     h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
                 }
                 else
-                    h.PIC(org.IsShop ? "/shp.webp" : org.EqCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");
+                    h.PIC(org.IsOfShop ? "/shp.webp" : org.IsCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
 
                 h.WORKBOARD(notice: org.id);
 
                 // qrcode
-                if (org.IsShop)
+                if (org.IsOfShop)
                 {
                     h.NAV_(css: "uk-col uk-margin uk-flex-middle").QRCODE(MainApp.WwwUrl + "/" + org.MarketId + "/", css: " uk-width-small").SPAN("推荐市场")._NAV();
                 }

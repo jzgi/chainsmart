@@ -52,8 +52,10 @@ namespace ChainSmart
                     {
                         h.SP().T(o.unitx).T(o.unit).T("件");
                     }
+
                     h.T("</option>");
                 }
+
                 h._SELECT();
 
                 h.SPAN_("uk-width-medium").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填写价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
@@ -92,6 +94,7 @@ namespace ChainSmart
                 {
                     h.BUTTON(Buy.Typs[i], nameof(buy), subscript: i, onclick: "return call_pos(this);");
                 }
+
                 h._BOTTOMBAR();
 
                 h._FORM();
@@ -151,7 +154,7 @@ namespace ChainSmart
         public async Task sum(WebContext wc, int state)
         {
             var org = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
             var cats = Grab<short, Cat>();
 
             if (wc.IsGet)
@@ -159,7 +162,7 @@ namespace ChainSmart
                 var o = new Asset
                 {
                     created = DateTime.Now,
-                    state = (short) state,
+                    creator = prin.name
                 };
                 wc.GivePane(200, h =>
                 {
@@ -176,7 +179,7 @@ namespace ChainSmart
         public async Task buy(WebContext wc, int payTyp)
         {
             var shp = wc[-1].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             var frm = await wc.ReadAsync<Form>();
             decimal pay = frm[nameof(pay)];
@@ -191,7 +194,8 @@ namespace ChainSmart
                 {
                     continue;
                 }
-                var comp = ((string) ety.Value).Split('-');
+
+                var comp = ((string)ety.Value).Split('-');
 
                 lst.Add(new BuyLn(itemid, comp));
             }
@@ -201,7 +205,7 @@ namespace ChainSmart
             var now = DateTime.Now;
             var m = new Buy()
             {
-                typ = (short) payTyp,
+                typ = (short)payTyp,
                 shpid = shp.id,
                 name = shp.name,
                 mktid = shp.MarketId,

@@ -13,7 +13,7 @@ namespace ChainSmart
         public virtual async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -35,8 +35,7 @@ namespace ChainSmart
                 h.LI_().FIELD("联系地址", o.addr)._LI();
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", o.specs)._LI();
-                h.LI_().FIELD("委托代办", o.trust).FIELD("服务状况", Org.States[o.state])._LI();
-                h.LI_().FIELD("状态", o.status, Org.Statuses)._LI();
+                h.LI_().FIELD("委托代办", o.trust).FIELD("状态", o.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", o.creator, o.created)._LI();
                 if (o.adapter != null)
                 {
@@ -50,7 +49,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             }, false, 900);
         }
 
@@ -137,8 +136,7 @@ namespace ChainSmart
                 h.LI_().FIELD("地址／场地", m.addr)._LI();
                 // h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", m.specs)._LI();
-                h.LI_().FIELD("委托代办", m.trust).FIELD("服务状况", Org.States[m.state])._LI();
-                h.LI_().FIELD("进度状态", m.status, Org.Statuses)._LI();
+                h.LI_().FIELD("委托代办", m.trust).FIELD("进度状态", m.status, Org.Statuses)._LI();
                 h.LI_().FIELD2("创建", m.created, m.creator)._LI();
                 if (m.adapter != null)
                 {
@@ -217,7 +215,6 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_("设置基本信息和参数");
                     h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("服务状况", nameof(org.state), org.state, Org.States, required: true)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
                 });
             }
@@ -227,8 +224,7 @@ namespace ChainSmart
 
                 using var dc = NewDbContext();
                 // update the db record
-                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, state = @3, adapted = @4, adapter = @5, status = 2 WHERE id = @6",
-                    p => p.Set(o.tip).Set(o.tel).Set(o.state).Set(DateTime.Now).Set(prin.name).Set(org.id));
+                await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(o.tip).Set(o.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
 
                 wc.GivePane(200);
             }
@@ -238,7 +234,7 @@ namespace ChainSmart
 
     public class AdmlyOrgVarWork : OrgVarWork
     {
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [AdmlyAuthorize(User.ROL_OPN)]
         [Ui(tip: "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
         public async Task edit(WebContext wc)
         {
@@ -255,7 +251,7 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_(m.EqMarket ? "市场机构" : "供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMarket ? "市场机构" : "供应机构");
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
@@ -264,9 +260,9 @@ namespace ChainSmart
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (m.EqMarket)
+                    if (m.IsMarket)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.EqCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -294,6 +290,7 @@ namespace ChainSmart
             }
         }
 
+        [AdmlyAuthorize(User.ROL_OPN)]
         [Ui("管理", "设置管理人员", icon: "happy"), Tool(ButtonShow)]
         public async Task mgr(WebContext wc, int cmd)
         {
@@ -347,41 +344,28 @@ namespace ChainSmart
             }
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [AdmlyAuthorize(User.ROL_OPN)]
         [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), false, 3);
+            await doimg(wc, nameof(icon), false, 6);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), false, 3);
+            await doimg(wc, nameof(pic), false, 6);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, "m" + sub, false, 3);
+            await doimg(wc, "m" + sub, false, 6);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-        public async Task rm(WebContext wc)
-        {
-            int id = wc[0];
-
-            using var dc = NewDbContext();
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
-            await dc.ExecuteAsync(p => p.Set(id));
-
-            wc.GivePane(200);
-        }
-
-        [OrglyAuthorize(0, User.ROL_MGT)]
+        [AdmlyAuthorize(User.ROL_OPN)]
         [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
@@ -395,14 +379,27 @@ namespace ChainSmart
             wc.GivePane(200);
         }
 
-        [OrglyAuthorize(0, User.ROL_MGT)]
+        [AdmlyAuthorize(User.ROL_OPN)]
         [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
         public async Task unok(WebContext wc)
         {
             int id = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2 WHERE id = @1");
+            dc.Sql("UPDATE orgs SET status = 1 WHERE id = @1");
+            await dc.ExecuteAsync(p => p.Set(id));
+
+            wc.GivePane(200);
+        }
+
+        [AdmlyAuthorize(User.ROL_OPN)]
+        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        public async Task rm(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
             await dc.ExecuteAsync(p => p.Set(id));
 
             wc.GivePane(200);
@@ -412,7 +409,7 @@ namespace ChainSmart
 
     public class MktlyOrgVarWork : OrgVarWork
     {
-        [OrglyAuthorize( 0, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
         public async Task edit(WebContext wc)
         {

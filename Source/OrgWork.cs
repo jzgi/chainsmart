@@ -122,7 +122,7 @@ namespace ChainSmart
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (cmd == 1)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (_, v) => v.IsCenter, required: true)._LI();
                     }
 
                     h._FIELDSUL()._FORM();
@@ -248,7 +248,7 @@ namespace ChainSmart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR(subscript: Org.TYP_BRD);
+                h.TOOLBAR(subscript: Org.TYP_VTL);
 
                 if (arr == null)
                 {

@@ -324,7 +324,7 @@ create table assets
 )
     inherits (entities);
 
-alter table assets
+alter table assets_old
     owner to postgres;
 
 create table lots
@@ -336,7 +336,7 @@ create table lots
     srcname varchar(12),
     assetid integer
         constraint lots_assetid_fk
-            references assets,
+            references assets_old,
     targs   integer[],
     catid   smallint
         constraint lots_catsid_fk
@@ -560,7 +560,7 @@ SELECT o.typ,
        o.m2 IS NOT NULL   AS m2,
        o.m3 IS NOT NULL   AS m3,
        o.m4 IS NOT NULL   AS m4
-FROM assets o;
+FROM assets_old o;
 
 alter table assets_vw
     owner to postgres;

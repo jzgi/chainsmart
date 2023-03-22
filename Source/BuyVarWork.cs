@@ -51,7 +51,7 @@ namespace ChainSmart
                     h.TD(d.SubTotal, true, true);
                 });
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TOOLBAR(bottom: true, status: o.status, state: o.State);
             });
         }
     }

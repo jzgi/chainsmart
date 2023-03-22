@@ -53,7 +53,7 @@ namespace ChainSmart
             });
         }
 
-        [Ui("新采购订单", group: 1), Tool(Anchor)]
+        [Ui("采购订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -76,7 +76,7 @@ namespace ChainSmart
         }
 
         [BizNotice(BOOK_ADAPTED)]
-        [Ui(tip: "已确收", icon: "check", group: 2), Tool(Anchor)]
+        [Ui(tip: "待发货", icon: "eye", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -90,7 +90,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无已确收订单");
+                    h.ALERT("尚无待发货订单");
                     return;
                 }
 
@@ -98,7 +98,7 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -120,7 +120,7 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [BizNotice(BOOK_ABORTED)]
+        [BizNotice(BOOK_VOID)]
         [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
         public async Task @void(WebContext wc)
         {

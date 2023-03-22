@@ -135,7 +135,7 @@ namespace ChainSmart
             super = false;
             ulevel = 0;
 
-            var src = org.IsSource;
+            var src = org.IsOfSource;
             var orgid = src ? srcid : shpid;
             var orgly = src ? srcly : shply;
 

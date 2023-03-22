@@ -130,7 +130,7 @@ namespace ChainSmart
                 var o = new Asset
                 {
                     created = DateTime.Now,
-                    state = (short)state,
+                    creator = prin.name
                 };
                 wc.GivePane(200, h =>
                 {

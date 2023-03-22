@@ -50,7 +50,7 @@ namespace ChainSmart
 
                 h.MAINGRID(arr, o =>
                 {
-                    if (o.EqBrand)
+                    if (o.IsVirtual)
                     {
                         h.A_(o.addr, css: "uk-card-body uk-flex");
                     }

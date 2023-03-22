@@ -69,28 +69,34 @@ namespace ChainSmart
                 {
                     h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
                 }
+
                 if (o.oker != null)
                 {
                     h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 }
+
                 h._UL();
 
                 if (o.m1)
                 {
                     h.PIC("/asset/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m2)
                 {
                     h.PIC("/asset/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m3)
                 {
                     h.PIC("/asset/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
                 }
+
                 if (o.m4)
                 {
                     h.PIC("/asset/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
                 }
+
                 h._ARTICLE();
             }, true, 900, o.name);
         }
@@ -137,7 +143,7 @@ namespace ChainSmart
                 if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             }, false, 4);
         }
 
@@ -147,7 +153,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var src = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             if (wc.IsGet)
             {
@@ -219,7 +225,7 @@ namespace ChainSmart
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
-            var prin = (User) wc.Principal;
+            var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE assets SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");

@@ -42,7 +42,7 @@ namespace ChainSmart
                 for (int i = 0; i < topOrgs.Count; i++)
                 {
                     var o = topOrgs.ValueAt(i);
-                    if (!o.EqMarket)
+                    if (!o.IsMarket)
                     {
                         continue;
                     }
@@ -88,23 +88,14 @@ namespace ChainSmart
         {
             var xe = await wc.ReadAsync<XElem>();
 
-            // For DEBUG
-            // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
-            //  
-
             if (!OnNotified(sup: false, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
 
-            // War("trade_no " + trade_no);
-            // War("cash " + cash);
-
             int pos = 0;
             var buyid = trade_no.ParseInt(ref pos);
-
-            // War("buyid " + buyid);
 
             try
             {
@@ -116,15 +107,11 @@ namespace ChainSmart
                     dc.Let(out int shpid);
                     dc.Let(out decimal topay);
 
-                    // War("topay " + topay);
-
                     if (topay == cash) // update data
                     {
                         // the book and the lot updates
                         dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1");
                         await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
-
-                        // War("update ok!");
 
                         // put a notice
                         NoticeBot.Put(shpid, Notice.BUY_CREATED, 1, cash);

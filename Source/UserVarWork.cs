@@ -32,7 +32,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             });
         }
     }

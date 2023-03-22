@@ -10,7 +10,7 @@ namespace ChainSmart
         public static readonly Org Empty = new();
 
         public const short
-            TYP_BRD = 0b00000, // brand
+            TYP_VTL = 0b00000, // brand
             TYP_PRT = 0b01000, // parent
             TYP_SHP = 0b00001, // shop
             TYP_SRC = 0b00010, // source
@@ -158,27 +158,25 @@ namespace ChainSmart
 
         public string Tel => tel;
 
-        public int MarketId => EqMarket ? id : IsShop ? prtid : 0;
+        public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
 
         public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
-        public bool EqBrand => typ == TYP_BRD;
+        public bool IsVirtual => typ == TYP_VTL;
 
         public bool EqSource => typ == TYP_SRC;
 
-        public bool IsSource => (typ & TYP_SRC) == TYP_SRC;
+        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
 
-        public bool EqShop => typ == TYP_SHP;
+        public bool IsShop => typ == TYP_SHP;
 
-        public bool IsShop => (typ & TYP_SHP) == TYP_SHP;
+        public bool IsOfShop => (typ & TYP_SHP) == TYP_SHP;
 
-        public bool EqMarket => typ == TYP_MKT;
+        public bool IsMarket => typ == TYP_MKT;
 
-        public bool EqCenter => typ == TYP_CTR;
+        public bool IsCenter => typ == TYP_CTR;
 
-        public bool HasXy => EqMarket || EqSource || EqCenter;
-
-        public bool HasCtr => IsShop;
+        public bool HasXy => IsMarket || EqSource || IsCenter;
 
         public bool IsTopOrg => prtid == 0;
 

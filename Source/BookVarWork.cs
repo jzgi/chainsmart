@@ -38,7 +38,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.state);
+                h.TOOLBAR(bottom: true, status: o.status);
             });
         }
     }
@@ -95,7 +95,7 @@ namespace ChainSmart
                     }
 
                     // put a notice to the booker
-                    NoticeBot.Put(shpid, Notice.BOOK_ABORTED, 1, refund);
+                    NoticeBot.Put(shpid, Notice.BOOK_VOID, 1, refund);
                 }
             }
             catch (Exception)

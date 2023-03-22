@@ -837,7 +837,7 @@ function crop(trig, siz, title, subs) {
             wid = 480; hei = 160;
             break;
         case 3:
-            wid = 600; hei = 800;
+            wid = 480; hei = 640;
             break;
     }
     var html = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
