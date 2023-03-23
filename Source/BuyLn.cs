@@ -3,7 +3,7 @@
 namespace ChainSmart
 {
     /// <summary>
-    /// A detail line of buy.
+    /// A detail line of buy order.
     /// </summary>
     public class BuyLn : IData, IKeyable<int>
     {
@@ -15,19 +15,19 @@ namespace ChainSmart
 
         public string unit; // basic unit
 
-        public decimal unitx; // number of units per pack
+        public short unitx; // number of units per pack
 
         public decimal price;
 
         public decimal off;
 
-        public decimal qty;
+        public short qty;
 
         public BuyLn()
         {
         }
 
-        public BuyLn(int itemid, decimal qty)
+        public BuyLn(int itemid, short qty)
         {
             this.itemid = itemid;
             this.qty = qty;
@@ -40,9 +40,9 @@ namespace ChainSmart
             lotid = int.Parse(comp[0]);
             name = comp[1];
             unit = comp[2];
-            unitx = decimal.Parse(comp[3]);
+            unitx = short.Parse(comp[3]);
             price = decimal.Parse(comp[4]);
-            qty = decimal.Parse(comp[5]);
+            qty = short.Parse(comp[5]);
         }
 
         public void Read(ISource s, short msk = 0xff)
@@ -77,7 +77,7 @@ namespace ChainSmart
 
         public short QtyX => (short)(qty / unitx);
 
-        internal void Init(Item m, bool discount)
+        internal void Init(Item m, bool vip)
         {
             name = m.name;
             lotid = m.lotid;
@@ -85,7 +85,7 @@ namespace ChainSmart
             unitx = m.unitx;
             price = m.price;
 
-            if (discount)
+            if (vip)
             {
                 off = m.off;
             }

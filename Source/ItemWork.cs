@@ -161,7 +161,7 @@ namespace ChainSmart
                     var item = map[ln.itemid];
                     if (item != null)
                     {
-                        ln.Init(item, discount: prin.vip?.Contains(shpid) ?? false);
+                        ln.Init(item, vip: prin.vip?.Contains(shpid) ?? false);
                     }
                 }
 

@@ -7,7 +7,7 @@ namespace ChainSmart
     /// </summary>
     public class BookAgg : IData, IKeyable<int>
     {
-        public static readonly BookAgg Empty = new BookAgg();
+        public static readonly BookAgg Empty = new();
 
         internal string name; // shop
 

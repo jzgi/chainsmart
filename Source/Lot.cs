@@ -27,7 +27,6 @@ namespace ChainSmart
         internal int[] targs; // (optional) targeted centers or markets
         internal short catid;
         internal DateTime started;
-        internal short transfs;
 
         // individual order relevant
         internal int assetid;
@@ -35,6 +34,7 @@ namespace ChainSmart
         internal string unit;
         internal short unitx;
         internal decimal price;
+        internal decimal off;
         internal short minx;
         internal int cap;
         internal int stock;
@@ -75,7 +75,7 @@ namespace ChainSmart
                 s.Get(nameof(unit), ref unit);
                 s.Get(nameof(unitx), ref unitx);
                 s.Get(nameof(price), ref price);
-                s.Get(nameof(transfs), ref transfs);
+                s.Get(nameof(off), ref off);
                 s.Get(nameof(minx), ref minx);
                 s.Get(nameof(cap), ref cap);
                 s.Get(nameof(stock), ref stock);
@@ -125,7 +125,7 @@ namespace ChainSmart
                 s.Put(nameof(unit), unit);
                 s.Put(nameof(unitx), unitx);
                 s.Put(nameof(price), price);
-                s.Put(nameof(transfs), transfs);
+                s.Put(nameof(off), off);
                 s.Put(nameof(minx), minx);
                 s.Put(nameof(cap), cap);
                 s.Put(nameof(stock), stock);
@@ -152,7 +152,7 @@ namespace ChainSmart
 
         public int Key => id;
 
-        public decimal RealPrice => price - transfs;
+        public decimal RealPrice => price - off;
 
         public bool IsAvailableFor(int mktid)
         {
@@ -165,7 +165,7 @@ namespace ChainSmart
 
         public bool IsSpot => typ == 1;
 
-        public bool IsFuture => typ == 2;
+        public bool IsLift => typ == 2;
 
         public int MaxForSingleBook => Math.Min(avail, 200);
 

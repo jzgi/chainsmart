@@ -27,14 +27,13 @@ namespace ChainSmart
                 h.LI_().LABEL("卖方").ADIALOG_(MainApp.WwwUrl + "/org/", o.srcid, "/", ToolAttribute.MOD_SHOW, false).T(o.srcname)._A()._LI();
                 h.LI_().FIELD("产品名", o.name)._LI();
                 h.LI_().FIELD("简介", o.tip)._LI();
-                h.LI_().FIELD("计价单位", o.unit).FIELD("每件含量", o.unitx, false)._LI();
-                h.LI_().FIELD("单价", o.price, money: true).FIELD("立减", o.off)._LI();
-                h.LI_().FIELD("件数", o.QtyX).FIELD("支付", o.pay, money: true)._LI();
-                h.LI_().FIELD("状态", o.status, Book.Statuses)._LI();
+                h.LI_().FIELD("基准单位", o.unit).FIELD("每件含量", o.unitx)._LI();
+                h.LI_().FIELD("基准单价", o.price, money: true).FIELD("件数", o.QtyX)._LI();
+                h.LI_().FIELD("支付", o.pay, money: true).FIELD("状态", o.status, Book.Statuses)._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2("收货", o.oked, o.oker)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "待发", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("发货", o.oked, o.oker)._LI();
 
                 h._UL();
 
@@ -69,7 +68,7 @@ namespace ChainSmart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED)]
-        public async Task abort(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();

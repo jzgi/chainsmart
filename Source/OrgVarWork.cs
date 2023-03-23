@@ -28,23 +28,23 @@ namespace ChainSmart
                 h.LI_().FIELD("工商登记名", o.legal)._LI();
                 if (o.IsParent)
                 {
-                    h.LI_().FIELD("范围延展名", o.ext)._LI();
+                    h.LI_().FIELD("延展名", o.ext)._LI();
                 }
 
                 h.LI_().FIELD("联系电话", o.tel).FIELD("区域", regs[o.regid])._LI();
                 h.LI_().FIELD("联系地址", o.addr)._LI();
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", o.specs)._LI();
-                h.LI_().FIELD("委托代办", o.trust).FIELD("状态", o.status, Org.Statuses)._LI();
-                h.LI_().FIELD2("创建", o.creator, o.created)._LI();
+                h.LI_().FIELD("托管", o.trust)._LI();
+                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
                 if (o.adapter != null)
                 {
-                    h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
+                    h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
                 }
 
                 if (o.oker != null)
                 {
-                    h.LI_().FIELD2("上线", o.oker, o.oked)._LI();
+                    h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
                 }
 
                 h._UL();
@@ -95,7 +95,7 @@ namespace ChainSmart
         public override async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
-            var id = org?.id ?? (int)wc[0]; // apply to both implicit and explicit cases
+            var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
             var regs = Grab<short, Reg>();
 
             using var dc = NewDbContext();
@@ -229,6 +229,33 @@ namespace ChainSmart
                 wc.GivePane(200);
             }
         }
+
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 2)]
+        public async Task ok(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var prin = (User)wc.Principal;
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+            wc.GivePane(200);
+        }
+
+        [OrglyAuthorize(0, User.ROL_MGT)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+        public async Task unok(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
+            await dc.ExecuteAsync(p => p.Set(org.id));
+
+            wc.GivePane(200);
+        }
     }
 
 
@@ -257,12 +284,12 @@ namespace ChainSmart
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("范围延展名", nameof(m.ext), m.ext, max: 12, required: true)._LI();
-                    h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsCity, required: true)._LI();
+                    h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (m.IsMarket)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (k, v) => v.IsCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, orgs, filter: (_, v) => v.IsCenter, required: true)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -410,7 +437,7 @@ namespace ChainSmart
     public class MktlyOrgVarWork : OrgVarWork
     {
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(icon: "pencil"), Tool(ButtonShow, status: 3)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -432,7 +459,7 @@ namespace ChainSmart
                         h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                         h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                         h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                        h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (k, v) => v.IsSection)._LI();
+                        h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSection)._LI();
                         h.LI_().TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
                         h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
                     }
@@ -454,7 +481,7 @@ namespace ChainSmart
 
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
-                dc.Execute(p =>
+                await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, msk);
                     p.Set(id);
@@ -465,41 +492,41 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(icon: "github-alt"), Tool(ButtonCrop, status: 3)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
+            dc.Sql("UPDATE orgs SET status = 0 WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
             await dc.ExecuteAsync(p => p.Set(id));
 
             wc.GivePane(200);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -514,14 +541,14 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+        [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
         public async Task unok(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 2 WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.GivePane(200);
@@ -551,7 +578,7 @@ namespace ChainSmart
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (k, v) => v.IsProvince, required: true)._LI();
+                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
@@ -563,7 +590,7 @@ namespace ChainSmart
             else
             {
                 const short msk = MSK_EDIT;
-                var m = await wc.ReadObjectAsync<Org>(msk, instance: new Org
+                var m = await wc.ReadObjectAsync(msk, instance: new Org
                 {
                     adapted = DateTime.Now,
                     adapter = prin.name

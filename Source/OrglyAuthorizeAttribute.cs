@@ -41,13 +41,13 @@ namespace ChainSmart
                 return false;
             }
 
-            var rl = prin.GetRoleForOrg(org, out var super, out var ulvl);
-            if ((role & rl) == role && (ulevel == 0 || ulevel == ulvl))
+            var ret = prin.GetRoleForOrg(org, out var super, out var ulvl);
+            if ((role & ret) == role && (ulevel == 0 || ulevel == ulvl))
             {
                 if (!mock)
                 {
                     wc.Super = super;
-                    wc.Role = role;
+                    wc.Role = ret;
                 }
 
                 return true;

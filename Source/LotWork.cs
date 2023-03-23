@@ -134,7 +134,7 @@ namespace ChainSmart
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
-                transfs = 1,
+                off = 1,
                 unitx = 1,
                 created = DateTime.Now,
                 creator = prin.name,
@@ -160,7 +160,7 @@ namespace ChainSmart
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
-                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.transfs), o.transfs, min: 1, max: 100)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.off), o.off, min: 1, max: 100)._LI();
 
                     h._FIELDSUL();
 
@@ -200,7 +200,7 @@ namespace ChainSmart
                 srcid = org.id,
                 srcname = org.name,
                 started = DateTime.Today.AddDays(14),
-                transfs = 1,
+                off = 1,
                 unitx = 1,
                 created = DateTime.Now,
                 creator = prin.name,
@@ -226,7 +226,7 @@ namespace ChainSmart
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                     h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                     h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
-                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.transfs), o.transfs, min: 1, max: 100)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.off), o.off, min: 1, max: 100)._LI();
                     h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
 
                     h._FIELDSUL();

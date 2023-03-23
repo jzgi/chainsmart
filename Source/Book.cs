@@ -71,7 +71,7 @@ namespace ChainSmart
             unit = lot.unit;
             unitx = lot.unitx;
             price = lot.price;
-            off = lot.transfs;
+            off = lot.off;
         }
 
         public override void Read(ISource s, short msk = 0xff)
@@ -156,7 +156,7 @@ namespace ChainSmart
 
         public decimal RealPrice => price - off;
 
-        public decimal Total => decimal.Round(RealPrice * qty, 2);
+        public decimal Total => RealPrice * qty;
 
         public override string ToString() => shpname + "采购" + srcname + "产品" + name;
 
