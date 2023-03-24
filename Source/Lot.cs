@@ -12,12 +12,12 @@ namespace ChainSmart
 
         public const short
             TYP_SPOT = 1,
-            TYP_OPEN = 2;
+            TYP_LIFT = 2;
 
         public static readonly Map<short, string> Typs = new()
         {
             { TYP_SPOT, "现货" },
-            { TYP_OPEN, "助农" },
+            { TYP_LIFT, "助农" },
         };
 
         internal int id;
@@ -64,11 +64,13 @@ namespace ChainSmart
             {
                 s.Get(nameof(srcid), ref srcid);
                 s.Get(nameof(srcname), ref srcname);
-                s.Get(nameof(assetid), ref assetid);
+                s.Get(nameof(stock), ref stock);
+                s.Get(nameof(avail), ref avail);
             }
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(assetid), ref assetid);
                 s.Get(nameof(targs), ref targs);
                 s.Get(nameof(catid), ref catid);
                 s.Get(nameof(started), ref started);
@@ -78,8 +80,6 @@ namespace ChainSmart
                 s.Get(nameof(off), ref off);
                 s.Get(nameof(minx), ref minx);
                 s.Get(nameof(cap), ref cap);
-                s.Get(nameof(stock), ref stock);
-                s.Get(nameof(avail), ref avail);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -113,12 +113,14 @@ namespace ChainSmart
             {
                 s.Put(nameof(srcid), srcid);
                 s.Put(nameof(srcname), srcname);
-                if (assetid > 0) s.Put(nameof(assetid), assetid);
-                else s.PutNull(nameof(assetid));
+                s.Put(nameof(stock), stock);
+                s.Put(nameof(avail), avail);
             }
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                if (assetid > 0) s.Put(nameof(assetid), assetid);
+                else s.PutNull(nameof(assetid));
                 s.Put(nameof(targs), targs);
                 s.Put(nameof(catid), catid);
                 s.Put(nameof(started), started);
@@ -128,8 +130,6 @@ namespace ChainSmart
                 s.Put(nameof(off), off);
                 s.Put(nameof(minx), minx);
                 s.Put(nameof(cap), cap);
-                s.Put(nameof(stock), stock);
-                s.Put(nameof(avail), avail);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -167,7 +167,7 @@ namespace ChainSmart
 
         public bool IsLift => typ == 2;
 
-        public int MaxForSingleBook => Math.Min(avail, 200);
+        public int MaxXForSingleBook => Math.Min(avail, 200) / unitx;
 
         public override string ToString() => name;
     }

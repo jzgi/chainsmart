@@ -40,13 +40,13 @@ namespace ChainSmart
         internal int lotid;
 
         internal string unit;
-        internal decimal unitx;
+        internal short unitx;
         internal decimal price;
         internal decimal off;
-        internal decimal qty;
+        internal int qty;
         internal decimal topay;
         internal decimal pay;
-        internal decimal ret; // qty cut
+        internal int ret; // qty cut
         internal decimal refund; // pay refunded
 
 

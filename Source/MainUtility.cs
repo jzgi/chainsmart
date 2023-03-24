@@ -78,6 +78,42 @@ namespace ChainSmart
             return h;
         }
 
+        public static HtmlBuilder LOTNAVBAR(this HtmlBuilder h, string uri, int curcatid, Map<short, Cat> map, int ctrid)
+        {
+            h.T("<nav class=\"uk-top-bar uk-flex-center\">");
+            h.T("<ul class=\"uk-subnav\">");
+
+            var count = map.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var ety = map.EntryAt(i);
+                var catid = ety.Key;
+
+                int cat_ctr_id = ShplyBookWork.Comp(catid, ctrid);
+                var v = ety.Value;
+
+                h.T("<li");
+                if (catid == curcatid)
+                {
+                    h.T(" class=\"uk-active\"");
+                }
+
+                h.T("><a href=\"");
+                h.T(uri);
+                h.T('-');
+                h.T(cat_ctr_id);
+                h.T("\" onclick=\"goto(this.href, event);\">");
+                h.T(v.ToString());
+                h.T("</a></li>");
+            }
+
+            h.T("</ul>");
+            h.T("</nav>");
+            h.T("<div class=\"uk-top-placeholder\"></div>");
+
+            return h;
+        }
+
 
         public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
         {

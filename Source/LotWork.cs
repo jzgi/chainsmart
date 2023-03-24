@@ -71,7 +71,7 @@ namespace ChainSmart
         }
 
         [Ui(tip: "已下线", icon: "cloud-download", group: 2), Tool(Anchor)]
-        public async Task off(WebContext wc)
+        public async Task down(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -151,7 +151,7 @@ namespace ChainSmart
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("现货产品批次（输运入品控库之后再销售）");
+                    h.FORM_().FIELDSUL_("现货产品批次（输运进入品控库之后再销售）");
 
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
@@ -195,7 +195,7 @@ namespace ChainSmart
 
             var o = new Lot
             {
-                typ = Lot.TYP_OPEN,
+                typ = Lot.TYP_LIFT,
                 status = Entity.STU_CREATED,
                 srcid = org.id,
                 srcname = org.name,
@@ -224,9 +224,9 @@ namespace ChainSmart
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
-                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.off), o.off, min: 1, max: 100)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
                     h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
 
                     h._FIELDSUL();

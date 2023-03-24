@@ -66,7 +66,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无产源设施");
+                    h.ALERT("尚无上线产源设施");
                     return;
                 }
 
@@ -75,7 +75,7 @@ namespace ChainSmart
         }
 
         [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
-        public async Task off(WebContext wc)
+        public async Task down(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -89,6 +89,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
+                    h.ALERT("尚无下线产源设施");
                     return;
                 }
 
@@ -111,6 +112,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
+                    h.ALERT("尚无删除产源设施");
                     return;
                 }
 

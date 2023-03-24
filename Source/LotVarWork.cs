@@ -113,34 +113,34 @@ namespace ChainSmart
             const short msk = 255 | MSK_EXTRA;
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
-            var m = await dc.QueryTopAsync<Lot>(p => p.Set(id).Set(org.id), msk);
+            var o = await dc.QueryTopAsync<Lot>(p => p.Set(id).Set(org.id), msk);
 
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", m.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-                h.LI_().FIELD("交易类型", Lot.Typs[m.typ]);
-                if (m.typ == 2) h.FIELD("交货起始日", m.started);
+                h.LI_().FIELD("产品名", o.name)._LI();
+                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
+                if (o.typ == 2) h.FIELD("交货起始日", o.started);
                 h._LI();
 
                 h.LI_();
-                if (m.targs == null) h.FIELD("限域投放", "不限");
-                else h.FIELD("限域投放", m.targs, topOrgs, capt: v => v.Ext);
+                if (o.targs == null) h.FIELD("限域投放", "不限");
+                else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
                 h._LI();
-                h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
-                h.LI_().FIELD("单价", m.RealPrice, true).FIELD("起订件数", m.minx)._LI();
-                h.LI_().FIELD("批次总量", m.cap).FIELD("输运次数", m.off, true)._LI();
-                h.LI_().FIELD("库存量", m.stock).FIELD("剩余量", m.avail)._LI();
-                h.LI_().FIELD2("溯源编号", m.nstart, m.nend, "－")._LI();
+                h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
+                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价调整", o.off, true)._LI();
+                h.LI_().FIELD("批次总量", o.cap).FIELD("起订件数", o.minx)._LI();
+                h.LI_().FIELD("库存量", o.stock).FIELD("剩余量", o.avail)._LI();
+                h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
-                h.LI_().FIELD2("创编", m.created, m.creator)._LI();
-                if (m.adapter != null) h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
-                if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
+                h.LI_().FIELD2("创编", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
 
                 h._UL();
 
-                h.TABLE(m.ops, o =>
+                h.TABLE(o.ops, o =>
                     {
                         h.TD_().T(o.dt, time: 1)._TD();
                         h.TD(o.tip);
@@ -152,7 +152,7 @@ namespace ChainSmart
                     reverse: true
                 );
 
-                h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             });
         }
 
@@ -275,7 +275,7 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
@@ -286,8 +286,8 @@ namespace ChainSmart
                     }
 
                     h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("降价调整", nameof(o.off), o.off, min: -999.99M, max: 999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx).LI_().NUMBER("批次总量", nameof(o.stock), o.stock)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("降价", nameof(o.off), o.off, min: -999.99M, max: 999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx).LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
@@ -462,14 +462,14 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
-        [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED | STU_OKED)]
+        [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]
         public async Task stock(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
             var prin = (User)wc.Principal;
 
-            short typ = 0;
+            short optyp = 0;
             string tip = null;
             int qty = 0;
 
@@ -478,7 +478,7 @@ namespace ChainSmart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("库存操作");
-                    h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
+                    h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                     h.LI_().TEXT("摘要", nameof(tip), tip, datalst: StockOp.Tips)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
@@ -487,18 +487,18 @@ namespace ChainSmart
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
-                typ = f[nameof(typ)];
+                optyp = f[nameof(optyp)];
                 tip = f[nameof(tip)];
                 qty = f[nameof(qty)];
 
                 // update
-                if (typ > 1)
+                if (optyp == 2)
                 {
                     qty = -qty;
                 }
 
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND srcid = @6");
+                dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @3 ELSE 0 END), stock = stock + @3 WHERE id = @5 AND srcid = @6");
                 await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(tip).Set(qty).Set(prin.name).Set(id).Set(org.id));
 
                 wc.GivePane(200); // close dialog
@@ -567,10 +567,10 @@ namespace ChainSmart
                 // bottom bar
                 //
                 decimal realprice = o.RealPrice;
-                short qtyx = o.minx;
-                decimal unitx = o.unitx;
-                decimal qty = qtyx * unitx;
-                decimal topay = decimal.Round(qty * o.RealPrice, 2); // round to money 2 decimal digits
+                int qtyx = o.minx < o.MaxXForSingleBook ? o.minx : 0;
+                short unitx = o.unitx;
+                int qty = qtyx * unitx;
+                decimal topay = qty * o.RealPrice;
 
                 h.BOTTOMBAR_();
                 h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(1); topay.value = ({realprice} * qty.value).toFixed(2);");
@@ -578,7 +578,7 @@ namespace ChainSmart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = o.minx; i < o.MaxForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+                for (int i = o.minx; i < o.MaxXForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
@@ -591,7 +591,7 @@ namespace ChainSmart
 
                 h._FORM();
                 h._BOTTOMBAR();
-            }, shared: true, maxage: 60);
+            }, true, 60); // NOTE publicly cacheable though within a private context
         }
 
         public async Task book(WebContext wc, int cmd)

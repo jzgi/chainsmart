@@ -114,9 +114,9 @@ namespace ChainSmart
 
             CreateWork<SrclyLotWork>("slot");
 
-            CreateWork<SrclyBookWork>("sbooks", state: Book.TYP_SPOT, ui: new("销售订单-现货", "商户"));
+            CreateWork<SrclyBookWork>("sbookspot", state: Book.TYP_SPOT, ui: new("销售订单-现货", "商户"));
 
-            CreateWork<SrclyBookWork>("sbookf", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
+            CreateWork<SrclyBookWork>("sbooklift", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
 
             CreateWork<SrclyBookAggWork>("sbookldg");
 

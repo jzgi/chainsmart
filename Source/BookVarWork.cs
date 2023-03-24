@@ -3,7 +3,6 @@ using System.Data;
 using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Application;
-using static ChainFx.Entity;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
 
@@ -32,7 +31,7 @@ namespace ChainSmart
                 h.LI_().FIELD("支付", o.pay, money: true).FIELD("状态", o.status, Book.Statuses)._LI();
 
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "待发", o.adapted, o.adapter)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "备发", o.adapted, o.adapter)._LI();
                 if (o.oker != null) h.LI_().FIELD2("发货", o.oked, o.oker)._LI();
 
                 h._UL();
@@ -42,10 +41,16 @@ namespace ChainSmart
         }
     }
 
+    public class ShplyBookVarWork : BookVarWork
+    {
+    }
+
     public class SrclyBookVarWork : BookVarWork
     {
+        bool IsSpotTyp => (short)Parent.State == Book.TYP_SPOT;
+
         [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("发货", "确认发货？", icon: "sign-out"), Tool(ButtonConfirm, status: STU_CREATED)]
+        [Ui("备发", "授权品控库发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
         public async Task adapt(WebContext wc)
         {
             int id = wc[0];
@@ -53,21 +58,59 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING shpid, topay");
+            dc.Sql("UPDATE books SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING ctrid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
-                dc.Let(out int shpid);
+                dc.Let(out int ctrid);
                 dc.Let(out decimal topay);
 
-                // put a notice to the booker
-                NoticeBot.Put(shpid, Notice.BOOK_ADAPTED, 1, topay);
+                // put a notice to the relevant center
+                NoticeBot.Put(ctrid, Notice.BOOK_ADAPTED, 1, topay);
+            }
+
+            wc.Give(204);
+        }
+
+        [OrglyAuthorize(0, User.ROL_LOG)]
+        [Ui("发货", "确认从品控库发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 2)]
+        public async Task ok(WebContext wc)
+        {
+            int id = wc[0];
+            var org = wc[-2].As<Org>();
+            var prin = (User)wc.Principal;
+
+            using var dc = NewDbContext(IsolationLevel.ReadUncommitted);
+            try
+            {
+                // set status and decrease the stock
+                dc.Sql("UPDATE books SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND srcid = @4 AND status = 2 RETURNING lotid, qty, shpid, topay");
+                if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
+                {
+                    dc.Let(out int lotid);
+                    dc.Let(out int qty);
+                    dc.Let(out int shpid);
+                    dc.Let(out decimal topay);
+
+                    // adjust the stock
+                    dc.Sql("UPDATE lots SET stock = stock - @1 WHERE id = @2");
+                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
+
+                    // put a notice to the shop
+                    NoticeBot.Put(shpid, Notice.BOOK_OKED, 1, topay);
+                }
+            }
+            catch (Exception)
+            {
+                dc.Rollback();
+                Err("退款失败, bookid " + id);
+                return;
             }
 
             wc.Give(204);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED)]
+        [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
         public async Task @void(WebContext wc)
         {
             int id = wc[0];
@@ -77,14 +120,20 @@ namespace ChainSmart
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("UPDATE books SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND srcid = @4 AND status = 1 RETURNING shpid, topay, refund");
+                dc.Sql("UPDATE books SET status = 0, ret = qty, refund = pay, adapted = @1, adapter = @2 WHERE id = @3 AND srcid = @4 AND status BETWEEN 1 AND 2 RETURNING lotid, qty, shpid, topay, refund");
                 if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
+                    dc.Let(out int lotid);
+                    dc.Let(out int qty);
                     dc.Let(out int shpid);
                     dc.Let(out decimal topay);
                     dc.Let(out decimal refund);
 
-                    // remote call
+                    // adjust the stock
+                    dc.Sql("UPDATE lots SET avail = avail + @1 WHERE id = @2");
+                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
+
+                    // remote call to refund
                     var trade_no = Buy.GetOutTradeNo(id, topay);
                     string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no);
                     if (err != null) // not success
@@ -93,14 +142,14 @@ namespace ChainSmart
                         Err(err);
                     }
 
-                    // put a notice to the booker
+                    // put a notice to the shop
                     NoticeBot.Put(shpid, Notice.BOOK_VOID, 1, refund);
                 }
             }
             catch (Exception)
             {
                 dc.Rollback();
-                Err("退款失败，订单号：" + id);
+                Err("退款失败, bookid " + id);
                 return;
             }
 
@@ -108,31 +157,6 @@ namespace ChainSmart
         }
     }
 
-
-    public class ShplyBookVarWork : BookVarWork
-    {
-        [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("收货", "确认收货？", icon: "sign-in"), Tool(ButtonConfirm, status: STU_ADAPTED)]
-        public async Task ok(WebContext wc)
-        {
-            int id = wc[0];
-            var org = wc[-2].As<Org>();
-            var prin = (User)wc.Principal;
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE books SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND shpid = @4 AND status = 2 RETURNING srcid, topay");
-            if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
-            {
-                dc.Let(out int srcid);
-                dc.Let(out decimal topay);
-
-                // put a notice to the processor
-                NoticeBot.Put(srcid, Notice.BOOK_OKED, 1, topay);
-            }
-
-            wc.Give(204);
-        }
-    }
 
     public class CtrlyBookVarWork : BookVarWork
     {

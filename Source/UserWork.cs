@@ -198,7 +198,7 @@ namespace ChainSmart
 
                 if (arr == null)
                 {
-                    h.ALERT("无此用户");
+                    h.ALERT("尚无人员权限");
                     return;
                 }
 

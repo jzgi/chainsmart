@@ -64,7 +64,8 @@ namespace ChainSmart
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                var cat_ctr_id = Comp(0, org.ctrid);
+                h.TOOLBAR(subscript: cat_ctr_id);
                 if (arr == null)
                 {
                     h.ALERT("尚无新采购订单");
@@ -143,30 +144,36 @@ namespace ChainSmart
             }, false, 6);
         }
 
+        internal static (short catid, int ctrid) Decomp(int cat_ctr_id) => ((short)(cat_ctr_id >> 24), cat_ctr_id & 0x00ffffff);
+
+        internal static int Comp(short catid, int ctrid) => (catid << 24) | ctrid;
+
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("采购", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int catid)
+        public async Task @new(WebContext wc, int cat_ctr_id) // NOTE so that it is publicly cacheable
         {
             var org = wc[-1].As<Org>();
-            int ctrid = org.ctrid;
             var cats = Grab<short, Cat>();
+
+            (short catid, int ctrid) = Decomp(cat_ctr_id);
 
             if (catid == 0)
             {
-                wc.Subscript = catid = cats.KeyAt(0);
+                catid = cats.KeyAt(0);
+                wc.Subscript = Comp(catid, ctrid);
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND catid = @2 AND (targs IS NULL OR targs @> ARRAY[@3])");
-            var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(catid).Set(org.ctrid));
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND catid = @1 AND (targs IS NULL OR targs @> ARRAY[@2])");
+            var arr = await dc.QueryAsync<Lot>(p => p.Set(catid).Set(ctrid));
 
             wc.GivePage(200, h =>
             {
-                h.TOPBAR_().NAVBAR(nameof(@new), catid, cats)._TOPBAR();
+                h.TOPBAR_().LOTNAVBAR(nameof(@new), catid, cats, ctrid)._TOPBAR();
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无产品");
+                    h.ALERT("尚无上线产品");
                     return;
                 }
 
@@ -185,7 +192,7 @@ namespace ChainSmart
 
                     h._A();
                 });
-            }, false, 60);
+            }, true, 60); // NOTE we deliberately make the pages publicly cacheable though within a private context
         }
     }
 
@@ -203,7 +210,7 @@ namespace ChainSmart
             await dc.ExecuteAsync();
         }
 
-        static void MainGrid(HtmlBuilder h, Book[] arr)
+        private static void MainGrid(HtmlBuilder h, Book[] arr)
         {
             h.MAINGRID(arr, o =>
             {
@@ -228,17 +235,17 @@ namespace ChainSmart
         }
 
 
-        short Typ => (short)State;
+        private short BookTyp => (short)State;
 
         [BizNotice(BOOK_CREATED)]
-        [Ui("新订单"), Tool(Anchor)]
+        [Ui("销售订单"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 1 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE typ = @1 AND srcid = @2 AND status = 1 ORDER BY created DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(BookTyp).Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -253,21 +260,21 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [Ui(tip: "已授意", icon: "check", group: 2), Tool(Anchor)]
+        [Ui(tip: "已备发", icon: "eye", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 2 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE typ = @1 AND srcid = @2 AND status = 2 ORDER BY adapted DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(BookTyp).Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无已授意订单");
+                    h.ALERT("尚无已备发订单");
                     return;
                 }
 
@@ -276,14 +283,14 @@ namespace ChainSmart
         }
 
         [BizNotice(BOOK_OKED)]
-        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 4 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE typ = @1 AND srcid = @2 AND status = 4 ORDER BY oked DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(BookTyp).Set(org.id));
 
             wc.GivePage(200, h =>
             {
@@ -304,15 +311,15 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE srcid = @1 AND typ = @2 AND status = 0 ORDER BY id DESC");
-            var arr = await dc.QueryAsync<Book>(p => p.Set(org.id).Set(Typ));
+            dc.Sql("SELECT ").collst(Book.Empty).T(" FROM books WHERE typ = @1 AND srcid = @2 AND status = 0 ORDER BY id DESC");
+            var arr = await dc.QueryAsync<Book>(p => p.Set(BookTyp).Set(org.id));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("尚无撤销的订单");
+                    h.ALERT("尚无已撤销订单");
                     return;
                 }
 
