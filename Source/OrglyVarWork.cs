@@ -37,12 +37,6 @@ namespace ChainSmart
                 h._TOPBARXL();
 
                 h.WORKBOARD(notice: org.id);
-
-                // qrcode
-                if (org.IsOfShop)
-                {
-                    h.NAV_(css: "uk-col uk-margin uk-flex-middle").QRCODE(MainApp.WwwUrl + "/" + org.MarketId + "/", css: " uk-width-small").SPAN("推荐市场")._NAV();
-                }
             }, false, 30, title: org.name);
         }
     }
@@ -60,9 +54,9 @@ namespace ChainSmart
 
             CreateWork<OrglyAccessWork>("access", true); // true = shop
 
-            CreateWork<OrglyCreditWork>("credit");
+            CreateWork<OrglyBuyClearWork>("buyclr", state: true);
 
-            CreateWork<PtylyBuyClearWork>("buyclr", state: true);
+            CreateWork<OrglyCreditWork>("credit");
 
             // shp
 
@@ -72,12 +66,13 @@ namespace ChainSmart
 
             CreateWork<ShplyBuyWork>("sbuy");
 
-            CreateWork<ShplyPosWork>("spos");
+            CreateWork<ShplyBookWork>("sbook");
 
             CreateWork<ShplyBuyAggWork>("sbuyagg");
 
-            CreateWork<ShplyBookWork>("sbook");
+            CreateWork<ShplyBookAggWork>("sbookagg");
 
+            CreateWork<ShplyPosWork>("spos");
 
             // mkt
 
@@ -106,7 +101,7 @@ namespace ChainSmart
 
             CreateWork<OrglyCreditWork>("credit");
 
-            CreateWork<PtylyBookClearWork>("bookclr", state: true); // true = is org
+            CreateWork<OrglyBookClearWork>("bookclr", state: true); // true = is org
 
             // src
 

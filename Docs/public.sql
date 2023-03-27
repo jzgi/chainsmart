@@ -203,26 +203,6 @@ create table global
 alter table global
     owner to postgres;
 
-create table bookaggs
-(
-    typ     smallint not null,
-    orgid   integer  not null,
-    dt      date,
-    acct    integer  not null,
-    prtid   integer,
-    trans   integer,
-    qty     numeric(8, 1),
-    amt     money,
-    created timestamp(0),
-    creator varchar(12)
-);
-
-alter table bookaggs
-    owner to postgres;
-
-create index rpts_main_idx
-    on bookaggs (typ, orgid, dt);
-
 create table bookclrs
 (
     id    integer default nextval('clears_id_seq'::regclass) not null
@@ -236,29 +216,15 @@ create table bookclrs
     topay money,
     pay   money
 )
-    inherits (entities);
+     inherits
+(
+    entities
+)tablespace sup;
 
 alter table bookclrs
     owner to postgres;
 
 alter sequence clears_id_seq owned by bookclrs.id;
-
-create table buyaggs
-(
-    typ     smallint not null,
-    orgid   integer  not null,
-    dt      date,
-    acct    integer  not null,
-    prtid   integer,
-    trans   integer,
-    qty     numeric(8, 1),
-    amt     money,
-    created timestamp(0),
-    creator varchar(12)
-);
-
-alter table buyaggs
-    owner to postgres;
 
 create table buyclrs
 (
@@ -273,7 +239,10 @@ create table buyclrs
     topay money,
     pay   money
 )
-    inherits (entities);
+    inherits
+(
+    entities
+)tablespace rtl ;
 
 alter table buyclrs
     owner to postgres;
@@ -362,10 +331,7 @@ create table items
     pic   bytea,
     ops   stockop[]
 )
-    tablespace rtl inherits
-(
-    entities
-);
+    inherits (entities);
 
 alter table items
     owner to postgres;
@@ -395,13 +361,13 @@ create table books
         constraint books_lotid_fk
             references lots,
     unit    varchar(4),
-    unitx   numeric(6, 1),
+    unitx   smallint,
     price   money,
     "off"   money,
-    qty     numeric(8, 1),
+    qty     integer,
     topay   money,
     pay     money,
-    ret     numeric(6, 1),
+    ret     integer,
     refund  money,
     constraint typ_chk
         check ((typ >= 1) AND (typ <= 2))
@@ -416,7 +382,23 @@ alter table books
 
 create unique index books_single_idx
     on books (shpid, status)
-    where (status = '-1'::integer);
+    where (status = '-1'::integer) tablespace sup;
+
+create index books_ctridstatus_idx
+    on books (ctrid, status)
+    tablespace sup;
+
+create index books_shpidstatus_idx
+    on books (shpid, status)
+    tablespace sup;
+
+create index books_srcidstatus_idx
+    on books (srcid, status)
+    tablespace sup;
+
+create index books_mktidstatus_idx
+    on books (mktid, status)
+    tablespace sup;
 
 create index lots_nend_idx
     on lots (nend);
@@ -474,7 +456,7 @@ create table buys
     ret    numeric(6, 1),
     refund money,
     constraint typ_chk
-        check ((typ >= 1) AND (typ <= 4))
+        check ((typ >= 1) AND (typ <= 3))
 )
     tablespace rtl inherits
 (
@@ -494,7 +476,47 @@ create index buys_shpidstatus_idx
 
 create unique index buys_single_idx
     on buys (shpid, typ, status)
-    where ((typ = 1) AND (status = '-1'::integer));
+    where ((typ = 1) AND (status = '-1'::integer)) tablespace rtl;
+
+create index buys_mktidstatus_idx
+    on buys (mktid, status)
+    tablespace rtl;
+
+create table buyaggs
+(
+    orgid   integer  not null,
+    dt      date     not null,
+    typ     smallint not null,
+    coid    integer,
+    trans   integer,
+    qty     integer,
+    amt     money,
+    created timestamp(0),
+    creator varchar(12),
+    constraint buyaggs_pk
+        primary key (orgid, dt, typ)
+)
+    tablespace rtl;
+
+alter table buyaggs
+    owner to postgres;
+
+create table bookaggs
+(
+    orgid   integer  not null,
+    dt      date,
+    typ     smallint not null,
+    coid    integer,
+    trans   integer,
+    qty     integer,
+    amt     money,
+    created timestamp(0),
+    creator varchar(12)
+)
+    tablespace sup;
+
+alter table bookaggs
+    owner to postgres;
 
 create view orgs_vw
             (typ, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, ext, legal,
@@ -707,15 +729,13 @@ DECLARE
     paststamp timestamp(0);
 
     TYP_PLAT constant int = 1;
-    TYP_GATEWAY constant int = 2;
-    TYP_SHP constant int = 3;
-    TYP_MKT constant int = 4;
+    TYP_SHP constant int = 2;
+    TYP_MKT constant int = 3;
 
-    BASE constant int = 1000;
-    RATE_PLAT constant int = 4;
-    RATE_GATEWAY constant int = 6;
-    RATE_SHP constant int = 970;
-    RATE_MKT constant int = 20;
+    BASE constant int = 100;
+    RATE_PLAT constant int = 1;
+    RATE_SHP constant int = 97;
+    RATE_MKT constant int = 2;
 
 BEGIN
 
@@ -725,17 +745,15 @@ BEGIN
 
     opr = coalesce(opr, 'SYS');
 
-    SELECT coalesce(
-                   buysgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    SELECT coalesce(buysgen, '2000-01-01'::date) FROM global WHERE pk INTO past;
     paststamp = (past + interval '1 day')::timestamp(0);
 
     -- buys for shop
 
-    INSERT INTO buyaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
-    SELECT 1,
-           shpid,
-           typ,
+    INSERT INTO buyaggs (orgid, dt, typ, coid, trans, amt, created, creator)
+    SELECT shpid,
            oked::date,
+           typ,
            first(mktid),
            count(pay),
            sum(pay - coalesce(refund, 0::money)),
@@ -743,7 +761,7 @@ BEGIN
            opr
     FROM buys
     WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY shpid, typ, oked::date;
+    GROUP BY shpid, oked::date, typ;
 
     INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_SHP,
@@ -765,16 +783,14 @@ BEGIN
            first(creator),
            now,
            opr,
-           prtid,
+           coid,
            till,
            sum(trans),
            sum(amt),
            RATE_MKT,
            sum(amt * RATE_MKT / BASE)
     FROM buyaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY prtid;
-
-
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY coid;
 
     UPDATE global SET buysgen = till WHERE pk;
 END
@@ -793,21 +809,16 @@ DECLARE
     tillstamp timestamp(0);
     paststamp timestamp(0);
 
-
     TYP_PLAT constant int = 1;
-    TYP_GATEWAY constant int = 2;
-    TYP_SRC constant int = 5;
-    TYP_ZON constant int = 6;
-    TYP_CTR constant int = 7;
+    TYP_SRC constant int = 2;
+    TYP_CTR constant int = 3;
 
 --     rates in thousandth
 
-    BASE constant int = 1000;
-    RATE_PLAT constant int = 4;
-    RATE_GATEWAY constant int = 6;
-    RATE_SRC constant int = 970;
-    RATE_ZON constant int = 4;
-    RATE_CTR constant int = 16;
+    BASE constant int = 100;
+    RATE_PLAT constant int = 1;
+    RATE_SRC constant int = 97;
+    RATE_CTR constant int = 2;
 
 BEGIN
 
@@ -820,40 +831,20 @@ BEGIN
 
     paststamp = (past + interval '1 day')::timestamp(0);
 
-
-
     -- books for source
 
-    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
-    SELECT 2,
-           srcid,
-           itemid,
+    INSERT INTO bookaggs (orgid, dt, typ, coid, trans, amt, created, creator)
+    SELECT srcid,
            oked::date,
-           first(zonid),
+           typ,
+           first(ctrid),
            count(pay),
            sum(pay - coalesce(refund, 0::money)),
            now,
            opr
     FROM books
     WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY srcid, itemid, oked::date;
-
-    -- books for center
-
-    INSERT INTO bookaggs (typ, orgid, acct, dt, prtid, trans, amt, created, creator)
-    SELECT 3,
-           ctrid,
-           itemid,
-           oked::date,
-           NULL,
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
-    FROM books
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY ctrid, itemid, oked::date;
-
+    GROUP BY srcid, oked::date, typ;
 
 
     INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
@@ -868,37 +859,21 @@ BEGIN
            RATE_SRC,
            sum(amt * RATE_SRC / BASE)
     FROM bookaggs
-    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY orgid;
-
-    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
-    SELECT TYP_ZON,
-           first(creator),
-           now,
-           opr,
-           prtid,
-           till,
-           sum(trans),
-           sum(amt),
-           RATE_ZON,
-           sum(amt * RATE_ZON / BASE)
-    FROM bookaggs
-    WHERE typ = 2 AND dt > past AND dt <= till GROUP BY prtid;
-
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
     INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_CTR,
            first(creator),
            now,
            opr,
-           orgid,
+           coid,
            till,
            sum(trans),
            sum(amt),
            RATE_CTR,
            sum(amt * RATE_CTR / BASE)
     FROM bookaggs
-    WHERE typ = 3 AND dt > past AND dt <= till GROUP BY orgid;
-
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY coid;
 
     UPDATE global SET booksgen = till WHERE pk;
 
@@ -907,7 +882,7 @@ $$;
 
 alter function booksgen(date, varchar) owner to postgres;
 
-create function buys_trig_upd() returns trigger
+create function buys_trig_func() returns trigger
     language plpgsql
 as
 $$
@@ -915,16 +890,28 @@ DECLARE
     ln buyln;
 BEGIN
     -- update ware avail values
-    IF (NEW.status = 4 AND (TG_OP = 'INSERT' OR OLD.status < 4)) THEN
+    IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
 
         FOREACH ln IN ARRAY NEW.lns LOOP -- oked
-        UPDATE wares SET avail = avail - ln.qty WHERE id = ln.wareid;
+        UPDATE items SET avail = avail - ln.qty, stock = stock - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
-    ELSEIF (NEW.status = 8 AND (TG_OP = 'INSERT' OR OLD.status < 8)) THEN -- aborted
+    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1) THEN -- paid
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE wares SET avail = avail + ln.qty WHERE id = ln.wareid;
+                UPDATE items SET avail = avail - ln.qty WHERE id = ln.itemid;
+            END LOOP;
+
+    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4) THEN -- delivered
+
+        FOREACH ln IN ARRAY NEW.lns LOOP
+                UPDATE items SET stock = stock - ln.qty WHERE id = ln.itemid;
+            END LOOP;
+
+    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 0) THEN -- voided
+
+        FOREACH ln IN ARRAY NEW.lns LOOP
+                UPDATE items SET avail = avail + ln.qty, stock = stock + ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     END IF;
@@ -933,7 +920,22 @@ BEGIN
 END
 $$;
 
-alter function buys_trig_upd() owner to postgres;
+alter function buys_trig_func() owner to postgres;
+
+create trigger buys_ins_trig
+    after insert
+    on buys
+    for each row
+    when (new.status = 4)
+execute procedure buys_trig_func();
+
+create trigger buys_upd_trig
+    after update
+        of status
+    on buys
+    for each row
+    when (new.status IS DISTINCT FROM old.status)
+execute procedure buys_trig_func();
 
 create aggregate first(anyelement) (
     sfunc = first_agg,

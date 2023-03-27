@@ -330,16 +330,16 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("采购订单集中收货", "机构")]
+    [Ui("采购订单统一收货", "机构")]
     public class MktlyBookWork : BookWork<MktlyBookVarWork>
     {
-        [Ui("按产品", group: 1), Tool(Anchor)]
+        [Ui("按产品批次", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var mkt = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM books WHERE mktid = @1 AND state > 0 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM books WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
             await dc.QueryAsync(p => p.Set(mkt.id).Set(page));
 
             wc.GivePage(200, h =>
@@ -373,7 +373,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT shpid, first(shpname) AS shpname, count(id) AS count FROM books WHERE mktid = @1 AND state > 0 GROUP BY shpid");
+            dc.Sql("SELECT shpid, first(shpname) AS shpname, count(id) AS count FROM books WHERE mktid = @1 AND status = 4 GROUP BY shpid");
             var arr = await dc.QueryAsync<BookAgg>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

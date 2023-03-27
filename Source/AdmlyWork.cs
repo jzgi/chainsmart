@@ -17,9 +17,9 @@ namespace ChainSmart
 
             CreateWork<AdmlyAccessWork>("access");
 
-            CreateWork<PtylyBuyClearWork>("pbuyclr", state: false);
+            CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
 
-            CreateWork<PtylyBookClearWork>("pbookclr", state: false);
+            CreateWork<OrglyBookClearWork>("pbookclr", state: false);
 
             CreateWork<AdmlyNodeWork>("node");
 

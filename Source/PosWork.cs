@@ -40,7 +40,7 @@ namespace ChainSmart
                 // form input
 
                 h.FORM_().FIELDSUL_();
-                h.LI_().SELECT_(nameof(itemid), onchange: "posWareChange(this);").T("<option></option>");
+                h.LI_().SELECT_(nameof(itemid), onchange: "posWareChange(this);");
 
                 for (var i = 0; i < arr?.Length; i++)
                 {
@@ -90,9 +90,11 @@ namespace ChainSmart
                 h._NAV();
 
                 h.BOTTOMBAR_();
-                for (short i = 2; i <= 4; i++)
+                for (short i = 2; i <= 3; i++)
                 {
-                    h.BUTTON(Buy.Typs[i], nameof(buy), subscript: i, onclick: "return call_pos(this);");
+                    h.BUTTON_(nameof(buy), subscript: i, onclick: "return call_pos(this);", css: "uk-button-default");
+                    h.ICON(Buy.Icons[i]).SP().T(Buy.Typs[i]);
+                    h._BUTTON();
                 }
 
                 h._BOTTOMBAR();

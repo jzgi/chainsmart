@@ -12,15 +12,20 @@ namespace ChainSmart
         public const short
             TYP_PLAT = 1,
             TYP_CASH = 2,
-            TYP_QRCODE = 3,
-            TYP_BANK = 4;
+            TYP_TRANSF = 3;
 
         public static readonly Map<short, string> Typs = new()
         {
             { TYP_PLAT, "平台" },
             { TYP_CASH, "现金" },
-            { TYP_QRCODE, "扫码" },
-            { TYP_BANK, "银行" },
+            { TYP_TRANSF, "转账" },
+        };
+
+        public static readonly Map<short, string> Icons = new()
+        {
+            { TYP_PLAT, "cloud-upload" },
+            { TYP_CASH, "file" },
+            { TYP_TRANSF, "thumbnails" },
         };
 
         public new static readonly Map<short, string> Statuses = new()

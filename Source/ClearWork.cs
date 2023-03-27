@@ -138,7 +138,7 @@ namespace ChainSmart
     }
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应业务结算管理", "财务")]
+    [Ui("供应业务结算", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlyBookClearVarWork>
     {
         [Ui("供应业务结算", group: 1), Tool(Anchor)]
@@ -235,10 +235,10 @@ namespace ChainSmart
         }
     }
 
-    [Ui("消费业务收入")]
-    public class PtylyBuyClearWork : ClearWork<PtylyClearVarWork>
+    [Ui("业务结款")]
+    public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
     {
-        [Ui("业务收入", group: 1), Tool(Anchor)]
+        [Ui("业务结款", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             var isOrg = (bool)State;
@@ -277,8 +277,8 @@ namespace ChainSmart
         }
     }
 
-    [Ui("供应业务结款")]
-    public class PtylyBookClearWork : ClearWork<PtylyClearVarWork>
+    [Ui("业务结款")]
+    public class OrglyBookClearWork : ClearWork<PtylyClearVarWork>
     {
         [Ui("业务收入", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)

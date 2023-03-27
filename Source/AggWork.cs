@@ -37,14 +37,14 @@ namespace ChainSmart
 
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("消费业务汇总表", "财务")]
+    [Ui("市场业务日总", "财务")]
     public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
     {
         [Ui("消费业务", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM buyaggs WHERE typ = 1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = dc.Query<Agg>(p => p.Set(page));
 
             wc.GivePage(200, h =>
@@ -54,7 +54,7 @@ namespace ChainSmart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.acct]);
+                    h.TD(Buy.Typs[o.typ]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -72,7 +72,7 @@ namespace ChainSmart
         public void past(WebContext wc, int page)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM buyaggs WHERE typ = 1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs WHERE typ = 1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = dc.Query<Agg>(p => p.Set(page));
 
             wc.GivePage(200, h =>
@@ -82,7 +82,7 @@ namespace ChainSmart
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.acct]);
+                    h.TD(Buy.Typs[o.typ]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -99,7 +99,7 @@ namespace ChainSmart
 
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应业务汇总表", "财务")]
+    [Ui("供应业务日总", "财务")]
     public class AdmlyBookAggWork : AggWork<AdmlyBookAggVarWork>
     {
         public void @default(WebContext wc, int page)
@@ -108,23 +108,29 @@ namespace ChainSmart
         }
     }
 
-    [Ui("销售汇总", "商户")]
-    public class ShplyBuyAggWork : AggWork<OrglyAggrVarWork>
+    [Ui("销售日总", "商户")]
+    public class ShplyBuyAggWork : AggWork<ShplyBuyAggVarWork>
     {
         public void @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM rpts WHERE typ = 1 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
             var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
+                if (arr == null)
+                {
+                    h.ALERT("暂无生成报表");
+                    return;
+                }
+
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.acct]);
+                    h.TD(Buy.Typs[o.typ]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -139,25 +145,66 @@ namespace ChainSmart
         }
     }
 
+    [Ui("采购日总", "商户")]
+    public class ShplyBookAggWork : AggWork<ShplyBookAggVarWork>
+    {
+        public void @default(WebContext wc, int page)
+        {
+            var org = wc[-1].As<Org>();
 
-    [Ui("销售报表", "商户")]
-    public class SrclyBookAggWork : AggWork<OrglyAggrVarWork>
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM bookaggs WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
+
+            wc.GivePage(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("暂无生成报表");
+                    return;
+                }
+
+                h.TABLE(arr, o =>
+                {
+                    h.TD_().T(o.dt, 3, 0)._TD();
+                    h.TD(Buy.Typs[o.typ]);
+                    h.TD_("uk-text-right").T(o.trans)._TD();
+                    h.TD_("uk-text-right").CNY(o.amt)._TD();
+                }, thead: () =>
+                {
+                    h.TH("日期", css: "uk-width-medium");
+                    h.TH("类型");
+                    h.TH("笔数");
+                    h.TH("金额");
+                });
+                h.PAGINATION(arr?.Length == 30);
+            }, false, 60);
+        }
+    }
+
+    [Ui("销售日总", "商户")]
+    public class SrclyBookAggWork : AggWork<SrclyBookAggVarWork>
     {
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM rpts WHERE typ = 2 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT * FROM bookaggs WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Agg>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
+                if (arr == null)
+                {
+                    h.ALERT("暂无生成报表");
+                    return;
+                }
+
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    var item = GrabObject<int, Asset>(o.acct);
-                    h.TD(item.name);
+                    h.TD(Buy.Typs[o.typ]);
                     h.TD_("uk-text-right").T(o.trans)._TD();
                     h.TD_("uk-text-right").CNY(o.amt)._TD();
                 }, thead: () =>
@@ -173,26 +220,31 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR)]
-    [Ui("销售报表", "机构")]
-    public class CtrlyBookAggWork : AggWork<OrglyAggrVarWork>
+    [Ui("销售日总", "机构")]
+    public class CtrlyBookAggWork : AggWork<CtrlyBookAggVarWork>
     {
         public async Task @default(WebContext wc, int page)
         {
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT * FROM bookaggs WHERE typ = 3 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+            dc.Sql("SELECT * FROM bookaggs WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
             var arr = await dc.QueryAsync<Agg>(p => p.Set(org.id).Set(page));
 
             wc.GivePage(200, h =>
             {
+                if (arr == null)
+                {
+                    h.ALERT("暂无生成报表");
+                    return;
+                }
+
                 h.TABLE(arr, o =>
                 {
                     h.TD_().T(o.dt, 3, 0)._TD();
-                    var item = GrabObject<int, Asset>(o.acct);
-                    h.TD(item.name);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
+                    h.TD(Buy.Typs[o.typ]);
+                    h.TD_("uk-text-right").T((int)o?.trans)._TD();
+                    h.TD_("uk-text-right").CNY((decimal)o?.amt)._TD();
                 }, thead: () =>
                 {
                     h.TH("日期", css: "uk-width-medium");
