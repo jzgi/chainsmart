@@ -17,7 +17,7 @@ create type stockop as
 
 alter type stockop owner to postgres;
 
-create type buyln as
+create type buyitem as
 (
     itemid integer,
     lotid  integer,
@@ -29,7 +29,7 @@ create type buyln as
     qty    smallint
 );
 
-alter type buyln owner to postgres;
+alter type buyitem owner to postgres;
 
 create table entities
 (
@@ -216,10 +216,10 @@ create table bookclrs
     topay money,
     pay   money
 )
-     inherits
+    tablespace sup inherits
 (
     entities
-)tablespace sup;
+);
 
 alter table bookclrs
     owner to postgres;
@@ -239,10 +239,10 @@ create table buyclrs
     topay money,
     pay   money
 )
-    inherits
+    tablespace rtl inherits
 (
     entities
-)tablespace rtl ;
+);
 
 alter table buyclrs
     owner to postgres;
@@ -431,6 +431,9 @@ create table assets
 alter table assets
     owner to postgres;
 
+create index assets_orgidstatus_idx
+    on assets (orgid, status);
+
 create table buys
 (
     id     bigserial
@@ -450,7 +453,7 @@ create table buys
     ucom   varchar(12),
     uaddr  varchar(30),
     uim    varchar(28),
-    lns    buyln[],
+    items  buyitem[],
     topay  money,
     pay    money,
     ret    numeric(6, 1),

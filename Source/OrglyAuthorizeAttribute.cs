@@ -42,7 +42,7 @@ namespace ChainSmart
             }
 
             var ret = prin.GetRoleForOrg(org, out var super, out var ulvl);
-            if ((role & ret) == role && (ulevel == 0 || ulevel == ulvl))
+            if ((role & ret) == role && (ulevel == 0 || (ulevel | ulvl) == ulvl))
             {
                 if (!mock)
                 {

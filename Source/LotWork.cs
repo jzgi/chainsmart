@@ -144,23 +144,20 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-
-                await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-                var assets = dc.ToIntMap();
+                var assets = await GrabMapAsync<int, int, Asset>(o.assetid);
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("现货产品批次（输运进入品控库之后再销售）");
+                    h.FORM_().FIELDSUL_("现货产品批次（货入品控库之后再销售）");
 
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                     h.LI_().SELECT("产源设施", nameof(o.assetid), o.assetid, assets)._LI();
                     h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
-                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap).NUMBER("输运次数", nameof(o.off), o.off, min: 1, max: 100)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                    h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
 
                     h._FIELDSUL();
 
@@ -210,14 +207,11 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                using var dc = NewDbContext();
-
-                await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-                var assets = dc.ToIntMap();
+                var assets = await GrabMapAsync<int, int, Asset>(o.assetid);
 
                 wc.GivePane(200, h =>
                 {
-                    h.FORM_().FIELDSUL_("助农产品批次（输运入品控库之前先销售）");
+                    h.FORM_().FIELDSUL_("助农产品批次（货入品控库之前先销售）");
 
                     h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();

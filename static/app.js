@@ -186,7 +186,7 @@ function posResum(form, round) {
     // round if applicable
     if (round == 1) {
         if (sum >= parseFloat(pay.value)) sum = Math.floor(sum);
-    } 
+    }
     else if (round == 2) {
         if (sum <= parseFloat(pay.value)) sum = Math.ceil(sum);
     }
@@ -271,11 +271,12 @@ function call_pos(trig) {
 
     // get prepare id
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status >= 200) {
             trig.disabled = false; // re-enable the button
             var tbody = document.getElementById('lns');
             tbody.innerHTML = ''; // clear the table of lines
+            alert('成功记录');
             trig.form.reset(); // reset the form
         }
     };

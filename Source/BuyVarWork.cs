@@ -37,7 +37,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TABLE(o.lns, d =>
+                h.TABLE(o.items, d =>
                 {
                     h.TD_().T(d.name);
                     if (d.unitx != 1)
@@ -93,7 +93,7 @@ namespace ChainSmart
                 appeal = (await wc.ReadAsync<Form>())[nameof(appeal)];
                 using var dc = NewDbContext();
                 dc.Sql("UPDATE orders SET appeal = @1 WHERE id = @2 AND uid = @3");
-                dc.Execute(p => p.Set(appeal).Set(orderid).Set(prin.id));
+                await dc.ExecuteAsync(p => p.Set(appeal).Set(orderid).Set(prin.id));
                 wc.GivePane(200); // close
             }
         }

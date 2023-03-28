@@ -136,7 +136,7 @@ namespace ChainSmart
             string addr = f[nameof(addr)];
 
             // lines of detail
-            var lst = new List<BuyLn>();
+            var lst = new List<BuyItem>();
             for (int i = 0; i < f.Count; i++)
             {
                 var ety = f.EntryAt(i);
@@ -148,7 +148,7 @@ namespace ChainSmart
                     continue;
                 }
 
-                lst.Add(new BuyLn(id, qty));
+                lst.Add(new BuyItem(id, qty));
             }
 
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);

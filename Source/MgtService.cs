@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -33,23 +34,14 @@ namespace ChainSmart
         {
             var xe = await wc.ReadAsync<XElem>();
 
-            // For DEBUG
-            // var xe = DataUtility.FileTo<XElem>("./Docs/test.xml");
-            //  
-
             if (!OnNotified(sup: true, xe, out var trade_no, out var cash))
             {
                 wc.Give(400);
                 return;
             }
 
-            // War("trade_no " + trade_no);
-            // War("cash " + cash);
-
             int pos = 0;
             var bookid = trade_no.ParseInt(ref pos);
-
-            // War("bookid " + bookid);
 
             try
             {
@@ -63,17 +55,11 @@ namespace ChainSmart
                     dc.Let(out short qty);
                     dc.Let(out decimal topay);
 
-                    // War("lotid " + lotid);
-                    // War("qty " + qty);
-                    // War("topay " + topay);
-
                     if (topay == cash) // update data
                     {
                         // the book and the lot updates
-                        dc.Sql("UPDATE books SET status = 1, pay = @1 WHERE id = @2 AND status = -1; UPDATE lots SET avail = avail - @3 WHERE id = @4");
-                        await dc.ExecuteAsync(p => p.Set(cash).Set(bookid).Set(qty).Set(lotid));
-
-                        // War("update ok!");
+                        dc.Sql("UPDATE books SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lots SET avail = avail - @4 WHERE id = @5");
+                        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(bookid).Set(qty).Set(lotid));
 
                         // put a notice to the accepter
                         NoticeBot.Put(srcid, Notice.BOOK_CREATED, 1, cash);

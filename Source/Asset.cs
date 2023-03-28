@@ -58,13 +58,13 @@ namespace ChainSmart
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(rank), ref rank);
                 s.Get(nameof(cap), ref cap);
-                s.Get(nameof(cern), ref cern);
-                s.Get(nameof(factor), ref factor);
                 s.Get(nameof(x), ref x);
                 s.Get(nameof(y), ref y);
+                s.Get(nameof(rank), ref rank);
                 s.Get(nameof(specs), ref specs);
+                s.Get(nameof(cern), ref cern);
+                s.Get(nameof(factor), ref factor);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
@@ -94,12 +94,12 @@ namespace ChainSmart
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(rank), rank);
                 s.Put(nameof(cap), cap);
-                s.Put(nameof(cern), cern);
-                s.Put(nameof(factor), factor);
                 s.Put(nameof(x), x);
                 s.Put(nameof(y), y);
+                s.Put(nameof(rank), rank);
+                s.Put(nameof(cern), cern);
+                s.Put(nameof(factor), factor);
                 s.Put(nameof(specs), specs);
             }
 

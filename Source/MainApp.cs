@@ -25,7 +25,7 @@ namespace ChainSmart
             // start the concluder thead
             // cycler.Start();
 
-            MapComposite<BuyLn>();
+            MapComposite<BuyItem>();
             MapComposite<StockOp>();
 
             CacheUp();
@@ -68,11 +68,11 @@ namespace ChainSmart
                 }, 60 * 15
             );
 
-            // indivisual assets (n < 5000)
-            CacheObject<int, Asset>((dc, id) =>
+            //  assets of each org (n < 30)
+            CacheMap<int, int, Asset>((dc, orgid) =>
                 {
-                    dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1");
-                    return dc.QueryTop<Asset>(p => p.Set(id));
+                    dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE orgid = @1 AND status = 4");
+                    return dc.QueryAsync<int, Asset>(p => p.Set(orgid));
                 }, 60 * 30
             );
 

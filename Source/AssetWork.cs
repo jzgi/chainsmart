@@ -98,7 +98,7 @@ namespace ChainSmart
         }
 
         [Ui(icon: "trash", group: 4), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -120,9 +120,9 @@ namespace ChainSmart
             }, false, 6);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
         [Ui("新建", "新建产源设施", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task @new(WebContext wc, int state)
+        public async Task @new(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
@@ -138,13 +138,14 @@ namespace ChainSmart
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Asset.Typs, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().SELECT("等级", nameof(o.rank), o.rank, Asset.Ranks, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
                     h.LI_().SELECT("碳减排项目", nameof(o.cern), o.cern, Cern.Typs)._LI();
-                    // h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
+                    h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
                 });

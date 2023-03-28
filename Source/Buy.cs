@@ -46,7 +46,7 @@ namespace ChainSmart
         internal string ucom; // community
         internal string uaddr; // address
         internal string uim;
-        internal BuyLn[] lns; // detail lines
+        internal BuyItem[] items; // item lines
         internal decimal topay;
         internal decimal pay;
         internal decimal ret;
@@ -56,13 +56,13 @@ namespace ChainSmart
         {
         }
 
-        public Buy(User prin, Org shp, BuyLn[] arr)
+        public Buy(User prin, Org shp, BuyItem[] arr)
         {
             typ = TYP_PLAT;
             name = shp.Name;
             shpid = shp.id;
             mktid = shp.MarketId;
-            lns = arr;
+            items = arr;
             uid = prin.id;
             uname = prin.name;
             utel = prin.tel;
@@ -88,7 +88,7 @@ namespace ChainSmart
                 s.Get(nameof(ucom), ref ucom);
                 s.Get(nameof(uaddr), ref uaddr);
                 s.Get(nameof(uim), ref uim);
-                s.Get(nameof(lns), ref lns);
+                s.Get(nameof(items), ref items);
                 s.Get(nameof(topay), ref topay);
             }
 
@@ -122,7 +122,7 @@ namespace ChainSmart
                 s.Put(nameof(ucom), ucom);
                 s.Put(nameof(uaddr), uaddr);
                 s.Put(nameof(uim), uim);
-                s.Put(nameof(lns), lns);
+                s.Put(nameof(items), items);
                 s.Put(nameof(topay), topay);
             }
 
@@ -137,9 +137,9 @@ namespace ChainSmart
         public void SetToPay()
         {
             var sum = 0.00M;
-            if (lns != null)
+            if (items != null)
             {
-                foreach (var ln in lns)
+                foreach (var ln in items)
                 {
                     sum += ln.SubTotal;
                 }

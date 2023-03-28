@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -109,9 +110,8 @@ namespace ChainSmart
 
                     if (topay == cash) // update data
                     {
-                        // the book and the lot updates
-                        dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1");
-                        await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
+                        dc.Sql("UPDATE buys SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1");
+                        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(buyid));
 
                         // put a notice
                         NoticeBot.Put(shpid, Notice.BUY_CREATED, 1, cash);

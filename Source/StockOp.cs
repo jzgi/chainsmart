@@ -5,10 +5,12 @@ namespace ChainSmart
 {
     public struct StockOp : IData, IKeyable<DateTime>
     {
+        public const short TYP_ADD = 1, TYP_SUBSTRACT = 2;
+
         public static readonly Map<short, string> Typs = new()
         {
-            { 1, "＋" },
-            { 2, "－" },
+            { TYP_ADD, "＋" },
+            { TYP_SUBSTRACT, "－" },
         };
 
         public static readonly string[] Tips =

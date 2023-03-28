@@ -31,9 +31,9 @@ namespace ChainSmart
 
                 h.LI_().T(o.uname).SP().T(o.utel).SP().T(o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
 
-                for (int i = 0; i < o?.lns.Length; i++)
+                for (int i = 0; i < o?.items.Length; i++)
                 {
-                    var d = o.lns[i];
+                    var d = o.items[i];
 
                     h.LI_();
 
@@ -119,9 +119,9 @@ namespace ChainSmart
                 h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
                 // the first detail
-                var ln = o.lns[0];
+                var ln = o.items[0];
 
-                if (o.lns.Length == 1)
+                if (o.items.Length == 1)
                 {
                     h.PIC(MainApp.WwwUrl, "/lot/", ln.lotid, "/icon", css: "uk-width-1-5");
                 }
@@ -131,7 +131,7 @@ namespace ChainSmart
                 h.ASIDE_();
                 h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Book.Statuses[o.status])._SPAN()._HEADER();
                 h.Q(o.uaddr, "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-width-1-3")._SPAN().SPAN_("uk-width-1-3").T(o.lns.Length).SP().T("项商品")._SPAN().SPAN_("uk-margin-auto-left").CNY(o.pay)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN_("uk-width-1-3")._SPAN().SPAN_("uk-width-1-3").T(o.items.Length).SP().T("项商品")._SPAN().SPAN_("uk-margin-auto-left").CNY(o.pay)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

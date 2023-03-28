@@ -5,7 +5,7 @@ namespace ChainSmart
     /// <summary>
     /// A detail line of buy order.
     /// </summary>
-    public class BuyLn : IData, IKeyable<int>
+    public class BuyItem : IData, IKeyable<int>
     {
         public int itemid;
 
@@ -23,17 +23,17 @@ namespace ChainSmart
 
         public short qty;
 
-        public BuyLn()
+        public BuyItem()
         {
         }
 
-        public BuyLn(int itemid, short qty)
+        public BuyItem(int itemid, short qty)
         {
             this.itemid = itemid;
             this.qty = qty;
         }
 
-        public BuyLn(int itemid, string[] comp)
+        public BuyItem(int itemid, string[] comp)
         {
             this.itemid = itemid;
 

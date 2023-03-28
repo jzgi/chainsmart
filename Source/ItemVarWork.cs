@@ -205,7 +205,7 @@ namespace ChainSmart
             var org = wc[-2].As<Org>();
             var prin = (User)wc.Principal;
 
-            short typ = 0;
+            short optyp = 0;
             decimal qty = 0.0M;
             string tip = null;
 
@@ -214,7 +214,7 @@ namespace ChainSmart
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("库存操作");
-                    h.LI_().SELECT("操作类型", nameof(typ), typ, StockOp.Typs, required: true)._LI();
+                    h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
                     h.LI_().TEXT("注释", nameof(tip), tip, max: 20)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
@@ -223,7 +223,7 @@ namespace ChainSmart
             else // POST
             {
                 var f = await wc.ReadAsync<Form>();
-                typ = f[nameof(typ)];
+                optyp = f[nameof(optyp)];
                 qty = f[nameof(qty)];
                 tip = f[nameof(tip)];
 
@@ -231,15 +231,15 @@ namespace ChainSmart
                 using var dc = NewDbContext();
 
                 var now = DateTime.Now;
-                if (typ < 5) // add
+                if (optyp == StockOp.TYP_ADD)
                 {
-                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4, @5)::StockOp, avail = avail + @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4, @5)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @6 AND shpid = @7");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(optyp).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
                 }
-                else // reduce
+                else // TYP_SUBSTRACT
                 {
-                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3::NUMERIC(8,1)), @4, @5)::StockOp, avail = avail - @3::NUMERIC(8,1) WHERE id = @6 AND shpid = @7");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(typ).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4, @5)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @6 AND shpid = @7");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(optyp).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog

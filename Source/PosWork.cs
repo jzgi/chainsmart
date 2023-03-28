@@ -46,7 +46,7 @@ namespace ChainSmart
                 {
                     var o = arr[i];
 
-                    h.T("<option value=\"").T(o.id).T("\" itemid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
+                    h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
                     h.T(o.name);
                     if (o.unitx != 1)
                     {
@@ -124,15 +124,22 @@ namespace ChainSmart
 
                 h.TABLE(arr, o =>
                 {
-                    h.TD_().T(o.created, 2, 2)._TD();
+                    h.TD_().T(o.created, 1, 2)._TD();
+                    h.TD_();
+                    foreach (var e in o.items)
+                    {
+                        
+                        h.T(e.name);
+                    }
+                    h._TD();
                     h.TD(o.pay);
-                    h.TD(o.oker);
+                    h.TD(Buy.Typs[o.typ]);
                 });
             }, false, 6);
         }
 
         [Ui(tip: "已作废", icon: "trash", group: 4), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -187,7 +194,7 @@ namespace ChainSmart
             decimal pay = frm[nameof(pay)];
 
             // detail lines
-            var lst = new List<BuyLn>();
+            var lst = new List<BuyItem>();
             for (var i = 0; i < frm.Count; i++)
             {
                 var ety = frm.EntryAt(i);
@@ -199,7 +206,7 @@ namespace ChainSmart
 
                 var comp = ((string)ety.Value).Split('-');
 
-                lst.Add(new BuyLn(itemid, comp));
+                lst.Add(new BuyItem(itemid, comp));
             }
 
             if (lst.Count == 0) return;
@@ -213,7 +220,7 @@ namespace ChainSmart
                 mktid = shp.MarketId,
                 created = now,
                 creator = prin.name,
-                lns = lst.ToArray(),
+                items = lst.ToArray(),
                 status = STU_OKED,
                 oked = now,
                 oker = prin.name,
@@ -221,12 +228,14 @@ namespace ChainSmart
             };
             m.SetToPay();
 
-            const short msk = MSK_BORN | MSK_EDIT | MSK_LATER;
+            const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS | MSK_LATER;
 
             using var dc = NewDbContext();
 
             dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
+
+            wc.Give(201); // created
         }
     }
 }

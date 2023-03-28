@@ -18,7 +18,7 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").T(col).T(" FROM assets WHERE id = @1");
-                if (dc.QueryTop(p => p.Set(id)))
+                if (await dc.QueryTopAsync(p => p.Set(id)))
                 {
                     dc.Let(out byte[] bytes);
                     if (bytes == null) wc.Give(204); // no content 
@@ -147,8 +147,8 @@ namespace ChainSmart
             }, false, 4);
         }
 
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
+        [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: 3)]
         public async Task edit(WebContext wc)
         {
             int id = wc[0];
@@ -158,26 +158,27 @@ namespace ChainSmart
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets WHERE id = @1");
+                dc.Sql("SELECT ").collst(Asset.Empty).T(" FROM assets_vw WHERE id = @1");
                 var o = dc.QueryTop<Asset>(p => p.Set(id));
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                    h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
                     h.LI_().SELECT("类别", nameof(o.typ), o.typ, Asset.Typs, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
+                    h.LI_().SELECT("等级", nameof(o.rank), o.rank, Asset.Ranks, required: true)._LI();
                     h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
                     h.LI_().SELECT("碳减排项目", nameof(o.cern), o.cern, Cern.Typs)._LI();
-                    // h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
+                    h.LI_().NUMBER("碳减排因子", nameof(o.factor), o.factor, min: 0.01)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认")._FORM();
                 });
             }
             else // POST
             {
-                const short msk = MSK_TYP | MSK_EDIT;
+                const short msk = MSK_EDIT;
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Asset
                 {
@@ -202,25 +203,25 @@ namespace ChainSmart
         [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), false, 4);
+            await doimg(wc, nameof(icon), false, 6);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+        [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), false, 4);
+            await doimg(wc, nameof(pic), false, 6);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 6)]
+        [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, "m" + sub, false, 4);
+            await doimg(wc, "m" + sub, false, 6);
         }
 
-        [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -249,23 +250,15 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确认删除或者作废此产品？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui(tip: "确认删除或者作废此产品？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
         public async Task rm(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            try
-            {
-                dc.Sql("DELETE FROM assets WHERE id = @1 AND orgid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
-            catch (Exception e)
-            {
-                dc.Sql("UPDATE assets SET status = 0 WHERE id = @1 AND orgid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
+            dc.Sql("UPDATE assets SET status = 0 WHERE id = @1 AND orgid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204);
         }

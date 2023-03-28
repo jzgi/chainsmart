@@ -18,29 +18,28 @@ namespace ChainSmart
 
         static readonly string ORG_URL = MainApp.WwwUrl + "/org/";
 
-        protected static void PublicShow(HtmlBuilder h, Org src, Lot o, Asset asset, bool pricing)
+        protected static void LotShow(HtmlBuilder h, Lot lot, Org org, Asset asset, bool pricing)
         {
             h.ARTICLE_("uk-card uk-card-primary");
             h.H4("产品信息", "uk-card-header");
             h.SECTION_("uk-card-body");
-            if (o.pic)
+            if (lot.pic)
             {
-                h.PIC(LOT_URL, o.id, "/pic", css: "uk-width-1-1");
+                h.PIC(LOT_URL, lot.id, "/pic", css: "uk-width-1-1");
             }
 
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品名", o.name)._LI();
-            h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            h.LI_().LABEL("供应方").A_(ORG_URL, src.id, "/", css: "uk-button-link uk-active").T(src.legal)._A()._LI();
-            h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-            if (o.typ == 2) h.FIELD("交货起始日", o.started);
+            h.LI_().FIELD("产品名", lot.name)._LI();
+            h.LI_().FIELD("简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
+            h.LI_().FIELD("交易类型", Lot.Typs[lot.typ]);
+            if (lot.typ == 2) h.FIELD("交货起始日", lot.started);
             h._LI();
 
             if (pricing)
             {
-                h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
-                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("起订件数", o.minx)._LI();
-                h.LI_().FIELD("库存量", o.stock).FIELD("剩余量", o.avail)._LI();
+                h.LI_().FIELD("单位", lot.unit).FIELD2("每件含", lot.unitx, lot.unit)._LI();
+                h.LI_().FIELD("单价", lot.RealPrice, true).FIELD("起订件数", lot.minx)._LI();
+                h.LI_().FIELD("库存量", lot.stock).FIELD("剩余量", lot.avail)._LI();
             }
 
             h._UL();
@@ -48,59 +47,138 @@ namespace ChainSmart
             h._ARTICLE();
 
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H4("批次信息", "uk-card-header");
-            h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
-            h.LI_().FIELD("批次总量", o.cap)._LI();
+            h.H4("批次检验", "uk-card-header");
+            h.SECTION_("uk-card-body");
+            h.UL_("uk-list uk-list-divider");
+            h.LI_().FIELD("批次编号", lot.id, digits: 8)._LI();
+            h.LI_().FIELD("批次总量", lot.cap)._LI();
 
-            if (o.nstart > 0 && o.nend > 0)
+            if (lot.nstart > 0 && lot.nend > 0)
             {
-                h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+                h.LI_().FIELD2("溯源编号", $"{lot.nstart:0000 0000}", $"{lot.nend:0000 0000}", "－")._LI();
             }
 
-            h.LI_().LABEL("产源设施");
-            if (asset != null)
-                h.A_(ASSET_URL, o.assetid, "/", css: "uk-button-link uk-active").T(asset.name)._A()._LI();
-            else
-                h.SPAN("未知", css: "uk-static");
-            h._LI();
-
-            h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-            if (o.adapter != null)
-            {
-                h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
-            }
-
-            if (o.oker != null)
-            {
-                h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-            }
+            h.LI_().FIELD2("创编", lot.created, lot.creator)._LI();
+            if (lot.adapter != null) h.LI_().FIELD2("制码", lot.adapted, lot.adapter)._LI();
+            if (lot.oker != null) h.LI_().FIELD2("上线", lot.oked, lot.oker)._LI();
 
             h._UL();
+
+            if (lot.m1)
+            {
+                h.PIC(LOT_URL, lot.id, "/m-1", css: "uk-width-1-1");
+            }
+
+            if (lot.m2)
+            {
+                h.PIC(LOT_URL, lot.id, "/m-2", css: "uk-width-1-1");
+            }
+
+            if (lot.m3)
+            {
+                h.PIC(LOT_URL, lot.id, "/m-3", css: "uk-width-1-1");
+            }
+
+            if (lot.m4)
+            {
+                h.PIC(LOT_URL, lot.id, "/m-4", css: "uk-width-1-1");
+            }
+
+            h._SECTION();
             h._ARTICLE();
 
+            // ASSEET
+
+            if (asset != null)
+            {
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H3("批次检验", "uk-card-header");
+                h.SECTION_("uk-card-body");
+                if (asset.pic)
+                {
+                    h.PIC(ASSET_URL, asset.id, "/pic", css: "uk-width-1-1");
+                }
+
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("设施名", asset.name)._LI();
+                h.LI_().FIELD("简介", asset.tip)._LI();
+                h.LI_().FIELD("等级", asset.rank, Asset.Ranks)._LI();
+                h._UL();
+
+                if (asset.m1)
+                {
+                    h.PIC(ASSET_URL, asset.id, "/m-1", css: "uk-width-1-1");
+                }
+
+                if (asset.m2)
+                {
+                    h.PIC(ASSET_URL, asset.id, "/m-2", css: "uk-width-1-1");
+                }
+
+                if (asset.m3)
+                {
+                    h.PIC(ASSET_URL, asset.id, "/m-3", css: "uk-width-1-1");
+                }
+
+                if (asset.m4)
+                {
+                    h.PIC(ASSET_URL, asset.id, "/m-4", css: "uk-width-1-1");
+                }
+
+                h._SECTION();
+                h._ARTICLE();
+            }
+            //
+            // SRC
+
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H4("批次检验", "uk-card-header");
-            if (o.m1)
+            h.H4("商户信息", "uk-card-header");
+            h.SECTION_("uk-card-body");
+            if (org.pic)
             {
-                h.PIC(LOT_URL, o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                h.PIC(ORG_URL, org.id, "/pic", css: "uk-width-1-1");
             }
 
-            if (o.m2)
+            h.UL_("uk-list uk-list-divider");
+            h.LI_().FIELD("商户名", org.name)._LI();
+            h.LI_().FIELD("简介", org.tip)._LI();
+            if (org.IsParent)
             {
-                h.PIC(LOT_URL, o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                h.LI_().FIELD("范围延展名", org.Ext)._LI();
             }
 
-            if (o.m3)
+            h.LI_().FIELD("工商登记名", org.legal)._LI();
+            h.LI_().FIELD("联系电话", org.tel)._LI();
+            h.LI_().FIELD("地址／场地", org.addr)._LI();
+            h.LI_().FIELD("指标参数", org.specs)._LI();
+            h.LI_().FIELD("委托代办", org.trust).FIELD("进度状态", org.status, Org.Statuses)._LI();
+            h.LI_().FIELD2("创建", org.created, org.creator)._LI();
+            if (org.adapter != null) h.LI_().FIELD2("修改", org.adapted, org.adapter)._LI();
+            if (org.oker != null) h.LI_().FIELD2("上线", org.oked, org.oker)._LI();
+
+            h._UL();
+
+            if (org.m1)
             {
-                h.PIC(LOT_URL, o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                h.PIC(ORG_URL, org.id, "/m-1", css: "uk-width-1-1");
             }
 
-            if (o.m4)
+            if (org.m2)
             {
-                h.PIC(LOT_URL, o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                h.PIC(ORG_URL, org.id, "/m-2", css: "uk-width-1-1");
             }
 
+            if (org.m3)
+            {
+                h.PIC(ORG_URL, org.id, "/m-3", css: "uk-width-1-1");
+            }
+
+            if (org.m4)
+            {
+                h.PIC(ORG_URL, org.id, "/m-4", css: "uk-width-1-1");
+            }
+
+            h._SECTION();
             h._ARTICLE();
         }
 
@@ -129,7 +207,7 @@ namespace ChainSmart
                 else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
                 h._LI();
                 h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
-                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价调整", o.off, true)._LI();
+                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价", o.off, true)._LI();
                 h.LI_().FIELD("批次总量", o.cap).FIELD("起订件数", o.minx)._LI();
                 h.LI_().FIELD("库存量", o.stock).FIELD("剩余量", o.avail)._LI();
                 h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
@@ -201,6 +279,13 @@ namespace ChainSmart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
 
+            var src = GrabObject<int, Org>(o.srcid);
+            Asset asset = null;
+            if (o.assetid > 0)
+            {
+                asset = (await GrabMapAsync<int, int, Asset>(o.srcid))[o.assetid];
+            }
+
             wc.GivePage(200, h =>
             {
                 if (o == null)
@@ -208,9 +293,6 @@ namespace ChainSmart
                     h.ALERT("无效的溯源产品批次");
                     return;
                 }
-
-                var src = GrabObject<int, Org>(o.srcid);
-                var asset = o.assetid > 0 ? GrabObject<int, Asset>(o.assetid) : null;
 
                 h.TOPBARXL_();
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.name)._HEADER();
@@ -223,7 +305,7 @@ namespace ChainSmart
 
                 h._TOPBARXL();
 
-                PublicShow(h, src, o, asset, false);
+                LotShow(h, o, src, asset, false);
 
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
@@ -362,7 +444,7 @@ namespace ChainSmart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                var asset = GrabObject<int, Asset>(o.assetid);
+                var asset = o.assetid == 0 ? null : GrabObject<int, Asset>(o.assetid);
 
                 if (cmd == 1)
                 {
@@ -395,7 +477,7 @@ namespace ChainSmart
                             h.ASIDE_().H6_().T(Self.name).T("溯源")._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                             h._HEADER();
 
-                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.Ranks[asset.rank], "uk-margin-auto-left")._H6();
+                            h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Asset.Ranks[asset?.rank ?? 0], "uk-margin-auto-left")._H6();
 
                             h._LI();
 
@@ -557,12 +639,16 @@ namespace ChainSmart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
+            var src = GrabObject<int, Org>(o.srcid);
+            Asset asset = null;
+            if (o.assetid > 0)
+            {
+                asset = (await GrabMapAsync<int, int, Asset>(o.srcid))[o.assetid];
+            }
+
             wc.GivePane(200, h =>
             {
-                var src = GrabObject<int, Org>(o.srcid);
-                var asset = o.assetid > 0 ? GrabObject<int, Asset>(o.assetid) : null;
-
-                PublicShow(h, src, o, asset, true);
+                LotShow(h, o, src, asset, true);
 
                 // bottom bar
                 //

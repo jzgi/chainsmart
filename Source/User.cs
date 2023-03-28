@@ -155,12 +155,24 @@ namespace ChainSmart
                         super = true;
                         ulevel = 1;
                     }
+                    else if (!org.trust && admly == ROL_MGT)
+                    {
+                        ret = ROL_OPN; // downgraded role
+                        super = true;
+                        ulevel = 1;
+                    }
                 }
                 else
                 {
                     if (org.trust && orgid == org.prtid && (orgly > 0 && orgid > 0))
                     {
                         ret = orgly;
+                        super = true;
+                        ulevel = 2;
+                    }
+                    else if (!org.trust && orgid == org.prtid && orgly == ROL_MGT && orgid > 0)
+                    {
+                        ret = ROL_OPN; // downgraded role
                         super = true;
                         ulevel = 2;
                     }
