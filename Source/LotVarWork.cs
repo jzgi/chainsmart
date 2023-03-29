@@ -18,28 +18,28 @@ namespace ChainSmart
 
         static readonly string ORG_URL = MainApp.WwwUrl + "/org/";
 
-        protected static void LotShow(HtmlBuilder h, Lot lot, Org org, Asset asset, bool pricing)
+        protected static void LotShow(HtmlBuilder h, Lot o, Org org, Asset asset, bool pricing)
         {
             h.ARTICLE_("uk-card uk-card-primary");
             h.H4("产品信息", "uk-card-header");
             h.SECTION_("uk-card-body");
-            if (lot.pic)
+            if (o.pic)
             {
-                h.PIC(LOT_URL, lot.id, "/pic", css: "uk-width-1-1");
+                h.PIC(LOT_URL, o.id, "/pic", css: "uk-width-1-1");
             }
 
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品名", lot.name)._LI();
-            h.LI_().FIELD("简介", string.IsNullOrEmpty(lot.tip) ? "无" : lot.tip)._LI();
-            h.LI_().FIELD("交易类型", Lot.Typs[lot.typ]);
-            if (lot.typ == 2) h.FIELD("交货起始日", lot.started);
+            h.LI_().FIELD("产品名", o.name)._LI();
+            h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+            h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
+            if (o.typ == 2) h.FIELD("交货起始日", o.started);
             h._LI();
 
             if (pricing)
             {
-                h.LI_().FIELD("单位", lot.unit).FIELD2("每件含", lot.unitx, lot.unit)._LI();
-                h.LI_().FIELD("单价", lot.RealPrice, true).FIELD("起订件数", lot.minx)._LI();
-                h.LI_().FIELD("库存量", lot.stock).FIELD("剩余量", lot.avail)._LI();
+                h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
+                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价", o.off, true)._LI();
+                h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("剩余量", o.stock, o.AvailX, "（")._LI();
             }
 
             h._UL();
@@ -50,38 +50,38 @@ namespace ChainSmart
             h.H4("批次检验", "uk-card-header");
             h.SECTION_("uk-card-body");
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("批次编号", lot.id, digits: 8)._LI();
-            h.LI_().FIELD("批次总量", lot.cap)._LI();
+            h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
+            h.LI_().FIELD2("批次总量", o.cap, o.CapX, "（")._LI();
 
-            if (lot.nstart > 0 && lot.nend > 0)
+            if (o.nstart > 0 && o.nend > 0)
             {
-                h.LI_().FIELD2("溯源编号", $"{lot.nstart:0000 0000}", $"{lot.nend:0000 0000}", "－")._LI();
+                h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
             }
 
-            h.LI_().FIELD2("创编", lot.created, lot.creator)._LI();
-            if (lot.adapter != null) h.LI_().FIELD2("制码", lot.adapted, lot.adapter)._LI();
-            if (lot.oker != null) h.LI_().FIELD2("上线", lot.oked, lot.oker)._LI();
+            h.LI_().FIELD2("创编", o.created, o.creator)._LI();
+            if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
+            if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
 
             h._UL();
 
-            if (lot.m1)
+            if (o.m1)
             {
-                h.PIC(LOT_URL, lot.id, "/m-1", css: "uk-width-1-1");
+                h.PIC(LOT_URL, o.id, "/m-1", css: "uk-width-1-1");
             }
 
-            if (lot.m2)
+            if (o.m2)
             {
-                h.PIC(LOT_URL, lot.id, "/m-2", css: "uk-width-1-1");
+                h.PIC(LOT_URL, o.id, "/m-2", css: "uk-width-1-1");
             }
 
-            if (lot.m3)
+            if (o.m3)
             {
-                h.PIC(LOT_URL, lot.id, "/m-3", css: "uk-width-1-1");
+                h.PIC(LOT_URL, o.id, "/m-3", css: "uk-width-1-1");
             }
 
-            if (lot.m4)
+            if (o.m4)
             {
-                h.PIC(LOT_URL, lot.id, "/m-4", css: "uk-width-1-1");
+                h.PIC(LOT_URL, o.id, "/m-4", css: "uk-width-1-1");
             }
 
             h._SECTION();
@@ -207,9 +207,9 @@ namespace ChainSmart
                 else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
                 h._LI();
                 h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
-                h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价", o.off, true)._LI();
-                h.LI_().FIELD("批次总量", o.cap).FIELD("起订件数", o.minx)._LI();
-                h.LI_().FIELD("库存量", o.stock).FIELD("剩余量", o.avail)._LI();
+                h.LI_().FIELD("单价", o.price, true).FIELD("降价", o.off, true)._LI();
+                h.LI_().FIELD4("批次总量", o.cap, "（", o.CapX, "）").FIELD("起订件数", o.minx)._LI();
+                h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("剩余量", o.avail, "（", o.AvailX, "）")._LI();
                 h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
                 h.LI_().FIELD2("创编", o.created, o.creator)._LI();
@@ -348,10 +348,10 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
-                var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
+                var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
                 await dc.QueryAsync("SELECT id, name FROM assets_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-                var assets = dc.ToIntMap();
+                var assets = await GrabMapAsync<int, int, Asset>(o.srcid);
 
                 wc.GivePane(200, h =>
                 {
@@ -444,7 +444,7 @@ namespace ChainSmart
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND srcid = @2");
                 var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-                var asset = o.assetid == 0 ? null : GrabObject<int, Asset>(o.assetid);
+                var asset = o.assetid == 0 ? null : (await GrabMapAsync<int, int, Asset>(o.srcid))[o.assetid];
 
                 if (cmd == 1)
                 {
@@ -481,7 +481,7 @@ namespace ChainSmart
 
                             h._LI();
 
-                            if (++idx >= o.stock)
+                            if (++idx >= o.CapX)
                             {
                                 break;
                             }
@@ -489,7 +489,7 @@ namespace ChainSmart
 
                         h._UL();
 
-                        h.PAGINATION(idx < o.stock, begin: 2, print: true);
+                        h.PAGINATION(idx < o.CapX, begin: 2, print: true);
                     });
                 }
             }
@@ -664,11 +664,10 @@ namespace ChainSmart
                 h.HIDDEN(nameof(realprice), realprice);
 
                 h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-                for (int i = o.minx; i < o.MaxXForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+                for (int i = o.minx; i <= o.MaxXForSingleBook; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
                 {
                     h.OPTION_(i).T(i)._OPTION();
                 }
-
                 h._SELECT().SP();
                 h.SPAN_("uk-width-expand").T("件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 

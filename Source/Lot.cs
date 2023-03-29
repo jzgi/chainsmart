@@ -159,6 +159,10 @@ namespace ChainSmart
             return targs == null || targs.Contains(mktid);
         }
 
+        public int CapX => cap / unitx;
+
+        public int StockX => stock / unitx;
+
         public int AvailX => avail / unitx;
 
         public StockOp[] Ops => ops;

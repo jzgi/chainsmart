@@ -26,11 +26,10 @@ namespace ChainSmart
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-                h.LI_().FIELD("基准单位", m.unit).FIELD2("批发件含量", m.unitx, m.unit)._LI();
-                h.LI_().FIELD("基准单价", m.price, money: true).FIELD("优惠立减", m.off, money: true)._LI();
-                h.LI_().FIELD("起订件数", m.min)._LI();
-                h.LI_().FIELD2("可下单量", m.avail, m.unit).FIELD("库存量", m.stock)._LI();
-                h.LI_().FIELD("状态", Item.Statuses[m.status])._LI();
+                h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
+                h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户降价", m.off, money: true)._LI();
+                h.LI_().FIELD("起订件数", m.minx)._LI();
+                h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("可用量", m.avail, m.AvailX, "（")._LI();
 
                 if (m.creator != null) h.LI_().FIELD2("创建", m.creator, m.created)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("调整", m.adapter, m.adapted)._LI();
@@ -144,24 +143,24 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
-                var o = dc.QueryTop<Item>(p => p.Set(itemid));
+                var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_("商品信息");
 
-                    h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 9999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 });
             }
             else // POST
             {
-                const short msk = MSK_TYP | MSK_EDIT;
+                const short msk = MSK_EDIT;
                 // populate 
                 var m = await wc.ReadObjectAsync(msk, new Item
                 {

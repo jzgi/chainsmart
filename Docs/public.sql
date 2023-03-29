@@ -333,10 +333,10 @@ create table items
 )
     inherits (entities);
 
-alter table items
+alter table items_old
     owner to postgres;
 
-alter sequence items_id_seq owned by items.id;
+alter sequence items_id_seq owned by items_old.id;
 
 create table books
 (
@@ -612,13 +612,13 @@ SELECT o.typ,
        o.unitx,
        o.price,
        o.off,
-       o.min,
+       o.minx,
        o.stock,
        o.avail,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic,
        o.ops
-FROM items o;
+FROM items_old o;
 
 alter table items_vw
     owner to postgres;
@@ -896,25 +896,25 @@ BEGIN
     IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
 
         FOREACH ln IN ARRAY NEW.lns LOOP -- oked
-        UPDATE items SET avail = avail - ln.qty, stock = stock - ln.qty WHERE id = ln.itemid;
+        UPDATE items_old SET avail = avail - ln.qty, stock = stock - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1) THEN -- paid
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items SET avail = avail - ln.qty WHERE id = ln.itemid;
+                UPDATE items_old SET avail = avail - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4) THEN -- delivered
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items SET stock = stock - ln.qty WHERE id = ln.itemid;
+                UPDATE items_old SET stock = stock - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 0) THEN -- voided
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items SET avail = avail + ln.qty, stock = stock + ln.qty WHERE id = ln.itemid;
+                UPDATE items_old SET avail = avail + ln.qty, stock = stock + ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     END IF;

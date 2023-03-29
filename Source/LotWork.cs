@@ -121,7 +121,7 @@ namespace ChainSmart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("现货", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task newspot(WebContext wc, int typ)
+        public async Task new1(WebContext wc, int typ)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
@@ -144,7 +144,7 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                var assets = await GrabMapAsync<int, int, Asset>(o.assetid);
+                var assets = await GrabMapAsync<int, int, Asset>(o.srcid);
 
                 wc.GivePane(200, h =>
                 {
@@ -161,7 +161,7 @@ namespace ChainSmart
 
                     h._FIELDSUL();
 
-                    h.BOTTOM_BUTTON("确认", nameof(newspot));
+                    h.BOTTOM_BUTTON("确认", nameof(new1));
 
                     h._FORM();
                 });
@@ -183,7 +183,7 @@ namespace ChainSmart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("助农", "新建助农产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-        public async Task newlift(WebContext wc)
+        public async Task new2(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
@@ -207,7 +207,7 @@ namespace ChainSmart
 
             if (wc.IsGet)
             {
-                var assets = await GrabMapAsync<int, int, Asset>(o.assetid);
+                var assets = await GrabMapAsync<int, int, Asset>(o.srcid);
 
                 wc.GivePane(200, h =>
                 {
@@ -225,7 +225,7 @@ namespace ChainSmart
 
                     h._FIELDSUL();
 
-                    h.BOTTOM_BUTTON("确认", nameof(newlift));
+                    h.BOTTOM_BUTTON("确认", nameof(new2));
 
                     h._FORM();
                 });

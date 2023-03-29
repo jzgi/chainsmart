@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
@@ -86,7 +85,7 @@ namespace ChainSmart
                     h.Q(o.tip, "uk-width-expand");
 
                     // FOOTER: price and qty select & detail
-                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.min},{o.stock},{o.AvailX});\">"); // pricing portion
+                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.minx},{o.stock},{o.AvailX});\">"); // pricing portion
                     h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                     h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: false)._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
@@ -269,7 +268,7 @@ namespace ChainSmart
         }
 
         [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
-        public async Task off(WebContext wc)
+        public async Task down(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
@@ -291,7 +290,7 @@ namespace ChainSmart
         }
 
         [Ui(tip: "已作废", icon: "trash", group: 8), Tool(Anchor)]
-        public async Task aborted(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             var src = wc[-1].As<Org>();
 
@@ -313,30 +312,34 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("自创", "自创非供应商品", icon: "plus", group: 2), Tool(ButtonOpen)]
-        public async Task def(WebContext wc, int state)
+        [Ui("自建", "自建其它来源商品", icon: "plus", group: 2), Tool(ButtonOpen)]
+        public async Task def(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
             var prin = (User)wc.Principal;
             var cats = Grab<short, Cat>();
 
+            var o = new Item
+            {
+                typ = Item.TYP_DEF,
+                shpid = org.id,
+                created = DateTime.Now,
+                creator = prin.name,
+                unitx = 1,
+                minx = 1
+            };
             if (wc.IsGet)
             {
-                var o = new Item
-                {
-                    created = DateTime.Now,
-                    creator = prin.name
-                };
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.typ), o.typ, cats, required: true)._LI();
+                    h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
                 });
@@ -345,12 +348,7 @@ namespace ChainSmart
             {
                 const short msk = MSK_BORN | MSK_EDIT;
                 // populate 
-                var m = await wc.ReadObjectAsync(msk, new Item
-                {
-                    shpid = org.id,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                var m = await wc.ReadObjectAsync(msk, o);
 
                 // insert
                 using var dc = NewDbContext();
@@ -362,50 +360,45 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("导入", "导入供应产品", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
-        public async Task imp(WebContext wc, int state)
+        [Ui("引用", "引用供应平台产品", icon: "plus", group: 2), Tool(ButtonOpen)]
+        public async Task @ref(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var prin = (User)wc.Principal;
+
+            var o = new Item
+            {
+                typ = Item.TYP_REF,
+                created = DateTime.Now,
+                creator = prin.name,
+                unitx = 1,
+                minx = 1
+            };
 
             if (wc.IsGet)
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT DISTINCT lotid, concat(srcname, ' ', name), id FROM books WHERE shpid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
                 await dc.QueryAsync(p => p.Set(org.id));
-                var map = dc.ToIntMap();
-
-                var o = new Item
-                {
-                    created = DateTime.Now,
-                    creator = prin.name,
-                    unitx = 1,
-                    min = 1,
-                    stock = 30,
-                };
+                var lots = dc.ToIntMap();
 
                 wc.GivePane(200, h =>
                 {
                     h.FORM_().FIELDSUL_();
 
-                    h.LI_().SELECT("供应产品", nameof(o.lotid), o.lotid, map, required: true)._LI();
-                    h.LI_().TEXT("基准单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("批发件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                    h.LI_().NUMBER("基准单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                    h.LI_().NUMBER("起订件数", nameof(o.min), o.min)._LI();
+                    h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
+                    h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                    h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
+                    h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();
                 });
             }
             else // POST
             {
                 const short msk = MSK_BORN | MSK_EDIT;
                 // populate 
-                var m = await wc.ReadObjectAsync(msk, new Item
-                {
-                    shpid = org.id,
-                    created = DateTime.Now,
-                    creator = prin.name,
-                });
+                var m = await wc.ReadObjectAsync(msk, o);
                 var lot = GrabObject<int, Lot>(m.lotid);
                 m.typ = lot.typ;
                 m.name = lot.name;

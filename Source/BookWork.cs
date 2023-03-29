@@ -149,10 +149,9 @@ namespace ChainSmart
         internal static int Comp(short catid, int ctrid) => (catid << 24) | ctrid;
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("采购", "新建采购订单", "plus", group: 1), Tool(ButtonOpen)]
+        [Ui("创建", "创建采购订单", "plus", group: 1), Tool(ButtonOpen)]
         public async Task @new(WebContext wc, int cat_ctr_id) // NOTE so that it is publicly cacheable
         {
-            var org = wc[-1].As<Org>();
             var cats = Grab<short, Cat>();
 
             (short catid, int ctrid) = Decomp(cat_ctr_id);
