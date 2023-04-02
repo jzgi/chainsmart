@@ -85,7 +85,7 @@ namespace ChainSmart
                     h.Q(o.tip, "uk-width-expand");
 
                     // FOOTER: price and qty select & detail
-                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.minx},{o.stock},{o.AvailX});\">"); // pricing portion
+                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.minx},{o.AvailX});\">"); // pricing portion
                     h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                     h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: false)._SELECT();
                     h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
@@ -111,7 +111,7 @@ namespace ChainSmart
 
                 h.DIV_("uk-flex uk-width-1-1");
                 h.SELECT_SPEC(nameof(com), org.specs, css: "uk-width-medium");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼 栋 单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                 h._DIV();
 
                 h._DIV();
@@ -121,7 +121,7 @@ namespace ChainSmart
                 h._BOTTOMBAR();
 
                 h._FORM();
-            }, true, 300, title: org.name, onload: "fixAll();");
+            }, true, 120, title: org.name, onload: "fixAll();");
         }
 
         public async Task buy(WebContext wc, int cmd)
@@ -233,7 +233,7 @@ namespace ChainSmart
                     h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
                 }
 
-                h.SPAN(Item.Statuses[o.status], "uk-badge");
+                h.SPAN(Statuses[o.status], "uk-badge");
                 h._HEADER();
 
                 h.Q(o.tip, "uk-width-expand");

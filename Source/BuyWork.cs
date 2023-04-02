@@ -31,7 +31,7 @@ namespace ChainSmart
 
                 h.LI_().T(o.uname).SP().T(o.utel).SP().T(o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
 
-                for (int i = 0; i < o?.items.Length; i++)
+                for (int i = 0; i < o.items.Length; i++)
                 {
                     var d = o.items[i];
 
@@ -80,7 +80,7 @@ namespace ChainSmart
                 }
 
                 MainGrid(h, arr);
-                h.PAGINATION(arr?.Length > 10);
+                h.PAGINATION(arr.Length > 10);
             }, false, 4);
         }
 
@@ -103,7 +103,7 @@ namespace ChainSmart
                 }
 
                 MainGrid(h, arr);
-                h.PAGINATION(arr?.Length > 10);
+                h.PAGINATION(arr.Length > 10);
             }, false, 4);
         }
     }
@@ -325,7 +325,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             bool inner = wc.Query[nameof(inner)];
-            string com = null;
+            string com;
             if (inner)
             {
                 wc.GivePane(200, h =>

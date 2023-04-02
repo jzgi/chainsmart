@@ -8,6 +8,14 @@
     font-weight: normal;
 }
 
+.fprice {
+    color: #000;
+}
+
+.fprice.vip  {
+    color: #7daa1d;
+}
+
 button output {
     font-size: 1.125rem;
 }

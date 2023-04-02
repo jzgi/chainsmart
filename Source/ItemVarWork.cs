@@ -31,8 +31,8 @@ namespace ChainSmart
                 h.LI_().FIELD("起订件数", m.minx)._LI();
                 h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("可用量", m.avail, m.AvailX, "（")._LI();
 
-                if (m.creator != null) h.LI_().FIELD2("创建", m.creator, m.created)._LI();
-                if (m.adapter != null) h.LI_().FIELD2("调整", m.adapter, m.adapted)._LI();
+                if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
+                if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
                 if (m.oker != null) h.LI_().FIELD2("上线", m.oker, m.oked)._LI();
 
                 h._UL();
@@ -119,12 +119,12 @@ namespace ChainSmart
 
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600 * 6);
+            await doimg(wc, nameof(icon), true, 3600);
         }
 
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), true, 3600 * 6);
+            await doimg(wc, nameof(pic), true, 3600);
         }
     }
 
@@ -215,7 +215,7 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_("库存操作");
                     h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
-                    h.LI_().TEXT("注释", nameof(tip), tip, max: 20)._LI();
+                    h.LI_().TEXT("摘要", nameof(tip), tip, max: 20)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
                 });
             }

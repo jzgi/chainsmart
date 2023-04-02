@@ -279,6 +279,12 @@ namespace ChainSmart
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
 
+            if (o == null)
+            {
+                wc.GivePage(200, h => { h.ALERT("无效的溯源产品批次"); });
+                return;
+            }
+
             var src = GrabObject<int, Org>(o.srcid);
             Asset asset = null;
             if (o.assetid > 0)
@@ -288,12 +294,6 @@ namespace ChainSmart
 
             wc.GivePage(200, h =>
             {
-                if (o == null)
-                {
-                    h.ALERT("无效的溯源产品批次");
-                    return;
-                }
-
                 h.TOPBARXL_();
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.name)._HEADER();
                 if (o.icon)
@@ -316,12 +316,12 @@ namespace ChainSmart
 
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600 * 6);
+            await doimg(wc, nameof(icon), true, 3600);
         }
 
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), true, 3600 * 6);
+            await doimg(wc, nameof(pic), true, 3600);
         }
 
         public async Task m(WebContext wc, int sub)

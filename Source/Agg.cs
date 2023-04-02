@@ -23,9 +23,9 @@ namespace ChainSmart
 
         internal DateTime dt;
 
-        internal short typ;
+        internal int acct;
 
-        internal short coid;
+        internal short corgid;
 
         internal int trans;
 
@@ -37,8 +37,8 @@ namespace ChainSmart
         {
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(dt), ref dt);
-            s.Get(nameof(typ), ref typ);
-            s.Get(nameof(coid), ref coid);
+            s.Get(nameof(acct), ref acct);
+            s.Get(nameof(corgid), ref corgid);
             s.Get(nameof(trans), ref trans);
             s.Get(nameof(qty), ref qty);
             s.Get(nameof(amt), ref amt);
@@ -48,8 +48,8 @@ namespace ChainSmart
         {
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(dt), dt);
-            s.Put(nameof(typ), typ);
-            s.Put(nameof(coid), coid);
+            s.Put(nameof(acct), acct);
+            s.Put(nameof(corgid), corgid);
             s.Put(nameof(trans), trans);
             s.Put(nameof(qty), qty);
             s.Put(nameof(amt), amt);

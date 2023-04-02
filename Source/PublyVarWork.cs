@@ -17,14 +17,14 @@ namespace ChainSmart
             CreateVarWork<PublyItemWork>(); // home for one shop
         }
 
-        public async Task @default(WebContext wc, int sec)
+        public async Task @default(WebContext wc, int sector)
         {
             int orgid = wc[0];
             var org = GrabObject<int, Org>(orgid);
             var regs = Grab<short, Reg>();
 
             Org[] arr;
-            if (sec == 0) // when default section
+            if (sector == 0) // when default sector
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
@@ -35,14 +35,14 @@ namespace ChainSmart
             {
                 using var dc = NewDbContext();
                 dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sec));
+                arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sector));
             }
 
             wc.GivePage(200, h =>
             {
-                h.NAVBAR(string.Empty, sec, regs, (k, v) => v.IsSection, "star");
+                h.NAVBAR(string.Empty, sector, regs, (k, v) => v.IsSection, "star");
 
-                if (sec != 0 && arr == null)
+                if (sector != 0 && arr == null)
                 {
                     h.ALERT("尚无商户");
                     return;
@@ -74,7 +74,7 @@ namespace ChainSmart
 
                     h._A();
                 });
-            }, shared: sec > 0, 900, org.Ext); // shared cache when no personal data
+            }, true, 360, org.Ext);
         }
     }
 }

@@ -104,17 +104,17 @@ namespace ChainSmart
 
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600 * 4);
+            await doimg(wc, nameof(icon), true, 7200);
         }
 
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), true, 3600 * 4);
+            await doimg(wc, nameof(pic), true, 7200);
         }
 
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, nameof(m) + sub, true, 3600 * 4);
+            await doimg(wc, nameof(m) + sub, true, 7200);
         }
     }
 

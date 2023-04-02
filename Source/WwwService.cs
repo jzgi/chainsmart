@@ -81,7 +81,7 @@ namespace ChainSmart
                 }
 
                 h._ARTICLE();
-            }, true, 720, title: Self.Name, onload: "fixAll();");
+            }, true, 360, title: Self.Name, onload: "fixAll();");
         }
 
 

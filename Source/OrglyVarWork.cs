@@ -80,6 +80,10 @@ namespace ChainSmart
 
             CreateWork<MktlyTestWork>("mtest");
 
+            CreateWork<MktlyBuyAggWork>("mbuyagg");
+
+            CreateWork<MktlyBookAggWork>("mbookagg");
+
             CreateWork<MktlyBuyWork>("mbuy");
 
             CreateWork<MktlyBookWork>("mbook");
@@ -113,17 +117,17 @@ namespace ChainSmart
 
             CreateWork<SrclyBookWork>("sbooklift", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
 
-            CreateWork<SrclyBookAggWork>("sbookldg");
+            CreateWork<SrclyBookAggWork>("sbookagg");
 
             // ctr
 
             CreateWork<CtrlyOrgWork>("corg");
 
-            CreateWork<CtrlyBookAggWork>("cbookagg");
-
             CreateWork<CtrlyBookWork>("cbook");
 
             CreateWork<CtrlyLotWork>("clot");
+
+            CreateWork<CtrlyBookAggWork>("cbookagg");
         }
     }
 }

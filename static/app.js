@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, price, off, min, max, availx) {
+function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -36,7 +36,6 @@ function fillPriceAndQtySelect(trig, evt, price, off, min, max, availx) {
 
     var vip = false; // whether vip for current contet
     if (evt.detail) {
-
         // to-path matched
         var lst = evt.detail.split(' ');
         for (var i = 0; i < lst.length; i++) {
@@ -48,17 +47,10 @@ function fillPriceAndQtySelect(trig, evt, price, off, min, max, availx) {
     }
 
     // fill fprice
-    //
-
     var out_fprice = trig.querySelector('.fprice');
     if (vip) {
         out_fprice.value = (price - off).toFixed(2);
-
-        // pad with the normal price
-        if (off > 0) {
-            var badge = trig.parentElement.querySelector('.uk-badge');
-            badge.innerHTML = '<s>￥' + price.toFixed(2) + '</s>&nbsp;' + badge.innerHTML;
-        }
+        out_fprice.classList.add('vip');
     }
     else {
         out_fprice.value = price.toFixed(2);
@@ -66,16 +58,13 @@ function fillPriceAndQtySelect(trig, evt, price, off, min, max, availx) {
 
     // fill qty options
     //
-
     if (vip) {
-        min = 1;
+        minx = 1;
     }
-    if (availx < max) {
-        max = availx;
-    }
+    var maxx = availx > 200 ? 200 : availx; 
 
     var sel_qtyselect = trig.querySelector('.qtyselect');
-    for (var i = min; i <= max; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+    for (var i = minx; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' 件';
@@ -303,15 +292,6 @@ function call_buy(trig) {
     // validate form before submit
     if (!form || !form.reportValidity()) return false;
 
-    // reap of cookies
-    var inps = trig.form.querySelectorAll('input[cookie');
-    for (var i = 0; i < inps.length; i++) {
-        var inp = inps[i];
-        var cookieName = inp.getAttribute('cookie');
-
-        document.cookie = cookieName + '=' + inp.value + ';max-age=31104000';
-    }
-
     // get prepare id
     var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
@@ -321,7 +301,7 @@ function call_buy(trig) {
     };
     xhr.open(method, action, false);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send(serialize(trig.form));
+    xhr.send(serialize(trig.form, true)); // notEmpty
 
     return false;
 }
@@ -487,7 +467,7 @@ function fixAll() {
     }
 }
 
-function serialize(form) {
+function serialize(form, notEmpty) {
     if (!form || form.nodeName !== "FORM") {
         return null;
     }
@@ -532,6 +512,9 @@ function serialize(form) {
                 q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
                 break;
             case 'SELECT':
+                if (notEmpty && form.elements[i].value == '') 
+                    break;
+
                 switch (form.elements[i].type) {
                     case 'select-one':
                         q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
@@ -835,7 +818,7 @@ function crop(trig, siz, title, subs) {
             wid = 120; hei = 120;
             break;
         case 2:
-            wid = 480; hei = 160;
+            wid = 480; hei = 200;
             break;
         case 3:
             wid = 480; hei = 640;

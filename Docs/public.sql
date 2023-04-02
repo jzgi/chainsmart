@@ -1,7 +1,3 @@
-create sequence items_id_seq;
-
-alter sequence items_id_seq owner to postgres;
-
 create sequence clears_id_seq;
 
 alter sequence clears_id_seq owner to postgres;
@@ -191,19 +187,7 @@ create table tests
 alter table tests
     owner to postgres;
 
-create table global
-(
-    buysgen  date,
-    booksgen date,
-    pk       boolean not null
-        constraint global_pk
-            primary key
-);
-
-alter table global
-    owner to postgres;
-
-create table bookclrs
+create table booksc
 (
     id    integer default nextval('clears_id_seq'::regclass) not null
         constraint clears_pk
@@ -221,31 +205,10 @@ create table bookclrs
     entities
 );
 
-alter table bookclrs
+alter table booksc
     owner to postgres;
 
-alter sequence clears_id_seq owned by bookclrs.id;
-
-create table buyclrs
-(
-    id    serial
-        constraint buyclrs_pk
-            primary key,
-    orgid integer not null,
-    till  date,
-    trans integer,
-    amt   money,
-    rate  smallint,
-    topay money,
-    pay   money
-)
-    tablespace rtl inherits
-(
-    entities
-);
-
-alter table buyclrs
-    owner to postgres;
+alter sequence clears_id_seq owned by booksc.id;
 
 create table _accts
 (
@@ -301,42 +264,13 @@ create table lots
     m2      bytea,
     m3      bytea,
     m4      bytea,
-    constraint typ_chk
-        check ((typ >= 1) AND (typ <= 2))
+    constraint lots_typ_chk
+        check ((typ >= 1) AND (typ <= 2) AND (avail >= 0))
 )
     inherits (entities);
 
 alter table lots
     owner to postgres;
-
-create table items
-(
-    id    integer default nextval('wares_id_seq'::regclass) not null
-        constraint items_pk
-            primary key,
-    shpid integer                                           not null
-        constraint items_shpid_fk
-            references orgs,
-    lotid integer
-        constraint items_lotid_fk
-            references lots,
-    unit  varchar(4),
-    unitx smallint,
-    price money,
-    "off" money,
-    min   smallint,
-    stock smallint,
-    avail smallint                                          not null,
-    icon  bytea,
-    pic   bytea,
-    ops   stockop[]
-)
-    inherits (entities);
-
-alter table items_old
-    owner to postgres;
-
-alter sequence items_id_seq owned by items_old.id;
 
 create table books
 (
@@ -405,6 +339,9 @@ create index lots_nend_idx
 
 create index lots_srcidstatus_idx
     on lots (srcid, status);
+
+create index lots_catid_idx
+    on lots (catid);
 
 create table assets
 (
@@ -485,31 +422,12 @@ create index buys_mktidstatus_idx
     on buys (mktid, status)
     tablespace rtl;
 
-create table buyaggs
+create table booksa_typ
 (
-    orgid   integer  not null,
-    dt      date     not null,
-    typ     smallint not null,
-    coid    integer,
-    trans   integer,
-    qty     integer,
-    amt     money,
-    created timestamp(0),
-    creator varchar(12),
-    constraint buyaggs_pk
-        primary key (orgid, dt, typ)
-)
-    tablespace rtl;
-
-alter table buyaggs
-    owner to postgres;
-
-create table bookaggs
-(
-    orgid   integer  not null,
+    orgid   integer not null,
     dt      date,
-    typ     smallint not null,
-    coid    integer,
+    acct    integer not null,
+    corgid  integer,
     trans   integer,
     qty     integer,
     amt     money,
@@ -518,7 +436,128 @@ create table bookaggs
 )
     tablespace sup;
 
-alter table bookaggs
+alter table booksa_typ
+    owner to postgres;
+
+create table items
+(
+    id    serial
+        constraint items_pk
+            primary key,
+    shpid integer  not null
+        constraint items_shpid_fk
+            references orgs,
+    lotid integer
+        constraint items_lotid_fk
+            references lots,
+    catid smallint
+        constraint items_catid_fk
+            references cats,
+    unit  varchar(4),
+    unitx smallint,
+    price money,
+    "off" money,
+    minx  smallint,
+    stock smallint,
+    avail smallint not null
+        constraint items_avail_chk
+            check (avail >= 0),
+    ops   stockop[],
+    icon  bytea,
+    pic   bytea
+)
+    inherits (entities);
+
+alter table items
+    owner to postgres;
+
+create index items_catid_idx
+    on items (catid);
+
+create table booksa_lotid
+(
+    orgid   integer not null,
+    dt      date,
+    acct    integer not null,
+    corgid  integer,
+    trans   integer,
+    qty     integer,
+    amt     money,
+    created timestamp(0),
+    creator varchar(12)
+)
+    tablespace sup;
+
+alter table booksa_lotid
+    owner to postgres;
+
+create table global
+(
+    buysgen     date,
+    buysgenopr  varchar(12),
+    booksgen    date,
+    booksgenopr varchar(12),
+    pk          boolean not null
+        constraint global_pk
+            primary key
+);
+
+alter table global
+    owner to postgres;
+
+create table buysa_typ
+(
+    orgid  integer not null,
+    dt     date    not null,
+    acct   integer not null,
+    name   varchar(12),
+    corgid integer,
+    trans  integer,
+    amt    money,
+    constraint buya_typ_pk
+        primary key (orgid, dt, acct)
+)
+    tablespace rtl;
+
+alter table buysa_typ
+    owner to postgres;
+
+create table buysa_itemid
+(
+    orgid  integer not null,
+    dt     date    not null,
+    acct   integer not null,
+    name   varchar(12),
+    corgid integer,
+    trans  integer,
+    amt    money,
+    constraint buya_itemid_pk
+        primary key (orgid, dt, acct)
+)
+    tablespace rtl;
+
+alter table buysa_itemid
+    owner to postgres;
+
+create table buysc
+(
+    orgid  integer not null,
+    dt     date    not null,
+    typ    integer not null,
+    name   varchar(12),
+    tip    varchar(20),
+    trans  integer,
+    amt    money,
+    rate   smallint,
+    topay  money,
+    pay    money,
+    status smallint,
+    constraint buysclr_pk
+        primary key (orgid, dt, typ)
+)
+    tablespace rtl;
+
+alter table buysc
     owner to postgres;
 
 create view orgs_vw
@@ -589,38 +628,6 @@ SELECT o.typ,
 FROM users o;
 
 alter table users_vw
-    owner to postgres;
-
-create view items_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, lotid, unit, unitx,
-             price, "off", min, stock, avail, icon, pic, ops)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.shpid,
-       o.lotid,
-       o.unit,
-       o.unitx,
-       o.price,
-       o.off,
-       o.minx,
-       o.stock,
-       o.avail,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.ops
-FROM items_old o;
-
-alter table items_vw
     owner to postgres;
 
 create view assets_vw
@@ -701,6 +708,39 @@ FROM lots o;
 alter table lots_vw
     owner to postgres;
 
+create view items_vw
+            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, lotid, catid, unit,
+             unitx, price, "off", minx, stock, avail, ops, icon, pic)
+as
+SELECT o.typ,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.shpid,
+       o.lotid,
+       o.catid,
+       o.unit,
+       o.unitx,
+       o.price,
+       o.off,
+       o.minx,
+       o.stock,
+       o.avail,
+       o.ops,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic
+FROM items o;
+
+alter table items_vw
+    owner to postgres;
+
 create function first_agg(anyelement, anyelement) returns anyelement
     immutable
     strict
@@ -751,51 +791,41 @@ BEGIN
     SELECT coalesce(buysgen, '2000-01-01'::date) FROM global WHERE pk INTO past;
     paststamp = (past + interval '1 day')::timestamp(0);
 
-    -- buys for shop
+    -- aggregate buys by orgid + dt + typ
 
-    INSERT INTO buyaggs (orgid, dt, typ, coid, trans, amt, created, creator)
+    INSERT INTO buysa_typ
     SELECT shpid,
-           oked::date,
+           created::date,
            typ,
+           CASE WHEN typ = 1 THEN '平台' WHEN typ = 2 THEN '现金' ELSE '转账' END,
            first(mktid),
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
+           count(*),
+           sum(pay - coalesce(refund, 0::money))
     FROM buys
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY shpid, oked::date, typ;
+    WHERE created >= paststamp AND created < tillstamp AND status > 0
+    GROUP BY shpid, created::date, typ;
 
-    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
-    SELECT TYP_SHP,
-           first(creator),
-           now,
-           opr,
-           orgid,
-           till,
-           sum(trans),
-           sum(amt),
-           RATE_SHP,
-           sum(amt * RATE_SHP / BASE)
-    FROM buyaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
+    -- aggregate buys by itemid
+
+    INSERT INTO buysa_itemid
+    SELECT (unnest(buys_agg(items,shpid, created::date,mktid))).*
+    FROM buys
+    WHERE created >= paststamp AND created < tillstamp AND status > 0
+    GROUP BY shpid, created::date;
 
 
-    INSERT INTO buyclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
-    SELECT TYP_MKT,
-           first(creator),
-           now,
-           opr,
-           coid,
-           till,
-           sum(trans),
-           sum(amt),
-           RATE_MKT,
-           sum(amt * RATE_MKT / BASE)
-    FROM buyaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY coid;
+    INSERT INTO buysc (orgid, dt, typ, trans, amt, rate, topay)
+    SELECT orgid, now, TYP_SHP, sum(trans), sum(amt), RATE_SHP, sum(amt * RATE_SHP / BASE)
+    FROM buysa_typ
+    WHERE acct = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
-    UPDATE global SET buysgen = till WHERE pk;
+    INSERT INTO buysc (orgid, dt, typ, trans, amt, rate, topay)
+    SELECT corgid, now, TYP_MKT, sum(trans), sum(amt), RATE_MKT, sum(amt * RATE_MKT / BASE)
+    FROM buysa_typ
+    WHERE acct = 1 AND dt > past AND dt <= till GROUP BY corgid;
+
+
+    UPDATE global SET buysgen = till, buysgenopr = opr WHERE pk;
 END
 $$;
 
@@ -896,25 +926,25 @@ BEGIN
     IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
 
         FOREACH ln IN ARRAY NEW.lns LOOP -- oked
-        UPDATE items_old SET avail = avail - ln.qty, stock = stock - ln.qty WHERE id = ln.itemid;
+        UPDATE items SET avail = avail - ln.qty, stock = stock - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1) THEN -- paid
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items_old SET avail = avail - ln.qty WHERE id = ln.itemid;
+                UPDATE items SET avail = avail - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4) THEN -- delivered
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items_old SET stock = stock - ln.qty WHERE id = ln.itemid;
+                UPDATE items SET stock = stock - ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 0) THEN -- voided
 
         FOREACH ln IN ARRAY NEW.lns LOOP
-                UPDATE items_old SET avail = avail + ln.qty, stock = stock + ln.qty WHERE id = ln.itemid;
+                UPDATE items SET avail = avail + ln.qty, stock = stock + ln.qty WHERE id = ln.itemid;
             END LOOP;
 
     END IF;
@@ -940,6 +970,43 @@ create trigger buys_upd_trig
     when (new.status IS DISTINCT FROM old.status)
 execute procedure buys_trig_func();
 
+create function buyitem_agg_func(ret buysa_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buysa_itemid[]
+    language plpgsql
+as
+$$
+DECLARE
+    agg buysa_itemid;
+    itm buyitem;
+    fnd bool;
+BEGIN
+
+    FOREACH itm IN ARRAY items LOOP
+
+            fnd = FALSE;
+
+            IF ret IS NOT NULL THEN
+                FOREACH agg IN ARRAY ret LOOP
+                        IF agg.acct = itm.itemid THEN -- found
+                            agg.trans = agg.trans + itm.qty;
+                            agg.amt = agg.amt + (itm.price - itm.off) * itm.qty;
+                            fnd = TRUE;
+                            CONTINUE;
+                        END IF;
+                    END LOOP;
+            END IF;
+
+            IF ret IS NULL OR NOT fnd THEN
+                agg = (orgid, dt, itm.itemid, itm.name, corgid, itm.qty, (itm.price - itm.off) * itm.qty);
+                ret = ret || agg;
+            end if;
+        END LOOP;
+
+    RETURN ret;
+END;
+$$;
+
+alter function buyitem_agg_func(buysa_itemid[], buyitem[], integer, date, integer) owner to postgres;
+
 create aggregate first(anyelement) (
     sfunc = first_agg,
     stype = anyelement,
@@ -955,4 +1022,11 @@ create aggregate last(anyelement) (
     );
 
 alter aggregate last(anyelement) owner to postgres;
+
+create aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) (
+    sfunc = buyitem_agg_func,
+    stype = buysa_itemid[]
+    );
+
+alter aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) owner to postgres;
 

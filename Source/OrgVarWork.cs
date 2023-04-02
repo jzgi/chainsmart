@@ -10,7 +10,7 @@ namespace ChainSmart
 {
     public abstract class OrgVarWork : WebWork
     {
-        public virtual async Task @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
             var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
@@ -36,16 +36,10 @@ namespace ChainSmart
                 h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
                 h.LI_().FIELD("指标参数", o.specs)._LI();
                 h.LI_().FIELD("托管", o.trust)._LI();
-                h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null)
-                {
-                    h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-                }
 
-                if (o.oker != null)
-                {
-                    h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-                }
+                h.LI_().FIELD2("创编", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
 
                 h._UL();
 
@@ -92,105 +86,19 @@ namespace ChainSmart
 
     public class PublyOrgVarWork : OrgVarWork
     {
-        public override async Task @default(WebContext wc)
-        {
-            var org = wc[-1].As<Org>();
-            var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
-            var regs = Grab<short, Reg>();
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-            var m = await dc.QueryTopAsync<Org>(p => p.Set(id));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOPBARXL_();
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(m.legal)._HEADER();
-                if (m.icon)
-                {
-                    h.PIC("/org/", m.id, "/icon", circle: true, css: "uk-width-small");
-                }
-                else
-                    h.PIC("/void.webp", circle: true, css: "uk-width-small");
-
-                h._TOPBARXL();
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("机构信息", "uk-card-header");
-                h.SECTION_("uk-card-body");
-                if (m.pic)
-                {
-                    h.PIC("/org/", m.id, "/pic", css: "uk-width-1-1");
-                }
-
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("商户名", m.name)._LI();
-                h.LI_().FIELD("简介", m.tip)._LI();
-                if (m.IsParent)
-                {
-                    h.LI_().FIELD("范围延展名", m.Ext)._LI();
-                }
-
-                h.LI_().FIELD("工商登记名", m.legal)._LI();
-                h.LI_().FIELD("联系电话", m.tel).FIELD("区域", regs[m.regid])._LI();
-                h.LI_().FIELD("地址／场地", m.addr)._LI();
-                // h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
-                h.LI_().FIELD("指标参数", m.specs)._LI();
-                h.LI_().FIELD("委托代办", m.trust).FIELD("进度状态", m.status, Org.Statuses)._LI();
-                h.LI_().FIELD2("创建", m.created, m.creator)._LI();
-                if (m.adapter != null)
-                {
-                    h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
-                }
-
-                if (m.oker != null)
-                {
-                    h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
-                }
-
-                h._UL();
-                h._SECTION();
-                h._ARTICLE();
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H4("机构证照", "uk-card-header");
-                if (m.m1)
-                {
-                    h.PIC("/org/", m.id, "/m-1", css: "uk-width-1-1 uk-card-body");
-                }
-
-                if (m.m2)
-                {
-                    h.PIC("/org/", m.id, "/m-2", css: "uk-width-1-1 uk-card-body");
-                }
-
-                if (m.m3)
-                {
-                    h.PIC("/org/", m.id, "/m-3", css: "uk-width-1-1 uk-card-body");
-                }
-
-                if (m.m4)
-                {
-                    h.PIC("/org/", m.id, "/m-4", css: "uk-width-1-1 uk-card-body");
-                }
-
-                h._ARTICLE();
-            }, false, 900, title: "机构信息");
-        }
-
         public async Task icon(WebContext wc)
         {
-            await doimg(wc, nameof(icon), true, 3600);
+            await doimg(wc, nameof(icon), true, 7200);
         }
 
         public async Task pic(WebContext wc)
         {
-            await doimg(wc, nameof(pic), true, 3600);
+            await doimg(wc, nameof(pic), true, 7200);
         }
 
         public async Task m(WebContext wc, int sub)
         {
-            await doimg(wc, nameof(m) + sub, true, 3600);
+            await doimg(wc, nameof(m) + sub, true, 7200);
         }
     }
 
