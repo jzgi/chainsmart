@@ -20,9 +20,9 @@ namespace ChainSmart
             DateTime last = default;
             foreach (var o in arr)
             {
-                if (o.till != last)
+                if (o.dt != last)
                 {
-                    h.TR_().TD_("uk-padding-tiny-left", colspan: 4).T(o.till, time: 0)._TD()._TR();
+                    h.TR_().TD_("uk-padding-tiny-left", colspan: 4).T(o.dt, time: 0)._TD()._TR();
                 }
 
                 h.TR_();
@@ -42,7 +42,7 @@ namespace ChainSmart
                 h.TD_("uk-text-right").CNY(o.topay)._TD();
                 h._TR();
 
-                last = o.till;
+                last = o.dt;
             }
 
             h._TABLE();
@@ -51,10 +51,10 @@ namespace ChainSmart
 
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("消费业务结算管理", "财务")]
+    [Ui("市场端结款", "财务")]
     public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     {
-        [Ui("消费业务结算", group: 1), Tool(Anchor)]
+        [Ui("市场端结款", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();
@@ -138,10 +138,10 @@ namespace ChainSmart
     }
 
     [AdmlyAuthorize(User.ROL_FIN)]
-    [Ui("供应业务结算", "财务")]
+    [Ui("供应端结款", "财务")]
     public class AdmlyBookClearWork : ClearWork<AdmlyBookClearVarWork>
     {
-        [Ui("供应业务结算", group: 1), Tool(Anchor)]
+        [Ui("供应端结款", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             using var dc = NewDbContext();

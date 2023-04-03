@@ -22,8 +22,8 @@ select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='sup');
 
 ALTER TABLE books SET TABLESPACE sup;
-ALTER TABLE booksc SET TABLESPACE sup;
-ALTER TABLE booksa_typ SET TABLESPACE sup;
+ALTER TABLE bookclrs SET TABLESPACE sup;
+ALTER TABLE bookaggs_typ SET TABLESPACE sup;
 
 ALTER INDEX books_pk SET TABLESPACE sup;
 ALTER INDEX books_single_idx SET TABLESPACE sup;
@@ -38,8 +38,8 @@ select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='rtl');
 
 ALTER TABLE buys SET TABLESPACE rtl;
-ALTER TABLE buysc SET TABLESPACE rtl;
-ALTER TABLE buysa_typ SET TABLESPACE rtl;
+ALTER TABLE buyclrs SET TABLESPACE rtl;
+ALTER TABLE buyaggs_typ SET TABLESPACE rtl;
 
 ALTER INDEX buys_pk SET TABLESPACE rtl;
 ALTER INDEX buys_single_idx SET TABLESPACE rtl;

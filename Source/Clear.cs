@@ -33,7 +33,7 @@ namespace ChainSmart
 
         internal int id;
         internal int orgid;
-        internal DateTime till;
+        internal DateTime dt;
         internal short trans;
         internal decimal amt;
         internal short rate;
@@ -49,7 +49,7 @@ namespace ChainSmart
                 s.Get(nameof(id), ref id);
             }
 
-            s.Get(nameof(till), ref till);
+            s.Get(nameof(dt), ref dt);
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(trans), ref trans);
             s.Get(nameof(amt), ref amt);
@@ -67,7 +67,7 @@ namespace ChainSmart
                 s.Put(nameof(id), id);
             }
 
-            s.Put(nameof(till), till);
+            s.Put(nameof(dt), dt);
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(trans), trans);
             s.Put(nameof(amt), amt);

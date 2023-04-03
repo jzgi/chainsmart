@@ -62,7 +62,7 @@ namespace ChainSmart
 
             CreateWork<ShplyItemWork>("sitem");
 
-            CreateWork<ShplyVipWork>("svip");
+            CreateWork<ShplyPosWork>("spos");
 
             CreateWork<ShplyBuyWork>("sbuy");
 
@@ -72,7 +72,7 @@ namespace ChainSmart
 
             CreateWork<ShplyBookAggWork>("sbookagg");
 
-            CreateWork<ShplyPosWork>("spos");
+            CreateWork<ShplyVipWork>("svip");
 
             // mkt
 
@@ -80,13 +80,13 @@ namespace ChainSmart
 
             CreateWork<MktlyTestWork>("mtest");
 
-            CreateWork<MktlyBuyAggWork>("mbuyagg");
-
-            CreateWork<MktlyBookAggWork>("mbookagg");
-
             CreateWork<MktlyBuyWork>("mbuy");
 
             CreateWork<MktlyBookWork>("mbook");
+
+            CreateWork<MktlyBuyAggWork>("mbuyagg");
+
+            CreateWork<MktlyBookAggWork>("mbookagg");
         }
     }
 

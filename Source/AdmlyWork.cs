@@ -33,13 +33,13 @@ namespace ChainSmart
 
             // fin
 
-            CreateWork<AdmlyBuyClearWork>("buyclr");
-
-            CreateWork<AdmlyBookClearWork>("bookclr");
-
             CreateWork<AdmlyBuyAggWork>("buyagg");
 
             CreateWork<AdmlyBookAggWork>("bookagg");
+
+            CreateWork<AdmlyBuyClearWork>("buyclr");
+
+            CreateWork<AdmlyBookClearWork>("bookclr");
         }
 
         public void @default(WebContext wc)

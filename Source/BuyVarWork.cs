@@ -102,7 +102,7 @@ namespace ChainSmart
     public class ShplyBuyVarWork : BuyVarWork
     {
         [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("集中", "确认集中统一发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 1)]
+        [Ui("备发", "已备货并集中等待发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
         public async Task adapt(WebContext wc)
         {
             int id = wc[0];
@@ -123,7 +123,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_LOG)]
-        [Ui("发货", "确认自行发货？", icon: "sign-out"), Tool(ButtonConfirm, status: 3)]
+        [Ui("发货", "确认自行发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 3)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -145,7 +145,7 @@ namespace ChainSmart
 
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("撤单", "确认撤单退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+        [Ui("撤销", "确认撤销并且退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
         public async Task @void(WebContext wc)
         {
             int id = wc[0];

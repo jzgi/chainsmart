@@ -205,10 +205,10 @@ create table booksc
     entities
 );
 
-alter table booksc
+alter table bookclrs
     owner to postgres;
 
-alter sequence clears_id_seq owned by booksc.id;
+alter sequence clears_id_seq owned by bookclrs.id;
 
 create table _accts
 (
@@ -436,7 +436,7 @@ create table booksa_typ
 )
     tablespace sup;
 
-alter table booksa_typ
+alter table bookaggs_typ
     owner to postgres;
 
 create table items
@@ -488,7 +488,7 @@ create table booksa_lotid
 )
     tablespace sup;
 
-alter table booksa_lotid
+alter table bookaggs_lotid
     owner to postgres;
 
 create table global
@@ -502,7 +502,7 @@ create table global
             primary key
 );
 
-alter table global
+alter table gens
     owner to postgres;
 
 create table buysa_typ
@@ -519,7 +519,7 @@ create table buysa_typ
 )
     tablespace rtl;
 
-alter table buysa_typ
+alter table buyaggs_typ
     owner to postgres;
 
 create table buysa_itemid
@@ -536,7 +536,7 @@ create table buysa_itemid
 )
     tablespace rtl;
 
-alter table buysa_itemid
+alter table buyaggs_itemid
     owner to postgres;
 
 create table buysc
@@ -557,7 +557,7 @@ create table buysc
 )
     tablespace rtl;
 
-alter table buysc
+alter table buyclrs
     owner to postgres;
 
 create view orgs_vw
@@ -788,12 +788,12 @@ BEGIN
 
     opr = coalesce(opr, 'SYS');
 
-    SELECT coalesce(buysgen, '2000-01-01'::date) FROM global WHERE pk INTO past;
+    SELECT coalesce(buysgen, '2000-01-01'::date) FROM gens WHERE pk INTO past;
     paststamp = (past + interval '1 day')::timestamp(0);
 
     -- aggregate buys by orgid + dt + typ
 
-    INSERT INTO buysa_typ
+    INSERT INTO buyaggs_typ
     SELECT shpid,
            created::date,
            typ,
@@ -807,25 +807,25 @@ BEGIN
 
     -- aggregate buys by itemid
 
-    INSERT INTO buysa_itemid
+    INSERT INTO buyaggs_itemid
     SELECT (unnest(buys_agg(items,shpid, created::date,mktid))).*
     FROM buys
     WHERE created >= paststamp AND created < tillstamp AND status > 0
     GROUP BY shpid, created::date;
 
 
-    INSERT INTO buysc (orgid, dt, typ, trans, amt, rate, topay)
+    INSERT INTO buyclrs (orgid, dt, typ, trans, amt, rate, topay)
     SELECT orgid, now, TYP_SHP, sum(trans), sum(amt), RATE_SHP, sum(amt * RATE_SHP / BASE)
-    FROM buysa_typ
-    WHERE acct = 1 AND dt > past AND dt <= till GROUP BY orgid;
+    FROM buyaggs_typ
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
-    INSERT INTO buysc (orgid, dt, typ, trans, amt, rate, topay)
+    INSERT INTO buyclrs (orgid, dt, typ, trans, amt, rate, topay)
     SELECT corgid, now, TYP_MKT, sum(trans), sum(amt), RATE_MKT, sum(amt * RATE_MKT / BASE)
-    FROM buysa_typ
-    WHERE acct = 1 AND dt > past AND dt <= till GROUP BY corgid;
+    FROM buyaggs_typ
+    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY corgid;
 
 
-    UPDATE global SET buysgen = till, buysgenopr = opr WHERE pk;
+    UPDATE gens SET buysgen = till, buysgenopr = opr WHERE pk;
 END
 $$;
 
@@ -857,7 +857,7 @@ BEGIN
 
     opr = coalesce(opr, 'SYS');
 
-    SELECT coalesce(booksgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
+    SELECT coalesce(booksgen, '2000-01-01'::date)FROM gens WHERE pk INTO past;
     tillstamp = (till + interval '1 day')::timestamp(0);
 
     opr = coalesce(opr, 'SYS');
@@ -908,7 +908,7 @@ BEGIN
     FROM bookaggs
     WHERE typ = 1 AND dt > past AND dt <= till GROUP BY coid;
 
-    UPDATE global SET booksgen = till WHERE pk;
+    UPDATE gens SET booksgen = till WHERE pk;
 
 END
 $$;
@@ -970,12 +970,12 @@ create trigger buys_upd_trig
     when (new.status IS DISTINCT FROM old.status)
 execute procedure buys_trig_func();
 
-create function buyitem_agg_func(ret buysa_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buysa_itemid[]
+create function buyitem_agg_func(ret buyaggs_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buyaggs_itemid[]
     language plpgsql
 as
 $$
 DECLARE
-    agg buysa_itemid;
+    agg buyaggs_itemid;
     itm buyitem;
     fnd bool;
 BEGIN
@@ -986,7 +986,7 @@ BEGIN
 
             IF ret IS NOT NULL THEN
                 FOREACH agg IN ARRAY ret LOOP
-                        IF agg.acct = itm.itemid THEN -- found
+                        IF agg.typ = itm.itemid THEN -- found
                             agg.trans = agg.trans + itm.qty;
                             agg.amt = agg.amt + (itm.price - itm.off) * itm.qty;
                             fnd = TRUE;
@@ -1005,7 +1005,7 @@ BEGIN
 END;
 $$;
 
-alter function buyitem_agg_func(buysa_itemid[], buyitem[], integer, date, integer) owner to postgres;
+alter function buyitem_agg_func(buyaggs_itemid[], buyitem[], integer, date, integer) owner to postgres;
 
 create aggregate first(anyelement) (
     sfunc = first_agg,
@@ -1025,7 +1025,7 @@ alter aggregate last(anyelement) owner to postgres;
 
 create aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) (
     sfunc = buyitem_agg_func,
-    stype = buysa_itemid[]
+    stype = buyaggs_itemid[]
     );
 
 alter aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) owner to postgres;

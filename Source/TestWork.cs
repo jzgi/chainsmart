@@ -11,7 +11,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("检测报告", "机构")]
+    [Ui("检测", "机构")]
     public class MktlyTestWork : TestWork<MktlyTestVarWork>
     {
         public void @default(WebContext wc, int page)

@@ -109,7 +109,7 @@ namespace ChainSmart
     }
 
 
-    [Ui("销售订单", "商户")]
+    [Ui("网售订单", "商户")]
     public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     {
         static void MainGrid(HtmlBuilder h, Buy[] arr)
@@ -140,7 +140,7 @@ namespace ChainSmart
 
 
         [BizNotice(BUY_CREATED)]
-        [Ui("销售订单", group: 1), Tool(Anchor)]
+        [Ui("网售订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -154,7 +154,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无新销售订单");
+                    h.ALERT("尚无网售订单");
                     return;
                 }
 
@@ -162,7 +162,7 @@ namespace ChainSmart
             }, false, 4);
         }
 
-        [Ui(tip: "已集中", icon: "pull", group: 2), Tool(Anchor)]
+        [Ui(tip: "已备发", icon: "eye", group: 2), Tool(Anchor)]
         public async Task adapted(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -176,7 +176,7 @@ namespace ChainSmart
                 h.TOOLBAR(notice: org.id);
                 if (arr == null)
                 {
-                    h.ALERT("尚无已集中订单");
+                    h.ALERT("尚无已备发订单");
                     return;
                 }
 
@@ -185,7 +185,7 @@ namespace ChainSmart
         }
 
         [BizNotice(BUY_OKED)]
-        [Ui(tip: "已发货", icon: "sign-out", group: 4), Tool(Anchor)]
+        [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
         public async Task oked(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -207,7 +207,7 @@ namespace ChainSmart
             }, false, 4);
         }
 
-        [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+        [Ui(tip: "已撤销", icon: "trash", group: 8), Tool(Anchor)]
         public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
