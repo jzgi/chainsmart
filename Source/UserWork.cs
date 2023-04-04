@@ -100,7 +100,7 @@ namespace ChainSmart
                                 h.LI_().FIELD("现有权限", "无")._LI();
                             }
 
-                            h.LI_().SELECT("权限", nameof(admly), admly, User.Orgly, filter: (k, v) => k > 0)._LI();
+                            h.LI_().SELECT("权限", nameof(admly), admly, User.Orgly, filter: (k, _) => k > 0)._LI();
                             h._FIELDSUL();
                             h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                         }
@@ -181,15 +181,16 @@ namespace ChainSmart
     [Ui("人员权限", "常规")]
     public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     {
+        bool IsShop => (bool)State;
+
+
         [Ui("人员权限"), Tool(Anchor)]
         public async Task @default(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
-            var shp = (bool)State;
-
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(shp ? "shpid" : "srcid").T(" = @1 AND ").T(shp ? "shply" : "srcly").T(" > 0");
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(IsShop ? "shpid" : "srcid").T(" = @1 AND ").T(IsShop ? "shply" : "srcly").T(" > 0");
             var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -202,7 +203,7 @@ namespace ChainSmart
                     return;
                 }
 
-                MainGrid(h, arr, shp);
+                MainGrid(h, arr, IsShop);
             }, false, 6);
         }
 
@@ -247,12 +248,14 @@ namespace ChainSmart
                             if (o.srcid > 0)
                             {
                                 var exOrg = GrabObject<int, Org>(shp ? o.shpid : o.srcid);
-
-                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[shp ? o.shply : o.srcly])._LI();
-                                if (exOrg.id != org.id)
+                                if (exOrg != null)
                                 {
-                                    h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
-                                    yes = false;
+                                    h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[shp ? o.shply : o.srcly])._LI();
+                                    if (exOrg.id != org.id)
+                                    {
+                                        h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
+                                        yes = false;
+                                    }
                                 }
                             }
                             else
@@ -262,7 +265,7 @@ namespace ChainSmart
 
                             if (yes)
                             {
-                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, v) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                                h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, _) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                                 h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                             }
 

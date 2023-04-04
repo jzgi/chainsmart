@@ -103,9 +103,9 @@ namespace ChainSmart
 
             CreateWork<OrglyAccessWork>("access", false); // false = source
 
-            CreateWork<OrglyCreditWork>("credit");
-
             CreateWork<OrglyBookClearWork>("bookclr", state: true); // true = is org
+
+            CreateWork<OrglyCreditWork>("credit");
 
             // src
 

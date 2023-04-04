@@ -106,7 +106,7 @@ namespace ChainSmart
     public class OrglySetgWork : OrgVarWork
     {
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("设置", icon: "cog"), Tool(ButtonShow)]
+        [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 3)]
         public async Task setg(WebContext wc)
         {
             var org = wc[-1].As<Org>();

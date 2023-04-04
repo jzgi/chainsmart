@@ -25,9 +25,8 @@ namespace ChainSmart
             {
                 h.UL_("uk-list uk-list-divider");
 
-                h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().SPAN(o.uaddr)._DIV()._LI();
+                h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().T(string.IsNullOrEmpty(o.ucom) ? "自提" : o.ucom).T('-').T(o.uaddr)._DIV()._LI();
                 h.LI_().FIELD("卖方", o.name)._LI();
-                // h.LI_().FIELD("简介", o.tip)._LI();
                 h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
 
                 h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();

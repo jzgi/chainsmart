@@ -8,7 +8,7 @@ namespace ChainSmart
 {
     public abstract class UserVarWork : WebWork
     {
-        public virtual async Task @default(WebContext wc)
+        public async Task @default(WebContext wc)
         {
             int uid = wc[0];
 
@@ -32,7 +32,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
+                h.TOOLBAR(bottom: true);
             });
         }
     }
@@ -208,18 +208,18 @@ namespace ChainSmart
 
     public class OrglyAccessVarWork : UserVarWork
     {
+        bool IsShop => (bool)Parent.State;
+
         [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
-            short orgid = wc[-2];
+            var org = wc[-2].As<Org>();
             short id = wc[0];
 
-            var shp = (bool)State;
-
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET ").T(shp ? "shpid" : "srcid").T(" = NULL, ").T(shp ? "shply" : "srcly").T(" = 0 WHERE id = @1 AND ").T(shp ? "shpid" : "srcid").T(" = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(orgid));
+            dc.Sql("UPDATE users SET ").T(IsShop ? "shpid" : "srcid").T(" = NULL, ").T(IsShop ? "shply" : "srcly").T(" = 0 WHERE id = @1 AND ").T(IsShop ? "shpid" : "srcid").T(" = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204); // no content
         }

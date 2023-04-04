@@ -10,10 +10,10 @@ var WCPay = function (data, sup) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
 
                 if (sup) {
-                    alert('下单成功');
+                    alert('订购成功');
                 }
                 else {
-                    alert('下单成功，查看订单在「我的消费」');
+                    alert('订购成功，请在「我的消费」查看');
                 }
                 // close without refresh
                 window.parent.closeUp(false);
@@ -203,10 +203,10 @@ function posAdd(trig) {
     var subtotal = parseFloat(form['subtotal'].value);
 
     // target ul element
-    var tbody = document.getElementById('lns');
+    var tbody = document.getElementById('items');
     var tr = document.createElement("tr");
     var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
-    html += '<td>' + opt.innerText + '</td><td>' + price.toFixed(2) + '</td><td>' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    html += '<td>' + opt.innerText + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
 
@@ -261,13 +261,17 @@ function call_pos(trig) {
     // get prepare id
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status >= 200) {
+        if (this.readyState == 4) {
             trig.disabled = false; // re-enable the button
-            var tbody = document.getElementById('lns');
-            tbody.innerHTML = ''; // clear the table of lines
-            alert('成功记录');
-            trig.form.reset(); // reset the form
-        }
+            if (this.status >= 200 && this.status < 205) {
+                var tbody = document.getElementById('items');
+                tbody.innerHTML = ''; // clear the table of lines
+                alert('成功');
+                trig.form.reset(); // reset the form
+            } else if (this.status >= 500) {
+                alert('错误，请确认库存');
+            }
+        } 
     };
 
     xhr.open(method, action, false);

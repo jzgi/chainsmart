@@ -39,7 +39,7 @@ namespace ChainSmart
             {
                 h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
                 h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价", o.off, true)._LI();
-                h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("剩余量", o.stock, o.AvailX, "（")._LI();
+                h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("未用量", o.stock, o.AvailX, "（")._LI();
             }
 
             h._UL();
@@ -209,7 +209,7 @@ namespace ChainSmart
                 h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
                 h.LI_().FIELD("单价", o.price, true).FIELD("降价", o.off, true)._LI();
                 h.LI_().FIELD4("批次总量", o.cap, "（", o.CapX, "）").FIELD("起订件数", o.minx)._LI();
-                h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("剩余量", o.avail, "（", o.AvailX, "）")._LI();
+                h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("未用量", o.avail, "（", o.AvailX, "）")._LI();
                 h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
                 h.LI_().FIELD2("创编", o.created, o.creator)._LI();

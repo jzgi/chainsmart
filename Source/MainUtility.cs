@@ -71,7 +71,7 @@ namespace ChainSmart
                 }
             }
 
-            h.OPTION(string.Empty, "非派送区");
+            h.OPTION(string.Empty, "自提");
 
             h._SELECT();
 

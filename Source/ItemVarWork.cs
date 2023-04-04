@@ -29,7 +29,7 @@ namespace ChainSmart
                 h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
                 h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户降价", m.off, money: true)._LI();
                 h.LI_().FIELD("起订件数", m.minx)._LI();
-                h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("可用量", m.avail, m.AvailX, "（")._LI();
+                h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("未用量", m.avail, m.AvailX, "（")._LI();
 
                 if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
                 if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -205,7 +205,7 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             short optyp = 0;
-            decimal qty = 0.0M;
+            short qty = 0;
             string tip = null;
 
             if (wc.IsGet)
@@ -215,7 +215,7 @@ namespace ChainSmart
                     h.FORM_().FIELDSUL_("库存操作");
                     h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                     h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
-                    h.LI_().TEXT("摘要", nameof(tip), tip, max: 20)._LI();
+                    h.LI_().TEXT("摘要", nameof(tip), tip, max: 20, datalst: StockOp.Tips)._LI();
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
                 });
             }
@@ -232,13 +232,13 @@ namespace ChainSmart
                 var now = DateTime.Now;
                 if (optyp == StockOp.TYP_ADD)
                 {
-                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4, @5)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @6 AND shpid = @7");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(optyp).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND shpid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                 }
                 else // TYP_SUBSTRACT
                 {
-                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4, @5)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @6 AND shpid = @7");
-                    await dc.ExecuteAsync(p => p.Set(now).Set(optyp).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+                    dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @5 AND shpid = @6");
+                    await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
                 }
 
                 wc.GivePane(200); // close dialog

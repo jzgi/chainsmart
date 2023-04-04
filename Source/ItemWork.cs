@@ -237,7 +237,7 @@ namespace ChainSmart
                 h._HEADER();
 
                 h.Q(o.tip, "uk-width-expand");
-                h.FOOTER_().SPAN2("剩余", o.avail).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                h.FOOTER_().SPAN2("未用量", o.avail).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
                 h._ASIDE();
 
                 h._A();

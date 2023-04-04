@@ -48,10 +48,11 @@ namespace ChainSmart
 
                     h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.unitx).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
                     h.T(o.name);
-                    if (o.unitx != 1)
+                    if (o.unitx > 1)
                     {
-                        h.SP().T(o.unitx).T(o.unit).T("件");
+                        h.T(o.unitx).T(o.unit);
                     }
+                    h.T('（').T(o.avail).T('）');
 
                     h.T("</option>");
                 }
@@ -78,8 +79,8 @@ namespace ChainSmart
                 h.FORM_();
 
                 h.TABLE_();
-                h.T("<thead>").TH("商品", css: "uk-width-1-2").TH("单价").TH("数量").TH("小计").T("<th class=\"uk-width-micro\"></th></thead>");
-                h.T("<tbody id=\"lns\">"); // lines
+                h.T("<thead>").TH("商品", css: "uk-width-1-2 uk-text-left").TH("单价", css: "uk-text-right").TH("数量", css: "uk-text-right").TH("小计", css: "uk-text-right").T("<th class=\"uk-width-micro\"></th></thead>");
+                h.T("<tbody id=\"items\">"); // line items
                 h.T("</tbody>");
                 h._TABLE();
 
@@ -128,7 +129,6 @@ namespace ChainSmart
                     h.TD_();
                     foreach (var e in o.items)
                     {
-                        
                         h.T(e.name);
                     }
                     h._TD();
@@ -230,10 +230,18 @@ namespace ChainSmart
 
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS | MSK_LATER;
 
-            using var dc = NewDbContext();
+            try
+            {
+                using var dc = NewDbContext();
 
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk);
-            await dc.ExecuteAsync(p => m.Write(p, msk));
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk);
+                await dc.ExecuteAsync(p => m.Write(p, msk));
+            }
+            catch (Exception e)
+            {
+                wc.Give(500); // data error, maybe a check violdate
+                return;
+            }
 
             wc.Give(201); // created
         }
