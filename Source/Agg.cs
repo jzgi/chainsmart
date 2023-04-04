@@ -25,6 +25,8 @@ namespace ChainSmart
 
         internal int typ;
 
+        internal string name;
+
         internal short corgid;
 
         internal int trans;
@@ -36,6 +38,7 @@ namespace ChainSmart
             s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(dt), ref dt);
             s.Get(nameof(typ), ref typ);
+            s.Get(nameof(name), ref name);
             s.Get(nameof(corgid), ref corgid);
             s.Get(nameof(trans), ref trans);
             s.Get(nameof(amt), ref amt);
@@ -46,6 +49,7 @@ namespace ChainSmart
             s.Put(nameof(orgid), orgid);
             s.Put(nameof(dt), dt);
             s.Put(nameof(typ), typ);
+            s.Put(nameof(name), name);
             s.Put(nameof(corgid), corgid);
             s.Put(nameof(trans), trans);
             s.Put(nameof(amt), amt);

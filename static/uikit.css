@@ -3177,9 +3177,8 @@ ul.uk-nav-sub {
     margin: 0 16px;
     position: relative;
     justify-content: center;
-    border: 1px solid #f59604;
     border-radius: 50%;
-    background-color: #f8f8f8;
+    background-color: #ededed;
     padding: 2px 7px;
 }
 
@@ -3190,7 +3189,6 @@ ul.uk-nav-sub {
 
 .uk-pagination>.uk-disabled {
     color: #fbd9a6;
-    border: 1px solid #fbd9a6;
 }
 
 .uk-pagination>.uk-active>* {

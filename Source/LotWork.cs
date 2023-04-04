@@ -39,8 +39,42 @@ namespace ChainSmart
         }
     }
 
+
     public class PublyLotWork : LotWork<PublyLotVarWork>
     {
+        static readonly string[] TAGS = { "", "label" };
+
+        [Ui("预制标签")]
+        public async Task @default(WebContext wc)
+        {
+            int num = 0;
+            wc.GivePage(200, h =>
+            {
+                h.SUBNAV(TAGS);
+                //
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_("预制标签");
+                h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();
+                h.LI_().BUTTON("查询")._LI();
+                h._FIELDSUL();
+                h._FORM();
+            });
+        }
+
+        [Ui("印制贴标")]
+        public async Task label(WebContext wc)
+        {
+            int num = 0;
+            wc.GivePage(200, h =>
+            {
+                h.SUBNAV(TAGS);
+                //
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_("预制标签");
+                h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();
+                h.LI_().BUTTON("查询")._LI();
+                h._FIELDSUL();
+                h._FORM();
+            });
+        }
     }
 
 

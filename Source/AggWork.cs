@@ -15,6 +15,23 @@ namespace ChainSmart
             CreateVarWork<V>();
         }
 
+        protected static void MainTable(HtmlBuilder h, Agg[] arr)
+        {
+            h.TABLE(arr, o =>
+            {
+                h.TD_().T(o.dt, 3, 0)._TD();
+                h.TD(o.name);
+                h.TD_("uk-text-right").T(o.trans)._TD();
+                h.TD_("uk-text-right").CNY(o.amt)._TD();
+            }, thead: () =>
+            {
+                h.TH("日期", css: "uk-width-medium");
+                h.TH("类型");
+                h.TH("数量");
+                h.TH("金额");
+            });
+        }
+
         [Ui("结算", "结算代收款项", icon: "list", group: 1), Tool(ButtonOpen)]
         public async Task gen(WebContext wc)
         {
@@ -142,19 +159,8 @@ namespace ChainSmart
                     return;
                 }
 
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.typ]);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
-                }, thead: () =>
-                {
-                    h.TH("日期", css: "uk-width-medium");
-                    h.TH("类型");
-                    h.TH("笔数");
-                    h.TH("金额");
-                });
+                MainTable(h, arr);
+
                 h.PAGINATION(arr.Length == 30);
             }, false, 60);
         }
@@ -178,19 +184,8 @@ namespace ChainSmart
                     return;
                 }
 
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.typ]);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
-                }, thead: () =>
-                {
-                    h.TH("日期", css: "uk-width-medium");
-                    h.TH("类型");
-                    h.TH("笔数");
-                    h.TH("金额");
-                });
+                MainTable(h, arr);
+
                 h.PAGINATION(arr.Length == 30);
             }, false, 60);
         }
@@ -218,19 +213,8 @@ namespace ChainSmart
                     return;
                 }
 
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.typ]);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
-                }, thead: () =>
-                {
-                    h.TH("日期", css: "uk-width-medium");
-                    h.TH("类型");
-                    h.TH("笔数");
-                    h.TH("金额");
-                });
+                MainTable(h, arr);
+
                 h.PAGINATION(arr.Length == 30);
             }, false, 60);
         }
@@ -254,19 +238,8 @@ namespace ChainSmart
                     return;
                 }
 
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.typ]);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
-                }, thead: () =>
-                {
-                    h.TH("日期", css: "uk-width-medium");
-                    h.TH("类型");
-                    h.TH("笔数");
-                    h.TH("金额");
-                });
+                MainTable(h, arr);
+
                 h.PAGINATION(arr.Length == 30);
             }, false, 60);
         }
@@ -294,19 +267,8 @@ namespace ChainSmart
                     return;
                 }
 
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.dt, 3, 0)._TD();
-                    h.TD(Buy.Typs[(short)o.typ]);
-                    h.TD_("uk-text-right").T(o.trans)._TD();
-                    h.TD_("uk-text-right").CNY(o.amt)._TD();
-                }, thead: () =>
-                {
-                    h.TH("日期", css: "uk-width-medium");
-                    h.TH("类型");
-                    h.TH("笔数");
-                    h.TH("金额");
-                });
+                MainTable(h, arr);
+
                 h.PAGINATION(arr.Length == 30);
             }, false, 60);
         }
