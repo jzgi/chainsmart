@@ -27,22 +27,19 @@ RUN apt-get update -y \
 postgresql-9.6
 
 # DB
+COPY ./db/conf/. /etc/postgresql/9.6/main/.
 WORKDIR /db
-
 COPY ./db/init-sql/. ./
 RUN chmod +x ./setup.sh && ./setup.sh
 
-WORKDIR /app
 # Web
-# COPY chainmart/. ./
-VOLUME [ "/app" ]
+WORKDIR /app
+COPY app/. ./
 # nginx
-# COPY ./nginx/*.conf /etc/nginx/sites-enabled/.
 VOLUME [ "/etc/nginx/sites-enabled" ]
 EXPOSE 80
 EXPOSE 81
 EXPOSE 443
 EXPOSE 5432
-# COPY ./entrypoint.sh .
-# RUN chmod +x entrypoint.sh
-ENTRYPOINT ["sh","entrypoint.sh"]
+COPY ./entrypoint.sh .
+ENTRYPOINT ["/bin/bash","entrypoint.sh"]
