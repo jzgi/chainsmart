@@ -6,14 +6,30 @@ using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
+using static ChainFx.Web.ToolAttribute;
 
 namespace ChainSmart
 {
-    public abstract class PosWork<V> : WebWork where V : PosVarWork, new()
+    public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     {
         protected override void OnCreate()
         {
             CreateVarWork<V>();
+        }
+
+        protected static void MainTable(HtmlBuilder h, Buy[] arr)
+        {
+            h.TABLE(arr, o =>
+            {
+                h.TD_().T(o.created, 0, 2)._TD();
+                h.TD_().ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name);
+                foreach (var v in o.items)
+                {
+                    h.PIC(MainApp.WwwUrl + "/item/", o.id, "/icon", css: "uk-width-tiny");
+                }
+                h._A()._TD();
+                h.TD_(css: "uk-text-right").SP().CNY(o.pay).ICON(Buy.Icons[o.typ])._TD();
+            });
         }
     }
 
@@ -40,7 +56,7 @@ namespace ChainSmart
                 // form input
 
                 h.FORM_().FIELDSUL_();
-                h.LI_().SELECT_(nameof(itemid), onchange: "posWareChange(this);");
+                h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);");
 
                 for (var i = 0; i < arr?.Length; i++)
                 {
@@ -104,8 +120,8 @@ namespace ChainSmart
             }, false, 60, onload: "fixAll();");
         }
 
-        [Ui(tip: "零售记录", icon: "list", group: 2), Tool(Anchor)]
-        public async Task lst(WebContext wc)
+        [Ui(tip: "今日记录", icon: "table", group: 2), Tool(Anchor)]
+        public async Task today(WebContext wc)
         {
             var org = wc[-1].As<Org>();
 
@@ -116,29 +132,57 @@ namespace ChainSmart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
                 if (arr == null)
                 {
                     h.ALERT("尚无消费记录");
                     return;
                 }
-
-                h.TABLE(arr, o =>
-                {
-                    h.TD_().T(o.created, 1, 2)._TD();
-                    h.TD_();
-                    foreach (var e in o.items)
-                    {
-                        h.T(e.name);
-                    }
-                    h._TD();
-                    h.TD(o.pay);
-                    h.TD(Buy.Typs[o.typ]);
-                });
+                MainTable(h, arr);
             }, false, 6);
         }
 
-        [Ui(tip: "已作废", icon: "trash", group: 4), Tool(Anchor)]
+        [Ui(tip: "以往记录", icon: "history", group: 2), Tool(AnchorPrompt)]
+        public async Task past(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+            var today = DateTime.Today;
+            int day = 0;
+            bool inner = wc.Query[nameof(inner)];
+            if (inner)
+            {
+                wc.GivePane(200, h =>
+                {
+                    h.FORM_().FIELDSUL_("浏览以往一周记录");
+                    for (day = 1; day <= 7; day++)
+                    {
+                        var dt = today.AddDays(-day);
+                        h.LI_().RADIO(nameof(day), day, dt.ToString("yyyy-mm-dd"))._LI();
+                    }
+                    h._FIELDSUL()._FORM();
+                });
+            }
+            else // OUTER
+            {
+                day = wc.Query[nameof(day)];
+
+                using var dc = NewDbContext();
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND created BETWEEN @2 AND @3");
+                var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(today.AddDays(-day - 1)).Set(today.AddDays(-day)));
+
+                wc.GivePage(200, h =>
+                {
+                    h.TOOLBAR();
+                    if (arr == null)
+                    {
+                        h.ALERT("没有交易记录");
+                        return;
+                    }
+                    MainTable(h, arr);
+                }, false, 60);
+            }
+        }
+
+        [Ui(tip: "已撤销", icon: "trash", group: 4), Tool(Anchor)]
         public async Task @void(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -150,38 +194,13 @@ namespace ChainSmart
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-
                 if (arr == null)
                 {
-                    h.ALERT("尚无零售记录");
+                    h.ALERT("尚无已作废记录");
+                    return;
                 }
-            });
-        }
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("汇总", "汇总当日记录", icon: "plus-circle", group: 2), Tool(ButtonOpen)]
-        public async Task sum(WebContext wc, int state)
-        {
-            var org = wc[-1].As<Org>();
-            var prin = (User)wc.Principal;
-            var cats = Grab<short, Cat>();
-
-            if (wc.IsGet)
-            {
-                var o = new Asset
-                {
-                    created = DateTime.Now,
-                    creator = prin.name
-                };
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("填写产品资料");
-
-                    h.LI_().FIELD("金额", 0.0M)._LI();
-
-                    h._FIELDSUL()._FORM();
-                });
-            }
+                MainTable(h, arr);
+            }, false, 6);
         }
 
 

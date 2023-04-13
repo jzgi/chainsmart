@@ -21,7 +21,7 @@ namespace ChainSmart
 
         public decimal off;
 
-        public short qty;
+        public decimal qty;
 
         public BuyItem()
         {
@@ -42,7 +42,7 @@ namespace ChainSmart
             unit = comp[2];
             unitx = short.Parse(comp[3]);
             price = decimal.Parse(comp[4]);
-            qty = short.Parse(comp[5]);
+            qty = decimal.Parse(comp[5]);
         }
 
         public void Read(ISource s, short msk = 0xff)

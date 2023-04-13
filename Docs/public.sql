@@ -184,7 +184,7 @@ create table tests
 )
     inherits (entities);
 
-alter table tests
+alter table evals
     owner to postgres;
 
 create table booksc

@@ -433,8 +433,8 @@ namespace ChainSmart
                     wc.GivePane(200, h =>
                     {
                         h.FORM_().FIELDSUL_("溯源标签方式");
-                        h.LI_().AGOTO("Ａ）绑定预制标签", "tag-1")._LI();
-                        h.LI_().AGOTO("Ｂ）现场印制专属贴标", "tag-2")._LI();
+                        h.LI_().AGOTO("Ａ）绑定预制标签", nameof(tag), 1)._LI();
+                        h.LI_().AGOTO("Ｂ）现场印制专属贴标", nameof(tag), 1)._LI();
                         h._FIELDSUL()._FORM();
                     });
                     return;

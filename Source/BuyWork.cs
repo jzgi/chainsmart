@@ -48,7 +48,7 @@ namespace ChainSmart
                     h._SPAN();
 
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
-                    h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T('件')._SPAN();
+                    h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T(d.unit)._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
                     h._LI();
                 }

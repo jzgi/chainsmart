@@ -25,14 +25,17 @@ namespace ChainSmart
             {
                 h.UL_("uk-list uk-list-divider");
 
-                h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().T(string.IsNullOrEmpty(o.ucom) ? "自提" : o.ucom).T('-').T(o.uaddr)._DIV()._LI();
-                h.LI_().FIELD("卖方", o.name)._LI();
+
+                if (o.IsPlat)
+                {
+                    h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().T(string.IsNullOrEmpty(o.ucom) ? "非派送区" : o.ucom).T('-').T(o.uaddr)._DIV()._LI();
+                    h.LI_().FIELD("卖方", o.name)._LI();
+                }
                 h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
 
-                h.LI_().FIELD("状态", o.status, Buy.Statuses)._LI();
                 if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "发货", o.adapted, o.adapter)._LI();
-                if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "收货", o.oked, o.oker)._LI();
+                if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "备发", o.adapted, o.adapter)._LI();
+                if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "发货", o.oked, o.oker)._LI();
 
                 h._UL();
 
@@ -46,7 +49,7 @@ namespace ChainSmart
 
                     h._TD();
                     h.TD_(css: "uk-text-right").CNY(d.RealPrice).SP().SUB(d.unit)._TD();
-                    h.TD2(d.qty, "件", css: "uk-text-right");
+                    h.TD2(d.qty, d.unit, css: "uk-text-right");
                     h.TD(d.SubTotal, true, true);
                 });
 
@@ -142,8 +145,7 @@ namespace ChainSmart
             wc.Give(204);
         }
 
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
+        [OrglyAuthorize(0, User.ROL_MGT)]
         [Ui("撤销", "确认撤销并且退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
         public async Task @void(WebContext wc)
         {

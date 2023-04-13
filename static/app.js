@@ -37,7 +37,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
     var vip = false; // whether vip for current contet
     if (evt.detail) {
         // to-path matched
-        var lst = evt.detail.split(' ');
+        var lst = evt.detail.split('+');
         for (var i = 0; i < lst.length; i++) {
             if (n == parseInt(lst[i])) {
                 vip = true;
@@ -58,7 +58,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill qty options
     //
-    if (vip) {
+    if (!vip) {
         minx = 1;
     }
     var maxx = availx > 200 ? 200 : availx; 
@@ -112,7 +112,7 @@ function sumQtyDetails(trig, unitx) {
 }
 
 
-function posWareChange(trig) {
+function posItemChange(trig) {
     var form = trig.form;
 
     var v = trig.selectedOptions[0];
