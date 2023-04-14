@@ -166,7 +166,7 @@ namespace ChainSmart
                 day = wc.Query[nameof(day)];
 
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND created BETWEEN @2 AND @3");
+                dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND typ > 1 AND created BETWEEN @2 AND @3");
                 var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(today.AddDays(-day - 1)).Set(today.AddDays(-day)));
 
                 wc.GivePage(200, h =>
@@ -188,7 +188,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND typ >= 2 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND typ > 1 AND status = 0 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

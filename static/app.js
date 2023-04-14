@@ -927,9 +927,14 @@ function cropUpd(el, url, close) {
         xhr.open('POST', url, false);
         xhr.onload = function (e) {
             if (xhr.status == 200 || xhr.status == 201) {
+
                 alert("上传成功");
+
+                // set a refresh flag
+                var div = ancestorOf(el, 'uk-modal');
+                div.classList.add('button-refresh-trig');
+
                 if (close) {
-                    var div = ancestorOf(el, 'uk-modal');
                     UIkit.modal(div).hide();
                 }
             }

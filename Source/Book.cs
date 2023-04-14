@@ -1,3 +1,4 @@
+using System;
 using ChainFx;
 
 namespace ChainSmart
@@ -153,6 +154,26 @@ namespace ChainSmart
         }
 
         public int Key => id;
+        
+        // STATE
+        //
+
+        public const short STA_CANCELL = 1;
+
+        public override short State
+        {
+            get
+            {
+                var now = DateTime.Now;
+                short v = 0;
+                if (now.Date <= created.Date.AddDays(1) && now.Hour < 12)
+                {
+                    v |= STA_CANCELL;
+                }
+                return v;
+            }
+        }
+
 
         public short QtyX => (short)(qty / unitx);
 

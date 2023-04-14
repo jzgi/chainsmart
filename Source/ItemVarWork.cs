@@ -24,6 +24,7 @@ namespace ChainSmart
             wc.GivePane(200, h =>
             {
                 h.UL_("uk-list uk-list-divider");
+
                 h.LI_().FIELD("商品名", m.name)._LI();
                 h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
                 h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
@@ -97,23 +98,31 @@ namespace ChainSmart
 
             wc.GivePane(200, h =>
             {
-                h.ARTICLE_("uk-card uk-card-primary");
-
-                if (o.pic)
+                if (o.lotid > 0)
                 {
-                    h.PIC("/item/", o.id, "/pic");
+                    var lot = GrabObject<int, Lot>(o.lotid);
+                    var src = GrabObject<int, Org>(lot.srcid);
+                    var asset = lot.assetid > 0 ? GrabMap<int, int, Asset>(lot.srcid)[lot.assetid] : null;
+                    LotVarWork.LotShow(h, lot, src, asset, false);
                 }
+                else
+                {
+                    h.ARTICLE_("uk-card uk-card-primary");
+                    if (o.pic)
+                    {
+                        h.PIC("/item/", o.id, "/pic");
+                    }
+                    h.H4("商品信息", "uk-card-header");
 
-                h.H4("产品详情", "uk-card-header");
+                    h.SECTION_("uk-card-body");
+                    h.UL_("uk-list uk-list-divider");
+                    h.LI_().FIELD("商品名", o.name)._LI();
+                    h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                    h._UL();
+                    h._SECTION();
 
-                h.SECTION_("uk-card-body");
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", o.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-                h._UL();
-                h._SECTION();
-
-                h._ARTICLE();
+                    h._ARTICLE();
+                }
             }, true, 900);
         }
 
@@ -197,7 +206,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("库存", icon: "database"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]
         public async Task stock(WebContext wc)
         {
             int itemid = wc[0];
@@ -246,7 +255,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED, state: Item.STA_OKABLE)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -276,22 +285,14 @@ namespace ChainSmart
 
         [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui(tip: "确认删除或者作废？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-        public async Task rm(WebContext wc)
+        public async Task @void(WebContext wc)
         {
             int id = wc[0];
             var org = wc[-2].As<Org>();
 
             using var dc = NewDbContext();
-            try
-            {
-                dc.Sql("DELETE FROM items WHERE id = @1 AND shpid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
-            catch (Exception)
-            {
-                dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND shpid = @2");
-                await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-            }
+            dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND shpid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
             wc.Give(204);
         }

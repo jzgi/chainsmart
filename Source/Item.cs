@@ -115,6 +115,24 @@ namespace ChainSmart
 
         public int Key => id;
 
+        // STATE
+        //
+
+        public const short STA_OKABLE = 1;
+
+        public override short State
+        {
+            get
+            {
+                short v = 0;
+                if (icon && pic)
+                {
+                    v |= STA_OKABLE;
+                }
+                return v;
+            }
+        }
+
         public decimal RealPrice => price - off;
 
         public int StockX => stock / unitx;

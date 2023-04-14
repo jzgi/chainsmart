@@ -23,12 +23,11 @@ namespace ChainSmart
                 h.LI_().FIELD("用户名", o.name)._LI();
                 h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
                 h.LI_().FIELD("电话", o.tel)._LI();
-                // h.LI_().FIELD("状态", Entity.States[o.state])._LI();
                 h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
                 h.LI_().FIELD("机构权限", User.Orgly[o.srcly])._LI();
 
-                if (o.oker != null) h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-                if (o.adapter != null) h.LI_().FIELD2("调整", o.adapter, o.adapted)._LI();
+                if (o.oker != null) h.LI_().FIELD2("创编", o.created, o.creator)._LI();
+                if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
 
                 h._UL();
 
@@ -196,11 +195,11 @@ namespace ChainSmart
         [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
         public async Task rm(WebContext wc)
         {
-            short uid = wc[0];
+            int uid = wc[0];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET admly = NULL WHERE id = @1");
-            await dc.ExecuteAsync(p => p.Set(uid).Set(uid));
+            dc.Sql("UPDATE users SET admly = 0 WHERE id = @1");
+            await dc.ExecuteAsync(p => p.Set(uid));
 
             wc.Give(204); // no content
         }
@@ -215,7 +214,7 @@ namespace ChainSmart
         public async Task rm(WebContext wc)
         {
             var org = wc[-2].As<Org>();
-            short id = wc[0];
+            int id = wc[0];
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE users SET ").T(IsShop ? "shpid" : "srcid").T(" = NULL, ").T(IsShop ? "shply" : "srcly").T(" = 0 WHERE id = @1 AND ").T(IsShop ? "shpid" : "srcid").T(" = @2");

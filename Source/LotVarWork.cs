@@ -18,7 +18,7 @@ namespace ChainSmart
 
         static readonly string ORG_URL = MainApp.WwwUrl + "/org/";
 
-        protected static void LotShow(HtmlBuilder h, Lot o, Org org, Asset asset, bool pricing)
+        internal static void LotShow(HtmlBuilder h, Lot o, Org src, Asset asset, bool pricing)
         {
             h.ARTICLE_("uk-card uk-card-primary");
             h.H4("产品信息", "uk-card-header");
@@ -132,50 +132,50 @@ namespace ChainSmart
             // SRC
 
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H4("商户信息", "uk-card-header");
+            h.H4("供应信息", "uk-card-header");
             h.SECTION_("uk-card-body");
-            if (org.pic)
+            if (src.pic)
             {
-                h.PIC(ORG_URL, org.id, "/pic", css: "uk-width-1-1");
+                h.PIC(ORG_URL, src.id, "/pic", css: "uk-width-1-1");
             }
 
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("商户名", org.name)._LI();
-            h.LI_().FIELD("简介", org.tip)._LI();
-            if (org.IsParent)
+            h.LI_().FIELD("商户名", src.name)._LI();
+            h.LI_().FIELD("简介", src.tip)._LI();
+            if (src.IsParent)
             {
-                h.LI_().FIELD("范围延展名", org.Ext)._LI();
+                h.LI_().FIELD("范围延展名", src.Ext)._LI();
             }
 
-            h.LI_().FIELD("工商登记名", org.legal)._LI();
-            h.LI_().FIELD("联系电话", org.tel)._LI();
-            h.LI_().FIELD("地址／场地", org.addr)._LI();
-            h.LI_().FIELD("指标参数", org.specs)._LI();
-            h.LI_().FIELD("委托代办", org.trust).FIELD("进度状态", org.status, Org.Statuses)._LI();
-            h.LI_().FIELD2("创建", org.created, org.creator)._LI();
-            if (org.adapter != null) h.LI_().FIELD2("修改", org.adapted, org.adapter)._LI();
-            if (org.oker != null) h.LI_().FIELD2("上线", org.oked, org.oker)._LI();
+            h.LI_().FIELD("工商登记名", src.legal)._LI();
+            h.LI_().FIELD("联系电话", src.tel)._LI();
+            h.LI_().FIELD("地址／场地", src.addr)._LI();
+            h.LI_().FIELD("指标参数", src.specs)._LI();
+            h.LI_().FIELD("委托代办", src.trust).FIELD("进度状态", src.status, Org.Statuses)._LI();
+            h.LI_().FIELD2("创建", src.created, src.creator)._LI();
+            if (src.adapter != null) h.LI_().FIELD2("修改", src.adapted, src.adapter)._LI();
+            if (src.oker != null) h.LI_().FIELD2("上线", src.oked, src.oker)._LI();
 
             h._UL();
 
-            if (org.m1)
+            if (src.m1)
             {
-                h.PIC(ORG_URL, org.id, "/m-1", css: "uk-width-1-1");
+                h.PIC(ORG_URL, src.id, "/m-1", css: "uk-width-1-1");
             }
 
-            if (org.m2)
+            if (src.m2)
             {
-                h.PIC(ORG_URL, org.id, "/m-2", css: "uk-width-1-1");
+                h.PIC(ORG_URL, src.id, "/m-2", css: "uk-width-1-1");
             }
 
-            if (org.m3)
+            if (src.m3)
             {
-                h.PIC(ORG_URL, org.id, "/m-3", css: "uk-width-1-1");
+                h.PIC(ORG_URL, src.id, "/m-3", css: "uk-width-1-1");
             }
 
-            if (org.m4)
+            if (src.m4)
             {
-                h.PIC(ORG_URL, org.id, "/m-4", css: "uk-width-1-1");
+                h.PIC(ORG_URL, src.id, "/m-4", css: "uk-width-1-1");
             }
 
             h._SECTION();
@@ -515,7 +515,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED, state: Lot.STA_OKABLE)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];

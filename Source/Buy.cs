@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainSmart
 {
@@ -150,6 +151,25 @@ namespace ChainSmart
         }
 
         public long Key => id;
+
+
+        // STATE
+        //
+        
+        public const short STA_CANCELL = 1;
+
+        public override short State
+        {
+            get
+            {
+                short v = 0;
+                if (DateTime.Today == created.Date)
+                {
+                    v |= STA_CANCELL;
+                }
+                return v;
+            }
+        }
 
         public bool IsPlat => typ == TYP_PLAT;
 

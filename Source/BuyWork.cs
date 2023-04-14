@@ -31,25 +31,23 @@ namespace ChainSmart
 
                 h.LI_().T(o.uname).SP().T(o.utel).SP().T(o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
 
-                for (int i = 0; i < o.items.Length; i++)
+                foreach (var it in o.items)
                 {
-                    var d = o.items[i];
-
                     h.LI_();
 
-                    h.PIC("/item/", d.itemid, "/icon", css: "uk-width-micro");
+                    h.PIC("/item/", it.itemid, "/icon", css: "uk-width-micro");
 
-                    h.SPAN_("uk-width-expand").SP().T(d.name);
-                    if (d.unitx != 1)
+                    h.SPAN_("uk-width-expand").SP().T(it.name);
+                    if (it.unitx != 1)
                     {
-                        h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
+                        h.SP().SMALL_().T(it.unitx).T(it.unit).T("件")._SMALL();
                     }
 
                     h._SPAN();
 
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.RealPrice).SP().SUB(d.unit)._SPAN();
-                    h.SPAN_("uk-width-tiny uk-flex-right").T(d.qty).SP().T(d.unit)._SPAN();
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(d.SubTotal)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                    h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                     h._LI();
                 }
 
@@ -61,13 +59,12 @@ namespace ChainSmart
             });
         }
 
-        [Ui("新订单", group: 1), Tool(Anchor)]
         public async Task @default(WebContext wc, int page)
         {
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
 
             wc.GivePage(200, h =>
@@ -76,29 +73,6 @@ namespace ChainSmart
                 if (arr == null)
                 {
                     h.ALERT("尚无当前消费订单");
-                    return;
-                }
-
-                MainGrid(h, arr);
-                h.PAGINATION(arr.Length > 10);
-            }, false, 4);
-        }
-
-        [Ui(tip: "历史订单", icon: "history", group: 2), Tool(Anchor)]
-        public async Task past(WebContext wc, int page)
-        {
-            var prin = (User)wc.Principal;
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status >= 4 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                if (arr == null)
-                {
-                    h.ALERT("尚无历史订单");
                     return;
                 }
 
@@ -146,7 +120,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 1 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 1 AND typ = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -168,7 +142,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 2 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 2 AND typ = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -191,7 +165,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 4 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 4 AND typ = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>
@@ -213,7 +187,7 @@ namespace ChainSmart
             var org = wc[-1].As<Org>();
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 0 ORDER BY id DESC");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE shpid = @1 AND status = 0 AND typ = 1 ORDER BY id DESC");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
             wc.GivePage(200, h =>

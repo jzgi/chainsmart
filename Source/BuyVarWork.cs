@@ -53,14 +53,13 @@ namespace ChainSmart
                     h.TD(d.SubTotal, true, true);
                 });
 
-                h.TOOLBAR(bottom: true, status: o.status, state: o.State);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             });
         }
     }
 
     public class MyBuyVarWork : BuyVarWork
     {
-        [Ui("收货", "确认收货？"), Tool(ButtonConfirm, status: STU_ADAPTED)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -78,32 +77,11 @@ namespace ChainSmart
 
             wc.Give(200);
         }
-
-
-        [Ui("意见", group: 2), Tool(ButtonOpen)]
-        public async Task note(WebContext wc)
-        {
-            int orderid = wc[0];
-            var prin = (User)wc.Principal;
-            short appeal;
-            if (wc.IsGet)
-            {
-                wc.GivePane(200, h => { });
-            }
-            else
-            {
-                appeal = (await wc.ReadAsync<Form>())[nameof(appeal)];
-                using var dc = NewDbContext();
-                dc.Sql("UPDATE orders SET appeal = @1 WHERE id = @2 AND uid = @3");
-                await dc.ExecuteAsync(p => p.Set(appeal).Set(orderid).Set(prin.id));
-                wc.GivePane(200); // close
-            }
-        }
     }
 
     public class ShplyBuyVarWork : BuyVarWork
     {
-        [OrglyAuthorize(0, User.ROL_LOG)]
+        [OrglyAuthorize(0, User.ROL_OPN)]
         [Ui("备发", "已备货并集中等待发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
         public async Task adapt(WebContext wc)
         {
@@ -112,14 +90,8 @@ namespace ChainSmart
             var prin = (User)wc.Principal;
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND shpid = @4 AND status = 1 RETURNING uim, pay");
-            if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
-            {
-                dc.Let(out string uim);
-                dc.Let(out decimal pay);
-
-                await PostSendAsync(uim, "您的订单已经发货，请留意接收（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
-            }
+            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND shpid = @4 AND status = 1");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.Give(204);
         }
@@ -139,14 +111,14 @@ namespace ChainSmart
                 dc.Let(out string uim);
                 dc.Let(out decimal pay);
 
-                await PostSendAsync(uim, prin.name + "已替您做了收货操作（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
+                await PostSendAsync(uim, "您的订单已经发货，请留意接收（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
             }
 
             wc.Give(204);
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("撤销", "确认撤销并且退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+        [Ui("撤销", "确认撤销并且退款？", icon: "trash"), Tool(ButtonConfirm, status: 7, state: Buy.STA_CANCELL)]
         public async Task @void(WebContext wc)
         {
             int id = wc[0];
