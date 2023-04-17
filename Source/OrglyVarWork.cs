@@ -78,7 +78,7 @@ namespace ChainSmart
 
             CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<MktlyTestWork>("mtest");
+            CreateWork<MktlyEvalWork>("mtest");
 
             CreateWork<MktlyBuyWork>("mbuy");
 
@@ -122,6 +122,8 @@ namespace ChainSmart
             // ctr
 
             CreateWork<CtrlyOrgWork>("corg");
+
+            CreateWork<CtrlyEvalWork>("ceval");
 
             CreateWork<CtrlyBookWork>("cbook");
 

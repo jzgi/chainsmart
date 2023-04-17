@@ -25,6 +25,7 @@ namespace ChainSmart
 
                 h.HEADER_("uk-width-expand uk-col uk-padding-left");
                 h.H2(prin.name);
+                h.H4(prin.tel);
                 if (prin.typ > 0) h.P(User.Typs[prin.typ]);
                 h._HEADER();
 

@@ -1,3 +1,4 @@
+using System;
 using ChainFx;
 
 namespace ChainSmart
@@ -11,19 +12,21 @@ namespace ChainSmart
 
         public const short
             TYP_SPOT = 1,
-            TYP_LIFT = 2;
+            TYP_LIFT = 2,
+            TYP_ROLL = 3;
 
         public static readonly Map<short, string> Typs = new()
         {
-            { TYP_SPOT, "现货订单" },
-            { TYP_LIFT, "助农订单" },
+            { TYP_SPOT, "现货" },
+            { TYP_LIFT, "助农" },
+            { TYP_ROLL, "铺货" },
         };
 
         public new static readonly Map<short, string> Statuses = new()
         {
             { STU_VOID, "撤单" },
             { STU_CREATED, "下单" },
-            { STU_ADAPTED, "待发" },
+            { STU_ADAPTED, "备发" },
             { STU_OKED, "发货" },
         };
 
@@ -151,6 +154,26 @@ namespace ChainSmart
         }
 
         public int Key => id;
+        
+        // STATE
+        //
+
+        public const short STA_CANCELL = 1;
+
+        public override short State
+        {
+            get
+            {
+                var now = DateTime.Now;
+                short v = 0;
+                if (now.Date <= created.Date.AddDays(1) && now.Hour < 12)
+                {
+                    v |= STA_CANCELL;
+                }
+                return v;
+            }
+        }
+
 
         public short QtyX => (short)(qty / unitx);
 

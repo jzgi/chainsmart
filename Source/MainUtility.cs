@@ -50,7 +50,7 @@ namespace ChainSmart
 
         public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string css = null)
         {
-            h.SELECT_(name, local: name, css: css);
+            h.SELECT_(name, local: name, required: true, css: css);
 
             for (int i = 0; i < specs.Count; i++)
             {
@@ -71,7 +71,7 @@ namespace ChainSmart
                 }
             }
 
-            h.OPTION(string.Empty, "自提");
+            h.OPTION(string.Empty, "非派送区");
 
             h._SELECT();
 

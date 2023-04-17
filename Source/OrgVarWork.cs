@@ -139,7 +139,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_MGT)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 2)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
         public async Task ok(WebContext wc)
         {
             var org = wc[-1].As<Org>();
@@ -301,7 +301,7 @@ namespace ChainSmart
         }
 
         [AdmlyAuthorize(User.ROL_OPN)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -400,41 +400,28 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(icon: "github-alt"), Tool(ButtonCrop, status: 3)]
+        [Ui(tip: "上传图标", icon: "github-alt"), Tool(ButtonCrop, status: 3)]
         public async Task icon(WebContext wc)
         {
             await doimg(wc, nameof(icon), false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
+        [Ui(tip: "上传照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
         public async Task pic(WebContext wc)
         {
             await doimg(wc, nameof(pic), false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("资料", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
+        [Ui(tip: "上传影印", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
         public async Task m(WebContext wc, int sub)
         {
             await doimg(wc, "m" + sub, false, 3);
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
-        public async Task rm(WebContext wc)
-        {
-            int id = wc[0];
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET status = 0 WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
-            await dc.ExecuteAsync(p => p.Set(id));
-
-            wc.GivePane(200);
-        }
-
-        [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3)]
+        [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
         public async Task ok(WebContext wc)
         {
             int id = wc[0];
@@ -458,6 +445,19 @@ namespace ChainSmart
             using var dc = NewDbContext();
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+            wc.GivePane(200);
+        }
+
+        [OrglyAuthorize(0, User.ROL_OPN)]
+        [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+        public async Task rm(WebContext wc)
+        {
+            int id = wc[0];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET status = 0 WHERE id = @1 AND typ = ").T(Org.TYP_SHP);
+            await dc.ExecuteAsync(p => p.Set(id));
 
             wc.GivePane(200);
         }

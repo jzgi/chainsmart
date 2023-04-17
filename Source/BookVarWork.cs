@@ -36,7 +36,7 @@ namespace ChainSmart
 
                 h._UL();
 
-                h.TOOLBAR(bottom: true, status: o.status);
+                h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
             });
         }
     }
@@ -110,7 +110,7 @@ namespace ChainSmart
         }
 
         [OrglyAuthorize(0, User.ROL_OPN)]
-        [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+        [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: 7, state: Book.STA_CANCELL)]
         public async Task @void(WebContext wc)
         {
             int id = wc[0];

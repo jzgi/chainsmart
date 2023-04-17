@@ -37,7 +37,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
     var vip = false; // whether vip for current contet
     if (evt.detail) {
         // to-path matched
-        var lst = evt.detail.split(' ');
+        var lst = evt.detail.split('+');
         for (var i = 0; i < lst.length; i++) {
             if (n == parseInt(lst[i])) {
                 vip = true;
@@ -58,7 +58,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill qty options
     //
-    if (vip) {
+    if (!vip) {
         minx = 1;
     }
     var maxx = availx > 200 ? 200 : availx; 
@@ -112,7 +112,7 @@ function sumQtyDetails(trig, unitx) {
 }
 
 
-function posWareChange(trig) {
+function posItemChange(trig) {
     var form = trig.form;
 
     var v = trig.selectedOptions[0];
@@ -927,9 +927,14 @@ function cropUpd(el, url, close) {
         xhr.open('POST', url, false);
         xhr.onload = function (e) {
             if (xhr.status == 200 || xhr.status == 201) {
+
                 alert("上传成功");
+
+                // set a refresh flag
+                var div = ancestorOf(el, 'uk-modal');
+                div.classList.add('button-refresh-trig');
+
                 if (close) {
-                    var div = ancestorOf(el, 'uk-modal');
                     UIkit.modal(div).hide();
                 }
             }

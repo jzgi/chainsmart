@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainSmart
 {
@@ -24,7 +25,7 @@ namespace ChainSmart
         public static readonly Map<short, string> Icons = new()
         {
             { TYP_PLAT, "cloud-upload" },
-            { TYP_CASH, "file" },
+            { TYP_CASH, "bookmark" },
             { TYP_TRANSF, "thumbnails" },
         };
 
@@ -150,6 +151,27 @@ namespace ChainSmart
         }
 
         public long Key => id;
+
+
+        // STATE
+        //
+        
+        public const short STA_CANCELL = 1;
+
+        public override short State
+        {
+            get
+            {
+                short v = 0;
+                if (DateTime.Today == created.Date)
+                {
+                    v |= STA_CANCELL;
+                }
+                return v;
+            }
+        }
+
+        public bool IsPlat => typ == TYP_PLAT;
 
         public override string ToString() => uname + "购买" + name + "商品";
 
