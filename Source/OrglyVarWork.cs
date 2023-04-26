@@ -1,135 +1,132 @@
 ﻿using ChainFx.Web;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+public abstract class OrglyVarWork : WebWork
 {
-    public abstract class OrglyVarWork : WebWork
+    public void @default(WebContext wc)
     {
-        public void @default(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            var prin = (User)wc.Principal;
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
 
-            wc.GivePage(200, h =>
+        wc.GivePage(200, h =>
+        {
+            h.TOPBARXL_();
+
+            bool astack = wc.Query[nameof(astack)];
+            if (astack)
             {
-                h.TOPBARXL_();
+                h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
+            }
 
-                bool astack = wc.Query[nameof(astack)];
-                if (astack)
-                {
-                    h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
-                }
+            string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
-                string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+            h.HEADER_("uk-width-expand uk-col uk-padding-left");
+            h.H2(org.name);
+            if (org.IsParent) h.H4(org.Ext);
+            h.P2(prin.name, rol, brace: true);
+            h._HEADER();
 
-                h.HEADER_("uk-width-expand uk-col uk-padding-left");
-                h.H2(org.name);
-                if (org.IsParent) h.H4(org.Ext);
-                h.P2(prin.name, rol, brace: true);
-                h._HEADER();
+            if (org.icon)
+            {
+                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
+            }
+            else
+                h.PIC(org.IsOfShop ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
 
-                if (org.icon)
-                {
-                    h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
-                }
-                else
-                    h.PIC(org.IsOfShop ? "/shp.webp" : org.IsCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");
+            h._TOPBARXL();
 
-                h._TOPBARXL();
-
-                h.WORKBOARD(notice: org.id);
-            }, false, 30, title: org.name);
-        }
+            h.WORKBOARD(notice: org.id);
+        }, false, 30, title: org.name);
     }
+}
 
-
-    [OrglyAuthorize(Org.TYP_SHP)]
-    [Ui("市场操作")]
-    public class ShplyVarWork : OrglyVarWork
+[OrglyAuthorize(Org.TYP_RTL)]
+[Ui("市场操作")]
+public class RtllyVarWork : OrglyVarWork
+{
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            // org
+        // org
 
-            CreateWork<OrglySetgWork>("setg");
+        CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<OrglyAccessWork>("access", true); // true = shop
+        CreateWork<OrglyAccessWork>("access", true); // true = shop
 
-            CreateWork<OrglyBuyClearWork>("buyclr", state: true);
+        CreateWork<OrglyBuyClearWork>("buyclr", state: true);
 
-            CreateWork<OrglyCreditWork>("credit");
+        CreateWork<OrglyCarbonWork>("credit");
 
-            // shp
+        // retail shop
 
-            CreateWork<ShplyItemWork>("sitem");
+        CreateWork<RtllyItemWork>("ritem");
 
-            CreateWork<ShplyPosWork>("spos");
+        CreateWork<RtllyPosWork>("rpos");
 
-            CreateWork<ShplyBuyWork>("sbuy");
+        CreateWork<RtllyBuyWork>("rbuy");
 
-            CreateWork<ShplyBookWork>("sbook");
+        CreateWork<RtllyOrdWork>("rord");
 
-            CreateWork<ShplyBuyAggWork>("sbuyagg");
+        CreateWork<RtllyBuyAggWork>("rbuyagg");
 
-            CreateWork<ShplyBookAggWork>("sbookagg");
+        CreateWork<RtllyOrdAggWork>("rordagg");
 
-            CreateWork<ShplyVipWork>("svip");
+        CreateWork<RtllyVipWork>("rvip");
 
-            // mkt
+        // mkt
 
-            CreateWork<MktlyOrgWork>("morg");
+        CreateWork<MktlyOrgWork>("morg");
 
-            CreateWork<MktlyEvalWork>("mtest");
+        CreateWork<MktlyCreditWork>("mcredit");
 
-            CreateWork<MktlyBuyWork>("mbuy");
+        CreateWork<MktlyBuyWork>("mbuy");
 
-            CreateWork<MktlyBookWork>("mbook");
+        CreateWork<MktlyOrdWork>("mord");
 
-            CreateWork<MktlyBuyAggWork>("mbuyagg");
+        CreateWork<MktlyBuyAggWork>("mbuyagg");
 
-            CreateWork<MktlyBookAggWork>("mbookagg");
-        }
+        CreateWork<MktlyOrdAggWork>("mordagg");
     }
+}
 
-
-    [OrglyAuthorize(Org.TYP_SRC)]
-    [Ui("供应操作")]
-    public class SrclyVarWork : OrglyVarWork
+[OrglyAuthorize(Org.TYP_SUP)]
+[Ui("供应操作")]
+public class SuplyVarWork : OrglyVarWork
+{
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            // org
+        // org
 
-            CreateWork<OrglySetgWork>("setg");
+        CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<OrglyAccessWork>("access", false); // false = source
+        CreateWork<OrglyAccessWork>("access", false); // false = source
 
-            CreateWork<OrglyBookClearWork>("bookclr", state: true); // true = is org
+        CreateWork<OrglyOrdClearWork>("ordclr", state: true); // true = is org
 
-            CreateWork<OrglyCreditWork>("credit");
+        CreateWork<OrglyCarbonWork>("credit");
 
-            // src
+        // supply shop
 
-            CreateWork<SrclyAssetWork>("sasset");
+        CreateWork<SuplyProdWork>("sprod");
 
-            CreateWork<SrclyLotWork>("slot");
+        CreateWork<SuplyLotWork>("slot");
 
-            CreateWork<SrclyBookWork>("sbookspot", state: Book.TYP_SPOT, ui: new("销售订单-现货", "商户"));
+        CreateWork<SuplyOrdWork>("sordspot", state: Ord.TYP_SPOT, ui: new("销售订单-现货", "商户"));
 
-            CreateWork<SrclyBookWork>("sbooklift", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
+        CreateWork<SuplyOrdWork>("sordlift", state: Ord.TYP_LIFT, ui: new("销售订单-助农", "商户"));
 
-            CreateWork<SrclyBookAggWork>("sbookagg");
+        CreateWork<SuplyOrdAggWork>("sordagg");
 
-            // ctr
+        // ctr
 
-            CreateWork<CtrlyOrgWork>("corg");
+        CreateWork<CtrlyOrgWork>("corg");
 
-            CreateWork<CtrlyEvalWork>("ceval");
+        CreateWork<CtrlyCreditWork>("ceval");
 
-            CreateWork<CtrlyBookWork>("cbook");
+        CreateWork<CtrlyOrdWork>("cord");
 
-            CreateWork<CtrlyLotWork>("clot");
+        CreateWork<CtrlyLotWork>("clot");
 
-            CreateWork<CtrlyBookAggWork>("cbookagg");
-        }
+        CreateWork<CtrlyOrdAggWork>("cordagg");
     }
 }

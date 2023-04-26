@@ -2,32 +2,31 @@
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+public abstract class TagWork : WebWork
 {
-    public abstract class TagWork : WebWork
+}
+
+public class PublyTagWork : TagWork
+{
+    protected override void OnCreate()
     {
+        CreateVarWork<PublyTagVarWork>();
     }
 
-    public class PublyTagWork : TagWork
+    public async Task @default(WebContext wc, int id)
     {
-        protected override void OnCreate()
+        using var dc = NewDbContext();
+        dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
+        if (await dc.QueryTopAsync(p => p.Set(id)))
         {
-            CreateVarWork<PublyTagVarWork>();
+            dc.Let(out int lotid);
+            wc.GiveRedirect("/lot/" + lotid + "/");
         }
-
-        public async Task @default(WebContext wc, int id)
+        else
         {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
-            if (await dc.QueryTopAsync(p => p.Set(id)))
-            {
-                dc.Let(out int lotid);
-                wc.GiveRedirect("/lot/" + lotid + "/");
-            }
-            else
-            {
-                wc.GivePage(304, h => h.ALERT("此溯源码没有绑定产品"));
-            }
+            wc.GivePage(304, h => h.ALERT("此溯源码没有绑定产品"));
         }
     }
 }

@@ -1,39 +1,38 @@
 ﻿using System;
 using ChainFx.Web;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+/// <summary>
+/// To implement principal authorization of access to the target resources.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
+public class AdmlyAuthorizeAttribute : AuthorizeAttribute
 {
-    /// <summary>
-    /// To implement principal authorization of access to the target resources.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-    public class AdmlyAuthorizeAttribute : AuthorizeAttribute
+    // platform admin role requirement (bitwise)
+    readonly short role;
+
+
+    public AdmlyAuthorizeAttribute(short role = 1)
     {
-        // platform admin role requirement (bitwise)
-        readonly short role;
+        this.role = role;
+    }
 
+    public override bool Do(WebContext wc, bool mock)
+    {
+        var prin = (User)wc.Principal;
 
-        public AdmlyAuthorizeAttribute(short role = 1)
+        // admly required
+        if (role > 0)
         {
-            this.role = role;
-        }
-
-        public override bool Do(WebContext wc, bool mock)
-        {
-            var prin = (User)wc.Principal;
-
-            // admly required
-            if (role > 0)
+            if (!mock)
             {
-                if (!mock)
-                {
-                    wc.Role = prin.admly;
-                }
-
-                return (prin.admly & role) == role;
+                wc.Role = prin.admly;
             }
 
-            return false;
+            return (prin.admly & role) == role;
         }
+
+        return false;
     }
 }

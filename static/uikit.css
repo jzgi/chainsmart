@@ -278,10 +278,9 @@ h5,
 h6,
 .uk-h6 {
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: normal;
     margin: 2px 0;
     color: #333;
-
 }
 
 ol>li {

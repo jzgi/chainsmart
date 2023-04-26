@@ -1,33 +1,32 @@
 ﻿﻿using System.Threading.Tasks;
 using ChainFx.Web;
 
-namespace ChainSmart
-{
-    public abstract class ClearVarWork : WebWork
-    {
-    }
+ namespace ChainSmart; 
 
-    public class AdmlyBookClearVarWork : ClearVarWork
-    {
-    }
+ public abstract class ClearVarWork : WebWork
+ {
+ }
 
-    public class AdmlyBuyClearVarWork : ClearVarWork
-    {
-    }
+ public class AdmlyOrdClearVarWork : ClearVarWork
+ {
+ }
 
-    public class PtylyClearVarWork : ClearVarWork
-    {
-        [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
-        public async Task rcv(WebContext wc, int dt)
-        {
-            int orderid = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close
-            }
-        }
-    }
-}
+ public class AdmlyBuyClearVarWork : ClearVarWork
+ {
+ }
+
+ public class PtylyClearVarWork : ClearVarWork
+ {
+     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
+     public async Task rcv(WebContext wc, int dt)
+     {
+         int orderid = wc[0];
+         if (wc.IsGet)
+         {
+         }
+         else // POST
+         {
+             wc.GivePane(200); // close
+         }
+     }
+ }

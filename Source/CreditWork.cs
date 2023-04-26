@@ -2,20 +2,31 @@
 
 namespace ChainSmart
 {
-    public class CreditWork : WebWork
+    public abstract class CreditWork<V> : WebWork where V : CreditVarWork, new()
     {
+        protected override void OnCreate()
+        {
+            CreateVarWork<V>();
+        }
     }
 
-    [Ui("碳积分账户", "常规")]
-    public class OrglyCreditWork : CreditWork
+    [OrglyAuthorize(Org.TYP_MKT)]
+    [Ui("综合评估", "机构")]
+    public class MktlyCreditWork : CreditWork<MktlyCreditVarWork>
     {
-        public void @default(WebContext wc)
+        public void @default(WebContext wc, int page)
         {
-            wc.GivePane(200, h =>
-            {
-                h.ALERT("该功能尚未开启");
-                h.TOOLBAR(bottom: true);
-            }, false, 7);
+            wc.GivePage(200, h => { h.TOOLBAR(); });
+        }
+    }
+
+    [OrglyAuthorize(Org.TYP_CTR)]
+    [Ui("综合评估", "机构")]
+    public class CtrlyCreditWork : CreditWork<CtrlyCreditVarWork>
+    {
+        public void @default(WebContext wc, int page)
+        {
+            wc.GivePage(200, h => { h.TOOLBAR(); });
         }
     }
 }

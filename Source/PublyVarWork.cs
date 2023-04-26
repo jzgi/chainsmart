@@ -4,77 +4,76 @@ using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+/// 
+/// The home for a market
+///
+[UserAuthenticate]
+public class PublyVarWork : WebWork
 {
-    /// 
-    /// The home for a market
-    ///
-    [UserAuthenticate]
-    public class PublyVarWork : WebWork
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
+        CreateVarWork<PublyItemWork>(); // home for one shop
+    }
+
+    public async Task @default(WebContext wc, int sector)
+    {
+        int orgid = wc[0];
+        var org = GrabObject<int, Org>(orgid);
+        var regs = Grab<short, Reg>();
+
+        Org[] arr;
+        if (sector == 0) // when default sector
         {
-            CreateVarWork<PublyItemWork>(); // home for one shop
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
+            arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
+            arr = arr.AddOf(org, first: true);
+        }
+        else
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
+            arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sector));
         }
 
-        public async Task @default(WebContext wc, int sector)
+        wc.GivePage(200, h =>
         {
-            int orgid = wc[0];
-            var org = GrabObject<int, Org>(orgid);
-            var regs = Grab<short, Reg>();
+            h.NAVBAR(string.Empty, sector, regs, (k, v) => v.IsSection, "star");
 
-            Org[] arr;
-            if (sector == 0) // when default sector
+            if (sector != 0 && arr == null)
             {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
-                arr = arr.AddOf(org, first: true);
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sector));
+                h.ALERT("尚无商户");
+                return;
             }
 
-            wc.GivePage(200, h =>
+            h.MAINGRID(arr, o =>
             {
-                h.NAVBAR(string.Empty, sector, regs, (k, v) => v.IsSection, "star");
-
-                if (sector != 0 && arr == null)
+                if (o.IsVirtual)
                 {
-                    h.ALERT("尚无商户");
-                    return;
+                    h.A_(o.addr, css: "uk-card-body uk-flex");
+                }
+                else
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Name, css: "uk-card-body uk-flex");
                 }
 
-                h.MAINGRID(arr, o =>
+                if (o.icon)
                 {
-                    if (o.IsVirtual)
-                    {
-                        h.A_(o.addr, css: "uk-card-body uk-flex");
-                    }
-                    else
-                    {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Name, css: "uk-card-body uk-flex");
-                    }
+                    h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
 
-                    if (o.icon)
-                    {
-                        h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                h.ASIDE_();
+                h.HEADER_().H4(o.Name).SPAN("")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.Name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            }, true, 360, org.Ext);
-        }
+                h._A();
+            });
+        }, true, 360, org.Ext);
     }
 }

@@ -2,10 +2,7 @@
 
 namespace ChainSmart;
 
-/// <summary>
-/// The data modal for an standard category.
-/// </summary>
-public class Cat : Entity, IKeyable<short>, IFolderable
+public class Credit : Entity, IKeyable<int>
 {
     public static readonly Cat Empty = new();
 
@@ -35,11 +32,5 @@ public class Cat : Entity, IKeyable<short>, IFolderable
         s.Put(nameof(size), size);
     }
 
-    public short Key => id;
-
-    public override string ToString() => name;
-
-    public short Index => idx;
-
-    public short Size => size;
+    public int Key => id;
 }

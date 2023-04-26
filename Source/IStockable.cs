@@ -1,7 +1,6 @@
-﻿namespace ChainSmart
+﻿namespace ChainSmart;
+
+public interface IStockable
 {
-    public interface IStockable
-    {
-        StockOp[] Ops { get; }
-    }
+    StockOp[] Ops { get; }
 }

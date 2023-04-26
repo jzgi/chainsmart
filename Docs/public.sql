@@ -162,12 +162,12 @@ create unique index users_tel_idx
     on users (tel);
 
 create index users_shpid_idx
-    on users (shpid)
-    where (shpid > 0);
+    on users (rtlid)
+    where (rtlid > 0);
 
 create index users_srcid_idx
-    on users (srcid)
-    where (srcid > 0);
+    on users (supid)
+    where (supid > 0);
 
 create index users_vip_idx
     on users using gin (vip);
@@ -184,10 +184,10 @@ create table evals
 )
     inherits (entities);
 
-alter table evals
+alter table credits
     owner to postgres;
 
-alter sequence tests_id_seq owned by evals.id;
+alter sequence tests_id_seq owned by credits.id;
 
 create table _accts
 (
@@ -290,34 +290,34 @@ create table books
     entities
 )tablespace sup ;
 
-alter table books
+alter table ords
     owner to postgres;
 
 create unique index books_single_idx
-    on books (shpid, status)
+    on ords (rtlid, status)
     where (status = '-1'::integer) tablespace sup;
 
 create index books_ctridstatus_idx
-    on books (ctrid, status)
+    on ords (ctrid, status)
     tablespace sup;
 
 create index books_shpidstatus_idx
-    on books (shpid, status)
+    on ords (rtlid, status)
     tablespace sup;
 
 create index books_srcidstatus_idx
-    on books (srcid, status)
+    on ords (supid, status)
     tablespace sup;
 
 create index books_mktidstatus_idx
-    on books (mktid, status)
+    on ords (mktid, status)
     tablespace sup;
 
 create index lots_nend_idx
     on lots (nend);
 
 create index lots_srcidstatus_idx
-    on lots (srcid, status);
+    on lots (supid, status);
 
 create index lots_catid_idx
     on lots (catid);
@@ -344,11 +344,11 @@ create table assets
 )
     inherits (entities);
 
-alter table assets
+alter table prods
     owner to postgres;
 
 create index assets_orgidstatus_idx
-    on assets (orgid, status);
+    on prods (orgid, status);
 
 create table buys
 (
@@ -390,11 +390,11 @@ create index buys_uidstatus_idx
     tablespace rtl;
 
 create index buys_shpidstatus_idx
-    on buys (shpid, status)
+    on buys (rtlid, status)
     tablespace rtl;
 
 create unique index buys_single_idx
-    on buys (shpid, typ, status)
+    on buys (rtlid, typ, status)
     where ((typ = 1) AND (status = '-1'::integer)) tablespace rtl;
 
 create index buys_mktidstatus_idx
@@ -500,7 +500,7 @@ create table bookclrs
     entities
 )tablespace sup ;
 
-alter table bookclrs
+alter table ordclrs
     owner to postgres;
 
 create table buyclrs
@@ -540,7 +540,7 @@ create table bookaggs_typ
 )
     tablespace sup;
 
-alter table bookaggs_typ
+alter table ordaggs_typ
     owner to postgres;
 
 create table bookaggs_lotid
@@ -558,7 +558,7 @@ create table bookaggs_lotid
 )
     tablespace sup;
 
-alter table bookaggs_lotid
+alter table ordaggs_lotid
     owner to postgres;
 
 create view orgs_vw
@@ -619,10 +619,10 @@ SELECT o.typ,
        o.im,
        o.credential,
        o.admly,
-       o.srcid,
-       o.srcly,
-       o.shpid,
-       o.shply,
+       o.supid,
+       o.suply,
+       o.rtlid,
+       o.rtlly,
        o.vip,
        o.refer,
        o.icon IS NOT NULL AS icon
@@ -660,9 +660,9 @@ SELECT o.typ,
        o.m2 IS NOT NULL   AS m2,
        o.m3 IS NOT NULL   AS m3,
        o.m4 IS NOT NULL   AS m4
-FROM assets o;
+FROM prods o;
 
-alter table assets_vw
+alter table prods_vw
     owner to postgres;
 
 create view lots_vw
@@ -681,9 +681,9 @@ SELECT o.typ,
        o.oker,
        o.status,
        o.id,
-       o.srcid,
-       o.srcname,
-       o.assetid,
+       o.supid,
+       o.supname,
+       o.prodid,
        o.targs,
        o.catid,
        o.started,
@@ -724,7 +724,7 @@ SELECT o.typ,
        o.oker,
        o.status,
        o.id,
-       o.shpid,
+       o.rtlid,
        o.lotid,
        o.catid,
        o.unit,
@@ -798,7 +798,7 @@ BEGIN
     -- books for source
 
     INSERT INTO bookaggs (orgid, dt, typ, coid, trans, amt, created, creator)
-    SELECT srcid,
+    SELECT supid,
            oked::date,
            typ,
            first(ctrid),
@@ -806,12 +806,12 @@ BEGIN
            sum(pay - coalesce(refund, 0::money)),
            now,
            opr
-    FROM books
+    FROM ords
     WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY srcid, oked::date, typ;
+    GROUP BY supid, oked::date, typ;
 
 
-    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO ordclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_SRC,
            first(creator),
            now,
@@ -825,7 +825,7 @@ BEGIN
     FROM bookaggs
     WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
-    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO ordclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_CTR,
            first(creator),
            now,

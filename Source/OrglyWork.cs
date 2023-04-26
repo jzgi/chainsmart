@@ -2,41 +2,40 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+public abstract class OrglyWork : WebWork
 {
-    public abstract class OrglyWork : WebWork
-    {
-    }
+}
 
-    [Ui("市场操作")]
-    [UserAuthenticate]
-    public class ShplyWork : OrglyWork
+[Ui("市场操作")]
+[UserAuthenticate]
+public class RtllyWork : OrglyWork
+{
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            // id of either current user or the specified
-            CreateVarWork<ShplyVarWork>((prin, key) =>
-                {
-                    var orgid = key?.ToInt() ?? ((User)prin).shpid;
-                    return GrabObject<int, Org>(orgid);
-                }
-            );
-        }
+        // id of either current user or the specified
+        CreateVarWork<RtllyVarWork>((prin, key) =>
+            {
+                var orgid = key?.ToInt() ?? ((User)prin).rtlid;
+                return GrabObject<int, Org>(orgid);
+            }
+        );
     }
+}
 
-    [UserAuthenticate]
-    [Ui("供应操作")]
-    public class SrclyWork : OrglyWork
+[UserAuthenticate]
+[Ui("供应操作")]
+public class SuplyWork : OrglyWork
+{
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            // id of either current user or the specified
-            CreateVarWork<SrclyVarWork>((prin, key) =>
-                {
-                    var orgid = key?.ToInt() ?? ((User)prin).srcid;
-                    return GrabObject<int, Org>(orgid);
-                }
-            );
-        }
+        // id of either current user or the specified
+        CreateVarWork<SuplyVarWork>((prin, key) =>
+            {
+                var orgid = key?.ToInt() ?? ((User)prin).supid;
+                return GrabObject<int, Org>(orgid);
+            }
+        );
     }
 }

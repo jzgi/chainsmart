@@ -21,16 +21,16 @@ FROM pg_indexes WHERE tablespace IS NULL AND schemaname = 'public';
 select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='sup');
 
-ALTER TABLE books SET TABLESPACE sup;
-ALTER TABLE bookclrs SET TABLESPACE sup;
-ALTER TABLE bookaggs_typ SET TABLESPACE sup;
+ALTER TABLE ords SET TABLESPACE sup;
+ALTER TABLE ordclrs SET TABLESPACE sup;
+ALTER TABLE ordaggs_typ SET TABLESPACE sup;
 
-ALTER INDEX books_pk SET TABLESPACE sup;
-ALTER INDEX books_single_idx SET TABLESPACE sup;
-ALTER INDEX books_ctridstatus_idx SET TABLESPACE sup;
-ALTER INDEX books_mktidstatus_idx SET TABLESPACE sup;
-ALTER INDEX books_shpidstatus_idx SET TABLESPACE sup;
-ALTER INDEX books_srcidstatus_idx SET TABLESPACE sup;
+ALTER INDEX ords_pk SET TABLESPACE sup;
+ALTER INDEX ords_single_idx SET TABLESPACE sup;
+ALTER INDEX ords_ctridstatus_idx SET TABLESPACE sup;
+ALTER INDEX ords_mktidstatus_idx SET TABLESPACE sup;
+ALTER INDEX ords_rtlidstatus_idx SET TABLESPACE sup;
+ALTER INDEX ords_supidstatus_idx SET TABLESPACE sup;
 
 -- rtl
 
@@ -44,7 +44,7 @@ ALTER TABLE buyaggs_typ SET TABLESPACE rtl;
 ALTER INDEX buys_pk SET TABLESPACE rtl;
 ALTER INDEX buys_single_idx SET TABLESPACE rtl;
 ALTER INDEX buys_mktidstatus_idx SET TABLESPACE rtl;
-ALTER INDEX buys_shpidstatus_idx SET TABLESPACE rtl;
+ALTER INDEX buys_rtlidstatus_idx SET TABLESPACE rtl;
 ALTER INDEX buys_uidstatus_idx SET TABLESPACE rtl;
 
 

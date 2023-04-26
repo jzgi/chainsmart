@@ -1,23 +1,22 @@
 ﻿using ChainFx.Web;
 
-namespace ChainSmart
-{
-    public class BizNoticeAttribute : NoticeAttribute
-    {
-        public BizNoticeAttribute(short slot) : base(slot)
-        {
-        }
+namespace ChainSmart;
 
-        public override int DoCheck(int noticeId, bool clear = false)
+public class BizNoticeAttribute : NoticeAttribute
+{
+    public BizNoticeAttribute(short slot) : base(slot)
+    {
+    }
+
+    public override int DoCheck(int noticeId, bool clear = false)
+    {
+        if (clear)
         {
-            if (clear)
-            {
-                return NoticeBot.CheckAndClearPully(noticeId, slot);
-            }
-            else
-            {
-                return NoticeBot.CheckPully(noticeId, slot);
-            }
+            return NoticeBot.CheckAndClearPully(noticeId, slot);
+        }
+        else
+        {
+            return NoticeBot.CheckPully(noticeId, slot);
         }
     }
 }

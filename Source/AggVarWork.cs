@@ -1,65 +1,64 @@
 ﻿using System.Threading.Tasks;
 using ChainFx.Web;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+public class AggVarWork : WebWork
 {
-    public class AggVarWork : WebWork
-    {
-    }
+}
 
-    public class AdmlyBookAggVarWork : AggVarWork
-    {
-    }
+public class AdmlyOrdAggVarWork : AggVarWork
+{
+}
 
-    public class AdmlyBuyAggVarWork : AggVarWork
-    {
-    }
+public class AdmlyBuyAggVarWork : AggVarWork
+{
+}
 
-    public class ShplyBuyAggVarWork : AggVarWork
+public class RtllyBuyAggVarWork : AggVarWork
+{
+    [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
+    public async Task rcv(WebContext wc, int dt)
     {
-        [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
-        public async Task rcv(WebContext wc, int dt)
+        int orderid = wc[0];
+        if (wc.IsGet)
         {
-            int orderid = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close
-            }
+        }
+        else // POST
+        {
+            wc.GivePane(200); // close
         }
     }
+}
 
-    public class ShplyBookAggVarWork : AggVarWork
+public class RtllyOrdAggVarWork : AggVarWork
+{
+    [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
+    public async Task rcv(WebContext wc, int dt)
     {
-        [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
-        public async Task rcv(WebContext wc, int dt)
+        int orderid = wc[0];
+        if (wc.IsGet)
         {
-            int orderid = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close
-            }
+        }
+        else // POST
+        {
+            wc.GivePane(200); // close
         }
     }
+}
 
-    public class SrclyBookAggVarWork : AggVarWork
+public class SuplyOrdAggVarWork : AggVarWork
+{
+    [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
+    public async Task rcv(WebContext wc, int dt)
     {
-        [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
-        public async Task rcv(WebContext wc, int dt)
+        int orderid = wc[0];
+        if (wc.IsGet)
         {
-            int orderid = wc[0];
-            if (wc.IsGet)
-            {
-            }
-            else // POST
-            {
-                wc.GivePane(200); // close
-            }
+        }
+        else // POST
+        {
+            wc.GivePane(200); // close
         }
     }
 }
