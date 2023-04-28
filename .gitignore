@@ -1,7 +1,8 @@
 ## chainmart
 *.json
 **/docker/db/data/
-**/docker/app/
+**/docker/app/chainsmart/*
+smart-data.sql
 smart.sql
 
 ## Ignore Visual Studio temporary files, build results, and

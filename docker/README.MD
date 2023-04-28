@@ -1,3 +1,10 @@
+## database
+```bash
+cat ./db/init-sql/smart-schema.sql > ./db/init-db/smart.sql
+cat ./db/init-sql/smart-table.sql >> ./db/init-db/smart.sql
+cat ./db/init-sql/smart-data.sql >> ./db/init-db/smart.sql
+```
+
 ## build image
 ```bash
 docker build -t chainsmart .
