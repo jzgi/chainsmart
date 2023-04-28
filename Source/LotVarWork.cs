@@ -625,7 +625,7 @@ public class CtrlyLotVarWork : LotVarWork
 {
 }
 
-public class RtllyOrdLotVarWork : LotVarWork
+public class RtllyPurLotVarWork : LotVarWork
 {
     //
     // NOTE: this page is made publicly cacheable, though under variable path
@@ -652,7 +652,7 @@ public class RtllyOrdLotVarWork : LotVarWork
             // bottom bar
             //
             decimal realprice = o.RealPrice;
-            int qtyx = o.minx < o.MaxXForSingleOrd ? o.minx : 0;
+            int qtyx = o.minx < o.MaxXForSinglePur ? o.minx : 0;
             short unitx = o.unitx;
             int qty = qtyx * unitx;
             decimal topay = qty * o.RealPrice;
@@ -663,7 +663,7 @@ public class RtllyOrdLotVarWork : LotVarWork
             h.HIDDEN(nameof(realprice), realprice);
 
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-            for (int i = o.minx; i <= o.MaxXForSingleOrd; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+            for (int i = o.minx; i <= o.MaxXForSinglePur; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
             {
                 h.OPTION_(i).T(i)._OPTION();
             }
@@ -671,14 +671,14 @@ public class RtllyOrdLotVarWork : LotVarWork
             h.SPAN_("uk-width-expand").T("件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 
             // pay button
-            h.BUTTON_(nameof(ord), onclick: "return call_ord(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.BUTTON_(nameof(pur), onclick: "return call_pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._FORM();
             h._BOTTOMBAR();
         }, true, 60); // NOTE publicly cacheable though within a private context
     }
 
-    public async Task ord(WebContext wc, int cmd)
+    public async Task pur(WebContext wc, int cmd)
     {
         var rtl = wc[-3].As<Org>();
         int lotid = wc[0];
@@ -697,7 +697,7 @@ public class RtllyOrdLotVarWork : LotVarWork
 
             var qty = qtyx * lot.unitx;
 
-            var m = new Ord(lot, rtl)
+            var m = new Pur(lot, rtl)
             {
                 created = DateTime.Now,
                 creator = prin.name,
@@ -708,7 +708,7 @@ public class RtllyOrdLotVarWork : LotVarWork
 
             // make use of any existing abandoned record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO ords ").colset(Ord.Empty, msk)._VALUES_(Ord.Empty, msk).T(" ON CONFLICT (rtlid, status) WHERE status = -1 DO UPDATE ")._SET_(Ord.Empty, msk).T(" RETURNING id, topay");
+            dc.Sql("INSERT INTO purs ").colset(Pur.Empty, msk)._VALUES_(Pur.Empty, msk).T(" ON CONFLICT (rtlid, status) WHERE status = -1 DO UPDATE ")._SET_(Pur.Empty, msk).T(" RETURNING id, topay");
             await dc.QueryTopAsync(p => m.Write(p));
             dc.Let(out int ordid);
             dc.Let(out decimal topay);

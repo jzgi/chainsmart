@@ -7,7 +7,7 @@ public class AggVarWork : WebWork
 {
 }
 
-public class AdmlyOrdAggVarWork : AggVarWork
+public class AdmlyPurAggVarWork : AggVarWork
 {
 }
 
@@ -31,7 +31,7 @@ public class RtllyBuyAggVarWork : AggVarWork
     }
 }
 
-public class RtllyOrdAggVarWork : AggVarWork
+public class RtllyPurAggVarWork : AggVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)
@@ -47,7 +47,7 @@ public class RtllyOrdAggVarWork : AggVarWork
     }
 }
 
-public class SuplyOrdAggVarWork : AggVarWork
+public class SuplyPurAggVarWork : AggVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)

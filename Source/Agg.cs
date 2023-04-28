@@ -12,7 +12,7 @@ public struct Agg : IData
 
     public const short 
         BUYAGG = 1, 
-        ORDAGG = 2;
+        PURAGG = 2;
 
     public static readonly Map<short, string> Typs = new()
     {

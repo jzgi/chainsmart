@@ -21,16 +21,16 @@ FROM pg_indexes WHERE tablespace IS NULL AND schemaname = 'public';
 select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='sup');
 
-ALTER TABLE ords SET TABLESPACE sup;
-ALTER TABLE ordclrs SET TABLESPACE sup;
-ALTER TABLE ordaggs_typ SET TABLESPACE sup;
+ALTER TABLE purs SET TABLESPACE sup;
+ALTER TABLE purclrs SET TABLESPACE sup;
+ALTER TABLE puraggs_typ SET TABLESPACE sup;
 
-ALTER INDEX ords_pk SET TABLESPACE sup;
-ALTER INDEX ords_single_idx SET TABLESPACE sup;
-ALTER INDEX ords_ctridstatus_idx SET TABLESPACE sup;
-ALTER INDEX ords_mktidstatus_idx SET TABLESPACE sup;
-ALTER INDEX ords_rtlidstatus_idx SET TABLESPACE sup;
-ALTER INDEX ords_supidstatus_idx SET TABLESPACE sup;
+ALTER INDEX purs_pk SET TABLESPACE sup;
+ALTER INDEX purs_single_idx SET TABLESPACE sup;
+ALTER INDEX purs_ctridstatus_idx SET TABLESPACE sup;
+ALTER INDEX purs_mktidstatus_idx SET TABLESPACE sup;
+ALTER INDEX purs_rtlidstatus_idx SET TABLESPACE sup;
+ALTER INDEX purs_supidstatus_idx SET TABLESPACE sup;
 
 -- rtl
 

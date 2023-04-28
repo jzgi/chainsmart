@@ -14,7 +14,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
 {
     const string WXAUTH = "wxauth";
 
-    const int MAXAGE = 3600 * 24 * 3; // 3 days
+    const int MAXAGE = 3600 * 24; // 3 days
 
 
     public override bool Do(WebContext wc) => throw new NotImplementedException();
@@ -84,7 +84,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
             var prin = dc.ToObject<User>();
 
             wc.Principal = prin; // set principal for afterwrads
-            wc.SetUserCookies(prin, MAXAGE);
+            wc.SetTokenCookies(prin);
         }
         else // keep the acquired openid and signup
         {

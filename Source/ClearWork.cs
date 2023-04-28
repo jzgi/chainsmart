@@ -139,13 +139,13 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
 
 [AdmlyAuthorize(User.ROL_FIN)]
 [Ui("供应端结款", "财务")]
-public class AdmlyOrdClearWork : ClearWork<AdmlyOrdClearVarWork>
+public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
 {
     [Ui("供应端结款", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM ordclrs WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM purclrs WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
         var arr = await dc.QueryAsync<Clear>();
 
         wc.GivePage(200, h =>
@@ -278,7 +278,7 @@ public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
 }
 
 [Ui("业务结款")]
-public class OrglyOrdClearWork : ClearWork<PtylyClearVarWork>
+public class OrglyPurClearWork : ClearWork<PtylyClearVarWork>
 {
     [Ui("业务收入", group: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)

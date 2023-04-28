@@ -3,7 +3,7 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A line item of buy order.
+/// A line item of buy record..
 /// </summary>
 public class BuyItem : IData, IKeyable<int>
 {

@@ -41,14 +41,14 @@ public class MgtService : MainService
         }
 
         int pos = 0;
-        var ordid = trade_no.ParseInt(ref pos);
+        var purid = trade_no.ParseInt(ref pos);
 
         try
         {
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
             // verify that the ammount is correct
-            if (await dc.QueryTopAsync("SELECT supid, lotid, qty, topay FROM ords WHERE id = @1 AND status = -1", p => p.Set(ordid)))
+            if (await dc.QueryTopAsync("SELECT supid, lotid, qty, topay FROM purs WHERE id = @1 AND status = -1", p => p.Set(purid)))
             {
                 dc.Let(out int supid);
                 dc.Let(out int lotid);
@@ -58,11 +58,11 @@ public class MgtService : MainService
                 if (topay == cash) // update data
                 {
                     // the order and the lot updates
-                    dc.Sql("UPDATE ords SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lots SET avail = avail - @4 WHERE id = @5");
-                    await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(ordid).Set(qty).Set(lotid));
+                    dc.Sql("UPDATE purs SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lots SET avail = avail - @4 WHERE id = @5");
+                    await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(purid).Set(qty).Set(lotid));
 
                     // put a notice to the accepter
-                    NoticeBot.Put(supid, Notice.ORD_CREATED, 1, cash);
+                    NoticeBot.Put(supid, Notice.PUR_CREATED, 1, cash);
                 }
             }
         }

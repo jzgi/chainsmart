@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// An online retail buy order.
+/// An online retail buy record..
 /// </summary>
 public class Buy : Entity, IKeyable<long>
 {

@@ -5,9 +5,9 @@ namespace ChainSmart;
 /// <summary>
 /// An aggregation of orders.
 /// </summary>
-public class OrdAgg : IData, IKeyable<int>
+public class PurAgg : IData, IKeyable<int>
 {
-    public static readonly OrdAgg Empty = new();
+    public static readonly PurAgg Empty = new();
 
     internal string name; // shop
 

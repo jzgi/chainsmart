@@ -103,7 +103,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
                 h.PIC("/void.webp", css: "uk-width-1-5");
 
             h.ASIDE_();
-            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Ord.Statuses[o.status])._SPAN()._HEADER();
+            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
             h.Q(o.uaddr, "uk-width-expand");
             h.FOOTER_().SPAN_("uk-width-1-3")._SPAN().SPAN_("uk-width-1-3").T(o.items.Length).SP().T("项商品")._SPAN().SPAN_("uk-margin-auto-left").CNY(o.pay)._SPAN()._FOOTER();
             h._ASIDE();

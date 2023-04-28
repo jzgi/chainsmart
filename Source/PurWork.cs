@@ -9,7 +9,7 @@ using static ChainSmart.Notice;
 
 namespace ChainSmart;
 
-public abstract class OrdWork<V> : WebWork where V : OrdVarWork, new()
+public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
 {
     protected override void OnCreate()
     {
@@ -18,18 +18,18 @@ public abstract class OrdWork<V> : WebWork where V : OrdVarWork, new()
 }
 
 [Ui("采购订单", "商户")]
-public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
+public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
     {
         base.OnCreate();
 
-        // add sub work for order creation
-        CreateWork<RtllyOrdLotWork>("lot");
+        // add sub work for purchase creation
+        CreateWork<RtllyPurLotWork>("lot");
     }
 
 
-    static void MainGrid(HtmlBuilder h, Ord[] arr)
+    static void MainGrid(HtmlBuilder h, Pur[] arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -44,7 +44,7 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
                 h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
             }
 
-            h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Ord.Statuses[o.status])._SPAN()._HEADER();
+            h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
             h.Q_("uk-width-expand").T(o.supname)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
@@ -59,8 +59,8 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE rtlid = @1 AND status = 1 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 1 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -76,15 +76,15 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
         }, false, 6);
     }
 
-    [BizNotice(ORD_ADAPTED)]
+    [BizNotice(PUR_ADAPTED)]
     [Ui(tip: "待发货", icon: "eye", group: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE rtlid = @1 AND status = 2 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 2 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -105,8 +105,8 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -121,15 +121,15 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
         }, false, 6);
     }
 
-    [BizNotice(ORD_VOID)]
+    [BizNotice(PUR_VOID)]
     [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE rtlid = @1 AND status = 0 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 0 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -195,7 +195,7 @@ public class RtllyOrdWork : OrdWork<RtllyOrdVarWork>
     }
 }
 
-public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
+public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
     // timer that automatically transfers orders 
     const uint FIVE_MINUTES = 1000 * 300;
@@ -209,7 +209,7 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
         await dc.ExecuteAsync();
     }
 
-    private static void MainGrid(HtmlBuilder h, Ord[] arr)
+    private static void MainGrid(HtmlBuilder h, Pur[] arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -224,7 +224,7 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
                 h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
             }
 
-            h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Ord.Statuses[o.status])._SPAN()._HEADER();
+            h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
             h.Q_("uk-width-expand").T(o.rtlname)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
@@ -234,17 +234,17 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
     }
 
 
-    private short OrdTyp => (short)State;
+    private short PurTyp => (short)State;
 
-    [BizNotice(ORD_CREATED)]
+    [BizNotice(PUR_CREATED)]
     [Ui("销售订单"), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE typ = @1 AND supid = @2 AND status = 1 ORDER BY created DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(OrdTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 1 ORDER BY created DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -265,8 +265,8 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE typ = @1 AND supid = @2 AND status = 2 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(OrdTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 2 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -281,15 +281,15 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
         }, false, 6);
     }
 
-    [BizNotice(ORD_OKED)]
+    [BizNotice(PUR_OKED)]
     [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE typ = @1 AND supid = @2 AND status = 4 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(OrdTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 4 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -310,8 +310,8 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ord.Empty).T(" FROM ords WHERE typ = @1 AND supid = @2 AND status = 0 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Ord>(p => p.Set(OrdTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 0 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -329,7 +329,7 @@ public class SuplyOrdWork : OrdWork<SuplyOrdVarWork>
 
 [OrglyAuthorize(Org.TYP_MKT)]
 [Ui("采购订单统一收货", "机构")]
-public class MktlyOrdWork : OrdWork<MktlyOrdVarWork>
+public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("按产品批次", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -337,7 +337,7 @@ public class MktlyOrdWork : OrdWork<MktlyOrdVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM ords WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
+        dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
         await dc.QueryAsync(p => p.Set(mkt.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -371,8 +371,8 @@ public class MktlyOrdWork : OrdWork<MktlyOrdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, first(rtlname) AS rtlname, count(id) AS count FROM ords WHERE mktid = @1 AND status = 4 GROUP BY rtlid");
-        var arr = await dc.QueryAsync<OrdAgg>(p => p.Set(org.id));
+        dc.Sql("SELECT rtlid, first(rtlname) AS rtlname, count(id) AS count FROM purs WHERE mktid = @1 AND status = 4 GROUP BY rtlid");
+        var arr = await dc.QueryAsync<PurAgg>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -394,8 +394,8 @@ public class MktlyOrdWork : OrdWork<MktlyOrdVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, first(rtlname), count(qty) AS qty FROM ords WHERE mktid = @1 AND state > 0 GROUP BY rtlid, lotid");
-        var arr = await dc.QueryAsync<OrdAgg>(p => p.Set(mkt.id));
+        dc.Sql("SELECT rtlid, first(rtlname), count(qty) AS qty FROM purs WHERE mktid = @1 AND state > 0 GROUP BY rtlid, lotid");
+        var arr = await dc.QueryAsync<PurAgg>(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
         {
@@ -425,7 +425,7 @@ public class MktlyOrdWork : OrdWork<MktlyOrdVarWork>
 
 [OrglyAuthorize(Org.TYP_CTR)]
 [Ui("销售订单集中发货", "机构")]
-public class CtrlyOrdWork : OrdWork<CtrlyOrdVarWork>
+public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
     [Ui("按批次", group: 2), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -434,7 +434,7 @@ public class CtrlyOrdWork : OrdWork<CtrlyOrdVarWork>
         var topOrgs = Grab<int, Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM ords WHERE ctrid = @1 AND status = 2 GROUP BY mktid, lotid ORDER BY mktid");
+        dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM purs WHERE ctrid = @1 AND status = 2 GROUP BY mktid, lotid ORDER BY mktid");
         await dc.QueryAsync(p => p.Set(ctr.id));
 
         wc.GivePage(200, h =>
@@ -479,7 +479,7 @@ public class CtrlyOrdWork : OrdWork<CtrlyOrdVarWork>
         var topOrgs = Grab<int, Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, itemid, last(name), sum(qty - qtyre) AS qty FROM ords WHERE ctrid = @1 AND status = 4 GROUP BY mktid, itemid ORDER BY mktid");
+        dc.Sql("SELECT mktid, itemid, last(name), sum(qty - qtyre) AS qty FROM purs WHERE ctrid = @1 AND status = 4 GROUP BY mktid, itemid ORDER BY mktid");
         await dc.QueryAsync(p => p.Set(ctr.id));
 
         wc.GivePage(200, h =>

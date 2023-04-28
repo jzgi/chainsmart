@@ -290,27 +290,27 @@ create table books
     entities
 )tablespace sup ;
 
-alter table ords
+alter table purs
     owner to postgres;
 
 create unique index books_single_idx
-    on ords (rtlid, status)
+    on purs (rtlid, status)
     where (status = '-1'::integer) tablespace sup;
 
 create index books_ctridstatus_idx
-    on ords (ctrid, status)
+    on purs (ctrid, status)
     tablespace sup;
 
 create index books_shpidstatus_idx
-    on ords (rtlid, status)
+    on purs (rtlid, status)
     tablespace sup;
 
 create index books_srcidstatus_idx
-    on ords (supid, status)
+    on purs (supid, status)
     tablespace sup;
 
 create index books_mktidstatus_idx
-    on ords (mktid, status)
+    on purs (mktid, status)
     tablespace sup;
 
 create index lots_nend_idx
@@ -500,7 +500,7 @@ create table bookclrs
     entities
 )tablespace sup ;
 
-alter table ordclrs
+alter table purclrs
     owner to postgres;
 
 create table buyclrs
@@ -540,7 +540,7 @@ create table bookaggs_typ
 )
     tablespace sup;
 
-alter table ordaggs_typ
+alter table puraggs_typ
     owner to postgres;
 
 create table bookaggs_lotid
@@ -558,7 +558,7 @@ create table bookaggs_lotid
 )
     tablespace sup;
 
-alter table ordaggs_lotid
+alter table puraggs_lotid
     owner to postgres;
 
 create view orgs_vw
@@ -806,12 +806,12 @@ BEGIN
            sum(pay - coalesce(refund, 0::money)),
            now,
            opr
-    FROM ords
+    FROM purs
     WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
     GROUP BY supid, oked::date, typ;
 
 
-    INSERT INTO ordclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO purclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_SRC,
            first(creator),
            now,
@@ -825,7 +825,7 @@ BEGIN
     FROM bookaggs
     WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
-    INSERT INTO ordclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO purclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_CTR,
            first(creator),
            now,
@@ -844,7 +844,7 @@ BEGIN
 END
 $$;
 
-alter function booksgen(date, varchar) owner to postgres;
+alter function pursgen(date, varchar) owner to postgres;
 
 create function buys_trig_func() returns trigger
     language plpgsql

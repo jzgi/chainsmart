@@ -39,7 +39,6 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
     }
 }
 
-
 public class PublyLotWork : LotWork<PublyLotVarWork>
 {
     static readonly string[] TAGS = { "", "label" };
@@ -76,7 +75,6 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
         });
     }
 }
-
 
 [Ui("产品批次", "商户")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
@@ -150,9 +148,6 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    static readonly string[] UNITS = { "斤", "包", "箱", "桶" };
-
-
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("现货", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
     public async Task new1(WebContext wc, int typ)
@@ -168,7 +163,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             status = Entity.STU_CREATED,
             supid = org.id,
             supname = org.name,
-            off = 1,
+            off = 0.00M,
+            unit = "斤",
             unitx = 1,
             created = DateTime.Now,
             creator = prin.name,
@@ -189,9 +185,9 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                 h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
 
                 h._FIELDSUL();
 
@@ -232,6 +228,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             supname = org.name,
             started = DateTime.Today.AddDays(14),
             off = 1,
+            unit = "斤",
             unitx = 1,
             created = DateTime.Now,
             creator = prin.name,
@@ -252,9 +249,9 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
                 h.LI_().SELECT("产源设施", nameof(o.prodid), o.prodid, prods)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
                 h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
 
                 h._FIELDSUL();
@@ -309,6 +306,6 @@ public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
     }
 }
 
-public class RtllyOrdLotWork : LotWork<RtllyOrdLotVarWork>
+public class RtllyPurLotWork : LotWork<RtllyPurLotVarWork>
 {
 }

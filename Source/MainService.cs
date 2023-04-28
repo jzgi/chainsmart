@@ -74,7 +74,7 @@ public abstract class MainService : WebService
 
             // successfully signed in
             wc.Principal = prin;
-            wc.SetUserCookies(prin);
+            wc.SetTokenCookies(prin);
 
             wc.GiveRedirect(url ?? "/");
         }
@@ -133,7 +133,7 @@ public abstract class MainService : WebService
 
                 // refresh cookie
                 wc.Principal = m;
-                wc.SetUserCookies(m);
+                wc.SetTokenCookies(m);
                 wc.GiveRedirect(url);
             }
         }

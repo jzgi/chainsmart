@@ -120,7 +120,7 @@ public class MyAccessVarWork : WebWork
         var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
         // resend token cookie
-        wc.SetUserCookies(o);
+        wc.SetTokenCookies(o);
 
         wc.Give(200, shared: false, maxage: 12);
     }

@@ -378,7 +378,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM ords WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
+            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
             await dc.QueryAsync(p => p.Set(org.id));
             var lots = dc.ToIntMap();
 

@@ -65,11 +65,11 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<RtllyBuyWork>("rbuy");
 
-        CreateWork<RtllyOrdWork>("rord");
+        CreateWork<RtllyPurWork>("rord");
 
         CreateWork<RtllyBuyAggWork>("rbuyagg");
 
-        CreateWork<RtllyOrdAggWork>("rordagg");
+        CreateWork<RtllyPurAggWork>("rordagg");
 
         CreateWork<RtllyVipWork>("rvip");
 
@@ -81,11 +81,11 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyBuyWork>("mbuy");
 
-        CreateWork<MktlyOrdWork>("mord");
+        CreateWork<MktlyPurWork>("mord");
 
         CreateWork<MktlyBuyAggWork>("mbuyagg");
 
-        CreateWork<MktlyOrdAggWork>("mordagg");
+        CreateWork<MktlyPurAggWork>("mordagg");
     }
 }
 
@@ -101,7 +101,7 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<OrglyAccessWork>("access", false); // false = source
 
-        CreateWork<OrglyOrdClearWork>("ordclr", state: true); // true = is org
+        CreateWork<OrglyPurClearWork>("ordclr", state: true); // true = is org
 
         CreateWork<OrglyCarbonWork>("credit");
 
@@ -111,11 +111,11 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyOrdWork>("sordspot", state: Ord.TYP_SPOT, ui: new("销售订单-现货", "商户"));
+        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_SPOT, ui: new("销售订单-现货", "商户"));
 
-        CreateWork<SuplyOrdWork>("sordlift", state: Ord.TYP_LIFT, ui: new("销售订单-助农", "商户"));
+        CreateWork<SuplyPurWork>("sordlift", state: Pur.TYP_LIFT, ui: new("销售订单-助农", "商户"));
 
-        CreateWork<SuplyOrdAggWork>("sordagg");
+        CreateWork<SuplyPurAggWork>("sordagg");
 
         // ctr
 
@@ -123,10 +123,10 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<CtrlyCreditWork>("ceval");
 
-        CreateWork<CtrlyOrdWork>("cord");
+        CreateWork<CtrlyPurWork>("cord");
 
         CreateWork<CtrlyLotWork>("clot");
 
-        CreateWork<CtrlyOrdAggWork>("cordagg");
+        CreateWork<CtrlyPurAggWork>("cordagg");
     }
 }

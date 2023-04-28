@@ -192,7 +192,7 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
     public bool IsLift => typ == 2;
 
-    public int MaxXForSingleOrd => Math.Min(avail, 200) / unitx;
+    public int MaxXForSinglePur => Math.Min(avail, 200) / unitx;
 
     public override string ToString() => name;
 }

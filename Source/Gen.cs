@@ -12,7 +12,7 @@ public class Gen : IData, IKeyable<short>
 
     public const short 
         BUY = 1, 
-        ORD = 2;
+        PUR = 2;
 
     public static readonly Map<short, string> Typs = new()
     {

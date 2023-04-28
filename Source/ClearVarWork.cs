@@ -7,7 +7,7 @@ using ChainFx.Web;
  {
  }
 
- public class AdmlyOrdClearVarWork : ClearVarWork
+ public class AdmlyPurClearVarWork : ClearVarWork
  {
  }
 

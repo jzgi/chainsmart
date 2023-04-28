@@ -19,7 +19,7 @@ public class AdmlyWork : WebWork
 
         CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
 
-        CreateWork<OrglyOrdClearWork>("pordclr", state: false);
+        CreateWork<OrglyPurClearWork>("ppurclr", state: false);
 
         CreateWork<AdmlyNodeWork>("node");
 
@@ -35,11 +35,11 @@ public class AdmlyWork : WebWork
 
         CreateWork<AdmlyBuyAggWork>("buyagg");
 
-        CreateWork<AdmlyOrdAggWork>("ordagg");
+        CreateWork<AdmlyPurAggWork>("puragg");
 
         CreateWork<AdmlyBuyClearWork>("buyclr");
 
-        CreateWork<AdmlyOrdClearWork>("ordclr");
+        CreateWork<AdmlyPurClearWork>("purclr");
     }
 
     public void @default(WebContext wc)

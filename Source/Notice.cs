@@ -9,10 +9,10 @@ namespace ChainSmart;
 public class Notice : IKeyable<int>
 {
     public const short
-        ORD_CREATED = 1,
-        ORD_ADAPTED = 2,
-        ORD_OKED = 3,
-        ORD_VOID = 4,
+        PUR_CREATED = 1,
+        PUR_ADAPTED = 2,
+        PUR_OKED = 3,
+        PUR_VOID = 4,
         BUY_CREATED = 5,
         BUY_ADAPTED = 6,
         BUY_OKED = 7,
@@ -20,10 +20,10 @@ public class Notice : IKeyable<int>
 
     public static readonly Map<short, string> Slots = new()
     {
-        { ORD_CREATED, "供应新单" },
-        { ORD_ADAPTED, "供应发货" },
-        { ORD_OKED, "供应收货" },
-        { ORD_VOID, "供应撤单" },
+        { PUR_CREATED, "供应新单" },
+        { PUR_ADAPTED, "供应发货" },
+        { PUR_OKED, "供应收货" },
+        { PUR_VOID, "供应撤单" },
         { BUY_CREATED, "消费新单" },
         { BUY_ADAPTED, "消费发货" },
         { BUY_OKED, "消费收货" },

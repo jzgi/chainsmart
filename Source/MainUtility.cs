@@ -89,7 +89,7 @@ public static class MainUtility
             var ety = map.EntryAt(i);
             var catid = ety.Key;
 
-            int cat_ctr_id = RtllyOrdWork.Comp(catid, ctrid);
+            int cat_ctr_id = RtllyPurWork.Comp(catid, ctrid);
             var v = ety.Value;
 
             h.T("<li");
@@ -196,16 +196,27 @@ public static class MainUtility
     }
 
 
-    public static void SetUserCookies(this WebContext wc, User o, int maxage = 3600 * 24 * 3)
+    public static void SetTokenCookies(this WebContext wc, User o, int maxage = 3600 * 12)
     {
+        // get root domain name for cookies
+
+        var host = wc.Header("Host");
+        var dot = host.LastIndexOf('.', host.Length - 1);
+        string root = null;
+        if (dot != -1)
+        {
+            dot = host.LastIndexOf('.', dot - 1);
+            root = dot == -1 ? null : host[(dot + 1)..];
+        }
+
         // token cookie
         var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, httponly: true);
+        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, domain: root, httponly: true);
 
         // cookie for vip, o means none
-        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: maxage);
-        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), maxage: maxage);
-        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), maxage: maxage);
+        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), domain: root, maxage: maxage);
+        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), domain: root, maxage: maxage);
+        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), domain: root, maxage: maxage);
 
         // multiple cookie
         wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);
@@ -222,9 +233,8 @@ public static class MainUtility
         jo.Get(nameof(terms), ref terms);
 
         h.OL_();
-        for (int i = 0; i < terms.Length; i++)
+        foreach (var o in terms)
         {
-            var o = terms[i];
             h.LI_().T(o)._LI();
         }
 

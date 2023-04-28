@@ -93,7 +93,7 @@ public class MyVarWork : WebWork
             prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(prin.id));
 
             // refresh cookies
-            wc.SetUserCookies(prin);
+            wc.SetTokenCookies(prin);
 
             wc.GivePane(200); // close
         }

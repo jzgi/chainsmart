@@ -3,7 +3,7 @@
     {
       "type": "view",
       "name": "逛市场",
-      "url": "http://zhnt-x.com/"
+      "url": "http://www.zhnt-x.com/"
     },
     {
       "name": "我的",
@@ -11,27 +11,27 @@
         {
           "type": "view",
           "name": "供应操作　　　　　🔒",
-          "url": "http://zhnt-x.com:81/suply//"
+          "url": "http://mgt.zhnt-x.com:81/suply//"
         },
         {
           "type": "view",
           "name": "市场操作　　　　　🔒",
-          "url": "http://zhnt-x.com:81/rtlly//"
+          "url": "http://mgt.zhnt-x.com:81/rtlly//"
         },
         {
           "type": "view",
           "name": "产品批次溯源查询　\uD83D\uDD0E",
-          "url": "http://zhnt-x.com/lot/"
+          "url": "http://www.zhnt-x.com/lot/"
         },
         {
           "type": "view",
           "name": "我的消费",
-          "url": "http://zhnt-x.com/my//buy/"
+          "url": "http://www.zhnt-x.com/my//buy/"
         },
         {
           "type": "view",
           "name": "我的个人账号",
-          "url": "http://zhnt-x.com/my//"
+          "url": "http://www.zhnt-x.com/my//"
         }
       ]
     }

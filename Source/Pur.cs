@@ -4,11 +4,11 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// An order record.
+/// An purchase record.
 /// </summary>
-public class Ord : Entity, IKeyable<int>
+public class Pur : Entity, IKeyable<int>
 {
-    public static readonly Ord Empty = new();
+    public static readonly Pur Empty = new();
 
     public const short
         TYP_SPOT = 1,
@@ -51,11 +51,11 @@ public class Ord : Entity, IKeyable<int>
     internal decimal refund; // pay refunded
 
 
-    public Ord()
+    public Pur()
     {
     }
 
-    public Ord(Lot lot, Org rtl)
+    public Pur(Lot lot, Org rtl)
     {
         typ = lot.typ;
         name = lot.name;
