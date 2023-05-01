@@ -184,10 +184,10 @@ create table evals
 )
     inherits (entities);
 
-alter table credits
+alter table evals
     owner to postgres;
 
-alter sequence tests_id_seq owned by credits.id;
+alter sequence tests_id_seq owned by evals.id;
 
 create table _accts
 (

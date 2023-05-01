@@ -62,7 +62,7 @@ public class PublyProdVarWork : ProdVarWork
             h.LI_().FIELD("名称", o.name)._LI();
             h.LI_().FIELD("类别", o.typ, Prod.Typs)._LI();
             h.LI_().FIELD("简介", o.tip)._LI();
-            h.LI_().FIELD("碳减排项目", o.unitg)._LI();
+            h.LI_().FIELD("碳减排项目", o.co2ep)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
             h.LI_().FIELD2("创建", o.created, o.creator)._LI();
             if (o.adapter != null)

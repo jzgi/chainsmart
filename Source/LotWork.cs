@@ -150,7 +150,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("现货", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-    public async Task new1(WebContext wc, int typ)
+    public async Task newspot(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -163,13 +163,15 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             status = Entity.STU_CREATED,
             supid = org.id,
             supname = org.name,
-            off = 0.00M,
             unit = "斤",
-            unitx = 1,
+            cap = 2000,
             created = DateTime.Now,
             creator = prin.name,
+            off = 0,
+            unitx = 1,
+            flashx = 0,
             minx = 1,
-            cap = 200,
+            maxx = 1,
         };
 
         if (wc.IsGet)
@@ -178,20 +180,23 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("现货产品批次（货入品控库之后再销售）");
+                h.FORM_().FIELDSUL_("现货（货入品控库之后再销售）");
 
+                h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
-                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
+                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
+                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
                 h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
-                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
 
-                h._FIELDSUL();
+                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
 
-                h.BOTTOM_BUTTON("确认", nameof(new1));
+                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
 
                 h._FORM();
             });
@@ -213,7 +218,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("助农", "新建助农产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
-    public async Task new2(WebContext wc)
+    public async Task newpre(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -222,18 +227,20 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         var o = new Lot
         {
-            typ = Lot.TYP_LIFT,
+            typ = Lot.TYP_PRE,
             status = Entity.STU_CREATED,
             supid = org.id,
             supname = org.name,
             started = DateTime.Today.AddDays(14),
-            off = 1,
             unit = "斤",
-            unitx = 1,
+            cap = 2000,
             created = DateTime.Now,
             creator = prin.name,
+            off = 0,
+            unitx = 1,
+            flashx = 0,
             minx = 1,
-            cap = 200,
+            maxx = 1,
         };
 
         if (wc.IsGet)
@@ -242,21 +249,24 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("助农产品批次（货入品控库之前先销售）");
+                h.FORM_().FIELDSUL_("助农（货入品控库之前先销售）");
 
+                h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
-                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                h.LI_().SELECT("产源设施", nameof(o.prodid), o.prodid, prods)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (k, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
-                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
+                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
+                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
 
-                h._FIELDSUL();
+                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
 
-                h.BOTTOM_BUTTON("确认", nameof(new2));
+                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
 
                 h._FORM();
             });

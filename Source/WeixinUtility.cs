@@ -135,25 +135,25 @@ public static class WeixinUtility
     {
         var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
         string nickname = jo[nameof(nickname)];
-        return new User {im = openid, name = nickname};
+        return new User { im = openid, name = nickname };
     }
 
 
     static readonly DateTime EPOCH = new DateTime(1970, 1, 1);
 
-    public static long NowMillis => (long) (DateTime.Now - EPOCH).TotalMilliseconds;
+    public static long NowMillis => (long)(DateTime.Now - EPOCH).TotalMilliseconds;
 
     public static IContent BuildPrepayContent(string prepay_id)
     {
         string package = "prepay_id=" + prepay_id;
-        string timeStamp = ((int) (DateTime.Now - EPOCH).TotalSeconds).ToString();
+        string timeStamp = ((int)(DateTime.Now - EPOCH).TotalSeconds).ToString();
         var jo = new JObj
         {
-            {"appId", appid},
-            {"nonceStr", noncestr},
-            {"package", package},
-            {"signType", "MD5"},
-            {"timeStamp", timeStamp}
+            { "appId", appid },
+            { "nonceStr", noncestr },
+            { "package", package },
+            { "signType", "MD5" },
+            { "timeStamp", timeStamp }
         };
         jo.Add("paySign", Sign(jo, "paySign"));
         return jo.Dump();
@@ -233,16 +233,16 @@ public static class WeixinUtility
 
         var x = new XElem("xml")
         {
-            {"appid", appid},
-            {"body", descr},
-            {"mch_id", mchid},
-            {"nonce_str", noncestr},
-            {"notify_url", notifyurl},
-            {"openid", openid},
-            {"out_trade_no", trade_no},
-            {"spbill_create_ip", ip},
-            {"total_fee", ((int) (amount * 100)).ToString()},
-            {"trade_type", "JSAPI"}
+            { "appid", appid },
+            { "body", descr },
+            { "mch_id", mchid },
+            { "nonce_str", noncestr },
+            { "notify_url", notifyurl },
+            { "openid", openid },
+            { "out_trade_no", trade_no },
+            { "spbill_create_ip", ip },
+            { "total_fee", ((int)(amount * 100)).ToString() },
+            { "trade_type", "JSAPI" }
         };
         var sign = Sign(x);
         x.Add("sign", sign);
@@ -286,7 +286,7 @@ public static class WeixinUtility
         }
 
         int total_fee = xe.Child(nameof(total_fee)); // in cent
-        total = ((decimal) total_fee) / 100;
+        total = ((decimal)total_fee) / 100;
         out_trade_no = xe.Child(nameof(out_trade_no)); // order no
 
         return true;
@@ -299,10 +299,10 @@ public static class WeixinUtility
 
         var x = new XElem("xml")
         {
-            {"appid", appid},
-            {"mch_id", mchid},
-            {"nonce_str", noncestr},
-            {"out_trade_no", orderno}
+            { "appid", appid },
+            { "mch_id", mchid },
+            { "nonce_str", noncestr },
+            { "out_trade_no", orderno }
         };
         string sign = Sign(x);
         x.Add("sign", sign);
@@ -334,15 +334,15 @@ public static class WeixinUtility
         // must be in ascii order
         var x = new XElem("xml")
         {
-            {"appid", appid},
-            {"mch_id", mchid},
-            {"nonce_str", noncestr},
+            { "appid", appid },
+            { "mch_id", mchid },
+            { "nonce_str", noncestr },
             // {"op_user_id", mchid},
-            {"out_refund_no", refoundno},
-            {"out_trade_no", out_trade_no},
-            {"refund_desc", descr},
-            {"refund_fee", ((int) (refund * 100)).ToString()},
-            {"total_fee", ((int) (total * 100)).ToString()}
+            { "out_refund_no", refoundno },
+            { "out_trade_no", out_trade_no },
+            { "refund_desc", descr },
+            { "refund_fee", ((int)(refund * 100)).ToString() },
+            { "total_fee", ((int)(total * 100)).ToString() }
         };
         var sign = Sign(x);
         x.Add("sign", sign);
@@ -377,10 +377,10 @@ public static class WeixinUtility
 
         var x = new XElem("xml")
         {
-            {"appid", appid},
-            {"mch_id", mchid},
-            {"nonce_str", noncestr},
-            {"out_trade_no", orderid.ToString()}
+            { "appid", appid },
+            { "mch_id", mchid },
+            { "nonce_str", noncestr },
+            { "out_trade_no", orderid.ToString() }
         };
         string sign = Sign(x);
         x.Add("sign", sign);
@@ -467,7 +467,7 @@ public static class WeixinUtility
 
                 bdr.Add(mbr.Key);
                 bdr.Add('=');
-                bdr.Add((string) mbr);
+                bdr.Add((string)mbr);
             }
 
             bdr.Add("&key=");
@@ -509,7 +509,7 @@ public static class WeixinUtility
     {
         DateTime startTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
         DateTime nowTime = DateTime.UtcNow;
-        long unixTime = (long) Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
+        long unixTime = (long)Math.Round((nowTime - startTime).TotalMilliseconds, MidpointRounding.AwayFromZero);
         return unixTime;
     }
 
@@ -520,15 +520,15 @@ public static class WeixinUtility
         long timestamp = ToTimestamp() / 1000;
         var dict = new Dictionary<string, string>
         {
-            {"Action", "SendSms"},
-            {"Nonce", "11886"},
-            {"Timestamp", timestamp.ToString()},
-            {"Version", "2021-01-11"},
-            {"SecretId", smssecretid},
-            {"Region", "ap-guangzhou"},
-            {"SmsSdkAppId", smssdkappid},
-            {"SignName", Nodality.Self.name},
-            {"TemplateId", smsvcodetempid}
+            { "Action", "SendSms" },
+            { "Nonce", "11886" },
+            { "Timestamp", timestamp.ToString() },
+            { "Version", "2021-01-11" },
+            { "SecretId", smssecretid },
+            { "Region", "ap-guangzhou" },
+            { "SmsSdkAppId", smssdkappid },
+            { "SignName", Application.Name },
+            { "TemplateId", smsvcodetempid }
         };
 
         for (var i = 0; i < templateParamSet.Length; i++)
@@ -573,15 +573,15 @@ public static class WeixinUtility
         long timestamp = ToTimestamp() / 1000;
         var dict = new Dictionary<string, string>
         {
-            {"Action", "SendSms"},
-            {"Nonce", "11886"},
-            {"Timestamp", timestamp.ToString()},
-            {"Version", "2021-01-11"},
-            {"SecretId", smssecretid},
-            {"Region", "ap-guangzhou"},
-            {"SmsSdkAppId", smssdkappid},
-            {"SignName", Nodality.Self.name},
-            {"TemplateId", smsnotiftempid}
+            { "Action", "SendSms" },
+            { "Nonce", "11886" },
+            { "Timestamp", timestamp.ToString() },
+            { "Version", "2021-01-11" },
+            { "SecretId", smssecretid },
+            { "Region", "ap-guangzhou" },
+            { "SmsSdkAppId", smssdkappid },
+            { "SignName", Application.Name },
+            { "TemplateId", smsnotiftempid }
         };
 
         for (var i = 0; i < templateParamSet.Length; i++)

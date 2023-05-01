@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// A product lot for ordering.
+/// A product lot for purchasing..
 /// </summary>
 public class Lot : Entity, IKeyable<int>, IStockable
 {
@@ -12,12 +12,12 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
     public const short
         TYP_SPOT = 1,
-        TYP_LIFT = 2;
+        TYP_PRE = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_SPOT, "现货" },
-        { TYP_LIFT, "助农" },
+        { TYP_PRE, "助农" },
     };
 
     internal int id;
@@ -34,15 +34,22 @@ public class Lot : Entity, IKeyable<int>, IStockable
     internal string unit;
     internal short unitx;
     internal decimal price;
-    internal decimal off;
-    internal DateTime flashed;
-    internal short minx;
     internal int cap;
     internal int stock;
     internal int avail;
 
+    // promotional
+    internal decimal off;
+    internal short minx;
+    internal short maxx;
+    internal short flashx;
+
+    // traceability
     internal int nstart;
     internal int nend;
+
+
+    // media
     internal bool icon;
     internal bool pic;
     internal bool m1;
@@ -78,16 +85,18 @@ public class Lot : Entity, IKeyable<int>, IStockable
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
-            s.Get(nameof(off), ref off);
-            s.Get(nameof(flashed), ref flashed);
-            s.Get(nameof(minx), ref minx);
             s.Get(nameof(cap), ref cap);
+            s.Get(nameof(off), ref off);
+            s.Get(nameof(minx), ref minx);
+            s.Get(nameof(maxx), ref maxx);
+            s.Get(nameof(flashx), ref flashx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
+
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -121,23 +130,25 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            if (prodid > 0) s.Put(nameof(prodid), prodid);
-            else s.PutNull(nameof(prodid));
+            s.Put(nameof(prodid), prodid);
             s.Put(nameof(targs), targs);
             s.Put(nameof(catid), catid);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
+            s.Put(nameof(cap), cap);
             s.Put(nameof(off), off);
             s.Put(nameof(minx), minx);
-            s.Put(nameof(cap), cap);
+            s.Put(nameof(maxx), maxx);
+            s.Put(nameof(flashx), flashx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
+
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);
@@ -188,9 +199,9 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
     public StockOp[] Ops => ops;
 
-    public bool IsSpot => typ == 1;
+    public bool IsSpot => typ == TYP_SPOT;
 
-    public bool IsLift => typ == 2;
+    public bool IsPre => typ == TYP_PRE;
 
     public int MaxXForSinglePur => Math.Min(avail, 200) / unitx;
 

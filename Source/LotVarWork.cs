@@ -28,17 +28,23 @@ public class LotVarWork : WebWork
         }
 
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("产品名", o.name)._LI();
+        h.LI_().FIELD("产品名称", o.name).FIELD("分类", o.catid)._LI();
         h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-        if (o.typ == 2) h.FIELD("交货起始日", o.started);
+        if (o.IsPre)
+        {
+            h.FIELD("输运起始日", o.started);
+        }
         h._LI();
 
         if (pricing)
         {
-            h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("单价", o.RealPrice, true).FIELD("降价", o.off, true)._LI();
-            h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("未用量", o.stock, o.AvailX, "（")._LI();
+            h.LI_().FIELD("单位", o.unit).FIELD("单价", o.price, true)._LI();
+            h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("可用量", o.stock, o.AvailX, "（")._LI();
+
+            h.LI_().FIELD("单价优惠额", o.off, true)._LI();
+            h.LI_().FIELD2("每件含量", o.unitx, o.unitx).FIELD2("秒杀件数", o.flashx, o.flashx)._LI();
+            h.LI_().FIELD2("起订件数", o.unitx, o.unitx).FIELD2("限订件数", o.flashx, o.flashx)._LI();
         }
 
         h._UL();
@@ -49,8 +55,8 @@ public class LotVarWork : WebWork
         h.H4("批次检验", "uk-card-header");
         h.SECTION_("uk-card-body");
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
         h.LI_().FIELD2("批次总量", o.cap, o.CapX, "（")._LI();
+        h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
 
         if (o.nstart > 0 && o.nend > 0)
         {
@@ -99,9 +105,10 @@ public class LotVarWork : WebWork
             }
 
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("设施名", prod.name)._LI();
+            h.LI_().FIELD("产品源", prod.name)._LI();
             h.LI_().FIELD("简介", prod.tip)._LI();
             h.LI_().FIELD("等级", prod.rank, Prod.Ranks)._LI();
+            h.LI_().FIELD("说明", prod.remark)._LI();
             h._UL();
 
             if (prod.m1)
@@ -331,8 +338,6 @@ public class PublyLotVarWork : LotVarWork
 
 public class SuplyLotVarWork : LotVarWork
 {
-    static readonly string[] UNITS = { "斤", "两", "包", "箱", "桶" };
-
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改产品批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
     public async Task edit(WebContext wc)
@@ -354,21 +359,26 @@ public class SuplyLotVarWork : LotVarWork
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_();
+                h.FORM_().FIELDSUL_(o.IsSpot ? "现货（货入品控库之后再销售）" : "助农（货入品控库之前先销售）");
 
-                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, tip: "可选", max: 40)._LI();
-                h.LI_().SELECT("产源设施", nameof(o.prodid), o.prodid, prods)._LI();
+                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                if (o.IsLift)
+                if (o.IsPre)
                 {
-                    h.LI_().DATE("交货日期", nameof(o.started), o.started)._LI();
+                    h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
 
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true, datalst: UNITS).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("降价", nameof(o.off), o.off, min: -999.99M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx).LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
+                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+
+                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
+
+                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -473,7 +483,7 @@ public class SuplyLotVarWork : LotVarWork
 
                         h.HEADER_();
                         h.QRCODE(MainApp.WwwUrl + "/lot/" + o.id + "/", css: "uk-width-1-3");
-                        h.ASIDE_().H6_().T(Self.name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
+                        h.ASIDE_().H6_().T(Application.Name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                         h._HEADER();
 
                         h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Prod.Ranks[prod?.rank ?? 0], "uk-margin-auto-left")._H6();

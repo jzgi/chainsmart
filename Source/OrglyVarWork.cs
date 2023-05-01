@@ -55,7 +55,7 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<OrglyBuyClearWork>("buyclr", state: true);
 
-        CreateWork<OrglyCarbonWork>("credit");
+        CreateWork<OrglyEvalWork>("ceval");
 
         // retail shop
 
@@ -65,11 +65,11 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<RtllyBuyWork>("rbuy");
 
-        CreateWork<RtllyPurWork>("rord");
+        CreateWork<RtllyPurWork>("rpur");
 
         CreateWork<RtllyBuyAggWork>("rbuyagg");
 
-        CreateWork<RtllyPurAggWork>("rordagg");
+        CreateWork<RtllyPurAggWork>("rpuragg");
 
         CreateWork<RtllyVipWork>("rvip");
 
@@ -77,15 +77,15 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyOrgWork>("morg");
 
-        CreateWork<MktlyCreditWork>("mcredit");
+        CreateWork<MktlyEvalWork>("meval");
 
         CreateWork<MktlyBuyWork>("mbuy");
 
-        CreateWork<MktlyPurWork>("mord");
+        CreateWork<MktlyPurWork>("mpur");
 
         CreateWork<MktlyBuyAggWork>("mbuyagg");
 
-        CreateWork<MktlyPurAggWork>("mordagg");
+        CreateWork<MktlyPurAggWork>("mpuragg");
     }
 }
 
@@ -101,9 +101,9 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<OrglyAccessWork>("access", false); // false = source
 
-        CreateWork<OrglyPurClearWork>("ordclr", state: true); // true = is org
+        CreateWork<OrglyPurClearWork>("purclr", state: true); // true = is org
 
-        CreateWork<OrglyCarbonWork>("credit");
+        CreateWork<OrglyEvalWork>("eval");
 
         // supply shop
 
@@ -113,20 +113,20 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_SPOT, ui: new("销售订单-现货", "商户"));
 
-        CreateWork<SuplyPurWork>("sordlift", state: Pur.TYP_LIFT, ui: new("销售订单-助农", "商户"));
+        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_PRE, ui: new("销售订单-助农", "商户"));
 
-        CreateWork<SuplyPurAggWork>("sordagg");
+        CreateWork<SuplyPurAggWork>("spuragg");
 
         // ctr
 
         CreateWork<CtrlyOrgWork>("corg");
 
-        CreateWork<CtrlyCreditWork>("ceval");
+        CreateWork<CtrlyEvalWork>("ceval");
 
-        CreateWork<CtrlyPurWork>("cord");
+        CreateWork<CtrlyPurWork>("cpur");
 
         CreateWork<CtrlyLotWork>("clot");
 
-        CreateWork<CtrlyPurAggWork>("cordagg");
+        CreateWork<CtrlyPurAggWork>("cpuragg");
     }
 }

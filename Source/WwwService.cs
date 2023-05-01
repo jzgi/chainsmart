@@ -81,7 +81,7 @@ public class WwwService : MainService
             }
 
             h._ARTICLE();
-        }, true, 360, title: Self.Name, onload: "fixAll();");
+        }, true, 360, title: Application.Name, onload: "fixAll();");
     }
 
 

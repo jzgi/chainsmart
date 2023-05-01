@@ -1,5 +1,4 @@
 using ChainFx;
-using ChainFx.Nodal;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 
@@ -11,7 +10,12 @@ public class AdmlyWork : WebWork
 {
     protected override void OnCreate()
     {
-        // 
+        // twins
+
+        CreateWork<AdmlyTwinWork>("twin");
+
+
+        // basic 
 
         CreateWork<AdmlySetgWork>("setg");
 
@@ -20,8 +24,6 @@ public class AdmlyWork : WebWork
         CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
 
         CreateWork<OrglyPurClearWork>("ppurclr", state: false);
-
-        CreateWork<AdmlyNodeWork>("node");
 
         // biz
 
@@ -51,7 +53,7 @@ public class AdmlyWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(Self.name);
+            h.H2(Name);
             h.P2(prin.name, User.Orgly[wc.Role], brace: true);
             h._HEADER();
 
@@ -98,9 +100,4 @@ public class AdmlySetgWork : WebWork
             h.TOOLBAR(bottom: true);
         });
     }
-}
-
-[Ui("碳交易网络", "常规", icon: "social")]
-public class AdmlyNodeWork : NodeWork
-{
 }

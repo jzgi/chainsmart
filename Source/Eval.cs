@@ -2,7 +2,7 @@
 
 namespace ChainSmart;
 
-public class Credit : Entity, IKeyable<int>
+public class Eval : Entity, IKeyable<int>
 {
     public static readonly Cat Empty = new();
 
