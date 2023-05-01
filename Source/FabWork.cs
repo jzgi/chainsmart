@@ -9,14 +9,14 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-public abstract class ProdWork<V> : WebWork where V : ProdVarWork, new()
+public abstract class FabWork<V> : WebWork where V : FabVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, Prod[] arr)
+    protected static void MainGrid(HtmlBuilder h, Fab[] arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -24,7 +24,7 @@ public abstract class ProdWork<V> : WebWork where V : ProdVarWork, new()
 
             if (o.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/prod/", o.id, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/fab/", o.id, "/icon", css: "uk-width-1-5");
             }
             else
                 h.PIC("/void.webp", css: "uk-width-1-5");
@@ -40,7 +40,7 @@ public abstract class ProdWork<V> : WebWork where V : ProdVarWork, new()
     }
 }
 
-public class PublyProdWork : ProdWork<PublyProdVarWork>
+public class PublyFabWork : FabWork<PublyFabVarWork>
 {
     public void @default(WebContext wc)
     {
@@ -49,7 +49,7 @@ public class PublyProdWork : ProdWork<PublyProdVarWork>
 }
 
 [Ui("产品源", "商户")]
-public class SuplyProdWork : ProdWork<SuplyProdVarWork>
+public class SuplyFabWork : FabWork<SuplyFabVarWork>
 {
     [Ui("产品源", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -57,8 +57,8 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Prod>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -80,8 +80,8 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Prod>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -103,8 +103,8 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Prod>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -129,7 +129,7 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
 
         if (wc.IsGet)
         {
-            var o = new Prod
+            var o = new Fab
             {
                 created = DateTime.Now,
                 creator = prin.name
@@ -139,10 +139,10 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
                 h.FORM_().FIELDSUL_();
 
                 h.LI_().TEXT("产品源名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Prod.Typs, required: true)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Fab.Typs, required: true)._LI();
                 h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Prod.Ranks, required: true)._LI();
+                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Fab.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
                 h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
                 // h.LI_().SELECT("碳减排项目", nameof(o.piece), o.piece, Cern.Typs)._LI();
@@ -155,7 +155,7 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
         {
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
-            var m = await wc.ReadObjectAsync(msk, new Prod
+            var m = await wc.ReadObjectAsync(msk, new Fab
             {
                 orgid = org.id,
                 created = DateTime.Now,
@@ -164,7 +164,7 @@ public class SuplyProdWork : ProdWork<SuplyProdVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO prods ").colset(Prod.Empty, msk)._VALUES_(Prod.Empty, msk);
+            dc.Sql("INSERT INTO fabs ").colset(Fab.Empty, msk)._VALUES_(Fab.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog

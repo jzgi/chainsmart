@@ -87,7 +87,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // FOOTER: price and qty select & detail
                 h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.minx},{o.AvailX});\">"); // pricing portion
                 h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: false)._SELECT();
+                h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: true)._SELECT();
                 h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                 h._FOOTER();
 

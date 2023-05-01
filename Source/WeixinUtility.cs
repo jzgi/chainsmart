@@ -19,11 +19,11 @@ namespace ChainSmart;
 /// </summary>
 public static class WeixinUtility
 {
-    static readonly WebClient OpenApi = new WebClient("https://api.weixin.qq.com");
+    static readonly WebConnector OpenApi = new WebConnector("https://api.weixin.qq.com");
 
-    static readonly WebClient SupPayApi, RtlPayApi;
+    static readonly WebConnector SupPayApi, RtlPayApi;
 
-    static readonly WebClient SmsApi = new WebClient("https://sms.tencentcloudapi.com");
+    static readonly WebConnector SmsApi = new WebConnector("https://sms.tencentcloudapi.com");
 
     public static readonly string
         appid,
@@ -73,7 +73,7 @@ public static class WeixinUtility
         }
     }
 
-    static WebClient Set(string fileName, string password)
+    static WebConnector Set(string fileName, string password)
     {
         var handler = new WebClientHandler
         {
@@ -81,7 +81,7 @@ public static class WeixinUtility
         };
         var cert = new X509Certificate2(fileName, password, X509KeyStorageFlags.MachineKeySet);
         handler.ClientCertificates.Add(cert);
-        return new WebClient("https://api.mch.weixin.qq.com", handler);
+        return new WebConnector("https://api.mch.weixin.qq.com", handler);
     }
 
     static string accessToken;

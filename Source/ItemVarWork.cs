@@ -102,8 +102,8 @@ public class PublyItemVarWork : ItemVarWork
             {
                 var lot = GrabObject<int, Lot>(o.lotid);
                 var sup = GrabObject<int, Org>(lot.supid);
-                var prod = lot.prodid > 0 ? GrabMap<int, int, Prod>(lot.supid)[lot.prodid] : null;
-                LotVarWork.LotShow(h, lot, sup, prod, false);
+                var fab = lot.fabid > 0 ? GrabMap<int, int, Fab>(lot.supid)[lot.fabid] : null;
+                LotVarWork.LotShow(h, lot, sup, fab, false);
             }
             else
             {

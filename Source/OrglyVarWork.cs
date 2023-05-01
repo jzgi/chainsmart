@@ -107,7 +107,7 @@ public class SuplyVarWork : OrglyVarWork
 
         // supply shop
 
-        CreateWork<SuplyProdWork>("sprod");
+        CreateWork<SuplyFabWork>("sfab");
 
         CreateWork<SuplyLotWork>("slot");
 

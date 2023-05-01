@@ -44,6 +44,10 @@ public class MainApp : Application
     }
 
 
+    public static void TwinUp()
+    {
+    }
+
     public static void CacheUp()
     {
         Cache(dc =>
@@ -68,11 +72,11 @@ public class MainApp : Application
             }, 60 * 15
         );
 
-        //  productions of each org (n < 30)
-        CacheMap<int, int, Prod>((dc, orgid) =>
+        //  fabrications of each org (n < 30)
+        CacheMap<int, int, Fab>((dc, orgid) =>
             {
-                dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE orgid = @1 AND status = 4");
-                return dc.QueryAsync<int, Prod>(p => p.Set(orgid));
+                dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 4");
+                return dc.QueryAsync<int, Fab>(p => p.Set(orgid));
             }, 60 * 30
         );
 

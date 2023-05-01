@@ -12,7 +12,7 @@ public class NoticeBot
 
 
     // the message sending thread
-    static readonly Thread pusher = new Thread(PushCycle);
+    static readonly Thread pusher = new(PushCycle);
 
 
     /// <summary>

@@ -64,6 +64,11 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
     var maxx = availx > 200 ? 200 : availx; 
 
     var sel_qtyselect = trig.querySelector('.qtyselect');
+
+    var opt = document.createElement("option");
+    opt.text = '0 件';
+    sel_qtyselect.add(opt);
+
     for (var i = minx; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;

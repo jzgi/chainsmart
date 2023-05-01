@@ -344,11 +344,11 @@ create table assets
 )
     inherits (entities);
 
-alter table prods
+alter table fabs
     owner to postgres;
 
 create index assets_orgidstatus_idx
-    on prods (orgid, status);
+    on fabs (orgid, status);
 
 create table buys
 (
@@ -660,9 +660,9 @@ SELECT o.typ,
        o.m2 IS NOT NULL   AS m2,
        o.m3 IS NOT NULL   AS m3,
        o.m4 IS NOT NULL   AS m4
-FROM prods o;
+FROM fabs o;
 
-alter table prods_vw
+alter table fabs_vw
     owner to postgres;
 
 create view lots_vw
@@ -683,7 +683,7 @@ SELECT o.typ,
        o.id,
        o.supid,
        o.supname,
-       o.prodid,
+       o.fabid,
        o.targs,
        o.catid,
        o.started,

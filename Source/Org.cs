@@ -1,11 +1,12 @@
 ﻿using ChainFx;
+using ChainFx.Nodal;
 
 namespace ChainSmart;
 
 /// <summary>
 /// An organizational unit.
 /// </summary>
-public class Org : Entity, IKeyable<int>
+public class Org : Entity, IKeyable<int>, ITwin
 {
     public static readonly Org Empty = new();
 

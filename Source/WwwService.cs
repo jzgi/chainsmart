@@ -19,7 +19,7 @@ public class WwwService : MainService
 
         CreateWork<PublyOrgWork>("org");
 
-        CreateWork<PublyProdWork>("prod");
+        CreateWork<PublyFabWork>("fab");
 
         CreateWork<PublyItemWork>("item");
 

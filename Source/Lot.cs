@@ -28,8 +28,8 @@ public class Lot : Entity, IKeyable<int>, IStockable
     internal short catid;
     internal DateTime started;
 
-    // individual order relevant
-    internal int prodid;
+    // individual relevant
+    internal int fabid;
 
     internal string unit;
     internal short unitx;
@@ -78,7 +78,7 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(prodid), ref prodid);
+            s.Get(nameof(fabid), ref fabid);
             s.Get(nameof(targs), ref targs);
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(started), ref started);
@@ -130,7 +130,7 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(prodid), prodid);
+            s.Put(nameof(fabid), fabid);
             s.Put(nameof(targs), targs);
             s.Put(nameof(catid), catid);
             s.Put(nameof(started), started);

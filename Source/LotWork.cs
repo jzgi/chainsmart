@@ -176,7 +176,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var prods = await GrabMapAsync<int, int, Prod>(o.supid);
+            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {
@@ -185,7 +185,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
+                h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
                 h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
@@ -245,7 +245,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var prods = await GrabMapAsync<int, int, Prod>(o.supid);
+            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {
@@ -254,7 +254,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
+                h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();

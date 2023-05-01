@@ -13,11 +13,11 @@ namespace ChainSmart;
 public class LotVarWork : WebWork
 {
     static readonly string
-        ProdUrl = MainApp.WwwUrl + "/prod/",
+        FabUrl = MainApp.WwwUrl + "/fab/",
         LotUrl = MainApp.WwwUrl + "/lot/",
         OrgUrl = MainApp.WwwUrl + "/org/";
 
-    internal static void LotShow(HtmlBuilder h, Lot o, Org sup, Prod prod, bool pricing)
+    internal static void LotShow(HtmlBuilder h, Lot o, Org sup, Fab fab, bool pricing)
     {
         h.ARTICLE_("uk-card uk-card-primary");
         h.H4("产品信息", "uk-card-header");
@@ -94,41 +94,41 @@ public class LotVarWork : WebWork
 
         // ASSEET
 
-        if (prod != null)
+        if (fab != null)
         {
             h.ARTICLE_("uk-card uk-card-primary");
             h.H3("批次检验", "uk-card-header");
             h.SECTION_("uk-card-body");
-            if (prod.pic)
+            if (fab.pic)
             {
-                h.PIC(ProdUrl, prod.id, "/pic", css: "uk-width-1-1");
+                h.PIC(FabUrl, fab.id, "/pic", css: "uk-width-1-1");
             }
 
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品源", prod.name)._LI();
-            h.LI_().FIELD("简介", prod.tip)._LI();
-            h.LI_().FIELD("等级", prod.rank, Prod.Ranks)._LI();
-            h.LI_().FIELD("说明", prod.remark)._LI();
+            h.LI_().FIELD("产品源", fab.name)._LI();
+            h.LI_().FIELD("简介", fab.tip)._LI();
+            h.LI_().FIELD("等级", fab.rank, Fab.Ranks)._LI();
+            h.LI_().FIELD("说明", fab.remark)._LI();
             h._UL();
 
-            if (prod.m1)
+            if (fab.m1)
             {
-                h.PIC(ProdUrl, prod.id, "/m-1", css: "uk-width-1-1");
+                h.PIC(FabUrl, fab.id, "/m-1", css: "uk-width-1-1");
             }
 
-            if (prod.m2)
+            if (fab.m2)
             {
-                h.PIC(ProdUrl, prod.id, "/m-2", css: "uk-width-1-1");
+                h.PIC(FabUrl, fab.id, "/m-2", css: "uk-width-1-1");
             }
 
-            if (prod.m3)
+            if (fab.m3)
             {
-                h.PIC(ProdUrl, prod.id, "/m-3", css: "uk-width-1-1");
+                h.PIC(FabUrl, fab.id, "/m-3", css: "uk-width-1-1");
             }
 
-            if (prod.m4)
+            if (fab.m4)
             {
-                h.PIC(ProdUrl, prod.id, "/m-4", css: "uk-width-1-1");
+                h.PIC(FabUrl, fab.id, "/m-4", css: "uk-width-1-1");
             }
 
             h._SECTION();
@@ -292,10 +292,10 @@ public class PublyLotVarWork : LotVarWork
         }
 
         var sup = GrabObject<int, Org>(o.supid);
-        Prod prod = null;
-        if (o.prodid > 0)
+        Fab fab = null;
+        if (o.fabid > 0)
         {
-            prod = (await GrabMapAsync<int, int, Prod>(o.supid))[o.prodid];
+            fab = (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
         }
 
         wc.GivePage(200, h =>
@@ -311,7 +311,7 @@ public class PublyLotVarWork : LotVarWork
 
             h._TOPBARXL();
 
-            LotShow(h, o, sup, prod, false);
+            LotShow(h, o, sup, fab, false);
 
             h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
             h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
@@ -354,8 +354,8 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            await dc.QueryAsync("SELECT id, name FROM prods_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-            var prods = await GrabMapAsync<int, int, Prod>(o.supid);
+            await dc.QueryAsync("SELECT id, name FROM fabs_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
+            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {
@@ -364,7 +364,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.prodid), o.prodid, prods)._LI();
+                h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 if (o.IsPre)
                 {
@@ -453,7 +453,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var prod = o.prodid == 0 ? null : (await GrabMapAsync<int, int, Prod>(o.supid))[o.prodid];
+            var fab = o.fabid == 0 ? null : (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
 
             if (cmd == 1)
             {
@@ -486,7 +486,7 @@ public class SuplyLotVarWork : LotVarWork
                         h.ASIDE_().H6_().T(Application.Name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                         h._HEADER();
 
-                        h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Prod.Ranks[prod?.rank ?? 0], "uk-margin-auto-left")._H6();
+                        h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Fab.Ranks[fab?.rank ?? 0], "uk-margin-auto-left")._H6();
 
                         h._LI();
 
@@ -649,15 +649,15 @@ public class RtllyPurLotVarWork : LotVarWork
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
         var sup = GrabObject<int, Org>(o.supid);
-        Prod prod = null;
-        if (o.prodid > 0)
+        Fab fab = null;
+        if (o.fabid > 0)
         {
-            prod = (await GrabMapAsync<int, int, Prod>(o.supid))[o.prodid];
+            fab = (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
         }
 
         wc.GivePane(200, h =>
         {
-            LotShow(h, o, sup, prod, true);
+            LotShow(h, o, sup, fab, true);
 
             // bottom bar
             //

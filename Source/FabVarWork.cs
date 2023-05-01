@@ -9,7 +9,7 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class ProdVarWork : WebWork
+public abstract class FabVarWork : WebWork
 {
     protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
     {
@@ -17,7 +17,7 @@ public abstract class ProdVarWork : WebWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").T(col).T(" FROM prods WHERE id = @1");
+            dc.Sql("SELECT ").T(col).T(" FROM fabs WHERE id = @1");
             if (await dc.QueryTopAsync(p => p.Set(id)))
             {
                 dc.Let(out byte[] bytes);
@@ -34,7 +34,7 @@ public abstract class ProdVarWork : WebWork
             var f = await wc.ReadAsync<Form>();
             ArraySegment<byte> img = f[nameof(img)];
             using var dc = NewDbContext();
-            dc.Sql("UPDATE prods SET ").T(col).T(" = @1 WHERE id = @2");
+            dc.Sql("UPDATE fabs SET ").T(col).T(" = @1 WHERE id = @2");
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
                 wc.Give(200); // ok
@@ -44,15 +44,15 @@ public abstract class ProdVarWork : WebWork
     }
 }
 
-public class PublyProdVarWork : ProdVarWork
+public class PublyFabVarWork : FabVarWork
 {
     public async Task @default(WebContext wc)
     {
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Prod>(p => p.Set(id));
+        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Fab>(p => p.Set(id));
 
         wc.GivePage(200, h =>
         {
@@ -60,7 +60,7 @@ public class PublyProdVarWork : ProdVarWork
             h.H4("产源设施", "uk-card-header");
             h.UL_("uk-card-body uk-list uk-list-divider");
             h.LI_().FIELD("名称", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Prod.Typs)._LI();
+            h.LI_().FIELD("类别", o.typ, Fab.Typs)._LI();
             h.LI_().FIELD("简介", o.tip)._LI();
             h.LI_().FIELD("碳减排项目", o.co2ep)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
@@ -79,22 +79,22 @@ public class PublyProdVarWork : ProdVarWork
 
             if (o.m1)
             {
-                h.PIC("/prod/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/fab/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m2)
             {
-                h.PIC("/prod/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/fab/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m3)
             {
-                h.PIC("/prod/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/fab/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m4)
             {
-                h.PIC("/prod/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/fab/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
             }
 
             h._ARTICLE();
@@ -118,21 +118,21 @@ public class PublyProdVarWork : ProdVarWork
     }
 }
 
-public class SuplyProdVarWork : ProdVarWork
+public class SuplyFabVarWork : FabVarWork
 {
     public async Task @default(WebContext wc)
     {
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Prod>(p => p.Set(id));
+        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Fab>(p => p.Set(id));
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("产品源名称", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Prod.Typs)._LI();
+            h.LI_().FIELD("类别", o.typ, Fab.Typs)._LI();
             h.LI_().FIELD("简介", o.tip)._LI();
             h.LI_().FIELD("说明", o.remark)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
@@ -157,17 +157,17 @@ public class SuplyProdVarWork : ProdVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Prod.Empty).T(" FROM prods_vw WHERE id = @1");
-            var o = dc.QueryTop<Prod>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
+            var o = dc.QueryTop<Fab>(p => p.Set(id));
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_();
 
                 h.LI_().TEXT("产品源名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Prod.Typs, required: true)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Fab.Typs, required: true)._LI();
                 h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Prod.Ranks, required: true)._LI();
+                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Fab.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
                 h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
@@ -178,7 +178,7 @@ public class SuplyProdVarWork : ProdVarWork
         {
             const short msk = MSK_EDIT;
             // populate 
-            var m = await wc.ReadObjectAsync(msk, new Prod
+            var m = await wc.ReadObjectAsync(msk, new Fab
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -186,7 +186,7 @@ public class SuplyProdVarWork : ProdVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE prods ")._SET_(Prod.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE fabs ")._SET_(Fab.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -227,7 +227,7 @@ public class SuplyProdVarWork : ProdVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE prods SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
+        dc.Sql("UPDATE fabs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -241,7 +241,7 @@ public class SuplyProdVarWork : ProdVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE prods SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
+        dc.Sql("UPDATE fabs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -255,7 +255,7 @@ public class SuplyProdVarWork : ProdVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE prods SET status = 0 WHERE id = @1 AND orgid = @2");
+        dc.Sql("UPDATE fabs SET status = 0 WHERE id = @1 AND orgid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(204);

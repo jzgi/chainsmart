@@ -1,13 +1,14 @@
 ﻿using ChainFx;
+using ChainFx.Nodal;
 
 namespace ChainSmart;
 
 /// <summary>
-/// A traceable set of production facilities that produce lots of products. 
+/// A traceable fabrication that produces lots of products. 
 /// </summary>
-public class Prod : Entity, IKeyable<int>
+public class Fab : Entity, IKeyable<int>, ITwin
 {
-    public static readonly Prod Empty = new();
+    public static readonly Fab Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
