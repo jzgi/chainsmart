@@ -18,7 +18,7 @@ public class ItemVarWork : WebWork
         const short msk = 255 | MSK_EXTRA;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND rtlid = @2");
+        dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND orgid = @2");
         var m = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
@@ -93,17 +93,28 @@ public class PublyItemVarWork : ItemVarWork
         int itemid = wc[0];
 
         using var dc = NewDbContext();
+
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
+
+        Lot lot = null;
+        Org org = null;
+        if (o.lotid > 0)
+        {
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
+            lot = await dc.QueryTopAsync<Lot>(p => p.Set(o.lotid));
+
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
+            org = await dc.QueryTopAsync<Org>(p => p.Set(o.orgid));
+        }
 
         wc.GivePane(200, h =>
         {
             if (o.lotid > 0)
             {
-                var lot = GrabRow<int, Lot>(o.lotid);
-                var sup = GrabRow<int, Org>(lot.supid);
-                var fab = lot.fabid > 0 ? GrabSet<int, int, Fab>(lot.supid)[lot.fabid] : null;
-                LotVarWork.LotShow(h, lot, sup, fab, false);
+                var fab = lot?.fabid > 0 ? GetTwin<Fab>(lot.fabid) : null;
+
+                LotVarWork.LotShow(h, lot, org, fab, false);
             }
             else
             {
@@ -179,7 +190,7 @@ public class RtllyItemVarWork : ItemVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items ")._SET_(Item.Empty, msk).T(" WHERE id = @1 AND rtlid = @2");
+            dc.Sql("UPDATE items ")._SET_(Item.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -241,12 +252,12 @@ public class RtllyItemVarWork : ItemVarWork
             var now = DateTime.Now;
             if (optyp == StockOp.TYP_ADD)
             {
-                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND rtlid = @6");
+                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND orgid = @6");
                 await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
             }
             else // TYP_SUBSTRACT
             {
-                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @5 AND rtlid = @6");
+                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @5 AND orgid = @6");
                 await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
             }
 
@@ -263,7 +274,7 @@ public class RtllyItemVarWork : ItemVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND rtlid = @4");
+        dc.Sql("UPDATE items SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -277,7 +288,7 @@ public class RtllyItemVarWork : ItemVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE items SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND rtlid = @2");
+        dc.Sql("UPDATE items SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -285,15 +296,35 @@ public class RtllyItemVarWork : ItemVarWork
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确认删除或者作废？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-    public async Task @void(WebContext wc)
+    public async Task rm(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND rtlid = @2");
+        dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND orgid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(204);
+    }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui(tip: "恢复", icon: "reply"), Tool(ButtonConfirm, status: 0)]
+    public async Task restore(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+
+        using var dc = NewDbContext();
+        try
+        {
+            dc.Sql("UPDATE items SET status = CASE WHEN adapter IS NULL 1 ELSE 2 END WHERE id = @1 AND orgid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        }
+        catch (Exception)
+        {
+        }
+
+        wc.Give(204); // no content
     }
 }

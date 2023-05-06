@@ -317,7 +317,7 @@ create index lots_nend_idx
     on lots (nend);
 
 create index lots_srcidstatus_idx
-    on lots (supid, status);
+    on lots (orgid, status);
 
 create index lots_catid_idx
     on lots (catid);
@@ -681,8 +681,8 @@ SELECT o.typ,
        o.oker,
        o.status,
        o.id,
-       o.supid,
-       o.supname,
+       o.orgid,
+       o.orgname,
        o.fabid,
        o.targs,
        o.catid,
@@ -724,7 +724,7 @@ SELECT o.typ,
        o.oker,
        o.status,
        o.id,
-       o.rtlid,
+       o.orgid,
        o.lotid,
        o.catid,
        o.unit,

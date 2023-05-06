@@ -17,7 +17,7 @@ public class LotVarWork : WebWork
         LotUrl = MainApp.WwwUrl + "/lot/",
         OrgUrl = MainApp.WwwUrl + "/org/";
 
-    internal static void LotShow(HtmlBuilder h, Lot o, Org sup, Fab fab, bool pricing)
+    internal static void LotShow(HtmlBuilder h, Lot o, Org org, Fab fab, bool pricing)
     {
         h.ARTICLE_("uk-card uk-card-primary");
         h.H4("产品信息", "uk-card-header");
@@ -140,48 +140,48 @@ public class LotVarWork : WebWork
         h.ARTICLE_("uk-card uk-card-primary");
         h.H4("供应信息", "uk-card-header");
         h.SECTION_("uk-card-body");
-        if (sup.pic)
+        if (org.pic)
         {
-            h.PIC(OrgUrl, sup.id, "/pic", css: "uk-width-1-1");
+            h.PIC(OrgUrl, org.id, "/pic", css: "uk-width-1-1");
         }
 
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("商户名", sup.name)._LI();
-        h.LI_().FIELD("简介", sup.tip)._LI();
-        if (sup.IsParent)
+        h.LI_().FIELD("商户名", org.name)._LI();
+        h.LI_().FIELD("简介", org.tip)._LI();
+        if (org.IsParent)
         {
-            h.LI_().FIELD("范围延展名", sup.Ext)._LI();
+            h.LI_().FIELD("范围延展名", org.Ext)._LI();
         }
 
-        h.LI_().FIELD("工商登记名", sup.legal)._LI();
-        h.LI_().FIELD("联系电话", sup.tel)._LI();
-        h.LI_().FIELD("地址／场地", sup.addr)._LI();
-        h.LI_().FIELD("指标参数", sup.specs)._LI();
-        h.LI_().FIELD("委托代办", sup.trust).FIELD("进度状态", sup.status, Org.Statuses)._LI();
-        h.LI_().FIELD2("创建", sup.created, sup.creator)._LI();
-        if (sup.adapter != null) h.LI_().FIELD2("修改", sup.adapted, sup.adapter)._LI();
-        if (sup.oker != null) h.LI_().FIELD2("上线", sup.oked, sup.oker)._LI();
+        h.LI_().FIELD("工商登记名", org.legal)._LI();
+        h.LI_().FIELD("联系电话", org.tel)._LI();
+        h.LI_().FIELD("地址／场地", org.addr)._LI();
+        h.LI_().FIELD("指标参数", org.specs)._LI();
+        h.LI_().FIELD("委托代办", org.trust).FIELD("进度状态", org.status, Org.Statuses)._LI();
+        h.LI_().FIELD2("创建", org.created, org.creator)._LI();
+        if (org.adapter != null) h.LI_().FIELD2("修改", org.adapted, org.adapter)._LI();
+        if (org.oker != null) h.LI_().FIELD2("上线", org.oked, org.oker)._LI();
 
         h._UL();
 
-        if (sup.m1)
+        if (org.m1)
         {
-            h.PIC(OrgUrl, sup.id, "/m-1", css: "uk-width-1-1");
+            h.PIC(OrgUrl, org.id, "/m-1", css: "uk-width-1-1");
         }
 
-        if (sup.m2)
+        if (org.m2)
         {
-            h.PIC(OrgUrl, sup.id, "/m-2", css: "uk-width-1-1");
+            h.PIC(OrgUrl, org.id, "/m-2", css: "uk-width-1-1");
         }
 
-        if (sup.m3)
+        if (org.m3)
         {
-            h.PIC(OrgUrl, sup.id, "/m-3", css: "uk-width-1-1");
+            h.PIC(OrgUrl, org.id, "/m-3", css: "uk-width-1-1");
         }
 
-        if (sup.m4)
+        if (org.m4)
         {
-            h.PIC(OrgUrl, sup.id, "/m-4", css: "uk-width-1-1");
+            h.PIC(OrgUrl, org.id, "/m-4", css: "uk-width-1-1");
         }
 
         h._SECTION();
@@ -196,7 +196,7 @@ public class LotVarWork : WebWork
 
         const short msk = 255 | MSK_EXTRA;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
+        dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
@@ -291,11 +291,11 @@ public class PublyLotVarWork : LotVarWork
             return;
         }
 
-        var sup = GrabRow<int, Org>(o.supid);
+        var org = GetTwin<Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
+            fab = GetTwin<Fab>(o.fabid);
         }
 
         wc.GivePage(200, h =>
@@ -311,7 +311,7 @@ public class PublyLotVarWork : LotVarWork
 
             h._TOPBARXL();
 
-            LotShow(h, o, sup, fab, false);
+            LotShow(h, o, org, fab, false);
 
             h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
             h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
@@ -351,11 +351,11 @@ public class SuplyLotVarWork : LotVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
             await dc.QueryAsync("SELECT id, name FROM fabs_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
+            var fabs = GetTwinSet<Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -395,7 +395,7 @@ public class SuplyLotVarWork : LotVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND supid = @2");
+            dc.Sql("UPDATE lots ")._SET_(Lot.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 o.Write(p, msk);
@@ -450,10 +450,10 @@ public class SuplyLotVarWork : LotVarWork
             }
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fab = o.fabid == 0 ? null : (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
+            var fab = o.fabid == 0 ? null : (await GrabSetAsync<int, int, Fab>(o.orgid))[o.fabid];
 
             if (cmd == 1)
             {
@@ -532,7 +532,7 @@ public class SuplyLotVarWork : LotVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND supid = @4");
+        dc.Sql("UPDATE lots SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.Give(200);
@@ -546,7 +546,7 @@ public class SuplyLotVarWork : LotVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND supid = @2")._MEET_(wc);
+        dc.Sql("UPDATE lots SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2")._MEET_(wc);
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(200);
@@ -589,7 +589,7 @@ public class SuplyLotVarWork : LotVarWork
             }
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @3 ELSE 0 END), stock = stock + @3 WHERE id = @5 AND supid = @6");
+            dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @3 ELSE 0 END), stock = stock + @3 WHERE id = @5 AND orgid = @6");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(tip).Set(qty).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog
@@ -604,7 +604,7 @@ public class SuplyLotVarWork : LotVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND supid = @2");
+        dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND orgid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(204); // no content
@@ -620,7 +620,7 @@ public class SuplyLotVarWork : LotVarWork
         using var dc = NewDbContext();
         try
         {
-            dc.Sql("UPDATE lots SET status = CASE WHEN adapter IS NULL 2 ELSE 1 END WHERE id = @1 AND supid = @2");
+            dc.Sql("UPDATE lots SET status = CASE WHEN adapter IS NULL 2 ELSE 1 END WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
         }
         catch (Exception)
@@ -648,16 +648,16 @@ public class RtllyPurLotVarWork : LotVarWork
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-        var sup = GrabRow<int, Org>(o.supid);
+        var org = GetTwin<Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
+            fab = GetTwin<Fab>(o.fabid);
         }
 
         wc.GivePane(200, h =>
         {
-            LotShow(h, o, sup, fab, true);
+            LotShow(h, o, org, fab, true);
 
             // bottom bar
             //

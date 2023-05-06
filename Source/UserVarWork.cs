@@ -90,7 +90,7 @@ public class MyAccessVarWork : WebWork
 
             if (prin.rtlly > 0 && prin.rtlid > 0)
             {
-                var org = GrabRow<int, Org>(prin.rtlid);
+                var org = GetTwin<Org>(prin.rtlid);
 
                 h.LI_().FIELD(User.Orgly[prin.rtlly], org.name)._LI();
 

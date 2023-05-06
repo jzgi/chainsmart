@@ -70,20 +70,6 @@ public class MainApp : Application
                 return dc.Query<short, Reg>();
             }, 60 * 60 * 12
         );
-
-        // indivisual lots (n < 2000)
-        // CacheRows<int, Lot>((dc, id) =>
-        //     {
-        //         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-        //         return dc.QueryTop<Lot>(p => p.Set(id));
-        //     }, 60 * 30
-        // );
-        MakeSetCache<int, int, Lot>((dc, supid) =>
-            {
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status > 0");
-                return dc.Query<int, Lot>(p => p.Set(supid));
-            }, 60 * 30
-        );
     }
 
     static async void Cycle(object state)

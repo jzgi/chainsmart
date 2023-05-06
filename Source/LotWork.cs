@@ -85,7 +85,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -108,7 +108,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -131,7 +131,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status = 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status = 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -161,8 +161,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         {
             typ = Lot.TYP_SPOT,
             status = Entity.STU_CREATED,
-            supid = org.id,
-            supname = org.name,
+            orgid = org.id,
+            orgname = org.name,
             unit = "斤",
             cap = 2000,
             created = DateTime.Now,
@@ -176,7 +176,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
+            var fabs = await GrabSetAsync<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -229,8 +229,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         {
             typ = Lot.TYP_PRE,
             status = Entity.STU_CREATED,
-            supid = org.id,
-            supname = org.name,
+            orgid = org.id,
+            orgname = org.name,
             started = DateTime.Today.AddDays(14),
             unit = "斤",
             cap = 2000,
@@ -245,7 +245,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
+            var fabs = await GrabSetAsync<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -298,7 +298,7 @@ public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>

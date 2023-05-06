@@ -64,8 +64,8 @@ public class Pur : Entity, IKeyable<int>
         rtlid = rtl.id;
         rtlname = rtl.Name;
         mktid = rtl.MarketId;
-        supid = lot.supid;
-        supname = lot.supname;
+        supid = lot.orgid;
+        supname = lot.orgname;
         ctrid = rtl.ctrid;
 
         lotid = lot.id;

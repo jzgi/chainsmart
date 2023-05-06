@@ -21,8 +21,8 @@ public class Lot : Entity, IKeyable<int>, IStockable
     };
 
     internal int id;
-    internal int supid;
-    internal string supname;
+    internal int orgid;
+    internal string orgname;
 
     internal int[] targs; // (optional) targeted centers or markets
     internal short catid;
@@ -70,8 +70,8 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(supid), ref supid);
-            s.Get(nameof(supname), ref supname);
+            s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(orgname), ref orgname);
             s.Get(nameof(stock), ref stock);
             s.Get(nameof(avail), ref avail);
         }
@@ -122,8 +122,8 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(supid), supid);
-            s.Put(nameof(supname), supname);
+            s.Put(nameof(orgid), orgid);
+            s.Put(nameof(orgname), orgname);
             s.Put(nameof(stock), stock);
             s.Put(nameof(avail), avail);
         }

@@ -19,7 +19,7 @@ public class Item : Entity, IKeyable<int>, IStockable
 
 
     internal int id;
-    internal int rtlid;
+    internal int orgid;
     internal int lotid;
     internal short catid;
     internal string unit;
@@ -48,7 +48,7 @@ public class Item : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(rtlid), ref rtlid);
+            s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(lotid), ref lotid);
         }
 
@@ -88,7 +88,7 @@ public class Item : Entity, IKeyable<int>, IStockable
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(rtlid), rtlid);
+            s.Put(nameof(orgid), orgid);
             if (lotid > 0) s.Put(nameof(lotid), lotid);
             else s.PutNull(nameof(lotid));
         }

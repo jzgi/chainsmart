@@ -27,7 +27,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         var org = GetTwin<Org>(orgid);
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -124,10 +124,10 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         }, true, 120, title: org.name, onload: "fixAll();");
     }
 
-    public async Task buy(WebContext wc, int cmd)
+    public async Task buy(WebContext wc)
     {
-        int rtlid = wc[-1];
-        var rtl = GrabRow<int, Org>(rtlid);
+        int orgid = wc[-1];
+        var org = GetTwin<Org>(orgid);
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();
@@ -153,19 +153,19 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND id ")._IN_(lst);
-            var map = await dc.QueryAsync<int, Item>(p => p.Set(rtlid).SetForIn(lst));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND id ")._IN_(lst);
+            var map = await dc.QueryAsync<int, Item>(p => p.Set(orgid).SetForIn(lst));
 
             foreach (var ln in lst)
             {
                 var item = map[ln.itemid];
                 if (item != null)
                 {
-                    ln.Init(item, vip: prin.vip?.Contains(rtlid) ?? false);
+                    ln.Init(item, vip: prin.vip?.Contains(orgid) ?? false);
                 }
             }
 
-            var m = new Buy(prin, rtl, lst.ToArray())
+            var m = new Buy(prin, org, lst.ToArray())
             {
                 created = DateTime.Now,
                 creator = prin.name,
@@ -177,7 +177,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             // NOTE single unsubmitted record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (rtlid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
+            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (orgid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
             await dc.QueryTopAsync(p => m.Write(p, msk));
             dc.Let(out int buyid);
             dc.Let(out decimal topay);
@@ -247,11 +247,11 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     [Ui("上线商品", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
-        var sup = wc[-1].As<Org>();
+        var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 4 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Item>(p => p.Set(sup.id));
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -270,11 +270,11 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
     public async Task down(WebContext wc)
     {
-        var sup = wc[-1].As<Org>();
+        var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Item>(p => p.Set(sup.id));
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -292,11 +292,11 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     [Ui(tip: "已作废", icon: "trash", group: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
-        var sup = wc[-1].As<Org>();
+        var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 0 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Item>(p => p.Set(sup.id));
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -323,7 +323,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         var o = new Item
         {
             typ = Item.TYP_DEF,
-            rtlid = org.id,
+            orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
             unitx = 1,
@@ -378,7 +378,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
+            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE orgid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
             await dc.QueryAsync(p => p.Set(org.id));
             var lots = dc.ToIntMap();
 
