@@ -16,7 +16,7 @@ public abstract class OrgVarWork : WebWork
         var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
         var regs = Grab<short, Reg>();
 
-        var m = Find<Org>(id);
+        var m = GetTwin<Org>(id);
 
         wc.GivePane(200, h =>
         {
@@ -110,7 +110,7 @@ public class OrglySetgWork : OrgVarWork
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = Find<Org>(org.id);
+        var m = GetTwin<Org>(org.id);
 
         if (wc.IsGet)
         {
@@ -171,9 +171,9 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-        var topOrgs = FindSet<Org>(0);
+        var topOrgs = GetTwinSet<Org>(0);
 
-        var m = Find<Org>(id);
+        var m = GetTwin<Org>(id);
 
         if (wc.IsGet)
         {
@@ -341,7 +341,7 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var regs = Grab<short, Reg>();
 
-        var m = Find<Org>(id);
+        var m = GetTwin<Org>(id);
 
         if (wc.IsGet)
         {
@@ -460,7 +460,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var regs = Grab<short, Reg>();
         var prin = (User)wc.Principal;
 
-        var o = Find<Org>(id);
+        var o = GetTwin<Org>(id);
 
         if (wc.IsGet)
         {

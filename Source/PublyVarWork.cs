@@ -19,18 +19,19 @@ public class PublyVarWork : WebWork
     public void @default(WebContext wc, int sector)
     {
         int orgid = wc[0];
-        var org = Find<Org>(orgid);
         var regs = Grab<short, Reg>();
+
+        var org = GetTwin<Org>(orgid);
 
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            arr = FindArray<Org>(orgid, x => x.regid == 0 && org.status == 4);
+            arr = GetTwinArray<Org>(orgid, x => x.regid == 0 && org.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else
         {
-            arr = FindArray<Org>(orgid, x => x.regid == sector && org.status == 4);
+            arr = GetTwinArray<Org>(orgid, x => x.regid == sector && org.status == 4);
         }
 
         wc.GivePage(200, h =>

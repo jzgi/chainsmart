@@ -32,8 +32,9 @@ public class WwwService : MainService
     /// </summary>
     public void @default(WebContext wc)
     {
-        var mkts = FindArray<Org>(0, x => x.IsMarket);
         var regs = Grab<short, Reg>();
+
+        var mkts = GetTwinArray<Org>(0, x => x.IsMarket);
 
         wc.GivePage(200, h =>
         {

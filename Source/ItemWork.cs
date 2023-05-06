@@ -24,7 +24,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GrabRow<int, Org>(orgid);
+        var org = GetTwin<Org>(orgid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");

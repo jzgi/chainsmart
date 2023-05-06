@@ -48,11 +48,11 @@ public class MainApp : Application
 
     public static void MakeGraphs()
     {
-        Graph<OrgGraph>("org");
+        MakeGraph<OrgGraph>("org");
 
-        Graph<FabGraph>("fab");
+        MakeGraph<FabGraph>("fab");
 
-        Graph<VanGraph>("van");
+        MakeGraph<VanGraph>("van");
     }
 
     public static void MakeCaches()

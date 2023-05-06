@@ -56,7 +56,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = FindArray<Fab>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GetTwinArray<Fab>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -77,7 +77,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = FindArray<Fab>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GetTwinArray<Fab>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -98,7 +98,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = FindArray<Fab>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var arr = GetTwinArray<Fab>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
 
         wc.GivePage(200, h =>
         {
