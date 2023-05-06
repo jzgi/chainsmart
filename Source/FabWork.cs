@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx.Nodal;
 using ChainFx.Web;
 using static ChainFx.Entity;
 using static ChainFx.Web.Modal;
@@ -16,9 +16,9 @@ public abstract class FabWork<V> : WebWork where V : FabVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, Fab[] arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Fab> lst)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
@@ -52,13 +52,11 @@ public class PublyFabWork : FabWork<PublyFabVarWork>
 public class SuplyFabWork : FabWork<SuplyFabVarWork>
 {
     [Ui("产品源", group: 1), Tool(Anchor)]
-    public async Task @default(WebContext wc)
+    public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
+        var arr = FindArray<Fab>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -75,13 +73,11 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     }
 
     [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
-    public async Task down(WebContext wc)
+    public void down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
+        var arr = FindArray<Fab>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -98,13 +94,11 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     }
 
     [Ui(icon: "trash", group: 4), Tool(Anchor)]
-    public async Task @void(WebContext wc)
+    public void @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Fab>(p => p.Set(org.id));
+        var arr = FindArray<Fab>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
 
         wc.GivePage(200, h =>
         {

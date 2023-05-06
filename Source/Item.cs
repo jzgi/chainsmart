@@ -30,6 +30,7 @@ public class Item : Entity, IKeyable<int>, IStockable
     internal short stock;
     internal short avail;
     internal DateTime flashed;
+    // internal short upc;
 
     internal bool icon;
     internal bool pic;

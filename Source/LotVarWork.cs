@@ -291,11 +291,11 @@ public class PublyLotVarWork : LotVarWork
             return;
         }
 
-        var sup = GrabObject<int, Org>(o.supid);
+        var sup = GrabRow<int, Org>(o.supid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
+            fab = (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
         }
 
         wc.GivePage(200, h =>
@@ -355,7 +355,7 @@ public class SuplyLotVarWork : LotVarWork
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
             await dc.QueryAsync("SELECT id, name FROM fabs_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
+            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {
@@ -453,7 +453,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND supid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fab = o.fabid == 0 ? null : (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
+            var fab = o.fabid == 0 ? null : (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
 
             if (cmd == 1)
             {
@@ -648,11 +648,11 @@ public class RtllyPurLotVarWork : LotVarWork
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-        var sup = GrabObject<int, Org>(o.supid);
+        var sup = GrabRow<int, Org>(o.supid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = (await GrabMapAsync<int, int, Fab>(o.supid))[o.fabid];
+            fab = (await GrabSetAsync<int, int, Fab>(o.supid))[o.fabid];
         }
 
         wc.GivePane(200, h =>

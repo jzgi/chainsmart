@@ -59,7 +59,7 @@ public class MyAccessVarWork : WebWork
                         h.BR();
                     }
 
-                    var org = GrabObject<int, Org>(vip[i]);
+                    var org = GrabRow<int, Org>(vip[i]);
                     if (org != null)
                     {
                         h.T(org.name);
@@ -81,7 +81,7 @@ public class MyAccessVarWork : WebWork
 
             if (prin.suply > 0 && prin.supid > 0)
             {
-                var org = GrabObject<int, Org>(prin.supid);
+                var org = GrabRow<int, Org>(prin.supid);
 
                 h.LI_().FIELD(User.Orgly[prin.suply], org.name)._LI();
 
@@ -90,7 +90,7 @@ public class MyAccessVarWork : WebWork
 
             if (prin.rtlly > 0 && prin.rtlid > 0)
             {
-                var org = GrabObject<int, Org>(prin.rtlid);
+                var org = GrabRow<int, Org>(prin.rtlid);
 
                 h.LI_().FIELD(User.Orgly[prin.rtlly], org.name)._LI();
 

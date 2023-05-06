@@ -32,7 +32,7 @@ public class WwwService : MainService
     /// </summary>
     public void @default(WebContext wc)
     {
-        var topOrgs = Grab<int, Org>();
+        var mkts = FindArray<Org>(0, x => x.IsMarket);
         var regs = Grab<short, Reg>();
 
         wc.GivePage(200, h =>
@@ -40,14 +40,8 @@ public class WwwService : MainService
             bool exist = false;
             var last = 0;
 
-            for (int i = 0; i < topOrgs.Count; i++)
+            foreach (var o in mkts)
             {
-                var o = topOrgs.ValueAt(i);
-                if (!o.IsMarket)
-                {
-                    continue;
-                }
-
                 if (o.regid != last)
                 {
                     h._LI();

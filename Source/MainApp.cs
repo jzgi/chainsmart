@@ -28,7 +28,9 @@ public class MainApp : Application
         MapComposite<BuyItem>();
         MapComposite<StockOp>();
 
-        CacheUp();
+        MakeCaches();
+
+        MakeGraphs();
 
         const string STATIC_ROOT = "static";
 
@@ -44,56 +46,43 @@ public class MainApp : Application
     }
 
 
-    public static void TwinUp()
+    public static void MakeGraphs()
     {
+        Graph<OrgGraph>("org");
+
+        Graph<FabGraph>("fab");
+
+        Graph<VanGraph>("van");
     }
 
-    public static void CacheUp()
+    public static void MakeCaches()
     {
-        Cache(dc =>
+        MakeCache(dc =>
             {
                 dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY id");
                 return dc.Query<short, Cat>();
             }, 60 * 60 * 12
         );
 
-        Cache(dc =>
+        MakeCache(dc =>
             {
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                 return dc.Query<short, Reg>();
             }, 60 * 60 * 12
         );
 
-        // upper level orgs
-        Cache(dc =>
-            {
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE typ >= ").T(Org.TYP_LOG).T(" ORDER BY regid");
-                return dc.Query<int, Org>();
-            }, 60 * 15
-        );
-
-        //  fabrications of each org (n < 30)
-        CacheMap<int, int, Fab>((dc, orgid) =>
-            {
-                dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status = 4");
-                return dc.QueryAsync<int, Fab>(p => p.Set(orgid));
-            }, 60 * 30
-        );
-
         // indivisual lots (n < 2000)
-        CacheObject<int, Lot>((dc, id) =>
+        // CacheRows<int, Lot>((dc, id) =>
+        //     {
+        //         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
+        //         return dc.QueryTop<Lot>(p => p.Set(id));
+        //     }, 60 * 30
+        // );
+        MakeSetCache<int, int, Lot>((dc, supid) =>
             {
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-                return dc.QueryTop<Lot>(p => p.Set(id));
+                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE supid = @1 AND status > 0");
+                return dc.Query<int, Lot>(p => p.Set(supid));
             }, 60 * 30
-        );
-
-        // individual orgs (n < 8000)
-        CacheObject<int, Org>((dc, id) =>
-            {
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-                return dc.QueryTop<Org>(p => p.Set(id));
-            }, 60 * 60
         );
     }
 

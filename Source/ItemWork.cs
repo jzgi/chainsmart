@@ -24,7 +24,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GrabObject<int, Org>(orgid);
+        var org = GrabRow<int, Org>(orgid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
@@ -127,7 +127,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task buy(WebContext wc, int cmd)
     {
         int rtlid = wc[-1];
-        var rtl = GrabObject<int, Org>(rtlid);
+        var rtl = GrabRow<int, Org>(rtlid);
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();
@@ -399,7 +399,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
             var m = await wc.ReadObjectAsync(msk, o);
-            var lot = GrabObject<int, Lot>(m.lotid);
+            var lot = GrabRow<int, Lot>(m.lotid);
             m.typ = lot.typ;
             m.name = lot.name;
             m.tip = lot.tip;

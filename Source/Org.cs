@@ -11,7 +11,7 @@ public class Org : Entity, IKeyable<int>, ITwin
     public static readonly Org Empty = new();
 
     public const short
-        TYP_VTL = 0b00000, // brand
+        TYP_BRD = 0b00000, // brand
         TYP_PRT = 0b01000, // parent
         TYP_RTL = 0b00001, // shop
         TYP_SUP = 0b00010, // source
@@ -178,31 +178,33 @@ public class Org : Entity, IKeyable<int>, ITwin
 
     public string Tel => tel;
 
-    public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
+    public int MarketId => IsMarket ? id : IsOfRetail ? prtid : 0;
 
     public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
-    public bool IsVirtual => typ == TYP_VTL;
+    public bool IsBrand => typ == TYP_BRD;
 
-    public bool EqSource => typ == TYP_SUP;
+    public bool IsSupply => typ == TYP_SUP;
 
-    public bool IsOfSource => (typ & TYP_SUP) == TYP_SUP;
+    public bool IsOfSupply => (typ & TYP_SUP) == TYP_SUP;
 
-    public bool IsShop => typ == TYP_RTL;
+    public bool IsRetail => typ == TYP_RTL;
 
-    public bool IsOfShop => (typ & TYP_RTL) == TYP_RTL;
+    public bool IsOfRetail => (typ & TYP_RTL) == TYP_RTL;
 
     public bool IsMarket => typ == TYP_MKT;
 
     public bool IsCenter => typ == TYP_CTR;
 
-    public bool HasXy => IsMarket || EqSource || IsCenter;
+    public bool HasXy => IsMarket || IsSupply || IsCenter;
 
     public bool IsTopOrg => prtid == 0;
 
     public string Name => name;
 
     public string Ext => ext;
+
+    public int TwinSetKey => prtid;
 
     public override string ToString() => name;
 }

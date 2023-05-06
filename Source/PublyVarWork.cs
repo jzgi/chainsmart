@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using ChainFx;
+﻿using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
@@ -17,30 +16,26 @@ public class PublyVarWork : WebWork
         CreateVarWork<PublyItemWork>(); // home for one shop
     }
 
-    public async Task @default(WebContext wc, int sector)
+    public void @default(WebContext wc, int sector)
     {
         int orgid = wc[0];
-        var org = GrabObject<int, Org>(orgid);
+        var org = Find<Org>(orgid);
         var regs = Grab<short, Reg>();
 
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
-            arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
+            arr = FindArray<Org>(orgid, x => x.regid == 0 && org.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else
         {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
-            arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sector));
+            arr = FindArray<Org>(orgid, x => x.regid == sector && org.status == 4);
         }
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(string.Empty, sector, regs, (k, v) => v.IsSection, "star");
+            h.NAVBAR(string.Empty, sector, regs, (_, v) => v.IsSection, "star");
 
             if (sector != 0 && arr == null)
             {
@@ -50,7 +45,7 @@ public class PublyVarWork : WebWork
 
             h.MAINGRID(arr, o =>
             {
-                if (o.IsVirtual)
+                if (o.IsBrand)
                 {
                     h.A_(o.addr, css: "uk-card-body uk-flex");
                 }

@@ -92,7 +92,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
                         h.LI_().FIELD("用户姓名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabObject<int, Org>(o.supid);
+                            var org = GrabRow<int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else
@@ -247,7 +247,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                         var yes = true;
                         if (o.supid > 0)
                         {
-                            var exOrg = GrabObject<int, Org>(rtl ? o.rtlid : o.supid);
+                            var exOrg = GrabRow<int, Org>(rtl ? o.rtlid : o.supid);
                             if (exOrg != null)
                             {
                                 h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[rtl ? o.rtlly : o.suply])._LI();

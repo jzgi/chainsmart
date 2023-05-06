@@ -18,7 +18,7 @@ public class RtllyWork : OrglyWork
         CreateVarWork<RtllyVarWork>((prin, key) =>
             {
                 var orgid = key?.ToInt() ?? ((User)prin).rtlid;
-                return GrabObject<int, Org>(orgid);
+                return Find<Org>(orgid);
             }
         );
     }
@@ -34,7 +34,7 @@ public class SuplyWork : OrglyWork
         CreateVarWork<SuplyVarWork>((prin, key) =>
             {
                 var orgid = key?.ToInt() ?? ((User)prin).supid;
-                return GrabObject<int, Org>(orgid);
+                return Find<Org>(orgid);
             }
         );
     }

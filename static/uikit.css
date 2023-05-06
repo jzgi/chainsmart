@@ -2152,8 +2152,8 @@ main.uk-grid>li {
 .uk-card-body {
 
     padding: 4px 6px;
-    background-color: #f8f8f8;
     width: -webkit-fill-available;
+    background-color: #f8f8f8;
 }
 
 section.uk-card-body,

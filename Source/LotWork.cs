@@ -176,7 +176,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
+            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {
@@ -245,7 +245,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = await GrabMapAsync<int, int, Fab>(o.supid);
+            var fabs = await GrabSetAsync<int, int, Fab>(o.supid);
 
             wc.GivePane(200, h =>
             {

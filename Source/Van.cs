@@ -4,9 +4,9 @@ using ChainFx.Nodal;
 namespace ChainSmart;
 
 /// <summary>
-/// A traceable fabrication that produces lots of products. 
+/// A transport van data object. 
 /// </summary>
-public class Fab : Entity, IKeyable<int>, ITwin
+public class Van : Entity, IKeyable<int>, ITwin
 {
     public static readonly Fab Empty = new();
 

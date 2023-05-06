@@ -23,7 +23,7 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
         h.MAINGRID(arr, o =>
         {
-            var rtl = GrabObject<int, Org>(o.rtlid);
+            var rtl = GrabRow<int, Org>(o.rtlid);
 
             h.HEADER_("uk-card-header").ATEL(rtl.tel).SP().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
 

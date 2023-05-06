@@ -135,7 +135,7 @@ public class User : Entity, IKeyable<int>
         super = false;
         ulevel = 0;
 
-        var sup = org.IsOfSource;
+        var sup = org.IsOfSupply;
         var orgid = sup ? supid : rtlid;
         var orgly = sup ? suply : rtlly;
 
