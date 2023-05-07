@@ -188,5 +188,7 @@ public class User : Entity, IKeyable<int>
         return super && role > 0;
     }
 
+    public bool IsVipFor(int orgid) => vip == null || vip.Contains(orgid);
+
     public override string ToString() => name;
 }

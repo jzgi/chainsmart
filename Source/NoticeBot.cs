@@ -59,7 +59,7 @@ public class NoticeBot
         // get or create the notice
         var ntc = bag.GetOrAdd(noticeId, k =>
         {
-            var org = Nodality.GrabRow<int, Org>(noticeId);
+            var org = Nodality.GrabValue<int, Org>(noticeId);
 
             return new Notice(noticeId, org.name, org.tel);
         });

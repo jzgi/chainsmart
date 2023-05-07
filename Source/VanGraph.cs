@@ -14,6 +14,6 @@ public class VanGraph : TwinGraph<Van>
     public override Map<int, Van> LoadMap(DbContext dc, int setkey)
     {
         dc.Sql("SELECT ").collst(Van.Empty).T(" FROM vans_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
-        return dc.Query<int, Van>();
+        return dc.Query<int, Van>(p => p.Set(setkey));
     }
 }

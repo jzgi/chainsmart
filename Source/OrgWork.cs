@@ -54,7 +54,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var array = GetTwinArray<Org>(0, filter: x => x.IsMarket, comp: (x, y) => x.regid - y.regid);
+        var array = GrabTwinArray<Org>(0, filter: x => x.IsMarket, comp: (x, y) => x.regid - y.regid);
         var arr = array.segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -75,7 +75,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var arr = GetTwinArray<Org>(0, filter: x => x.IsCenter, comp: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<Org>(0, filter: x => x.IsCenter, comp: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -175,7 +175,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GetTwinArray<Org>(org.id, comp: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<Org>(org.id, comp: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -215,7 +215,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GetTwinArray<Org>(org.id, filter: x => x.regid == regid);
+            var arr = GrabTwinArray<Org>(org.id, filter: x => x.regid == regid);
 
             wc.GivePage(200, h =>
             {
@@ -237,7 +237,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var arr = GetTwinArray<Org>(org.id, filter: x => x.IsBrand);
+        var arr = GrabTwinArray<Org>(org.id, filter: x => x.IsBrand);
 
         wc.GivePage(200, h =>
         {
@@ -352,7 +352,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GetTwinArray<Org>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<Org>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -374,7 +374,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GetTwinArray<Org>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<Org>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -396,7 +396,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GetTwinArray<Org>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var array = GrabTwinArray<Org>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
         var arr = array.segment(20 * page, 20);
 
         wc.GivePage(200, h =>

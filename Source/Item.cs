@@ -1,9 +1,8 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainSmart;
 
-public class Item : Entity, IKeyable<int>, IStockable
+public class Item : Entity, IKeyable<int>
 {
     public static readonly Item Empty = new();
 
@@ -26,11 +25,10 @@ public class Item : Entity, IKeyable<int>, IStockable
     internal short unitx;
     internal decimal price;
     internal decimal off;
-    internal short minx;
+    internal short maxx;
     internal short stock;
     internal short avail;
-    internal DateTime flashed;
-    // internal short upc;
+    internal short flashx;
 
     internal bool icon;
     internal bool pic;
@@ -59,8 +57,8 @@ public class Item : Entity, IKeyable<int>, IStockable
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(flashed), ref flashed);
-            s.Get(nameof(minx), ref minx);
+            s.Get(nameof(flashx), ref flashx);
+            s.Get(nameof(maxx), ref maxx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -100,8 +98,8 @@ public class Item : Entity, IKeyable<int>, IStockable
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
-            s.Put(nameof(flashed), flashed);
-            s.Put(nameof(minx), minx);
+            s.Put(nameof(flashx), flashx);
+            s.Put(nameof(maxx), maxx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -142,7 +140,11 @@ public class Item : Entity, IKeyable<int>, IStockable
 
     public int StockX => stock / unitx;
 
+    public bool IsFlashing => flashx > 0;
+
     public int AvailX => avail / unitx;
+
+    public bool IsFromSupply => lotid > 0;
 
     public StockOp[] Ops => ops;
 }

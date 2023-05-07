@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
+function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashing) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -48,7 +48,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill fprice
     var out_fprice = trig.querySelector('.fprice');
-    if (vip) {
+    if (vip || flashing) {
         out_fprice.value = (price - off).toFixed(2);
         out_fprice.classList.add('vip');
     }
@@ -58,18 +58,16 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill qty options
     //
-    if (!vip) {
-        minx = 1;
+    if (availx < maxx) {
+        maxx = availx;
     }
-    var maxx = availx > 200 ? 200 : availx; 
-
     var sel_qtyselect = trig.querySelector('.qtyselect');
 
     var opt = document.createElement("option");
     opt.text = '0 件';
     sel_qtyselect.add(opt);
 
-    for (var i = minx; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+    for (var i = 1; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' 件';

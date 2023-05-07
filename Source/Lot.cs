@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// A product lot for purchasing..
 /// </summary>
-public class Lot : Entity, IKeyable<int>, IStockable
+public class Lot : Entity, IKeyable<int>
 {
     public static readonly Lot Empty = new();
 
@@ -40,7 +40,6 @@ public class Lot : Entity, IKeyable<int>, IStockable
 
     // promotional
     internal decimal off;
-    internal short minx;
     internal short maxx;
     internal short flashx;
 
@@ -87,7 +86,6 @@ public class Lot : Entity, IKeyable<int>, IStockable
             s.Get(nameof(price), ref price);
             s.Get(nameof(cap), ref cap);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(minx), ref minx);
             s.Get(nameof(maxx), ref maxx);
             s.Get(nameof(flashx), ref flashx);
         }
@@ -139,7 +137,6 @@ public class Lot : Entity, IKeyable<int>, IStockable
             s.Put(nameof(price), price);
             s.Put(nameof(cap), cap);
             s.Put(nameof(off), off);
-            s.Put(nameof(minx), minx);
             s.Put(nameof(maxx), maxx);
             s.Put(nameof(flashx), flashx);
         }
@@ -202,8 +199,6 @@ public class Lot : Entity, IKeyable<int>, IStockable
     public bool IsSpot => typ == TYP_SPOT;
 
     public bool IsPre => typ == TYP_PRE;
-
-    public int MaxXForSinglePur => Math.Min(avail, 200) / unitx;
 
     public override string ToString() => name;
 }

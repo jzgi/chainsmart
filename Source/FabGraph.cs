@@ -14,6 +14,6 @@ public class FabGraph : TwinGraph<Fab>
     public override Map<int, Fab> LoadMap(DbContext dc, int setkey)
     {
         dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
-        return dc.Query<int, Fab>();
+        return dc.Query<int, Fab>(p => p.Set(setkey));
     }
 }

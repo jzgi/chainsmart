@@ -29,7 +29,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户降价", m.off, money: true)._LI();
-            h.LI_().FIELD("起订件数", m.minx)._LI();
+            h.LI_().FIELD("起订件数", m.maxx)._LI();
             h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("未用量", m.avail, m.AvailX, "（")._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
@@ -112,7 +112,7 @@ public class PublyItemVarWork : ItemVarWork
         {
             if (o.lotid > 0)
             {
-                var fab = lot?.fabid > 0 ? GetTwin<Fab>(lot.fabid) : null;
+                var fab = lot?.fabid > 0 ? GrabTwin<Fab>(lot.fabid) : null;
 
                 LotVarWork.LotShow(h, lot, org, fab, false);
             }
@@ -167,13 +167,16 @@ public class RtllyItemVarWork : ItemVarWork
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("商品信息");
+                h.FORM_().FIELDSUL_("基本信息");
 
-                h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 9999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
+
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -181,7 +184,6 @@ public class RtllyItemVarWork : ItemVarWork
         else // POST
         {
             const short msk = MSK_EDIT;
-            // populate 
             var m = await wc.ReadObjectAsync(msk, new Item
             {
                 adapted = DateTime.Now,
@@ -234,8 +236,8 @@ public class RtllyItemVarWork : ItemVarWork
             {
                 h.FORM_().FIELDSUL_("库存操作");
                 h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
+                h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
-                h.LI_().TEXT("摘要", nameof(tip), tip, max: 20, datalst: StockOp.Tips)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
         }
@@ -250,16 +252,9 @@ public class RtllyItemVarWork : ItemVarWork
             using var dc = NewDbContext();
 
             var now = DateTime.Now;
-            if (optyp == StockOp.TYP_ADD)
-            {
-                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + @3, stock = stock + @3 WHERE id = @5 AND orgid = @6");
-                await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
-            }
-            else // TYP_SUBSTRACT
-            {
-                dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail - @3), @4)::StockOp, avail = avail - @3, stock = stock - @3 WHERE id = @5 AND orgid = @6");
-                await dc.ExecuteAsync(p => p.Set(now).Set(tip).Set(qty).Set(prin.name).Set(itemid).Set(org.id));
-            }
+            var op = (optyp == StockOp.TYP_ADD) ? "+" : "-";
+            dc.Sql("@UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail ").T(op).T(" @2), @3, @4)::StockOp, avail = avail ").T(op).T(" @2, stock = stock ").T(op).T(" @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(now).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }

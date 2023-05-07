@@ -170,13 +170,12 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             off = 0,
             unitx = 1,
             flashx = 0,
-            minx = 1,
             maxx = 1,
         };
 
         if (wc.IsGet)
         {
-            var fabs = await GrabSetAsync<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinSet<Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -187,14 +186,13 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1)._LI();
 
-                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
-                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
 
@@ -239,13 +237,12 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             off = 0,
             unitx = 1,
             flashx = 0,
-            minx = 1,
             maxx = 1,
         };
 
         if (wc.IsGet)
         {
-            var fabs = await GrabSetAsync<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinSet<Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -257,14 +254,13 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1)._LI();
 
-                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
-                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
 

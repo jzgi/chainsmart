@@ -16,7 +16,7 @@ public abstract class OrgVarWork : WebWork
         var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
         var regs = Grab<short, Reg>();
 
-        var m = GetTwin<Org>(id);
+        var m = GrabTwin<Org>(id);
 
         wc.GivePane(200, h =>
         {
@@ -110,7 +110,7 @@ public class OrglySetgWork : OrgVarWork
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GetTwin<Org>(org.id);
+        var m = GrabTwin<Org>(org.id);
 
         if (wc.IsGet)
         {
@@ -171,9 +171,9 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-        var topOrgs = GetTwinSet<Org>(0);
+        var topOrgs = GrabTwinSet<Org>(0);
 
-        var m = GetTwin<Org>(id);
+        var m = GrabTwin<Org>(id);
 
         if (wc.IsGet)
         {
@@ -240,7 +240,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                         h.LI_().FIELD("用户名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabRow<int, Org>(o.supid);
+                            var org = GrabValue<int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else
@@ -341,7 +341,7 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var regs = Grab<short, Reg>();
 
-        var m = GetTwin<Org>(id);
+        var m = GrabTwin<Org>(id);
 
         if (wc.IsGet)
         {
@@ -460,7 +460,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var regs = Grab<short, Reg>();
         var prin = (User)wc.Principal;
 
-        var o = GetTwin<Org>(id);
+        var o = GrabTwin<Org>(id);
 
         if (wc.IsGet)
         {

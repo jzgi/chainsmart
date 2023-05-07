@@ -1,6 +1,6 @@
 create sequence tests_id_seq;
 
-alter sequence tests_id_seq owner to postgres;
+alter sequence evals_id_seq owner to postgres;
 
 create type stockop as
 (
@@ -187,7 +187,7 @@ create table evals
 alter table evals
     owner to postgres;
 
-alter sequence tests_id_seq owned by evals.id;
+alter sequence evals_id_seq owned by evals.id;
 
 create table _accts
 (
@@ -731,7 +731,7 @@ SELECT o.typ,
        o.unitx,
        o.price,
        o.off,
-       o.minx,
+       o.maxx,
        o.stock,
        o.avail,
        o.ops,

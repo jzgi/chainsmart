@@ -21,13 +21,16 @@ public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
 
 public class PublyItemWork : ItemWork<PublyItemVarWork>
 {
+    /// <summary>
+    /// The home for a retail shop.
+    /// </summary>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GetTwin<Org>(orgid);
+        var org = GrabTwin<Org>(orgid);
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flashx > 0 THEN 0 ELSE 1 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -76,16 +79,18 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
                 // ran mark
-                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents");
-                h.ICON("question", css: "uk-icon-link");
-                h._A();
+                if (o.IsFlashing)
+                {
+                    h.SPAN_().T("秒杀 ").T(o.flashx).T(" 件")._SPAN();
+                }
+                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents").ICON("question", css: "uk-icon-link")._A();
                 h._SPAN();
                 h._HEADER();
 
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.minx},{o.AvailX});\">"); // pricing portion
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.maxx},{o.AvailX},{o.IsFlashing});\">"); // pricing portion
                 h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                 h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: true)._SELECT();
                 h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
@@ -127,7 +132,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task buy(WebContext wc)
     {
         int orgid = wc[-1];
-        var org = GetTwin<Org>(orgid);
+        var org = GrabTwin<Org>(orgid);
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();
@@ -156,12 +161,12 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND id ")._IN_(lst);
             var map = await dc.QueryAsync<int, Item>(p => p.Set(orgid).SetForIn(lst));
 
-            foreach (var ln in lst)
+            foreach (var bi in lst)
             {
-                var item = map[ln.itemid];
+                var item = map[bi.itemid];
                 if (item != null)
                 {
-                    ln.Init(item, vip: prin.vip?.Contains(orgid) ?? false);
+                    bi.Init(item, vip: prin.IsVipFor(orgid) || item.IsFlashing);
                 }
             }
 
@@ -184,7 +189,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             // // call WeChatPay to prepare order there
             string trade_no = Buy.GetOutTradeNo(buyid, topay);
-            var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sup: false,
+            var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(sup: false,
                 trade_no,
                 topay,
                 prin.im, // the payer
@@ -327,19 +332,22 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             created = DateTime.Now,
             creator = prin.name,
             unitx = 1,
-            minx = 1
+            maxx = 1
         };
         if (wc.IsGet)
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_();
+                h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
+
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -372,24 +380,27 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             created = DateTime.Now,
             creator = prin.name,
             unitx = 1,
-            minx = 1
+            maxx = 1
         };
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE orgid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
+            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
             await dc.QueryAsync(p => p.Set(org.id));
             var lots = dc.ToIntMap();
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_();
+                h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.00M, max: 99999.99M).NUMBER("大客户降价", nameof(o.off), o.off, min: 0.00M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
+
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();
             });
@@ -399,7 +410,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
             var m = await wc.ReadObjectAsync(msk, o);
-            var lot = GrabRow<int, Lot>(m.lotid);
+            var lot = GrabValue<int, Lot>(m.lotid);
             m.typ = lot.typ;
             m.name = lot.name;
             m.tip = lot.tip;

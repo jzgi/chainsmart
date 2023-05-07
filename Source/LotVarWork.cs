@@ -212,10 +212,11 @@ public class LotVarWork : WebWork
             if (o.targs == null) h.FIELD("限域投放", "不限");
             else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
             h._LI();
-            h.LI_().FIELD("单位", o.unit).FIELD2("每件含", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("单价", o.price, true).FIELD("降价", o.off, true)._LI();
-            h.LI_().FIELD4("批次总量", o.cap, "（", o.CapX, "）").FIELD("起订件数", o.minx)._LI();
-            h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("未用量", o.avail, "（", o.AvailX, "）")._LI();
+            h.LI_().FIELD("单位", o.unit).FIELD2("每件含l量", o.unitx, o.unit)._LI();
+            h.LI_().FIELD4("批次总量", o.cap, "（", o.CapX, "）")._LI();
+            h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
+            h.LI_().FIELD("限订件数", o.maxx).FIELD("秒杀件数", o.flashx)._LI();
+            h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("可用量", o.avail, "（", o.AvailX, "）")._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
             h.LI_().FIELD2("创编", o.created, o.creator)._LI();
@@ -291,11 +292,11 @@ public class PublyLotVarWork : LotVarWork
             return;
         }
 
-        var org = GetTwin<Org>(o.orgid);
+        var org = GrabTwin<Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GetTwin<Fab>(o.fabid);
+            fab = GrabTwin<Fab>(o.fabid);
         }
 
         wc.GivePage(200, h =>
@@ -355,7 +356,7 @@ public class SuplyLotVarWork : LotVarWork
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
             await dc.QueryAsync("SELECT id, name FROM fabs_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-            var fabs = GetTwinSet<Fab>(o.orgid);
+            var fabs = GrabTwinSet<Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -370,15 +371,13 @@ public class SuplyLotVarWork : LotVarWork
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1)._LI();
 
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h._FIELDSUL().FIELDSUL_("大客户和秒杀优惠");
-
-                h.LI_().NUMBER("单价优惠额", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
-                h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
+                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -453,7 +452,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fab = o.fabid == 0 ? null : (await GrabSetAsync<int, int, Fab>(o.orgid))[o.fabid];
+            var fab = o.fabid == 0 ? null : GrabTwin<Fab>(o.fabid);
 
             if (cmd == 1)
             {
@@ -570,7 +569,7 @@ public class SuplyLotVarWork : LotVarWork
             {
                 h.FORM_().FIELDSUL_("库存操作");
                 h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
-                h.LI_().TEXT("摘要", nameof(tip), tip, datalst: StockOp.Tips)._LI();
+                h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
@@ -648,11 +647,11 @@ public class RtllyPurLotVarWork : LotVarWork
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-        var org = GetTwin<Org>(o.orgid);
+        var org = GrabTwin<Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GetTwin<Fab>(o.fabid);
+            fab = GrabTwin<Fab>(o.fabid);
         }
 
         wc.GivePane(200, h =>
@@ -662,7 +661,7 @@ public class RtllyPurLotVarWork : LotVarWork
             // bottom bar
             //
             decimal realprice = o.RealPrice;
-            int qtyx = o.minx < o.MaxXForSinglePur ? o.minx : 0;
+            int qtyx = 1;
             short unitx = o.unitx;
             int qty = qtyx * unitx;
             decimal topay = qty * o.RealPrice;
@@ -673,7 +672,7 @@ public class RtllyPurLotVarWork : LotVarWork
             h.HIDDEN(nameof(realprice), realprice);
 
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-            for (int i = o.minx; i <= o.MaxXForSinglePur; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+            for (int i = 1; i <= o.maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
             {
                 h.OPTION_(i).T(i)._OPTION();
             }

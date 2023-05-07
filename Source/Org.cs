@@ -202,6 +202,10 @@ public class Org : Entity, IKeyable<int>, ITwin
 
     public string Name => name;
 
+    private string title;
+
+    public string Title => title ??= IsMarket ? name : '【' + addr + '】' + name;
+
     public string Ext => ext;
 
     public int TwinSetKey => prtid;

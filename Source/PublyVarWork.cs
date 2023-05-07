@@ -5,9 +5,6 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-/// 
-/// The home for a market
-///
 [UserAuthenticate]
 public class PublyVarWork : WebWork
 {
@@ -16,22 +13,25 @@ public class PublyVarWork : WebWork
         CreateVarWork<PublyItemWork>(); // home for one shop
     }
 
+    /// <summary>
+    /// The public home for a market.
+    /// </summary>
     public void @default(WebContext wc, int sector)
     {
         int orgid = wc[0];
         var regs = Grab<short, Reg>();
 
-        var org = GetTwin<Org>(orgid);
+        var org = GrabTwin<Org>(orgid);
 
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            arr = GetTwinArray<Org>(orgid, x => x.regid == 0 && org.status == 4);
+            arr = GrabTwinArray<Org>(orgid, x => x.regid == 0 && x.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else
         {
-            arr = GetTwinArray<Org>(orgid, x => x.regid == sector && org.status == 4);
+            arr = GrabTwinArray<Org>(orgid, x => x.regid == sector && x.status == 4);
         }
 
         wc.GivePage(200, h =>
@@ -52,7 +52,7 @@ public class PublyVarWork : WebWork
                 }
                 else
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Name, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, css: "uk-card-body uk-flex");
                 }
 
                 if (o.icon)
