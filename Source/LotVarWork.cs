@@ -568,7 +568,7 @@ public class SuplyLotVarWork : LotVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("库存操作");
-                h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
@@ -581,15 +581,15 @@ public class SuplyLotVarWork : LotVarWork
             tip = f[nameof(tip)];
             qty = f[nameof(qty)];
 
-            // update
-            if (optyp == 2)
+            // update db
+            if (optyp == StockOp.TYP_SUBSTRACT)
             {
                 qty = -qty;
             }
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[20] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, @3, (avail + @3), @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @3 ELSE 0 END), stock = stock + @3 WHERE id = @5 AND orgid = @6");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(tip).Set(qty).Set(prin.name).Set(id).Set(org.id));
+            dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @2 ELSE 0 END), stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(tip).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }

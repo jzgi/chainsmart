@@ -28,7 +28,7 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
             h.TR_();
             if (orgname)
             {
-                var org = GrabValue<int, Org>(o.orgid);
+                var org = GrabTwin<Org>(o.orgid);
                 h.TD(org.name);
             }
 
@@ -48,7 +48,6 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
         h._TABLE();
     }
 }
-
 
 [AdmlyAuthorize(User.ROL_FIN)]
 [Ui("市场端结款", "财务")]

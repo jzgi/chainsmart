@@ -240,7 +240,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                         h.LI_().FIELD("用户名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabValue<int, Org>(o.supid);
+                            var org = GrabTwin<Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else

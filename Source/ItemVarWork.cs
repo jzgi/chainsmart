@@ -27,10 +27,10 @@ public class ItemVarWork : WebWork
 
             h.LI_().FIELD("商品名", m.name)._LI();
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-            h.LI_().FIELD("单位", m.unit).FIELD2("每件含", m.unitx, m.unit)._LI();
-            h.LI_().FIELD("单价", m.price, money: true).FIELD("大客户降价", m.off, money: true)._LI();
-            h.LI_().FIELD("起订件数", m.maxx)._LI();
-            h.LI_().FIELD2("库存量", m.stock, m.StockX).FIELD2("未用量", m.avail, m.AvailX, "（")._LI();
+            h.LI_().FIELD("单位", m.unit).FIELD2("每件含量", m.unitx, m.unit)._LI();
+            h.LI_().FIELD("单价", m.price, money: true).FIELD("直降", m.off, money: true)._LI();
+            h.LI_().FIELD("限订件数", m.maxx).FIELD("秒杀件数", m.flashx)._LI();
+            h.LI_().FIELD2("库存量", m.stock, m.StockX, "（").FIELD2("可用量", m.avail, m.AvailX, "（")._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -218,6 +218,13 @@ public class RtllyItemVarWork : ItemVarWork
         await doimg(wc, nameof(pic), false, 6);
     }
 
+    // [OrglyAuthorize(0, User.ROL_OPN)]
+    // [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 2, status: 3)]
+    // public async Task m(WebContext wc, int sub)
+    // {
+    //     await doimg(wc, nameof(m) + sub, false, 3);
+    // }
+
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]
     public async Task stock(WebContext wc)
@@ -227,7 +234,7 @@ public class RtllyItemVarWork : ItemVarWork
         var prin = (User)wc.Principal;
 
         short optyp = 0;
-        short qty = 0;
+        int qty = 0;
         string tip = null;
 
         if (wc.IsGet)
@@ -235,9 +242,9 @@ public class RtllyItemVarWork : ItemVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("库存操作");
-                h.LI_().SELECT("操作类型", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
-                h.LI_().NUMBER("数量", nameof(qty), qty, money: false)._LI();
+                h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
         }
@@ -248,13 +255,15 @@ public class RtllyItemVarWork : ItemVarWork
             qty = f[nameof(qty)];
             tip = f[nameof(tip)];
 
-            // update
-            using var dc = NewDbContext();
+            if (optyp == StockOp.TYP_SUBSTRACT)
+            {
+                qty = -qty;
+            }
 
-            var now = DateTime.Now;
-            var op = (optyp == StockOp.TYP_ADD) ? "+" : "-";
-            dc.Sql("@UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail ").T(op).T(" @2), @3, @4)::StockOp, avail = avail ").T(op).T(" @2, stock = stock ").T(op).T(" @2 WHERE id = @5 AND orgid = @6");
-            await dc.ExecuteAsync(p => p.Set(now).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + @2, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }

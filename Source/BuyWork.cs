@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
@@ -15,15 +16,14 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-
 [Ui("我的消费", "账号功能")]
 public class MyBuyWork : BuyWork<MyBuyVarWork>
 {
-    static void MainGrid(HtmlBuilder h, Buy[] arr)
+    static void MainGrid(HtmlBuilder h, IList<Buy> lst)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
-            var rtl = GrabValue<int, Org>(o.rtlid);
+            var rtl = GrabTwin<Org>(o.rtlid);
 
             h.HEADER_("uk-card-header").ATEL(rtl.tel).SP().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
 
@@ -82,13 +82,12 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
     }
 }
 
-
 [Ui("网售订单", "商户")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
-    static void MainGrid(HtmlBuilder h, Buy[] arr)
+    static void MainGrid(HtmlBuilder h, IList<Buy> lst)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 

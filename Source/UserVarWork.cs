@@ -59,7 +59,7 @@ public class MyAccessVarWork : WebWork
                         h.BR();
                     }
 
-                    var org = GrabValue<int, Org>(vip[i]);
+                    var org = GrabTwin<Org>(vip[i]);
                     if (org != null)
                     {
                         h.T(org.name);
@@ -81,7 +81,7 @@ public class MyAccessVarWork : WebWork
 
             if (prin.suply > 0 && prin.supid > 0)
             {
-                var org = GrabValue<int, Org>(prin.supid);
+                var org = GrabTwin<Org>(prin.supid);
 
                 h.LI_().FIELD(User.Orgly[prin.suply], org.name)._LI();
 
