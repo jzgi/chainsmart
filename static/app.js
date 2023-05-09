@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashing) {
+function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashx) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -48,7 +48,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashing) {
 
     // fill fprice
     var out_fprice = trig.querySelector('.fprice');
-    if (vip || flashing) {
+    if (vip || flashx > 0) {
         out_fprice.value = (price - off).toFixed(2);
         out_fprice.classList.add('vip');
     }
@@ -62,10 +62,6 @@ function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashing) {
         maxx = availx;
     }
     var sel_qtyselect = trig.querySelector('.qtyselect');
-
-    var opt = document.createElement("option");
-    opt.text = '0 件';
-    sel_qtyselect.add(opt);
 
     for (var i = 1; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
         var opt = document.createElement("option");
@@ -918,7 +914,7 @@ function cropUpd(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.95
+            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.9
         }
     ).then(function (blob) {
 

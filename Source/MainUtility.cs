@@ -121,9 +121,15 @@ public static class MainUtility
         return h;
     }
 
-    public static HtmlBuilder A_ICON(this HtmlBuilder h, string url, string icon)
+    public static HtmlBuilder AICON(this HtmlBuilder h, string url, string icon, string css = null)
     {
-        h.T("<a class=\"uk-icon-button uk-light\" href=\"").T(url).T("\" uk-icon=\"icon: \"").T(icon).T("\"></a>");
+        h.T("<a class=\"uk-icon-link uk-circle");
+        if (css != null)
+        {
+            h.T(' ');
+            h.T(css);
+        }
+        h.T("\" target=\"_top\" href=\"").T(url).T("\" uk-icon=\"icon: ").T(icon).T("\"></a>");
         return h;
     }
 

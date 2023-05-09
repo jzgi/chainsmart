@@ -127,7 +127,7 @@ public class RtllyBuyVarWork : BuyVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND rtlid = @4 AND status BETWEEN 1 AND 2 RETURNING uim, topay, refund");
+            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND rtlid = @4 AND status BETWEEN 1 AND 4 RETURNING uim, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);

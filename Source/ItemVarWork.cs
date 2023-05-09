@@ -97,21 +97,12 @@ public class PublyItemVarWork : ItemVarWork
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
-        Lot lot = null;
-        Org org = null;
-        if (o.lotid > 0)
-        {
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-            lot = await dc.QueryTopAsync<Lot>(p => p.Set(o.lotid));
-
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1");
-            org = await dc.QueryTopAsync<Org>(p => p.Set(o.orgid));
-        }
-
         wc.GivePane(200, h =>
         {
             if (o.lotid > 0)
             {
+                var lot = GrabValue<int, Lot>(o.lotid);
+                var org = GrabTwin<Org>(o.orgid);
                 var fab = lot?.fabid > 0 ? GrabTwin<Fab>(lot.fabid) : null;
 
                 LotVarWork.LotShow(h, lot, org, fab, false);

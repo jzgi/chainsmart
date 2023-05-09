@@ -25,6 +25,9 @@ public class MainApp : Application
         // start the concluder thead
         // cycler.Start();
 
+        //
+        // db and caches and graphs
+
         MapComposite<BuyItem>();
         MapComposite<StockOp>();
 
@@ -32,28 +35,19 @@ public class MainApp : Application
 
         MakeGraphs();
 
+        //
+        // create web services
+
         const string STATIC_ROOT = "static";
 
         WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
-
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
-
-        // CreateService<FedService>("fed", STATIC_ROOT);
 
         NoticeBot.Start();
 
         await StartAsync();
     }
 
-
-    public static void MakeGraphs()
-    {
-        MakeGraph<OrgGraph>("org");
-
-        MakeGraph<FabGraph>("fab");
-
-        MakeGraph<VanGraph>("van");
-    }
 
     public static void MakeCaches()
     {
@@ -72,13 +66,22 @@ public class MainApp : Application
         );
 
 
-        // indivisual lots (n < 2000)
+        // for informative use, not for transactional use
         MakeCache<int, Lot>((dc, id) =>
             {
                 dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
                 return dc.QueryTop<Lot>(p => p.Set(id));
             }, 60 * 30
         );
+    }
+
+    public static void MakeGraphs()
+    {
+        MakeGraph<OrgGraph>("org");
+
+        MakeGraph<FabGraph>("fab");
+
+        MakeGraph<VanGraph>("van");
     }
 
     static async void Cycle(object state)

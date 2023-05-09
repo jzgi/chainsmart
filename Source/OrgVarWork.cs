@@ -42,7 +42,7 @@ public abstract class OrgVarWork : WebWork
             h._UL();
 
             h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
-        }, false, 900);
+        }, false, 6);
     }
 
 

@@ -42,7 +42,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>

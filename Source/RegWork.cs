@@ -50,7 +50,7 @@ public class AdmlyRegWork : RegWork
             h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
 
             MainGrid(h, arr);
-        }, false, 15);
+        }, false, 12);
     }
 
     [Ui("地市", group: 2), Tool(Anchor)]

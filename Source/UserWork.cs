@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -14,9 +15,9 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainGrid(HtmlBuilder h, User[] arr, bool? rtl)
+    protected static void MainGrid(HtmlBuilder h, IList<User> lst, bool? rtl)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
@@ -123,12 +124,11 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     }
 }
 
-
 [AdmlyAuthorize(User.ROL_OPN)]
 [Ui("用户管理", "业务")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
-    [Ui("用户", group: 1), Tool(Anchor)]
+    [Ui("用户管理", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -141,7 +141,31 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
         });
     }
 
-    [Ui(tip: "查询用户", icon: "search", group: 2), Tool(AnchorPrompt)]
+    [Ui(tip: "浏览用户", icon: "list", group: 2), Tool(Anchor)]
+    public async Task browse(WebContext wc, int page)
+    {
+        using var dc = NewDbContext();
+        
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw OFFSET @1 * 20 LIMIT 20");
+        var arr = await dc.QueryAsync<User>(p => p.Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("尚无用户");
+                return;
+            }
+
+            MainGrid(h, arr, false);
+            
+            h.PAGINATION(arr.Length == 20);
+        }, false, 6);
+    }
+
+    [Ui(tip: "查询用户", icon: "search", group: 4), Tool(AnchorPrompt)]
     public async Task search(WebContext wc)
     {
         bool inner = wc.Query[nameof(inner)];
@@ -295,7 +319,6 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
         }
     }
 }
-
 
 [Ui("大客户", "商户")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>

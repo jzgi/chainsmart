@@ -90,9 +90,9 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.maxx},{o.AvailX},{o.IsFlashing});\">"); // pricing portion
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.maxx},{o.AvailX},{o.flashx});\">"); // pricing portion
                 h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", required: true)._SELECT();
+                h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", empty: "0 件")._SELECT();
                 h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
                 h._FOOTER();
 
@@ -100,6 +100,9 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
                 h._SECTION();
             });
+
+            h.FOOTER_("uk-flex-center uk-background-muted").T("<a href=\"../\" target=\"_top\">逛市场").ICON("chevron-right")._A()._FOOTER();
+
 
             var topay = 0.00M;
 
@@ -182,7 +185,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             // NOTE single unsubmitted record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (orgid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
+            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (rtlid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
             await dc.QueryTopAsync(p => m.Write(p, msk));
             dc.Let(out int buyid);
             dc.Let(out decimal topay);

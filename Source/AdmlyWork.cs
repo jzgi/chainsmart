@@ -53,7 +53,7 @@ public class AdmlyWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(Name);
+            h.H2(Application.Name);
             h.P2(prin.name, User.Orgly[wc.Role], brace: true);
             h._HEADER();
 
