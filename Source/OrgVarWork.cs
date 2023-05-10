@@ -74,6 +74,29 @@ public abstract class OrgVarWork : WebWork
             dc.Sql("UPDATE orgs SET ").T(col).T(" = @1 WHERE id = @2");
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
+                var m = GrabTwin<int, int, Org>(id);
+                switch (col)
+                {
+                    case nameof(Org.icon):
+                        m.icon = true;
+                        break;
+                    case nameof(Org.pic):
+                        m.pic = true;
+                        break;
+                    case nameof(Org.m1):
+                        m.m1 = true;
+                        break;
+                    case nameof(Org.m2):
+                        m.m2 = true;
+                        break;
+                    case nameof(Org.m3):
+                        m.m3 = true;
+                        break;
+                    case nameof(Org.m4):
+                        m.m4 = true;
+                        break;
+                }
+
                 wc.Give(200); // ok
             }
             else
@@ -298,6 +321,15 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
 
+        var m = GrabTwin<int, int, Org>(id);
+
+        var now = DateTime.Now;
+        lock (m)
+        {
+            m.status = 4;
+            m.oked = now;
+            m.oker = prin.name;
+        }
         using var dc = NewDbContext();
         dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
@@ -311,8 +343,16 @@ public class AdmlyOrgVarWork : OrgVarWork
     {
         int id = wc[0];
 
+        var m = GrabTwin<int, int, Org>(id);
+
+        lock (m)
+        {
+            m.status = 1;
+            m.oked = default;
+            m.oker = null;
+        }
         using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 1 WHERE id = @1");
+        dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
         await dc.ExecuteAsync(p => p.Set(id));
 
         wc.GivePane(200);
@@ -323,6 +363,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
+
 
         using var dc = NewDbContext();
         dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);

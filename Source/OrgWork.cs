@@ -311,6 +311,10 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(msk, instance: o);
 
+            using var dc = NewDbContext();
+            dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
+            await dc.ExecuteAsync(p => o.Write(p, msk));
+            
             AddTwin<int, int, Org>(o);
 
             wc.GivePane(201); // created
