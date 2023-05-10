@@ -93,7 +93,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
                         h.LI_().FIELD("用户姓名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabTwin<Org>(o.supid);
+                            var org = GrabTwin<int, int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else
@@ -145,7 +145,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     public async Task browse(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        
+
         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw OFFSET @1 * 20 LIMIT 20");
         var arr = await dc.QueryAsync<User>(p => p.Set(page));
 
@@ -160,7 +160,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
             }
 
             MainGrid(h, arr, false);
-            
+
             h.PAGINATION(arr.Length == 20);
         }, false, 6);
     }
@@ -271,7 +271,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                         var yes = true;
                         if (o.supid > 0)
                         {
-                            var exOrg = GrabTwin<Org>(rtl ? o.rtlid : o.supid);
+                            var exOrg = GrabTwin<int, int, Org>(rtl ? o.rtlid : o.supid);
                             if (exOrg != null)
                             {
                                 h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[rtl ? o.rtlly : o.suply])._LI();

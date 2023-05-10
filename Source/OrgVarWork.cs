@@ -16,7 +16,7 @@ public abstract class OrgVarWork : WebWork
         var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
         var regs = Grab<short, Reg>();
 
-        var m = GrabTwin<Org>(id);
+        var m = GrabTwin<int, int, Org>(id);
 
         wc.GivePane(200, h =>
         {
@@ -110,7 +110,7 @@ public class OrglySetgWork : OrgVarWork
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<Org>(org.id);
+        var m = GrabTwin<int, int, Org>(org.id);
 
         if (wc.IsGet)
         {
@@ -171,9 +171,9 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-        var topOrgs = GrabTwinSet<Org>(0);
+        var topOrgs = GrabTwinSet<int, int, Org>(0);
 
-        var m = GrabTwin<Org>(id);
+        var m = GrabTwin<int, int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -240,7 +240,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                         h.LI_().FIELD("用户名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabTwin<Org>(o.supid);
+                            var org = GrabTwin<int, int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else
@@ -341,7 +341,7 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var regs = Grab<short, Reg>();
 
-        var m = GrabTwin<Org>(id);
+        var m = GrabTwin<int, int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -441,10 +441,11 @@ public class MktlyOrgVarWork : OrgVarWork
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
+        var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 0 WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
-        await dc.ExecuteAsync(p => p.Set(id));
+        dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
+        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);
     }
@@ -460,7 +461,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var regs = Grab<short, Reg>();
         var prin = (User)wc.Principal;
 
-        var o = GrabTwin<Org>(id);
+        var o = GrabTwin<int, int, Org>(id);
 
         if (wc.IsGet)
         {

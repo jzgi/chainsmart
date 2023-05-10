@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// A traceable fabrication that produces lots of products. 
 /// </summary>
-public class Fab : Entity, IKeyable<int>, ITwin
+public class Fab : Entity, ITwin<int, int>
 {
     public static readonly Fab Empty = new();
 
@@ -117,7 +117,7 @@ public class Fab : Entity, IKeyable<int>, ITwin
 
     public int Key => id;
 
-    public int TwinSetKey => orgid;
+    public int GroupKey => orgid;
 
     public override string ToString() => name;
 }

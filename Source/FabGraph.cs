@@ -3,7 +3,7 @@ using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-public class FabGraph : TwinGraph<Fab>
+public class FabGraph : TwinGraph<int, int, Fab>
 {
     public override Fab Load(DbContext dc, int key)
     {
@@ -11,9 +11,14 @@ public class FabGraph : TwinGraph<Fab>
         return dc.QueryTop<Fab>(p => p.Set(key));
     }
 
-    public override Map<int, Fab> LoadMap(DbContext dc, int setkey)
+    public override Map<int, Fab> LoadGroup(DbContext dc, int gkey)
     {
         dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
-        return dc.Query<int, Fab>(p => p.Set(setkey));
+        return dc.Query<int, Fab>(p => p.Set(gkey));
+    }
+
+    public override bool Save(DbContext dc, Fab v)
+    {
+        throw new System.NotImplementedException();
     }
 }

@@ -54,8 +54,8 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<Org>(0, filter: x => x.IsMarket, comp: (x, y) => x.regid - y.regid);
-        var arr = array.segment(20 * page, 20);
+        var array = GrabTwinArray<int, int, Org>(0, cond: x => x.IsMarket, comp: (x, y) => x.regid - y.regid);
+        var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -75,7 +75,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var arr = GrabTwinArray<Org>(0, filter: x => x.IsCenter, comp: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<int, int, Org>(0, cond: x => x.IsCenter, comp: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -175,8 +175,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<Org>(org.id, comp: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.segment(20 * page, 20);
+        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.IsRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -191,11 +191,11 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             MainGrid(h, arr, prin);
 
             h.PAGINATION(arr.Count == 20);
-        }, false, 15);
+        }, false, 6);
     }
 
-    [Ui(tip: "查询", icon: "search", group: 2), Tool(AnchorPrompt)]
-    public async Task search(WebContext wc)
+    [Ui(tip: "分区", icon: "list", group: 2), Tool(AnchorPrompt)]
+    public void search(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var regs = Grab<short, Reg>();
@@ -215,7 +215,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinArray<Org>(org.id, filter: x => x.regid == regid);
+            var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.regid == regid && x.IsRetail);
 
             wc.GivePage(200, h =>
             {
@@ -223,12 +223,12 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                 if (arr == null)
                 {
-                    h.ALERT("尚无该组成员");
+                    h.ALERT("该分区尚无成员");
                     return;
                 }
 
                 MainGrid(h, arr, prin);
-            }, false, 15);
+            }, false, 6);
         }
     }
 
@@ -237,7 +237,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<Org>(org.id, filter: x => x.IsBrand);
+
+        var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.IsBrand);
 
         wc.GivePage(200, h =>
         {
@@ -250,7 +251,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             }
 
             MainGrid(h, arr, prin);
-        }, false, 15);
+        }, false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
@@ -287,7 +288,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
                     h.LI_().TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
                     h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
                 });
             }
             else // TYP_VTL
@@ -301,7 +302,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
                     h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
                 });
             }
         }
@@ -310,9 +311,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(msk, instance: o);
 
-            using var dc = NewDbContext();
-            dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
-            await dc.ExecuteAsync(p => o.Write(p, msk));
+            AddTwin<int, int, Org>(o);
 
             wc.GivePane(201); // created
         }
@@ -352,8 +351,8 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<Org>(org.id, filter: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
-        var arr = array.segment(20 * page, 20);
+        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -374,8 +373,8 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<Org>(org.id, filter: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
-        var arr = array.segment(20 * page, 20);
+        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -396,8 +395,8 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<Org>(org.id, filter: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
-        var arr = array.segment(20 * page, 20);
+        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {

@@ -129,7 +129,7 @@ public static class MainUtility
             h.T(' ');
             h.T(css);
         }
-        h.T("\" target=\"_top\" href=\"").T(url).T("\" uk-icon=\"icon: ").T(icon).T("\"></a>");
+        h.T("\" target=\"_parent\" href=\"").T(url).T("\" uk-icon=\"icon: ").T(icon).T("\"></a>");
         return h;
     }
 

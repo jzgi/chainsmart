@@ -292,11 +292,11 @@ public class PublyLotVarWork : LotVarWork
             return;
         }
 
-        var org = GrabTwin<Org>(o.orgid);
+        var org = GrabTwin<int, int, Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GrabTwin<Fab>(o.fabid);
+            fab = GrabTwin<int, int, Fab>(o.fabid);
         }
 
         wc.GivePage(200, h =>
@@ -355,8 +355,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            await dc.QueryAsync("SELECT id, name FROM fabs_vw WHERE orgid = @1 AND status = 4", p => p.Set(org.id));
-            var fabs = GrabTwinSet<Fab>(o.orgid);
+            var fabs = GrabTwinSet<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -452,7 +451,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fab = o.fabid == 0 ? null : GrabTwin<Fab>(o.fabid);
+            var fab = o.fabid == 0 ? null : GrabTwin<int, int, Fab>(o.fabid);
 
             if (cmd == 1)
             {
@@ -647,11 +646,11 @@ public class RtllyPurLotVarWork : LotVarWork
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-        var org = GrabTwin<Org>(o.orgid);
+        var org = GrabTwin<int, int, Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GrabTwin<Fab>(o.fabid);
+            fab = GrabTwin<int, int, Fab>(o.fabid);
         }
 
         wc.GivePane(200, h =>

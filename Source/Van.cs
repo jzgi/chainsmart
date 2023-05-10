@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// A transport van data object. 
 /// </summary>
-public class Van : Entity, IKeyable<int>, ITwin
+public class Van : Entity, ITwin<int, int>
 {
     public static readonly Fab Empty = new();
 
@@ -117,7 +117,7 @@ public class Van : Entity, IKeyable<int>, ITwin
 
     public int Key => id;
 
-    public int TwinSetKey => orgid;
+    public int GroupKey => orgid;
 
     public override string ToString() => name;
 }

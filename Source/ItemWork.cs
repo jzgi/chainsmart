@@ -27,7 +27,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GrabTwin<Org>(orgid);
+        var org = GrabTwin<int, int, Org>(orgid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flashx > 0 THEN 0 ELSE 1 END, oked DESC");
@@ -42,7 +42,8 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             else
                 h.PIC_("/void-shop.webp");
 
-            h.ATEL(org.tel, css: "uk-overlay uk-position-center-right");
+            h.AICON("../", "home", css: "uk-overlay uk-position-top-left");
+            h.ATEL(org.tel, css: "uk-overlay uk-position-bottom-right");
             h._PIC();
 
             if (arr == null)
@@ -51,9 +52,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 return;
             }
 
-            decimal fprice = 0;
-
-            h.FORM_(oninput: $"pay.value = {fprice} * parseInt(unitx.value) * parseInt(qty.value);");
+            h.FORM_();
 
             h.MAINGRID(arr, o =>
             {
@@ -101,9 +100,6 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h._SECTION();
             });
 
-            h.FOOTER_("uk-flex-center uk-background-muted").T("<a href=\"../\" target=\"_top\">逛市场").ICON("chevron-right")._A()._FOOTER();
-
-
             var topay = 0.00M;
 
             h.BOTTOMBAR_(large: true);
@@ -129,13 +125,13 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             h._BOTTOMBAR();
 
             h._FORM();
-        }, true, 120, title: org.name, onload: "fixAll();");
+        }, true, 120, title: org.Title, onload: "fixAll();");
     }
 
     public async Task buy(WebContext wc)
     {
         int orgid = wc[-1];
-        var org = GrabTwin<Org>(orgid);
+        var org = GrabTwin<int, int, Org>(orgid);
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();

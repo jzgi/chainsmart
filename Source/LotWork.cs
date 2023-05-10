@@ -175,7 +175,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinSet<Fab>(o.orgid);
+            var fabs = GrabTwinSet<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -242,7 +242,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinSet<Fab>(o.orgid);
+            var fabs = GrabTwinSet<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
