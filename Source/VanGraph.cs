@@ -21,4 +21,9 @@ public class VanGraph : TwinGraph<int, int, Van>
     {
         return false;
     }
+
+    public override bool Remove(DbContext dc, int key)
+    {
+        throw new System.NotImplementedException();
+    }
 }

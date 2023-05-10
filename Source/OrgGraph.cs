@@ -32,4 +32,9 @@ public class OrgGraph : TwinGraph<int, int, Org>
         dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
         return dc.Execute(p => v.Write(p, msk)) == 1;
     }
+
+    public override bool Remove(DbContext dc, int key)
+    {
+        throw new System.NotImplementedException();
+    }
 }

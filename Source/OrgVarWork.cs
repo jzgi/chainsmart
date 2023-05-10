@@ -415,9 +415,17 @@ public class MktlyOrgVarWork : OrgVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
+        var m = GrabTwin<int, int, Org>(id);
+        var now = DateTime.Now;
+        lock (m)
+        {
+            m.status = 4;
+            m.oked = now;
+            m.oker = prin.name;
+        }
         using var dc = NewDbContext();
         dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
     }
@@ -429,6 +437,14 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
+        var m = GrabTwin<int, int, Org>(id);
+
+        lock (m)
+        {
+            m.status = 1;
+            m.oked = default;
+            m.oker = null;
+        }
         using var dc = NewDbContext();
         dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));

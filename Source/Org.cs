@@ -72,85 +72,91 @@ public class Org : Entity, ITwin<int, int>
 
     public override void Read(ISource s, short msk = 0xff)
     {
-        base.Read(s, msk);
-
-        if ((msk & MSK_ID) == MSK_ID)
+        lock (this)
         {
-            s.Get(nameof(id), ref id);
-        }
+            base.Read(s, msk);
 
-        if ((msk & MSK_BORN) == MSK_BORN)
-        {
-            s.Get(nameof(prtid), ref prtid);
-            s.Get(nameof(ctrid), ref ctrid);
-        }
+            if ((msk & MSK_ID) == MSK_ID)
+            {
+                s.Get(nameof(id), ref id);
+            }
 
-        if ((msk & MSK_EDIT) == MSK_EDIT)
-        {
-            s.Get(nameof(ext), ref ext);
-            s.Get(nameof(legal), ref legal);
-            s.Get(nameof(regid), ref regid);
-            s.Get(nameof(addr), ref addr);
-            s.Get(nameof(x), ref x);
-            s.Get(nameof(y), ref y);
-            s.Get(nameof(tel), ref tel);
-            s.Get(nameof(trust), ref trust);
-            s.Get(nameof(link), ref link);
-            s.Get(nameof(specs), ref specs);
-        }
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                s.Get(nameof(prtid), ref prtid);
+                s.Get(nameof(ctrid), ref ctrid);
+            }
 
-        if ((msk & MSK_LATER) == MSK_LATER)
-        {
-            s.Get(nameof(icon), ref icon);
-            s.Get(nameof(pic), ref pic);
-            s.Get(nameof(m1), ref m1);
-            s.Get(nameof(m2), ref m2);
-            s.Get(nameof(m3), ref m3);
-            s.Get(nameof(m4), ref m4);
+            if ((msk & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Get(nameof(ext), ref ext);
+                s.Get(nameof(legal), ref legal);
+                s.Get(nameof(regid), ref regid);
+                s.Get(nameof(addr), ref addr);
+                s.Get(nameof(x), ref x);
+                s.Get(nameof(y), ref y);
+                s.Get(nameof(tel), ref tel);
+                s.Get(nameof(trust), ref trust);
+                s.Get(nameof(link), ref link);
+                s.Get(nameof(specs), ref specs);
+            }
+
+            if ((msk & MSK_LATER) == MSK_LATER)
+            {
+                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(pic), ref pic);
+                s.Get(nameof(m1), ref m1);
+                s.Get(nameof(m2), ref m2);
+                s.Get(nameof(m3), ref m3);
+                s.Get(nameof(m4), ref m4);
+            }
         }
     }
 
     public override void Write(ISink s, short msk = 0xff)
     {
-        base.Write(s, msk);
-
-        if ((msk & MSK_ID) == MSK_ID)
+        lock (this)
         {
-            s.Put(nameof(id), id);
-        }
+            base.Write(s, msk);
 
-        if ((msk & MSK_BORN) == MSK_BORN)
-        {
-            if (prtid > 0) s.Put(nameof(prtid), prtid);
-            else s.PutNull(nameof(prtid));
+            if ((msk & MSK_ID) == MSK_ID)
+            {
+                s.Put(nameof(id), id);
+            }
 
-            if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
-            else s.PutNull(nameof(ctrid));
-        }
+            if ((msk & MSK_BORN) == MSK_BORN)
+            {
+                if (prtid > 0) s.Put(nameof(prtid), prtid);
+                else s.PutNull(nameof(prtid));
 
-        if ((msk & MSK_EDIT) == MSK_EDIT)
-        {
-            s.Put(nameof(ext), ext);
-            s.Put(nameof(legal), legal);
-            if (regid > 0) s.Put(nameof(regid), regid);
-            else s.PutNull(nameof(regid));
-            s.Put(nameof(addr), addr);
-            s.Put(nameof(x), x);
-            s.Put(nameof(y), y);
-            s.Put(nameof(trust), trust);
-            s.Put(nameof(tel), tel);
-            s.Put(nameof(link), link);
-            s.Put(nameof(specs), specs);
-        }
+                if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
+                else s.PutNull(nameof(ctrid));
+            }
 
-        if ((msk & MSK_LATER) == MSK_LATER)
-        {
-            s.Put(nameof(icon), icon);
-            s.Put(nameof(pic), pic);
-            s.Put(nameof(m1), m1);
-            s.Put(nameof(m2), m2);
-            s.Put(nameof(m3), m3);
-            s.Put(nameof(m4), m4);
+            if ((msk & MSK_EDIT) == MSK_EDIT)
+            {
+                s.Put(nameof(ext), ext);
+                s.Put(nameof(legal), legal);
+                if (regid > 0) s.Put(nameof(regid), regid);
+                else s.PutNull(nameof(regid));
+                s.Put(nameof(addr), addr);
+                s.Put(nameof(x), x);
+                s.Put(nameof(y), y);
+                s.Put(nameof(trust), trust);
+                s.Put(nameof(tel), tel);
+                s.Put(nameof(link), link);
+                s.Put(nameof(specs), specs);
+            }
+
+            if ((msk & MSK_LATER) == MSK_LATER)
+            {
+                s.Put(nameof(icon), icon);
+                s.Put(nameof(pic), pic);
+                s.Put(nameof(m1), m1);
+                s.Put(nameof(m2), m2);
+                s.Put(nameof(m3), m3);
+                s.Put(nameof(m4), m4);
+            }
         }
     }
 

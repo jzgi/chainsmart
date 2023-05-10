@@ -21,4 +21,9 @@ public class FabGraph : TwinGraph<int, int, Fab>
     {
         throw new System.NotImplementedException();
     }
+
+    public override bool Remove(DbContext dc, int key)
+    {
+        throw new System.NotImplementedException();
+    }
 }
