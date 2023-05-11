@@ -26,7 +26,7 @@ ALTER TABLE purclrs SET TABLESPACE sup;
 ALTER TABLE puraggs_typ SET TABLESPACE sup;
 
 ALTER INDEX purs_pk SET TABLESPACE sup;
-ALTER INDEX purs_single_idx SET TABLESPACE sup;
+ALTER INDEX purs_uidx SET TABLESPACE sup;
 ALTER INDEX purs_ctridstatus_idx SET TABLESPACE sup;
 ALTER INDEX purs_mktidstatus_idx SET TABLESPACE sup;
 ALTER INDEX purs_rtlidstatus_idx SET TABLESPACE sup;
@@ -42,7 +42,7 @@ ALTER TABLE buyclrs SET TABLESPACE rtl;
 ALTER TABLE buyaggs_typ SET TABLESPACE rtl;
 
 ALTER INDEX buys_pk SET TABLESPACE rtl;
-ALTER INDEX buys_single_idx SET TABLESPACE rtl;
+ALTER INDEX buys_uidx SET TABLESPACE rtl;
 ALTER INDEX buys_mktidstatus_idx SET TABLESPACE rtl;
 ALTER INDEX buys_rtlidstatus_idx SET TABLESPACE rtl;
 ALTER INDEX buys_uidstatus_idx SET TABLESPACE rtl;

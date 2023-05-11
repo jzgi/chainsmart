@@ -23,21 +23,17 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
     {
         h.MAINGRID(lst, o =>
         {
-            var rtl = GrabTwin<int, int, Org>(o.rtlid);
-
-            h.HEADER_("uk-card-header").ATEL(rtl.tel).SP().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
+            h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
 
             h.UL_("uk-card-body uk-list uk-list-divider");
 
-            h.LI_().T(o.uname).SP().T(o.utel).SP().T(o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
+            h.LI_().SPAN2(o.ucom, o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
 
             foreach (var it in o.items)
             {
                 h.LI_();
 
-                h.PIC("/item/", it.itemid, "/icon", css: "uk-width-micro");
-
-                h.SPAN_("uk-width-expand").SP().T(it.name);
+                h.SPAN_("uk-width-expand").T(it.name);
                 if (it.unitx != 1)
                 {
                     h.SP().SMALL_().T(it.unitx).T(it.unit).T("件")._SMALL();
@@ -69,7 +65,7 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(tip: prin.name);
             if (arr == null)
             {
                 h.ALERT("尚无当前消费订单");

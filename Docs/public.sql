@@ -1,14 +1,22 @@
-create sequence tests_id_seq;
+create sequence evals_id_seq;
 
 alter sequence evals_id_seq owner to postgres;
+
+create sequence purs_id_seq;
+
+alter sequence purs_id_seq owner to postgres;
+
+create sequence fabs_id_seq;
+
+alter sequence fabs_id_seq owner to postgres;
 
 create type stockop as
 (
     dt    timestamp(0),
-    tip   varchar(20),
     qty   integer,
     avail integer,
-    by    varchar(12)
+    tip   varchar(10),
+    by    varchar(10)
 );
 
 alter type stockop owner to postgres;
@@ -44,21 +52,6 @@ create table entities
 alter table entities
     owner to postgres;
 
-create table _ledgs
-(
-    seq     integer,
-    acct    varchar(20),
-    name    varchar(12),
-    amt     integer,
-    bal     integer,
-    cs      uuid,
-    blockcs uuid,
-    stamp   timestamp(0)
-);
-
-alter table _ledgs
-    owner to postgres;
-
 create table cats
 (
     id   smallint not null
@@ -87,33 +80,35 @@ alter table regs
 
 create table orgs
 (
-    id    serial
+    id      serial
         constraint orgs_pk
             primary key,
-    prtid integer
+    prtid   integer
         constraint orgs_prtid_fk
             references orgs,
-    ctrid integer
+    ctrid   integer
         constraint orgs_ctrid_fk
             references orgs,
-    ext   varchar(12),
-    legal varchar(20),
-    regid smallint
+    ext     varchar(12),
+    legal   varchar(20),
+    regid   smallint
         constraint orgs_regid_fk
             references regs,
-    addr  varchar(30),
-    x     double precision,
-    y     double precision,
-    tel   varchar(11),
-    trust boolean,
-    link  varchar(30),
-    specs jsonb,
-    icon  bytea,
-    pic   bytea,
-    m1    bytea,
-    m2    bytea,
-    m3    bytea,
-    m4    bytea
+    addr    varchar(30),
+    x       double precision,
+    y       double precision,
+    tel     varchar(11),
+    trust   boolean,
+    link    varchar(30),
+    credit  smallint,
+    reserve integer,
+    specs   jsonb,
+    icon    bytea,
+    pic     bytea,
+    m1      bytea,
+    m2      bytea,
+    m3      bytea,
+    m4      bytea
 )
     inherits (entities);
 
@@ -130,17 +125,15 @@ create table users
     im         varchar(28),
     credential varchar(32),
     admly      smallint default 0 not null,
-    srcid      smallint
-        constraint users_srcid_fk
+    supid      smallint
+        constraint users_supid_fk
             references orgs,
-    srcly      smallint default 0 not null,
-    shpid      integer
-        constraint users_shpid_fk
+    suply      smallint default 0 not null,
+    rtlid      integer
+        constraint users_rtlid_fk
             references orgs,
-    shply      smallint,
-    vip        integer[]
-        constraint users_vip_chk
-            check (array_length(vip, 1) <= 4),
+    rtlly      smallint,
+    vip        integer[],
     refer      integer
         constraint users_refer_fk
             references users,
@@ -161,11 +154,11 @@ create unique index users_im_idx
 create unique index users_tel_idx
     on users (tel);
 
-create index users_shpid_idx
+create index users_rtlid_idx
     on users (rtlid)
     where (rtlid > 0);
 
-create index users_srcid_idx
+create index users_supid_idx
     on users (supid)
     where (supid > 0);
 
@@ -189,38 +182,14 @@ alter table evals
 
 alter sequence evals_id_seq owned by evals.id;
 
-create table _accts
-(
-    no      varchar(18),
-    balance money
-)
-    inherits (entities);
-
-alter table _accts
-    owner to postgres;
-
-create table _asks
-(
-    acct    varchar(20),
-    name    varchar(12),
-    amt     integer,
-    bal     integer,
-    cs      uuid,
-    blockcs uuid,
-    stamp   timestamp(0)
-);
-
-alter table _asks
-    owner to postgres;
-
 create table lots
 (
     id      serial
         constraint lots_pk
             primary key,
-    srcid   integer,
-    srcname varchar(12),
-    assetid integer,
+    orgid   integer,
+    orgname varchar(12),
+    fabid   integer,
     targs   integer[],
     catid   smallint
         constraint lots_catsid_fk
@@ -230,12 +199,14 @@ create table lots
     unitx   smallint,
     price   money,
     "off"   money,
-    minx    smallint,
     cap     integer,
     stock   integer,
     avail   integer,
     nstart  integer,
     nend    integer,
+    minx    smallint,
+    maxx    smallint,
+    flashx  smallint,
     ops     stockop[],
     icon    bytea,
     pic     bytea,
@@ -243,35 +214,35 @@ create table lots
     m2      bytea,
     m3      bytea,
     m4      bytea,
-    constraint lots_typ_chk
-        check ((typ >= 1) AND (typ <= 2) AND (avail >= 0))
+    constraint lots_chk
+        check ((typ >= 1) AND (typ <= 2) AND (avail >= 0) AND (unitx >= 1))
 )
     inherits (entities);
 
 alter table lots
     owner to postgres;
 
-create table books
+create table purs
 (
-    id      bigserial
-        constraint books_pk
+    id      bigint default nextval('books_id_seq'::regclass) not null
+        constraint purs_pk
             primary key,
-    shpid   integer not null
-        constraint books_shpid_fk
+    rtlid   integer                                          not null
+        constraint purs_rtlid_fk
             references orgs,
-    shpname varchar(12),
-    mktid   integer not null
-        constraint books_mktid_fk
+    rtlname varchar(12),
+    mktid   integer                                          not null
+        constraint purs_mktid_fk
             references orgs,
-    ctrid   integer not null
-        constraint books_ctrid_fk
+    ctrid   integer                                          not null
+        constraint purs_ctrid_fk
             references orgs,
-    srcid   integer not null
-        constraint books_srcid_fk
+    supid   integer                                          not null
+        constraint purs_supid_fk
             references orgs,
-    srcname varchar(12),
+    supname varchar(12),
     lotid   integer
-        constraint books_lotid_fk
+        constraint purs_lotid_fk
             references lots,
     unit    varchar(4),
     unitx   smallint,
@@ -285,36 +256,35 @@ create table books
     constraint typ_chk
         check ((typ >= 1) AND (typ <= 2))
 )
-    inherits
+     inherits
 (
     entities
-)tablespace sup ;
+)tablespace sup;
 
 alter table purs
     owner to postgres;
 
-create unique index books_single_idx
+alter sequence purs_id_seq owned by purs.id;
+
+create unique index purs_uidx
     on purs (rtlid, status)
     where (status = '-1'::integer) tablespace sup;
 
-create index books_ctridstatus_idx
+create index purs_ctridstatus_idx
     on purs (ctrid, status)
     tablespace sup;
 
-create index books_shpidstatus_idx
+create index purs_rtlidstatus_idx
     on purs (rtlid, status)
     tablespace sup;
 
-create index books_srcidstatus_idx
+create index purs_supidstatus_idx
     on purs (supid, status)
     tablespace sup;
 
-create index books_mktidstatus_idx
+create index purs_mktidstatus_idx
     on purs (mktid, status)
     tablespace sup;
-
-create index lots_nend_idx
-    on lots (nend);
 
 create index lots_srcidstatus_idx
     on lots (orgid, status);
@@ -322,16 +292,19 @@ create index lots_srcidstatus_idx
 create index lots_catid_idx
     on lots (catid);
 
-create table assets
+create index lots_nend_idx
+    on lots (nend);
+
+create table fabs
 (
-    id     serial
-        constraint assets_pk
+    id     integer default nextval('assets_id_seq'::regclass) not null
+        constraint fabs_pk
             primary key,
     orgid  integer,
     rank   smallint,
-    cap    integer,
-    cern   varchar(12),
-    factor double precision,
+    remark varchar(100),
+    co2ekg money,
+    co2ep  money,
     x      double precision,
     y      double precision,
     specs  jsonb,
@@ -347,7 +320,9 @@ create table assets
 alter table fabs
     owner to postgres;
 
-create index assets_orgidstatus_idx
+alter sequence fabs_id_seq owned by fabs.id;
+
+create index fabs_orgidstatus_idx
     on fabs (orgid, status);
 
 create table buys
@@ -355,8 +330,8 @@ create table buys
     id     bigserial
         constraint buys_pk
             primary key,
-    shpid  integer not null
-        constraint buys_shpid_fk
+    rtlid  integer not null
+        constraint buys_rtlid_fk
             references orgs,
     mktid  integer not null
         constraint buys_mkt_fk
@@ -374,13 +349,13 @@ create table buys
     ret    numeric(6, 1),
     refund money,
     items  buyitem[],
-    constraint typ_chk
+    constraint buys_chk
         check ((typ >= 1) AND (typ <= 3))
 )
-    inherits
+   inherits
 (
     entities
-)tablespace rtl ;
+) tablespace rtl ;
 
 alter table buys
     owner to postgres;
@@ -389,44 +364,45 @@ create index buys_uidstatus_idx
     on buys (uid, status)
     tablespace rtl;
 
-create index buys_shpidstatus_idx
+create index buys_rtlidstatus_idx
     on buys (rtlid, status)
     tablespace rtl;
-
-create unique index buys_single_idx
-    on buys (rtlid, typ, status)
-    where ((typ = 1) AND (status = '-1'::integer)) tablespace rtl;
 
 create index buys_mktidstatus_idx
     on buys (mktid, status)
     tablespace rtl;
 
+create unique index buys_uidx
+    on buys (uid, typ, status)
+    where ((typ = 1) AND (status = '-1'::smallint)) tablespace rtl;
+
 create table items
 (
-    id    serial
+    id     serial
         constraint items_pk
             primary key,
-    shpid integer  not null
-        constraint items_shpid_fk
+    orgid  integer            not null
+        constraint items_rtlid_fk
             references orgs,
-    lotid integer
+    lotid  integer
         constraint items_lotid_fk
             references lots,
-    catid smallint
+    catid  smallint
         constraint items_catid_fk
             references cats,
-    unit  varchar(4),
-    unitx smallint,
-    price money,
-    "off" money,
-    minx  smallint,
-    stock smallint,
-    avail smallint not null
+    unit   varchar(4),
+    unitx  smallint,
+    price  money,
+    "off"  money,
+    maxx   smallint,
+    stock  smallint default 0 not null,
+    avail  smallint default 0 not null
         constraint items_avail_chk
             check (avail >= 0),
-    ops   stockop[],
-    icon  bytea,
-    pic   bytea
+    flashx smallint default 0 not null,
+    ops    stockop[],
+    icon   bytea,
+    pic    bytea
 )
     inherits (entities);
 
@@ -485,7 +461,7 @@ create table gens
 alter table gens
     owner to postgres;
 
-create table bookclrs
+create table purclrs
 (
     orgid integer not null,
     dt    date    not null,
@@ -495,10 +471,10 @@ create table bookclrs
     topay money,
     pay   money
 )
-    inherits
+   inherits
 (
     entities
-)tablespace sup ;
+) tablespace sup ;
 
 alter table purclrs
     owner to postgres;
@@ -525,7 +501,7 @@ create table buyclrs
 alter table buyclrs
     owner to postgres;
 
-create table bookaggs_typ
+create table puraggs_typ
 (
     orgid   integer not null,
     dt      date,
@@ -543,7 +519,7 @@ create table bookaggs_typ
 alter table puraggs_typ
     owner to postgres;
 
-create table bookaggs_lotid
+create table puraggs_lotid
 (
     orgid   integer not null,
     dt      date,
@@ -561,9 +537,32 @@ create table bookaggs_lotid
 alter table puraggs_lotid
     owner to postgres;
 
+create table vans
+(
+    id     serial,
+    orgid  integer,
+    rank   smallint,
+    remark varchar(100),
+    co2ekg money,
+    co2ep  money,
+    x      double precision,
+    y      double precision,
+    specs  jsonb,
+    icon   bytea,
+    pic    bytea,
+    m1     bytea,
+    m2     bytea,
+    m3     bytea,
+    m4     bytea
+)
+    inherits (entities);
+
+alter table vans
+    owner to postgres;
+
 create view orgs_vw
             (typ, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, ext, legal,
-             regid, addr, x, y, tel, trust, link, specs, icon, pic, m1, m2, m3, m4)
+             regid, addr, x, y, tel, trust, link, credit, specs, icon, pic, m1, m2, m3, m4)
 as
 SELECT o.typ,
        o.name,
@@ -587,6 +586,7 @@ SELECT o.typ,
        o.tel,
        o.trust,
        o.link,
+       o.credit,
        o.specs,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic,
@@ -601,7 +601,7 @@ alter table orgs_vw
 
 create view users_vw
             (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential,
-             admly, srcid, srcly, shpid, shply, vip, refer, icon)
+             admly, supid, suply, rtlid, rtlly, vip, refer, icon)
 as
 SELECT o.typ,
        o.name,
@@ -631,9 +631,9 @@ FROM users o;
 alter table users_vw
     owner to postgres;
 
-create view assets_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, rank, cap, cern, factor,
-             x, y, specs, icon, pic, m1, m2, m3, m4)
+create view fabs_vw
+            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, rank, remark, co2ekg,
+             co2ep, x, y, specs, icon, pic, m1, m2, m3, m4)
 as
 SELECT o.typ,
        o.name,
@@ -648,9 +648,9 @@ SELECT o.typ,
        o.id,
        o.orgid,
        o.rank,
-       o.cap,
-       o.cern,
-       o.factor,
+       o.remark,
+       o.co2ekg,
+       o.co2ep,
        o.x,
        o.y,
        o.specs,
@@ -666,9 +666,9 @@ alter table fabs_vw
     owner to postgres;
 
 create view lots_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, srcid, srcname, assetid, targs,
-             catid, started, unit, unitx, price, "off", minx, cap, stock, avail, nstart, nend, icon, pic, m1, m2, m3,
-             m4, ops)
+            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, orgname, fabid, targs,
+             catid, started, unit, unitx, price, "off", cap, stock, avail, nstart, nend, minx, maxx, flashx, icon, pic,
+             m1, m2, m3, m4, ops)
 as
 SELECT o.typ,
        o.name,
@@ -691,12 +691,14 @@ SELECT o.typ,
        o.unitx,
        o.price,
        o.off,
-       o.minx,
        o.cap,
        o.stock,
        o.avail,
        o.nstart,
        o.nend,
+       o.minx,
+       o.maxx,
+       o.flashx,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic,
        o.m1 IS NOT NULL   AS m1,
@@ -710,8 +712,8 @@ alter table lots_vw
     owner to postgres;
 
 create view items_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, shpid, lotid, catid, unit,
-             unitx, price, "off", minx, stock, avail, ops, icon, pic)
+            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, lotid, catid, unit,
+             unitx, price, "off", maxx, stock, avail, flashx, ops, icon, pic)
 as
 SELECT o.typ,
        o.name,
@@ -734,6 +736,7 @@ SELECT o.typ,
        o.maxx,
        o.stock,
        o.avail,
+       o.flashx,
        o.ops,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic
@@ -762,7 +765,7 @@ $$SELECT $2$$;
 
 alter function last_agg(anyelement, anyelement) owner to postgres;
 
-create function booksgen(till date, opr character varying) returns void
+create function pursgen(till date, opr character varying) returns void
     language plpgsql
 as
 $$
@@ -798,7 +801,7 @@ BEGIN
     -- books for source
 
     INSERT INTO bookaggs (orgid, dt, typ, coid, trans, amt, created, creator)
-    SELECT supid,
+    SELECT srcid,
            oked::date,
            typ,
            first(ctrid),
@@ -806,12 +809,12 @@ BEGIN
            sum(pay - coalesce(refund, 0::money)),
            now,
            opr
-    FROM purs
+    FROM books
     WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY supid, oked::date, typ;
+    GROUP BY srcid, oked::date, typ;
 
 
-    INSERT INTO purclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_SRC,
            first(creator),
            now,
@@ -825,7 +828,7 @@ BEGIN
     FROM bookaggs
     WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
 
-    INSERT INTO purclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
+    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
     SELECT TYP_CTR,
            first(creator),
            now,
@@ -853,20 +856,20 @@ $$
 DECLARE
     itm buyitem;
 BEGIN
-    -- update ware avail values
+    -- update avail values
     IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
 
         FOREACH itm IN ARRAY NEW.items LOOP -- oked
-        UPDATE items SET avail = avail - itm.qty, stock = stock - itm.qty WHERE id = itm.itemid;
+        UPDATE items SET avail = avail - itm.qty, stock = stock - itm.qty, flashx = CASE WHEN flashx > 0 THEN flashx - (itm.qty / itm.unitx) ELSE flashx END WHERE id = itm.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1 AND OLD.status < 1) THEN -- paid
 
         FOREACH itm IN ARRAY NEW.items LOOP
-                UPDATE items SET avail = avail - itm.qty WHERE id = itm.itemid;
+                UPDATE items SET avail = avail - itm.qty, flashx = CASE WHEN flashx > 0 THEN flashx - (itm.qty / itm.unitx) ELSE flashx END WHERE id = itm.itemid;
             END LOOP;
 
-    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4 AND OLD.status < 4) THEN -- delivered
+    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4 AND OLD.status < 4) THEN -- sent
 
         FOREACH itm IN ARRAY NEW.items LOOP
                 UPDATE items SET stock = stock - itm.qty WHERE id = itm.itemid;
@@ -942,12 +945,12 @@ DECLARE
     laststamp timestamp(0);
 
     TYP_PLAT constant int = 1;
-    TYP_SHP constant int = 2;
+    TYP_RTL constant int = 2;
     TYP_MKT constant int = 3;
 
     BASE constant int = 100;
     RATE_PLAT constant int = 1;
-    RATE_SHP constant int = 97;
+    RATE_RTL constant int = 97;
     RATE_MKT constant int = 2;
 
 BEGIN
@@ -967,7 +970,7 @@ BEGIN
     -- aggregate buys by typ
 
     INSERT INTO buyaggs_typ
-    SELECT shpid,
+    SELECT rtlid,
            created::date,
            typ,
            first(name),
@@ -978,23 +981,23 @@ BEGIN
     WHERE
             created >= laststamp AND created < tillstamp AND status > 0
     GROUP BY
-        shpid, created::date, typ;
+        rtlid, created::date, typ;
 
     -- aggregate buys by itemid
 
     INSERT INTO buyaggs_itemid
     SELECT
-        (unnest(buys_agg(items,shpid, created::date,mktid))).*
+        (unnest(buys_agg(items,rtlid, created::date,mktid))).*
     FROM buys
     WHERE
             created >= laststamp AND created < tillstamp AND status > 0
-    GROUP BY shpid, created::date;
+    GROUP BY rtlid, created::date;
 
 
     INSERT INTO buyclrs
     (orgid, dt, typ, name, trans, amt, rate, topay)
     SELECT
-        orgid, dt, TYP_SHP, first(name), sum(trans), sum(amt), RATE_SHP, sum(amt * RATE_SHP / BASE)
+        orgid, dt, TYP_RTL, first(name), sum(trans), sum(amt), RATE_RTL, sum(amt * RATE_RTL / BASE)
     FROM buyaggs_typ
     WHERE
             typ = 1 AND dt > last AND dt <= till GROUP BY orgid, dt;

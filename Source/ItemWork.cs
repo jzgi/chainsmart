@@ -181,7 +181,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             // NOTE single unsubmitted record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (rtlid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
+            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (uid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
             await dc.QueryTopAsync(p => m.Write(p, msk));
             dc.Let(out int buyid);
             dc.Let(out decimal topay);
