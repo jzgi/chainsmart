@@ -1216,6 +1216,7 @@ form legend {
     display: flex;
     width: 100%;
     min-height: 2.5rem;
+    align-items: center;
 } 
 
 .uk-fieldset>ul>li:nth-child(n+2) {

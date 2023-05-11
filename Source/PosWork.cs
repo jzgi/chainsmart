@@ -141,6 +141,8 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }, false, 6);
     }
 
+    private static readonly string[] DAYS = { "日", "一", "二", "三", "四", "五", "六" };
+
     [Ui(tip: "以往记录", icon: "history", group: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc)
     {
@@ -156,7 +158,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
                 for (day = 1; day <= 7; day++)
                 {
                     var dt = today.AddDays(-day);
-                    h.LI_().RADIO(nameof(day), day, dt.ToString("yyyy-mm-dd"))._LI();
+                    h.LI_().RADIO(nameof(day), day, dt.ToString("yyyy-MM-dd")).SP().T("周").T(DAYS[(int)dt.DayOfWeek])._LI();
                 }
                 h._FIELDSUL()._FORM();
             });

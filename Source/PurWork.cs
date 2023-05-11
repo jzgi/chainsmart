@@ -389,12 +389,12 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
     }
 
     [Ui("按商户", group: 4), Tool(Anchor)]
-    public async Task byrtl(WebContext wc)
+    public async Task shop(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, first(rtlname), count(qty) AS qty FROM purs WHERE mktid = @1 AND state > 0 GROUP BY rtlid, lotid");
+        dc.Sql("SELECT rtlid, first(rtlname), count(qty) AS qty FROM purs WHERE mktid = @1 AND status > 0 GROUP BY rtlid, lotid");
         var arr = await dc.QueryAsync<PurAgg>(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>

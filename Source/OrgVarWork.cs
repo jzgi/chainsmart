@@ -188,12 +188,13 @@ public class OrglySetgWork : OrgVarWork
 public class AdmlyOrgVarWork : OrgVarWork
 {
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "修改机构信息", icon: "pencil"), Tool(ButtonShow)]
+    [Ui(tip: "修改机构信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
+        
         var topOrgs = GrabTwinSet<int, int, Org>(0);
 
         var m = GrabTwin<int, int, Org>(id);
