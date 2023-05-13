@@ -29,6 +29,8 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         int orgid = wc[0];
         var org = GrabTwin<int, int, Org>(orgid);
 
+        var mkt = org.IsMarket ? org : GrabTwin<int, int, Org>(org.prtid);
+
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flashx > 0 THEN 0 ELSE 1 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
@@ -114,7 +116,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             string com;
 
             h.DIV_("uk-flex uk-width-1-1");
-            h.SELECT_SPEC(nameof(com), org.specs, css: "uk-width-medium");
+            h.SELECT_SPEC(nameof(com), mkt.specs, css: "uk-width-medium");
             h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼 栋 单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._DIV();
 

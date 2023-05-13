@@ -16,14 +16,4 @@ public class FabGraph : TwinGraph<int, int, Fab>
         dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
         return dc.Query<int, Fab>(p => p.Set(gkey));
     }
-
-    public override bool Save(DbContext dc, Fab v)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override bool Remove(DbContext dc, int key)
-    {
-        throw new System.NotImplementedException();
-    }
 }

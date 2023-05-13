@@ -24,17 +24,4 @@ public class OrgGraph : TwinGraph<int, int, Org>
             return dc.Query<int, Org>(p => p.Set(gkey));
         }
     }
-
-    public override bool Save(DbContext dc, Org v)
-    {
-        const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-
-        dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk);
-        return dc.Execute(p => v.Write(p, msk)) == 1;
-    }
-
-    public override bool Remove(DbContext dc, int key)
-    {
-        throw new System.NotImplementedException();
-    }
 }

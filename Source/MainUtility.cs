@@ -52,7 +52,7 @@ public static class MainUtility
     {
         h.SELECT_(name, local: name, required: true, css: css);
 
-        for (int i = 0; i < specs.Count; i++)
+        for (int i = 0; i < specs?.Count; i++)
         {
             var spec = specs.EntryAt(i);
             var v = spec.Value;

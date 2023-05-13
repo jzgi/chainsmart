@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ChainFx;
@@ -29,9 +30,9 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 
 
-    static void MainGrid(HtmlBuilder h, Pur[] arr)
+    static void MainGrid(HtmlBuilder h, IList<Pur> lst)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
@@ -209,9 +210,9 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         await dc.ExecuteAsync();
     }
 
-    private static void MainGrid(HtmlBuilder h, Pur[] arr)
+    private static void MainGrid(HtmlBuilder h, IList<Pur> lst)
     {
-        h.MAINGRID(arr, o =>
+        h.MAINGRID(lst, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 

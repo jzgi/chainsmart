@@ -28,7 +28,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
                 h.PIC(MainApp.WwwUrl + "/item/", o.id, "/icon", css: "uk-width-tiny");
             }
             h._A()._TD();
-            h.TD_(css: "uk-text-right").SP().CNY(o.pay).ICON(Buy.Icons[o.typ])._TD();
+            h.TD_(css: "uk-text-right").SP().CNY(o.pay).SP().ICON(Buy.Icons[o.typ])._TD();
         });
     }
 }

@@ -127,7 +127,7 @@ public class PublyOrgVarWork : OrgVarWork
 public class OrglySetgWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 3)]
+    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
     public async Task setg(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -194,7 +194,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-        
+
         var topOrgs = GrabTwinSet<int, int, Org>(0);
 
         var m = GrabTwin<int, int, Org>(id);
@@ -331,11 +331,13 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
+        });
 
-        wc.GivePane(200);
+        wc.Give(205);
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
@@ -352,11 +354,13 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
-        await dc.ExecuteAsync(p => p.Set(id));
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
+            return await dc.ExecuteAsync(p => p.Set(id)) == 1;
+        });
 
-        wc.GivePane(200);
+        wc.Give(205);
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
@@ -365,12 +369,15 @@ public class AdmlyOrgVarWork : OrgVarWork
     {
         int id = wc[0];
 
+        var m = GrabTwin<int, int, Org>(id);
 
-        using var dc = NewDbContext();
-        dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
-        await dc.ExecuteAsync(p => p.Set(id));
+        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        {
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
+            return await dc.ExecuteAsync(p => p.Set(id)) == 1;
+        });
 
-        wc.GivePane(200);
+        wc.Give(204); // no content
     }
 }
 
@@ -416,12 +423,14 @@ public class MktlyOrgVarWork : OrgVarWork
             const short msk = MSK_EDIT;
             m = await wc.ReadObjectAsync(msk, instance: m);
 
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
-            await dc.ExecuteAsync(p =>
+            await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async dc =>
             {
-                m.Write(p, msk);
-                p.Set(id);
+                dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, msk).T(" WHERE id = @1");
+                return await dc.ExecuteAsync(p =>
+                {
+                    m.Write(p, msk);
+                    p.Set(id);
+                }) == 1;
             });
 
             wc.GivePane(200); // close
@@ -458,6 +467,7 @@ public class MktlyOrgVarWork : OrgVarWork
         var prin = (User)wc.Principal;
 
         var m = GrabTwin<int, int, Org>(id);
+
         var now = DateTime.Now;
         lock (m)
         {
@@ -465,11 +475,13 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
-        await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id));
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
+        });
 
-        wc.GivePane(200);
+        wc.Give(205);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
@@ -487,11 +499,13 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
+            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+        });
 
-        wc.GivePane(200);
+        wc.Give(205);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
@@ -501,11 +515,15 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        var m = GrabTwin<int, int, Org>(id);
 
-        wc.GivePane(200);
+        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        {
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
+            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+        });
+
+        wc.Give(204); // no content
     }
 }
 
@@ -519,7 +537,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var regs = Grab<short, Reg>();
         var prin = (User)wc.Principal;
 
-        var o = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -527,14 +545,14 @@ public class CtrlyOrgVarWork : OrgVarWork
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().SELECT("省份", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
-                h.LI_().TEXT("联系地址", nameof(o.addr), o.addr, max: 30)._LI();
-                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h.LI_().CHECKBOX("委托代办", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
+                h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
+                h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
+                h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
+                h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h.LI_().CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -542,16 +560,18 @@ public class CtrlyOrgVarWork : OrgVarWork
         else
         {
             const short msk = MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, instance: o);
-            o.adapted = DateTime.Now;
-            o.adapter = prin.name;
+            await wc.ReadObjectAsync(msk, instance: m);
+            m.adapted = DateTime.Now;
+            m.adapter = prin.name;
 
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
-            await dc.ExecuteAsync(p =>
+            await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async dc =>
             {
-                m.Write(p, msk);
-                p.Set(id);
+                dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, msk).T(" WHERE id = @1");
+                return await dc.ExecuteAsync(p =>
+                {
+                    m.Write(p, msk);
+                    p.Set(id);
+                }) == 1;
             });
 
             wc.GivePane(200); // close
@@ -580,44 +600,70 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确定删除此供源", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
-    public async Task rm(WebContext wc)
-    {
-        int id = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_SUP);
-        await dc.ExecuteAsync(p => p.Set(id));
-
-        wc.Give(204);
-    }
-
-    [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        var m = GrabTwin<int, int, Org>(id);
 
-        wc.GivePane(200);
+        var now = DateTime.Now;
+        lock (m)
+        {
+            m.status = 4;
+            m.oked = now;
+            m.oker = prin.name;
+        }
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
+        });
+
+        wc.Give(205);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+    [OrglyAuthorize(0, User.ROL_OPN)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        var m = GrabTwin<int, int, Org>(id);
 
-        wc.GivePane(200);
+        lock (m)
+        {
+            m.status = 1;
+            m.oked = default;
+            m.oker = null;
+        }
+        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
+            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+        });
+
+        wc.Give(205);
+    }
+
+    [OrglyAuthorize(0, User.ROL_OPN)]
+    [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+    public async Task rm(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+
+        var m = GrabTwin<int, int, Org>(id);
+
+        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        {
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
+            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+        });
+
+        wc.Give(204); // no content
     }
 }

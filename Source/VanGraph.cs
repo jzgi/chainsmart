@@ -16,14 +16,4 @@ public class VanGraph : TwinGraph<int, int, Van>
         dc.Sql("SELECT ").collst(Van.Empty).T(" FROM vans_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
         return dc.Query<int, Van>(p => p.Set(gkey));
     }
-
-    public override bool Save(DbContext dc, Van setkey)
-    {
-        return false;
-    }
-
-    public override bool Remove(DbContext dc, int key)
-    {
-        throw new System.NotImplementedException();
-    }
 }

@@ -37,6 +37,7 @@ public class Org : Entity, ITwin<int, int>
 
     public new static readonly Map<short, string> Statuses = new()
     {
+        { STU_VOID, null },
         { STU_CREATED, "新建" },
         { STU_ADAPTED, "修改" },
         { STU_OKED, "上线" },
