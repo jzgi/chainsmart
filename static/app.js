@@ -309,7 +309,7 @@ function call_buy(trig) {
     return false;
 }
 
-function call_book(trig) {
+function call_pur(trig) {
 
     var method = 'post';
     var action = trig.formAction || trig.name;

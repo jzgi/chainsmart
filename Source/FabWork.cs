@@ -139,8 +139,6 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
                 h.LI_().SELECT("等级", nameof(o.rank), o.rank, Fab.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
                 h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
-                // h.LI_().SELECT("碳减排项目", nameof(o.piece), o.piece, Cern.Typs)._LI();
-                // h.LI_().NUMBER("碳减排因子", nameof(o.co2ekg), o.co2ekg, min: 0.00M)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
@@ -156,10 +154,11 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
                 creator = prin.name,
             });
 
-            // insert
-            using var dc = NewDbContext();
-            dc.Sql("INSERT INTO fabs ").colset(Fab.Empty, msk)._VALUES_(Fab.Empty, msk);
-            await dc.ExecuteAsync(p => m.Write(p, msk));
+            await GetGraph<FabGraph, int, int, Fab>().CreateAsync(async dc =>
+            {
+                dc.Sql("INSERT INTO fabs_vw ").colset(Fab.Empty, msk)._VALUES_(Fab.Empty, msk).T(" RETURNING ").collst(Fab.Empty);
+                return await dc.QueryTopAsync<Fab>(p => m.Write(p, msk));
+            });
 
             wc.GivePane(200); // close dialog
         }

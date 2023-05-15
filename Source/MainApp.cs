@@ -65,7 +65,6 @@ public class MainApp : Application
             }, 60 * 60 * 12
         );
 
-
         // for informative use, not for transactional use
         MakeCache<int, Lot>((dc, id) =>
             {

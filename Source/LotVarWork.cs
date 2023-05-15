@@ -40,11 +40,11 @@ public class LotVarWork : WebWork
         if (pricing)
         {
             h.LI_().FIELD("单位", o.unit).FIELD("单价", o.price, true)._LI();
-            h.LI_().FIELD2("库存量", o.stock, o.StockX, "（").FIELD2("可用量", o.stock, o.AvailX, "（")._LI();
+            h.LI_().FIELD("库存件数", o.StockX).FIELD("可用件数", o.AvailX)._LI();
 
             h.LI_().FIELD("单价优惠额", o.off, true)._LI();
-            h.LI_().FIELD2("每件含量", o.unitx, o.unitx).FIELD2("秒杀件数", o.flashx, o.flashx)._LI();
-            h.LI_().FIELD2("起订件数", o.unitx, o.unitx).FIELD2("限订件数", o.flashx, o.flashx)._LI();
+            h.LI_().FIELD2("每件含量", o.unitx, o.unit).FIELD2("秒杀件数", o.flashx, o.flashx)._LI();
+            h.LI_().FIELD("起订件数", o.minx).FIELD("限订件数", o.maxx)._LI();
         }
 
         h._UL();
@@ -55,7 +55,7 @@ public class LotVarWork : WebWork
         h.H4("批次检验", "uk-card-header");
         h.SECTION_("uk-card-body");
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD2("批次总量", o.cap, o.CapX, "（")._LI();
+        h.LI_().FIELD("批次总件数", o.capx)._LI();
         h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
 
         if (o.nstart > 0 && o.nend > 0)
@@ -213,10 +213,10 @@ public class LotVarWork : WebWork
             else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
             h._LI();
             h.LI_().FIELD("单位", o.unit).FIELD2("每件含l量", o.unitx, o.unit)._LI();
-            h.LI_().FIELD4("批次总量", o.cap, "（", o.CapX, "）")._LI();
+            h.LI_().FIELD4("批次总件数", o.capx, "（", o.capx, "）")._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
             h.LI_().FIELD("限订件数", o.maxx).FIELD("秒杀件数", o.flashx)._LI();
-            h.LI_().FIELD4("库存量", o.stock, "（", o.StockX, "）").FIELD4("可用量", o.avail, "（", o.AvailX, "）")._LI();
+            h.LI_().FIELD("库存件数", o.StockX).FIELD("可用件数", o.AvailX)._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
             h.LI_().FIELD2("创编", o.created, o.creator)._LI();
@@ -345,7 +345,7 @@ public class SuplyLotVarWork : LotVarWork
     {
         int lotid = wc[0];
         var org = wc[-2].As<Org>();
-        var topOrgs = Grab<int, Org>();
+        var topOrgs = GrabTwinArray<int, int, Org>(0);
         var cats = Grab<short, Cat>();
         var prin = (User)wc.Principal;
 
@@ -365,18 +365,18 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: (_, v) => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 if (o.IsPre)
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("批次总量", nameof(o.cap), o.cap)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("批次总量", nameof(o.capx), o.capx)._LI();
                 h.LI_().NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.01M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 1, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -488,7 +488,7 @@ public class SuplyLotVarWork : LotVarWork
 
                         h._LI();
 
-                        if (++idx >= o.CapX)
+                        if (++idx >= o.capx)
                         {
                             break;
                         }
@@ -496,7 +496,7 @@ public class SuplyLotVarWork : LotVarWork
 
                     h._UL();
 
-                    h.PAGINATION(idx < o.CapX, begin: 2, print: true);
+                    h.PAGINATION(idx < o.capx, begin: 2, print: true);
                 });
             }
         }
@@ -560,7 +560,7 @@ public class SuplyLotVarWork : LotVarWork
 
         short optyp = 0;
         string tip = null;
-        int qty = 0;
+        int qtyx = 1;
 
         if (wc.IsGet)
         {
@@ -569,7 +569,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.FORM_().FIELDSUL_("库存操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
-                h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
+                h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
         }
@@ -578,13 +578,14 @@ public class SuplyLotVarWork : LotVarWork
             var f = await wc.ReadAsync<Form>();
             optyp = f[nameof(optyp)];
             tip = f[nameof(tip)];
-            qty = f[nameof(qty)];
+            qtyx = f[nameof(qtyx)];
 
-            // update db
             if (optyp == StockOp.TYP_SUBSTRACT)
             {
-                qty = -qty;
+                qtyx = -qtyx;
             }
+            var lot = GrabValue<int, Lot>(id);
+            int qty = qtyx * lot.unitx;
 
             using var dc = NewDbContext();
             dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @2 ELSE 0 END), stock = stock + @2 WHERE id = @5 AND orgid = @6");
@@ -671,7 +672,7 @@ public class RtllyPurLotVarWork : LotVarWork
             h.HIDDEN(nameof(realprice), realprice);
 
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-            for (int i = 1; i <= o.maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+            for (int i = 1; i <= Math.Min(o.maxx, o.AvailX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
             {
                 h.OPTION_(i).T(i)._OPTION();
             }

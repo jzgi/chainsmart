@@ -34,12 +34,13 @@ public class Lot : Entity, IKeyable<int>
     internal string unit;
     internal short unitx;
     internal decimal price;
-    internal int cap;
+    internal int capx;
     internal int stock;
     internal int avail;
 
     // promotional
     internal decimal off;
+    internal short minx;
     internal short maxx;
     internal short flashx;
 
@@ -84,8 +85,9 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
-            s.Get(nameof(cap), ref cap);
+            s.Get(nameof(capx), ref capx);
             s.Get(nameof(off), ref off);
+            s.Get(nameof(minx), ref minx);
             s.Get(nameof(maxx), ref maxx);
             s.Get(nameof(flashx), ref flashx);
         }
@@ -135,8 +137,9 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
-            s.Put(nameof(cap), cap);
+            s.Put(nameof(capx), capx);
             s.Put(nameof(off), off);
+            s.Put(nameof(minx), minx);
             s.Put(nameof(maxx), maxx);
             s.Put(nameof(flashx), flashx);
         }
@@ -187,8 +190,6 @@ public class Lot : Entity, IKeyable<int>
     {
         return targs == null || targs.Contains(mktid);
     }
-
-    public int CapX => cap / unitx;
 
     public int StockX => stock / unitx;
 

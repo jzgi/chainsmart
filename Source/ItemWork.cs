@@ -28,12 +28,15 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     {
         int orgid = wc[0];
         var org = GrabTwin<int, int, Org>(orgid);
+        var regs = Grab<short, Reg>();
 
         var mkt = org.IsMarket ? org : GrabTwin<int, int, Org>(org.prtid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flashx > 0 THEN 0 ELSE 1 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
+
+        var title = "【" + regs[org.regid]?.name + "-" + org.addr + "】" + org.name;
 
         wc.GivePage(200, h =>
         {
@@ -127,7 +130,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             h._BOTTOMBAR();
 
             h._FORM();
-        }, true, 120, title: org.Title, onload: "fixAll();");
+        }, true, 120, title: title, onload: "fixAll();");
     }
 
     public async Task buy(WebContext wc)

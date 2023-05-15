@@ -10,12 +10,8 @@ public class Unit
         { "斤", 500 },
         { "公斤", 1000 },
         { "个", 0 },
-        { "只", 0 },
-        { "根", 0 },
-        { "份", 0 },
-        { "包", 0 },
-        { "瓶", 0 },
-        { "桶", 0 },
+        { "毫升", 1 },
+        { "升", 1000 },
     };
 
     public static int Convert(string u1, int v, string u2, short pieceful)
