@@ -34,9 +34,9 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
                 h.LI_();
 
                 h.SPAN_("uk-width-expand").T(it.name);
-                if (it.unitx != 1)
+                if (it.unitw != 1)
                 {
-                    h.SP().SMALL_().T(it.unitx).T(it.unit).T("件")._SMALL();
+                    h.SP().SMALL_().T(it.unitw).T(it.unit).T("件")._SMALL();
                 }
 
                 h._SPAN();

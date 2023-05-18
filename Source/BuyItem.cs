@@ -15,7 +15,7 @@ public class BuyItem : IData, IKeyable<int>
 
     public string unit; // basic unit
 
-    public short unitx; // number of units per pack
+    public short unitw; // number of units per pack
 
     public decimal price;
 
@@ -33,6 +33,11 @@ public class BuyItem : IData, IKeyable<int>
         this.qty = qty;
     }
 
+    /// <summary>
+    /// To construct a POS buy record.
+    /// </summary>
+    /// <param name="itemid"></param>
+    /// <param name="comp"></param>
     public BuyItem(int itemid, string[] comp)
     {
         this.itemid = itemid;
@@ -40,7 +45,7 @@ public class BuyItem : IData, IKeyable<int>
         lotid = int.Parse(comp[0]);
         name = comp[1];
         unit = comp[2];
-        unitx = short.Parse(comp[3]);
+        unitw = short.Parse(comp[3]);
         price = decimal.Parse(comp[4]);
         qty = decimal.Parse(comp[5]);
     }
@@ -51,7 +56,7 @@ public class BuyItem : IData, IKeyable<int>
         s.Get(nameof(lotid), ref lotid);
         s.Get(nameof(name), ref name);
         s.Get(nameof(unit), ref unit);
-        s.Get(nameof(unitx), ref unitx);
+        s.Get(nameof(unitw), ref unitw);
         s.Get(nameof(price), ref price);
         s.Get(nameof(off), ref off);
         s.Get(nameof(qty), ref qty);
@@ -63,7 +68,7 @@ public class BuyItem : IData, IKeyable<int>
         s.Put(nameof(lotid), lotid);
         s.Put(nameof(name), name);
         s.Put(nameof(unit), unit);
-        s.Put(nameof(unitx), unitx);
+        s.Put(nameof(unitw), unitw);
         s.Put(nameof(price), price);
         s.Put(nameof(off), off);
         s.Put(nameof(qty), qty);
@@ -75,14 +80,12 @@ public class BuyItem : IData, IKeyable<int>
 
     public decimal SubTotal => decimal.Round(RealPrice * qty, 2);
 
-    public short QtyX => (short)(qty / unitx);
-
     internal void Init(Item m, bool vip)
     {
         name = m.name;
         lotid = m.lotid;
         unit = m.unit;
-        unitx = m.step;
+        unitw = m.unitw;
         price = m.price;
 
         if (vip)

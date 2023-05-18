@@ -41,9 +41,9 @@ public abstract class BuyVarWork : WebWork
             h.TABLE(o.items, d =>
             {
                 h.TD_().T(d.name);
-                if (d.unitx != 1)
+                if (d.unitw != 1)
                 {
-                    h.SP().SMALL_().T(d.unitx).T(d.unit).T("件")._SMALL();
+                    h.SP().SMALL_().T(d.unitw).T(d.unit).T("件")._SMALL();
                 }
 
                 h._TD();
