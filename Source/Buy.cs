@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// An online retail buy record..
+/// A retail buy record..
 /// </summary>
 public class Buy : Entity, IKeyable<long>
 {
@@ -155,7 +155,7 @@ public class Buy : Entity, IKeyable<long>
 
     // STATE
     //
-        
+
     public const short STA_CANCELL = 1;
 
     public override short State

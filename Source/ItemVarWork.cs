@@ -27,10 +27,13 @@ public class ItemVarWork : WebWork
 
             h.LI_().FIELD("商品名", m.name)._LI();
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-            h.LI_().FIELD("单位", m.unit).FIELD2("每件含量", m.unitx, m.unit)._LI();
+            h.LI_().FIELD("零售单位", m.unit).FIELD("单位重量", m.unitw, Unit.Metrics[m.unitw])._LI();
+            h.LI_().FIELD2("大件含单位", m.unitx, m.unit)._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD("直降", m.off, money: true)._LI();
-            h.LI_().FIELD("限订件数", m.maxx).FIELD("秒杀件数", m.flashx)._LI();
-            h.LI_().FIELD2("库存量", m.stock, m.StockX, "（").FIELD2("可用量", m.avail, m.AvailX, "（")._LI();
+            h.LI_().FIELD("限订大件数", m.maxx).FIELD("秒杀大件数", m.flashx)._LI();
+            h.LI_()
+                .LABEL("库存量").SPAN_("uk-static").T(m.stock).SP().T(m.unit).T('（').T(m.StockX).T(')')._SPAN()
+                .LABEL("可用量").SPAN_("uk-static").T(m.avail).SP().T(m.unit).T('（').T(m.AvailX).T(')')._SPAN()._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -162,7 +165,8 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
@@ -208,13 +212,6 @@ public class RtllyItemVarWork : ItemVarWork
     {
         await doimg(wc, nameof(pic), false, 6);
     }
-
-    // [OrglyAuthorize(0, User.ROL_OPN)]
-    // [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 2, status: 3)]
-    // public async Task m(WebContext wc, int sub)
-    // {
-    //     await doimg(wc, nameof(m) + sub, false, 3);
-    // }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]

@@ -4,7 +4,7 @@ using ChainFx.Nodal;
 namespace ChainSmart;
 
 /// <summary>
-/// A traceable fabrication that produces lots of products. 
+/// A fabrication of product lot. 
 /// </summary>
 public class Fab : Entity, ITwin<int, int>
 {

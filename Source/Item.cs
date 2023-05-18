@@ -22,6 +22,7 @@ public class Item : Entity, IKeyable<int>
     internal int lotid;
     internal short catid;
     internal string unit;
+    internal short unitw;
     internal short unitx;
     internal decimal price;
     internal decimal off;
@@ -54,6 +55,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitw), ref unitw);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);

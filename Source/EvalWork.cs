@@ -1,4 +1,7 @@
-﻿using ChainFx.Web;
+﻿using System.Threading.Tasks;
+using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
 namespace ChainSmart
 {
@@ -22,13 +25,98 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("综合评估", "机构")]
+    [Ui("评估检测", "机构")]
     public class MktlyEvalWork : EvalWork<MktlyEvalVarWork>
     {
+        protected static void MainGrid(HtmlBuilder h, Item[] arr)
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+                if (o.icon)
+                {
+                    h.PIC(MainApp.WwwUrl, "/item/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
+
+                h.ASIDE_();
+                h.HEADER_().H4(o.name);
+                if (o.unitx != 1)
+                {
+                    h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                }
+
+                // h.SPAN(Statuses[o.status], "uk-badge");
+                h._HEADER();
+
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN2("未用量", o.avail).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+                h._ASIDE();
+
+                h._A();
+            });
+        }
+
+        
+        [Ui("当前上线", group: 1), Tool(Anchor)]
         public void @default(WebContext wc, int page)
         {
-            wc.GivePage(200, h => { h.TOOLBAR(); });
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE orgid = @1 AND status = 4");
+            var arr = dc.Query<Eval>();
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+            }, false, 12);
         }
+        
+        [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
+        public async Task down(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无下线商品");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            }, false, 4);
+        }
+
+        [Ui(tip: "已作废", icon: "trash", group: 8), Tool(Anchor)]
+        public async Task @void(WebContext wc)
+        {
+            var org = wc[-1].As<Org>();
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
+            var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+                if (arr == null)
+                {
+                    h.ALERT("尚无作废商品");
+                    return;
+                }
+
+                MainGrid(h, arr);
+            }, false, 4);
+        }
+
     }
 
     [OrglyAuthorize(Org.TYP_CTR)]

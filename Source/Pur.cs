@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// An purchase record.
+/// A supply purchase record.
 /// </summary>
 public class Pur : Entity, IKeyable<int>
 {

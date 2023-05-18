@@ -6,30 +6,44 @@ public class Eval : Entity, IKeyable<int>
 {
     public static readonly Cat Empty = new();
 
-    internal short id;
+    internal int id;
+    internal int orgid;
+    internal JArr data;
 
-    internal short idx;
-
-    internal short size; // number of items
-
-    // must have an icon
-
-    public override void Read(ISource s, short proj = 0xff)
+    public override void Read(ISource s, short msk = 0xff)
     {
-        base.Read(s, proj);
+        base.Read(s, msk);
 
-        s.Get(nameof(id), ref id);
-        s.Get(nameof(idx), ref idx);
-        s.Get(nameof(size), ref size);
+        if ((msk & MSK_ID) == MSK_ID)
+        {
+            s.Get(nameof(id), ref id);
+        }
+        if ((msk & MSK_BORN) == MSK_BORN)
+        {
+            s.Get(nameof(orgid), ref orgid);
+        }
+        if ((msk & MSK_EDIT) == MSK_EDIT)
+        {
+            s.Get(nameof(data), ref data);
+        }
     }
 
-    public override void Write(ISink s, short proj = 0xff)
+    public override void Write(ISink s, short msk = 0xff)
     {
-        base.Write(s, proj);
+        base.Write(s, msk);
 
-        s.Put(nameof(id), id);
-        s.Put(nameof(idx), idx);
-        s.Put(nameof(size), size);
+        if ((msk & MSK_ID) == MSK_ID)
+        {
+            s.Put(nameof(id), id);
+        }
+        if ((msk & MSK_BORN) == MSK_BORN)
+        {
+            s.Put(nameof(orgid), orgid);
+        }
+        if ((msk & MSK_EDIT) == MSK_EDIT)
+        {
+            s.Put(nameof(data), data);
+        }
     }
 
     public int Key => id;

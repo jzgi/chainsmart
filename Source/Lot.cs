@@ -4,7 +4,7 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// A product lot for purchasing..
+/// A supply product lot record.
 /// </summary>
 public class Lot : Entity, IKeyable<int>
 {
@@ -27,19 +27,15 @@ public class Lot : Entity, IKeyable<int>
     internal int[] targs; // (optional) targeted centers or markets
     internal short catid;
     internal DateTime started;
-
-    // individual relevant
     internal int fabid;
-
     internal string unit;
+    internal short unitw;
     internal short unitx;
     internal decimal price;
+    internal decimal off;
     internal int capx;
     internal int stock;
     internal int avail;
-
-    // promotional
-    internal decimal off;
     internal short minx;
     internal short maxx;
     internal short flashx;
@@ -47,7 +43,6 @@ public class Lot : Entity, IKeyable<int>
     // traceability
     internal int nstart;
     internal int nend;
-
 
     // media
     internal bool icon;
@@ -83,10 +78,11 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(started), ref started);
             s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitw), ref unitw);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
-            s.Get(nameof(capx), ref capx);
             s.Get(nameof(off), ref off);
+            s.Get(nameof(capx), ref capx);
             s.Get(nameof(minx), ref minx);
             s.Get(nameof(maxx), ref maxx);
             s.Get(nameof(flashx), ref flashx);
@@ -96,7 +92,6 @@ public class Lot : Entity, IKeyable<int>
         {
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
-
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -135,10 +130,11 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(catid), catid);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
+            s.Put(nameof(unitw), unitw);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
-            s.Put(nameof(capx), capx);
             s.Put(nameof(off), off);
+            s.Put(nameof(capx), capx);
             s.Put(nameof(minx), minx);
             s.Put(nameof(maxx), maxx);
             s.Put(nameof(flashx), flashx);

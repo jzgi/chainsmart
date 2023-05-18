@@ -346,7 +346,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("单位", nameof(o.unit), o.unit, min: 1, max: 4, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
@@ -399,7 +400,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs, keyonly: true, required: true).NUMBER("每件含量", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
