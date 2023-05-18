@@ -33,7 +33,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         var mkt = org.IsMarket ? org : GrabTwin<int, int, Org>(org.prtid);
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flashx > 0 THEN 0 ELSE 1 END, oked DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         var title = "【" + regs[org.regid]?.name + "-" + org.addr + "】" + org.name;
@@ -75,9 +75,9 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.ASIDE_();
 
                 h.HEADER_().H4(o.name);
-                if (o.unitx != 1)
+                if (o.step != 1)
                 {
-                    h.SMALL_().T('（').T(o.unitx).T(o.unit).T("）")._SMALL();
+                    h.SMALL_().T('（').T(o.step).T(o.unit).T("）")._SMALL();
                 }
 
                 // top right corner span
@@ -85,7 +85,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // ran mark
                 if (o.IsFlashing)
                 {
-                    h.SPAN_().T("秒杀 ").T(o.flashx).T(" 件")._SPAN();
+                    h.SPAN_().T("秒杀 ").T(o.flash).SP().T(o.unit)._SPAN().SP();
                 }
                 h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents").ICON("question", css: "uk-icon-link")._A();
                 h._SPAN();
@@ -94,10 +94,10 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,{o.price},{o.off},{o.maxx},{o.AvailX},{o.flashx});\">"); // pricing portion
-                h.SPAN_("uk-width-1-3").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"sumQtyDetails(this,{o.unitx});", css: "uk-width-1-5 qtyselect ", empty: "0 件")._SELECT();
-                h.SPAN_("qtydetail uk-invisible").T("&nbsp;<output class=\"qtyx\"></output>&nbsp;").T(o.unit).T("<output class=\"rmb subtotal uk-width-expand uk-text-end\"></output>")._SPAN();
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.avail},{o.flash});\">"); // pricing portion
+                h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
+                h.SELECT_(o.id, onchange: $"calcSubAndTotal(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
+                h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                 h._FOOTER();
 
                 h._ASIDE();
@@ -237,9 +237,9 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
-            if (o.unitx != 1)
+            if (o.step != 1)
             {
-                h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                h.SP().SMALL_().T(o.step).T(o.unit).T("件")._SMALL();
             }
 
             h.SPAN(Statuses[o.status], "uk-badge");
@@ -335,24 +335,21 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unitx = 1,
-            maxx = 1
+            step = 1,
+            max = 1
         };
         if (wc.IsGet)
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("基本信息");
+                h.FORM_().FIELDSUL_("商品及促销");
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-
-                h._FIELDSUL().FIELDSUL_("销售及优惠");
-
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
+                h.LI_().NUMBER("下单整增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -384,8 +381,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             typ = Item.TYP_REF,
             created = DateTime.Now,
             creator = prin.name,
-            unitx = 1,
-            maxx = 1
+            step = 1,
+            max = 1
         };
 
         if (wc.IsGet)
@@ -400,13 +397,10 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-
-                h._FIELDSUL().FIELDSUL_("销售及优惠");
-
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
+                h.LI_().NUMBER("下单递增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();
             });

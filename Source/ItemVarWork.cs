@@ -27,13 +27,11 @@ public class ItemVarWork : WebWork
 
             h.LI_().FIELD("商品名", m.name)._LI();
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-            h.LI_().FIELD("零售单位", m.unit).FIELD("单位重量", m.unitw, Unit.Metrics[m.unitw])._LI();
-            h.LI_().FIELD2("大件含单位", m.unitx, m.unit)._LI();
+            h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics[m.unitw])._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD("直降", m.off, money: true)._LI();
-            h.LI_().FIELD("限订大件数", m.maxx).FIELD("秒杀大件数", m.flashx)._LI();
-            h.LI_()
-                .LABEL("库存量").SPAN_("uk-static").T(m.stock).SP().T(m.unit).T('（').T(m.StockX).T(')')._SPAN()
-                .LABEL("可用量").SPAN_("uk-static").T(m.avail).SP().T(m.unit).T('（').T(m.AvailX).T(')')._SPAN()._LI();
+            h.LI_().FIELD2("下单整增量", m.step, m.unit).FIELD2("每单限订量", m.max, m.unit)._LI();
+            h.LI_().FIELD2("秒杀量", m.flash, m.unit)._LI();
+            h.LI_().FIELD2("库存量", m.stock, m.unit).FIELD2("可用量", m.avail, m.unit)._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -165,13 +163,10 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位重量", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false)._LI();
-
-                h._FIELDSUL().FIELDSUL_("销售及优惠");
-
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX).NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX)._LI();
+                h.LI_().NUMBER("下单整增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });

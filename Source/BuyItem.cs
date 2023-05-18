@@ -82,7 +82,7 @@ public class BuyItem : IData, IKeyable<int>
         name = m.name;
         lotid = m.lotid;
         unit = m.unit;
-        unitx = m.unitx;
+        unitx = m.step;
         price = m.price;
 
         if (vip)

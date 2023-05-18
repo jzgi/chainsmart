@@ -23,13 +23,13 @@ public class Item : Entity, IKeyable<int>
     internal short catid;
     internal string unit;
     internal short unitw;
-    internal short unitx;
     internal decimal price;
     internal decimal off;
-    internal short maxx;
+    internal short step;
+    internal short max;
     internal short stock;
     internal short avail;
-    internal short flashx;
+    internal short flash;
 
     internal bool icon;
     internal bool pic;
@@ -56,11 +56,11 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
-            s.Get(nameof(unitx), ref unitx);
+            s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(flashx), ref flashx);
-            s.Get(nameof(maxx), ref maxx);
+            s.Get(nameof(flash), ref flash);
+            s.Get(nameof(max), ref max);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -97,11 +97,11 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(catid), catid);
             s.Put(nameof(unit), unit);
-            s.Put(nameof(unitx), unitx);
+            s.Put(nameof(step), step);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
-            s.Put(nameof(flashx), flashx);
-            s.Put(nameof(maxx), maxx);
+            s.Put(nameof(flash), flash);
+            s.Put(nameof(max), max);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -140,11 +140,7 @@ public class Item : Entity, IKeyable<int>
 
     public decimal RealPrice => price - off;
 
-    public int StockX => stock / unitx;
-
-    public bool IsFlashing => flashx > 0;
-
-    public int AvailX => avail / unitx;
+    public bool IsFlashing => flash > 0;
 
     public bool IsFromSupply => lotid > 0;
 

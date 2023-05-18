@@ -56,7 +56,7 @@ mark.state-4 {
     color: #fff;
     background-color: #f59604;
 }
-.qtydetail {
+.subtotal {
     flex: 1;
     min-width: 1px;
     box-sizing: border-box;

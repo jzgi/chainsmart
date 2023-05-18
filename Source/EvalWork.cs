@@ -42,9 +42,9 @@ namespace ChainSmart
 
                 h.ASIDE_();
                 h.HEADER_().H4(o.name);
-                if (o.unitx != 1)
+                if (o.step != 1)
                 {
-                    h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
+                    h.SP().SMALL_().T(o.step).T(o.unit).T("件")._SMALL();
                 }
 
                 // h.SPAN(Statuses[o.status], "uk-badge");

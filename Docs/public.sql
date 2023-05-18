@@ -730,13 +730,13 @@ SELECT o.typ,
        o.lotid,
        o.catid,
        o.unit,
-       o.unitx,
+       o.step,
        o.price,
        o.off,
-       o.maxx,
+       o.max,
        o.stock,
        o.avail,
-       o.flashx,
+       o.flash,
        o.ops,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic
@@ -860,13 +860,13 @@ BEGIN
     IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
 
         FOREACH itm IN ARRAY NEW.items LOOP -- oked
-        UPDATE items SET avail = avail - itm.qty, stock = stock - itm.qty, flashx = CASE WHEN flashx > 0 THEN flashx - (itm.qty / itm.unitx) ELSE flashx END WHERE id = itm.itemid;
+        UPDATE items SET avail = avail - itm.qty, stock = stock - itm.qty, flash = CASE WHEN flash > 0 THEN flash - (itm.qty / itm.unitx) ELSE flash END WHERE id = itm.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1 AND OLD.status < 1) THEN -- paid
 
         FOREACH itm IN ARRAY NEW.items LOOP
-                UPDATE items SET avail = avail - itm.qty, flashx = CASE WHEN flashx > 0 THEN flashx - (itm.qty / itm.unitx) ELSE flashx END WHERE id = itm.itemid;
+                UPDATE items SET avail = avail - itm.qty, flash = CASE WHEN flash > 0 THEN flash - (itm.qty / itm.unitx) ELSE flash END WHERE id = itm.itemid;
             END LOOP;
 
     ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4 AND OLD.status < 4) THEN -- sent

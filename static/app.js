@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashx) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, flash) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -48,7 +48,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashx) {
 
     // fill fprice
     var out_fprice = trig.querySelector('.fprice');
-    if (vip || flashx > 0) {
+    if (vip || flash > 0) {
         out_fprice.value = (price - off).toFixed(2);
         out_fprice.classList.add('vip');
     }
@@ -58,42 +58,40 @@ function fillPriceAndQtySelect(trig, evt, price, off, maxx, availx, flashx) {
 
     // fill qty options
     //
-    if (availx < maxx) {
-        maxx = availx;
+    if (avail < max) {
+        max = avail;
     }
     var sel_qtyselect = trig.querySelector('.qtyselect');
 
-    for (var i = 1; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+    for (var i = 1; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
-        opt.text = i + ' 件';
+        opt.text = i + ' ' + unit;
         sel_qtyselect.add(opt);
     }
 
 }
 
-function sumQtyDetails(trig, unitx) {
+// triggered by qty selection
+//
+function calcSubAndTotal(trig) {
 
     var footer = trig.parentElement;
 
-    var output_qtyx = footer.querySelector('.qtyx');
     var output_fprice = footer.querySelector('.fprice');
     var output_subtotal = footer.querySelector('.subtotal');
 
     var fprice = parseFloat(output_fprice.value);
 
-    output_qtyx.value = (unitx * trig.value);
-    output_subtotal.value = (unitx * trig.value * fprice).toFixed(2);
-
-    var span = footer.querySelector('.qtydetail');
+    output_subtotal.value = (trig.value * fprice).toFixed(2);
 
     // toggle visibility
     if (trig.value == 0) {
-        span.classList.add("uk-invisible");
+        output_subtotal.classList.add("uk-invisible");
         trig.classList.remove('uk-active');
     }
     else {
-        span.classList.remove("uk-invisible");
+        output_subtotal.classList.remove("uk-invisible");
         trig.classList.add('uk-active');
     }
 
