@@ -75,9 +75,9 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.ASIDE_();
 
                 h.HEADER_().H4(o.name);
-                if (o.step != 1)
+                if (o.step > 1)
                 {
-                    h.SMALL_().T('（').T(o.step).T(o.unit).T("）")._SMALL();
+                    h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
                 }
 
                 // top right corner span
@@ -96,7 +96,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // FOOTER: price and qty select & detail
                 h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.avail},{o.flash});\">"); // pricing portion
                 h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"calcSubAndTotal(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
+                h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
                 h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                 h._FOOTER();
 
@@ -237,16 +237,16 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
-            if (o.step != 1)
+            if (o.step > 1)
             {
-                h.SP().SMALL_().T(o.step).T(o.unit).T("件")._SMALL();
+                h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
             }
 
             h.SPAN(Statuses[o.status], "uk-badge");
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN2("未用量", o.avail).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN3("剩余", o.avail, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -348,8 +348,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("下单整增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
-                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
+                h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -399,8 +399,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("下单递增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
-                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
+                h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();
             });

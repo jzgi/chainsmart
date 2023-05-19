@@ -29,9 +29,9 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics[m.unitw])._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD("直降", m.off, money: true)._LI();
-            h.LI_().FIELD2("下单整增量", m.step, m.unit).FIELD2("每单限订量", m.max, m.unit)._LI();
-            h.LI_().FIELD2("秒杀量", m.flash, m.unit)._LI();
-            h.LI_().FIELD2("库存量", m.stock, m.unit).FIELD2("可用量", m.avail, m.unit)._LI();
+            h.LI_().FIELD2("每单限订数", m.max, m.unit).FIELD2("为整数", m.step, m.unit)._LI();
+            h.LI_().FIELD2("秒杀数", m.flash, m.unit)._LI();
+            h.LI_().FIELD2("库存数", m.stock, m.unit).FIELD2("剩余数", m.avail, m.unit)._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -165,8 +165,8 @@ public class RtllyItemVarWork : ItemVarWork
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("下单整增量", nameof(o.step), o.step, min: 1, money: false).NUMBER("每单限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
-                h.LI_().NUMBER("秒杀量", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
+                h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });

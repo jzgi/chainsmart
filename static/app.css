@@ -84,8 +84,9 @@ mark.state-4 {
 .suffix {
     display: flex;
     align-items: center;
+    justify-content: center;
     background-color: #f8f8f8;
-    width: 48px;
+    width: 40px;
     height: 100%;
 }
 

@@ -62,7 +62,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             {
                 var o = arr[i];
 
-                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitx=\"").T(o.step).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
+                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitw).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
                 h.T(o.name);
                 if (o.step > 1)
                 {
@@ -74,16 +74,14 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             }
 
             h._SELECT();
-
-            h.SPAN_("uk-width-medium").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填写价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
             h._LI();
 
             decimal subtotal = 0;
             decimal pay = 0;
 
             h.LI_();
-            h.SELECT_(nameof(qtyx))._SELECT();
-            h.SPAN_("uk-width-1-1").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填写数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
+            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填写价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
+            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填写数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
             h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal).ICON("cloud-download", "uk-position-right")._BUTTON();
             h._LI();
 

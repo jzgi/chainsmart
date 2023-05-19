@@ -74,7 +74,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, fl
 
 // triggered by qty selection
 //
-function calcSubAndTotal(trig) {
+function buyRecalc(trig) {
 
     var footer = trig.parentElement;
 
@@ -193,7 +193,7 @@ function posAdd(trig) {
     var lotid = parseInt(opt.getAttribute('lotid'));
     var name = opt.getAttribute('name');
     var unit = opt.getAttribute('unit');
-    var unitx = opt.getAttribute('unitx');
+    var unitw = opt.getAttribute('unitw');
     var price = parseFloat(form['price'].value);
     var qty = parseFloat(form['qty'].value);
 
@@ -202,7 +202,7 @@ function posAdd(trig) {
     // target ul element
     var tbody = document.getElementById('items');
     var tr = document.createElement("tr");
-    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
+    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
     html += '<td>' + opt.innerText + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);

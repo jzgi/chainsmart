@@ -39,7 +39,7 @@ public class LotVarWork : WebWork
 
         if (pricing)
         {
-            h.LI_().FIELD("零售单位", o.unit).FIELD(",单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD(",,单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
             h.LI_().FIELD2("大件含单位", o.unitx, o.unit)._LI();
             h.LI_().FIELD("库存大件数", o.StockX).FIELD("可用大件数", o.AvailX)._LI();
 
@@ -365,7 +365,7 @@ public class SuplyLotVarWork : LotVarWork
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT(",单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT(",,单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次大件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
@@ -672,7 +672,7 @@ public class RtllyPurLotVarWork : LotVarWork
                 h.OPTION_(i).T(i)._OPTION();
             }
             h._SELECT().SP();
-            h.SPAN_("uk-width-expand").T("件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
+            h.SPAN_("uk-width-expand").T(" 大件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 
             // pay button
             h.BUTTON_(nameof(pur), onclick: "return call_pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();

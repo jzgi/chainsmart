@@ -41,6 +41,7 @@ public class Pur : Entity, IKeyable<int>
     internal int lotid;
 
     internal string unit;
+    internal short unitw;
     internal short unitx;
     internal decimal price;
     internal decimal off;
@@ -70,6 +71,7 @@ public class Pur : Entity, IKeyable<int>
 
         lotid = lot.id;
         unit = lot.unit;
+        unitw = lot.unitw;
         unitx = lot.unitx;
         price = lot.price;
         off = lot.off;
@@ -93,10 +95,6 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(supid), ref supid);
             s.Get(nameof(supname), ref supname);
             s.Get(nameof(lotid), ref lotid);
-        }
-
-        if ((msk & MSK_EDIT) == MSK_EDIT)
-        {
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
@@ -131,10 +129,6 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(supid), supid);
             s.Put(nameof(supname), supname);
             s.Put(nameof(lotid), lotid);
-        }
-
-        if ((msk & MSK_EDIT) == MSK_EDIT)
-        {
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);

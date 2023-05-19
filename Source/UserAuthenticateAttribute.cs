@@ -48,10 +48,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
         string openid;
         if (wc.Cookies.TryGetValue(nameof(openid), out openid)) // a previously kept openid
         {
-            if (openid != null)
-            {
-                goto HasGotOpenId;
-            }
+            goto HasGotOpenId;
         }
 
         string state = wc.Query[nameof(state)];
