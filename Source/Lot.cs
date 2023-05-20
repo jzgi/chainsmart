@@ -198,4 +198,25 @@ public class Lot : Entity, IKeyable<int>
     public bool IsPre => typ == TYP_PRE;
 
     public override string ToString() => name;
+
+
+    public bool TryGetStockOp(int tracenum, out StockOp value)
+    {
+        if (ops != null)
+        {
+            var num = tracenum;
+            for (int i = ops.Length - 1; i >= 0; i--)
+            {
+                var op = ops[i];
+                num -= op.qty;
+                if (num <= 0)
+                {
+                    value = op;
+                    return true;
+                }
+            }
+        }
+        value = default;
+        return false;
+    }
 }

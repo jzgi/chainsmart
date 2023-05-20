@@ -135,7 +135,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
     public async Task buy(WebContext wc)
     {
-        int orgid = wc[-1];
+        int orgid = wc[0];
         var org = GrabTwin<int, int, Org>(orgid);
         var prin = (User)wc.Principal;
 
@@ -346,7 +346,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
                 h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
@@ -370,7 +370,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("引用", "引用供应平台产品", icon: "plus", group: 2), Tool(ButtonOpen)]
+    [Ui("导入", "从供应采购导入产品", icon: "plus", group: 2), Tool(ButtonOpen)]
     public async Task @ref(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -397,7 +397,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
                 h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
@@ -409,20 +408,26 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
-            var m = await wc.ReadObjectAsync(msk, o);
-            var lot = GrabValue<int, Lot>(m.lotid);
-            m.typ = lot.typ;
-            m.name = lot.name;
-            m.tip = lot.tip;
+            await wc.ReadObjectAsync(msk, o);
+            var lot = GrabValue<int, Lot>(o.lotid);
+
+            // init by lot
+            {
+                o.typ = lot.typ;
+                o.name = lot.name;
+                o.tip = lot.tip;
+                o.unit = lot.unit;
+                o.unitw = lot.unitw;
+            }
 
             // insert
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
 
             dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
-            var itemid = (int)await dc.ScalarAsync(p => m.Write(p, msk));
+            var itemid = (int)await dc.ScalarAsync(p => o.Write(p, msk));
 
             dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM lots WHERE id = @1) WHERE id = @2");
-            await dc.ExecuteAsync(p => p.Set(m.lotid).Set(itemid));
+            await dc.ExecuteAsync(p => p.Set(o.lotid).Set(itemid));
 
             wc.GivePane(200); // close dialog
         }

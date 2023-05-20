@@ -56,7 +56,7 @@ mark.state-4 {
     color: #fff;
     background-color: #f59604;
 }
-.subtotal {
+output.subtotal {
     flex: 1;
     min-width: 1px;
     box-sizing: border-box;
@@ -85,9 +85,11 @@ mark.state-4 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #f8f8f8;
-    width: 40px;
-    height: 100%;
+    background-color: #f6f6f6;
+    width: 3rem;
+    height: 2rem;
+    box-sizing: border-box;
+    color: #999;
 }
 
 @page {

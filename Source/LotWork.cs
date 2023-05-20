@@ -186,13 +186,13 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT(",,单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次大件数", nameof(o.capx), o.capx)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
 
@@ -254,13 +254,13 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT(",,单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次大件数", nameof(o.capx), o.capx)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
 

@@ -4,11 +4,11 @@ namespace ChainSmart;
 
 public class Eval : Entity, IKeyable<int>
 {
-    public static readonly Cat Empty = new();
+    public static readonly Eval Empty = new();
 
     internal int id;
     internal int orgid;
-    internal JArr data;
+    internal int level;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -24,7 +24,7 @@ public class Eval : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(data), ref data);
+            s.Get(nameof(level), ref level);
         }
     }
 
@@ -42,7 +42,7 @@ public class Eval : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(data), data);
+            s.Put(nameof(level), level);
         }
     }
 

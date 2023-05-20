@@ -63,7 +63,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, fl
     }
     var sel_qtyselect = trig.querySelector('.qtyselect');
 
-    for (var i = 1; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
+    for (var i = step; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' ' + unit;
@@ -115,34 +115,20 @@ function posItemChange(trig) {
     var v = trig.selectedOptions[0];
     var id = v.value;
     var unit = v.getAttribute('unit');
-    var unitx = parseFloat(v.getAttribute('unitx'));
+    var unitw = parseFloat(v.getAttribute('unitw'));
     var price = parseFloat(v.getAttribute('price'));
     var avail = parseFloat(v.getAttribute('avail'));
-    var availx = avail / unitx;
 
     // check local-storage price for selected ware
     var local_price = window.localStorage.getItem('pos-price-' + id);
     if (local_price) {
         price = parseFloat(local_price);
     }
-    form['price'].value = price;
+    form.price.value = price;
     // set local datum name
-    form['price'].setAttribute('local', 'pos-price-' + id);
-
-    // re-fill the qtyx options
-    var qtyx = form['qtyx'];
-    qtyx.innerHTML = null; // clear all qtyx options
-    if (unitx != 1.0) {
-        for (var i = 0; i < availx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
-            var opt = document.createElement("option");
-            opt.value = i;
-            opt.text = i + ' 件';
-            qtyx.add(opt);
-        }
-    }
-
+    form.price.setAttribute('local', 'pos-price-' + id);
     // set unit
-    form['unit'].value = unit ? unit : '';
+    form.unit.value = unit ? unit : '';
 
     posRecalc(trig);
 }
@@ -151,11 +137,10 @@ function posItemChange(trig) {
 function posRecalc(trig) {
 
     var form = trig.form;
-    var subtotal = form['subtotal'];
-    var price = form['price'];
-    var qty = form['qty'];
+    var subtotal = form.subtotal;
+    var price = form.price;
+    var qty = form. qty;
     subtotal.value = (qty.value * price.value).toFixed(2);
-
 }
 
 // resum as topay
@@ -194,16 +179,16 @@ function posAdd(trig) {
     var name = opt.getAttribute('name');
     var unit = opt.getAttribute('unit');
     var unitw = opt.getAttribute('unitw');
-    var price = parseFloat(form['price'].value);
-    var qty = parseFloat(form['qty'].value);
+    var price = parseFloat(form.price.value);
+    var qty = parseFloat(form.qty.value);
 
-    var subtotal = parseFloat(form['subtotal'].value);
+    var subtotal = parseFloat(form.subtotal.value);
 
     // target ul element
     var tbody = document.getElementById('items');
     var tr = document.createElement("tr");
     var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
-    html += '<td>' + opt.innerText + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    html += '<td>' + name + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
 
@@ -268,7 +253,7 @@ function call_pos(trig) {
             } else if (this.status >= 500) {
                 alert('错误，请确认库存');
             }
-        } 
+        }
     };
 
     xhr.open(method, action, false);
@@ -513,7 +498,7 @@ function serialize(form, notEmpty) {
                 q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
                 break;
             case 'SELECT':
-                if (notEmpty && form.elements[i].value == '') 
+                if (notEmpty && form.elements[i].value == '')
                     break;
 
                 switch (form.elements[i].type) {

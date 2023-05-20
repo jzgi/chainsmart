@@ -56,7 +56,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             // form input
 
             h.FORM_().FIELDSUL_();
-            h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);");
+            h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);", empty: "", required: false);
 
             for (var i = 0; i < arr?.Length; i++)
             {
@@ -68,7 +68,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
                 {
                     h.T(o.step).T(o.unit);
                 }
-                h.T('（').T(o.avail).T('）');
+                h.T('（').T(o.avail).SP().T(o.unit).T('）');
 
                 h.T("</option>");
             }
@@ -80,8 +80,8 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             decimal pay = 0;
 
             h.LI_();
-            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填写价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
-            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填写数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
+            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
+            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
             h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal).ICON("cloud-download", "uk-position-right")._BUTTON();
             h._LI();
 

@@ -17,7 +17,7 @@ public class LotVarWork : WebWork
         LotUrl = MainApp.WwwUrl + "/lot/",
         OrgUrl = MainApp.WwwUrl + "/org/";
 
-    internal static void LotShow(HtmlBuilder h, Lot o, Org org, Fab fab, bool pricing)
+    internal static void LotShow(HtmlBuilder h, Lot o, Org org, Fab fab, bool pricing, int tracenum = 0)
     {
         h.ARTICLE_("uk-card uk-card-primary");
         h.H4("产品信息", "uk-card-header");
@@ -39,13 +39,13 @@ public class LotVarWork : WebWork
 
         if (pricing)
         {
-            h.LI_().FIELD("零售单位", o.unit).FIELD(",,单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
-            h.LI_().FIELD2("大件含单位", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("库存大件数", o.StockX).FIELD("可用大件数", o.AvailX)._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
+            h.LI_().FIELD2("整件内含", o.unitx, o.unit)._LI();
+            h.LI_().FIELD("库存整件", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
 
             h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
-            h.LI_().FIELD("秒杀大件数", o.flashx)._LI();
-            h.LI_().FIELD("起订大件数", o.minx, "大件").FIELD("限订大件数", o.maxx)._LI();
+            h.LI_().FIELD("秒杀整件数", o.flashx)._LI();
+            h.LI_().FIELD("起订整件数", o.minx).FIELD("限订整件数", o.maxx)._LI();
         }
 
         h._UL();
@@ -56,12 +56,20 @@ public class LotVarWork : WebWork
         h.H4("批次检验", "uk-card-header");
         h.SECTION_("uk-card-body");
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("批次总件数", o.capx)._LI();
         h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
 
         if (o.nstart > 0 && o.nend > 0)
         {
-            h.LI_().FIELD2("溯源编号", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+            h.LI_().FIELD2("溯源码范围", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+        }
+
+        if (tracenum > 0)
+        {
+            h.LI_("uk-background-secondary").FIELD("本溯源码", $"{tracenum:0000 0000}")._LI();
+            if (o.TryGetStockOp(tracenum, out var v))
+            {
+                h.LI_("uk-background-secondary").FIELD("中转库操作", v.dt)._LI();
+            }
         }
 
         h.LI_().FIELD2("创编", o.created, o.creator)._LI();
@@ -187,16 +195,12 @@ public class LotVarWork : WebWork
         h._ARTICLE();
     }
 
-    public virtual async Task @default(WebContext wc)
+    public virtual void @default(WebContext wc)
     {
         int id = wc[0];
-        var org = wc[-2].As<Org>();
         var topOrgs = Grab<int, Org>();
 
-        const short msk = 255 | MSK_EXTRA;
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
-        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id).Set(org.id), msk);
+        var o = GrabValue<int, Lot>(id);
 
         wc.GivePane(200, h =>
         {
@@ -204,18 +208,19 @@ public class LotVarWork : WebWork
             h.LI_().FIELD("产品名", o.name)._LI();
             h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-            if (o.typ == 2) h.FIELD("交货起始日", o.started);
+            if (o.typ == 2) h.FIELD("输运起始日", o.started);
             h._LI();
 
             h.LI_();
             if (o.targs == null) h.FIELD("限域投放", "不限");
             else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
             h._LI();
-            h.LI_().FIELD("单位", o.unit).FIELD2("每件含l量", o.unitx, o.unit)._LI();
-            h.LI_().FIELD4("批次总件数", o.capx, "（", o.capx, "）")._LI();
+
+            h.LI_().FIELD("零售单位", o.unit).FIELD2("整件含有", o.unitx, o.unit)._LI();
+            h.LI_().FIELD("批次整件数", o.capx)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
-            h.LI_().FIELD("限订件数", o.maxx).FIELD("秒杀件数", o.flashx)._LI();
-            h.LI_().FIELD("库存件数", o.StockX).FIELD("可用件数", o.AvailX)._LI();
+            h.LI_().FIELD("限订整件数", o.maxx).FIELD("秒杀整件数", o.flashx)._LI();
+            h.LI_().FIELD("库存整件数", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
             h._UL();
@@ -273,13 +278,11 @@ public class LotVarWork : WebWork
 
 public class PublyLotVarWork : LotVarWork
 {
-    public override async Task @default(WebContext wc)
+    public override void @default(WebContext wc)
     {
         int id = wc[0];
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
+        var o = GrabValue<int, Lot>(id);
 
         if (o == null)
         {
@@ -365,13 +368,13 @@ public class SuplyLotVarWork : LotVarWork
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT(",,单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("大件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次大件数", nameof(o.capx), o.capx)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -505,7 +508,7 @@ public class SuplyLotVarWork : LotVarWork
 
                 // update
                 using var dc = NewDbContext();
-                dc.Sql("UPDATE lots SET nstart = @1, nend = @2, state = 2, status = 2, adapted = @3, adapter = @4 WHERE id = @5");
+                dc.Sql("UPDATE lots SET nstart = @1, nend = @2, status = 2, adapted = @3, adapter = @4 WHERE id = @5");
                 await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(DateTime.Now).Set(prin.name).Set(lotid));
             }
             else if (cmd == 2)
@@ -634,7 +637,7 @@ public class RtllyPurLotVarWork : LotVarWork
     //
     // NOTE: this page is made publicly cacheable, though under variable path
     //
-    public override async Task @default(WebContext wc)
+    public new async Task @default(WebContext wc)
     {
         int lotid = wc[0];
 
@@ -662,7 +665,7 @@ public class RtllyPurLotVarWork : LotVarWork
             decimal topay = qty * o.RealPrice;
 
             h.BOTTOMBAR_();
-            h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(1); topay.value = ({realprice} * qty.value).toFixed(2);");
+            h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(); topay.value = ({realprice} * qty.value).toFixed(2);");
 
             h.HIDDEN(nameof(realprice), realprice);
 
@@ -672,7 +675,7 @@ public class RtllyPurLotVarWork : LotVarWork
                 h.OPTION_(i).T(i)._OPTION();
             }
             h._SELECT().SP();
-            h.SPAN_("uk-width-expand").T(" 大件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
+            h.SPAN_("uk-width-expand").T(" 整件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 
             // pay button
             h.BUTTON_(nameof(pur), onclick: "return call_pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();

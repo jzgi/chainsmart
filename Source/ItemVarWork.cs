@@ -163,7 +163,14 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, keyset: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                if (o.IsFromSupply)
+                {
+                    h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, @readonly: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics, @readonly: true)._LI();
+                }
+                else
+                {
+                    h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                }
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
                 h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
