@@ -363,7 +363,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.IsCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
                 if (o.IsPre)
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();

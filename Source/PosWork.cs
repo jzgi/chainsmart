@@ -17,9 +17,9 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainTable(HtmlBuilder h, Buy[] arr)
+    protected static void MainTable(HtmlBuilder h, IList<Buy> lst)
     {
-        h.TABLE(arr, o =>
+        h.TABLE(lst, o =>
         {
             h.TD_().T(o.created, 0, 2)._TD();
             h.TD_().ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name);
@@ -80,7 +80,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             decimal pay = 0;
 
             h.LI_();
-            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"填价格\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
+            h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"改单价\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
             h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
             h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal).ICON("cloud-download", "uk-position-right")._BUTTON();
             h._LI();

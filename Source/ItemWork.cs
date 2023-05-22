@@ -30,7 +30,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         var org = GrabTwin<int, int, Org>(orgid);
         var regs = Grab<short, Reg>();
 
-        var mkt = org.IsMarket ? org : GrabTwin<int, int, Org>(org.prtid);
+        var mkt = org.EqMarket ? org : GrabTwin<int, int, Org>(org.prtid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
@@ -119,8 +119,8 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             string com;
 
             h.DIV_("uk-flex uk-width-1-1");
-            h.SELECT_SPEC(nameof(com), mkt.specs, css: "uk-width-medium");
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼 栋 单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '楼栋／单元': '详细收货地址'", css: "uk-width-medium");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._DIV();
 
             h._DIV();
@@ -335,6 +335,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
+            unit = "斤",
+            unitw = 500,
             step = 1,
             max = 1
         };
@@ -348,7 +350,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("网售限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("网售为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
                 h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
@@ -398,7 +400,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("每单限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("网售限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("网售为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
                 h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();

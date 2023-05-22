@@ -20,7 +20,7 @@ public class Unit
 
     public static readonly Map<short, string> Metrics = new()
     {
-        { 0, null },
+        { 0, "未定义" },
         { 50, "１两" },
         { 100, "２两" },
         { 150, "３两" },

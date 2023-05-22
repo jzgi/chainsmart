@@ -46,7 +46,7 @@ public class PublyVarWork : WebWork
 
             h.MAINGRID(arr, o =>
             {
-                if (o.IsBrand)
+                if (o.EqBrand)
                 {
                     h.A_(o.addr, css: "uk-card-body uk-flex");
                 }

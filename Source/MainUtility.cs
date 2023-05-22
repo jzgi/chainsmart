@@ -48,9 +48,9 @@ public static class MainUtility
         return h;
     }
 
-    public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string css = null)
+    public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string onchange = null, string css = null)
     {
-        h.SELECT_(name, local: name, required: true, css: css);
+        h.SELECT_(name, local: name, onchange: onchange, required: true, css: css);
 
         for (int i = 0; i < specs?.Count; i++)
         {

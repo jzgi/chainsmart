@@ -33,7 +33,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinArray<int, int, Org>(0, x => x.IsMarket);
+        var mkts = GrabTwinArray<int, int, Org>(0, x => x.EqMarket);
 
         wc.GivePage(200, h =>
         {

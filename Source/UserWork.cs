@@ -415,10 +415,6 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
                         {
                             h.ALERT("该用户已经是大客户");
                         }
-                        else if (o.HasVipMAx)
-                        {
-                            h.ALERT("该用户已经是４个商户的大客户");
-                        }
                         else
                         {
                             h.HIDDEN(nameof(o.id), o.id);

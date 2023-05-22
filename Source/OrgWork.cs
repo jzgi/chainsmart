@@ -42,7 +42,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q2(o.Ext, o.tip, css: "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -54,7 +54,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(0, cond: x => x.IsMarket, comp: (x, y) => x.regid - y.regid);
+        var array = GrabTwinArray<int, int, Org>(0, cond: x => x.EqMarket, comp: (x, y) => x.regid - y.regid);
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -75,7 +75,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var arr = GrabTwinArray<int, int, Org>(0, cond: x => x.IsCenter, comp: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<int, int, Org>(0, cond: x => x.EqCenter, comp: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -121,7 +121,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联中库", nameof(o.ctrid), o.ctrid, orgs, filter: (_, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中库", nameof(o.ctrid), o.ctrid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
                 }
 
                 h._FIELDSUL()._FORM();
@@ -164,7 +164,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/rtlly/", o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/rtlly/", o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -177,7 +177,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.IsRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.EqRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -217,7 +217,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.regid == regid && x.IsRetail);
+            var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.regid == regid && x.EqRetail);
 
             wc.GivePage(200, h =>
             {
@@ -240,7 +240,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.IsBrand);
+        var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.EqBrand);
 
         wc.GivePage(200, h =>
         {
@@ -345,7 +345,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/suply/", o.Key, "/", icon: "link", disabled: !prin.CanSupervize(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/suply/", o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();

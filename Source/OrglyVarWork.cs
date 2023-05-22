@@ -32,7 +32,7 @@ public abstract class OrglyVarWork : WebWork
                 h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
             }
             else
-                h.PIC(org.IsOfRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(org.IsRetail ? "/rtl.webp" : org.EqCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
 
             h._TOPBARXL();
 

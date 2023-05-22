@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 
 namespace ChainSmart;
 
@@ -51,7 +52,7 @@ public class User : Entity, IKeyable<int>
     internal int rtlid;
     internal short rtlly;
     internal int[] vip;
-    internal int refer;
+    internal DateTime agreed;
     internal bool icon;
 
     public override void Read(ISource s, short msk = 0xff)
@@ -79,7 +80,7 @@ public class User : Entity, IKeyable<int>
             s.Get(nameof(rtlid), ref rtlid);
             s.Get(nameof(rtlly), ref rtlly);
             s.Get(nameof(vip), ref vip);
-            s.Get(nameof(refer), ref refer);
+            s.Get(nameof(agreed), ref agreed);
             s.Get(nameof(icon), ref icon);
         }
     }
@@ -105,39 +106,34 @@ public class User : Entity, IKeyable<int>
             s.Put(nameof(rtlid), rtlid);
             s.Put(nameof(rtlly), rtlly);
             s.Put(nameof(vip), vip);
-            s.Put(nameof(refer), refer);
+            s.Put(nameof(agreed), agreed);
             s.Put(nameof(icon), icon);
         }
     }
 
     public int Key => id;
 
-    public bool IsProfessional => typ >= 1;
+    public bool IsPro => typ >= 1;
 
     public bool HasAdmly => admly > 0;
 
     public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
 
-
     public bool IsVipOf(int orgid) => vip != null && vip.Contains(orgid);
-
-
-    public bool HasVipMAx => vip != null && vip.Length >= 4;
 
 
     /// <summary>
     /// admly, supid + suply, rtlid + rtlly
     /// </summary>
-    public short GetRoleForOrg(Org org, out bool super, out int ulevel)
+    public short GetRoleForOrg(Org org, out bool upper, out int ulevel)
     {
         short ret = 0;
 
-        super = false;
+        upper = false;
         ulevel = 0;
 
-        var sup = org.IsOfSupply;
-        var orgid = sup ? supid : rtlid;
-        var orgly = sup ? suply : rtlly;
+        var orgid = org.IsSupply ? supid : rtlid;
+        var orgly = org.IsSupply ? suply : rtlly;
 
         // is of any role for the org
         if (org.id == orgid)
@@ -152,13 +148,13 @@ public class User : Entity, IKeyable<int>
                 if (org.trust && admly > 0)
                 {
                     ret = admly;
-                    super = true;
+                    upper = true;
                     ulevel = 1;
                 }
                 else if (!org.trust && admly == ROL_MGT)
                 {
                     ret = ROL_OPN; // downgraded role
-                    super = true;
+                    upper = true;
                     ulevel = 1;
                 }
             }
@@ -167,13 +163,13 @@ public class User : Entity, IKeyable<int>
                 if (org.trust && orgid == org.prtid && (orgly > 0 && orgid > 0))
                 {
                     ret = orgly;
-                    super = true;
+                    upper = true;
                     ulevel = 2;
                 }
                 else if (!org.trust && orgid == org.prtid && orgly == ROL_MGT && orgid > 0)
                 {
                     ret = ROL_OPN; // downgraded role
-                    super = true;
+                    upper = true;
                     ulevel = 2;
                 }
             }
@@ -182,10 +178,10 @@ public class User : Entity, IKeyable<int>
         return ret;
     }
 
-    public bool CanSupervize(Org org)
+    public bool CanBeUpperOf(Org org)
     {
-        var role = GetRoleForOrg(org, out var super, out _);
-        return super && role > 0;
+        var role = GetRoleForOrg(org, out var upper, out _);
+        return upper && role > 0;
     }
 
     public bool IsVipFor(int orgid) => vip == null || vip.Contains(orgid);

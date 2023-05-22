@@ -203,7 +203,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(m.IsMarket ? "市场机构" : "供应机构");
+                h.FORM_().FIELDSUL_(m.EqMarket ? "市场机构" : "供应机构");
 
                 h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
@@ -212,9 +212,9 @@ public class AdmlyOrgVarWork : OrgVarWork
                 h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                if (m.IsMarket)
+                if (m.EqMarket)
                 {
-                    h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, topOrgs, filter: (_, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, topOrgs, filter: (_, v) => v.EqCenter, required: true)._LI();
                 }
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -396,7 +396,7 @@ public class MktlyOrgVarWork : OrgVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(m.IsBrand ? "品牌信息" : "商户信息");
+                h.FORM_().FIELDSUL_(m.EqBrand ? "品牌信息" : "商户信息");
 
                 if (m.typ == Org.TYP_RTL)
                 {

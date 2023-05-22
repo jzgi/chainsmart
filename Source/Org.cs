@@ -185,25 +185,25 @@ public class Org : Entity, ITwin<int, int>
 
     public string Tel => tel;
 
-    public int MarketId => IsMarket ? id : IsOfRetail ? prtid : 0;
+    public int MarketId => EqMarket ? id : IsRetail ? prtid : 0;
 
     public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
-    public bool IsBrand => typ == TYP_BRD;
+    public bool EqBrand => typ == TYP_BRD;
 
-    public bool IsSupply => typ == TYP_SUP;
+    public bool EqSupply => typ == TYP_SUP;
 
-    public bool IsOfSupply => (typ & TYP_SUP) == TYP_SUP;
+    public bool IsSupply => (typ & TYP_SUP) == TYP_SUP;
 
-    public bool IsRetail => typ == TYP_RTL;
+    public bool EqRetail => typ == TYP_RTL;
 
-    public bool IsOfRetail => (typ & TYP_RTL) == TYP_RTL;
+    public bool IsRetail => (typ & TYP_RTL) == TYP_RTL;
 
-    public bool IsMarket => typ == TYP_MKT;
+    public bool EqMarket => typ == TYP_MKT;
 
-    public bool IsCenter => typ == TYP_CTR;
+    public bool EqCenter => typ == TYP_CTR;
 
-    public bool HasXy => IsMarket || IsSupply || IsCenter;
+    public bool HasXy => EqMarket || EqSupply || EqCenter;
 
     public bool IsTopOrg => prtid == 0;
 
@@ -211,7 +211,7 @@ public class Org : Entity, ITwin<int, int>
 
     private string title;
 
-    public string Title => title ??= IsMarket ? name : '【' + addr + '】' + name;
+    public string Title => title ??= EqMarket ? name : '【' + addr + '】' + name;
 
     public string Ext => ext;
 
