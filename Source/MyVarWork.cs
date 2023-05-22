@@ -18,7 +18,6 @@ public class MyVarWork : WebWork
         CreateWork<MyAccessVarWork>("access");
 
         CreateWork<MyAgmtVarWork>("agmt");
-
     }
 
     public void @default(WebContext wc)
@@ -43,7 +42,9 @@ public class MyVarWork : WebWork
 
             h._TOPBARXL();
 
-            h.WORKBOARD();
+            h.WORKBOARD(compact: false);
+            
+            h.FOOTER_("uk-card-footer uk-flex-center uk-margin-large-top").PIC("/qrcode.jpg", css: "uk-width-small")._FOOTER();
 
         }, false, 900);
     }

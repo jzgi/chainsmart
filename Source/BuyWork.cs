@@ -16,7 +16,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("我的消费", "账号功能")]
+[Ui("我的消费", "我的网上订单", icon: "cart")]
 public class MyBuyWork : BuyWork<MyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst)
@@ -68,7 +68,7 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
             h.TOOLBAR(tip: prin.name);
             if (arr == null)
             {
-                h.ALERT("尚无当前消费订单");
+                h.ALERT("尚无网购订单");
                 return;
             }
 

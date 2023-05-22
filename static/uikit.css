@@ -3082,9 +3082,7 @@ ul.uk-nav-sub {
 .uk-subnav> :focus,
 .uk-subnav>.uk-active {
     color: #000;
-    background-color: #fff;
-    border-top: 2px solid #f59604;
-    border-bottom-right-radius: 24px;
+    border-bottom: 2px solid #f59604;
 }
 
 .uk-subnav-divider>* {

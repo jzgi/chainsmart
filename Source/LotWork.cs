@@ -49,7 +49,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
         int num = 0;
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_("uk-flex-center").SUBNAV(TAGS)._TOPBAR();
+            h.TOPBAR_("uk-padding-left").SUBNAV(TAGS)._TOPBAR();
             //
             h.FORM_("uk-card uk-card-primary").FIELDSUL_("预制的硬质标签");
             h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();
@@ -65,7 +65,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
         int num = 0;
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_("uk-flex-center").SUBNAV(TAGS)._TOPBAR();
+            h.TOPBAR_("uk-padding-left").SUBNAV(TAGS)._TOPBAR();
             //
             h.FORM_("uk-card uk-card-primary").FIELDSUL_("印制的纸质贴标");
             h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();

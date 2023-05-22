@@ -11,7 +11,7 @@ public class PublyAgmtVarWork : AgntVarWork
 {
 }
 
-[Ui("用户协议", "账号功能")]
+[Ui("用户协议", "本系统的使用条款", icon: " file-text")]
 public class MyAgmtVarWork : AgntVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]

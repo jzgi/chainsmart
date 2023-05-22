@@ -82,7 +82,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.LI_();
             h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"price\" class=\"uk-input\" placeholder=\"改单价\" local=\"\" onchange=\"posRecalc(this);\" step=\"any\" required><output class=\"suffix\">元</output>")._SPAN();
             h.SPAN_("uk-width-expand").T("<input type=\"number\" name=\"qty\" class=\"uk-input\" placeholder=\"填数量\" oninput=\"posRecalc(this);\" step=\"any\" required><output name=\"unit\" class=\"suffix\"></output>")._SPAN();
-            h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal).ICON("cloud-download", "uk-position-right")._BUTTON();
+            h.T("<button type=\"button\" class=\"uk-button-danger uk-width-medium\" onclick=\"return posAdd(this);\">").CNYOUTPUT(nameof(subtotal), subtotal).ICON("cloud-download", css: "uk-position-right")._BUTTON();
             h._LI();
 
             h._FIELDSUL()._FORM();

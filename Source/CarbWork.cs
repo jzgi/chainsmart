@@ -28,7 +28,7 @@ public abstract class CarbWork : WebWork
 }
 
 [AdmlyAuthorize(User.ROL_MGT)]
-[Ui("我的碳积分", "账号功能")]
+[Ui("我的碳积分", "购买生态环保产品的额外奖励", icon: "world")]
 public class MyCarbWork : CarbWork
 {
     protected override void OnCreate()

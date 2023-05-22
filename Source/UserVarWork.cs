@@ -36,7 +36,7 @@ public abstract class UserVarWork : WebWork
     }
 }
 
-[Ui("我的身份权限", "账号功能")]
+[Ui("我的身份权限", "用户身份和操作权限", icon: "unlock")]
 public class MyAccessVarWork : WebWork
 {
     public void @default(WebContext wc)
