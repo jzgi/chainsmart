@@ -3084,9 +3084,7 @@ ul.uk-nav-sub {
     color: #000;
     background-color: #fff;
     border-top: 2px solid #f59604;
-    border-top-right-radius: 24px;
     border-bottom-right-radius: 24px;
-    border-top-left-radius: 24px;
 }
 
 .uk-subnav-divider>* {

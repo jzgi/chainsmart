@@ -43,33 +43,33 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
 {
     static readonly string[] TAGS = { "", "label" };
 
-    [Ui("预制标签")]
+    [Ui("硬质标签")]
     public void @default(WebContext wc)
     {
         int num = 0;
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_().SUBNAV(TAGS)._TOPBAR();
+            h.TOPBAR_("uk-flex-center").SUBNAV(TAGS)._TOPBAR();
             //
             h.FORM_("uk-card uk-card-primary").FIELDSUL_("预制的硬质标签");
             h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();
-            h.LI_().BUTTON("查询")._LI();
+            h.LI_("uk-flex-center").BUTTON("查询")._LI();
             h._FIELDSUL();
             h._FORM();
         }, shared: true, 120, title: "产品批次溯源查询");
     }
 
-    [Ui("印制贴标")]
+    [Ui("纸质贴标")]
     public void label(WebContext wc)
     {
         int num = 0;
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_().SUBNAV(TAGS)._TOPBAR();
+            h.TOPBAR_("uk-flex-center").SUBNAV(TAGS)._TOPBAR();
             //
             h.FORM_("uk-card uk-card-primary").FIELDSUL_("印制的纸质贴标");
             h.LI_().NUMBER("溯源编号", nameof(num), num)._LI();
-            h.LI_().BUTTON("查询")._LI();
+            h.LI_("uk-flex-center").BUTTON("查询")._LI();
             h._FIELDSUL();
             h._FORM();
         }, shared: true, 120, title: "产品批次溯源查询");

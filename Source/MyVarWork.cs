@@ -13,7 +13,7 @@ public class MyVarWork : WebWork
     {
         CreateWork<MyBuyWork>("buy");
 
-        CreateWork<MyCerWork>("cer");
+        CreateWork<MyCarbWork>("cer");
 
         CreateWork<MyAccessVarWork>("access");
 

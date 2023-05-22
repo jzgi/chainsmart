@@ -6,11 +6,11 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class CerVarWork : WebWork
+public abstract class CarbVarWork : WebWork
 {
 }
 
-public class MyCerVarWork : CerVarWork
+public class MyCarbVarWork : CarbVarWork
 {
     public async Task @default(WebContext wc, int typ)
     {

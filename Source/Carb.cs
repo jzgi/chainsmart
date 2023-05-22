@@ -4,11 +4,11 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// A carbon emission reduction deal.
+/// A carbon credit transaction record.
 /// </summary>
-public class Cer : IData, IKeyable<(int, DateTime)>
+public class Carb : IData, IKeyable<(int, DateTime)>
 {
-    public static readonly Cer Empty = new();
+    public static readonly Carb Empty = new();
 
     internal int userid;
     internal DateTime dt;
