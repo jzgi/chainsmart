@@ -16,7 +16,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("我的消费", "我的网上订单", icon: "cart")]
+[Ui("我的消费", "我的网购订单", icon: "cart")]
 public class MyBuyWork : BuyWork<MyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst)

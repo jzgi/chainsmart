@@ -5,10 +5,18 @@ namespace ChainSmart;
 
 public class VanGraph : TwinGraph<int, int, Van>
 {
-    public override Van Load(DbContext dc, int key)
+    public override bool TryGetGroupKey(DbContext dc, int key, out int gkey)
     {
-        dc.Sql("SELECT ").collst(Van.Empty).T(" FROM vans_vw WHERE id = @1 AND status > 0");
-        return dc.QueryTop<Van>(p => p.Set(key));
+        dc.Sql("SELECT orgid FROM vans_vw WHERE id = @1 AND status > 0");
+        if (dc.QueryTop(p => p.Set(key)))
+        {
+            dc.Let(out gkey);
+
+            return true;
+        }
+
+        gkey = default;
+        return false;
     }
 
     public override Map<int, Van> LoadGroup(DbContext dc, int gkey)

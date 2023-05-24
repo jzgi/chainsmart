@@ -1,14 +1,22 @@
-﻿using ChainFx;
+﻿using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Nodal;
 
 namespace ChainSmart;
 
 public class OrgGraph : TwinGraph<int, int, Org>
 {
-    public override Org Load(DbContext dc, int key)
+    public override bool TryGetGroupKey(DbContext dc, int key, out int gkey)
     {
-        dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE id = @1 AND status > 0");
-        return dc.QueryTop<Org>(p => p.Set(key));
+        dc.Sql("SELECT prtid FROM orgs_vw WHERE id = @1 AND status > 0");
+
+        if (dc.QueryTop(p => p.Set(key)))
+        {
+            dc.Let(out gkey);
+            return true;
+        }
+        gkey = -1;
+        return false;
     }
 
     public override Map<int, Org> LoadGroup(DbContext dc, int gkey)
@@ -23,5 +31,15 @@ public class OrgGraph : TwinGraph<int, int, Org>
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND status > 0 ORDER BY regid, id");
             return dc.Query<int, Org>(p => p.Set(gkey));
         }
+    }
+
+    protected override Task<int> DischargeGroupAsync(int gkey, Map<int, Org> group)
+    {
+        return base.DischargeGroupAsync(gkey, group);
+    }
+
+    protected override void OnCreate()
+    {
+        base.OnCreate();
     }
 }

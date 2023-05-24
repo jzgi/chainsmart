@@ -23,7 +23,7 @@ public class PublyTagWork : TagWork
         {
             dc.Let(out int lotid);
 
-            var lot = GrabValue<int, Lot>(lotid);
+            var lot = await GrabValueAsync<int, Lot>(lotid);
 
             if (lot == null)
             {
@@ -50,7 +50,7 @@ public class PublyTagWork : TagWork
                     h.PIC("/void.webp", circle: true, css: "uk-width-small");
 
                 h._TOPBARXL();
-                
+
                 LotVarWork.LotShow(h, lot, org, fab, false, tracenum);
 
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");

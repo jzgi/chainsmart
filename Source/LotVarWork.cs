@@ -195,12 +195,12 @@ public class LotVarWork : WebWork
         h._ARTICLE();
     }
 
-    public virtual void @default(WebContext wc)
+    public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
         var topOrgs = Grab<int, Org>();
 
-        var o = GrabValue<int, Lot>(id);
+        var o = await GrabValueAsync<int, Lot>(id);
 
         wc.GivePane(200, h =>
         {
@@ -278,11 +278,11 @@ public class LotVarWork : WebWork
 
 public class PublyLotVarWork : LotVarWork
 {
-    public override void @default(WebContext wc)
+    public override async Task @default(WebContext wc)
     {
         int id = wc[0];
 
-        var o = GrabValue<int, Lot>(id);
+        var o = await GrabValueAsync<int, Lot>(id);
 
         if (o == null)
         {
@@ -582,7 +582,7 @@ public class SuplyLotVarWork : LotVarWork
             {
                 qtyx = -qtyx;
             }
-            var lot = GrabValue<int, Lot>(id);
+            var lot = await GrabValueAsync<int, Lot>(id);
             int qty = qtyx * lot.unitx;
 
             using var dc = NewDbContext();

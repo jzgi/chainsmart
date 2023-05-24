@@ -203,7 +203,7 @@ svg:not(:root) {
 }
 
 p {
-    font-size: 0.8125rem;
+    font-size: 0.8rem;
     margin: 4px 0;
     color: #777;
 }
@@ -1143,7 +1143,6 @@ button.uk-icon:not(:disabled) {
     min-height: 6rem;
     padding: 4px;
     background-color: #ededed;
-    border-bottom: 1px solid #ddd;
 }
 
 .uk-top-bar.uk-modal-title {
@@ -3168,6 +3167,7 @@ ul.uk-nav-sub {
     list-style: none;
     font-size: 1.5rem;
     justify-content: center;
+    pointer-events: none; 
 }
 
 .uk-pagination>* {
@@ -3178,6 +3178,7 @@ ul.uk-nav-sub {
     border-radius: 50%;
     background-color: #ededed;
     padding: 2px 7px;
+    pointer-events: auto; 
 }
 
 .uk-pagination>a {

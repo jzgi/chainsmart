@@ -218,4 +218,12 @@ public class Org : Entity, ITwin<int, int>
     public int GroupKey => prtid;
 
     public override string ToString() => name;
+
+
+    // EVENT 
+
+
+    public TwinInput Input { get; }
+    
+    public TwinOutput Output { get; }
 }

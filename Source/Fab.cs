@@ -120,4 +120,9 @@ public class Fab : Entity, ITwin<int, int>
     public int GroupKey => orgid;
 
     public override string ToString() => name;
+
+
+    public TwinInput Input { get; }
+    
+    public TwinOutput Output { get; }
 }

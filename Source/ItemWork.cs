@@ -411,7 +411,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
             await wc.ReadObjectAsync(msk, o);
-            var lot = GrabValue<int, Lot>(o.lotid);
+            var lot = await GrabValueAsync<int, Lot>(o.lotid);
 
             // init by lot
             {
