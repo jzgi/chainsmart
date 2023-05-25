@@ -200,7 +200,9 @@ public class LotVarWork : WebWork
         int id = wc[0];
         var topOrgs = Grab<int, Org>();
 
-        var o = await GrabValueAsync<int, Lot>(id);
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
 
         wc.GivePane(200, h =>
         {
@@ -282,7 +284,10 @@ public class PublyLotVarWork : LotVarWork
     {
         int id = wc[0];
 
-        var o = await GrabValueAsync<int, Lot>(id);
+        const short msk = 255 | MSK_EXTRA;
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id), msk);
 
         if (o == null)
         {
@@ -582,11 +587,13 @@ public class SuplyLotVarWork : LotVarWork
             {
                 qtyx = -qtyx;
             }
-            var lot = await GrabValueAsync<int, Lot>(id);
-            int qty = qtyx * lot.unitx;
-
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lots SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @2 ELSE 0 END), stock = stock + @2 WHERE id = @5 AND orgid = @6");
+
+            var unitx = (short)(await dc.ScalarAsync("SELECT unitx FROM lots_vw WHERE id = @1", p => p.Set(id)));
+
+            int qty = qtyx * unitx;
+
+            dc.Sql("UPDATE lots SET ops = ops || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @2 ELSE 0 END), stock = stock + @2 WHERE id = @5 AND orgid = @6");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(tip).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog

@@ -18,12 +18,14 @@ public class PublyTagWork : TagWork
     public async Task @default(WebContext wc, int tracenum)
     {
         using var dc = NewDbContext();
+        
         dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
         if (await dc.QueryTopAsync(p => p.Set(tracenum)))
         {
             dc.Let(out int lotid);
 
-            var lot = await GrabValueAsync<int, Lot>(lotid);
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             if (lot == null)
             {

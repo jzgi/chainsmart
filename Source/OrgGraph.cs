@@ -37,9 +37,4 @@ public class OrgGraph : TwinGraph<int, int, Org>
     {
         return base.DischargeGroupAsync(gkey, group);
     }
-
-    protected override void OnCreate()
-    {
-        base.OnCreate();
-    }
 }

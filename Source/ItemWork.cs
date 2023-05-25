@@ -411,7 +411,11 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
             await wc.ReadObjectAsync(msk, o);
-            var lot = await GrabValueAsync<int, Lot>(o.lotid);
+
+            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+
+            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(o.lotid));
 
             // init by lot
             {
@@ -423,8 +427,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             }
 
             // insert
-            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
-
             dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
             var itemid = (int)await dc.ScalarAsync(p => o.Write(p, msk));
 

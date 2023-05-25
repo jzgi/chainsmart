@@ -55,7 +55,7 @@ public class MainApp : Application
             {
                 dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY id");
                 return dc.Query<short, Cat>();
-            }, 
+            },
             60 * 60 * 12
         );
 
@@ -63,17 +63,8 @@ public class MainApp : Application
             {
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                 return dc.Query<short, Reg>();
-            }, 
+            },
             60 * 60 * 12
-        );
-
-        // for informative use, not for transactional use
-        MakeCache<int, Lot>((dc, id) =>
-            {
-                dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-                return dc.QueryTopAsync<Lot>(p => p.Set(id));
-            }, 
-            60 * 30
         );
     }
 
