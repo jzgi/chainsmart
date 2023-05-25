@@ -72,9 +72,8 @@ public class LotVarWork : WebWork
             }
         }
 
-        h.LI_().FIELD2("创编", o.created, o.creator)._LI();
+        h.LI_().FIELD2("登记", o.created, o.creator)._LI();
         if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
-        if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
 
         h._UL();
 
@@ -157,17 +156,11 @@ public class LotVarWork : WebWork
         h.UL_("uk-list uk-list-divider");
         h.LI_().FIELD("商户名", org.name)._LI();
         h.LI_().FIELD("简介", org.tip)._LI();
-        if (org.IsParent)
-        {
-            h.LI_().FIELD("范围延展名", org.Ext)._LI();
-        }
-
         h.LI_().FIELD("工商登记名", org.legal)._LI();
         h.LI_().FIELD("联系电话", org.tel)._LI();
         h.LI_().FIELD("地址／场地", org.addr)._LI();
         h.LI_().FIELD("指标参数", org.specs)._LI();
-        h.LI_().FIELD("委托代办", org.trust).FIELD("进度状态", org.status, Org.Statuses)._LI();
-        h.LI_().FIELD2("创建", org.created, org.creator)._LI();
+        h.LI_().FIELD2("登记", org.created, org.creator)._LI();
 
         h._UL();
 
@@ -358,7 +351,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fabs = GrabTwinSet<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinArray<int, int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {

@@ -1142,7 +1142,7 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
-    background-color: #ededed;
+    background-color: rgb(221 221 221 / 55%);
 }
 
 .uk-top-bar.uk-modal-title {

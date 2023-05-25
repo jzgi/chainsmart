@@ -195,7 +195,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
 
-        var topOrgs = GrabTwinSet<int, int, Org>(0);
+        var topOrgs = GrabTwinArray<int, int, Org>(0);
 
         var m = GrabTwin<int, int, Org>(id);
 
@@ -214,7 +214,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                 h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                 if (m.EqMarket)
                 {
-                    h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, topOrgs, filter: (_, v) => v.EqCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中库", nameof(m.ctrid), m.ctrid, topOrgs, filter: v => v.EqCenter, required: true)._LI();
                 }
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
