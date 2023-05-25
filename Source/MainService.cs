@@ -62,10 +62,12 @@ public abstract class MainService : WebService
             password = f[nameof(password)];
             url = f[nameof(url)];
 
-            using var dc = Nodality.NewDbContext();
             var credential = MainUtility.ComputeCredential(tel, password);
+
+            using var dc = Nodality.NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
             var prin = dc.QueryTop<User>(p => p.Set(tel));
+
             if (prin == null || !credential.Equals(prin.credential))
             {
                 wc.GiveRedirect(nameof(login));
@@ -74,6 +76,7 @@ public abstract class MainService : WebService
 
             // successfully signed in
             wc.Principal = prin;
+            
             wc.SetTokenCookies(prin);
 
             wc.GiveRedirect(url ?? "/");

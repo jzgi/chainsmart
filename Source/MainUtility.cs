@@ -205,15 +205,25 @@ public static class MainUtility
     public static void SetTokenCookies(this WebContext wc, User o, int maxage = 3600 * 12)
     {
         // get root domain name for cookies
-
         var host = wc.Header("Host");
-        var dot = host.LastIndexOf('.', host.Length - 1);
+
         string root = null;
-        if (dot != -1)
+        if (host != null)
         {
-            dot = host.LastIndexOf('.', dot - 1);
-            root = dot == -1 ? null : host[(dot + 1)..];
+            var colon = host.LastIndexOf(':');
+            var end = colon == -1 ? host.Length : colon;
+            var dot = host.LastIndexOf('.', end - 1);
+
+            if (dot != -1)
+            {
+                dot = host.LastIndexOf('.', dot - 1);
+                root = dot == -1 ? null : host[(dot + 1)..end];
+            }
         }
+
+        Application.War("host: " + host);
+
+        Application.War("root: " + root);
 
         // token cookie
         var token = AuthenticateAttribute.ToToken(o, 0x0fff);
