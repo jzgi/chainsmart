@@ -6,7 +6,7 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
-using static ChainSmart.Notice;
+using static ChainSmart.OrgBox;
 
 namespace ChainSmart;
 
@@ -77,7 +77,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [BizNotice(PUR_ADAPTED)]
+    [OrgSpy(PUR_ADAPTED)]
     [Ui(tip: "待发货", icon: "eye", group: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
@@ -89,7 +89,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无待发货订单");
@@ -122,7 +122,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [BizNotice(PUR_VOID)]
+    [OrgSpy(PUR_VOID)]
     [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
@@ -134,7 +134,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无撤单");
@@ -237,7 +237,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
     private short PurTyp => (short)State;
 
-    [BizNotice(PUR_CREATED)]
+    [OrgSpy(PUR_CREATED)]
     [Ui("销售订单"), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
@@ -249,7 +249,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无新订单");
@@ -282,7 +282,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [BizNotice(PUR_OKED)]
+    [OrgSpy(PUR_OKED)]
     [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
@@ -294,7 +294,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已发货订单");

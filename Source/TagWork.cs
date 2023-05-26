@@ -33,11 +33,11 @@ public class PublyTagWork : TagWork
                 return;
             }
 
-            var org = GrabTwin<int, int, Org>(lot.orgid);
+            var org = GrabTwin<int, Org>(lot.orgid);
             Fab fab = null;
             if (lot.fabid > 0)
             {
-                fab = GrabTwin<int, int, Fab>(lot.fabid);
+                fab = GrabTwin<int, Fab>(lot.fabid);
             }
 
             wc.GivePage(200, h =>

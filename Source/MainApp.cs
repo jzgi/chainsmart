@@ -43,8 +43,6 @@ public class MainApp : Application
         WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
 
-        NoticeBot.Start();
-
         await StartAsync();
     }
 

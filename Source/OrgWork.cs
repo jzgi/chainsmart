@@ -54,7 +54,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(0, cond: x => x.EqMarket, comp: (x, y) => x.regid - y.regid);
+        var array = GrabTwinArray<int, Org>(0, cond: x => x.EqMarket, comp: (x, y) => x.regid - y.regid);
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -75,7 +75,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
 
-        var arr = GrabTwinArray<int, int, Org>(0, cond: x => x.EqCenter, comp: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<int, Org>(0, cond: x => x.EqCenter, comp: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -133,7 +133,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 
             await wc.ReadObjectAsync(msk, o);
 
-            await GetGraph<OrgGraph, int, int, Org>().CreateAsync(async dc =>
+            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
@@ -177,7 +177,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.EqRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<int, Org>(org.id, cond: x => x.EqRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -217,7 +217,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.regid == regid && x.EqRetail);
+            var arr = GrabTwinArray<int, Org>(org.id, cond: x => x.regid == regid && x.EqRetail);
 
             wc.GivePage(200, h =>
             {
@@ -240,7 +240,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var arr = GrabTwinArray<int, int, Org>(org.id, cond: x => x.EqBrand);
+        var arr = GrabTwinArray<int, Org>(org.id, cond: x => x.EqBrand);
 
         wc.GivePage(200, h =>
         {
@@ -314,7 +314,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(msk, instance: o);
 
-            await GetGraph<OrgGraph, int, int, Org>().CreateAsync(async dc =>
+            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
@@ -358,7 +358,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<int, Org>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -380,7 +380,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<int, Org>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -402,7 +402,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinArray<int, int, Org>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var array = GrabTwinArray<int, Org>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -456,7 +456,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(msk, instance: o);
 
-            await GetGraph<OrgGraph, int, int, Org>().CreateAsync(async dc =>
+            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));

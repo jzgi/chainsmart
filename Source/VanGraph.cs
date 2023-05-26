@@ -3,7 +3,7 @@ using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-public class VanGraph : TwinGraph<int, int, Van>
+public class VanGraph : TwinGraph<int, Van>
 {
     public override bool TryGetGroupKey(DbContext dc, int key, out int gkey)
     {

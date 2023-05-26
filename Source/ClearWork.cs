@@ -28,7 +28,7 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
             h.TR_();
             if (orgname)
             {
-                var org = GrabTwin<int, int, Org>(o.orgid);
+                var org = GrabTwin<int, Org>(o.orgid);
                 h.TD(org.name);
             }
 

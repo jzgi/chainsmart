@@ -33,7 +33,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinArray<int, int, Org>(0, x => x.EqMarket);
+        var mkts = GrabTwinArray<int, Org>(0, x => x.EqMarket);
 
         wc.GivePage(200, h =>
         {
@@ -108,7 +108,8 @@ public class WwwService : MainService
                     await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
 
                     // put a notice
-                    NoticeBot.Put(rtlid, Notice.BUY_CREATED, 1, cash);
+                    var rtl = GrabTwin<int, Org>(rtlid);
+                    rtl.Box.Put(OrgBox.BUY_CREATED, 1, cash);
                 }
             }
         }

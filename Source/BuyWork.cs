@@ -4,7 +4,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
-using static ChainSmart.Notice;
+using static ChainSmart.OrgBox;
 
 namespace ChainSmart;
 
@@ -108,7 +108,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 
 
-    [BizNotice(BUY_CREATED)]
+    [OrgSpy(BUY_CREATED)]
     [Ui("网售订单", group: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
@@ -120,7 +120,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无网售订单");
@@ -142,7 +142,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已备发订单");
@@ -153,7 +153,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 4);
     }
 
-    [BizNotice(BUY_OKED)]
+    [OrgSpy(BUY_OKED)]
     [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
@@ -165,7 +165,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已发货订单");
@@ -187,7 +187,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(notice: org.id);
+            h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已撤销订单");

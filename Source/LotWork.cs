@@ -154,7 +154,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var topOrgs = GrabTwinArray<int, int, Org>(0);
+        var topOrgs = GrabTwinArray<int, Org>(0);
         var cats = Grab<short, Cat>();
 
         var o = new Lot
@@ -175,7 +175,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinArray<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinArray<int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -220,7 +220,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var topOrgs = GrabTwinArray<int, int, Org>(0);
+        var topOrgs = GrabTwinArray<int, Org>(0);
         var cats = Grab<short, Cat>();
 
         var o = new Lot
@@ -242,7 +242,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinArray<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinArray<int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {

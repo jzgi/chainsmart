@@ -3,25 +3,25 @@ using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-public class FabGraph : TwinGraph<int, int, Fab>
+public class FabGraph : TwinGraph<int, Fab>
 {
-    public override bool TryGetGroupKey(DbContext dc, int key, out int gkey)
+    public override bool TryGetGroupKey(DbContext dc, int key, out int setkey)
     {
         dc.Sql("SELECT orgid FROM fabs_vw WHERE id = @1 AND status > 0");
         if (dc.QueryTop(p => p.Set(key)))
         {
-            dc.Let(out gkey);
+            dc.Let(out setkey);
 
             return true;
         }
 
-        gkey = default;
+        setkey = default;
         return false;
     }
 
-    public override Map<int, Fab> LoadGroup(DbContext dc, int gkey)
+    public override Map<int, Fab> LoadGroup(DbContext dc, int setkey)
     {
         dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
-        return dc.Query<int, Fab>(p => p.Set(gkey));
+        return dc.Query<int, Fab>(p => p.Set(setkey));
     }
 }

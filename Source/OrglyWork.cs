@@ -18,7 +18,7 @@ public class RtllyWork : OrglyWork
         CreateVarWork<RtllyVarWork>((prin, key) =>
             {
                 var orgid = key?.ToInt() ?? ((User)prin).rtlid;
-                return GrabTwin<int, int, Org>(orgid);
+                return GrabTwin<int, Org>(orgid);
             }
         );
     }
@@ -34,7 +34,7 @@ public class SuplyWork : OrglyWork
         CreateVarWork<SuplyVarWork>((prin, key) =>
             {
                 var orgid = key?.ToInt() ?? ((User)prin).supid;
-                return GrabTwin<int, int, Org>(orgid);
+                return GrabTwin<int, Org>(orgid);
             }
         );
     }

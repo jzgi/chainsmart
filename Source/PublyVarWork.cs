@@ -21,17 +21,17 @@ public class PublyVarWork : WebWork
         int orgid = wc[0];
         var regs = Grab<short, Reg>();
 
-        var org = GrabTwin<int, int, Org>(orgid);
+        var org = GrabTwin<int, Org>(orgid);
 
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            arr = GrabTwinArray<int, int, Org>(orgid, x => x.regid == 0 && x.status == 4);
+            arr = GrabTwinArray<int,  Org>(orgid, x => x.regid == 0 && x.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else
         {
-            arr = GrabTwinArray<int, int, Org>(orgid, x => x.regid == sector && x.status == 4);
+            arr = GrabTwinArray<int, Org>(orgid, x => x.regid == sector && x.status == 4);
         }
 
         wc.GivePage(200, h =>

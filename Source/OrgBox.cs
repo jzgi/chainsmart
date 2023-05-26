@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using ChainFx;
+using ChainFx.Nodal;
 
 namespace ChainSmart;
 
 /// <summary>
 /// A notice pertaining to a particular org.
 /// </summary>
-public class Notice : IKeyable<int>
+public class OrgBox : TwinBox
 {
     public const short
         PUR_CREATED = 1,
@@ -39,36 +40,10 @@ public class Notice : IKeyable<int>
     };
 
 
-    readonly int id;
-
-    readonly string name;
-
-    readonly string tel;
-
-
     // entries for push
     readonly Entry[] pushy = new Entry[CAPACITY];
 
     private int toPush;
-
-    // entries for pull
-    readonly Entry[] pully = new Entry[CAPACITY];
-
-    private int toPull;
-
-
-    internal Notice(int id, string name, string tel)
-    {
-        this.id = id;
-        this.name = name;
-        this.tel = tel;
-    }
-
-    public int Key => id;
-
-    public string Name => name;
-
-    public string Tel => tel;
 
 
     public void Put(short slot, int num, decimal amt)
@@ -85,10 +60,6 @@ public class Notice : IKeyable<int>
             // add push
             pushy[idx].Feed(slot, num, amt);
             toPush += num;
-
-            // add pull
-            pully[idx].Feed(slot, num, amt);
-            toPull += num;
         }
     }
 
@@ -114,7 +85,7 @@ public class Notice : IKeyable<int>
         }
     }
 
-    public int CheckPully(short slot)
+    public int CheckPully(short slot, bool clear = false)
     {
         if (slot > CAPACITY)
         {
@@ -125,41 +96,14 @@ public class Notice : IKeyable<int>
 
         lock (this)
         {
-            return pully[idx].count;
-        }
-    }
+            var ret = pushy[idx].spyCount;
 
-    public int CheckAndClearPully(short slot)
-    {
-        if (slot > CAPACITY)
-        {
-            return 0;
-        }
-
-        var idx = slot - 1;
-
-        lock (this)
-        {
-            var ret = pully[idx].count;
-
-            pully[idx].Reset();
+            if (clear)
+            {
+                pushy[idx].spyCount = 0;
+            }
 
             return ret;
-        }
-    }
-
-    public void ClearPully(short slot)
-    {
-        if (slot > CAPACITY)
-        {
-            return;
-        }
-
-        var idx = slot - 1;
-
-        lock (this)
-        {
-            pully[idx].Reset();
         }
     }
 
@@ -174,17 +118,6 @@ public class Notice : IKeyable<int>
         }
     }
 
-    public bool HasToPull
-    {
-        get
-        {
-            lock (this)
-            {
-                return toPull > 0;
-            }
-        }
-    }
-
 
     public struct Entry
     {
@@ -194,6 +127,7 @@ public class Notice : IKeyable<int>
 
         internal decimal sum;
 
+        internal int spyCount;
 
         internal bool IsEmpty => typ == 0 || count == 0;
 
@@ -203,6 +137,7 @@ public class Notice : IKeyable<int>
         {
             typ = slot;
             count += num;
+            spyCount += num;
             sum += amt;
         }
 

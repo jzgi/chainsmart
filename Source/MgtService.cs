@@ -62,7 +62,8 @@ public class MgtService : MainService
                     await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(purid).Set(qty).Set(lotid));
 
                     // put a notice to the accepter
-                    NoticeBot.Put(supid, Notice.PUR_CREATED, 1, cash);
+                    var sup = GrabTwin<int, Org>(supid);
+                    sup.Box.Put(OrgBox.PUR_CREATED, 1, cash);
                 }
             }
         }

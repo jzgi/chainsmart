@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// A fabrication of product lot. 
 /// </summary>
-public class Fab : Entity, ITwin<int, int>
+public class Fab : Entity, ITwin<int>
 {
     public static readonly Fab Empty = new();
 
@@ -117,12 +117,8 @@ public class Fab : Entity, ITwin<int, int>
 
     public int Key => id;
 
-    public int GroupKey => orgid;
+    public int SetKey => orgid;
 
     public override string ToString() => name;
 
-
-    public TwinInput Input { get; }
-    
-    public TwinOutput Output { get; }
 }

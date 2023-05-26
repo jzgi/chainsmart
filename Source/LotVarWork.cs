@@ -288,11 +288,11 @@ public class PublyLotVarWork : LotVarWork
             return;
         }
 
-        var org = GrabTwin<int, int, Org>(o.orgid);
+        var org = GrabTwin<int, Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GrabTwin<int, int, Fab>(o.fabid);
+            fab = GrabTwin<int, Fab>(o.fabid);
         }
 
         wc.GivePage(200, h =>
@@ -341,7 +341,7 @@ public class SuplyLotVarWork : LotVarWork
     {
         int lotid = wc[0];
         var org = wc[-2].As<Org>();
-        var topOrgs = GrabTwinArray<int, int, Org>(0);
+        var topOrgs = GrabTwinArray<int, Org>(0);
         var cats = Grab<short, Cat>();
         var prin = (User)wc.Principal;
 
@@ -351,7 +351,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fabs = GrabTwinArray<int, int, Fab>(o.orgid);
+            var fabs = GrabTwinArray<int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -447,7 +447,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fab = o.fabid == 0 ? null : GrabTwin<int, int, Fab>(o.fabid);
+            var fab = o.fabid == 0 ? null : GrabTwin<int, Fab>(o.fabid);
 
             if (cmd == 1)
             {
@@ -645,11 +645,11 @@ public class RtllyPurLotVarWork : LotVarWork
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
-        var org = GrabTwin<int, int, Org>(o.orgid);
+        var org = GrabTwin<int, Org>(o.orgid);
         Fab fab = null;
         if (o.fabid > 0)
         {
-            fab = GrabTwin<int, int, Fab>(o.fabid);
+            fab = GrabTwin<int, Fab>(o.fabid);
         }
 
         wc.GivePane(200, h =>

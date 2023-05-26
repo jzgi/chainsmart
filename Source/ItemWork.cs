@@ -27,10 +27,10 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GrabTwin<int, int, Org>(orgid);
+        var org = GrabTwin<int, Org>(orgid);
         var regs = Grab<short, Reg>();
 
-        var mkt = org.EqMarket ? org : GrabTwin<int, int, Org>(org.prtid);
+        var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.prtid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
@@ -136,7 +136,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     public async Task buy(WebContext wc)
     {
         int orgid = wc[0];
-        var org = GrabTwin<int, int, Org>(orgid);
+        var org = GrabTwin<int, Org>(orgid);
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();

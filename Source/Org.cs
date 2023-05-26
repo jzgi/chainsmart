@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// An organizational unit.
 /// </summary>
-public class Org : Entity, ITwin<int, int>
+public class Org : Entity, ITwin<int>
 {
     public static readonly Org Empty = new();
 
@@ -215,7 +215,7 @@ public class Org : Entity, ITwin<int, int>
 
     public string Ext => ext;
 
-    public int GroupKey => prtid;
+    public int SetKey => prtid;
 
     public override string ToString() => name;
 
@@ -223,7 +223,7 @@ public class Org : Entity, ITwin<int, int>
     // EVENT 
 
 
-    public TwinInput Input { get; }
-    
-    public TwinOutput Output { get; }
+    OrgBox box;
+
+    public OrgBox Box => box ??= new OrgBox();
 }

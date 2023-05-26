@@ -56,7 +56,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinArray<int, int, Fab>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinArray<int, Fab>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -77,7 +77,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinArray<int, int, Fab>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinArray<int, Fab>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -98,7 +98,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinArray<int, int, Fab>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var arr = GrabTwinArray<int, Fab>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
 
         wc.GivePage(200, h =>
         {
@@ -154,7 +154,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
                 creator = prin.name,
             });
 
-            await GetGraph<FabGraph, int, int, Fab>().CreateAsync(async dc =>
+            await GetGraph<FabGraph, int, Fab>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO fabs_vw ").colset(Fab.Empty, msk)._VALUES_(Fab.Empty, msk).T(" RETURNING ").collst(Fab.Empty);
                 return await dc.QueryTopAsync<Fab>(p => m.Write(p, msk));

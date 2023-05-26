@@ -16,7 +16,7 @@ public abstract class OrgVarWork : WebWork
         var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
         var regs = Grab<short, Reg>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         wc.GivePane(200, h =>
         {
@@ -74,7 +74,7 @@ public abstract class OrgVarWork : WebWork
             dc.Sql("UPDATE orgs SET ").T(col).T(" = @1 WHERE id = @2");
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
-                var m = GrabTwin<int, int, Org>(id);
+                var m = GrabTwin<int, Org>(id);
                 switch (col)
                 {
                     case nameof(Org.icon):
@@ -133,7 +133,7 @@ public class OrglySetgWork : OrgVarWork
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Org>(org.id);
+        var m = GrabTwin<int, Org>(org.id);
 
         if (wc.IsGet)
         {
@@ -195,9 +195,9 @@ public class AdmlyOrgVarWork : OrgVarWork
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
 
-        var topOrgs = GrabTwinArray<int, int, Org>(0);
+        var topOrgs = GrabTwinArray<int, Org>(0);
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -264,7 +264,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                         h.LI_().FIELD("用户名", o.name)._LI();
                         if (o.supid > 0)
                         {
-                            var org = GrabTwin<int, int, Org>(o.supid);
+                            var org = GrabTwin<int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
                         }
                         else
@@ -322,7 +322,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         var now = DateTime.Now;
         lock (m)
@@ -331,7 +331,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
@@ -346,7 +346,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     {
         int id = wc[0];
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         lock (m)
         {
@@ -354,7 +354,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -369,9 +369,9 @@ public class AdmlyOrgVarWork : OrgVarWork
     {
         int id = wc[0];
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
-        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -390,7 +390,7 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var regs = Grab<short, Reg>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -423,7 +423,7 @@ public class MktlyOrgVarWork : OrgVarWork
             const short msk = MSK_EDIT;
             m = await wc.ReadObjectAsync(msk, instance: m);
 
-            await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async dc =>
+            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -466,7 +466,7 @@ public class MktlyOrgVarWork : OrgVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         var now = DateTime.Now;
         lock (m)
@@ -475,7 +475,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -491,7 +491,7 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         lock (m)
         {
@@ -499,7 +499,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -515,9 +515,9 @@ public class MktlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
-        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -537,7 +537,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var regs = Grab<short, Reg>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         if (wc.IsGet)
         {
@@ -564,7 +564,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             m.adapted = DateTime.Now;
             m.adapter = prin.name;
 
-            await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async dc =>
+            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -607,7 +607,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         var now = DateTime.Now;
         lock (m)
@@ -616,7 +616,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -632,7 +632,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
         lock (m)
         {
@@ -640,7 +640,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -656,9 +656,9 @@ public class CtrlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Org>(id);
+        var m = GrabTwin<int, Org>(id);
 
-        await GetGraph<OrgGraph, int, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;

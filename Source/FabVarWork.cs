@@ -36,7 +36,7 @@ public abstract class FabVarWork : WebWork
             dc.Sql("UPDATE fabs SET ").T(col).T(" = @1 WHERE id = @2");
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
-                var m = GrabTwin<int, int, Fab>(id);
+                var m = GrabTwin<int, Fab>(id);
                 switch (col)
                 {
                     case nameof(Fab.icon):
@@ -206,7 +206,7 @@ public class SuplyFabVarWork : FabVarWork
                 adapter = prin.name,
             });
 
-            await GetGraph<FabGraph, int, int, Fab>().UpdateAsync(m, async dc =>
+            await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE fabs_vw")._SET_(Fab.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
                 return await dc.ExecuteAsync(p =>
@@ -249,7 +249,7 @@ public class SuplyFabVarWork : FabVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, int, Fab>(id);
+        var m = GrabTwin<int, Fab>(id);
 
         var now = DateTime.Now;
         lock (m)
@@ -258,7 +258,7 @@ public class SuplyFabVarWork : FabVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<FabGraph, int, int, Fab>().UpdateAsync(m, async (dc) =>
+        await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE fabs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -274,7 +274,7 @@ public class SuplyFabVarWork : FabVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Fab>(id);
+        var m = GrabTwin<int, Fab>(id);
 
         lock (m)
         {
@@ -282,7 +282,7 @@ public class SuplyFabVarWork : FabVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<FabGraph, int, int, Fab>().UpdateAsync(m, async (dc) =>
+        await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE fabs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -298,9 +298,9 @@ public class SuplyFabVarWork : FabVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, int, Fab>(id);
+        var m = GrabTwin<int, Fab>(id);
 
-        await GetGraph<FabGraph, int, int, Fab>().RemoveAsync(m, async (dc) =>
+        await GetGraph<FabGraph, int, Fab>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM fabs WHERE id = @1 AND orgid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;

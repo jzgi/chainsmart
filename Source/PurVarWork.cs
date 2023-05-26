@@ -65,7 +65,8 @@ public class SuplyPurVarWork : PurVarWork
             dc.Let(out decimal topay);
 
             // put a notice to the relevant center
-            NoticeBot.Put(ctrid, Notice.PUR_ADAPTED, 1, topay);
+            var ctr = GrabTwin<int, Org>(ctrid);
+            ctr.Box.Put(OrgBox.PUR_ADAPTED, 1, topay);
         }
 
         wc.Give(204);
@@ -96,7 +97,8 @@ public class SuplyPurVarWork : PurVarWork
                 await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
 
                 // put a notice to the shop
-                NoticeBot.Put(rtlid, Notice.PUR_OKED, 1, topay);
+                var rtl = GrabTwin<int, Org>(rtlid);
+                rtl.Box.Put(OrgBox.PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -143,7 +145,8 @@ public class SuplyPurVarWork : PurVarWork
                 }
 
                 // put a notice to the shop
-                NoticeBot.Put(rtlid, Notice.PUR_VOID, 1, refund);
+                var rtl = GrabTwin<int, Org>(rtlid);
+                rtl.Box.Put(OrgBox.PUR_VOID, 1, refund);
             }
         }
         catch (Exception)

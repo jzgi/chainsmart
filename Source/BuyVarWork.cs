@@ -71,7 +71,8 @@ public class MyBuyVarWork : BuyVarWork
             dc.Let(out int rtlid);
             dc.Let(out decimal pay);
 
-            NoticeBot.Put(rtlid, Notice.BUY_OKED, 1, pay);
+            var rtl = GrabTwin<int, Org>(rtlid);
+            rtl.Box.Put(OrgBox.BUY_OKED, 1, pay);
         }
 
         wc.Give(200);
