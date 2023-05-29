@@ -55,7 +55,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
         if (!WXAUTH.Equals(state)) // if not weixin auth
         {
             // redirect to WeiXin auth
-            WeixinUtility.GiveRedirectWeiXinAuthorize(wc, MainApp.WwwUrl, false);
+            WeixinUtility.GiveRedirectWeiXinAuthorize(wc, false);
             return false;
         }
 

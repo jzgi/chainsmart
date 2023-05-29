@@ -101,7 +101,7 @@ public static class WeixinUtility
         return accessToken;
     }
 
-    public static void GiveRedirectWeiXinAuthorize(WebContext wc, string listenAddr, bool userinfo = false)
+    public static void GiveRedirectWeiXinAuthorize(WebContext wc, bool userinfo = false)
     {
         string redirect_url = WebUtility.UrlEncode(wc.Url);
 
