@@ -6,7 +6,6 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Nodal;
 using ChainFx.Web;
 using static ChainFx.CryptoUtility;
 using static ChainFx.Application;
@@ -47,7 +46,7 @@ public static class WeixinUtility
 
     static WeixinUtility()
     {
-        var s = Application.Prog;
+        var s = Prog;
         s.Get(nameof(appid), ref appid);
         s.Get(nameof(appsecret), ref appsecret);
         s.Get(nameof(supmchid), ref supmchid);
@@ -104,7 +103,10 @@ public static class WeixinUtility
 
     public static void GiveRedirectWeiXinAuthorize(WebContext wc, string listenAddr, bool userinfo = false)
     {
-        string redirect_url = WebUtility.UrlEncode(listenAddr + wc.Uri);
+        string redirect_url = WebUtility.UrlEncode(wc.Url);
+
+        // War("redirect_url:" + redirect_url);
+
         wc.SetHeader(
             "Location",
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appid + "&redirect_uri=" + redirect_url + "&response_type=code&scope=" + (userinfo ? "snsapi_userinfo" : "snsapi_base") + "&state=wxauth#wechat_redirect"
@@ -527,7 +529,7 @@ public static class WeixinUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Application.Name },
+            { "SignName", Name },
             { "TemplateId", smsvcodetempid }
         };
 
@@ -580,7 +582,7 @@ public static class WeixinUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Application.Name },
+            { "SignName", Name },
             { "TemplateId", smsnotiftempid }
         };
 
