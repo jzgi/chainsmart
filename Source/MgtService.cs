@@ -63,7 +63,7 @@ public class MgtService : MainService
 
                     // put a notice to the accepter
                     var sup = GrabTwin<int, Org>(supid);
-                    sup.Box.Put(OrgBox.PUR_CREATED, 1, cash);
+                    sup.NoticeQueue.Put(OrgNoticeQueue.PUR_CREATED, 1, cash);
                 }
             }
         }

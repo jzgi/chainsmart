@@ -341,7 +341,7 @@ public class SuplyLotVarWork : LotVarWork
     {
         int lotid = wc[0];
         var org = wc[-2].As<Org>();
-        var topOrgs = GrabTwinArray<int, Org>(0);
+        var topOrgs = GrabTwinSet<int, Org>(0);
         var cats = Grab<short, Cat>();
         var prin = (User)wc.Principal;
 
@@ -351,7 +351,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var fabs = GrabTwinArray<int, Fab>(o.orgid);
+            var fabs = GrabTwinSet<int, Fab>(o.orgid);
 
             wc.GivePane(200, h =>
             {

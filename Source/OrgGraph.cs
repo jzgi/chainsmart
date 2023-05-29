@@ -46,7 +46,7 @@ public class OrgGraph : TwinGraph<int, Org>
         foreach (var ety in set)
         {
             var org = ety.Value;
-            var box = org.Box;
+            var box = org.NoticeQueue;
             if (box.HasToPush)
             {
                 box.PushToBuffer(sb);

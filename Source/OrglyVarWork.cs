@@ -1,4 +1,5 @@
-﻿using ChainFx.Web;
+﻿using ChainFx;
+using ChainFx.Web;
 
 namespace ChainSmart;
 
@@ -79,13 +80,28 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyEvalWork>("meval");
 
-        CreateWork<MktlyBuyWork>("mbuy");
+        CreateWork<MktlyBuyWork>("mbuy"); // delivery
 
         CreateWork<MktlyPurWork>("mpur");
 
         CreateWork<MktlyBuyAggWork>("mbuyagg");
 
         CreateWork<MktlyPurAggWork>("mpuragg");
+    }
+
+    /// <summary>
+    /// The polling of events that belong to the presented org.
+    /// </summary>
+    /// <param name="wc"></param>
+    [OrglyAuthorize(Org.TYP_MKT)]
+    public void @event(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        // var es = org.EventQueue;
+
+        var formm = new FormMpBuilder(32000);
     }
 }
 

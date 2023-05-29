@@ -1,13 +1,14 @@
 ﻿using System.Text;
 using ChainFx;
 using ChainFx.Nodal;
+using Microsoft.Extensions.Primitives;
 
 namespace ChainSmart;
 
 /// <summary>
-/// A notice pertaining to a particular org.
+/// The output event queue for an org which contains b 
 /// </summary>
-public class OrgBox : TwinBox
+public class OrgEventQueue : TwinEventQueue
 {
     public const short
         PUR_CREATED = 1,
@@ -40,10 +41,10 @@ public class OrgBox : TwinBox
     };
 
 
-    // entries for push
-    readonly Entry[] pushy = new Entry[CAPACITY];
+    // entries of various types
+    readonly Entry[] entries = new Entry[CAPACITY];
 
-    private int toPush;
+    int count;
 
 
     public void Put(short slot, int num, decimal amt)
@@ -58,8 +59,16 @@ public class OrgBox : TwinBox
         lock (this)
         {
             // add push
-            pushy[idx].Feed(slot, num, amt);
-            toPush += num;
+            entries[idx].Feed(slot, num, amt);
+            count += num;
+        }
+    }
+
+    public void PutDeliveryAssign(string user, Buy[] arr)
+    {
+        lock (this)
+        {
+            // add push
         }
     }
 
@@ -69,19 +78,19 @@ public class OrgBox : TwinBox
         lock (this)
         {
             var ord = 0;
-            for (var i = 0; i < pushy.Length; i++)
+            for (var i = 0; i < entries.Length; i++)
             {
-                if (pushy[i].IsStuffed)
+                if (entries[i].IsStuffed)
                 {
                     sb.Append(NUMS[ord++]).Append(' ');
 
-                    pushy[i].PutToBuffer(sb);
+                    entries[i].PutToBuffer(sb);
 
-                    pushy[i].Reset();
+                    entries[i].Reset();
                 }
             }
 
-            toPush = 0;
+            count = 0;
         }
     }
 
@@ -96,11 +105,11 @@ public class OrgBox : TwinBox
 
         lock (this)
         {
-            var ret = pushy[idx].spyCount;
+            var ret = entries[idx].spyCount;
 
             if (clear)
             {
-                pushy[idx].spyCount = 0;
+                entries[idx].spyCount = 0;
             }
 
             return ret;
@@ -113,7 +122,7 @@ public class OrgBox : TwinBox
         {
             lock (this)
             {
-                return toPush > 0;
+                return count > 0;
             }
         }
     }
@@ -125,7 +134,7 @@ public class OrgBox : TwinBox
 
         internal int count;
 
-        internal decimal sum;
+        internal StringValues sum;
 
         internal int spyCount;
 
@@ -144,7 +153,6 @@ public class OrgBox : TwinBox
         internal void Reset()
         {
             count = 0;
-            sum = 0;
         }
 
         internal void PutToBuffer(StringBuilder sb)

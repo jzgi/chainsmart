@@ -4,7 +4,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
-using static ChainSmart.OrgBox;
+using static ChainSmart.OrgNoticeQueue;
 
 namespace ChainSmart;
 
@@ -338,4 +338,5 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             }, false, 30);
         }
     }
+
 }

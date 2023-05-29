@@ -195,7 +195,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
 
-        var topOrgs = GrabTwinArray<int, Org>(0);
+        var topOrgs = GrabTwinSet<int, Org>(0);
 
         var m = GrabTwin<int, Org>(id);
 

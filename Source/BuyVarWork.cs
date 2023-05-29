@@ -72,7 +72,7 @@ public class MyBuyVarWork : BuyVarWork
             dc.Let(out decimal pay);
 
             var rtl = GrabTwin<int, Org>(rtlid);
-            rtl.Box.Put(OrgBox.BUY_OKED, 1, pay);
+            rtl.NoticeQueue.Put(OrgNoticeQueue.BUY_OKED, 1, pay);
         }
 
         wc.Give(200);
@@ -161,14 +161,25 @@ public class RtllyBuyVarWork : BuyVarWork
 
 public class MktlyBuyVarWork : BuyVarWork
 {
-    public new async Task @default(WebContext wc)
+    public async Task assign(WebContext wc)
     {
         string com = wc[0];
+        var prin = (User)wc.Principal;
         var org = wc[-2].As<Org>();
 
-        const short msk = 255 | MSK_EXTRA;
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty, msk).T(" FROM buys WHERE rtlid = @1 AND ucom = @2 ORDER BY uid");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(com), msk);
+        if (wc.IsGet)
+        {
+            // job assign list
+        }
+        else
+        {
+            using var dc = NewDbContext();
+            
+            dc.Sql("UPDATE buys SET status = 4, oked = @1, oker = @2 WHERE rtlid = @3 AND status = 2 AND ucom = @4 RETURNING ").collst(Buy.Empty);
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(com));
+
+            // iot event
+            // GrabTwin<int, Org>(org.id).EventQueue.PutDeliveryAssign(prin.name, arr);
+        }
     }
 }

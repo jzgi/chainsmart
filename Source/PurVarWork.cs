@@ -66,7 +66,7 @@ public class SuplyPurVarWork : PurVarWork
 
             // put a notice to the relevant center
             var ctr = GrabTwin<int, Org>(ctrid);
-            ctr.Box.Put(OrgBox.PUR_ADAPTED, 1, topay);
+            ctr.NoticeQueue.Put(OrgNoticeQueue.PUR_ADAPTED, 1, topay);
         }
 
         wc.Give(204);
@@ -98,7 +98,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.Box.Put(OrgBox.PUR_OKED, 1, topay);
+                rtl.NoticeQueue.Put(OrgNoticeQueue.PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -146,7 +146,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.Box.Put(OrgBox.PUR_VOID, 1, refund);
+                rtl.NoticeQueue.Put(OrgNoticeQueue.PUR_VOID, 1, refund);
             }
         }
         catch (Exception)

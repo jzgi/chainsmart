@@ -26,12 +26,12 @@ public class PublyVarWork : WebWork
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            arr = GrabTwinArray<int,  Org>(orgid, x => x.regid == 0 && x.status == 4);
+            arr = GrabTwinSet<int,  Org>(orgid, x => x.regid == 0 && x.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else
         {
-            arr = GrabTwinArray<int, Org>(orgid, x => x.regid == sector && x.status == 4);
+            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == sector && x.status == 4);
         }
 
         wc.GivePage(200, h =>

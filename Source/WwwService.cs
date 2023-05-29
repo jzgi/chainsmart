@@ -33,7 +33,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinArray<int, Org>(0, x => x.EqMarket);
+        var mkts = GrabTwinSet<int, Org>(0, x => x.EqMarket);
 
         wc.GivePage(200, h =>
         {
@@ -57,9 +57,10 @@ public class WwwService : MainService
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markAndGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">").T(o.Ext)._A();
-                h.SPAN_("uk-margin-auto-left");
-                h.SPAN(o.addr, css: "uk-width-auto uk-text-small uk-padding-small-right");
+                h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markAndGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.H4(o.Ext);
+                h.P(o.addr, css: "uk-margin-auto-left");
+                h._A();
                 h.A_POI(o.x, o.y, o.Ext, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
                 h._LI();
 
@@ -75,7 +76,7 @@ public class WwwService : MainService
             }
 
             h._ARTICLE();
-        }, true, 360, title: Application.Name, onload: "fixAll();");
+        }, true, 360, title: Application.Name + "市场", onload: "fixAll();");
     }
 
 
@@ -109,7 +110,7 @@ public class WwwService : MainService
 
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
-                    rtl.Box.Put(OrgBox.BUY_CREATED, 1, cash);
+                    rtl.NoticeQueue.Put(OrgNoticeQueue.BUY_CREATED, 1, cash);
                 }
             }
         }

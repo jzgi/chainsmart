@@ -223,7 +223,11 @@ public class Org : Entity, ITwin<int>
     // EVENT 
 
 
-    OrgBox box;
+    private OrgNoticeQueue noticeq;
 
-    public OrgBox Box => box ??= new OrgBox();
+    public OrgNoticeQueue NoticeQueue => noticeq ??= new OrgNoticeQueue();
+
+    // private OrgEventQueue eventq;
+    //
+    // public OrgEventQueue EventQueue => eventq ??= new OrgEventQueue();
 }
