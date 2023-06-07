@@ -48,7 +48,7 @@ public class PublyFabWork : FabWork<PublyFabVarWork>
     }
 }
 
-[Ui("产品源", "商户")]
+[Ui("产品源")]
 public class SuplyFabWork : FabWork<SuplyFabVarWork>
 {
     [Ui("产品源", group: 1), Tool(Anchor)]

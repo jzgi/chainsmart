@@ -8,27 +8,19 @@ namespace ChainSmart;
 /// <summary>
 /// The output event queue for an org which contains b 
 /// </summary>
-public class OrgEventQueue : TwinEventQueue
+public class OrgEventQueue : TwinEdgiePack
 {
     public const short
-        PUR_CREATED = 1,
+        DELIVERY = 1,
         PUR_ADAPTED = 2,
-        PUR_OKED = 3,
-        PUR_VOID = 4,
-        BUY_CREATED = 5,
-        BUY_ADAPTED = 6,
-        BUY_OKED = 7,
         BUY_VOID = 8;
 
     public static readonly Map<short, string> Slots = new()
     {
-        { PUR_CREATED, "供应新单" },
+        { DELIVERY, "社区合单" },
         { PUR_ADAPTED, "供应发货" },
-        { PUR_OKED, "供应收货" },
-        { PUR_VOID, "供应撤单" },
-        { BUY_CREATED, "消费新单" },
-        { BUY_ADAPTED, "消费发货" },
-        { BUY_OKED, "消费收货" },
+
+
         { BUY_VOID, "消费撤单" },
     };
 

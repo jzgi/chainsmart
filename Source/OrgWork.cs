@@ -23,7 +23,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_OPN)]
-[Ui("机构管理", "业务")]
+[Ui("机构管理")]
 public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 {
     protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool rtlly)
@@ -145,7 +145,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("成员商户", "机构")]
+[Ui("成员商户")]
 public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)
@@ -326,7 +326,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("成员商户", "机构")]
+[Ui("成员商户")]
 public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)

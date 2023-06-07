@@ -78,7 +78,7 @@ public class MyBuyWork : BuyWork<MyBuyVarWork>
     }
 }
 
-[Ui("网售订单", "商户")]
+[Ui("网售订单")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst)
@@ -200,7 +200,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("销售订单统一发货", "机构")]
+[Ui("销售订单统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
     [Ui("待发货", group: 1), Tool(Anchor)]

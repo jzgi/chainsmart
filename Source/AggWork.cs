@@ -91,9 +91,8 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
     }
 }
 
-
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场业务汇总", "财务")]
+[Ui("市场业务汇总")]
 public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
 {
     [Ui("市场业务", group: 1), Tool(Anchor)]
@@ -125,9 +124,8 @@ public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
     }
 }
 
-
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应业务汇总", "财务")]
+[Ui("供应业务汇总")]
 public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
 {
     [Ui("供应业务", group: 1), Tool(Anchor)]
@@ -137,7 +135,7 @@ public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
     }
 }
 
-[Ui("销售业务日总", "商户")]
+[Ui("销售业务日总")]
 public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
 {
     [Ui("按商品", group: 1), Tool(Anchor)]
@@ -191,7 +189,7 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
     }
 }
 
-[Ui("采购业务日总", "商户")]
+[Ui("采购业务日总")]
 public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
 {
     [Ui("按产品批次", group: 1), Tool(Anchor)]
@@ -245,7 +243,7 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
     }
 }
 
-[Ui("销售业务日总", "商户")]
+[Ui("销售业务日总")]
 public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 {
     [Ui("按产品批次", group: 1), Tool(Anchor)]
@@ -311,7 +309,7 @@ public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("销售情况汇总", "机构")]
+[Ui("销售情况汇总")]
 public class MktlyBuyAggWork : AggWork<AggVarWork>
 {
     public void @default(WebContext wc, int page)
@@ -327,7 +325,7 @@ public class MktlyBuyAggWork : AggWork<AggVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购情况汇总", "机构")]
+[Ui("采购情况汇总")]
 public class MktlyPurAggWork : AggWork<AggVarWork>
 {
     public void @default(WebContext wc, int page)
@@ -343,7 +341,7 @@ public class MktlyPurAggWork : AggWork<AggVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("销售情况汇总", "机构")]
+[Ui("销售情况汇总")]
 public class CtrlyPurAggWork : AggWork<AggVarWork>
 {
     public void @default(WebContext wc, int page)

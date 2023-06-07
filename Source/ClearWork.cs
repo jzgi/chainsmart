@@ -50,7 +50,7 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场端结款", "财务")]
+[Ui("市场端结款")]
 public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
 {
     [Ui("市场端结款", group: 1), Tool(Anchor)]
@@ -137,7 +137,7 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应端结款", "财务")]
+[Ui("供应端结款")]
 public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
 {
     [Ui("供应端结款", group: 1), Tool(Anchor)]

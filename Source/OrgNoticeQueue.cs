@@ -7,7 +7,7 @@ namespace ChainSmart;
 /// <summary>
 /// A notice pertaining to a particular org.
 /// </summary>
-public class OrgNoticeQueue : TwinEventQueue
+public class OrgNoticeQueue : TwinEdgiePack
 {
     public const short
         PUR_CREATED = 1,

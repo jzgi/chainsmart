@@ -123,7 +123,7 @@ public class PublyOrgVarWork : OrgVarWork
     }
 }
 
-[Ui("信息和参数", "常规")]
+[Ui("信息和参数")]
 public class OrglySetgWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_MGT)]

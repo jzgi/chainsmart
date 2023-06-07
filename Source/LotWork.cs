@@ -76,7 +76,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
     }
 }
 
-[Ui("产品批次", "商户")]
+[Ui("产品批次")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
     [Ui("产品批次", group: 1), Tool(Anchor)]
@@ -285,7 +285,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("产品批次集中盘库", "机构")]
+[Ui("产品批次集中盘库")]
 public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
 {
     [Ui("统一盘库", group: 1), Tool(Anchor)]

@@ -227,7 +227,7 @@ public class Org : Entity, ITwin<int>
 
     public OrgNoticeQueue NoticeQueue => noticeq ??= new OrgNoticeQueue();
 
-    // private OrgEventQueue eventq;
-    //
-    // public OrgEventQueue EventQueue => eventq ??= new OrgEventQueue();
+    private OrgEventQueue eventq;
+    
+    public OrgEventQueue EventQueue => eventq ??= new OrgEventQueue();
 }

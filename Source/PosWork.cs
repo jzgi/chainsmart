@@ -33,7 +33,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("零售终端", "商户")]
+[Ui("零售终端")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
     [Ui("零售终端", group: 1), Tool(Anchor)]

@@ -30,7 +30,7 @@ public abstract class RegWork : WebWork
 }
 
 [AdmlyAuthorize(User.ROL_MGT)]
-[Ui("区域设置", "业务")]
+[Ui("区域设置")]
 public class AdmlyRegWork : RegWork
 {
     protected override void OnCreate()

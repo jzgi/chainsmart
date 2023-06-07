@@ -50,7 +50,7 @@ public class RtllyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglySetgWork>("setg");
+        CreateWork<OrglySetgWork>("setg", header: "常规");
 
         CreateWork<OrglyAccessWork>("access", true); // true = shop
 
@@ -60,7 +60,7 @@ public class RtllyVarWork : OrglyVarWork
 
         // retail shop
 
-        CreateWork<RtllyItemWork>("ritem");
+        CreateWork<RtllyItemWork>("ritem", header: "商户");
 
         CreateWork<RtllyPosWork>("rpos");
 
@@ -76,7 +76,7 @@ public class RtllyVarWork : OrglyVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("morg");
+        CreateWork<MktlyOrgWork>("morg", header: "机构");
 
         CreateWork<MktlyEvalWork>("meval");
 
@@ -92,16 +92,26 @@ public class RtllyVarWork : OrglyVarWork
     /// <summary>
     /// The polling of events that belong to the presented org.
     /// </summary>
-    /// <param name="wc"></param>
     [OrglyAuthorize(Org.TYP_MKT)]
     public void @event(WebContext wc)
     {
         var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;
 
-        // var es = org.EventQueue;
+        var es = org.EventQueue;
 
-        var formm = new FormMpBuilder(32000);
+        var j = new JsonBuilder(true, 1024 * 32);
+        try
+        {
+            j.ARR_();
+
+
+            j._ARR();
+        }
+        finally
+        {
+            j.Clear();
+        }
     }
 }
 
@@ -113,7 +123,7 @@ public class SuplyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglySetgWork>("setg");
+        CreateWork<OrglySetgWork>("setg", header: "常规");
 
         CreateWork<OrglyAccessWork>("access", false); // false = source
 
@@ -123,19 +133,19 @@ public class SuplyVarWork : OrglyVarWork
 
         // supply shop
 
-        CreateWork<SuplyFabWork>("sfab");
+        CreateWork<SuplyFabWork>("sfab", header: "商户");
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_SPOT, ui: new("销售订单-现货", "商户"));
+        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_SPOT, ui: new("销售订单-现货"));
 
-        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_PRE, ui: new("销售订单-助农", "商户"));
+        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_PRE, ui: new("销售订单-助农"));
 
         CreateWork<SuplyPurAggWork>("spuragg");
 
         // ctr
 
-        CreateWork<CtrlyOrgWork>("corg");
+        CreateWork<CtrlyOrgWork>("corg", header: "机构");
 
         CreateWork<CtrlyEvalWork>("ceval");
 

@@ -220,7 +220,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     }
 }
 
-[Ui("商品", "商户")]
+[Ui("商品")]
 public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 {
     protected static void MainGrid(HtmlBuilder h, Item[] arr)

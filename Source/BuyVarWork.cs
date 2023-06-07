@@ -82,7 +82,7 @@ public class MyBuyVarWork : BuyVarWork
 public class RtllyBuyVarWork : BuyVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("备发", "已备货并集中等待发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
+    [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
     public async Task adapt(WebContext wc)
     {
         int id = wc[0];

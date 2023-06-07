@@ -1,6 +1,5 @@
 using ChainFx;
 using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -17,7 +16,7 @@ public class AdmlyWork : WebWork
 
         // basic 
 
-        CreateWork<AdmlySetgWork>("setg");
+        CreateWork<AdmlySetgWork>("setg", header: "常规");
 
         CreateWork<AdmlyAccessWork>("access");
 
@@ -27,7 +26,7 @@ public class AdmlyWork : WebWork
 
         // biz
 
-        CreateWork<AdmlyRegWork>("reg");
+        CreateWork<AdmlyRegWork>("reg", header: "业务");
 
         CreateWork<AdmlyUserWork>("user");
 
@@ -35,7 +34,7 @@ public class AdmlyWork : WebWork
 
         // fin
 
-        CreateWork<AdmlyBuyAggWork>("buyagg");
+        CreateWork<AdmlyBuyAggWork>("buyagg", header: "财务");
 
         CreateWork<AdmlyPurAggWork>("puragg");
 
@@ -66,7 +65,7 @@ public class AdmlyWork : WebWork
     }
 }
 
-[Ui("基本信息和参数", "常规")]
+[Ui("基本信息和参数")]
 public class AdmlySetgWork : WebWork
 {
     public static readonly decimal

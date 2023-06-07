@@ -3071,7 +3071,7 @@ ul.uk-nav-sub {
 }
 
 .uk-subnav>*> :first-child {
-    color: #777;
+    color: #7daa1d;
     text-transform: uppercase;
     transition: 0.1s ease-in-out;
     transition-property: color, background-color;
@@ -3080,8 +3080,13 @@ ul.uk-nav-sub {
 .uk-subnav> :hover,
 .uk-subnav> :focus,
 .uk-subnav>.uk-active {
-    color: #000;
     border-bottom: 2px solid #f59604;
+}
+
+.uk-subnav> :hover>:first-child,
+.uk-subnav> :focus>:first-child,
+.uk-subnav>.uk-active>:first-child {
+    color: #f59604;
 }
 
 .uk-subnav-divider>* {

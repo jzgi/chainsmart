@@ -45,7 +45,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
     }
 }
 
-[Ui("人员权限", "常规")]
+[Ui("人员权限")]
 public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
 {
     [Ui("人员权限"), Tool(Anchor)]
@@ -125,7 +125,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_OPN)]
-[Ui("用户管理", "业务")]
+[Ui("用户管理")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
     [Ui("用户管理", group: 1), Tool(Anchor)]
@@ -202,7 +202,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
     }
 }
 
-[Ui("人员权限", "常规")]
+[Ui("人员权限")]
 public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
 {
     bool IsShop => (bool)State;
@@ -320,7 +320,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     }
 }
 
-[Ui("大客户", "商户")]
+[Ui("大客户")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {
     [Ui("大客户", group: 1), Tool(Anchor)]
