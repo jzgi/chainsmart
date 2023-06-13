@@ -1709,12 +1709,9 @@ select.uk-form-width-xsmall {
     padding: 6px 16px;
     margin: 4px;
     font-size: .9375rem;
-}
-
-button.uk-button-default {
-    background-color: #888;
+    background-color: #7daa1d;
     color: #fff;
-    border-radius: 18px;
+    border-radius: 16px;
     border: 0;
 }
 
@@ -1723,7 +1720,8 @@ button.uk-button-default {
 .uk-button-default:focus,
 .uk-button-default:active,
 .uk-button-default.uk-active {
-    background-color: #888;
+    background-color: #739d18;
+    color: #fff;
 }
 
 button.uk-button-primary {
@@ -2155,7 +2153,7 @@ main.uk-grid>li {
 
     padding: 4px 6px;
     width: -webkit-fill-available;
-    background-color: #fafafa;
+    box-shadow: 1px 1px 0px 0px #ededed;
 }
 
 section.uk-card-body,
@@ -2428,8 +2426,8 @@ a.uk-card-body {
 
 .uk-alert {
     position: relative;
-    margin: 6px;
-    padding: 16px;
+    margin: 4px;
+    padding: 12px;
     color: #333;
 }
 
@@ -2461,8 +2459,8 @@ a.uk-card-body {
 }
 
 .uk-alert-success {
-    background: #edfbf6;
-    color: #32d296;
+    background: rgb(125 170 29 / 0.05);
+    color: #7daa1d;
 }
 
 .uk-alert-warning {
@@ -2556,6 +2554,14 @@ a.uk-card-body {
     align-items: center;
 }
 
+.uk-label.uk-dark {
+    white-space: nowrap;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
 label.uk-label {
     display: flex;
     color: #7daa1d;
@@ -2563,6 +2569,7 @@ label.uk-label {
     width: 5.25rem;
     min-width: 5.25rem;
     justify-content: flex-end;
+    height: 2rem;
 }
 
 ul.uk-large>li>.uk-label {

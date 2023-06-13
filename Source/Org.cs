@@ -1,4 +1,5 @@
-﻿using ChainFx;
+﻿using System.Threading;
+using ChainFx;
 using ChainFx.Nodal;
 
 namespace ChainSmart;
@@ -211,7 +212,7 @@ public class Org : Entity, ITwin<int>
 
     private string title;
 
-    public string Title => title ??= EqMarket ? name : '【' + addr + '】' + name;
+    public string Title => title ??= EqMarket ? name : name + '（' + addr + '）';
 
     public string Ext => ext;
 
@@ -223,11 +224,25 @@ public class Org : Entity, ITwin<int>
     // EVENT 
 
 
-    private OrgNoticeQueue noticeq;
+    private OrgNoticePack notices;
 
-    public OrgNoticeQueue NoticeQueue => noticeq ??= new OrgNoticeQueue();
+    public OrgNoticePack Notices
+    {
+        get
+        {
+            Interlocked.CompareExchange(ref notices, new OrgNoticePack(), null);
+            return notices;
+        }
+    }
 
-    private OrgEventQueue eventq;
-    
-    public OrgEventQueue EventQueue => eventq ??= new OrgEventQueue();
+    private OrgEventPack events;
+
+    public OrgEventPack Events
+    {
+        get
+        {
+            Interlocked.CompareExchange(ref events, new OrgEventPack(), null);
+            return events;
+        }
+    }
 }

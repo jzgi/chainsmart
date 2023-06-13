@@ -11,13 +11,13 @@ public class Lot : Entity, IKeyable<int>
     public static readonly Lot Empty = new();
 
     public const short
-        TYP_SPOT = 1,
-        TYP_PRE = 2;
+        TYP_NORM = 1,
+        TYP_ADVC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_SPOT, "现货" },
-        { TYP_PRE, "助农" },
+        { TYP_NORM, "现供" },
+        { TYP_ADVC, "助农" },
     };
 
     internal int id;
@@ -193,9 +193,9 @@ public class Lot : Entity, IKeyable<int>
 
     public StockOp[] Ops => ops;
 
-    public bool IsSpot => typ == TYP_SPOT;
+    public bool IsSpot => typ == TYP_NORM;
 
-    public bool IsPre => typ == TYP_PRE;
+    public bool IsPre => typ == TYP_ADVC;
 
     public override string ToString() => name;
 

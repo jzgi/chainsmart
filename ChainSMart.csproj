@@ -14,4 +14,8 @@
       <ProjectReference Include="..\ChainFx\ChainFx.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
+    </ItemGroup>
+
 </Project>

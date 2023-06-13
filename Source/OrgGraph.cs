@@ -8,7 +8,7 @@ namespace ChainSmart;
 
 public class OrgGraph : TwinGraph<int, Org>
 {
-    public override bool TryGetGroupKey(DbContext dc, int key, out int setkey)
+    public override bool TryGetTwinSetKey(DbContext dc, int key, out int setkey)
     {
         dc.Sql("SELECT prtid FROM orgs_vw WHERE id = @1 AND status > 0");
 
@@ -21,7 +21,7 @@ public class OrgGraph : TwinGraph<int, Org>
         return false;
     }
 
-    public override Map<int, Org> LoadGroup(DbContext dc, int setkey)
+    public override Map<int, Org> LoadTwinSet(DbContext dc, int setkey)
     {
         if (setkey == 0)
         {
@@ -35,7 +35,7 @@ public class OrgGraph : TwinGraph<int, Org>
         }
     }
 
-    protected override async Task<int> DischargeGroupAsync(int setkey, Map<int, Org> set)
+    protected override async Task<int> TwinSetIoCycleAsync(int setkey, Map<int, Org> set)
     {
         // use same builder for each and every sent notice
         var sb = new StringBuilder();
@@ -46,7 +46,7 @@ public class OrgGraph : TwinGraph<int, Org>
         foreach (var ety in set)
         {
             var org = ety.Value;
-            var box = org.NoticeQueue;
+            var box = org.Notices;
             if (box.HasToPush)
             {
                 box.PushToBuffer(sb);

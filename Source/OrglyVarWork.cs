@@ -1,5 +1,9 @@
-﻿using ChainFx;
+﻿using System;
+using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -23,9 +27,9 @@ public abstract class OrglyVarWork : WebWork
             string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(org.name);
-            if (org.IsParent) h.H4(org.Ext);
-            h.P2(prin.name, rol, brace: true);
+            h.H2_().T(org.name).SP().Q(Org.Statuses[org.status])._H2();
+            // if (org.IsParent) h.H4(org.Ext);
+            h.H5_().T(prin.name).T('（').T(rol).T('）')._H5();
             h._HEADER();
 
             if (org.icon)
@@ -38,8 +42,74 @@ public abstract class OrglyVarWork : WebWork
             h._TOPBARXL();
 
             h.WORKBOARD(notice: org.id);
+
+            h.TOOLBAR(bottom: true, status: org.Status, state: org.State);
         }, false, 30, title: org.name);
     }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
+    public async Task setg(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        var m = GrabTwin<int, Org>(org.id);
+
+        if (wc.IsGet)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("设置基本信息和参数");
+                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
+                h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
+            });
+        }
+        else
+        {
+            await wc.ReadObjectAsync(instance: m); // use existing object
+
+            using var dc = NewDbContext();
+            // update the db record
+            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+            wc.GivePane(200);
+        }
+    }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    public async Task ok(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+        wc.GivePane(200);
+    }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    public async Task unok(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
+        await dc.ExecuteAsync(p => p.Set(org.id));
+
+        wc.GivePane(200);
+    }
+
+    // [Ui(icon: "question"), Tool(ButtonShow, status: 15)]
+    // public override void help(WebContext wc)
+    // {
+    //     base.help(wc);
+    // }
 }
 
 [OrglyAuthorize(Org.TYP_RTL)]
@@ -50,13 +120,11 @@ public class RtllyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglySetgWork>("setg", header: "常规");
-
-        CreateWork<OrglyAccessWork>("access", true); // true = shop
+        CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = shop
 
         CreateWork<OrglyBuyClearWork>("buyclr", state: true);
 
-        CreateWork<OrglyEvalWork>("ceval");
+        CreateWork<OrglyEvalWork>("eval");
 
         // retail shop
 
@@ -98,7 +166,7 @@ public class RtllyVarWork : OrglyVarWork
         var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;
 
-        var es = org.EventQueue;
+        var es = org.Events;
 
         var j = new JsonBuilder(true, 1024 * 32);
         try
@@ -123,9 +191,7 @@ public class SuplyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglySetgWork>("setg", header: "常规");
-
-        CreateWork<OrglyAccessWork>("access", false); // false = source
+        CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = source
 
         CreateWork<OrglyPurClearWork>("purclr", state: true); // true = is org
 
@@ -137,9 +203,9 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_SPOT, ui: new("销售订单-现货"));
+        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_NORM, ui: new("销售订单-现货"));
 
-        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_PRE, ui: new("销售订单-助农"));
+        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
 
         CreateWork<SuplyPurAggWork>("spuragg");
 

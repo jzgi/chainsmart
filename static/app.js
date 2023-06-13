@@ -559,7 +559,10 @@ function goto(trigOrUrl, evt) {
     evt.preventDefault();
 
     if (trigOrUrl.tagName == 'A') {
-        location.replace(trigOrUrl.href);
+        var fr = trigOrUrl.target == '_parent' ? 
+            window.parent : 
+            window;
+        fr.location.replace(trigOrUrl.href);
     }
     else {
         location.replace(trigOrUrl);

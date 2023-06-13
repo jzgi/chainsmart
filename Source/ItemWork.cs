@@ -48,7 +48,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.PIC_("/void-shop.webp");
 
             h.AICON("../", "home", css: "uk-overlay uk-position-top-left");
-            h.ATEL(org.tel, css: "uk-overlay uk-position-bottom-right");
+            h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
             h._PIC();
 
             if (arr == null)

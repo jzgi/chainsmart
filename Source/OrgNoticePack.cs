@@ -1,26 +1,33 @@
 ﻿using System.Text;
 using ChainFx;
 using ChainFx.Nodal;
-using Microsoft.Extensions.Primitives;
 
 namespace ChainSmart;
 
 /// <summary>
-/// The output event queue for an org which contains b 
+/// A notice pertaining to a particular org.
 /// </summary>
-public class OrgEventQueue : TwinEdgiePack
+public class OrgNoticePack : TwinEdgiePack
 {
     public const short
-        DELIVERY = 1,
+        PUR_CREATED = 1,
         PUR_ADAPTED = 2,
+        PUR_OKED = 3,
+        PUR_VOID = 4,
+        BUY_CREATED = 5,
+        BUY_ADAPTED = 6,
+        BUY_OKED = 7,
         BUY_VOID = 8;
 
-    public static readonly Map<short, string> Slots = new()
+    public static readonly Map<short, string> Typs = new()
     {
-        { DELIVERY, "社区合单" },
+        { PUR_CREATED, "供应新单" },
         { PUR_ADAPTED, "供应发货" },
-
-
+        { PUR_OKED, "供应收货" },
+        { PUR_VOID, "供应撤单" },
+        { BUY_CREATED, "消费新单" },
+        { BUY_ADAPTED, "消费发货" },
+        { BUY_OKED, "消费收货" },
         { BUY_VOID, "消费撤单" },
     };
 
@@ -33,10 +40,10 @@ public class OrgEventQueue : TwinEdgiePack
     };
 
 
-    // entries of various types
-    readonly Entry[] entries = new Entry[CAPACITY];
+    // entries for push
+    readonly Slot[] slots = new Slot[CAPACITY];
 
-    int count;
+    private int toPush;
 
 
     public void Put(short slot, int num, decimal amt)
@@ -51,16 +58,8 @@ public class OrgEventQueue : TwinEdgiePack
         lock (this)
         {
             // add push
-            entries[idx].Feed(slot, num, amt);
-            count += num;
-        }
-    }
-
-    public void PutDeliveryAssign(string user, Buy[] arr)
-    {
-        lock (this)
-        {
-            // add push
+            slots[idx].Feed(slot, num, amt);
+            toPush += num;
         }
     }
 
@@ -70,19 +69,19 @@ public class OrgEventQueue : TwinEdgiePack
         lock (this)
         {
             var ord = 0;
-            for (var i = 0; i < entries.Length; i++)
+            for (var i = 0; i < slots.Length; i++)
             {
-                if (entries[i].IsStuffed)
+                if (slots[i].IsStuffed)
                 {
                     sb.Append(NUMS[ord++]).Append(' ');
 
-                    entries[i].PutToBuffer(sb);
+                    slots[i].PutToBuffer(sb);
 
-                    entries[i].Reset();
+                    slots[i].Reset();
                 }
             }
 
-            count = 0;
+            toPush = 0;
         }
     }
 
@@ -97,11 +96,11 @@ public class OrgEventQueue : TwinEdgiePack
 
         lock (this)
         {
-            var ret = entries[idx].spyCount;
+            var ret = slots[idx].spyCount;
 
             if (clear)
             {
-                entries[idx].spyCount = 0;
+                slots[idx].spyCount = 0;
             }
 
             return ret;
@@ -114,19 +113,19 @@ public class OrgEventQueue : TwinEdgiePack
         {
             lock (this)
             {
-                return count > 0;
+                return toPush > 0;
             }
         }
     }
 
 
-    public struct Entry
+    public struct Slot
     {
         internal short typ;
 
         internal int count;
 
-        internal StringValues sum;
+        internal decimal sum;
 
         internal int spyCount;
 
@@ -145,11 +144,12 @@ public class OrgEventQueue : TwinEdgiePack
         internal void Reset()
         {
             count = 0;
+            sum = 0;
         }
 
         internal void PutToBuffer(StringBuilder sb)
         {
-            sb.Append(Slots[typ]).Append(' ').Append(count).Append(' ').Append('￥').Append(sum);
+            sb.Append(Typs[typ]).Append(' ').Append(count).Append(' ').Append('￥').Append(sum);
         }
     }
 }

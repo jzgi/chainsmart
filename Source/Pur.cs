@@ -11,13 +11,15 @@ public class Pur : Entity, IKeyable<int>
     public static readonly Pur Empty = new();
 
     public const short
-        TYP_SPOT = 1,
-        TYP_PRE = 2;
+        TYP_NORM = 1,
+        TYP_ADVC = 2,
+        TYP_CUST = 4;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_SPOT, "现货" },
-        { TYP_PRE, "助农" },
+        { TYP_NORM, "现供" },
+        { TYP_ADVC, "助农" },
+        { TYP_CUST, "定制" },
     };
 
     public new static readonly Map<short, string> Statuses = new()
@@ -96,6 +98,7 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(supname), ref supname);
             s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(unit), ref unit);
+            s.Get(nameof(unitw), ref unitw);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
@@ -130,6 +133,7 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(supname), supname);
             s.Put(nameof(lotid), lotid);
             s.Put(nameof(unit), unit);
+            s.Put(nameof(unitw), unitw);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);

@@ -149,7 +149,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("现货", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("现供", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
     public async Task newspot(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -159,7 +159,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         var o = new Lot
         {
-            typ = Lot.TYP_SPOT,
+            typ = Lot.TYP_NORM,
             status = Entity.STU_CREATED,
             orgid = org.id,
             orgname = org.name,
@@ -225,7 +225,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         var o = new Lot
         {
-            typ = Lot.TYP_PRE,
+            typ = Lot.TYP_ADVC,
             status = Entity.STU_CREATED,
             orgid = org.id,
             orgname = org.name,

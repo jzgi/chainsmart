@@ -47,7 +47,7 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    bool IsSpotTyp => (short)Parent.State == Pur.TYP_SPOT;
+    bool IsSpotTyp => (short)Parent.State == Pur.TYP_NORM;
 
     [OrglyAuthorize(0, User.ROL_LOG)]
     [Ui("备发", "授权品控库发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
@@ -66,7 +66,7 @@ public class SuplyPurVarWork : PurVarWork
 
             // put a notice to the relevant center
             var ctr = GrabTwin<int, Org>(ctrid);
-            ctr.NoticeQueue.Put(OrgNoticeQueue.PUR_ADAPTED, 1, topay);
+            ctr.Notices.Put(OrgNoticePack.PUR_ADAPTED, 1, topay);
         }
 
         wc.Give(204);
@@ -98,7 +98,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.NoticeQueue.Put(OrgNoticeQueue.PUR_OKED, 1, topay);
+                rtl.Notices.Put(OrgNoticePack.PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -146,7 +146,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.NoticeQueue.Put(OrgNoticeQueue.PUR_VOID, 1, refund);
+                rtl.Notices.Put(OrgNoticePack.PUR_VOID, 1, refund);
             }
         }
         catch (Exception)

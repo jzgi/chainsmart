@@ -287,7 +287,7 @@ public class OrglyPurClearWork : ClearWork<PtylyClearVarWork>
         var org = isOrg ? wc[-1].As<Org>() : null;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM ordclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
+        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM purclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
         var arr = dc.Query<Clear>(p =>
         {
             if (org == null)

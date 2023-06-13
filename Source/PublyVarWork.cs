@@ -13,10 +13,35 @@ public class PublyVarWork : WebWork
         CreateVarWork<PublyItemWork>(); // home for one shop
     }
 
+    public void @default(WebContext wc)
+    {
+        int orgid = wc[0];
+        var regs = Grab<short, Reg>();
+
+        var org = GrabTwin<int, Org>(orgid);
+
+        wc.GivePage(200, h =>
+            {
+                if (org.pic)
+                {
+                    h.PIC_("/org/", org.id, "/pic");
+                }
+                else
+                    h.PIC_("/void-shop.webp");
+
+                h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
+                h.SPAN(org.Ext, css: "uk-label uk-dark uk-overlay uk-position-bottom-right");
+                h._PIC();
+
+                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("进入市场")._A()._BOTTOMBAR();
+            }
+        );
+    }
+
     /// <summary>
     /// The public home for a market.
     /// </summary>
-    public void @default(WebContext wc, int sector)
+    public void lst(WebContext wc, int sector)
     {
         int orgid = wc[0];
         var regs = Grab<short, Reg>();
@@ -26,7 +51,7 @@ public class PublyVarWork : WebWork
         Org[] arr;
         if (sector == 0) // when default sector
         {
-            arr = GrabTwinSet<int,  Org>(orgid, x => x.regid == 0 && x.status == 4);
+            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == 0 && x.status == 4);
             arr = arr.AddOf(org, first: true);
         }
         else

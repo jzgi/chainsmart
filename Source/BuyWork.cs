@@ -4,7 +4,7 @@ using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
-using static ChainSmart.OrgNoticeQueue;
+using static ChainSmart.OrgNoticePack;
 
 namespace ChainSmart;
 

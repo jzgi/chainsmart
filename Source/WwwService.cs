@@ -57,9 +57,10 @@ public class WwwService : MainService
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"return markAndGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
-                h.H4(o.Ext);
+                h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.SPAN(o.Ext);
                 h.P(o.addr, css: "uk-margin-auto-left");
+                h.ICON("chevron-right");
                 h._A();
                 h.A_POI(o.x, o.y, o.Ext, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
                 h._LI();
@@ -110,7 +111,7 @@ public class WwwService : MainService
 
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
-                    rtl.NoticeQueue.Put(OrgNoticeQueue.BUY_CREATED, 1, cash);
+                    rtl.Notices.Put(OrgNoticePack.BUY_CREATED, 1, cash);
                 }
             }
         }
