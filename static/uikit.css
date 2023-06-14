@@ -646,11 +646,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #fff;
-}
-
-.uk-card-body.uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #fff;
+    border-top: 1px solid #ededed;
 }
 
 /*

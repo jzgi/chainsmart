@@ -187,4 +187,34 @@ public class User : Entity, IKeyable<int>
     public bool IsVipFor(int orgid) => vip == null || vip.Contains(orgid);
 
     public override string ToString() => name;
+
+
+    //
+    // state
+
+    public const short
+        STA_ORDI = 1,
+        STA_OP = 2;
+
+    public override short State
+    {
+        get
+        {
+            short v = 0;
+            if (supid > 0 || rtlid > 0)
+            {
+                if (credential != null)
+                {
+                    v |= STA_OP;
+                }
+            }
+            else
+            {
+                v |= STA_ORDI;
+            }
+            return v;
+        }
+    }
+
+    public bool IsStationOp => (supid > 0 || rtlid > 0) && credential != null;
 }

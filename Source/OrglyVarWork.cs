@@ -41,7 +41,7 @@ public abstract class OrglyVarWork : WebWork
 
             h._TOPBARXL();
 
-            h.WORKBOARD(notice: org.id);
+            h.WORKBOARD(twinSpy: org.id);
 
             h.TOOLBAR(bottom: true, status: org.Status, state: org.State);
         }, false, 30, title: org.name);

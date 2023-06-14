@@ -22,6 +22,9 @@ public class PublyVarWork : WebWork
 
         wc.GivePage(200, h =>
             {
+                h.ARTICLE_("uk-card");
+                h.H3(org.Ext, css: "uk-card-header");
+                h.SECTION_("uk-card-body");
                 if (org.pic)
                 {
                     h.PIC_("/org/", org.id, "/pic");
@@ -30,10 +33,19 @@ public class PublyVarWork : WebWork
                     h.PIC_("/void-shop.webp");
 
                 h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
-                h.SPAN(org.Ext, css: "uk-label uk-dark uk-overlay uk-position-bottom-right");
                 h._PIC();
 
-                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("进入市场")._A()._BOTTOMBAR();
+                h.Q(org.addr);
+
+                h._SECTION();
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card");
+                h.H3("派送覆盖", css: "uk-card-header");
+                h.UL_("uk-card-body");
+                h._UL();
+
+                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
             }
         );
     }
@@ -61,7 +73,7 @@ public class PublyVarWork : WebWork
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(string.Empty, sector, regs, (_, v) => v.IsSection, "star");
+            h.NAVBAR(nameof(lst), sector, regs, (_, v) => v.IsSection, "star");
 
             if (sector != 0 && arr == null)
             {
