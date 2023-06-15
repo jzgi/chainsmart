@@ -8,6 +8,7 @@ namespace ChainSmart;
 
 [MyAuthorize]
 [Ui("我的个人账号")]
+[Summary("注册的用户可以管理个人账号以及相关的资源")]
 public class MyVarWork : WebWork
 {
     protected override void OnCreate()
@@ -27,9 +28,9 @@ public class MyVarWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(prin.name);
+            h.H1(prin.name);
             h.H4(prin.tel);
-            if (prin.typ > 0) h.P(User.Typs[prin.typ]);
+            if (prin.typ > 0) h.Q(User.Typs[prin.typ]);
             h._HEADER();
 
             if (prin.icon)
@@ -126,7 +127,7 @@ public class MyVarWork : WebWork
     }
 
 
-    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
+    [Ui("设置", "设置我的账号信息", icon: "cog"), Tool(ButtonShow, status: 7)]
     public async Task setg(WebContext wc)
     {
         const string PASSWORD_MASK = "t#0^0z4R4pX7";

@@ -16,38 +16,36 @@ public class PublyVarWork : WebWork
     public void @default(WebContext wc)
     {
         int orgid = wc[0];
-        var regs = Grab<short, Reg>();
-
         var org = GrabTwin<int, Org>(orgid);
 
         wc.GivePage(200, h =>
+        {
+            h.ARTICLE_("uk-card uk-card-primary");
+            h.H2(org.Ext, css: "uk-card-header");
+            h.SECTION_("uk-card-body");
+            if (org.pic)
             {
-                h.ARTICLE_("uk-card");
-                h.H3(org.Ext, css: "uk-card-header");
-                h.SECTION_("uk-card-body");
-                if (org.pic)
-                {
-                    h.PIC_("/org/", org.id, "/pic");
-                }
-                else
-                    h.PIC_("/void-shop.webp");
-
-                h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
-                h._PIC();
-
-                h.Q(org.addr);
-
-                h._SECTION();
-                h._ARTICLE();
-
-                h.ARTICLE_("uk-card");
-                h.H3("派送覆盖", css: "uk-card-header");
-                h.UL_("uk-card-body");
-                h._UL();
-
-                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+                h.PIC_("/org/", org.id, "/pic");
             }
-        );
+            else
+                h.PIC_("/void-shop.webp");
+
+            h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
+            h._PIC();
+
+            h.Q(org.addr);
+
+            h._SECTION();
+            h._ARTICLE();
+
+            h.ARTICLE_("uk-card uk-card-primary");
+            h.H3("派送覆盖", css: "uk-card-header");
+            h.UL_("uk-card-body");
+            h._UL();
+            h._ARTICLE();
+
+            h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+        }, true, 720, org.Ext);
     }
 
     /// <summary>
@@ -107,6 +105,6 @@ public class PublyVarWork : WebWork
 
                 h._A();
             });
-        }, true, 360, org.Ext);
+        }, true, 720, org.Ext);
     }
 }

@@ -27,9 +27,9 @@ public abstract class OrglyVarWork : WebWork
             string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2_().T(org.name).SP().Q(Org.Statuses[org.status])._H2();
-            // if (org.IsParent) h.H4(org.Ext);
-            h.H5_().T(prin.name).T('（').T(rol).T('）')._H5();
+            h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
+            if (org.IsParent) h.H4(org.Ext);
+            h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
             h._HEADER();
 
             if (org.icon)
@@ -104,12 +104,6 @@ public abstract class OrglyVarWork : WebWork
 
         wc.GivePane(200);
     }
-
-    // [Ui(icon: "question"), Tool(ButtonShow, status: 15)]
-    // public override void help(WebContext wc)
-    // {
-    //     base.help(wc);
-    // }
 }
 
 [OrglyAuthorize(Org.TYP_RTL)]
@@ -156,6 +150,21 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyPurAggWork>("mpuragg");
     }
+
+    [Ui(tip: "摊铺直通车", icon: "thumbnails"), Tool(ButtonShow, status: 15)]
+    public void qrcode(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+
+        wc.GivePane(200, h =>
+        {
+            h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
+            h.QRCODE(MainApp.WwwUrl + "/" + org.prtid + "/" + org.id + "/", css: "uk-width-small");
+            h.SPAN(org.name);
+            h._NAV();
+        }, false, 720);
+    }
+
 
     /// <summary>
     /// The polling of events that belong to the presented org.

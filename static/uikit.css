@@ -239,24 +239,25 @@ h6,
 
 h1,
 .uk-h1 {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-    color: #333;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #7daa1d;
+    margin: 4px 0;
 }
 
 h2,
 .uk-h2 {
-    font-size: 1.25rem;
-    margin: 0.25rem 0;
-    color: #7daa1d;
+    font-size: 1.125rem;
+    margin: 4px 0;
+    color: #ff3b30;
 }
 
 h3,
 .uk-h3 {
     font-size: 1rem;
     font-weight: 500;
-    margin: 0;
     color: #7daa1d;
+    margin: 0;
 }
 
 h4,
@@ -306,7 +307,8 @@ dt {
 
 dd {
     padding: 8px;
-    margin-left: 0;
+    margin-left: 2rem;
+    background-color: rgb(237 237 237 / 0.5);
 }
 
 hr,
@@ -2146,9 +2148,11 @@ main.uk-grid>li {
 }
 
 .uk-card-body {
-
     padding: 4px 6px;
     width: -webkit-fill-available;
+}
+
+.uk-card-default>.uk-card-body {
     box-shadow: 1px 1px 0px 0px #ededed;
 }
 
@@ -2219,7 +2223,7 @@ a.uk-card-body {
  * Primary
  */
 .uk-card-primary {
-    margin: 4px;
+    margin: 2px;
     background-color: #fff;
 }
 
@@ -2578,10 +2582,10 @@ label>input[type="checkbox"] {
 }
 
 .uk-label-success {
-    color: #fff;
-    background-color: #7daa1d;
-    padding: 4px 8px;
-    border: 2px solid #fff;
+    color: #7daa1d;
+    background-color: rgb(125 170 29 / 10%);
+    padding: 4px 12px;
+    border-radius: 12px;
 }
 
 .uk-label-warning {
