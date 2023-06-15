@@ -230,7 +230,10 @@ public class Org : Entity, ITwin<int>
     {
         get
         {
-            Interlocked.CompareExchange(ref notices, new OrgNoticePack(), null);
+            if (notices == null)
+            {
+                Interlocked.CompareExchange(ref notices, new OrgNoticePack(), null);
+            }
             return notices;
         }
     }
@@ -241,7 +244,10 @@ public class Org : Entity, ITwin<int>
     {
         get
         {
-            Interlocked.CompareExchange(ref events, new OrgEventPack(), null);
+            if (events == null)
+            {
+                Interlocked.CompareExchange(ref events, new OrgEventPack(), null);
+            }
             return events;
         }
     }

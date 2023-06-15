@@ -128,7 +128,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
 [Ui("用户管理")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
-    [Ui("用户管理", group: 1), Tool(Anchor)]
+    [Ui("用户管理", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -141,7 +141,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
         });
     }
 
-    [Ui(tip: "浏览用户", icon: "list", group: 2), Tool(Anchor)]
+    [Ui(tip: "浏览用户", icon: "list", status: 2), Tool(Anchor)]
     public async Task browse(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -165,7 +165,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "查询用户", icon: "search", group: 4), Tool(AnchorPrompt)]
+    [Ui(tip: "查询用户", icon: "search", status: 4), Tool(AnchorPrompt)]
     public async Task search(WebContext wc)
     {
         bool inner = wc.Query[nameof(inner)];
@@ -323,7 +323,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
 [Ui("大客户")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {
-    [Ui("大客户", group: 1), Tool(Anchor)]
+    [Ui("大客户", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -387,7 +387,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("添加", "添加大客户", icon: "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("添加", "添加大客户", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
         var org = wc[-1].As<Org>();

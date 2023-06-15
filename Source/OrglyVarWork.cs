@@ -48,7 +48,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
+    [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         var org = wc[0].As<Org>();
@@ -79,7 +79,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -93,7 +93,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -151,7 +151,7 @@ public class RtllyVarWork : OrglyVarWork
         CreateWork<MktlyPurAggWork>("mpuragg");
     }
 
-    [Ui(tip: "摊铺直通车", icon: "thumbnails"), Tool(ButtonShow, status: 15)]
+    [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
     public void qrcode(WebContext wc)
     {
         var org = wc[0].As<Org>();

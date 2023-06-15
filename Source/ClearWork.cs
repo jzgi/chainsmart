@@ -53,7 +53,7 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
 [Ui("市场端结款")]
 public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
 {
-    [Ui("市场端结款", group: 1), Tool(Anchor)]
+    [Ui("市场端结款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -75,7 +75,7 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
         }, false, 60);
     }
 
-    [Ui(tip: "已付款", icon: "credit-card", group: 2), Tool(Anchor)]
+    [Ui(tip: "已付款", icon: "credit-card", status: 2), Tool(Anchor)]
     public async Task oked(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -98,7 +98,7 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_FIN)]
-    [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
+    [Ui("结算", "结算代收款项", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
         if (wc.IsGet)
@@ -140,7 +140,7 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
 [Ui("供应端结款")]
 public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
 {
-    [Ui("供应端结款", group: 1), Tool(Anchor)]
+    [Ui("供应端结款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -162,7 +162,7 @@ public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
         }, false, 3);
     }
 
-    [Ui(tip: "历史", icon: "history", group: 2), Tool(AnchorPrompt)]
+    [Ui(tip: "历史", icon: "history", status: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc, int page)
     {
         var topOrgs = Grab<int, Org>();
@@ -196,7 +196,7 @@ public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_FIN)]
-    [Ui("结算", "结算代收款项", icon: "plus-circle", group: 1), Tool(ButtonOpen)]
+    [Ui("结算", "结算代收款项", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
         if (wc.IsGet)
@@ -237,7 +237,7 @@ public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
 [Ui("业务结款")]
 public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
 {
-    [Ui("业务结款", group: 1), Tool(Anchor)]
+    [Ui("业务结款", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var isOrg = (bool)State;
@@ -279,7 +279,7 @@ public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
 [Ui("业务结款")]
 public class OrglyPurClearWork : ClearWork<PtylyClearVarWork>
 {
-    [Ui("业务收入", group: 1), Tool(Anchor)]
+    [Ui("业务收入", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var isOrg = (bool)State;

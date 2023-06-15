@@ -336,7 +336,7 @@ public class PublyLotVarWork : LotVarWork
 public class SuplyLotVarWork : LotVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改产品批次", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "修改产品批次", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int lotid = wc[0];
@@ -401,28 +401,28 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: 3)]
+    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 4);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 4);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, size: 3, subs: 4, status: 3)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("溯源", "溯源码绑定或印制", icon: "tag"), Tool(ButtonShow, status: 3)]
+    [Ui("溯源", "溯源码绑定或印制", icon: "tag", status: 3), Tool(ButtonShow)]
     public async Task tag(WebContext wc, int cmd)
     {
         int lotid = wc[0];
@@ -518,7 +518,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED, state: Lot.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Lot.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -533,7 +533,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -547,7 +547,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
-    [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]
+    [Ui("库存", icon: "database", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int id = wc[0];
@@ -594,7 +594,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "删除或者作废该批次", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "删除或者作废该批次", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
@@ -608,7 +608,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "恢复", icon: "reply"), Tool(ButtonConfirm, status: 0)]
+    [Ui(tip: "恢复", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
         int id = wc[0];

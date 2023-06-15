@@ -50,7 +50,7 @@ public class SuplyPurVarWork : PurVarWork
     bool IsSpotTyp => (short)Parent.State == Pur.TYP_NORM;
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("备发", "授权品控库发货？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
+    [Ui("备发", "授权品控库发货？", icon: "eye", status: 1), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
         int id = wc[0];
@@ -73,7 +73,7 @@ public class SuplyPurVarWork : PurVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("发货", "确认从品控库发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 2)]
+    [Ui("发货", "确认从品控库发货？", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -112,7 +112,7 @@ public class SuplyPurVarWork : PurVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("撤单", "确认撤单并退款？", icon: "trash"), Tool(ButtonConfirm, status: 7, state: Pur.STA_CANCELL)]
+    [Ui("撤单", "确认撤单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];

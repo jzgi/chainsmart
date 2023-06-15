@@ -38,7 +38,7 @@ public class AdmlyRegWork : RegWork
         CreateVarWork<AdmlyRegVarWork>();
     }
 
-    [Ui("省份", group: 1), Tool(Anchor)]
+    [Ui("省份", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -53,7 +53,7 @@ public class AdmlyRegWork : RegWork
         }, false, 12);
     }
 
-    [Ui("地市", group: 2), Tool(Anchor)]
+    [Ui("地市", status: 2), Tool(Anchor)]
     public void city(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -68,7 +68,7 @@ public class AdmlyRegWork : RegWork
         }, false, 15);
     }
 
-    [Ui("场区", group: 4), Tool(Anchor)]
+    [Ui("场区", status: 4), Tool(Anchor)]
     public void sect(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -83,7 +83,7 @@ public class AdmlyRegWork : RegWork
         }, false, 15);
     }
 
-    [Ui("新建", "新建区域", icon: "plus", group: 7), Tool(ButtonOpen)]
+    [Ui("新建", "新建区域", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int typ)
     {
         var prin = (User)wc.Principal;

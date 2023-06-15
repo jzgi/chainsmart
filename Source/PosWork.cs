@@ -36,7 +36,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
 [Ui("零售终端")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
-    [Ui("零售终端", group: 1), Tool(Anchor)]
+    [Ui("零售终端", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -118,7 +118,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }, false, 60, onload: "fixAll();");
     }
 
-    [Ui(tip: "今日记录", icon: "table", group: 2), Tool(Anchor)]
+    [Ui(tip: "今日记录", icon: "table", status: 2), Tool(Anchor)]
     public async Task today(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -141,7 +141,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
 
     private static readonly string[] DAYS = { "日", "一", "二", "三", "四", "五", "六" };
 
-    [Ui(tip: "以往记录", icon: "history", group: 2), Tool(AnchorPrompt)]
+    [Ui(tip: "以往记录", icon: "history", status: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -182,7 +182,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }
     }
 
-    [Ui(tip: "已撤销", icon: "trash", group: 4), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();

@@ -54,7 +54,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         });
     }
 
-    [Ui("采购订单", group: 1), Tool(Anchor)]
+    [Ui("采购订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -78,7 +78,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 
     [OrgSpy(PUR_ADAPTED)]
-    [Ui(tip: "待发货", icon: "eye", group: 2), Tool(Anchor)]
+    [Ui(tip: "待发货", icon: "eye", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -100,7 +100,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -123,7 +123,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 
     [OrgSpy(PUR_VOID)]
-    [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+    [Ui(tip: "已撤单", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -150,7 +150,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     internal static int Comp(short catid, int ctrid) => (catid << 24) | ctrid;
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("创建", "创建采购订单", "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("创建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cat_ctr_id) // NOTE so that it is publicly cacheable
     {
         var cats = Grab<short, Cat>();
@@ -260,7 +260,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已备发", icon: "eye", group: 2), Tool(Anchor)]
+    [Ui(tip: "已备发", icon: "eye", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -283,7 +283,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 
     [OrgSpy(PUR_OKED)]
-    [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -305,7 +305,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已撤单", icon: "trash", group: 8), Tool(Anchor)]
+    [Ui(tip: "已撤单", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -332,7 +332,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 [Ui("采购订单统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("按产品批次", group: 1), Tool(Anchor)]
+    [Ui("按产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var mkt = wc[-1].As<Org>();
@@ -366,7 +366,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "历史", icon: "history", group: 2), Tool(Anchor)]
+    [Ui(tip: "历史", icon: "history", status: 2), Tool(Anchor)]
     public async Task past(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -389,7 +389,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui("按商户", group: 4), Tool(Anchor)]
+    [Ui("按商户", status: 4), Tool(Anchor)]
     public async Task shop(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
@@ -428,7 +428,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 [Ui("销售订单集中发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("按批次", group: 2), Tool(Anchor)]
+    [Ui("按批次", status: 2), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
@@ -468,12 +468,12 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", group: 4), Tool(Anchor)]
+    [Ui(icon: "history", status: 4), Tool(Anchor)]
     public async Task bylotpast(WebContext wc)
     {
     }
 
-    [Ui("按市场", group: 8), Tool(Anchor)]
+    [Ui("按市场", status: 8), Tool(Anchor)]
     public async Task bymrt(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
@@ -513,12 +513,12 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", group: 16), Tool(Anchor)]
+    [Ui(icon: "history", status: 16), Tool(Anchor)]
     public async Task bymrtpast(WebContext wc)
     {
     }
 
-    [Ui("发出", group: 255), Tool(ButtonOpen)]
+    [Ui("发出", status: 255), Tool(ButtonOpen)]
     public async Task rev(WebContext wc)
     {
         var prin = (User)wc.Principal;
@@ -539,7 +539,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }
     }
 
-    [Ui("取消发出", group: 2), Tool(ButtonOpen)]
+    [Ui("取消发出", status: 2), Tool(ButtonOpen)]
     public async Task unrcv(WebContext wc)
     {
         var prin = (User)wc.Principal;

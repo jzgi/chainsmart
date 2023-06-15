@@ -48,7 +48,7 @@ public class MyVarWork : WebWork
         }, false, 120);
     }
 
-    [Ui("身份", "刷新我的身份权限", icon: "user"), Tool(ButtonShow, status: 7)]
+    [Ui("身份", "刷新我的身份权限", icon: "user", status: 7), Tool(ButtonShow)]
     public async Task access(WebContext wc)
     {
         int uid = wc[0];
@@ -127,7 +127,7 @@ public class MyVarWork : WebWork
     }
 
 
-    [Ui("设置", "设置我的账号信息", icon: "cog"), Tool(ButtonShow, status: 7)]
+    [Ui("设置", "设置我的账号信息", icon: "cog", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         const string PASSWORD_MASK = "t#0^0z4R4pX7";

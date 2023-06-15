@@ -123,11 +123,10 @@ public class PublyOrgVarWork : OrgVarWork
     }
 }
 
-
 public class AdmlyOrgVarWork : OrgVarWork
 {
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "修改机构信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "修改机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -234,28 +233,28 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -280,7 +279,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -303,7 +302,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
@@ -323,7 +322,7 @@ public class AdmlyOrgVarWork : OrgVarWork
 public class MktlyOrgVarWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(icon: "pencil"), Tool(ButtonShow, status: 3)]
+    [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -377,28 +376,28 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传图标", icon: "github-alt"), Tool(ButtonCrop, status: 3)]
+    [Ui(tip: "上传图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
+    [Ui(tip: "上传照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传影印", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
+    [Ui(tip: "上传影印", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -424,7 +423,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -448,7 +447,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+    [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
@@ -469,7 +468,7 @@ public class MktlyOrgVarWork : OrgVarWork
 public class CtrlyOrgVarWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改供源信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "修改供源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -518,28 +517,28 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+    [Ui("照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("资料", icon: "album"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 3, subs: 4)]
+    [Ui("资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -565,7 +564,7 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -589,7 +588,7 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确定删除此商户", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+    [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];

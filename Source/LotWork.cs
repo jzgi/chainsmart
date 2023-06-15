@@ -79,7 +79,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
 [Ui("产品批次")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
-    [Ui("产品批次", group: 1), Tool(Anchor)]
+    [Ui("产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -102,7 +102,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已下线", icon: "cloud-download", group: 2), Tool(Anchor)]
+    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
     public async Task down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -125,7 +125,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已删除", icon: "trash", group: 4), Tool(Anchor)]
+    [Ui(tip: "已删除", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -149,7 +149,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("现供", "新建现货产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("现供", "新建现货产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task newspot(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -215,7 +215,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("助农", "新建助农产品批次", icon: "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("助农", "新建助农产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task newpre(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -288,7 +288,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 [Ui("产品批次集中盘库")]
 public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
 {
-    [Ui("统一盘库", group: 1), Tool(Anchor)]
+    [Ui("统一盘库", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
