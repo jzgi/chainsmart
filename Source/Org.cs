@@ -1,75 +1,80 @@
-﻿using ChainFx;
+﻿using System.Threading;
+using ChainFx;
+using ChainFx.Nodal;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+/// <summary>
+/// An organizational unit.
+/// </summary>
+public class Org : Entity, ITwin<int>
 {
-    /// <summary>
-    /// An organizational unit.
-    /// </summary>
-    public class Org : Entity, IKeyable<int>
+    public static readonly Org Empty = new();
+
+    public const short
+        TYP_BRD = 0b00000, // brand
+        TYP_PRT = 0b01000, // parent
+        TYP_RTL = 0b00001, // shop
+        TYP_SUP = 0b00010, // source
+        TYP_LOG = 0b00100, // logistic
+        TYP_MKT = TYP_PRT | TYP_RTL, // market
+        TYP_CTR = TYP_PRT | TYP_SUP | TYP_LOG; // center
+
+
+    public const short
+        STA_VOID = 0,
+        STA_PRE = 1,
+        STA_FINE = 2,
+        STA_TOP = 4;
+
+    public static readonly Map<short, string> States = new()
     {
-        public static readonly Org Empty = new();
-
-        public const short
-            TYP_VTL = 0b00000, // brand
-            TYP_PRT = 0b01000, // parent
-            TYP_SHP = 0b00001, // shop
-            TYP_SRC = 0b00010, // source
-            TYP_LOG = 0b00100, // logistic
-            TYP_MKT = TYP_PRT | TYP_SHP, // market
-            TYP_CTR = TYP_PRT | TYP_SRC | TYP_LOG; // center
+        { STA_VOID, "停业" },
+        { STA_PRE, "放假" },
+        { STA_FINE, "正常" },
+        { STA_TOP, "满负" },
+    };
 
 
-        public const short
-            STA_VOID = 0,
-            STA_PRE = 1,
-            STA_FINE = 2,
-            STA_TOP = 4;
-
-        public static readonly Map<short, string> States = new()
-        {
-            { STA_VOID, "停业" },
-            { STA_PRE, "放假" },
-            { STA_FINE, "正常" },
-            { STA_TOP, "满负" },
-        };
+    public new static readonly Map<short, string> Statuses = new()
+    {
+        { STU_VOID, null },
+        { STU_CREATED, "新建" },
+        { STU_ADAPTED, "修改" },
+        { STU_OKED, "上线" },
+    };
 
 
-        public new static readonly Map<short, string> Statuses = new()
-        {
-            { STU_CREATED, "新建" },
-            { STU_ADAPTED, "修改" },
-            { STU_OKED, "上线" },
-        };
+    // id
+    internal int id;
 
+    // parent id, only if shop or source
+    internal int prtid;
 
-        // id
-        internal int id;
+    // center id, only if market or shop
+    internal int ctrid;
 
-        // parent id, only if shop or source
-        internal int prtid;
+    internal string ext; // extended territory name
+    internal string legal; // legal name
+    internal short regid;
+    internal string addr;
+    internal double x;
+    internal double y;
+    internal string tel;
+    internal bool trust;
+    internal string link;
 
-        // center id, only if market or shop
-        internal int ctrid;
+    internal bool icon;
+    internal JObj specs;
+    internal bool pic;
+    internal bool m1;
+    internal bool m2;
+    internal bool m3;
+    internal bool m4;
 
-        internal string ext; // extended territory name
-        internal string legal; // legal name
-        internal short regid;
-        internal string addr;
-        internal double x;
-        internal double y;
-        internal string tel;
-        internal bool trust;
-        internal string link;
-
-        internal bool icon;
-        internal JObj specs;
-        internal bool pic;
-        internal bool m1;
-        internal bool m2;
-        internal bool m3;
-        internal bool m4;
-
-        public override void Read(ISource s, short msk = 0xff)
+    public override void Read(ISource s, short msk = 0xff)
+    {
+        lock (this)
         {
             base.Read(s, msk);
 
@@ -108,8 +113,11 @@ namespace ChainSmart
                 s.Get(nameof(m4), ref m4);
             }
         }
+    }
 
-        public override void Write(ISink s, short msk = 0xff)
+    public override void Write(ISink s, short msk = 0xff)
+    {
+        lock (this)
         {
             base.Write(s, msk);
 
@@ -152,57 +160,89 @@ namespace ChainSmart
                 s.Put(nameof(m4), m4);
             }
         }
+    }
 
 
-        public int Key => id;
+    public int Key => id;
 
-        // STATE
-        //
+    // STATE
+    //
 
-        public const short STA_OKABLE = 1;
+    public const short STA_OKABLE = 1;
 
-        public override short State
+    public override short State
+    {
+        get
         {
-            get
+            short v = 0;
+            if (icon && pic)
             {
-                short v = 0;
-                if (icon && pic)
-                {
-                    v |= STA_OKABLE;
-                }
-                return v;
+                v |= STA_OKABLE;
             }
+            return v;
         }
+    }
 
 
-        public string Tel => tel;
+    public string Tel => tel;
 
-        public int MarketId => IsMarket ? id : IsOfShop ? prtid : 0;
+    public int MarketId => EqMarket ? id : IsRetail ? prtid : 0;
 
-        public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
+    public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
 
-        public bool IsVirtual => typ == TYP_VTL;
+    public bool EqBrand => typ == TYP_BRD;
 
-        public bool EqSource => typ == TYP_SRC;
+    public bool EqSupply => typ == TYP_SUP;
 
-        public bool IsOfSource => (typ & TYP_SRC) == TYP_SRC;
+    public bool IsSupply => (typ & TYP_SUP) == TYP_SUP;
 
-        public bool IsShop => typ == TYP_SHP;
+    public bool EqRetail => typ == TYP_RTL;
 
-        public bool IsOfShop => (typ & TYP_SHP) == TYP_SHP;
+    public bool IsRetail => (typ & TYP_RTL) == TYP_RTL;
 
-        public bool IsMarket => typ == TYP_MKT;
+    public bool EqMarket => typ == TYP_MKT;
 
-        public bool IsCenter => typ == TYP_CTR;
+    public bool EqCenter => typ == TYP_CTR;
 
-        public bool HasXy => IsMarket || EqSource || IsCenter;
+    public bool HasXy => EqMarket || EqSupply || EqCenter;
 
-        public bool IsTopOrg => prtid == 0;
+    public bool IsTopOrg => prtid == 0;
 
-        public string Name => name;
+    public string Name => name;
 
-        public string Ext => ext;
+    private string title;
 
-        public override string ToString() => name;
+    public string Title => title ??= EqMarket ? name : name + '（' + addr + '）';
+
+    public string Ext => ext;
+
+    public int SetKey => prtid;
+
+    public override string ToString() => name;
+
+
+    // EVENT 
+
+
+    private OrgNoticePack notices;
+
+    public OrgNoticePack Notices
+    {
+        get
+        {
+            Interlocked.CompareExchange(ref notices, new OrgNoticePack(), null);
+            return notices;
+        }
+    }
+
+    private OrgEventPack events;
+
+    public OrgEventPack Events
+    {
+        get
+        {
+            Interlocked.CompareExchange(ref events, new OrgEventPack(), null);
+            return events;
+        }
     }
 }

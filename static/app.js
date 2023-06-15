@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, flash) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -48,7 +48,7 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill fprice
     var out_fprice = trig.querySelector('.fprice');
-    if (vip) {
+    if (vip || flash > 0) {
         out_fprice.value = (price - off).toFixed(2);
         out_fprice.classList.add('vip');
     }
@@ -58,43 +58,40 @@ function fillPriceAndQtySelect(trig, evt, price, off, minx, availx) {
 
     // fill qty options
     //
-    if (!vip) {
-        minx = 1;
+    if (avail < max) {
+        max = avail;
     }
-    var maxx = availx > 200 ? 200 : availx; 
-
     var sel_qtyselect = trig.querySelector('.qtyselect');
-    for (var i = minx; i <= maxx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
+
+    for (var i = step; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
-        opt.text = i + ' 件';
+        opt.text = i + ' ' + unit;
         sel_qtyselect.add(opt);
     }
 
 }
 
-function sumQtyDetails(trig, unitx) {
+// triggered by qty selection
+//
+function buyRecalc(trig) {
 
     var footer = trig.parentElement;
 
-    var output_qtyx = footer.querySelector('.qtyx');
     var output_fprice = footer.querySelector('.fprice');
     var output_subtotal = footer.querySelector('.subtotal');
 
     var fprice = parseFloat(output_fprice.value);
 
-    output_qtyx.value = (unitx * trig.value);
-    output_subtotal.value = (unitx * trig.value * fprice).toFixed(2);
-
-    var span = footer.querySelector('.qtydetail');
+    output_subtotal.value = (trig.value * fprice).toFixed(2);
 
     // toggle visibility
     if (trig.value == 0) {
-        span.classList.add("uk-invisible");
+        output_subtotal.classList.add("uk-invisible");
         trig.classList.remove('uk-active');
     }
     else {
-        span.classList.remove("uk-invisible");
+        output_subtotal.classList.remove("uk-invisible");
         trig.classList.add('uk-active');
     }
 
@@ -118,34 +115,20 @@ function posItemChange(trig) {
     var v = trig.selectedOptions[0];
     var id = v.value;
     var unit = v.getAttribute('unit');
-    var unitx = parseFloat(v.getAttribute('unitx'));
+    var unitw = parseFloat(v.getAttribute('unitw'));
     var price = parseFloat(v.getAttribute('price'));
     var avail = parseFloat(v.getAttribute('avail'));
-    var availx = avail / unitx;
 
     // check local-storage price for selected ware
     var local_price = window.localStorage.getItem('pos-price-' + id);
     if (local_price) {
         price = parseFloat(local_price);
     }
-    form['price'].value = price;
+    form.price.value = price;
     // set local datum name
-    form['price'].setAttribute('local', 'pos-price-' + id);
-
-    // re-fill the qtyx options
-    var qtyx = form['qtyx'];
-    qtyx.innerHTML = null; // clear all qtyx options
-    if (unitx != 1.0) {
-        for (var i = 0; i < availx; i += (i >= 120 ? 5 : i >= 60 ? 2 : 1)) {
-            var opt = document.createElement("option");
-            opt.value = i;
-            opt.text = i + ' 件';
-            qtyx.add(opt);
-        }
-    }
-
+    form.price.setAttribute('local', 'pos-price-' + id);
     // set unit
-    form['unit'].value = unit ? unit : '';
+    form.unit.value = unit ? unit : '';
 
     posRecalc(trig);
 }
@@ -154,11 +137,10 @@ function posItemChange(trig) {
 function posRecalc(trig) {
 
     var form = trig.form;
-    var subtotal = form['subtotal'];
-    var price = form['price'];
-    var qty = form['qty'];
+    var subtotal = form.subtotal;
+    var price = form.price;
+    var qty = form. qty;
     subtotal.value = (qty.value * price.value).toFixed(2);
-
 }
 
 // resum as topay
@@ -196,17 +178,17 @@ function posAdd(trig) {
     var lotid = parseInt(opt.getAttribute('lotid'));
     var name = opt.getAttribute('name');
     var unit = opt.getAttribute('unit');
-    var unitx = opt.getAttribute('unitx');
-    var price = parseFloat(form['price'].value);
-    var qty = parseFloat(form['qty'].value);
+    var unitw = opt.getAttribute('unitw');
+    var price = parseFloat(form.price.value);
+    var qty = parseFloat(form.qty.value);
 
-    var subtotal = parseFloat(form['subtotal'].value);
+    var subtotal = parseFloat(form.subtotal.value);
 
     // target ul element
     var tbody = document.getElementById('items');
     var tr = document.createElement("tr");
-    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitx + '-' + price + '-' + qty + '">';
-    html += '<td>' + opt.innerText + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
+    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
+    html += '<td>' + name + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
 
@@ -271,7 +253,7 @@ function call_pos(trig) {
             } else if (this.status >= 500) {
                 alert('错误，请确认库存');
             }
-        } 
+        }
     };
 
     xhr.open(method, action, false);
@@ -310,7 +292,7 @@ function call_buy(trig) {
     return false;
 }
 
-function call_book(trig) {
+function call_pur(trig) {
 
     var method = 'post';
     var action = trig.formAction || trig.name;
@@ -516,7 +498,7 @@ function serialize(form, notEmpty) {
                 q.push(form.elements[i].name + "=" + encodeURIComponent(form.elements[i].value));
                 break;
             case 'SELECT':
-                if (notEmpty && form.elements[i].value == '') 
+                if (notEmpty && form.elements[i].value == '')
                     break;
 
                 switch (form.elements[i].type) {
@@ -577,7 +559,10 @@ function goto(trigOrUrl, evt) {
     evt.preventDefault();
 
     if (trigOrUrl.tagName == 'A') {
-        location.replace(trigOrUrl.href);
+        var fr = trigOrUrl.target == '_parent' ? 
+            window.parent : 
+            window;
+        fr.location.replace(trigOrUrl.href);
     }
     else {
         location.replace(trigOrUrl);
@@ -915,7 +900,7 @@ function cropUpd(el, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.95
+            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.9
         }
     ).then(function (blob) {
 

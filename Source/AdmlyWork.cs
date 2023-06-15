@@ -1,107 +1,102 @@
 using ChainFx;
-using ChainFx.Nodal;
 using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+[UserAuthenticate, AdmlyAuthorize]
+[Ui("平台管理")]
+public class AdmlyWork : WebWork
 {
-    [UserAuthenticate, AdmlyAuthorize]
-    [Ui("平台管理")]
-    public class AdmlyWork : WebWork
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            // 
+        // twins
 
-            CreateWork<AdmlySetgWork>("setg");
+        CreateWork<AdmlyTwinWork>("twin");
 
-            CreateWork<AdmlyAccessWork>("access");
 
-            CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
+        // basic 
 
-            CreateWork<OrglyBookClearWork>("pbookclr", state: false);
+        CreateWork<AdmlySetgWork>("setg", header: "常规");
 
-            CreateWork<AdmlyNodeWork>("node");
+        CreateWork<AdmlyAccessWork>("access");
 
-            // biz
+        CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
 
-            CreateWork<AdmlyRegWork>("reg");
+        CreateWork<OrglyPurClearWork>("ppurclr", state: false);
 
-            CreateWork<AdmlyUserWork>("user");
+        // biz
 
-            CreateWork<AdmlyOrgWork>("org");
+        CreateWork<AdmlyRegWork>("reg", header: "业务");
 
-            // fin
+        CreateWork<AdmlyUserWork>("user");
 
-            CreateWork<AdmlyBuyAggWork>("buyagg");
+        CreateWork<AdmlyOrgWork>("org");
 
-            CreateWork<AdmlyBookAggWork>("bookagg");
+        // fin
 
-            CreateWork<AdmlyBuyClearWork>("buyclr");
+        CreateWork<AdmlyBuyAggWork>("buyagg", header: "财务");
 
-            CreateWork<AdmlyBookClearWork>("bookclr");
-        }
+        CreateWork<AdmlyPurAggWork>("puragg");
 
-        public void @default(WebContext wc)
-        {
-            var prin = (User)wc.Principal;
+        CreateWork<AdmlyBuyClearWork>("buyclr");
 
-            wc.GivePage(200, h =>
-            {
-                h.TOPBARXL_();
-
-                h.HEADER_("uk-width-expand uk-col uk-padding-left");
-                h.H2(Self.name);
-                h.P2(prin.name, User.Orgly[wc.Role], brace: true);
-                h._HEADER();
-
-                h.PIC("/logo.webp", circle: true, css: "uk-width-small");
-
-                h._TOPBARXL();
-
-                h.WORKBOARD();
-            }, false, 900);
-        }
+        CreateWork<AdmlyPurClearWork>("purclr");
     }
 
-    [Ui("基本信息和参数", "常规")]
-    public class AdmlySetgWork : WebWork
+    public void @default(WebContext wc)
     {
-        public static readonly decimal
-            rtlbasic,
-            rtlfee,
-            rtlpayrate,
-            suppayrate;
+        var prin = (User)wc.Principal;
 
-        static AdmlySetgWork()
+        wc.GivePage(200, h =>
         {
-            var jo = Application.Prog;
+            h.TOPBARXL_();
 
-            jo.Get(nameof(rtlbasic), ref rtlbasic);
-            jo.Get(nameof(rtlfee), ref rtlfee);
-            jo.Get(nameof(rtlpayrate), ref rtlpayrate);
-            jo.Get(nameof(suppayrate), ref suppayrate);
-        }
+            h.HEADER_("uk-width-expand uk-col uk-padding-left");
+            h.H2(Application.Name);
+            h.P2(prin.name, User.Orgly[wc.Role], brace: true);
+            h._HEADER();
 
-        public void @default(WebContext wc)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.UL_("uk-list uk-list-divider uk-large");
+            h.PIC("/logo.webp", circle: true, css: "uk-width-small");
 
-                h.LI_().FIELD("消费派送基本费", rtlbasic)._LI();
-                h.LI_().FIELD("消费每单打理费", rtlfee)._LI();
-                h.LI_().FIELD("消费支付扣点", rtlpayrate)._LI();
-                h.LI_().FIELD("供应支付扣点", suppayrate)._LI();
-                h._UL();
+            h._TOPBARXL();
 
-                h.TOOLBAR(bottom: true);
-            });
-        }
+            h.WORKBOARD();
+        }, false, 900);
+    }
+}
+
+[Ui("基本信息和参数")]
+public class AdmlySetgWork : WebWork
+{
+    public static readonly decimal
+        rtlbasic,
+        rtlfee,
+        rtlpayrate,
+        suppayrate;
+
+    static AdmlySetgWork()
+    {
+        var jo = Application.Prog;
+
+        jo.Get(nameof(rtlbasic), ref rtlbasic);
+        jo.Get(nameof(rtlfee), ref rtlfee);
+        jo.Get(nameof(rtlpayrate), ref rtlpayrate);
+        jo.Get(nameof(suppayrate), ref suppayrate);
     }
 
-    [Ui("碳交易网络", "常规", icon: "social")]
-    public class AdmlyNodeWork : NodeWork
+    public void @default(WebContext wc)
     {
+        wc.GivePane(200, h =>
+        {
+            h.UL_("uk-list uk-list-divider uk-large");
+
+            h.LI_().FIELD("消费派送基本费", rtlbasic)._LI();
+            h.LI_().FIELD("消费每单打理费", rtlfee)._LI();
+            h.LI_().FIELD("消费支付扣点", rtlpayrate)._LI();
+            h.LI_().FIELD("供应支付扣点", suppayrate)._LI();
+            h._UL();
+
+            h.TOOLBAR(bottom: true);
+        });
     }
 }

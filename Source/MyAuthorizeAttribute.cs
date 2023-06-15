@@ -1,34 +1,33 @@
 ﻿using System;
 using ChainFx.Web;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+/// <summary>
+/// To implement principal authorization of access to the target resources.
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
+public class MyAuthorizeAttribute : AuthorizeAttribute
 {
-    /// <summary>
-    /// To implement principal authorization of access to the target resources.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-    public class MyAuthorizeAttribute : AuthorizeAttribute
+    // user type 
+    readonly short typ;
+
+
+    public MyAuthorizeAttribute(short typ = 0)
     {
-        // user type 
-        readonly short typ;
+        this.typ = typ;
+    }
 
+    public override bool Do(WebContext wc, bool mock)
+    {
+        var prin = (User)wc.Principal;
 
-        public MyAuthorizeAttribute(short typ = 0)
+        // if meet typ
+        if (typ == 0 || (prin.typ & typ) == typ)
         {
-            this.typ = typ;
+            return true;
         }
 
-        public override bool Do(WebContext wc, bool mock)
-        {
-            var prin = (User)wc.Principal;
-
-            // if meet typ
-            if (typ == 0 || (prin.typ & typ) == typ)
-            {
-                return true;
-            }
-
-            return false;
-        }
+        return false;
     }
 }

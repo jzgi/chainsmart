@@ -1,9 +1,8 @@
-﻿namespace ChainSmart
-{
-    public interface IFolderable
-    {
-        short Index { get; }
+﻿namespace ChainSmart;
 
-        short Size { get; }
-    }
+public interface IFolderable
+{
+    short Index { get; }
+
+    short Size { get; }
 }

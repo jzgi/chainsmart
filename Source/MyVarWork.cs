@@ -1,102 +1,183 @@
 using System.Threading.Tasks;
 using ChainFx;
-using ChainFx.Nodal;
 using ChainFx.Web;
+using static ChainFx.Nodal.Nodality;
+using static ChainFx.Web.Modal;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+[MyAuthorize]
+[Ui("我的个人账号")]
+public class MyVarWork : WebWork
 {
-    [MyAuthorize]
-    [Ui("我的个人账号")]
-    public class MyVarWork : WebWork
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
-        {
-            CreateWork<MyAccessVarWork>("access");
+        CreateWork<MyBuyWork>("buy");
 
-            CreateWork<MyBuyWork>("buy");
-        }
+        CreateWork<MyCarbWork>("cer");
 
-        public void @default(WebContext wc)
+        CreateWork<MyAgmtVarWork>("agmt");
+    }
+
+    public void @default(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
+        wc.GivePage(200, h =>
         {
-            var prin = (User)wc.Principal;
-            wc.GivePage(200, h =>
+            h.TOPBARXL_();
+
+            h.HEADER_("uk-width-expand uk-col uk-padding-left");
+            h.H2(prin.name);
+            h.H4(prin.tel);
+            if (prin.typ > 0) h.P(User.Typs[prin.typ]);
+            h._HEADER();
+
+            if (prin.icon)
             {
-                h.TOPBARXL_();
+                h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+            }
+            else
+                h.PIC("/my.webp", circle: true, css: "uk-width-small");
 
-                h.HEADER_("uk-width-expand uk-col uk-padding-left");
-                h.H2(prin.name);
-                h.H4(prin.tel);
-                if (prin.typ > 0) h.P(User.Typs[prin.typ]);
-                h._HEADER();
+            h._TOPBARXL();
 
-                if (prin.icon)
+            h.WORKBOARD(compact: false);
+
+            h.TOOLBAR(bottom: true, status: prin.Status, state: prin.State);
+        }, false, 120);
+    }
+
+    [Ui("身份", "刷新我的身份权限", icon: "user"), Tool(ButtonShow, status: 7)]
+    public async Task access(WebContext wc)
+    {
+        int uid = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+        var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
+
+        // resend token cookie
+        wc.SetTokenCookies(o);
+
+        wc.GivePane(200, h =>
+        {
+            h.ARTICLE_("uk-card uk-card-default");
+            h.H4("我的最新身份和权限", css: "uk-card-header");
+            h.UL_("uk-card-body uk-list uk-list-divider");
+
+            var any = 0;
+            var vip = o.vip;
+            if (vip != null)
+            {
+                h.LI_().LABEL("大客户").SPAN_("uk-static");
+                for (int i = 0; i < vip.Length; i++)
                 {
-                    h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                    if (i > 0)
+                    {
+                        h.BR();
+                    }
+
+                    var org = GrabTwin<int, Org>(vip[i]);
+                    if (org != null)
+                    {
+                        h.T(org.name);
+                    }
                 }
-                else
-                    h.PIC("/my.webp", circle: true, css: "uk-width-small");
 
-                h._TOPBARXL();
+                h._SPAN();
+                h._LI();
 
-                h.WORKBOARD();
+                any++;
+            }
 
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H3("服务约定", "uk-card-header");
-                h.SECTION_("uk-card-body");
-                h.P("「中惠农通」线上平台是实体市场的镜像，平台上所有商户都是在指定市场内有实体商户的合法经营户，受当地政府有关部门监管。");
-                h.P("通过平台发生的线上和线下的商品交易行为，买卖双方应各自负有相应的责任。");
-                h.P("按照平台的协议，市场内的「中惠农通体验中心」作为商盟的盟主，有权向盟友商户提出整改建议。");
-                h.P("「中惠农通」是集体所有制平台，保障您的个人数据不作任何其它用途。");
-                h._SECTION();
-                h.FOOTER_("uk-card-footer uk-flex-center").PIC("/qrcode.jpg", css: "uk-width-small")._FOOTER();
-                h._ARTICLE();
-            }, false, 900);
-        }
+            if (o.admly > 0)
+            {
+                h.LI_().FIELD(User.Admly[o.admly], "平台")._LI();
 
-        [Ui("设置", icon: "pencil"), Tool(Modal.ButtonShow)]
-        public async Task setg(WebContext wc)
+                any++;
+            }
+
+            if (o.suply > 0 && o.supid > 0)
+            {
+                var org = GrabTwin<int, Org>(o.supid);
+
+                h.LI_().FIELD(User.Orgly[o.suply], org.name)._LI();
+
+                any++;
+            }
+
+            if (o.rtlly > 0 && o.rtlid > 0)
+            {
+                var org = GrabTwin<int, Org>(o.rtlid);
+
+                h.LI_().FIELD(User.Orgly[o.rtlly], org.name)._LI();
+
+                any++;
+            }
+
+            if (any == 0)
+            {
+                h.LI_().FIELD(null, "暂无特殊权限")._LI();
+            }
+
+            h._UL();
+            h._ARTICLE();
+        }, false, 60);
+    }
+
+
+    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
+    public async Task setg(WebContext wc)
+    {
+        const string PASSWORD_MASK = "t#0^0z4R4pX7";
+
+        string name;
+        string tel;
+        string password;
+        var prin = (User)wc.Principal;
+        if (wc.IsGet)
         {
-            const string PASSMASK = "t#0^0z4R4pX7";
-            string name;
-            string tel;
-            // string password;
-            var prin = (User)wc.Principal;
-            if (wc.IsGet)
+            name = prin.name;
+            tel = prin.tel;
+            password = string.IsNullOrEmpty(prin.credential) ? null : PASSWORD_MASK;
+            wc.GivePane(200, h =>
             {
-                name = prin.name;
-                tel = prin.tel;
-                // password = string.IsNullOrEmpty(prin.credential) ? null : PASSMASK;
-                wc.GivePane(200, h =>
+                h.FORM_().FIELDSUL_("基本信息");
+
+                h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true, @readonly: prin.IsStationOp)._LI();
+                h.LI_().TEXT("登录手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, @readonly: true);
+
+                h._FIELDSUL();
+
+                if (prin.IsStationOp)
                 {
-                    h.FORM_().FIELDSUL_("基本信息");
-                    h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true)._LI();
-                    h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    // h._FIELDSUL();
-                    // h.FIELDSUL_("操作密码（可选）");
-                    // h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
-                    h._FIELDSUL().BOTTOM_BUTTON("确定", nameof(setg))._FORM();
-                });
-            }
-            else // POST
-            {
-                var f = await wc.ReadAsync<Form>();
-                name = f[nameof(name)];
-                tel = f[nameof(tel)];
-                // password = f[nameof(password)];
-                // var credential =
-                //     string.IsNullOrEmpty(password) ? null :
-                //     password == PASSMASK ? prin.credential :
-                //     MainUtility.ComputeCredential(tel, password);
+                    h.FIELDSUL_("工作台操作密码");
+                    h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
+                    h._FIELDSUL();
+                }
+                h.BOTTOM_BUTTON("确定", nameof(setg))._FORM();
+            });
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            name = f[nameof(name)];
 
-                using var dc = Nodality.NewDbContext();
-                dc.Sql("UPDATE users SET name = CASE WHEN @1 IS NULL THEN name ELSE @1 END , tel = @2 WHERE id = @3 RETURNING ").collst(User.Empty);
-                prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(prin.id));
+            tel = f[nameof(tel)];
 
-                // refresh cookies
-                wc.SetUserCookies(prin);
+            password = f[nameof(password)];
+            var credential = string.IsNullOrEmpty(password) ? null :
+                password == PASSWORD_MASK ? prin.credential :
+                MainUtility.ComputeCredential(tel, password);
 
-                wc.GivePane(200); // close
-            }
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE users SET name = @1, tel = @2, credential = @3 WHERE id = @4 RETURNING ").collst(User.Empty);
+            prin = await dc.QueryTopAsync<User>(p => p.Set(name).Set(tel).Set(credential).Set(prin.id));
+
+            // refresh cookies
+            wc.SetTokenCookies(prin);
+
+            wc.GivePane(200); // close
         }
     }
 }

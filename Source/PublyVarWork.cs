@@ -1,80 +1,112 @@
-﻿using System.Threading.Tasks;
-using ChainFx;
+﻿using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+[UserAuthenticate]
+public class PublyVarWork : WebWork
 {
-    /// 
-    /// The home for a market
-    ///
-    [UserAuthenticate]
-    public class PublyVarWork : WebWork
+    protected override void OnCreate()
     {
-        protected override void OnCreate()
+        CreateVarWork<PublyItemWork>(); // home for one shop
+    }
+
+    public void @default(WebContext wc)
+    {
+        int orgid = wc[0];
+        var regs = Grab<short, Reg>();
+
+        var org = GrabTwin<int, Org>(orgid);
+
+        wc.GivePage(200, h =>
+            {
+                h.ARTICLE_("uk-card");
+                h.H3(org.Ext, css: "uk-card-header");
+                h.SECTION_("uk-card-body");
+                if (org.pic)
+                {
+                    h.PIC_("/org/", org.id, "/pic");
+                }
+                else
+                    h.PIC_("/void-shop.webp");
+
+                h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
+                h._PIC();
+
+                h.Q(org.addr);
+
+                h._SECTION();
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card");
+                h.H3("派送覆盖", css: "uk-card-header");
+                h.UL_("uk-card-body");
+                h._UL();
+
+                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+            }
+        );
+    }
+
+    /// <summary>
+    /// The public home for a market.
+    /// </summary>
+    public void lst(WebContext wc, int sector)
+    {
+        int orgid = wc[0];
+        var regs = Grab<short, Reg>();
+
+        var org = GrabTwin<int, Org>(orgid);
+
+        Org[] arr;
+        if (sector == 0) // when default sector
         {
-            CreateVarWork<PublyItemWork>(); // home for one shop
+            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == 0 && x.status == 4);
+            arr = arr.AddOf(org, first: true);
+        }
+        else
+        {
+            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == sector && x.status == 4);
         }
 
-        public async Task @default(WebContext wc, int sector)
+        wc.GivePage(200, h =>
         {
-            int orgid = wc[0];
-            var org = GrabObject<int, Org>(orgid);
-            var regs = Grab<short, Reg>();
+            h.NAVBAR(nameof(lst), sector, regs, (_, v) => v.IsSection, "star");
 
-            Org[] arr;
-            if (sector == 0) // when default sector
+            if (sector != 0 && arr == null)
             {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid IS NULL AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(orgid));
-                arr = arr.AddOf(org, first: true);
-            }
-            else
-            {
-                using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND regid = @2 AND status = 4 ORDER BY addr");
-                arr = await dc.QueryAsync<Org>(p => p.Set(orgid).Set(sector));
+                h.ALERT("尚无商户");
+                return;
             }
 
-            wc.GivePage(200, h =>
+            h.MAINGRID(arr, o =>
             {
-                h.NAVBAR(string.Empty, sector, regs, (k, v) => v.IsSection, "star");
-
-                if (sector != 0 && arr == null)
+                if (o.EqBrand)
                 {
-                    h.ALERT("尚无商户");
-                    return;
+                    h.A_(o.addr, css: "uk-card-body uk-flex");
+                }
+                else
+                {
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, css: "uk-card-body uk-flex");
                 }
 
-                h.MAINGRID(arr, o =>
+                if (o.icon)
                 {
-                    if (o.IsVirtual)
-                    {
-                        h.A_(o.addr, css: "uk-card-body uk-flex");
-                    }
-                    else
-                    {
-                        h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Name, css: "uk-card-body uk-flex");
-                    }
+                    h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC("/void.webp", css: "uk-width-1-5");
 
-                    if (o.icon)
-                    {
-                        h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                h.ASIDE_();
+                h.HEADER_().H4(o.Name).SPAN("")._HEADER();
+                h.Q(o.tip, "uk-width-expand");
+                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                h._ASIDE();
 
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.Name).SPAN("")._HEADER();
-                    h.Q(o.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            }, true, 360, org.Ext);
-        }
+                h._A();
+            });
+        }, true, 360, org.Ext);
     }
 }

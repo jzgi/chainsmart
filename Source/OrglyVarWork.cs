@@ -1,135 +1,224 @@
-﻿using ChainFx.Web;
+﻿using System;
+using System.Threading.Tasks;
+using ChainFx;
+using ChainFx.Web;
+using static ChainFx.Web.Modal;
+using static ChainFx.Nodal.Nodality;
 
-namespace ChainSmart
+namespace ChainSmart;
+
+public abstract class OrglyVarWork : WebWork
 {
-    public abstract class OrglyVarWork : WebWork
+    public void @default(WebContext wc)
     {
-        public void @default(WebContext wc)
-        {
-            var org = wc[0].As<Org>();
-            var prin = (User)wc.Principal;
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
 
-            wc.GivePage(200, h =>
+        wc.GivePage(200, h =>
+        {
+            h.TOPBARXL_();
+
+            bool astack = wc.Query[nameof(astack)];
+            if (astack)
             {
-                h.TOPBARXL_();
+                h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
+            }
 
-                bool astack = wc.Query[nameof(astack)];
-                if (astack)
-                {
-                    h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
-                }
+            string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
-                string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+            h.HEADER_("uk-width-expand uk-col uk-padding-left");
+            h.H2_().T(org.name).SP().Q(Org.Statuses[org.status])._H2();
+            // if (org.IsParent) h.H4(org.Ext);
+            h.H5_().T(prin.name).T('（').T(rol).T('）')._H5();
+            h._HEADER();
 
-                h.HEADER_("uk-width-expand uk-col uk-padding-left");
-                h.H2(org.name);
-                if (org.IsParent) h.H4(org.Ext);
-                h.P2(prin.name, rol, brace: true);
-                h._HEADER();
+            if (org.icon)
+            {
+                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
+            }
+            else
+                h.PIC(org.IsRetail ? "/rtl.webp" : org.EqCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
 
-                if (org.icon)
-                {
-                    h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
-                }
-                else
-                    h.PIC(org.IsOfShop ? "/shp.webp" : org.IsCenter ? "/ctr.webp" : "/src.webp", circle: true, css: "uk-width-small");
+            h._TOPBARXL();
 
-                h._TOPBARXL();
+            h.WORKBOARD(twinSpy: org.id);
 
-                h.WORKBOARD(notice: org.id);
-            }, false, 30, title: org.name);
+            h.TOOLBAR(bottom: true, status: org.Status, state: org.State);
+        }, false, 30, title: org.name);
+    }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
+    public async Task setg(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        var m = GrabTwin<int, Org>(org.id);
+
+        if (wc.IsGet)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("设置基本信息和参数");
+                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
+                h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
+            });
+        }
+        else
+        {
+            await wc.ReadObjectAsync(instance: m); // use existing object
+
+            using var dc = NewDbContext();
+            // update the db record
+            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+            wc.GivePane(200);
         }
     }
 
-
-    [OrglyAuthorize(Org.TYP_SHP)]
-    [Ui("市场操作")]
-    public class ShplyVarWork : OrglyVarWork
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    public async Task ok(WebContext wc)
     {
-        protected override void OnCreate()
-        {
-            // org
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
 
-            CreateWork<OrglySetgWork>("setg");
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id));
 
-            CreateWork<OrglyAccessWork>("access", true); // true = shop
-
-            CreateWork<OrglyBuyClearWork>("buyclr", state: true);
-
-            CreateWork<OrglyCreditWork>("credit");
-
-            // shp
-
-            CreateWork<ShplyItemWork>("sitem");
-
-            CreateWork<ShplyPosWork>("spos");
-
-            CreateWork<ShplyBuyWork>("sbuy");
-
-            CreateWork<ShplyBookWork>("sbook");
-
-            CreateWork<ShplyBuyAggWork>("sbuyagg");
-
-            CreateWork<ShplyBookAggWork>("sbookagg");
-
-            CreateWork<ShplyVipWork>("svip");
-
-            // mkt
-
-            CreateWork<MktlyOrgWork>("morg");
-
-            CreateWork<MktlyEvalWork>("mtest");
-
-            CreateWork<MktlyBuyWork>("mbuy");
-
-            CreateWork<MktlyBookWork>("mbook");
-
-            CreateWork<MktlyBuyAggWork>("mbuyagg");
-
-            CreateWork<MktlyBookAggWork>("mbookagg");
-        }
+        wc.GivePane(200);
     }
 
-
-    [OrglyAuthorize(Org.TYP_SRC)]
-    [Ui("供应操作")]
-    public class SrclyVarWork : OrglyVarWork
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    public async Task unok(WebContext wc)
     {
-        protected override void OnCreate()
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
+        await dc.ExecuteAsync(p => p.Set(org.id));
+
+        wc.GivePane(200);
+    }
+
+    // [Ui(icon: "question"), Tool(ButtonShow, status: 15)]
+    // public override void help(WebContext wc)
+    // {
+    //     base.help(wc);
+    // }
+}
+
+[OrglyAuthorize(Org.TYP_RTL)]
+[Ui("市场操作")]
+public class RtllyVarWork : OrglyVarWork
+{
+    protected override void OnCreate()
+    {
+        // org
+
+        CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = shop
+
+        CreateWork<OrglyBuyClearWork>("buyclr", state: true);
+
+        CreateWork<OrglyEvalWork>("eval");
+
+        // retail shop
+
+        CreateWork<RtllyItemWork>("ritem", header: "商户");
+
+        CreateWork<RtllyPosWork>("rpos");
+
+        CreateWork<RtllyBuyWork>("rbuy");
+
+        CreateWork<RtllyPurWork>("rpur");
+
+        CreateWork<RtllyBuyAggWork>("rbuyagg");
+
+        CreateWork<RtllyPurAggWork>("rpuragg");
+
+        CreateWork<RtllyVipWork>("rvip");
+
+        // mkt
+
+        CreateWork<MktlyOrgWork>("morg", header: "机构");
+
+        CreateWork<MktlyEvalWork>("meval");
+
+        CreateWork<MktlyBuyWork>("mbuy"); // delivery
+
+        CreateWork<MktlyPurWork>("mpur");
+
+        CreateWork<MktlyBuyAggWork>("mbuyagg");
+
+        CreateWork<MktlyPurAggWork>("mpuragg");
+    }
+
+    /// <summary>
+    /// The polling of events that belong to the presented org.
+    /// </summary>
+    [OrglyAuthorize(Org.TYP_MKT)]
+    public void @event(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        var es = org.Events;
+
+        var j = new JsonBuilder(true, 1024 * 32);
+        try
         {
-            // org
+            j.ARR_();
 
-            CreateWork<OrglySetgWork>("setg");
 
-            CreateWork<OrglyAccessWork>("access", false); // false = source
-
-            CreateWork<OrglyBookClearWork>("bookclr", state: true); // true = is org
-
-            CreateWork<OrglyCreditWork>("credit");
-
-            // src
-
-            CreateWork<SrclyAssetWork>("sasset");
-
-            CreateWork<SrclyLotWork>("slot");
-
-            CreateWork<SrclyBookWork>("sbookspot", state: Book.TYP_SPOT, ui: new("销售订单-现货", "商户"));
-
-            CreateWork<SrclyBookWork>("sbooklift", state: Book.TYP_LIFT, ui: new("销售订单-助农", "商户"));
-
-            CreateWork<SrclyBookAggWork>("sbookagg");
-
-            // ctr
-
-            CreateWork<CtrlyOrgWork>("corg");
-
-            CreateWork<CtrlyEvalWork>("ceval");
-
-            CreateWork<CtrlyBookWork>("cbook");
-
-            CreateWork<CtrlyLotWork>("clot");
-
-            CreateWork<CtrlyBookAggWork>("cbookagg");
+            j._ARR();
         }
+        finally
+        {
+            j.Clear();
+        }
+    }
+}
+
+[OrglyAuthorize(Org.TYP_SUP)]
+[Ui("供应操作")]
+public class SuplyVarWork : OrglyVarWork
+{
+    protected override void OnCreate()
+    {
+        // org
+
+        CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = source
+
+        CreateWork<OrglyPurClearWork>("purclr", state: true); // true = is org
+
+        CreateWork<OrglyEvalWork>("eval");
+
+        // supply shop
+
+        CreateWork<SuplyFabWork>("sfab", header: "商户");
+
+        CreateWork<SuplyLotWork>("slot");
+
+        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_NORM, ui: new("销售订单-现货"));
+
+        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
+
+        CreateWork<SuplyPurAggWork>("spuragg");
+
+        // ctr
+
+        CreateWork<CtrlyOrgWork>("corg", header: "机构");
+
+        CreateWork<CtrlyEvalWork>("ceval");
+
+        CreateWork<CtrlyPurWork>("cpur");
+
+        CreateWork<CtrlyLotWork>("clot");
+
+        CreateWork<CtrlyPurAggWork>("cpuragg");
     }
 }
