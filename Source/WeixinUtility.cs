@@ -43,6 +43,10 @@ public static class WeixinUtility
         smsvcodetempid,
         smsnotiftempid;
 
+    public static readonly string
+        icbcappid,
+        icbcprivatekey,
+        icbcapigwpublickkey;
 
     static WeixinUtility()
     {
@@ -60,6 +64,9 @@ public static class WeixinUtility
         s.Get(nameof(smsvcodetempid), ref smsvcodetempid);
         s.Get(nameof(smsnotiftempid), ref smsnotiftempid);
 
+        s.Get(nameof(icbcappid), ref icbcappid);
+        s.Get(nameof(icbcprivatekey), ref icbcprivatekey);
+        s.Get(nameof(icbcapigwpublickkey), ref icbcapigwpublickkey);
         try
         {
             SupPayApi = Set("sup_apiclient_cert.p12", supmchid);
@@ -145,6 +152,17 @@ public static class WeixinUtility
 
     public static long NowMillis => (long)(DateTime.Now - EPOCH).TotalMilliseconds;
 
+    public static IContent BuildIcbcContent()
+    {
+        var jo = new JObj
+        {
+            { "appid", icbcappid },
+            { "signType", "RSA2" },
+        };
+        jo.Add("sign",IcbcSign(jo,"sign"));
+        return jo.Dump();
+    }
+    
     public static IContent BuildPrepayContent(string prepay_id)
     {
         string package = "prepay_id=" + prepay_id;
@@ -482,6 +500,48 @@ public static class WeixinUtility
         }
     }
 
+    static string IcbcSign(JObj jo, string exclude = null)
+    {
+        var bdr = new TextBuilder(false, 1024);
+        try
+        {
+            for (int i = 0; i < jo.Count; i++)
+            {
+                var mbr = jo.ValueAt(i);
+
+                // not include the sign field
+                if (exclude != null && mbr.Key == exclude) continue;
+
+                if (bdr.Count > 0)
+                {
+                    bdr.Add('&');
+                }
+
+                bdr.Add(mbr.Key);
+                bdr.Add('=');
+                bdr.Add((string)mbr);
+            }
+            return CreateSign(bdr.ToString(), icbcprivatekey);
+        }
+        finally
+        {
+            bdr.Clear();
+        }
+    }
+    public static string CreateSign(string message, string privateKey)
+    {
+        _ = privateKey ?? throw new ArgumentException($"{nameof(privateKey)} 不能为 null！");
+
+        byte[] keyData = Convert.FromBase64String(privateKey);
+
+        using (var rsa = RSA.Create())
+        {
+            rsa.ImportPkcs8PrivateKey(keyData, out _);
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
+            return Convert.ToBase64String(rsa.SignData(data, 0, data.Length, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+        }
+    }
+    
     public static string Sign(string signKey, string secret)
     {
         using var mac = new HMACSHA1(Encoding.UTF8.GetBytes(signKey));
