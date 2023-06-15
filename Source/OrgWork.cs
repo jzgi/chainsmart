@@ -171,7 +171,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         });
     }
 
-    [Ui("成员商户", status: 1), Tool(Anchor)]
+    [Ui("成员商户", status: 7), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -196,7 +196,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "分区", icon: "list", status: 2), Tool(AnchorPrompt)]
+    [Ui(tip: "分区", icon: "list", status: 8), Tool(AnchorPrompt)]
     public void search(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -234,7 +234,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [Ui(tip: "品牌链接", icon: "star", status: 4), Tool(Anchor)]
+    [Ui(tip: "品牌链接", icon: "star", status: 16), Tool(Anchor)]
     public void star(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -257,7 +257,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 1 | 4), Tool(ButtonOpen)]
+    [Ui("新建", "新建成员商户", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();

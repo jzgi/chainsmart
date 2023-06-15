@@ -13,7 +13,6 @@ public class AdmlyWork : WebWork
 
         CreateWork<AdmlyTwinWork>("twin");
 
-
         // basic 
 
         CreateWork<AdmlySetgWork>("setg", header: "常规");
@@ -52,7 +51,7 @@ public class AdmlyWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(Application.Name);
+            h.H1(Application.Name);
             h.P2(prin.name, User.Orgly[wc.Role], brace: true);
             h._HEADER();
 
@@ -61,6 +60,8 @@ public class AdmlyWork : WebWork
             h._TOPBARXL();
 
             h.WORKBOARD();
+
+            h.TOOLBAR(bottom: true);
         }, false, 900);
     }
 }
