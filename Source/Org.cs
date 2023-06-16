@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using ChainFx;
 using ChainFx.Nodal;
 
@@ -64,6 +65,12 @@ public class Org : Entity, ITwin<int>
     internal bool trust;
     internal string link;
 
+    internal TimeSpan opened;
+    internal TimeSpan closed;
+
+    internal short credit;
+    internal string bankacct;
+
     internal bool icon;
     internal JObj specs;
     internal bool pic;
@@ -105,6 +112,10 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Get(nameof(opened), ref opened);
+                s.Get(nameof(closed), ref closed);
+                s.Get(nameof(credit), ref credit);
+                s.Get(nameof(bankacct), ref bankacct);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
@@ -152,6 +163,10 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
+                s.Put(nameof(opened), opened);
+                s.Put(nameof(closed), closed);
+                s.Put(nameof(credit), credit);
+                s.Put(nameof(bankacct), bankacct);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
                 s.Put(nameof(m1), m1);
@@ -217,6 +232,11 @@ public class Org : Entity, ITwin<int>
     public string Ext => ext;
 
     public int SetKey => prtid;
+
+    public bool IsOpen(TimeSpan now)
+    {
+        return IsOked && now > opened && now < closed;
+    }
 
     public override string ToString() => name;
 

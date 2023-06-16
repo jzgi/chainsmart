@@ -2160,6 +2160,10 @@ section.uk-card-body,
 a.uk-card-body {
     height: calc(100% - 8px);
 }
+a.uk-disabled {
+    background-color: rgb(238 238 238 / 30%);
+    pointer-events: none;
+}
 
 .uk-card-header {
     padding: 4px 6px;
@@ -2493,14 +2497,13 @@ a.uk-card-body {
 .uk-badge {
     box-sizing: border-box;
     vertical-align: middle;
-    margin-left: 4px;
+    margin-left: auto;
     color: #333;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin-left: auto;
     float: right;
 }
 
@@ -2523,7 +2526,6 @@ a.uk-card-body {
     right: 0;
     min-width: 12px;
     height: 12px;
-    ;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2531,6 +2533,15 @@ a.uk-card-body {
 
 .uk-badge-success {
     color: #7daa1d;
+    padding: 2px 0;
+    border-top: 1px solid #7daa1d;
+    border-bottom: 1px solid #7daa1d;
+}
+
+.uk-disabled .uk-badge-success {
+    color: #666;
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
 }
 
 .uk-badge-warning {

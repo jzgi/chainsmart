@@ -47,36 +47,6 @@ public abstract class OrglyVarWork : WebWork
         }, false, 30, title: org.name);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
-    public async Task setg(WebContext wc)
-    {
-        var org = wc[0].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var m = GrabTwin<int, Org>(org.id);
-
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("设置基本信息和参数");
-                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
-                h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
-            });
-        }
-        else
-        {
-            await wc.ReadObjectAsync(instance: m); // use existing object
-
-            using var dc = NewDbContext();
-            // update the db record
-            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
-
-            wc.GivePane(200);
-        }
-    }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
@@ -165,6 +135,37 @@ public class RtllyVarWork : OrglyVarWork
         }, false, 720);
     }
 
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
+    public async Task setg(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        var m = GrabTwin<int, Org>(org.id);
+
+        if (wc.IsGet)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("设置基本信息和参数");
+                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
+                h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h.LI_().TIME("开档时间", nameof(m.opened), m.opened).TIME("收档时间", nameof(m.closed), m.closed)._LI();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
+            });
+        }
+        else
+        {
+            await wc.ReadObjectAsync(instance: m); // use existing object
+
+            using var dc = NewDbContext();
+            // update the db record
+            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+            wc.GivePane(200);
+        }
+    }
 
     /// <summary>
     /// The polling of events that belong to the presented org.

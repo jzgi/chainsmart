@@ -1,11 +1,12 @@
-﻿using ChainFx;
+﻿using System;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-[UserAuthenticate]
+[UserAuthenticate(OmitDefault = true)]
 public class PublyVarWork : WebWork
 {
     protected override void OnCreate()
@@ -79,15 +80,17 @@ public class PublyVarWork : WebWork
                 return;
             }
 
+            var now = DateTime.Now.TimeOfDay;
             h.MAINGRID(arr, o =>
             {
+                var open = o.IsOpen(now);
                 if (o.EqBrand)
                 {
                     h.A_(o.addr, css: "uk-card-body uk-flex");
                 }
                 else
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, css: "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, disabled: !open, "uk-card-body uk-flex");
                 }
 
                 if (o.icon)
@@ -98,7 +101,7 @@ public class PublyVarWork : WebWork
                     h.PIC("/void.webp", css: "uk-width-1-5");
 
                 h.ASIDE_();
-                h.HEADER_().H4(o.Name).SPAN("")._HEADER();
+                h.HEADER_().H4(o.Name).SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success")._HEADER();
                 h.Q(o.tip, "uk-width-expand");
                 h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                 h._ASIDE();
