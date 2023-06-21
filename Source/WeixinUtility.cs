@@ -47,6 +47,7 @@ public static class WeixinUtility
 
     public static readonly string
         icbcappid,
+        icbcmerid,
         icbcprivatekey,
         icbcapigwpublickkey;
 
@@ -67,6 +68,7 @@ public static class WeixinUtility
         s.Get(nameof(smsnotiftempid), ref smsnotiftempid);
 
         s.Get(nameof(icbcappid), ref icbcappid);
+        s.Get(nameof(icbcmerid), ref icbcmerid);
         s.Get(nameof(icbcprivatekey), ref icbcprivatekey);
         s.Get(nameof(icbcapigwpublickkey), ref icbcapigwpublickkey);
         try
@@ -74,8 +76,9 @@ public static class WeixinUtility
             SupPayApi = Set("sup_apiclient_cert.p12", supmchid);
 
             RtlPayApi = Set("rtl_apiclient_cert.p12", rtlmchid);
-            IcbcApi = new WebConnectorByIcbc("https://gw.open.icbc.com.cn", icbcappid, icbcprivatekey,
-                icbcapigwpublickkey);
+            IcbcApi = new WebConnectorByIcbc("https://gw.open.icbc.com.cn", 
+                icbcappid, icbcmerid,icbcprivatekey,
+                icbcapigwpublickkey,appid);
         }
         catch (Exception e)
         {
