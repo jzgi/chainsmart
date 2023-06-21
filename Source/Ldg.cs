@@ -4,15 +4,15 @@ using ChainFx;
 namespace ChainSmart;
 
 /// <summary>
-/// An entry record of sumation.
+/// A ledger entry record.
 /// </summary>
-public struct Agg : IData
+public struct Ldg : IData
 {
-    public static readonly Agg Empty = new();
+    public static readonly Ldg Empty = new();
 
     public const short 
-        BUYAGG = 1, 
-        PURAGG = 2;
+        BUYLDG = 1, 
+        PURLDG = 2;
 
     public static readonly Map<short, string> Typs = new()
     {

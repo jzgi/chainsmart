@@ -22,8 +22,8 @@ select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='sup');
 
 ALTER TABLE purs SET TABLESPACE sup;
-ALTER TABLE purclrs SET TABLESPACE sup;
-ALTER TABLE puraggs_typ SET TABLESPACE sup;
+ALTER TABLE puraps SET TABLESPACE sup;
+ALTER TABLE purldgs_typ SET TABLESPACE sup;
 
 ALTER INDEX purs_pk SET TABLESPACE sup;
 ALTER INDEX purs_uidx SET TABLESPACE sup;
@@ -38,8 +38,8 @@ select relname from pg_class
 where reltablespace=(select oid from pg_tablespace where spcname='rtl');
 
 ALTER TABLE buys SET TABLESPACE rtl;
-ALTER TABLE buyclrs SET TABLESPACE rtl;
-ALTER TABLE buyaggs_typ SET TABLESPACE rtl;
+ALTER TABLE buyaps SET TABLESPACE rtl;
+ALTER TABLE buyldgs_typ SET TABLESPACE rtl;
 
 ALTER INDEX buys_pk SET TABLESPACE rtl;
 ALTER INDEX buys_uidx SET TABLESPACE rtl;

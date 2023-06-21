@@ -9,35 +9,31 @@ public class AdmlyWork : WebWork
 {
     protected override void OnCreate()
     {
-        // twins
-
-        CreateWork<AdmlyTwinWork>("twin");
-
         // basic 
 
         CreateWork<AdmlyAccessWork>("access", header: "常规");
 
-        CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
-
-        CreateWork<OrglyPurClearWork>("ppurclr", state: false);
+        CreateWork<AdmlyRegWork>("reg");
 
         // biz
 
-        CreateWork<AdmlyRegWork>("reg", header: "业务");
+        CreateWork<AdmlyOrgWork>("org", header: "业务");
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyOrgWork>("org");
-
         // fin
 
-        CreateWork<AdmlyBuyAggWork>("buyagg", header: "财务");
+        CreateWork<AdmlyBuyGenWork>("buygen", header: "财务");
 
-        CreateWork<AdmlyPurAggWork>("puragg");
+        CreateWork<AdmlyPurGenWork>("purgen");
 
-        CreateWork<AdmlyBuyClearWork>("buyclr");
+        CreateWork<AdmlyBuyApWork>("buyap");
 
-        CreateWork<AdmlyPurClearWork>("purclr");
+        CreateWork<AdmlyPurApWork>("purap");
+
+        CreateWork<AdmlyBuyLdgWork>("buyldg");
+
+        CreateWork<AdmlyPurLdgWork>("purldg");
     }
 
     public void @default(WebContext wc)

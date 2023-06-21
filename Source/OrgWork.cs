@@ -53,8 +53,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-
-        var array = GrabTwinSet<int, Org>(0, cond: x => x.EqMarket, comp: (x, y) => x.regid - y.regid);
+        var array = GrabTwinSet<int, Org>(0, filter: x => x.EqMarket, sorter: (x, y) => x.regid - y.regid);
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -74,8 +73,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void ctr(WebContext wc)
     {
         var prin = (User)wc.Principal;
-
-        var arr = GrabTwinSet<int, Org>(0, cond: x => x.EqCenter, comp: (x, y) => y.id - x.id);
+        var arr = GrabTwinSet<int, Org>(0, filter: x => x.EqCenter, sorter: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -129,14 +127,13 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         }
         else // POST
         {
-            const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-
-            await wc.ReadObjectAsync(msk, o);
+            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+            await wc.ReadObjectAsync(Msk, o);
 
             await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
-                return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
+                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
+                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
             });
 
             wc.GivePane(201); // created
@@ -176,8 +173,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-
-        var array = GrabTwinSet<int, Org>(org.id, cond: x => x.EqRetail, comp: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.EqRetail, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -217,7 +213,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinSet<int, Org>(org.id, cond: x => x.regid == regid && x.EqRetail);
+            var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.regid == regid && x.EqRetail);
 
             wc.GivePage(200, h =>
             {
@@ -239,8 +235,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-
-        var arr = GrabTwinSet<int, Org>(org.id, cond: x => x.EqBrand);
+        var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.EqBrand);
 
         wc.GivePage(200, h =>
         {
@@ -262,7 +257,6 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-
         var regs = Grab<short, Reg>();
         var o = new Org
         {
@@ -311,13 +305,13 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
         else // POST
         {
-            const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-            await wc.ReadObjectAsync(msk, instance: o);
+            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+            await wc.ReadObjectAsync(Msk, instance: o);
 
             await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
-                return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
+                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
+                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
             });
 
             wc.GivePane(201); // created
@@ -358,7 +352,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, cond: x => x.status == 4, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -380,7 +374,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, cond: x => x.status is 1 or 2, comp: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -402,7 +396,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, cond: x => x.status == 0, comp: (x, y) => x.adapted.CompareTo(y.adapted));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -453,13 +447,13 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         }
         else // POST
         {
-            const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-            await wc.ReadObjectAsync(msk, instance: o);
+            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+            await wc.ReadObjectAsync(Msk, instance: o);
 
             await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
-                return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
+                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
+                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
             });
 
             wc.GivePane(201); // created

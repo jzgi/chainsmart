@@ -86,7 +86,7 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = shop
 
-        CreateWork<OrglyBuyClearWork>("buyclr", state: true);
+        CreateWork<OrglyBuyApWork>("buyap", state: true);
 
         CreateWork<OrglyEvalWork>("eval");
 
@@ -100,9 +100,9 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<RtllyPurWork>("rpur");
 
-        CreateWork<RtllyBuyAggWork>("rbuyagg");
+        CreateWork<RtllyBuyLdgWork>("rbuyldg");
 
-        CreateWork<RtllyPurAggWork>("rpuragg");
+        CreateWork<RtllyPurLdgWork>("rpurldg");
 
         CreateWork<RtllyVipWork>("rvip");
 
@@ -116,9 +116,9 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyPurWork>("mpur");
 
-        CreateWork<MktlyBuyAggWork>("mbuyagg");
+        CreateWork<MktlyBuyLdgWork>("mbuyldg");
 
-        CreateWork<MktlyPurAggWork>("mpuragg");
+        CreateWork<MktlyPurLdgWork>("mpurldg");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -203,7 +203,7 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = source
 
-        CreateWork<OrglyPurClearWork>("purclr", state: true); // true = is org
+        CreateWork<OrglyPurApWork>("purap", state: true); // true = is org
 
         CreateWork<OrglyEvalWork>("eval");
 
@@ -217,7 +217,7 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
 
-        CreateWork<SuplyPurAggWork>("spuragg");
+        CreateWork<SuplyPurLdgWork>("spuragg");
 
         // ctr
 
@@ -229,6 +229,10 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<CtrlyLotWork>("clot");
 
-        CreateWork<CtrlyPurAggWork>("cpuragg");
+        CreateWork<CtrlyPurLdgWork>("cpuragg");
+
+        CreateWork<CtrlyTwinWork>("ctwin");
+
+
     }
 }

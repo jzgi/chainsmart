@@ -179,7 +179,7 @@ public class LotVarWork : WebWork
             h.PIC(OrgUrl, org.id, "/m-3", css: "uk-width-1-1");
         }
 
-        if (org.m4)
+        if (org.scene)
         {
             h.PIC(OrgUrl, org.id, "/m-4", css: "uk-width-1-1");
         }

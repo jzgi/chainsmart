@@ -3,19 +3,19 @@ using ChainFx.Web;
 
  namespace ChainSmart; 
 
- public abstract class ClearVarWork : WebWork
+ public abstract class ApVarWork : WebWork
  {
  }
 
- public class AdmlyPurClearVarWork : ClearVarWork
+ public class AdmlyPurApVarWork : ApVarWork
  {
  }
 
- public class AdmlyBuyClearVarWork : ClearVarWork
+ public class AdmlyBuyApVarWork : ApVarWork
  {
  }
 
- public class PtylyClearVarWork : ClearVarWork
+ public class PtylyApVarWork : ApVarWork
  {
      [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
      public async Task rcv(WebContext wc, int dt)

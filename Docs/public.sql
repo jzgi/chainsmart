@@ -426,7 +426,7 @@ create table buyaggs_typ
 )
     tablespace rtl;
 
-alter table buyaggs_typ
+alter table buyldgs_typ
     owner to postgres;
 
 create table buyaggs_itemid
@@ -443,7 +443,7 @@ create table buyaggs_itemid
 )
     tablespace rtl;
 
-alter table buyaggs_itemid
+alter table buyldgs_itemid
     owner to postgres;
 
 create table gens
@@ -458,7 +458,7 @@ create table gens
     opr     varchar(12)
 );
 
-alter table gens
+alter table buygens
     owner to postgres;
 
 create table purclrs
@@ -476,7 +476,7 @@ create table purclrs
     entities
 ) tablespace sup ;
 
-alter table purclrs
+alter table puraps
     owner to postgres;
 
 create table buyclrs
@@ -498,7 +498,7 @@ create table buyclrs
 )
     tablespace rtl;
 
-alter table buyclrs
+alter table buyaps
     owner to postgres;
 
 create table puraggs_typ
@@ -516,7 +516,7 @@ create table puraggs_typ
 )
     tablespace sup;
 
-alter table puraggs_typ
+alter table purldgs_typ
     owner to postgres;
 
 create table puraggs_lotid
@@ -534,7 +534,7 @@ create table puraggs_lotid
 )
     tablespace sup;
 
-alter table puraggs_lotid
+alter table purldgs_lotid
     owner to postgres;
 
 create table vans
@@ -593,7 +593,7 @@ SELECT o.typ,
        o.m1 IS NOT NULL   AS m1,
        o.m2 IS NOT NULL   AS m2,
        o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
+       o.scene IS NOT NULL   AS m4
 FROM orgs o;
 
 alter table orgs_vw
@@ -896,12 +896,12 @@ create trigger buys_trig
     for each row
 execute procedure buys_trig_func();
 
-create function buyitem_agg_func(ret buyaggs_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buyaggs_itemid[]
+create function buyitem_agg_func(ret buyldgs_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buyldgs_itemid[]
     language plpgsql
 as
 $$
 DECLARE
-    agg buyaggs_itemid;
+    agg buyldgs_itemid;
     itm buyitem;
     fnd bool;
 BEGIN
@@ -931,7 +931,7 @@ BEGIN
 END;
 $$;
 
-alter function buyitem_agg_func(buyaggs_itemid[], buyitem[], integer, date, integer) owner to postgres;
+alter function buyitem_agg_func(buyldgs_itemid[], buyitem[], integer, date, integer) owner to postgres;
 
 create function buysgen() returns void
     language plpgsql
@@ -957,7 +957,7 @@ BEGIN
 
     -- adjust parameters
 
-    SELECT coalesce(max(gens.till), '2000-01-01'::date) FROM gens WHERE typ = 1 INTO last;
+    SELECT coalesce(max(gens.till), '2000-01-01'::date) FROM buygens WHERE typ = 1 INTO last;
     laststamp = (last + interval '1 day')::timestamp(0);
 
     till = curr::date - interval '1 day';
@@ -969,7 +969,7 @@ BEGIN
 
     -- aggregate buys by typ
 
-    INSERT INTO buyaggs_typ
+    INSERT INTO buyldgs_typ
     SELECT rtlid,
            created::date,
            typ,
@@ -985,7 +985,7 @@ BEGIN
 
     -- aggregate buys by itemid
 
-    INSERT INTO buyaggs_itemid
+    INSERT INTO buyldgs_itemid
     SELECT
         (unnest(buys_agg(items,rtlid, created::date,mktid))).*
     FROM buys
@@ -994,24 +994,24 @@ BEGIN
     GROUP BY rtlid, created::date;
 
 
-    INSERT INTO buyclrs
+    INSERT INTO buyaps
     (orgid, dt, typ, name, trans, amt, rate, topay)
     SELECT
         orgid, dt, TYP_RTL, first(name), sum(trans), sum(amt), RATE_RTL, sum(amt * RATE_RTL / BASE)
-    FROM buyaggs_typ
+    FROM buyldgs_typ
     WHERE
             typ = 1 AND dt > last AND dt <= till GROUP BY orgid, dt;
 
     INSERT INTO
-        buyclrs (orgid, dt, typ, name, trans, amt, rate, topay)
+        buyaps (orgid, dt, typ, name, trans, amt, rate, topay)
     SELECT
         corgid, dt, TYP_MKT, first(name), sum(trans), sum(amt), RATE_MKT, sum(amt * RATE_MKT / BASE)
-    FROM buyaggs_typ
+    FROM buyldgs_typ
     WHERE
             typ = 1 AND dt > last AND dt <= till GROUP BY corgid, dt;
 
 
-    INSERT INTO gens (typ, till, started, ended)
+    INSERT INTO buygens (typ, till, started, ended)
     VALUES
         (1, till, curr, localtimestamp(0));
 END
@@ -1037,7 +1037,7 @@ alter aggregate last(anyelement) owner to postgres;
 
 create aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) (
     sfunc = buyitem_agg_func,
-    stype = buyaggs_itemid[]
+    stype = buyldgs_itemid[]
     );
 
 alter aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) owner to postgres;
