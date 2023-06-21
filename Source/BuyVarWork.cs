@@ -82,7 +82,7 @@ public class MyBuyVarWork : BuyVarWork
 public class RtllyBuyVarWork : BuyVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye"), Tool(ButtonConfirm, status: 1)]
+    [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye", status: 1), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
         int id = wc[0];
@@ -97,7 +97,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("发货", "确认自行发货？", icon: "arrow-right"), Tool(ButtonConfirm, status: 3)]
+    [Ui("发货", "确认自行发货？", icon: "arrow-right", status: 3), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -118,7 +118,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("撤销", "确认撤销并且退款？", icon: "trash"), Tool(ButtonConfirm, status: 7, state: Buy.STA_CANCELL)]
+    [Ui("撤销", "确认撤销并且退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Buy.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -174,7 +174,7 @@ public class MktlyBuyVarWork : BuyVarWork
         else
         {
             using var dc = NewDbContext();
-            
+
             dc.Sql("UPDATE buys SET status = 4, oked = @1, oker = @2 WHERE rtlid = @3 AND status = 2 AND ucom = @4 RETURNING ").collst(Buy.Empty);
             var arr = await dc.QueryAsync<Buy>(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(com));
 

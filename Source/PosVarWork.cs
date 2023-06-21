@@ -9,7 +9,7 @@ namespace ChainSmart;
 public class RtllyPosVarWork : BuyVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("撤销", "确认撤销该笔记录？", icon: "trash"), Tool(ButtonConfirm, status: 4)]
+    [Ui("撤销", "确认撤销该笔记录？", icon: "trash", status: 4), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];

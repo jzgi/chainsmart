@@ -169,7 +169,7 @@ public class SuplyFabVarWork : FabVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui(tip: "修改产源设施", icon: "pencil"), Tool(ButtonShow, status: 3)]
+    [Ui(tip: "修改产源设施", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -221,28 +221,28 @@ public class SuplyFabVarWork : FabVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: 3, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album"), Tool(ButtonCrop, status: 3, size: 3, subs: 4)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -268,7 +268,7 @@ public class SuplyFabVarWork : FabVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -292,7 +292,7 @@ public class SuplyFabVarWork : FabVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确认删除或者作废此产品？", icon: "trash"), Tool(ButtonConfirm, status: 3)]
+    [Ui(tip: "确认删除或者作废此产品？", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];

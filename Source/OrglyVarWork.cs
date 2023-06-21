@@ -27,9 +27,9 @@ public abstract class OrglyVarWork : WebWork
             string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2_().T(org.name).SP().Q(Org.Statuses[org.status])._H2();
-            // if (org.IsParent) h.H4(org.Ext);
-            h.H5_().T(prin.name).T('（').T(rol).T('）')._H5();
+            h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
+            if (org.IsParent) h.H4(org.Ext);
+            h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
             h._HEADER();
 
             if (org.icon)
@@ -47,39 +47,9 @@ public abstract class OrglyVarWork : WebWork
         }, false, 30, title: org.name);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("设置", icon: "cog"), Tool(ButtonShow, status: 7)]
-    public async Task setg(WebContext wc)
-    {
-        var org = wc[0].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var m = GrabTwin<int, Org>(org.id);
-
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("设置基本信息和参数");
-                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
-                h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
-            });
-        }
-        else
-        {
-            await wc.ReadObjectAsync(instance: m); // use existing object
-
-            using var dc = NewDbContext();
-            // update the db record
-            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
-
-            wc.GivePane(200);
-        }
-    }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: 3, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -93,7 +63,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: 4)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -104,12 +74,6 @@ public abstract class OrglyVarWork : WebWork
 
         wc.GivePane(200);
     }
-
-    // [Ui(icon: "question"), Tool(ButtonShow, status: 15)]
-    // public override void help(WebContext wc)
-    // {
-    //     base.help(wc);
-    // }
 }
 
 [OrglyAuthorize(Org.TYP_RTL)]
@@ -155,6 +119,52 @@ public class RtllyVarWork : OrglyVarWork
         CreateWork<MktlyBuyAggWork>("mbuyagg");
 
         CreateWork<MktlyPurAggWork>("mpuragg");
+    }
+
+    [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
+    public void qrcode(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+
+        wc.GivePane(200, h =>
+        {
+            h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
+            h.QRCODE(MainApp.WwwUrl + "/" + org.prtid + "/" + org.id + "/", css: "uk-width-small");
+            h.SPAN(org.name);
+            h._NAV();
+        }, false, 720);
+    }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
+    public async Task setg(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var prin = (User)wc.Principal;
+
+        var m = GrabTwin<int, Org>(org.id);
+
+        if (wc.IsGet)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("设置基本信息和参数");
+                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
+                h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h.LI_().TIME("开档时间", nameof(m.opened), m.opened).TIME("收档时间", nameof(m.closed), m.closed)._LI();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
+            });
+        }
+        else
+        {
+            await wc.ReadObjectAsync(instance: m); // use existing object
+
+            using var dc = NewDbContext();
+            // update the db record
+            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
+
+            wc.GivePane(200);
+        }
     }
 
     /// <summary>

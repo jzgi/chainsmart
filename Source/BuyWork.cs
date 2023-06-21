@@ -109,7 +109,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
 
     [OrgSpy(BUY_CREATED)]
-    [Ui("网售订单", group: 1), Tool(Anchor)]
+    [Ui("网售订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -131,7 +131,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已备发", icon: "eye", group: 2), Tool(Anchor)]
+    [Ui(tip: "已备发", icon: "eye", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -154,7 +154,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 
     [OrgSpy(BUY_OKED)]
-    [Ui(tip: "已发货", icon: "arrow-right", group: 4), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -176,7 +176,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已撤销", icon: "trash", group: 8), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -203,7 +203,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 [Ui("销售订单统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
-    [Ui("待发货", group: 1), Tool(Anchor)]
+    [Ui("待发货", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
@@ -247,7 +247,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         });
     }
 
-    [Ui(tip: "个人发货任务", icon: "user", group: 2), Tool(Anchor)]
+    [Ui(tip: "个人发货任务", icon: "user", status: 2), Tool(Anchor)]
     public async Task wait(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();

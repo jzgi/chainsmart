@@ -13,12 +13,9 @@ public class AdmlyWork : WebWork
 
         CreateWork<AdmlyTwinWork>("twin");
 
-
         // basic 
 
-        CreateWork<AdmlySetgWork>("setg", header: "常规");
-
-        CreateWork<AdmlyAccessWork>("access");
+        CreateWork<AdmlyAccessWork>("access", header: "常规");
 
         CreateWork<OrglyBuyClearWork>("pbuyclr", state: false);
 
@@ -52,7 +49,7 @@ public class AdmlyWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(Application.Name);
+            h.H1(Application.Name);
             h.P2(prin.name, User.Orgly[wc.Role], brace: true);
             h._HEADER();
 
@@ -61,39 +58,25 @@ public class AdmlyWork : WebWork
             h._TOPBARXL();
 
             h.WORKBOARD();
+
+            h.TOOLBAR(bottom: true);
         }, false, 900);
     }
-}
 
-[Ui("基本信息和参数")]
-public class AdmlySetgWork : WebWork
-{
-    public static readonly decimal
-        rtlbasic,
-        rtlfee,
-        rtlpayrate,
-        suppayrate;
-
-    static AdmlySetgWork()
+    [Ui("参数", "参数", icon: "cog"), Tool(Modal.ButtonShow)]
+    public void setg(WebContext wc)
     {
+        string tel = null;
+
         var jo = Application.Prog;
 
-        jo.Get(nameof(rtlbasic), ref rtlbasic);
-        jo.Get(nameof(rtlfee), ref rtlfee);
-        jo.Get(nameof(rtlpayrate), ref rtlpayrate);
-        jo.Get(nameof(suppayrate), ref suppayrate);
-    }
+        jo.Get(nameof(tel), ref tel);
 
-    public void @default(WebContext wc)
-    {
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider uk-large");
 
-            h.LI_().FIELD("消费派送基本费", rtlbasic)._LI();
-            h.LI_().FIELD("消费每单打理费", rtlfee)._LI();
-            h.LI_().FIELD("消费支付扣点", rtlpayrate)._LI();
-            h.LI_().FIELD("供应支付扣点", suppayrate)._LI();
+            h.LI_().FIELD("监督电话", tel)._LI();
             h._UL();
 
             h.TOOLBAR(bottom: true);

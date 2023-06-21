@@ -239,24 +239,25 @@ h6,
 
 h1,
 .uk-h1 {
-    font-size: 1.5rem;
-    margin: 0.5rem 0;
-    color: #333;
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #7daa1d;
+    margin: 4px 0;
 }
 
 h2,
 .uk-h2 {
-    font-size: 1.25rem;
-    margin: 0.25rem 0;
-    color: #7daa1d;
+    font-size: 1.125rem;
+    margin: 4px 0;
+    color: #ff3b30;
 }
 
 h3,
 .uk-h3 {
     font-size: 1rem;
     font-weight: 500;
-    margin: 0;
     color: #7daa1d;
+    margin: 0;
 }
 
 h4,
@@ -306,7 +307,8 @@ dt {
 
 dd {
     padding: 8px;
-    margin-left: 0;
+    margin-left: 2rem;
+    background-color: rgb(237 237 237 / 0.5);
 }
 
 hr,
@@ -2146,15 +2148,21 @@ main.uk-grid>li {
 }
 
 .uk-card-body {
-
     padding: 4px 6px;
     width: -webkit-fill-available;
+}
+
+.uk-card-default>.uk-card-body {
     box-shadow: 1px 1px 0px 0px #ededed;
 }
 
 section.uk-card-body,
 a.uk-card-body {
     height: calc(100% - 8px);
+}
+a.uk-disabled {
+    background-color: rgb(238 238 238 / 30%);
+    pointer-events: none;
 }
 
 .uk-card-header {
@@ -2219,7 +2227,7 @@ a.uk-card-body {
  * Primary
  */
 .uk-card-primary {
-    margin: 4px;
+    margin: 2px;
     background-color: #fff;
 }
 
@@ -2489,14 +2497,13 @@ a.uk-card-body {
 .uk-badge {
     box-sizing: border-box;
     vertical-align: middle;
-    margin-left: 4px;
+    margin-left: auto;
     color: #333;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: normal;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    margin-left: auto;
     float: right;
 }
 
@@ -2519,7 +2526,6 @@ a.uk-card-body {
     right: 0;
     min-width: 12px;
     height: 12px;
-    ;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2527,6 +2533,15 @@ a.uk-card-body {
 
 .uk-badge-success {
     color: #7daa1d;
+    padding: 2px 0;
+    border-top: 1px solid #7daa1d;
+    border-bottom: 1px solid #7daa1d;
+}
+
+.uk-disabled .uk-badge-success {
+    color: #666;
+    border-top: 1px solid #666;
+    border-bottom: 1px solid #666;
 }
 
 .uk-badge-warning {
@@ -2578,10 +2593,10 @@ label>input[type="checkbox"] {
 }
 
 .uk-label-success {
-    color: #fff;
-    background-color: #7daa1d;
-    padding: 4px 8px;
-    border: 2px solid #fff;
+    color: #7daa1d;
+    background-color: rgb(125 170 29 / 10%);
+    padding: 4px 12px;
+    border-radius: 12px;
 }
 
 .uk-label-warning {

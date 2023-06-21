@@ -77,7 +77,10 @@ public class WwwService : MainService
             }
 
             h._ARTICLE();
-        }, true, 360, title: Application.Name + "市场", onload: "fixAll();");
+
+            string tel = Application.Prog[nameof(tel)];
+            h.FOOTER_(css: "uk-position-bottom uk-flex-center").SPAN("平台监督：" + tel + " ☎", css: "uk-label uk-label-success uk-margin-small-bottom")._FOOTER();
+        }, true, 720, title: Application.Name + "市场", onload: "fixAll();");
     }
 
 

@@ -149,7 +149,7 @@ public class PublyItemVarWork : ItemVarWork
 public class RtllyItemVarWork : ItemVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改商品信息", icon: "pencil"), Tool(ButtonShow, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int itemid = wc[0];
@@ -208,21 +208,21 @@ public class RtllyItemVarWork : ItemVarWork
 
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "图标", icon: "github-alt"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image"), Tool(ButtonCrop, status: STU_CREATED | STU_ADAPTED, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("库存", icon: "database"), Tool(ButtonShow, status: 7)]
+    [Ui("库存", icon: "database", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int itemid = wc[0];
@@ -266,7 +266,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED, state: Item.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -281,7 +281,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download"), Tool(ButtonConfirm, status: STU_OKED)]
+    [Ui("下线", "下线以便修改", icon: "cloud-download", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -295,7 +295,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确认删除或者作废？", icon: "trash"), Tool(ButtonConfirm, status: STU_CREATED | STU_ADAPTED)]
+    [Ui(tip: "确认删除或者作废？", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
@@ -309,7 +309,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "恢复", icon: "reply"), Tool(ButtonConfirm, status: 0)]
+    [Ui(tip: "恢复", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
         int id = wc[0];
