@@ -24,14 +24,12 @@ public class PublyVarWork : WebWork
             h.ARTICLE_("uk-card uk-card-primary");
             h.H2(org.Ext, css: "uk-card-header");
             h.SECTION_("uk-card-body");
-            if (org.pic)
+            if (org.scene)
             {
-                h.PIC_("/org/", org.id, "/pic");
+                h.PIC_("/org/", org.id, "/scene");
             }
             else
-                h.PIC_("/void-shop.webp");
-
-            h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
+                h.PIC_("/void.webp");
             h._PIC();
 
             h.Q(org.addr);

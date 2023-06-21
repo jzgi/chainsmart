@@ -3,35 +3,19 @@ using ChainFx.Web;
 
 namespace ChainSmart;
 
-public class AggVarWork : WebWork
+public class LdgVarWork : WebWork
 {
 }
 
-public class AdmlyPurAggVarWork : AggVarWork
+public class AdmlyPurLdgVarWork : LdgVarWork
 {
 }
 
-public class AdmlyBuyAggVarWork : AggVarWork
+public class AdmlyBuyLdgVarWork : LdgVarWork
 {
 }
 
-public class RtllyBuyAggVarWork : AggVarWork
-{
-    [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
-    public async Task rcv(WebContext wc, int dt)
-    {
-        int orderid = wc[0];
-        if (wc.IsGet)
-        {
-        }
-        else // POST
-        {
-            wc.GivePane(200); // close
-        }
-    }
-}
-
-public class RtllyPurAggVarWork : AggVarWork
+public class RtllyBuyLdgVarWork : LdgVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)
@@ -47,7 +31,23 @@ public class RtllyPurAggVarWork : AggVarWork
     }
 }
 
-public class SuplyPurAggVarWork : AggVarWork
+public class RtllyPurLdgVarWork : LdgVarWork
+{
+    [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
+    public async Task rcv(WebContext wc, int dt)
+    {
+        int orderid = wc[0];
+        if (wc.IsGet)
+        {
+        }
+        else // POST
+        {
+            wc.GivePane(200); // close
+        }
+    }
+}
+
+public class SuplyPurLdgVarWork : LdgVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)

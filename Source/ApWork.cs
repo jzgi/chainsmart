@@ -7,14 +7,18 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
+/// <summary>
+/// Accounts Payable.
+/// </summary>
+/// <typeparam name="V"></typeparam>
+public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainTable(HtmlBuilder h, Clear[] arr, bool orgname)
+    protected static void MainTable(HtmlBuilder h, Ap[] arr, bool orgname)
     {
         h.TABLE_();
         DateTime last = default;
@@ -32,7 +36,7 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
                 h.TD(org.name);
             }
 
-            h.TD(Clear.Typs[o.typ]);
+            h.TD(Ap.Typs[o.typ]);
             h.TD_("uk-text-right").T(o.trans)._TD();
             if (!orgname)
             {
@@ -49,16 +53,15 @@ public abstract class ClearWork<V> : WebWork where V : ClearVarWork, new()
     }
 }
 
-[AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场端结款")]
-public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
+[Ui("市场端应付帐款")]
+public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 {
-    [Ui("市场端结款", status: 1), Tool(Anchor)]
+    [Ui("应付帐款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM buyclrs WHERE status BETWEEN 1 AND 2 ORDER BY id LIMIT 40 OFFSET @1 * 40");
-        var arr = await dc.QueryAsync<Clear>(p => p.Set(page));
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE status BETWEEN 1 AND 2 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -79,8 +82,8 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
     public async Task oked(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ BETWEEN ").T(Clear.TYP_RTL).T(" AND ").T(Clear.TYP_MKT).T(" AND status = 4 ORDER BY id LIMIT 40 OFFSET @1 * 40");
-        var arr = await dc.QueryAsync<Clear>(p => p.Set(page));
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE typ BETWEEN ").T(Ap.TYP_RTL).T(" AND ").T(Ap.TYP_MKT).T(" AND status = 4 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -97,55 +100,18 @@ public class AdmlyBuyClearWork : ClearWork<AdmlyBuyClearVarWork>
         }, false, 3);
     }
 
-    [OrglyAuthorize(0, User.ROL_FIN)]
-    [Ui("结算", "结算代收款项", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
-    public async Task gen(WebContext wc)
-    {
-        if (wc.IsGet)
-        {
-            var till = DateTime.Today.AddDays(-1);
-            wc.GivePane(200, h =>
-            {
-                h.FORM_(post: false).FIELDSUL_("选择截止（包含）日期");
-                h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // OUTER
-        {
-            DateTime till = wc.Query[nameof(till)];
-            using var dc = NewDbContext(IsolationLevel.RepeatableRead);
-
-            await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
-
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
-            var arr = await dc.QueryAsync<Clear>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    // h.TD(Clear.Typs[o.typ]);
-                    // h.TD(orgs[o.orgid]?.name);
-                    // h.TD_().T(o.till, 3, 0)._TD();
-                    // h.TD(o.amt, currency: true);
-                });
-            }, false, 3);
-        }
-    }
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应端结款")]
-public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
+[Ui("供应端应付帐款")]
+public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {
-    [Ui("供应端结款", status: 1), Tool(Anchor)]
+    [Ui("应付帐款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM purclrs WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
-        var arr = await dc.QueryAsync<Clear>();
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE typ BETWEEN 1 AND 3 AND status = 1 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+        var arr = await dc.QueryAsync<Ap>();
 
         wc.GivePage(200, h =>
         {
@@ -180,8 +146,8 @@ public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
         else
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE typ = ").T(Clear.TYP_SUP).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
-            var arr = await dc.QueryAsync<Clear>(p => p.Set(prv).Set(page));
+            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE typ = ").T(Ap.TYP_SUP).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
+            var arr = await dc.QueryAsync<Ap>(p => p.Set(prv).Set(page));
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
@@ -195,58 +161,20 @@ public class AdmlyPurClearWork : ClearWork<AdmlyPurClearVarWork>
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_FIN)]
-    [Ui("结算", "结算代收款项", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
-    public async Task gen(WebContext wc)
-    {
-        if (wc.IsGet)
-        {
-            var till = DateTime.Today.AddDays(-1);
-            wc.GivePane(200, h =>
-            {
-                h.FORM_(post: false).FIELDSUL_("选择截止（包含）日期");
-                h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // OUTER
-        {
-            DateTime till = wc.Query[nameof(till)];
-            using var dc = NewDbContext(IsolationLevel.RepeatableRead);
-
-            await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
-
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
-            var arr = await dc.QueryAsync<Clear>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    // h.TD(Clear.Typs[o.typ]);
-                    // h.TD(orgs[o.orgid]?.name);
-                    // h.TD_().T(o.till, 3, 0)._TD();
-                    // h.TD(o.amt, currency: true);
-                });
-            }, false, 3);
-        }
-    }
 }
 
 [Ui("业务结款")]
-public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
+public class OrglyBuyApWork : ApWork<PtylyApVarWork>
 {
     [Ui("业务结款", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var isOrg = (bool)State;
-
         var org = isOrg ? wc[-1].As<Org>() : null;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM buyclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-        var arr = dc.Query<Clear>(p =>
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
+        var arr = dc.Query<Ap>(p =>
         {
             if (org == null)
             {
@@ -277,7 +205,7 @@ public class OrglyBuyClearWork : ClearWork<PtylyClearVarWork>
 }
 
 [Ui("业务结款")]
-public class OrglyPurClearWork : ClearWork<PtylyClearVarWork>
+public class OrglyPurApWork : ApWork<PtylyApVarWork>
 {
     [Ui("业务收入", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -287,8 +215,8 @@ public class OrglyPurClearWork : ClearWork<PtylyClearVarWork>
         var org = isOrg ? wc[-1].As<Org>() : null;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM purclrs WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-        var arr = dc.Query<Clear>(p =>
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
+        var arr = dc.Query<Ap>(p =>
         {
             if (org == null)
             {

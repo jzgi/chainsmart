@@ -3,9 +3,12 @@ using ChainFx;
 
 namespace ChainSmart;
 
-public class Clear : IData, IKeyable<int>
+/// <summary>
+/// An account payable record.
+/// </summary>
+public class Ap : IData, IKeyable<int>
 {
-    public static readonly Clear Empty = new();
+    public static readonly Ap Empty = new();
 
     public const short
         TYP_PLAT = 1,
