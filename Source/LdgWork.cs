@@ -8,14 +8,14 @@ using static ChainFx.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
+public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainTable(HtmlBuilder h, Agg[] arr)
+    protected static void MainTable(HtmlBuilder h, Ldg[] arr)
     {
         h.TABLE(arr, o =>
         {
@@ -52,8 +52,8 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
 
             await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
 
-            dc.Sql("SELECT ").collst(Clear.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
-            var arr = await dc.QueryAsync<Clear>();
+            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
+            var arr = await dc.QueryAsync<Ap>();
 
             wc.GivePage(200, h =>
             {
@@ -69,7 +69,7 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
         }
     }
 
-    protected static void ClearTable(HtmlBuilder h, IEnumerable<Clear> arr)
+    protected static void ClearTable(HtmlBuilder h, IEnumerable<Ap> arr)
     {
         // h.TABLE_();
         // var last = 0;
@@ -92,15 +92,15 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场业务汇总")]
-public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
+[Ui("市场业务分类汇总")]
+public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
     [Ui("市场业务", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs_typ ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Agg>(p => p.Set(page));
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_typ ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+        var arr = dc.Query<Ldg>(p => p.Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -125,8 +125,8 @@ public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应业务汇总")]
-public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
+[Ui("供应业务分类汇总")]
+public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
     [Ui("供应业务", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -135,8 +135,8 @@ public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
     }
 }
 
-[Ui("销售业务日总")]
-public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
+[Ui("销售业务分类汇总")]
+public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -144,8 +144,8 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs_itemid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_itemid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -169,8 +169,8 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM buyaggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -189,8 +189,8 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
     }
 }
 
-[Ui("采购业务日总")]
-public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
+[Ui("采购业务分类汇总")]
+public class RtllyPurLdgWork : LdgWork<RtllyPurLdgVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -198,8 +198,8 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM puraggs_lotid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM puraggs_lotid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -223,8 +223,8 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Agg.Empty).T(" FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Agg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -243,8 +243,8 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
     }
 }
 
-[Ui("销售业务日总")]
-public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
+[Ui("销售业务分类汇总")]
+public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -253,7 +253,7 @@ public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 
         using var dc = NewDbContext();
         dc.Sql("SELECT * FROM puraggs_lotid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = await dc.QueryAsync<Agg>(p => p.Set(org.id).Set(page));
+        var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -278,7 +278,7 @@ public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 
         using var dc = NewDbContext();
         dc.Sql("SELECT * FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = await dc.QueryAsync<Agg>(p => p.Set(org.id).Set(page));
+        var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -309,8 +309,8 @@ public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("销售情况汇总")]
-public class MktlyBuyAggWork : AggWork<AggVarWork>
+[Ui("销售情况分类汇总")]
+public class MktlyBuyLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)
     {
@@ -325,8 +325,8 @@ public class MktlyBuyAggWork : AggWork<AggVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购情况汇总")]
-public class MktlyPurAggWork : AggWork<AggVarWork>
+[Ui("采购情况分类汇总")]
+public class MktlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)
     {
@@ -342,7 +342,7 @@ public class MktlyPurAggWork : AggWork<AggVarWork>
 
 [OrglyAuthorize(Org.TYP_CTR)]
 [Ui("销售情况汇总")]
-public class CtrlyPurAggWork : AggWork<AggVarWork>
+public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)
     {
