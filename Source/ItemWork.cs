@@ -28,15 +28,12 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
     {
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
-        var regs = Grab<short, Reg>();
 
         var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.prtid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
-
-        var title = "【" + regs[org.regid]?.name + "-" + org.addr + "】" + org.name;
 
         wc.GivePage(200, h =>
         {
@@ -130,7 +127,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             h._BOTTOMBAR();
 
             h._FORM();
-        }, true, 120, title: title, onload: "fixAll();");
+        }, true, 120, title: org.Title, onload: "fixAll();");
     }
 
     public async Task buy(WebContext wc)
@@ -253,7 +250,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         });
     }
 
-    [Ui("上线商品", group: 1), Tool(Anchor)]
+    [Ui("上线商品", status: 4), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -276,7 +273,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "下线商品", icon: "cloud-download", group: 2), Tool(Anchor)]
+    [Ui(tip: "下线商品", icon: "cloud-download", status: 3), Tool(Anchor)]
     public async Task down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -298,7 +295,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已作废", icon: "trash", group: 8), Tool(Anchor)]
+    [Ui(tip: "已作废", icon: "trash", status: 0), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -321,7 +318,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("自建", "自建其它来源商品", icon: "plus", group: 2), Tool(ButtonOpen)]
+    [Ui("自建", "自建其它来源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task def(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -372,7 +369,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("导入", "从供应采购导入产品", icon: "plus", group: 2), Tool(ButtonOpen)]
+    [Ui("导入", "从供应采购导入产品", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task @ref(WebContext wc)
     {
         var org = wc[-1].As<Org>();

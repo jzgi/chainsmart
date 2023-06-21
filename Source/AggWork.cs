@@ -32,7 +32,7 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
         });
     }
 
-    [Ui("结算", "结算代收款项", icon: "list", group: 1), Tool(ButtonOpen)]
+    [Ui("结算", "结算代收款项", icon: "list", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
         if (wc.IsGet)
@@ -95,7 +95,7 @@ public abstract class AggWork<V> : WebWork where V : AggVarWork, new()
 [Ui("市场业务汇总")]
 public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
 {
-    [Ui("市场业务", group: 1), Tool(Anchor)]
+    [Ui("市场业务", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -128,7 +128,7 @@ public class AdmlyBuyAggWork : AggWork<AdmlyBuyAggVarWork>
 [Ui("供应业务汇总")]
 public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
 {
-    [Ui("供应业务", group: 1), Tool(Anchor)]
+    [Ui("供应业务", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         wc.GivePage(200, h => { h.TOOLBAR(); });
@@ -138,7 +138,7 @@ public class AdmlyPurAggWork : AggWork<AdmlyPurAggVarWork>
 [Ui("销售业务日总")]
 public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
 {
-    [Ui("按商品", group: 1), Tool(Anchor)]
+    [Ui("按商品", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -163,7 +163,7 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
         }, false, 60);
     }
 
-    [Ui("按交易", group: 2), Tool(Anchor)]
+    [Ui("按交易", status: 2), Tool(Anchor)]
     public void typ(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -192,7 +192,7 @@ public class RtllyBuyAggWork : AggWork<RtllyBuyAggVarWork>
 [Ui("采购业务日总")]
 public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
 {
-    [Ui("按产品批次", group: 1), Tool(Anchor)]
+    [Ui("按产品批次", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -217,7 +217,7 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
         }, false, 60);
     }
 
-    [Ui("按交易", group: 2), Tool(Anchor)]
+    [Ui("按交易", status: 2), Tool(Anchor)]
     public void typ(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -246,7 +246,7 @@ public class RtllyPurAggWork : AggWork<RtllyPurAggVarWork>
 [Ui("销售业务日总")]
 public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
 {
-    [Ui("按产品批次", group: 1), Tool(Anchor)]
+    [Ui("按产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -271,7 +271,7 @@ public class SuplyPurAggWork : AggWork<SuplyPurAggVarWork>
         }, false, 60);
     }
 
-    [Ui("按交易", group: 2), Tool(Anchor)]
+    [Ui("按交易", status: 2), Tool(Anchor)]
     public async Task typ(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();

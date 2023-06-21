@@ -51,7 +51,7 @@ public class PublyFabWork : FabWork<PublyFabVarWork>
 [Ui("产品源")]
 public class SuplyFabWork : FabWork<SuplyFabVarWork>
 {
-    [Ui("产品源", group: 1), Tool(Anchor)]
+    [Ui("产品源", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -72,7 +72,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "cloud-download", group: 2), Tool(Anchor)]
+    [Ui(icon: "cloud-download", status: 2), Tool(Anchor)]
     public void down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -93,7 +93,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "trash", group: 4), Tool(Anchor)]
+    [Ui(icon: "trash", status: 4), Tool(Anchor)]
     public void @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -115,7 +115,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("新建", "新建产品源", icon: "plus", group: 1), Tool(ButtonOpen)]
+    [Ui("新建", "新建产品源", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();

@@ -36,7 +36,7 @@ public class MyCarbWork : CarbWork
         CreateVarWork<AdmlyRegVarWork>();
     }
 
-    [Ui("碳积分活动", group: 1), Tool(Anchor)]
+    [Ui("碳积分活动", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         using var dc = NewDbContext();
