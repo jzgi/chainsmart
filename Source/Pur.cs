@@ -12,14 +12,12 @@ public class Pur : Entity, IKeyable<int>
 
     public const short
         TYP_NORM = 1,
-        TYP_ADVC = 2,
-        TYP_CUST = 4;
+        TYP_ADVC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_NORM, "现供" },
         { TYP_ADVC, "助农" },
-        { TYP_CUST, "定制" },
     };
 
     public new static readonly Map<short, string> Statuses = new()

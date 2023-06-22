@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx.Web;
@@ -17,19 +16,26 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 
     protected static void MainTable(HtmlBuilder h, Ldg[] arr)
     {
-        h.TABLE(arr, o =>
+        h.TABLE_();
+        DateTime last = default;
+        foreach (var o in arr)
         {
-            h.TD_().T(o.dt, 3, 0)._TD();
+            if (o.dt != last)
+            {
+                h.TR_().TD_("uk-padding-tiny-left uk-label", colspan: 4).T(o.dt, time: 0)._TD()._TR();
+            }
+
+            h.TR_();
             h.TD(o.name);
-            h.TD_("uk-text-right").T(o.trans)._TD();
-            h.TD_("uk-text-right").CNY(o.amt)._TD();
-        }, thead: () =>
-        {
-            h.TH("日期", css: "uk-width-medium");
-            h.TH("类型");
-            h.TH("数量");
-            h.TH("金额");
-        });
+            h.TD(o.trans);
+            h.TD(o.qty);
+            h.TD(o.amt, true, true);
+            h._TR();
+
+            last = o.dt;
+        }
+
+        h._TABLE();
     }
 
     [Ui("结算", "结算代收款项", icon: "list", status: 1), Tool(ButtonOpen)]
@@ -68,27 +74,6 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
             }, false, 3);
         }
     }
-
-    protected static void ClearTable(HtmlBuilder h, IEnumerable<Ap> arr)
-    {
-        // h.TABLE_();
-        // var last = 0;
-        // foreach (var o in arr)
-        // {
-        //     if (o.since != last)
-        //     {
-        //         var spr = GrabObject<int, Org>(o.since);
-        //         h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 3).T(spr.name)._TD()._TR();
-        //     }
-        //     h.TR_();
-        //     h.TD(o.till);
-        //     h.TD(o.name);
-        //     h._TR();
-        //
-        //     last = o.since;
-        // }
-        // h._TABLE();
-    }
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
@@ -109,7 +94,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
             h.TABLE(arr, o =>
             {
                 h.TD_().T(o.dt, 3, 0)._TD();
-                h.TD(Buy.Typs[(short)o.typ]);
+                h.TD(Buy.Typs[(short)o.acct]);
                 h.TD_("uk-text-right").T(o.trans)._TD();
                 h.TD_("uk-text-right").CNY(o.amt)._TD();
             }, thead: () =>
@@ -135,124 +120,16 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[Ui("销售业务分类汇总")]
+[Ui("销售分类汇总")]
 public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_itemid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("暂无汇总记录");
-                return;
-            }
-
-            MainTable(h, arr);
-
-            h.PAGINATION(arr.Length == 30);
-        }, false, 60);
-    }
-
-    [Ui("按交易", status: 2), Tool(Anchor)]
-    public void typ(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("暂无汇总记录");
-                return;
-            }
-
-            MainTable(h, arr);
-
-            h.PAGINATION(arr.Length == 30);
-        }, false, 60);
-    }
-}
-
-[Ui("采购业务分类汇总")]
-public class RtllyPurLdgWork : LdgWork<RtllyPurLdgVarWork>
-{
-    [Ui("按产品批次", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM puraggs_lotid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("暂无汇总记录");
-                return;
-            }
-
-            MainTable(h, arr);
-
-            h.PAGINATION(arr.Length == 30);
-        }, false, 60);
-    }
-
-    [Ui("按交易", status: 2), Tool(Anchor)]
-    public void typ(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
-        var arr = dc.Query<Ldg>(p => p.Set(org.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("暂无汇总记录");
-                return;
-            }
-
-            MainTable(h, arr);
-
-            h.PAGINATION(arr.Length == 30);
-        }, false, 60);
-    }
-}
-
-[Ui("销售业务分类汇总")]
-public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
-{
-    [Ui("按产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT * FROM puraggs_lotid WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_itemid WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
         var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -277,6 +154,61 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Ldg.Empty).T(" FROM buyldgs_typ WHERE orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET 30 * @2");
+        var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("暂无汇总记录");
+                return;
+            }
+
+            MainTable(h, arr);
+
+            h.PAGINATION(arr.Length == 30);
+        }, false, 60);
+    }
+}
+
+
+[Ui("销售分类汇总")]
+public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
+{
+    [Ui("按产品批次", status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT * FROM purldgs_lotid WHERE orgid = @1 ORDER BY dt DESC, acct LIMIT 30 OFFSET 30 * @2");
+        var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("暂无汇总记录");
+                return;
+            }
+
+            MainTable(h, arr);
+
+            h.PAGINATION(arr.Length == 30);
+        }, false, 60);
+    }
+
+    [Ui("按类型", status: 2), Tool(Anchor)]
+    public async Task typ(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
         dc.Sql("SELECT * FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
         var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
 
@@ -293,7 +225,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
             h.TABLE(arr, o =>
             {
                 h.TD_().T(o.dt, 3, 0)._TD();
-                h.TD(Buy.Typs[(short)o.typ]);
+                h.TD(Buy.Typs[(short)o.acct]);
                 h.TD_("uk-text-right").T(o.trans)._TD();
                 h.TD_("uk-text-right").CNY(o.amt)._TD();
             }, thead: () =>
@@ -304,38 +236,6 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
                 h.TH("金额");
             });
             h.PAGINATION(arr.Length == 30);
-        }, false, 60);
-    }
-}
-
-[OrglyAuthorize(Org.TYP_MKT)]
-[Ui("销售情况分类汇总")]
-public class MktlyBuyLdgWork : LdgWork<LdgVarWork>
-{
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            h.ALERT("暂无生成报表");
-        }, false, 60);
-    }
-}
-
-[OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购情况分类汇总")]
-public class MktlyPurLdgWork : LdgWork<LdgVarWork>
-{
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            h.ALERT("暂无生成报表");
         }, false, 60);
     }
 }

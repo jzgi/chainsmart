@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[Ui("采购订单")]
+[Ui("采购")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
@@ -329,7 +329,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购订单统一收货")]
+[Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]

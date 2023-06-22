@@ -14,12 +14,12 @@ public class Org : Entity, ITwin<int>
 
     public const short
         TYP_BRD = 0b00000, // brand
-        TYP_PRT = 0b01000, // parent
+        TYP_EXT = 0b01000, // extended
         TYP_RTL = 0b00001, // shop
         TYP_SUP = 0b00010, // source
         TYP_LOG = 0b00100, // logistic
-        TYP_MKT = TYP_PRT | TYP_RTL, // market
-        TYP_CTR = TYP_PRT | TYP_SUP | TYP_LOG; // center
+        TYP_MKT = TYP_EXT | TYP_RTL, // market
+        TYP_CTR = TYP_EXT | TYP_SUP | TYP_LOG; // center
 
 
     public const short
@@ -49,13 +49,13 @@ public class Org : Entity, ITwin<int>
     // id
     internal int id;
 
-    // parent id, only if shop or source
-    internal int prtid;
+    // extension id, if rtl or sup
+    internal int extid;
 
     // center id, only if market or shop
     internal int ctrid;
 
-    internal string ext; // extended territory name
+    internal string ext; // extended name
     internal string legal; // legal name
     internal short regid;
     internal string addr;
@@ -92,7 +92,7 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(prtid), ref prtid);
+                s.Get(nameof(extid), ref extid);
                 s.Get(nameof(ctrid), ref ctrid);
             }
 
@@ -139,8 +139,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                if (prtid > 0) s.Put(nameof(prtid), prtid);
-                else s.PutNull(nameof(prtid));
+                if (extid > 0) s.Put(nameof(extid), extid);
+                else s.PutNull(nameof(extid));
 
                 if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
                 else s.PutNull(nameof(ctrid));
@@ -201,9 +201,9 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int MarketId => EqMarket ? id : IsRetail ? prtid : 0;
+    public int MarketId => EqMarket ? id : IsRetail ? extid : 0;
 
-    public bool IsParent => (typ & TYP_PRT) == TYP_PRT;
+    public bool IsExtended => (typ & TYP_EXT) == TYP_EXT;
 
     public bool EqBrand => typ == TYP_BRD;
 
@@ -221,7 +221,7 @@ public class Org : Entity, ITwin<int>
 
     public bool HasXy => EqMarket || EqSupply || EqCenter;
 
-    public bool IsTopOrg => prtid == 0;
+    public bool IsTopOrg => extid == 0;
 
     public string Name => name;
 
@@ -231,7 +231,7 @@ public class Org : Entity, ITwin<int>
 
     public string Ext => ext;
 
-    public int SetKey => prtid;
+    public int SetKey => extid;
 
     public bool IsOpen(TimeSpan now)
     {

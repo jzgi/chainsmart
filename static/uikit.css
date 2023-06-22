@@ -135,12 +135,14 @@ mark {
 }
 
 q {
-    font-size: 0.8rem;
+    font-size: .75rem;
     margin: 2px 0;
     color: #888;
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: pre-wrap;
 }
 
 q::before {
@@ -1905,7 +1907,7 @@ a.uk-button-primary.uk-active {
     align-items: center;
     font-weight: normal;
     align-items: center;
-    padding: 2px;
+    padding: 4px;
 }
 
 .uk-button-link:hover,
@@ -2160,9 +2162,8 @@ section.uk-card-body,
 a.uk-card-body {
     height: calc(100% - 8px);
 }
-a.uk-disabled {
+a.uk-inactive {
     background-color: rgb(238 238 238 / 30%);
-    pointer-events: none;
 }
 
 .uk-card-header {
@@ -2229,6 +2230,7 @@ a.uk-disabled {
 .uk-card-primary {
     margin: 2px;
     background-color: #fff;
+    margin-bottom: 1rem;
 }
 
 
@@ -2430,7 +2432,7 @@ a.uk-disabled {
 
 .uk-alert {
     position: relative;
-    margin: 4px;
+    margin: 0;
     padding: 12px;
     color: #333;
 }
@@ -2468,10 +2470,12 @@ a.uk-disabled {
 }
 
 .uk-alert-warning {
+    background: rgb(245 150 4 / 0.15);
     color: #faa05a;
 }
 
 .uk-alert-danger {
+    background: rgb(255 59 48 / 0.15);
     color: #ff3b30;
 }
 
@@ -2538,7 +2542,7 @@ a.uk-disabled {
     border-bottom: 1px solid #7daa1d;
 }
 
-.uk-disabled .uk-badge-success {
+.uk-inactive .uk-badge-success {
     color: #666;
     border-top: 1px solid #666;
     border-bottom: 1px solid #666;
@@ -6433,10 +6437,6 @@ iframe.uk-cover {
 
 .uk-svg {
     transform: translate(0, 0);
-}
-
-.uk-disabled {
-    pointer-events: none;
 }
 
 .uk-drag,

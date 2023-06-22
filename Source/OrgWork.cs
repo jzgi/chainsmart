@@ -263,7 +263,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             typ = (short)typ,
             created = DateTime.Now,
             creator = prin.name,
-            prtid = org.id,
+            extid = org.id,
             ctrid = org.ctrid,
             status = Entity.STU_CREATED
         };
@@ -423,7 +423,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var o = new Org
         {
             typ = Org.TYP_SUP,
-            prtid = zon.id,
+            extid = zon.id,
             created = DateTime.Now,
             creator = prin.name,
         };

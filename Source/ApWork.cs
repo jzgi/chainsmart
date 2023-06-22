@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
@@ -7,10 +6,6 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
-/// <summary>
-/// Accounts Payable.
-/// </summary>
-/// <typeparam name="V"></typeparam>
 public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
 {
     protected override void OnCreate()
@@ -18,50 +13,41 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainTable(HtmlBuilder h, Ap[] arr, bool orgname)
+    protected static void MainTable(HtmlBuilder h, IList<Ap> lst, bool orgname)
     {
         h.TABLE_();
-        DateTime last = default;
-        foreach (var o in arr)
+
+        h.THEAD_();
+        h.TH("日期");
+        h.TH("订单", css: "uk-text-right");
+        h.TH("总额", css: "uk-text-right");
+        h.TH("返率％", css: "uk-text-right");
+        h.TH("应收", css: "uk-text-right");
+        h._THEAD();
+
+        foreach (var o in lst)
         {
-            if (o.dt != last)
-            {
-                h.TR_().TD_("uk-padding-tiny-left", colspan: 4).T(o.dt, time: 0)._TD()._TR();
-            }
-
             h.TR_();
-            if (orgname)
-            {
-                var org = GrabTwin<int, Org>(o.orgid);
-                h.TD(org.name);
-            }
-
-            h.TD(Ap.Typs[o.typ]);
-            h.TD_("uk-text-right").T(o.trans)._TD();
-            if (!orgname)
-            {
-                h.TD_("uk-text-right").CNY(o.amt)._TD();
-            }
-
-            h.TD_("uk-text-right").CNY(o.topay)._TD();
+            h.TD(o.dt, time: 0);
+            h.TD(o.trans);
+            h.TD(o.amt, true, true);
+            h.TD(o.rate);
+            h.TD(o.topay, true, true);
             h._TR();
-
-            last = o.dt;
         }
-
         h._TABLE();
     }
 }
 
-[Ui("市场端应付帐款")]
+[Ui("市场端应付结款")]
 public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 {
-    [Ui("应付帐款", status: 1), Tool(Anchor)]
+    [Ui("应付结款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE status BETWEEN 1 AND 2 ORDER BY id LIMIT 40 OFFSET @1 * 40");
-        var arr = await dc.QueryAsync<Ap>(p => p.Set(page));
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 ORDER BY dt DESC LIMIT 30 OFFSET @2 * 30");
+        var arr = dc.Query<Ap>(p => p.Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -72,17 +58,17 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
                 return;
             }
 
-            MainTable(h, arr, true);
+            MainTable(h, arr, false);
 
-            h.PAGINATION(arr.Length == 40);
-        }, false, 60);
+            h.PAGINATION(arr?.Length == 30);
+        }, false, 120);
     }
 
     [Ui(tip: "已付款", icon: "credit-card", status: 2), Tool(Anchor)]
     public async Task oked(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE typ BETWEEN ").T(Ap.TYP_RTL).T(" AND ").T(Ap.TYP_MKT).T(" AND status = 4 ORDER BY id LIMIT 40 OFFSET @1 * 40");
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 2 ORDER BY id LIMIT 40 OFFSET @1 * 40");
         var arr = await dc.QueryAsync<Ap>(p => p.Set(page));
 
         wc.GivePage(200, h =>
@@ -99,7 +85,6 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
             h.PAGINATION(arr.Length == 40);
         }, false, 3);
     }
-
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
@@ -146,7 +131,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
         else
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE typ = ").T(Ap.TYP_SUP).T(" AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
+            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE level = 2 AND sprid = @1 AND status > 0 ORDER BY id DESC LIMIT 40 OFFSET 40 * @2");
             var arr = await dc.QueryAsync<Ap>(p => p.Set(prv).Set(page));
             wc.GivePage(200, h =>
             {
@@ -160,33 +145,19 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
             }, false, 3);
         }
     }
-
 }
 
-[Ui("业务结款")]
-public class OrglyBuyApWork : ApWork<PtylyApVarWork>
+[Ui("网售结款")]
+public class RtllyBuyApWork : ApWork<PtylyApVarWork>
 {
-    [Ui("业务结款", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
+    [Ui("网售结款", status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
     {
-        var isOrg = (bool)State;
-        var org = isOrg ? wc[-1].As<Org>() : null;
+        var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-        var arr = dc.Query<Ap>(p =>
-        {
-            if (org == null)
-            {
-                p.SetNull();
-            }
-            else
-            {
-                p.Set(org.id);
-            }
-
-            p.Set(page);
-        });
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET @2 * 30");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -199,36 +170,22 @@ public class OrglyBuyApWork : ApWork<PtylyApVarWork>
 
             MainTable(h, arr, false);
 
-            h.PAGINATION(arr?.Length == 20);
-        }, false, 3);
+            h.PAGINATION(arr?.Length == 30);
+        }, false, 120);
     }
 }
 
-[Ui("业务结款")]
-public class OrglyPurApWork : ApWork<PtylyApVarWork>
+[Ui("销售结款")]
+public class SuplyPurApWork : ApWork<PtylyApVarWork>
 {
-    [Ui("业务收入", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
+    [Ui("销售结款", status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
     {
-        var isOrg = (bool)State;
-
-        var org = isOrg ? wc[-1].As<Org>() : null;
+        var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY id DESC LIMIT 40 OFFSET @2 * 40");
-        var arr = dc.Query<Ap>(p =>
-        {
-            if (org == null)
-            {
-                p.SetNull();
-            }
-            else
-            {
-                p.Set(org.id);
-            }
-
-            p.Set(page);
-        });
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE level = 1 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET @2 * 30");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -241,7 +198,7 @@ public class OrglyPurApWork : ApWork<PtylyApVarWork>
 
             MainTable(h, arr, false);
 
-            h.PAGINATION(arr?.Length == 20);
-        }, false, 3);
+            h.PAGINATION(arr?.Length == 30);
+        }, false, 120);
     }
 }

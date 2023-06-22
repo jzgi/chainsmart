@@ -51,7 +51,7 @@ public class WwwService : MainService
                         h._ARTICLE();
                     }
 
-                    h.ARTICLE_("uk-card uk-card-primary");
+                    h.ARTICLE_("uk-card uk-card-default");
                     h.H3(regs[o.regid]?.name, "uk-card-header");
                     h.UL_("uk-card-body uk-list-divider");
                 }

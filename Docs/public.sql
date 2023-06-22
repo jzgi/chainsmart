@@ -1,41 +1,4 @@
-create sequence evals_id_seq;
-
-alter sequence evals_id_seq owner to postgres;
-
-create sequence purs_id_seq;
-
-alter sequence purs_id_seq owner to postgres;
-
-create sequence fabs_id_seq;
-
-alter sequence fabs_id_seq owner to postgres;
-
-create type stockop as
-(
-    dt    timestamp(0),
-    qty   integer,
-    avail integer,
-    tip   varchar(10),
-    by    varchar(10)
-);
-
-alter type stockop owner to postgres;
-
-create type buyitem as
-(
-    itemid integer,
-    lotid  integer,
-    name   varchar(12),
-    unit   varchar(4),
-    unitx  smallint,
-    price  money,
-    "off"  money,
-    qty    numeric(6, 1)
-);
-
-alter type buyitem owner to postgres;
-
-create table entities
+create table public.entities
 (
     typ     smallint           not null,
     name    varchar(12)        not null,
@@ -49,10 +12,12 @@ create table entities
     status  smallint default 1 not null
 );
 
-alter table entities
+comment on table public.entities is 'abstract entities';
+
+alter table public.entities
     owner to postgres;
 
-create table cats
+create table public.cats
 (
     id   smallint not null
         constraint cats_pk
@@ -60,12 +25,14 @@ create table cats
     idx  smallint,
     size smallint
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table cats
+comment on table public.cats is 'categories';
+
+alter table public.cats
     owner to postgres;
 
-create table regs
+create table public.regs
 (
     id  smallint not null
         constraint regs_pk
@@ -73,49 +40,55 @@ create table regs
     idx smallint,
     num smallint
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table regs
+comment on table public.regs is 'regions';
+
+alter table public.regs
     owner to postgres;
 
-create table orgs
+create table public.orgs
 (
-    id      serial
+    id       serial
         constraint orgs_pk
             primary key,
-    prtid   integer
+    extid    integer
         constraint orgs_prtid_fk
-            references orgs,
-    ctrid   integer
+            references public.orgs,
+    ctrid    integer
         constraint orgs_ctrid_fk
-            references orgs,
-    ext     varchar(12),
-    legal   varchar(20),
-    regid   smallint
+            references public.orgs,
+    ext      varchar(12),
+    legal    varchar(20),
+    regid    smallint
         constraint orgs_regid_fk
-            references regs,
-    addr    varchar(30),
-    x       double precision,
-    y       double precision,
-    tel     varchar(11),
-    trust   boolean,
-    link    varchar(30),
-    credit  smallint,
-    reserve integer,
-    specs   jsonb,
-    icon    bytea,
-    pic     bytea,
-    m1      bytea,
-    m2      bytea,
-    m3      bytea,
-    m4      bytea
+            references public.regs,
+    addr     varchar(30),
+    x        double precision,
+    y        double precision,
+    tel      varchar(11),
+    trust    boolean,
+    link     varchar(30),
+    credit   smallint,
+    bankacct varchar(20),
+    specs    jsonb,
+    icon     bytea,
+    pic      bytea,
+    m1       bytea,
+    m2       bytea,
+    m3       bytea,
+    scene    bytea,
+    opened   time(0),
+    closed   time(0)
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table orgs
+comment on table public.orgs is 'organizational units';
+
+alter table public.orgs
     owner to postgres;
 
-create table users
+create table public.users
 (
     id         serial
         constraint users_pk
@@ -127,62 +100,58 @@ create table users
     admly      smallint default 0 not null,
     supid      smallint
         constraint users_supid_fk
-            references orgs,
+            references public.orgs,
     suply      smallint default 0 not null,
     rtlid      integer
         constraint users_rtlid_fk
-            references orgs,
+            references public.orgs,
     rtlly      smallint,
     vip        integer[],
-    refer      integer
-        constraint users_refer_fk
-            references users,
+    agreed     date,
     icon       bytea
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table users
+alter table public.users
     owner to postgres;
 
 create index users_admly_idx
-    on users (admly)
+    on public.users using ??? (admly)
     where (admly > 0);
 
 create unique index users_im_idx
-    on users (im);
+    on public.users using ??? (im);
 
 create unique index users_tel_idx
-    on users (tel);
+    on public.users using ??? (tel);
 
 create index users_rtlid_idx
-    on users (rtlid)
+    on public.users using ??? (rtlid)
     where (rtlid > 0);
 
 create index users_supid_idx
-    on users (supid)
+    on public.users using ??? (supid)
     where (supid > 0);
 
 create index users_vip_idx
-    on users using gin (vip);
+    on public.users using ??? (vip);
 
-create table evals
+create table public.evals
 (
     id    integer default nextval('tests_id_seq'::regclass) not null
         constraint evals_pk
             primary key,
     orgid integer
         constraint evals_orgid_fk
-            references orgs,
+            references public.orgs,
     level integer
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table evals
+alter table public.evals
     owner to postgres;
 
-alter sequence evals_id_seq owned by evals.id;
-
-create table lots
+create table public.lots
 (
     id      serial
         constraint lots_pk
@@ -193,58 +162,62 @@ create table lots
     targs   integer[],
     catid   smallint
         constraint lots_catsid_fk
-            references cats,
+            references public.cats,
     started date,
     unit    varchar(4),
+    unitw   smallint default 0 not null,
     unitx   smallint,
     price   money,
     "off"   money,
-    cap     integer,
+    capx    integer,
     stock   integer,
     avail   integer,
-    nstart  integer,
-    nend    integer,
     minx    smallint,
     maxx    smallint,
     flashx  smallint,
+    nstart  integer,
+    nend    integer,
     ops     stockop[],
     icon    bytea,
     pic     bytea,
     m1      bytea,
     m2      bytea,
     m3      bytea,
-    m4      bytea,
-    constraint lots_chk
-        check ((typ >= 1) AND (typ <= 2) AND (avail >= 0) AND (unitx >= 1))
+    m4      bytea
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table lots
+comment on table public.lots is 'supply product lots';
+
+comment on column public.lots.unitw is 'unit weight';
+
+alter table public.lots
     owner to postgres;
 
-create table purs
+create table public.purs
 (
-    id      bigint default nextval('books_id_seq'::regclass) not null
+    id      bigint   default nextval('books_id_seq'::regclass) not null
         constraint purs_pk
             primary key,
-    rtlid   integer                                          not null
+    rtlid   integer                                            not null
         constraint purs_rtlid_fk
-            references orgs,
+            references public.orgs,
     rtlname varchar(12),
-    mktid   integer                                          not null
+    mktid   integer                                            not null
         constraint purs_mktid_fk
-            references orgs,
-    ctrid   integer                                          not null
+            references public.orgs,
+    ctrid   integer                                            not null
         constraint purs_ctrid_fk
-            references orgs,
-    supid   integer                                          not null
+            references public.orgs,
+    supid   integer                                            not null
         constraint purs_supid_fk
-            references orgs,
+            references public.orgs,
     supname varchar(12),
     lotid   integer
         constraint purs_lotid_fk
-            references lots,
+            references public.lots,
     unit    varchar(4),
+    unitw   smallint default 0                                 not null,
     unitx   smallint,
     price   money,
     "off"   money,
@@ -256,46 +229,46 @@ create table purs
     constraint typ_chk
         check ((typ >= 1) AND (typ <= 2))
 )
-     inherits
+    tablespace sup inherits
 (
-    entities
-)tablespace sup;
+    public.entities
+);
 
-alter table purs
+comment on table public.purs is 'supply purchases';
+
+comment on column public.purs.unitw is 'unit weight';
+
+alter table public.purs
     owner to postgres;
 
-alter sequence purs_id_seq owned by purs.id;
-
 create unique index purs_uidx
-    on purs (rtlid, status)
-    where (status = '-1'::integer) tablespace sup;
+    on public.purs using btree (rtlid, status)
+    where (status = '-1'::integer)
+    tablespace sup;
 
 create index purs_ctridstatus_idx
-    on purs (ctrid, status)
+    on public.purs using btree (ctrid, status)
     tablespace sup;
 
 create index purs_rtlidstatus_idx
-    on purs (rtlid, status)
+    on public.purs using ??? (rtlid, status)
     tablespace sup;
 
 create index purs_supidstatus_idx
-    on purs (supid, status)
+    on public.purs using ??? (supid, status)
     tablespace sup;
 
 create index purs_mktidstatus_idx
-    on purs (mktid, status)
+    on public.purs using ??? (mktid, status)
     tablespace sup;
 
 create index lots_srcidstatus_idx
-    on lots (orgid, status);
+    on public.lots using ??? (orgid, status);
 
 create index lots_catid_idx
-    on lots (catid);
+    on public.lots using ??? (catid);
 
-create index lots_nend_idx
-    on lots (nend);
-
-create table fabs
+create table public.fabs
 (
     id     integer default nextval('assets_id_seq'::regclass) not null
         constraint fabs_pk
@@ -315,30 +288,30 @@ create table fabs
     m3     bytea,
     m4     bytea
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table fabs
+comment on table public.fabs is 'fabrications of product lots';
+
+alter table public.fabs
     owner to postgres;
 
-alter sequence fabs_id_seq owned by fabs.id;
-
 create index fabs_orgidstatus_idx
-    on fabs (orgid, status);
+    on public.fabs using ??? (orgid, status);
 
-create table buys
+create table public.buys
 (
     id     bigserial
         constraint buys_pk
             primary key,
     rtlid  integer not null
         constraint buys_rtlid_fk
-            references orgs,
+            references public.orgs,
     mktid  integer not null
         constraint buys_mkt_fk
-            references orgs,
+            references public.orgs,
     uid    integer
         constraint buys_uid_fk
-            references users,
+            references public.users,
     uname  varchar(12),
     utel   varchar(11),
     ucom   varchar(12),
@@ -352,192 +325,113 @@ create table buys
     constraint buys_chk
         check ((typ >= 1) AND (typ <= 3))
 )
-   inherits
+    inherits
 (
-    entities
-) tablespace rtl ;
+    public.entities
+)tablespace rtl ;
 
-alter table buys
+comment on table public.buys is 'retail buys';
+
+alter table public.buys
     owner to postgres;
 
 create index buys_uidstatus_idx
-    on buys (uid, status)
+    on public.buys using ??? (uid, status)
     tablespace rtl;
 
 create index buys_rtlidstatus_idx
-    on buys (rtlid, status)
+    on public.buys using ??? (rtlid, status)
     tablespace rtl;
 
 create index buys_mktidstatus_idx
-    on buys (mktid, status)
+    on public.buys using ??? (mktid, status)
     tablespace rtl;
 
 create unique index buys_uidx
-    on buys (uid, typ, status)
-    where ((typ = 1) AND (status = '-1'::smallint)) tablespace rtl;
+    on public.buys using ??? (uid, typ, status)
+    where ((typ = 1) AND (status = '-1'::smallint))
+    tablespace rtl;
 
-create table items
+create trigger buys_trig
+    after insert or update
+        of status
+    on public.buys
+    for each row
+execute procedure public.buys_trig_func();
+
+create table public.items
 (
-    id     serial
+    id    serial
         constraint items_pk
             primary key,
-    orgid  integer            not null
+    orgid integer            not null
         constraint items_rtlid_fk
-            references orgs,
-    lotid  integer
+            references public.orgs,
+    lotid integer
         constraint items_lotid_fk
-            references lots,
-    catid  smallint
+            references public.lots,
+    catid smallint
         constraint items_catid_fk
-            references cats,
-    unit   varchar(4),
-    unitx  smallint,
-    price  money,
-    "off"  money,
-    maxx   smallint,
-    stock  smallint default 0 not null,
-    avail  smallint default 0 not null
-        constraint items_avail_chk
-            check (avail >= 0),
-    flashx smallint default 0 not null,
-    ops    stockop[],
-    icon   bytea,
-    pic    bytea
+            references public.cats,
+    unit  varchar(4),
+    unitw smallint default 0 not null,
+    step  smallint,
+    price money,
+    "off" money,
+    max   smallint,
+    stock smallint default 0 not null,
+    avail smallint default 0 not null,
+    flash smallint default 0 not null,
+    ops   stockop[],
+    icon  bytea,
+    pic   bytea
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table items
+comment on table public.items is 'retail items';
+
+comment on column public.items.unitw is 'unit weight';
+
+alter table public.items
     owner to postgres;
 
 create index items_catid_idx
-    on items (catid);
+    on public.items using ??? (catid);
 
-create table buyaggs_typ
+create table public.buygens
 (
-    orgid  integer not null,
-    dt     date    not null,
-    typ    integer not null,
-    name   varchar(12),
-    corgid integer,
-    trans  integer,
-    amt    money,
-    constraint buyaggs_typ_pk
-        primary key (orgid, dt, typ)
-)
-    tablespace rtl;
-
-alter table buyldgs_typ
-    owner to postgres;
-
-create table buyaggs_itemid
-(
-    orgid  integer not null,
-    dt     date    not null,
-    typ    integer not null,
-    name   varchar(12),
-    corgid integer,
-    trans  integer,
-    amt    money,
-    constraint buyaggs_itemid_pk
-        primary key (orgid, dt, typ)
-)
-    tablespace rtl;
-
-alter table buyldgs_itemid
-    owner to postgres;
-
-create table gens
-(
-    id      smallserial
-        constraint gens_pk
+    till    date not null
+        constraint buygens_pk
             primary key,
-    typ     smallint,
-    till    date,
     started timestamp(0),
     ended   timestamp(0),
-    opr     varchar(12)
+    opr     varchar(12),
+    amt     money
 );
 
-alter table buygens
+comment on table public.buygens is 'buy generations';
+
+alter table public.buygens
     owner to postgres;
 
-create table purclrs
+create table public.buyaps
 (
-    orgid integer not null,
-    dt    date    not null,
+    level smallint not null,
+    orgid integer  not null,
+    dt    date     not null,
     trans integer,
     amt   money,
     rate  smallint,
-    topay money,
-    pay   money
-)
-   inherits
-(
-    entities
-) tablespace sup ;
-
-alter table puraps
-    owner to postgres;
-
-create table buyclrs
-(
-    id     serial
-        constraint buyclrs_pk
-            primary key,
-    orgid  integer not null,
-    dt     date    not null,
-    typ    smallint,
-    name   varchar(12),
-    trans  integer,
-    amt    money,
-    rate   smallint,
-    topay  money,
-    pay    money,
-    acct   varchar(20),
-    status smallint
+    topay money
 )
     tablespace rtl;
 
-alter table buyaps
+comment on table public.buyaps is 'buy accounts payable';
+
+alter table public.buyaps
     owner to postgres;
 
-create table puraggs_typ
-(
-    orgid   integer not null,
-    dt      date,
-    typ     integer not null,
-    name    varchar(12),
-    corgid  integer,
-    trans   integer,
-    qty     integer,
-    amt     money,
-    created timestamp(0),
-    creator varchar(12)
-)
-    tablespace sup;
-
-alter table purldgs_typ
-    owner to postgres;
-
-create table puraggs_lotid
-(
-    orgid   integer not null,
-    dt      date,
-    typ     integer not null,
-    name    varchar(12),
-    corgid  integer,
-    trans   integer,
-    qty     integer,
-    amt     money,
-    created timestamp(0),
-    creator varchar(12)
-)
-    tablespace sup;
-
-alter table purldgs_lotid
-    owner to postgres;
-
-create table vans
+create table public.vans
 (
     id     serial,
     orgid  integer,
@@ -555,490 +449,139 @@ create table vans
     m3     bytea,
     m4     bytea
 )
-    inherits (entities);
+    inherits (public.entities);
 
-alter table vans
+alter table public.vans
     owner to postgres;
 
-create view orgs_vw
-            (typ, name, tip, created, creator, adapted, adapter, oker, oked, status, id, prtid, ctrid, ext, legal,
-             regid, addr, x, y, tel, trust, link, credit, specs, icon, pic, m1, m2, m3, m4)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oker,
-       o.oked,
-       o.status,
-       o.id,
-       o.prtid,
-       o.ctrid,
-       o.ext,
-       o.legal,
-       o.regid,
-       o.addr,
-       o.x,
-       o.y,
-       o.tel,
-       o.trust,
-       o.link,
-       o.credit,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.scene IS NOT NULL   AS m4
-FROM orgs o;
+create table public.carbs
+(
+    userid integer not null,
+    dt     date    not null,
+    typ    smallint,
+    v      money,
+    opr    varchar(10),
+    constraint carbs_pk
+        primary key (userid, dt)
+);
 
-alter table orgs_vw
+comment on table public.carbs is 'carbon credits operations';
+
+alter table public.carbs
     owner to postgres;
 
-create view users_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, tel, addr, im, credential,
-             admly, supid, suply, rtlid, rtlly, vip, refer, icon)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.tel,
-       o.addr,
-       o.im,
-       o.credential,
-       o.admly,
-       o.supid,
-       o.suply,
-       o.rtlid,
-       o.rtlly,
-       o.vip,
-       o.refer,
-       o.icon IS NOT NULL AS icon
-FROM users o;
+create table public.purgens
+(
+    till    date not null
+        constraint purgens_pk
+            primary key,
+    started timestamp(0),
+    ended   timestamp(0),
+    opr     varchar(12),
+    amt     money
+);
 
-alter table users_vw
+comment on table public.purgens is 'purchase generations';
+
+alter table public.purgens
     owner to postgres;
 
-create view fabs_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, rank, remark, co2ekg,
-             co2ep, x, y, specs, icon, pic, m1, m2, m3, m4)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.orgid,
-       o.rank,
-       o.remark,
-       o.co2ekg,
-       o.co2ep,
-       o.x,
-       o.y,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
-FROM fabs o;
+create table public.mcards
+(
+);
 
-alter table fabs_vw
+alter table public.mcards
     owner to postgres;
 
-create view lots_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, orgname, fabid, targs,
-             catid, started, unit, unitx, price, "off", cap, stock, avail, nstart, nend, minx, maxx, flashx, icon, pic,
-             m1, m2, m3, m4, ops)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.orgid,
-       o.orgname,
-       o.fabid,
-       o.targs,
-       o.catid,
-       o.started,
-       o.unit,
-       o.unitx,
-       o.price,
-       o.off,
-       o.capx,
-       o.stock,
-       o.avail,
-       o.nstart,
-       o.nend,
-       o.minx,
-       o.maxx,
-       o.flashx,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4,
-       o.ops
-FROM lots o;
+create table public.ldgs
+(
+    orgid   integer not null,
+    dt      date    not null,
+    acct    integer not null,
+    name    varchar(12),
+    coorgid integer,
+    trans   integer,
+    qty     integer,
+    amt     money
+);
 
-alter table lots_vw
+alter table public.ldgs
     owner to postgres;
 
-create view items_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, lotid, catid, unit,
-             unitx, price, "off", maxx, stock, avail, flashx, ops, icon, pic)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.orgid,
-       o.lotid,
-       o.catid,
-       o.unit,
-       o.step,
-       o.price,
-       o.off,
-       o.max,
-       o.stock,
-       o.avail,
-       o.flash,
-       o.ops,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic
-FROM items o;
+create table public.buyldgs_itemid
+(
+    constraint buyldgs_itemid_pk
+        primary key (orgid, dt, acct)
+)
+    inherits
+(
+    public.ldgs
+)tablespace rtl ;
 
-alter table items_vw
+comment on table public.buyldgs_itemid is 'buy ledgers by itemid';
+
+alter table public.buyldgs_itemid
     owner to postgres;
 
-create function first_agg(anyelement, anyelement) returns anyelement
-    immutable
-    strict
-    parallel safe
-    language sql
-as
-$$SELECT $1$$;
-
-alter function first_agg(anyelement, anyelement) owner to postgres;
-
-create function last_agg(anyelement, anyelement) returns anyelement
-    immutable
-    strict
-    parallel safe
-    language sql
-as
-$$SELECT $2$$;
-
-alter function last_agg(anyelement, anyelement) owner to postgres;
-
-create function pursgen(till date, opr character varying) returns void
-    language plpgsql
-as
-$$
-DECLARE
-
-    past date;
-    now timestamp(0) = localtimestamp(0);
-    tillstamp timestamp(0);
-    paststamp timestamp(0);
-
-    TYP_PLAT constant int = 1;
-    TYP_SRC constant int = 2;
-    TYP_CTR constant int = 3;
-
---     rates in thousandth
-
-    BASE constant int = 100;
-    RATE_PLAT constant int = 1;
-    RATE_SRC constant int = 97;
-    RATE_CTR constant int = 2;
-
-BEGIN
-
-    opr = coalesce(opr, 'SYS');
-
-    SELECT coalesce(booksgen, '2000-01-01'::date)FROM global WHERE pk INTO past;
-    tillstamp = (till + interval '1 day')::timestamp(0);
-
-    opr = coalesce(opr, 'SYS');
-
-    paststamp = (past + interval '1 day')::timestamp(0);
-
-    -- books for source
-
-    INSERT INTO bookaggs (orgid, dt, typ, coid, trans, amt, created, creator)
-    SELECT srcid,
-           oked::date,
-           typ,
-           first(ctrid),
-           count(pay),
-           sum(pay - coalesce(refund, 0::money)),
-           now,
-           opr
-    FROM books
-    WHERE status = 4 AND oked >= paststamp AND oked < tillstamp
-    GROUP BY srcid, oked::date, typ;
-
-
-    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
-    SELECT TYP_SRC,
-           first(creator),
-           now,
-           opr,
-           orgid,
-           till,
-           sum(trans),
-           sum(amt),
-           RATE_SRC,
-           sum(amt * RATE_SRC / BASE)
-    FROM bookaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY orgid;
-
-    INSERT INTO bookclrs (typ, name, created, creator, orgid, till, trans, amt, rate, topay)
-    SELECT TYP_CTR,
-           first(creator),
-           now,
-           opr,
-           coid,
-           till,
-           sum(trans),
-           sum(amt),
-           RATE_CTR,
-           sum(amt * RATE_CTR / BASE)
-    FROM bookaggs
-    WHERE typ = 1 AND dt > past AND dt <= till GROUP BY coid;
-
-    UPDATE global SET booksgen = till WHERE pk;
-
-END
-$$;
-
-alter function pursgen(date, varchar) owner to postgres;
-
-create function buys_trig_func() returns trigger
-    language plpgsql
-as
-$$
-DECLARE
-    itm buyitem;
-BEGIN
-    -- update avail values
-    IF (TG_OP = 'INSERT' AND NEW.status = 4) THEN
-
-        FOREACH itm IN ARRAY NEW.items LOOP -- oked
-        UPDATE items SET avail = avail - itm.qty, stock = stock - itm.qty, flash = CASE WHEN flash > 0 THEN flash - (itm.qty / itm.unitw) ELSE flash END WHERE id = itm.itemid;
-            END LOOP;
-
-    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 1 AND OLD.status < 1) THEN -- paid
-
-        FOREACH itm IN ARRAY NEW.items LOOP
-                UPDATE items SET avail = avail - itm.qty, flash = CASE WHEN flash > 0 THEN flash - (itm.qty / itm.unitw) ELSE flash END WHERE id = itm.itemid;
-            END LOOP;
-
-    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 4 AND OLD.status < 4) THEN -- sent
-
-        FOREACH itm IN ARRAY NEW.items LOOP
-                UPDATE items SET stock = stock - itm.qty WHERE id = itm.itemid;
-            END LOOP;
-
-    ELSEIF (TG_OP = 'UPDATE' AND NEW.status = 0 AND OLD.status > 0) THEN -- voided
-
-        FOREACH itm IN ARRAY NEW.items LOOP
-                UPDATE items SET avail = avail + itm.qty, stock = stock + itm.qty WHERE id = itm.itemid;
-            END LOOP;
-
-    END IF;
-
-    RETURN NEW;
-END
-$$;
-
-alter function buys_trig_func() owner to postgres;
-
-create trigger buys_trig
-    after insert or update
-        of status
-    on buys
-    for each row
-execute procedure buys_trig_func();
-
-create function buyitem_agg_func(ret buyldgs_itemid[], items buyitem[], orgid integer, dt date, corgid integer) returns buyldgs_itemid[]
-    language plpgsql
-as
-$$
-DECLARE
-    agg buyldgs_itemid;
-    itm buyitem;
-    fnd bool;
-BEGIN
-
-    FOREACH itm IN ARRAY items LOOP
-
-            fnd = FALSE;
-
-            IF ret IS NOT NULL THEN
-                FOREACH agg IN ARRAY ret LOOP
-                        IF agg.typ = itm.itemid THEN -- found
-                            agg.trans = agg.trans + itm.qty;
-                            agg.amt = agg.amt + (itm.price - itm.off) * itm.qty;
-                            fnd = TRUE;
-                            CONTINUE;
-                        END IF;
-                    END LOOP;
-            END IF;
-
-            IF ret IS NULL OR NOT fnd THEN
-                agg = (orgid, dt, itm.itemid, itm.name, corgid, itm.qty, (itm.price - itm.off) * itm.qty);
-                ret = ret || agg;
-            end if;
-        END LOOP;
-
-    RETURN ret;
-END;
-$$;
-
-alter function buyitem_agg_func(buyldgs_itemid[], buyitem[], integer, date, integer) owner to postgres;
-
-create function buysgen() returns void
-    language plpgsql
-as
-$$
-DECLARE
-    curr timestamp(0) = localtimestamp(0);
-    till date;
-    tillstamp timestamp(0);
-    last date;
-    laststamp timestamp(0);
-
-    TYP_PLAT constant int = 1;
-    TYP_RTL constant int = 2;
-    TYP_MKT constant int = 3;
-
-    BASE constant int = 100;
-    RATE_PLAT constant int = 1;
-    RATE_RTL constant int = 97;
-    RATE_MKT constant int = 2;
-
-BEGIN
-
-    -- adjust parameters
-
-    SELECT coalesce(max(gens.till), '2000-01-01'::date) FROM buygens WHERE typ = 1 INTO last;
-    laststamp = (last + interval '1 day')::timestamp(0);
-
-    till = curr::date - interval '1 day';
-    tillstamp = (till + interval '1 day')::timestamp(0);
-
-    IF (till <= last) THEN
-        RETURN;
-    end if;
-
-    -- aggregate buys by typ
-
-    INSERT INTO buyldgs_typ
-    SELECT rtlid,
-           created::date,
-           typ,
-           first(name),
-           first(mktid),
-           count(*),
-           sum(pay - coalesce(refund, 0::money))
-    FROM buys
-    WHERE
-            created >= laststamp AND created < tillstamp AND status > 0
-    GROUP BY
-        rtlid, created::date, typ;
-
-    -- aggregate buys by itemid
-
-    INSERT INTO buyldgs_itemid
-    SELECT
-        (unnest(buys_agg(items,rtlid, created::date,mktid))).*
-    FROM buys
-    WHERE
-            created >= laststamp AND created < tillstamp AND status > 0
-    GROUP BY rtlid, created::date;
-
-
-    INSERT INTO buyaps
-    (orgid, dt, typ, name, trans, amt, rate, topay)
-    SELECT
-        orgid, dt, TYP_RTL, first(name), sum(trans), sum(amt), RATE_RTL, sum(amt * RATE_RTL / BASE)
-    FROM buyldgs_typ
-    WHERE
-            typ = 1 AND dt > last AND dt <= till GROUP BY orgid, dt;
-
-    INSERT INTO
-        buyaps (orgid, dt, typ, name, trans, amt, rate, topay)
-    SELECT
-        corgid, dt, TYP_MKT, first(name), sum(trans), sum(amt), RATE_MKT, sum(amt * RATE_MKT / BASE)
-    FROM buyldgs_typ
-    WHERE
-            typ = 1 AND dt > last AND dt <= till GROUP BY corgid, dt;
-
-
-    INSERT INTO buygens (typ, till, started, ended)
-    VALUES
-        (1, till, curr, localtimestamp(0));
-END
-$$;
-
-alter function buysgen() owner to postgres;
-
-create aggregate first(anyelement) (
-    sfunc = first_agg,
-    stype = anyelement,
-    parallel = safe
-    );
-
-alter aggregate first(anyelement) owner to postgres;
-
-create aggregate last(anyelement) (
-    sfunc = last_agg,
-    stype = anyelement,
-    parallel = safe
-    );
-
-alter aggregate last(anyelement) owner to postgres;
-
-create aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) (
-    sfunc = buyitem_agg_func,
-    stype = buyldgs_itemid[]
-    );
-
-alter aggregate buys_agg(items buyitem[], orgid integer, dt date, corgid integer) owner to postgres;
+create table public.buyldgs_typ
+(
+    constraint buyldgs_typ_pk
+        primary key (orgid, dt, acct)
+)
+    inherits
+(
+    public.ldgs
+) tablespace rtl;
+
+comment on table public.buyldgs_typ is 'buy ledgers by type';
+
+alter table public.buyldgs_typ
+    owner to postgres;
+
+create table public.purldgs_lotid
+(
+    constraint purldgs_lotid_pk
+        primary key (orgid, acct, dt)
+)
+    inherits
+(
+    public.ldgs
+)tablespace sup ;
+
+comment on table public.purldgs_lotid is 'purchase ledgers by lotid';
+
+alter table public.purldgs_lotid
+    owner to postgres;
+
+create table public.purldgs_typ
+(
+    constraint purldgs_typ_pk
+        primary key (orgid, dt, acct)
+)
+    inherits
+(
+    public.ldgs
+)tablespace sup ;
+
+comment on table public.purldgs_typ is 'purchase ledgers by type';
+
+alter table public.purldgs_typ
+    owner to postgres;
+
+create table public.puraps
+(
+    level smallint not null,
+    orgid integer  not null,
+    dt    date     not null,
+    trans integer,
+    amt   money,
+    rate  smallint,
+    topay money
+)
+    tablespace sup;
+
+comment on table public.puraps is 'purchaes accounts payable';
+
+alter table public.puraps
+    owner to postgres;
 

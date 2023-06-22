@@ -160,13 +160,13 @@ public class User : Entity, IKeyable<int>
             }
             else
             {
-                if (org.trust && orgid == org.prtid && (orgly > 0 && orgid > 0))
+                if (org.trust && orgid == org.extid && (orgly > 0 && orgid > 0))
                 {
                     ret = orgly;
                     upper = true;
                     ulevel = 2;
                 }
-                else if (!org.trust && orgid == org.prtid && orgly == ROL_MGT && orgid > 0)
+                else if (!org.trust && orgid == org.extid && orgly == ROL_MGT && orgid > 0)
                 {
                     ret = ROL_OPN; // downgraded role
                     upper = true;

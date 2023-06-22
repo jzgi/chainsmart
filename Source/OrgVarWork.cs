@@ -24,7 +24,7 @@ public abstract class OrgVarWork : WebWork
             h.LI_().FIELD("商户名", m.name)._LI();
             h.LI_().FIELD("简介", m.tip)._LI();
             h.LI_().FIELD("工商登记名", m.legal)._LI();
-            if (m.IsParent)
+            if (m.IsExtended)
             {
                 h.LI_().FIELD("延展名", m.ext)._LI();
             }
@@ -436,7 +436,7 @@ public class MktlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND extid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -458,11 +458,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
-        {
-            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
-            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
-        });
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) => { return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1; });
 
         wc.Give(205);
     }
@@ -478,7 +474,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND extid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -583,7 +579,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND prtid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND extid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -606,7 +602,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND prtid = @2");
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND extid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -623,7 +619,7 @@ public class CtrlyOrgVarWork : OrgVarWork
 
         await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND prtid = @2 AND status BETWEEN 1 AND 2");
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND extid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 

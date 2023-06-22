@@ -29,18 +29,48 @@ public class PublyVarWork : WebWork
                 h.PIC_("/org/", org.id, "/scene");
             }
             else
+            {
                 h.PIC_("/void.webp");
+            }
             h._PIC();
 
-            h.Q(org.addr);
-
             h._SECTION();
+
+            h.FOOTER_("uk-card-footer").T("地处").T(org.addr);
+            if (org.tip != null)
+            {
+                h.T('，').T(org.tip);
+            }
+            h._FOOTER();
+
             h._ARTICLE();
 
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H3("派送覆盖", css: "uk-card-header");
-            h.UL_("uk-card-body");
-            h._UL();
+            h.H3("免费派送区域", css: "uk-card-header");
+            // h.SECTION_("uk-card-body");
+            var specs = org.specs;
+            for (int i = 0; i < specs?.Count; i++)
+            {
+                var spec = specs.EntryAt(i);
+                var v = spec.Value;
+                if (v.IsObject)
+                {
+                    h.DL_(css: "uk-card-body");
+                    h.DT(spec.Key);
+
+                    h.DD_();
+                    var sub = (JObj)v;
+                    for (int k = 0; k < sub.Count; k++)
+                    {
+                        if (k > 0) h.T('，');
+                        var e = sub.EntryAt(k);
+                        h.T(e.Key);
+                    }
+                    h._DD();
+                    h._DL();
+                }
+            }
+            // h._SECTION();
             h._ARTICLE();
 
             h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
@@ -88,7 +118,7 @@ public class PublyVarWork : WebWork
                 }
                 else
                 {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, disabled: !open, "uk-card-body uk-flex");
+                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, inactive: !open, "uk-card-body uk-flex");
                 }
 
                 if (o.icon)

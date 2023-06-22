@@ -28,7 +28,7 @@ public abstract class OrglyVarWork : WebWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
-            if (org.IsParent) h.H4(org.Ext);
+            if (org.IsExtended) h.H4(org.Ext);
             h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
             h._HEADER();
 
@@ -84,9 +84,7 @@ public class RtllyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = shop
-
-        CreateWork<OrglyBuyApWork>("buyap", state: true);
+        CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = retail
 
         CreateWork<OrglyEvalWork>("eval");
 
@@ -94,17 +92,17 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
 
+        CreateWork<RtllyVipWork>("rvip");
+
         CreateWork<RtllyPosWork>("rpos");
 
         CreateWork<RtllyBuyWork>("rbuy");
 
-        CreateWork<RtllyPurWork>("rpur");
+        CreateWork<RtllyBuyApWork>("rbuyap");
 
         CreateWork<RtllyBuyLdgWork>("rbuyldg");
 
-        CreateWork<RtllyPurLdgWork>("rpurldg");
-
-        CreateWork<RtllyVipWork>("rvip");
+        CreateWork<RtllyPurWork>("rpur");
 
         // mkt
 
@@ -115,10 +113,6 @@ public class RtllyVarWork : OrglyVarWork
         CreateWork<MktlyBuyWork>("mbuy"); // delivery
 
         CreateWork<MktlyPurWork>("mpur");
-
-        CreateWork<MktlyBuyLdgWork>("mbuyldg");
-
-        CreateWork<MktlyPurLdgWork>("mpurldg");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -129,7 +123,7 @@ public class RtllyVarWork : OrglyVarWork
         wc.GivePane(200, h =>
         {
             h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
-            h.QRCODE(MainApp.WwwUrl + "/" + org.prtid + "/" + org.id + "/", css: "uk-width-small");
+            h.QRCODE(MainApp.WwwUrl + "/" + org.extid + "/" + org.id + "/", css: "uk-width-small");
             h.SPAN(org.name);
             h._NAV();
         }, false, 720);
@@ -201,9 +195,7 @@ public class SuplyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = source
-
-        CreateWork<OrglyPurApWork>("purap", state: true); // true = is org
+        CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = supply
 
         CreateWork<OrglyEvalWork>("eval");
 
@@ -213,11 +205,13 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurspot", state: Pur.TYP_NORM, ui: new("销售订单-现货"));
+        CreateWork<SuplyPurWork>("spurnorm", state: Pur.TYP_NORM, ui: new("销售订单-现货"));
 
-        CreateWork<SuplyPurWork>("spurpre", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
+        CreateWork<SuplyPurWork>("spuradvc", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
 
-        CreateWork<SuplyPurLdgWork>("spuragg");
+        CreateWork<SuplyPurLdgWork>("spurldg");
+
+        CreateWork<SuplyPurApWork>("spurap");
 
         // ctr
 
@@ -232,7 +226,5 @@ public class SuplyVarWork : OrglyVarWork
         CreateWork<CtrlyPurLdgWork>("cpuragg");
 
         CreateWork<CtrlyTwinWork>("ctwin");
-
-
     }
 }

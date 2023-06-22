@@ -10,7 +10,7 @@ public class OrgGraph : TwinGraph<int, Org>
 {
     public override bool TryGetTwinSetKey(DbContext dc, int key, out int setkey)
     {
-        dc.Sql("SELECT prtid FROM orgs_vw WHERE id = @1 AND status > 0");
+        dc.Sql("SELECT extid FROM orgs_vw WHERE id = @1 AND status > 0");
 
         if (dc.QueryTop(p => p.Set(key)))
         {
@@ -25,12 +25,12 @@ public class OrgGraph : TwinGraph<int, Org>
     {
         if (setkey == 0)
         {
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid IS NULL AND status > 0 ORDER BY regid, id");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE extid IS NULL AND status > 0 ORDER BY regid, id");
             return dc.Query<int, Org>();
         }
         else
         {
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE prtid = @1 AND status > 0 ORDER BY regid, id");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE extid = @1 AND status > 0 ORDER BY regid, id");
             return dc.Query<int, Org>(p => p.Set(setkey));
         }
     }

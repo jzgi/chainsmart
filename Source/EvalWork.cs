@@ -26,7 +26,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("评估检测")]
+    [Ui("评测管理")]
     public class MktlyEvalWork : EvalWork<MktlyEvalVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, IList<Eval> arr)
