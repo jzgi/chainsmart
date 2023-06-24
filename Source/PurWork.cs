@@ -427,10 +427,10 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("销售订单集中发货")]
+[Ui("中转库发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("按批次", status: 2), Tool(Anchor)]
+    [Ui("按产品批次", status: 2), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
@@ -470,13 +470,13 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", status: 4), Tool(Anchor)]
-    public async Task bylotpast(WebContext wc)
+    [Ui("↳", "以往按产品批次", status: 4), Tool(Anchor)]
+    public async Task lotpast(WebContext wc)
     {
     }
 
     [Ui("按市场", status: 8), Tool(Anchor)]
-    public async Task bymrt(WebContext wc)
+    public async Task mkt(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
         var topOrgs = Grab<int, Org>();
@@ -515,34 +515,13 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", status: 16), Tool(Anchor)]
-    public async Task bymrtpast(WebContext wc)
+    [Ui("↳", "以往按市场", status: 16), Tool(Anchor)]
+    public async Task mktpast(WebContext wc)
     {
     }
 
-    [Ui("发出", status: 255), Tool(ButtonOpen)]
-    public async Task rev(WebContext wc)
-    {
-        var prin = (User)wc.Principal;
-        short orgid = wc[-1];
-        short typ = 0;
-        decimal amt = 0;
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("指定统计区间");
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // POST
-        {
-            wc.GivePane(200); // close dialog
-        }
-    }
-
-    [Ui("取消发出", status: 2), Tool(ButtonOpen)]
-    public async Task unrcv(WebContext wc)
+    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
+    public async Task send(WebContext wc)
     {
         var prin = (User)wc.Principal;
         short orgid = wc[-1];

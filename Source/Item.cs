@@ -8,12 +8,12 @@ public class Item : Entity, IKeyable<int>
 
     public const short
         TYP_DEF = 1,
-        TYP_REF = 2;
+        TYP_STD = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_DEF, "自建" },
-        { TYP_REF, "引用" },
+        { TYP_DEF, "编外" },
+        { TYP_STD, "供应" },
     };
 
 
@@ -29,7 +29,7 @@ public class Item : Entity, IKeyable<int>
     internal short max;
     internal short stock;
     internal short avail;
-    internal short flash;
+    internal short min;
 
     internal bool icon;
     internal bool pic;
@@ -59,7 +59,7 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(flash), ref flash);
+            s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
         }
 
@@ -100,7 +100,7 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(step), step);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
-            s.Put(nameof(flash), flash);
+            s.Put(nameof(min), min);
             s.Put(nameof(max), max);
         }
 
@@ -140,7 +140,7 @@ public class Item : Entity, IKeyable<int>
 
     public decimal RealPrice => price - off;
 
-    public bool IsFlashing => flash > 0;
+    public bool IsFlashing => off > 0;
 
     public bool IsFromSupply => lotid > 0;
 

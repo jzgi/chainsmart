@@ -32,7 +32,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.parentid);
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN off > 0::money THEN 1 ELSE 0 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -56,7 +56,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             if (!org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("本店已打烊，订单将待明天处理", bell: true, css: "uk-alert-warning");
+                h.ALERT("本店已打烊，订单待明天发货", bell: true, css: "uk-alert-warning");
             }
 
             if (arr == null)
@@ -93,7 +93,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // ran mark
                 if (o.IsFlashing)
                 {
-                    h.SPAN_().T("秒杀 ").T(o.flash).SP().T(o.unit)._SPAN().SP();
+                    h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
                 }
                 h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents").ICON("question", css: "uk-icon-link")._A();
                 h._SPAN();
@@ -102,7 +102,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.avail},{o.flash});\">"); // pricing portion
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.avail},{o.min});\">"); // pricing portion
                 h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                 h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
                 h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
@@ -329,7 +329,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("自建", "自建其它来源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("编外", "新建编外非溯源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task def(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -352,14 +352,14 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("商品及促销");
+                h.FORM_().FIELDSUL_("商品信息");
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("网售限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("网售为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
+                h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.avail).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -380,15 +380,15 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("导入", "从供应采购导入产品", icon: "plus", status: 3), Tool(ButtonOpen)]
-    public async Task @ref(WebContext wc)
+    [Ui("供应", "导入来自供应链的溯源产品", icon: "plus", status: 3), Tool(ButtonOpen)]
+    public async Task std(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
         var o = new Item
         {
-            typ = Item.TYP_REF,
+            typ = Item.TYP_STD,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,
@@ -404,14 +404,14 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("基本信息");
+                h.FORM_().FIELDSUL_("产品信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("网售限订数", nameof(o.max), o.max, min: 1, max: o.avail).NUMBER("网售为整数", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("秒杀数", nameof(o.flash), o.flash, min: 0, max: o.avail)._LI();
+                h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.avail).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@ref))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(std))._FORM();
             });
         }
         else // POST

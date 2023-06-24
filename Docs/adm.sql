@@ -23,7 +23,7 @@ where reltablespace=(select oid from pg_tablespace where spcname='sup');
 
 ALTER TABLE purs SET TABLESPACE sup;
 ALTER TABLE puraps SET TABLESPACE sup;
-ALTER TABLE purldgs_typ SET TABLESPACE sup;
+ALTER TABLE purldgs_hub_lotid SET TABLESPACE sup;
 
 ALTER INDEX purs_pk SET TABLESPACE sup;
 ALTER INDEX purs_uidx SET TABLESPACE sup;

@@ -77,7 +77,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场业务分类汇总")]
+[Ui("市场业务日总表")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
     [Ui("市场业务", status: 1), Tool(Anchor)]
@@ -110,7 +110,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应业务分类汇总")]
+[Ui("供应业务日总表")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
     [Ui("供应业务", status: 1), Tool(Anchor)]
@@ -174,8 +174,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
-
-[Ui("销售分类汇总")]
+[Ui("销售业务日总")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
@@ -241,7 +240,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("销售情况汇总")]
+[Ui("中转库发货日总")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)

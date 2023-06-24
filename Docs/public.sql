@@ -561,9 +561,9 @@ create table public.purldgs_typ
     public.ldgs
 )tablespace sup ;
 
-comment on table public.purldgs_typ is 'purchase ledgers by type';
+comment on table public.purldgs_hub_lotid is 'purchase ledgers by type';
 
-alter table public.purldgs_typ
+alter table public.purldgs_hub_lotid
     owner to postgres;
 
 create table public.puraps

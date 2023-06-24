@@ -149,7 +149,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("现供", "新建现货产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("现供", "新建现供产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task newspot(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -162,15 +162,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             typ = Lot.TYP_NORM,
             status = Entity.STU_CREATED,
             orgid = org.id,
-            orgname = org.name,
             unit = "斤",
             capx = 2000,
             created = DateTime.Now,
             creator = prin.name,
             off = 0,
             unitx = 1,
-            flashx = 0,
-            maxx = 1,
+            minx = 1,
+            maxx = 20,
         };
 
         if (wc.IsGet)
@@ -179,20 +178,19 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("现货（货入品控库之后再销售）");
+                h.FORM_().FIELDSUL_("");
 
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.forhubs), o.forhubs, topOrgs, filter: v => v.EqCenter, capt: v => v.Cover, size: 2, required: false)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
 
@@ -228,7 +226,6 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             typ = Lot.TYP_ADVC,
             status = Entity.STU_CREATED,
             orgid = org.id,
-            orgname = org.name,
             started = DateTime.Today.AddDays(14),
             unit = "斤",
             capx = 2000,
@@ -236,8 +233,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             creator = prin.name,
             off = 0,
             unitx = 1,
-            flashx = 0,
-            maxx = 1,
+            minx = 1,
+            maxx = 20,
         };
 
         if (wc.IsGet)
@@ -252,15 +249,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.forhubs), o.forhubs, topOrgs, filter: v => v.EqCenter, capt: v => v.Cover, size: 2, required: false)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
 
@@ -285,16 +281,16 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("产品批次集中盘库")]
+[Ui("中转库盘存")]
 public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
 {
-    [Ui("统一盘库", status: 1), Tool(Anchor)]
+    [Ui("中转库盘存", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE hubid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>

@@ -35,6 +35,7 @@ public class Pur : Entity, IKeyable<int>
     internal int mktid; // market
     internal int hubid; // hub warehouse
     internal int supid; // supply
+    internal string supname; // supplier name
     internal int ctrid; // info center
 
     internal int lotid;
@@ -65,6 +66,8 @@ public class Pur : Entity, IKeyable<int>
         mktid = rtl.ItsMarketId;
         hubid = rtl.hubid;
         supid = sup.id;
+        supname = sup.name;
+
         ctrid = sup.ItsCenterId;
 
         lotid = lot.id;
@@ -90,6 +93,7 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(mktid), ref mktid);
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(supid), ref supid);
+            s.Get(nameof(supname), ref supname);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(unit), ref unit);
@@ -124,6 +128,7 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(mktid), mktid);
             s.Put(nameof(hubid), hubid);
             s.Put(nameof(supid), supid);
+            s.Put(nameof(supname), supname);
             s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(lotid), lotid);
             s.Put(nameof(unit), unit);

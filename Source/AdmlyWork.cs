@@ -23,11 +23,7 @@ public class AdmlyWork : WebWork
 
         // fin
 
-        CreateWork<AdmlyBuyGenWork>("buygen", header: "财务");
-
-        CreateWork<AdmlyPurGenWork>("purgen");
-
-        CreateWork<AdmlyBuyApWork>("buyap");
+        CreateWork<AdmlyBuyApWork>("buyap", header: "财务");
 
         CreateWork<AdmlyPurApWork>("purap");
 

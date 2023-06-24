@@ -22,9 +22,6 @@ public class Lot : Entity, IKeyable<int>
 
     internal int id;
     internal int orgid;
-    internal string orgname;
-
-    internal int[] forhubs; // (optional) targeted hubs or markets
     internal short catid;
     internal DateTime started;
     internal int fabid;
@@ -35,10 +32,8 @@ public class Lot : Entity, IKeyable<int>
     internal decimal off;
     internal int capx;
     internal int stock;
-    internal int avail;
     internal short minx;
     internal short maxx;
-    internal short flashx;
 
     // traceability
     internal int nstart;
@@ -54,6 +49,9 @@ public class Lot : Entity, IKeyable<int>
 
     internal StockOp[] ops;
 
+    // from the inventory table
+    [NonSerialized] internal int avail;
+
     public override void Read(ISource s, short msk = 0xff)
     {
         base.Read(s, msk);
@@ -66,15 +64,12 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(orgname), ref orgname);
             s.Get(nameof(stock), ref stock);
-            s.Get(nameof(avail), ref avail);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Get(nameof(fabid), ref fabid);
-            s.Get(nameof(forhubs), ref forhubs);
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(started), ref started);
             s.Get(nameof(unit), ref unit);
@@ -85,7 +80,6 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(capx), ref capx);
             s.Get(nameof(minx), ref minx);
             s.Get(nameof(maxx), ref maxx);
-            s.Get(nameof(flashx), ref flashx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -103,6 +97,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EXTRA) == MSK_EXTRA)
         {
             s.Get(nameof(ops), ref ops);
+            s.Get(nameof(avail), ref avail);
         }
     }
 
@@ -118,15 +113,12 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(orgname), orgname);
             s.Put(nameof(stock), stock);
-            s.Put(nameof(avail), avail);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Put(nameof(fabid), fabid);
-            s.Put(nameof(forhubs), forhubs);
             s.Put(nameof(catid), catid);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
@@ -137,7 +129,6 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(capx), capx);
             s.Put(nameof(minx), minx);
             s.Put(nameof(maxx), maxx);
-            s.Put(nameof(flashx), flashx);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
@@ -156,6 +147,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EXTRA) == MSK_EXTRA)
         {
             s.Put(nameof(ops), ops);
+            s.Put(nameof(avail), avail);
         }
     }
 
@@ -182,11 +174,6 @@ public class Lot : Entity, IKeyable<int>
 
     public decimal RealPrice => price - off;
 
-    public bool IsAvailableFor(int mktid)
-    {
-        return forhubs == null || forhubs.Contains(mktid);
-    }
-
     public int StockX => stock / unitx;
 
     public int AvailX => avail / unitx;
@@ -195,7 +182,7 @@ public class Lot : Entity, IKeyable<int>
 
     public bool IsSpot => typ == TYP_NORM;
 
-    public bool IsPre => typ == TYP_ADVC;
+    public bool IsAdvance => typ == TYP_ADVC;
 
     public override string ToString() => name;
 

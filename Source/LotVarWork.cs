@@ -31,7 +31,7 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("产品名", o.name).FIELD("分类", o.catid)._LI();
         h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-        if (o.IsPre)
+        if (o.IsAdvance)
         {
             h.FIELD("输运起始日", o.started);
         }
@@ -43,8 +43,7 @@ public class LotVarWork : WebWork
             h.LI_().FIELD2("整件内含", o.unitx, o.unit)._LI();
             h.LI_().FIELD("库存整件", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
 
-            h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
-            h.LI_().FIELD("秒杀整件数", o.flashx)._LI();
+            h.LI_().FIELD("零售单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
             h.LI_().FIELD("起订整件数", o.minx).FIELD("限订整件数", o.maxx)._LI();
         }
 
@@ -206,15 +205,10 @@ public class LotVarWork : WebWork
             if (o.typ == 2) h.FIELD("输运起始日", o.started);
             h._LI();
 
-            h.LI_();
-            if (o.forhubs == null) h.FIELD("限域投放", "不限");
-            else h.FIELD("限域投放", o.forhubs, topOrgs, capt: v => v.Cover);
-            h._LI();
-
             h.LI_().FIELD("零售单位", o.unit).FIELD2("整件含有", o.unitx, o.unit)._LI();
             h.LI_().FIELD("批次整件数", o.capx)._LI();
-            h.LI_().FIELD("单价", o.price, true).FIELD("直降", o.off, true)._LI();
-            h.LI_().FIELD("限订整件数", o.maxx).FIELD("秒杀整件数", o.flashx)._LI();
+            h.LI_().FIELD("单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
+            h.LI_().FIELD("起订整件数", o.minx).FIELD("限订整件数", o.maxx)._LI();
             h.LI_().FIELD("库存整件数", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
@@ -361,8 +355,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.forhubs), o.forhubs, topOrgs, filter: v => v.EqCenter, capt: v => v.Cover, size: 2, required: false)._LI();
-                if (o.IsPre)
+                if (o.IsAdvance)
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 }
@@ -371,8 +364,8 @@ public class SuplyLotVarWork : LotVarWork
 
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("秒杀整件数", nameof(o.flashx), o.flashx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });

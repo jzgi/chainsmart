@@ -23,6 +23,8 @@ public class Gen : IData, IKeyable<DateTime>
     // order date till (since last generation)
     internal DateTime till;
 
+    internal DateTime last;
+
     internal DateTime started;
 
     internal DateTime ended;
@@ -34,6 +36,7 @@ public class Gen : IData, IKeyable<DateTime>
     public void Read(ISource s, short msk = 0xff)
     {
         s.Get(nameof(till), ref till);
+        s.Get(nameof(last), ref last);
         s.Get(nameof(started), ref started);
         s.Get(nameof(ended), ref ended);
         s.Get(nameof(opr), ref opr);
@@ -43,6 +46,7 @@ public class Gen : IData, IKeyable<DateTime>
     public void Write(ISink s, short msk = 0xff)
     {
         s.Put(nameof(till), till);
+        s.Put(nameof(last), last);
         s.Put(nameof(started), started);
         s.Put(nameof(ended), ended);
         s.Put(nameof(opr), opr);

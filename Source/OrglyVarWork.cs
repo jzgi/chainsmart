@@ -205,7 +205,7 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurnorm", state: Pur.TYP_NORM, ui: new("销售订单-现货"));
+        CreateWork<SuplyPurWork>("spurnorm", state: Pur.TYP_NORM, ui: new("销售订单-现供"));
 
         CreateWork<SuplyPurWork>("spuradvc", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
 
@@ -219,11 +219,11 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<CtrlyEvalWork>("ceval");
 
-        CreateWork<CtrlyPurWork>("cpur");
-
         CreateWork<CtrlyLotWork>("clot");
 
-        CreateWork<CtrlyPurLdgWork>("cpuragg");
+        CreateWork<CtrlyPurWork>("cpur");
+
+        CreateWork<CtrlyPurLdgWork>("cpurldg");
 
         CreateWork<CtrlyTwinWork>("ctwin");
     }
