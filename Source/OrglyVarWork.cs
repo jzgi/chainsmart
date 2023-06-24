@@ -28,7 +28,7 @@ public abstract class OrglyVarWork : WebWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
-            if (org.IsExtended) h.H4(org.Ext);
+            if (org.IsExtended) h.H4(org.Cover);
             h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
             h._HEADER();
 
@@ -123,7 +123,7 @@ public class RtllyVarWork : OrglyVarWork
         wc.GivePane(200, h =>
         {
             h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
-            h.QRCODE(MainApp.WwwUrl + "/" + org.extid + "/" + org.id + "/", css: "uk-width-small");
+            h.QRCODE(MainApp.WwwUrl + "/" + org.parentid + "/" + org.id + "/", css: "uk-width-small");
             h.SPAN(org.name);
             h._NAV();
         }, false, 720);

@@ -22,7 +22,7 @@ public class PublyVarWork : WebWork
         wc.GivePage(200, h =>
         {
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H2(org.Ext, css: "uk-card-header");
+            h.H2(org.Cover, css: "uk-card-header");
             h.SECTION_("uk-card-body");
             if (org.scene)
             {
@@ -74,7 +74,7 @@ public class PublyVarWork : WebWork
             h._ARTICLE();
 
             h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
-        }, true, 720, org.Ext);
+        }, true, 720, org.Cover);
     }
 
     /// <summary>
@@ -136,6 +136,6 @@ public class PublyVarWork : WebWork
 
                 h._A();
             });
-        }, true, 720, org.Ext);
+        }, true, 720, org.Cover);
     }
 }

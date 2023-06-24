@@ -236,7 +236,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             typ = (short)payTyp,
             rtlid = rtl.id,
             name = rtl.name,
-            mktid = rtl.MarketId,
+            mktid = rtl.ItsMarketId,
             created = now,
             creator = prin.name,
             items = lst.ToArray(),

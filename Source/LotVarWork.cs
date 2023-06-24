@@ -207,8 +207,8 @@ public class LotVarWork : WebWork
             h._LI();
 
             h.LI_();
-            if (o.targs == null) h.FIELD("限域投放", "不限");
-            else h.FIELD("限域投放", o.targs, topOrgs, capt: v => v.Ext);
+            if (o.forhubs == null) h.FIELD("限域投放", "不限");
+            else h.FIELD("限域投放", o.forhubs, topOrgs, capt: v => v.Cover);
             h._LI();
 
             h.LI_().FIELD("零售单位", o.unit).FIELD2("整件含有", o.unitx, o.unit)._LI();
@@ -361,7 +361,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().SELECT("限域投放", nameof(o.targs), o.targs, topOrgs, filter: v => v.EqCenter, capt: v => v.Ext, size: 2, required: false)._LI();
+                h.LI_().SELECT("限域投放", nameof(o.forhubs), o.forhubs, topOrgs, filter: v => v.EqCenter, capt: v => v.Cover, size: 2, required: false)._LI();
                 if (o.IsPre)
                 {
                     h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
@@ -704,7 +704,9 @@ public class RtllyPurLotVarWork : LotVarWork
 
             var qty = qtyx * lot.unitx;
 
-            var m = new Pur(lot, rtl)
+            var sup = GrabTwin<int, Org>(lot.orgid);
+
+            var m = new Pur(lot, rtl, sup)
             {
                 created = DateTime.Now,
                 creator = prin.name,

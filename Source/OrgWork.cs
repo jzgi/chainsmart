@@ -41,7 +41,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
-            h.Q2(o.Ext, o.tip, css: "uk-width-expand");
+            h.Q2(o.Cover, o.tip, css: "uk-width-expand");
             h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -113,13 +113,13 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().TEXT("范围延展名", nameof(o.ext), o.ext, max: 12, required: true)._LI();
+                h.LI_().TEXT("范围延展名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联中库", nameof(o.ctrid), o.ctrid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中库", nameof(o.hubid), o.hubid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
                 }
 
                 h._FIELDSUL()._FORM();
@@ -263,8 +263,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             typ = (short)typ,
             created = DateTime.Now,
             creator = prin.name,
-            extid = org.id,
-            ctrid = org.ctrid,
+            parentid = org.id,
+            hubid = org.hubid,
             status = Entity.STU_CREATED
         };
 
@@ -423,7 +423,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var o = new Org
         {
             typ = Org.TYP_SUP,
-            extid = zon.id,
+            parentid = zon.id,
             created = DateTime.Now,
             creator = prin.name,
         };

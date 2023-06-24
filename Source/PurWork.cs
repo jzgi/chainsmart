@@ -46,7 +46,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             }
 
             h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q_("uk-width-expand").T(o.supname)._Q();
+            h.Q_("uk-width-expand").T(o.ctrid)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -65,7 +65,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            var cat_ctr_id = Comp(0, org.ctrid);
+            var cat_ctr_id = Comp(0, org.hubid);
             h.TOOLBAR(subscript: cat_ctr_id);
             if (arr == null)
             {
@@ -225,8 +225,10 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
                 h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
             }
 
+            var rtl = GrabTwin<int, Org>(o.rtlid);
+
             h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q_("uk-width-expand").T(o.rtlname)._Q();
+            h.Q_("uk-width-expand").T(rtl.name)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 

@@ -18,7 +18,7 @@ public struct Ldg : IData
 
     internal string name;
 
-    internal short coorgid;
+    internal short prtid;
 
     internal int trans;
 
@@ -32,7 +32,7 @@ public struct Ldg : IData
         s.Get(nameof(dt), ref dt);
         s.Get(nameof(acct), ref acct);
         s.Get(nameof(name), ref name);
-        s.Get(nameof(coorgid), ref coorgid);
+        s.Get(nameof(prtid), ref prtid);
         s.Get(nameof(trans), ref trans);
         s.Get(nameof(qty), ref qty);
         s.Get(nameof(amt), ref amt);
@@ -44,7 +44,7 @@ public struct Ldg : IData
         s.Put(nameof(dt), dt);
         s.Put(nameof(acct), acct);
         s.Put(nameof(name), name);
-        s.Put(nameof(coorgid), coorgid);
+        s.Put(nameof(prtid), prtid);
         s.Put(nameof(trans), trans);
         s.Put(nameof(qty), qty);
         s.Put(nameof(amt), amt);

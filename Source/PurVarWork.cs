@@ -18,12 +18,14 @@ public abstract class PurVarWork : WebWork
         dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE id = @1");
         var o = await dc.QueryTopAsync<Pur>(p => p.Set(id));
 
+        var rtl = GrabTwin<int, Org>(o.rtlid);
+
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("单号", o.id, digits: 10)._LI();
-            h.LI_().LABEL("买方").ADIALOG_(MainApp.WwwUrl + "/org/", o.rtlid, "/", ToolAttribute.MOD_SHOW, false).T(o.rtlname)._A()._LI();
-            h.LI_().LABEL("卖方").ADIALOG_(MainApp.WwwUrl + "/org/", o.supid, "/", ToolAttribute.MOD_SHOW, false).T(o.supname)._A()._LI();
+            h.LI_().LABEL("买方").ADIALOG_(MainApp.WwwUrl + "/org/", o.rtlid, "/", ToolAttribute.MOD_SHOW, false).T(rtl.name)._A()._LI();
+            h.LI_().LABEL("卖方").ADIALOG_(MainApp.WwwUrl + "/org/", o.supid, "/", ToolAttribute.MOD_SHOW, false).T(o.ctrid)._A()._LI();
             h.LI_().FIELD("产品名", o.name)._LI();
             h.LI_().FIELD("简介", o.tip)._LI();
             h.LI_().FIELD("基准单位", o.unit).FIELD("每件含量", o.unitx)._LI();

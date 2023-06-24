@@ -29,7 +29,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
-        var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.extid);
+        var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.parentid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN flash > 0 THEN 0 ELSE 1 END, oked DESC");
@@ -50,13 +50,13 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             if (!org.IsOked)
             {
-                h.ALERT("&#128276; 本店已下线", sticky: true, css: "uk-alert-danger");
+                h.ALERT("本店已下线", bell: true, css: "uk-alert-danger");
                 return;
             }
-            
+
             if (!org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("&#128276; 本店已打烊，订单将待明天处理", sticky: true, css: "uk-alert-warning");
+                h.ALERT("本店已打烊，订单将待明天处理", bell: true, css: "uk-alert-warning");
             }
 
             if (arr == null)

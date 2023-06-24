@@ -24,7 +24,7 @@ public class Lot : Entity, IKeyable<int>
     internal int orgid;
     internal string orgname;
 
-    internal int[] targs; // (optional) targeted centers or markets
+    internal int[] forhubs; // (optional) targeted hubs or markets
     internal short catid;
     internal DateTime started;
     internal int fabid;
@@ -74,7 +74,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Get(nameof(fabid), ref fabid);
-            s.Get(nameof(targs), ref targs);
+            s.Get(nameof(forhubs), ref forhubs);
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(started), ref started);
             s.Get(nameof(unit), ref unit);
@@ -126,7 +126,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Put(nameof(fabid), fabid);
-            s.Put(nameof(targs), targs);
+            s.Put(nameof(forhubs), forhubs);
             s.Put(nameof(catid), catid);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
@@ -184,7 +184,7 @@ public class Lot : Entity, IKeyable<int>
 
     public bool IsAvailableFor(int mktid)
     {
-        return targs == null || targs.Contains(mktid);
+        return forhubs == null || forhubs.Contains(mktid);
     }
 
     public int StockX => stock / unitx;

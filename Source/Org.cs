@@ -49,13 +49,13 @@ public class Org : Entity, ITwin<int>
     // id
     internal int id;
 
-    // extension id, if rtl or sup
-    internal int extid;
+    // parent id, if rtl or sup
+    internal int parentid;
 
-    // center id, only if market or shop
-    internal int ctrid;
+    // connected hub warehouse id, if market or retail 
+    internal int hubid;
 
-    internal string ext; // extended name
+    internal string cover; // coverage
     internal string legal; // legal name
     internal short regid;
     internal string addr;
@@ -92,13 +92,13 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(extid), ref extid);
-                s.Get(nameof(ctrid), ref ctrid);
+                s.Get(nameof(parentid), ref parentid);
+                s.Get(nameof(hubid), ref hubid);
             }
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(ext), ref ext);
+                s.Get(nameof(cover), ref cover);
                 s.Get(nameof(legal), ref legal);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
@@ -139,16 +139,16 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                if (extid > 0) s.Put(nameof(extid), extid);
-                else s.PutNull(nameof(extid));
+                if (parentid > 0) s.Put(nameof(parentid), parentid);
+                else s.PutNull(nameof(parentid));
 
-                if (ctrid > 0) s.Put(nameof(ctrid), ctrid);
-                else s.PutNull(nameof(ctrid));
+                if (hubid > 0) s.Put(nameof(hubid), hubid);
+                else s.PutNull(nameof(hubid));
             }
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(ext), ext);
+                s.Put(nameof(cover), cover);
                 s.Put(nameof(legal), legal);
                 if (regid > 0) s.Put(nameof(regid), regid);
                 else s.PutNull(nameof(regid));
@@ -201,7 +201,9 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int MarketId => EqMarket ? id : IsRetail ? extid : 0;
+    public int ItsMarketId => EqMarket ? id : IsRetail ? parentid : 0;
+
+    public int ItsCenterId => EqCenter ? id : IsSupply ? parentid : 0;
 
     public bool IsExtended => (typ & TYP_EXT) == TYP_EXT;
 
@@ -221,7 +223,7 @@ public class Org : Entity, ITwin<int>
 
     public bool HasXy => EqMarket || EqSupply || EqCenter;
 
-    public bool IsTopOrg => extid == 0;
+    public bool IsTopOrg => parentid == 0;
 
     public string Name => name;
 
@@ -229,9 +231,9 @@ public class Org : Entity, ITwin<int>
 
     public string Title => title ??= EqMarket ? name : name + '（' + addr + '）';
 
-    public string Ext => ext;
+    public string Cover => cover;
 
-    public int SetKey => extid;
+    public int SetKey => parentid;
 
     public bool IsOpen(TimeSpan now)
     {

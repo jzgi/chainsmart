@@ -116,25 +116,25 @@ alter table public.users
     owner to postgres;
 
 create index users_admly_idx
-    on public.users using ??? (admly)
+    on public.users (admly)
     where (admly > 0);
 
 create unique index users_im_idx
-    on public.users using ??? (im);
+    on public.users (im);
 
 create unique index users_tel_idx
-    on public.users using ??? (tel);
+    on public.users (tel);
 
 create index users_rtlid_idx
-    on public.users using ??? (rtlid)
+    on public.users (rtlid)
     where (rtlid > 0);
 
 create index users_supid_idx
-    on public.users using ??? (supid)
+    on public.users (supid)
     where (supid > 0);
 
 create index users_vip_idx
-    on public.users using ??? (vip);
+    on public.users using gin (vip);
 
 create table public.evals
 (
@@ -229,10 +229,10 @@ create table public.purs
     constraint typ_chk
         check ((typ >= 1) AND (typ <= 2))
 )
-    tablespace sup inherits
+    inherits
 (
     public.entities
-);
+)tablespace sup ;
 
 comment on table public.purs is 'supply purchases';
 
@@ -242,31 +242,30 @@ alter table public.purs
     owner to postgres;
 
 create unique index purs_uidx
-    on public.purs using btree (rtlid, status)
-    where (status = '-1'::integer)
-    tablespace sup;
+    on public.purs (rtlid, status)
+    where (status = '-1'::integer) tablespace sup;
 
 create index purs_ctridstatus_idx
-    on public.purs using btree (ctrid, status)
+    on public.purs (hubid, status)
     tablespace sup;
 
 create index purs_rtlidstatus_idx
-    on public.purs using ??? (rtlid, status)
+    on public.purs (rtlid, status)
     tablespace sup;
 
 create index purs_supidstatus_idx
-    on public.purs using ??? (supid, status)
+    on public.purs (supid, status)
     tablespace sup;
 
 create index purs_mktidstatus_idx
-    on public.purs using ??? (mktid, status)
+    on public.purs (mktid, status)
     tablespace sup;
 
 create index lots_srcidstatus_idx
-    on public.lots using ??? (orgid, status);
+    on public.lots (orgid, status);
 
 create index lots_catid_idx
-    on public.lots using ??? (catid);
+    on public.lots (catid);
 
 create table public.fabs
 (
@@ -296,7 +295,7 @@ alter table public.fabs
     owner to postgres;
 
 create index fabs_orgidstatus_idx
-    on public.fabs using ??? (orgid, status);
+    on public.fabs (orgid, status);
 
 create table public.buys
 (
@@ -336,21 +335,20 @@ alter table public.buys
     owner to postgres;
 
 create index buys_uidstatus_idx
-    on public.buys using ??? (uid, status)
+    on public.buys (uid, status)
     tablespace rtl;
 
 create index buys_rtlidstatus_idx
-    on public.buys using ??? (rtlid, status)
+    on public.buys (rtlid, status)
     tablespace rtl;
 
 create index buys_mktidstatus_idx
-    on public.buys using ??? (mktid, status)
+    on public.buys (mktid, status)
     tablespace rtl;
 
 create unique index buys_uidx
-    on public.buys using ??? (uid, typ, status)
-    where ((typ = 1) AND (status = '-1'::smallint))
-    tablespace rtl;
+    on public.buys (uid, typ, status)
+    where ((typ = 1) AND (status = '-1'::smallint)) tablespace rtl;
 
 create trigger buys_trig
     after insert or update
@@ -396,7 +394,7 @@ alter table public.items
     owner to postgres;
 
 create index items_catid_idx
-    on public.items using ??? (catid);
+    on public.items (catid);
 
 create table public.buygens
 (
@@ -513,10 +511,10 @@ create table public.buyldgs_itemid
     constraint buyldgs_itemid_pk
         primary key (orgid, dt, acct)
 )
-    inherits
+   inherits
 (
     public.ldgs
-)tablespace rtl ;
+) tablespace rtl ;
 
 comment on table public.buyldgs_itemid is 'buy ledgers by itemid';
 
@@ -528,10 +526,10 @@ create table public.buyldgs_typ
     constraint buyldgs_typ_pk
         primary key (orgid, dt, acct)
 )
-    inherits
+   inherits
 (
     public.ldgs
-) tablespace rtl;
+) tablespace rtl ;
 
 comment on table public.buyldgs_typ is 'buy ledgers by type';
 
