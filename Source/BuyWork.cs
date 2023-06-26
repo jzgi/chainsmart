@@ -200,7 +200,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("销售订单统一发货")]
+[Ui("网售统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
     [Ui("待发货", status: 1), Tool(Anchor)]
@@ -338,5 +338,4 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             }, false, 30);
         }
     }
-
 }

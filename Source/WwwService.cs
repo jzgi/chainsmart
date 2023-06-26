@@ -51,18 +51,18 @@ public class WwwService : MainService
                         h._ARTICLE();
                     }
 
-                    h.ARTICLE_("uk-card uk-card-primary");
+                    h.ARTICLE_("uk-card uk-card-default");
                     h.H3(regs[o.regid]?.name, "uk-card-header");
                     h.UL_("uk-card-body uk-list-divider");
                 }
 
                 h.LI_("uk-flex");
                 h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
-                h.SPAN(o.Ext);
+                h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
                 h._A();
-                h.A_POI(o.x, o.y, o.Ext, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
+                h.A_POI(o.x, o.y, o.Cover, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
                 h._LI();
 
                 exist = true;

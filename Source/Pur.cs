@@ -12,14 +12,12 @@ public class Pur : Entity, IKeyable<int>
 
     public const short
         TYP_NORM = 1,
-        TYP_ADVC = 2,
-        TYP_CUST = 4;
+        TYP_ADVC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_NORM, "现供" },
         { TYP_ADVC, "助农" },
-        { TYP_CUST, "定制" },
     };
 
     public new static readonly Map<short, string> Statuses = new()
@@ -33,12 +31,12 @@ public class Pur : Entity, IKeyable<int>
 
     internal int id;
 
-    internal int rtlid; // shop
-    internal string rtlname;
+    internal int rtlid; // retail
     internal int mktid; // market
-    internal int ctrid; // center
-    internal int supid; // source
-    internal string supname;
+    internal int hubid; // hub warehouse
+    internal int supid; // supply
+    internal string supname; // supplier name
+    internal int ctrid; // info center
 
     internal int lotid;
 
@@ -58,18 +56,19 @@ public class Pur : Entity, IKeyable<int>
     {
     }
 
-    public Pur(Lot lot, Org rtl)
+    public Pur(Lot lot, Org rtl, Org sup)
     {
         typ = lot.typ;
         name = lot.name;
         tip = lot.tip;
 
         rtlid = rtl.id;
-        rtlname = rtl.Name;
-        mktid = rtl.MarketId;
-        supid = lot.orgid;
-        supname = lot.orgname;
-        ctrid = rtl.ctrid;
+        mktid = rtl.ItsMarketId;
+        hubid = rtl.hubid;
+        supid = sup.id;
+        supname = sup.name;
+
+        ctrid = sup.ItsCenterId;
 
         lotid = lot.id;
         unit = lot.unit;
@@ -91,11 +90,11 @@ public class Pur : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(rtlid), ref rtlid);
-            s.Get(nameof(rtlname), ref rtlname);
             s.Get(nameof(mktid), ref mktid);
-            s.Get(nameof(ctrid), ref ctrid);
+            s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(supid), ref supid);
             s.Get(nameof(supname), ref supname);
+            s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
@@ -126,11 +125,11 @@ public class Pur : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(rtlid), rtlid);
-            s.Put(nameof(rtlname), rtlname);
             s.Put(nameof(mktid), mktid);
-            s.Put(nameof(ctrid), ctrid);
+            s.Put(nameof(hubid), hubid);
             s.Put(nameof(supid), supid);
             s.Put(nameof(supname), supname);
+            s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(lotid), lotid);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitw), unitw);
@@ -177,7 +176,7 @@ public class Pur : Entity, IKeyable<int>
 
     public decimal Total => RealPrice * qty;
 
-    public override string ToString() => rtlname + "采购" + supname + "产品" + name;
+    public override string ToString() => name;
 
     public static string GetOutTradeNo(int id, decimal topay) => (id + "-" + topay).Replace('.', '-');
 }

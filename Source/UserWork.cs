@@ -205,8 +205,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 [Ui("人员权限")]
 public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
 {
-    bool IsShop => (bool)State;
-
+    bool retail => (bool)State;
 
     [Ui("人员权限"), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -214,7 +213,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(IsShop ? "rtlid" : "supid").T(" = @1 AND ").T(IsShop ? "rtlly" : "suply").T(" > 0");
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(retail ? "rtlid" : "supid").T(" = @1 AND ").T(retail ? "rtlly" : "suply").T(" > 0");
         var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -227,7 +226,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                 return;
             }
 
-            MainGrid(h, arr, IsShop);
+            MainGrid(h, arr, retail);
         }, false, 6);
     }
 

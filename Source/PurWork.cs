@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[Ui("采购订单")]
+[Ui("采购")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
@@ -46,7 +46,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             }
 
             h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q_("uk-width-expand").T(o.supname)._Q();
+            h.Q_("uk-width-expand").T(o.ctrid)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -65,7 +65,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            var cat_ctr_id = Comp(0, org.ctrid);
+            var cat_ctr_id = Comp(0, org.hubid);
             h.TOOLBAR(subscript: cat_ctr_id);
             if (arr == null)
             {
@@ -225,8 +225,10 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
                 h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
             }
 
+            var rtl = GrabTwin<int, Org>(o.rtlid);
+
             h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q_("uk-width-expand").T(o.rtlname)._Q();
+            h.Q_("uk-width-expand").T(rtl.name)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -329,7 +331,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购订单统一收货")]
+[Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
@@ -425,10 +427,10 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("销售订单集中发货")]
+[Ui("中转库发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("按批次", status: 2), Tool(Anchor)]
+    [Ui("按产品批次", status: 2), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
@@ -468,13 +470,13 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", status: 4), Tool(Anchor)]
-    public async Task bylotpast(WebContext wc)
+    [Ui("↳", "以往按产品批次", status: 4), Tool(Anchor)]
+    public async Task lotpast(WebContext wc)
     {
     }
 
     [Ui("按市场", status: 8), Tool(Anchor)]
-    public async Task bymrt(WebContext wc)
+    public async Task mkt(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();
         var topOrgs = Grab<int, Org>();
@@ -513,34 +515,13 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "history", status: 16), Tool(Anchor)]
-    public async Task bymrtpast(WebContext wc)
+    [Ui("↳", "以往按市场", status: 16), Tool(Anchor)]
+    public async Task mktpast(WebContext wc)
     {
     }
 
-    [Ui("发出", status: 255), Tool(ButtonOpen)]
-    public async Task rev(WebContext wc)
-    {
-        var prin = (User)wc.Principal;
-        short orgid = wc[-1];
-        short typ = 0;
-        decimal amt = 0;
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("指定统计区间");
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // POST
-        {
-            wc.GivePane(200); // close dialog
-        }
-    }
-
-    [Ui("取消发出", status: 2), Tool(ButtonOpen)]
-    public async Task unrcv(WebContext wc)
+    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
+    public async Task send(WebContext wc)
     {
         var prin = (User)wc.Principal;
         short orgid = wc[-1];
