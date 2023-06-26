@@ -27,9 +27,8 @@ public class Item : Entity, IKeyable<int>
     internal decimal off;
     internal short step;
     internal short max;
-    internal short stock;
-    internal short avail;
     internal short min;
+    internal short stock;
 
     internal bool icon;
     internal bool pic;
@@ -66,7 +65,6 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(stock), ref stock);
-            s.Get(nameof(avail), ref avail);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
         }
@@ -107,7 +105,6 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(stock), stock);
-            s.Put(nameof(avail), avail);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
         }

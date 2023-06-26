@@ -154,7 +154,6 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var topOrgs = GrabTwinSet<int, Org>(0);
         var cats = Grab<short, Cat>();
 
         var o = new Lot
@@ -190,7 +189,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.StockX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.StockX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
 
@@ -256,7 +255,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.StockX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.StockX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
 
@@ -268,7 +267,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             // populate 
             await wc.ReadObjectAsync(msk, instance: o);
-            o.avail = o.capx; // initial available
+            o.stock = o.capx; // initial inventory
 
             // db insert
             using var dc = NewDbContext();

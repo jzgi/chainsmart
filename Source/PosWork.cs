@@ -62,13 +62,13 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             {
                 var o = arr[i];
 
-                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitw).T("\" price=\"").T(o.price).T("\" avail=\"").T(o.avail).T("\">");
+                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitw).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
                 h.T(o.name);
                 if (o.step > 1)
                 {
                     h.T(o.step).T(o.unit);
                 }
-                h.T('（').T(o.avail).SP().T(o.unit).T('）');
+                h.T('（').T(o.stock).SP().T(o.unit).T('）');
 
                 h.T("</option>");
             }

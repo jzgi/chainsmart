@@ -48,9 +48,10 @@ public class MgtService : MainService
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
             // verify that the ammount is correct
-            if (await dc.QueryTopAsync("SELECT supid, lotid, qty, topay FROM purs WHERE id = @1 AND status = -1", p => p.Set(purid)))
+            if (await dc.QueryTopAsync("SELECT supid, hubid, lotid, qty, topay FROM purs WHERE id = @1 AND status = -1", p => p.Set(purid)))
             {
                 dc.Let(out int supid);
+                dc.Let(out int hubid);
                 dc.Let(out int lotid);
                 dc.Let(out short qty);
                 dc.Let(out decimal topay);
@@ -58,8 +59,8 @@ public class MgtService : MainService
                 if (topay == cash) // update data
                 {
                     // the order and the lot updates
-                    dc.Sql("UPDATE purs SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lots SET avail = avail - @4 WHERE id = @5");
-                    await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(purid).Set(qty).Set(lotid));
+                    dc.Sql("UPDATE purs SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lotstocks SET stock = stock - @4 WHERE lotid = @5 AND hubid = @6");
+                    await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(purid).Set(qty).Set(lotid).Set(hubid));
 
                     // put a notice to the accepter
                     var sup = GrabTwin<int, Org>(supid);

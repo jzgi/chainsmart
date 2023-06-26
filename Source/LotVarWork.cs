@@ -39,12 +39,10 @@ public class LotVarWork : WebWork
 
         if (pricing)
         {
-            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
-            h.LI_().FIELD2("整件内含", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("库存整件", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
-
-            h.LI_().FIELD("零售单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
-            h.LI_().FIELD("起订整件数", o.minx).FIELD("限订整件数", o.maxx)._LI();
+            h.LI_().FIELD("零计单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
+            h.LI_().FIELD2("每件含", o.unitx, o.unit)._LI();
+            h.LI_().FIELD("单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
+            h.LI_().FIELD("起订件数", o.minx).FIELD("限订件数", o.maxx)._LI();
         }
 
         h._UL();
@@ -65,7 +63,7 @@ public class LotVarWork : WebWork
         if (tracenum > 0)
         {
             h.LI_("uk-background-secondary").FIELD("本溯源码", $"{tracenum:0000 0000}")._LI();
-            if (o.TryGetStockOp(tracenum, out var v))
+            if (o.TryGetInvOp(tracenum, out var v))
             {
                 h.LI_("uk-background-secondary").FIELD("中转库操作", v.dt)._LI();
             }
@@ -190,7 +188,6 @@ public class LotVarWork : WebWork
     public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
-        var topOrgs = Grab<int, Org>();
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
@@ -205,11 +202,10 @@ public class LotVarWork : WebWork
             if (o.typ == 2) h.FIELD("输运起始日", o.started);
             h._LI();
 
-            h.LI_().FIELD("零售单位", o.unit).FIELD2("整件含有", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("批次整件数", o.capx)._LI();
+            h.LI_().FIELD("零计单位", o.unit).FIELD2("每件含单位", o.unitx, o.unit)._LI();
+            h.LI_().FIELD("批次件数", o.capx)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
-            h.LI_().FIELD("起订整件数", o.minx).FIELD("限订整件数", o.maxx)._LI();
-            h.LI_().FIELD("库存整件数", o.StockX).FIELD("剩余整件数", o.AvailX)._LI();
+            h.LI_().FIELD("起订件数", o.minx).FIELD("限订件数", o.maxx)._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
             h._UL();
@@ -217,9 +213,9 @@ public class LotVarWork : WebWork
             h.TABLE(o.ops, o =>
                 {
                     h.TD_().T(o.dt, time: 1)._TD();
-                    h.TD(o.tip);
+                    h.TD(o.typ);
                     h.TD(o.qty, right: true);
-                    h.TD(o.avail, right: true);
+                    h.TD(o.stock, right: true);
                     h.TD(o.by);
                 },
                 thead: () => h.TH("操作时间").TH("摘要").TH("数量").TH("余量").TH("操作"),
@@ -335,7 +331,6 @@ public class SuplyLotVarWork : LotVarWork
     {
         int lotid = wc[0];
         var org = wc[-2].As<Org>();
-        var topOrgs = GrabTwinSet<int, Org>(0);
         var cats = Grab<short, Cat>();
         var prin = (User)wc.Principal;
 
@@ -365,7 +360,7 @@ public class SuplyLotVarWork : LotVarWork
                 h._FIELDSUL().FIELDSUL_("销售及优惠");
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 1, max: o.AvailX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.AvailX)._LI();
+                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 1, max: o.StockX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.StockX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -540,7 +535,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
-    [Ui("库存", icon: "database", status: 7), Tool(ButtonShow)]
+    [Ui("数量", icon: "database", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int id = wc[0];
@@ -548,16 +543,31 @@ public class SuplyLotVarWork : LotVarWork
         var prin = (User)wc.Principal;
 
         short optyp = 0;
-        string tip = null;
+        int hub = 0;
         int qtyx = 1;
 
         if (wc.IsGet)
         {
+            var arr = GrabTwinSet<int, Org>(0, filter: x => x.EqCenter, sorter: (x, y) => y.id - x.id);
+
+            using var dc = NewDbContext();
+
+            await dc.ExecuteAsync("SELECT hubid, stock::varchar FROM lotstocks WHERE lotid = @1");
+            var map = dc.ToIntMap();
+
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("库存操作");
+                h.FORM_().FIELDSUL_("中转库");
+
+                for (var i = 0; i < arr.Length; i++)
+                {
+                    var o = arr[i];
+                    var stock = map?[o.id];
+                    h.RADIO(nameof(hub), o.id, label: o.name, required: i == 0, tip: stock);
+                }
+
+                h._FIELDSUL().FIELDSUL_("数量操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
-                h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
                 h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
@@ -566,21 +576,24 @@ public class SuplyLotVarWork : LotVarWork
         {
             var f = await wc.ReadAsync<Form>();
             optyp = f[nameof(optyp)];
-            tip = f[nameof(tip)];
             qtyx = f[nameof(qtyx)];
+            hub = f[nameof(hub)];
 
-            if (optyp == StockOp.TYP_SUBSTRACT)
+            if (!StockOp.IsAddOp(optyp))
             {
                 qtyx = -qtyx;
             }
-            using var dc = NewDbContext();
+            using var dc = NewDbContext(IsolationLevel.ReadUncommitted);
 
-            var unitx = (short)(await dc.ScalarAsync("SELECT unitx FROM lots_vw WHERE id = @1", p => p.Set(id)));
-
+            await dc.QueryTopAsync("SELECT unitx FROM lots_vw WHERE id = @1", p => p.Set(id));
+            dc.Let(out int unitx);
             int qty = qtyx * unitx;
 
-            dc.Sql("UPDATE lots SET ops = ops || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + (CASE WHEN typ = 1 THEN @2 ELSE 0 END), stock = stock + @2 WHERE id = @5 AND orgid = @6");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(tip).Set(prin.name).Set(id).Set(org.id));
+            await dc.QueryTopAsync("INSERT INTO lotstocks VALUES (@1, @2, @3) ON CONFLICT (lotid, hubid) DO UPDATE SET stock = (lotstocks.stock + @3) RETURNING stock", p => p.Set(id).Set(hub).Set(qty));
+            dc.Let(out int stock);
+
+            dc.Sql("UPDATE lots SET ops = ops || ROW(@1, @2, @3, @4, @5, @6)::StockOp WHERE id = @7 AND orgid = @8");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(stock).Set(optyp).Set(prin.name).Set(hub).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }
@@ -663,7 +676,7 @@ public class RtllyPurLotVarWork : LotVarWork
             h.HIDDEN(nameof(realprice), realprice);
 
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-            for (int i = 1; i <= Math.Min(o.maxx, o.AvailX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+            for (int i = 1; i <= Math.Min(o.maxx, o.StockX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
             {
                 h.OPTION_(i).T(i)._OPTION();
             }

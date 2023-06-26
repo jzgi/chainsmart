@@ -150,7 +150,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     internal static int Comp(short catid, int ctrid) => (catid << 24) | ctrid;
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("创建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("新建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cat_ctr_id) // NOTE so that it is publicly cacheable
     {
         var cats = Grab<short, Cat>();
@@ -164,7 +164,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE status = 4 AND catid = @1 AND (targs IS NULL OR targs @> ARRAY[@2])");
+        dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @2 AND o.status = 4 AND catid = @1");
         var arr = await dc.QueryAsync<Lot>(p => p.Set(catid).Set(ctrid));
 
         wc.GivePage(200, h =>

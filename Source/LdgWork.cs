@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using ChainFx.Web;
@@ -14,7 +15,8 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainTable(HtmlBuilder h, Ldg[] arr)
+    protected static void MainTable(HtmlBuilder h, IList<Ldg> arr)
+
     {
         h.TABLE_();
         DateTime last = default;

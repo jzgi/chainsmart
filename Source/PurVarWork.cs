@@ -124,18 +124,19 @@ public class SuplyPurVarWork : PurVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE purs SET status = 0, ret = qty, refund = pay, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 2 RETURNING lotid, qty, rtlid, topay, refund");
+            dc.Sql("UPDATE purs SET status = 0, ret = qty, refund = pay, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 2 RETURNING lotid, hubid, qty, rtlid, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int lotid);
+                dc.Let(out int hubid);
                 dc.Let(out int qty);
                 dc.Let(out int rtlid);
                 dc.Let(out decimal topay);
                 dc.Let(out decimal refund);
 
                 // adjust the stock
-                dc.Sql("UPDATE lots SET avail = avail + @1 WHERE id = @2");
-                await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
+                dc.Sql("UPDATE lotstocks SET stock = stock + @1 WHERE lotid = @2 AND hubid = @3");
+                await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
 
                 // remote call to refund
                 var trade_no = Buy.GetOutTradeNo(id, topay);

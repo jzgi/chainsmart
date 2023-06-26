@@ -102,7 +102,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.avail},{o.min});\">"); // pricing portion
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
                 h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
                 h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
                 h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
@@ -254,7 +254,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN3("剩余", o.avail, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN3("剩余", o.stock, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -359,7 +359,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.avail).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -409,7 +409,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.avail).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(std))._FORM();
             });

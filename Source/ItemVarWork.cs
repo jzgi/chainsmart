@@ -28,10 +28,9 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("商品名", m.name)._LI();
             h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics)._LI();
-            h.LI_().FIELD("单价", m.price, money: true).FIELD("直降", m.off, money: true)._LI();
-            h.LI_().FIELD2("网售限订数", m.max, m.unit).FIELD2("网售为整数", m.step, m.unit)._LI();
-            h.LI_().FIELD2("秒杀数", m.min, m.unit)._LI();
-            h.LI_().FIELD2("库存数", m.stock, m.unit).FIELD2("剩余数", m.avail, m.unit)._LI();
+            h.LI_().FIELD("零售单价", m.price, money: true).FIELD("秒杀直降", m.off, money: true)._LI();
+            h.LI_().FIELD2("起订量", m.min, m.unit).FIELD2("限订量", m.max, m.unit)._LI();
+            h.LI_().FIELD2("为整量", m.step, m.unit).FIELD2("剩余量", m.stock, m.unit)._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -42,9 +41,9 @@ public class ItemVarWork : WebWork
             h.TABLE(m.ops, o =>
             {
                 h.TD_().T(o.dt, date: 2, time: 1)._TD();
-                h.TD_("uk-text-right").T(o.tip)._TD();
+                h.TD_("uk-text-right").T(o.typ)._TD();
                 h.TD(o.qty, right: true);
-                h.TD(o.avail, right: true);
+                h.TD(o.stock, right: true);
                 h.TD(o.by);
             }, caption: "库存操作记录", reverse: true);
 
@@ -180,7 +179,7 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.avail).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.avail)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -223,7 +222,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("库存", icon: "database", status: 7), Tool(ButtonShow)]
+    [Ui("数量", icon: "database", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int itemid = wc[0];
@@ -238,9 +237,8 @@ public class RtllyItemVarWork : ItemVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("库存操作");
+                h.FORM_().FIELDSUL_("数量操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
-                h.LI_().SELECT("摘要", nameof(tip), tip, StockOp.Tips)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
@@ -250,17 +248,16 @@ public class RtllyItemVarWork : ItemVarWork
             var f = await wc.ReadAsync<Form>();
             optyp = f[nameof(optyp)];
             qty = f[nameof(qty)];
-            tip = f[nameof(tip)];
 
-            if (optyp == StockOp.TYP_SUBSTRACT)
+            if (!StockOp.IsAddOp(optyp))
             {
                 qty = -qty;
             }
 
             // update db
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (avail + @2), @3, @4)::StockOp, avail = avail + @2, stock = stock + @2 WHERE id = @5 AND orgid = @6");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(tip).Set(prin.name).Set(itemid).Set(org.id));
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4)::StockOp, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }

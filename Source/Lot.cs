@@ -30,8 +30,10 @@ public class Lot : Entity, IKeyable<int>
     internal short unitx;
     internal decimal price;
     internal decimal off;
+
     internal int capx;
-    internal int stock;
+
+    // internal int stock;
     internal short minx;
     internal short maxx;
 
@@ -49,8 +51,8 @@ public class Lot : Entity, IKeyable<int>
 
     internal StockOp[] ops;
 
-    // from the inventory table
-    [NonSerialized] internal int avail;
+    // from the stock table
+    [NonSerialized] internal int stock;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -64,7 +66,6 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(stock), ref stock);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
@@ -97,7 +98,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EXTRA) == MSK_EXTRA)
         {
             s.Get(nameof(ops), ref ops);
-            s.Get(nameof(avail), ref avail);
+            s.Get(nameof(stock), ref stock);
         }
     }
 
@@ -113,7 +114,6 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(stock), stock);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
@@ -147,7 +147,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EXTRA) == MSK_EXTRA)
         {
             s.Put(nameof(ops), ops);
-            s.Put(nameof(avail), avail);
+            s.Put(nameof(stock), stock);
         }
     }
 
@@ -176,8 +176,6 @@ public class Lot : Entity, IKeyable<int>
 
     public int StockX => stock / unitx;
 
-    public int AvailX => avail / unitx;
-
     public StockOp[] Ops => ops;
 
     public bool IsSpot => typ == TYP_NORM;
@@ -187,7 +185,7 @@ public class Lot : Entity, IKeyable<int>
     public override string ToString() => name;
 
 
-    public bool TryGetStockOp(int tracenum, out StockOp value)
+    public bool TryGetInvOp(int tracenum, out StockOp value)
     {
         if (ops != null)
         {
