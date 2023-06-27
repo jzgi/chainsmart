@@ -684,7 +684,7 @@ public class RtllyPurLotVarWork : LotVarWork
             h.SPAN_("uk-width-expand").T(" 整件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 
             // pay button
-            h.BUTTON_(nameof(pur), onclick: "return call_pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.BUTTON_(nameof(pur), onclick: "return $pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._FORM();
             h._BOTTOMBAR();

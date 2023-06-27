@@ -15,6 +15,10 @@ public class OrgGraph : TwinGraph<int, Org>
         if (dc.QueryTop(p => p.Set(key)))
         {
             dc.Let(out setkey);
+            if (setkey == 0)
+            {
+                setkey = key;
+            }
             return true;
         }
         setkey = -1;
@@ -30,7 +34,7 @@ public class OrgGraph : TwinGraph<int, Org>
         }
         else
         {
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parentid = @1 AND status > 0 ORDER BY regid, id");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE (id = @1 OR parentid = @1) AND status > 0 ORDER BY regid, id");
             return dc.Query<int, Org>(p => p.Set(setkey));
         }
     }
@@ -64,7 +68,7 @@ public class OrgGraph : TwinGraph<int, Org>
             // reset buffer
             sb.Clear();
         }
-        
+
         return num;
     }
 }

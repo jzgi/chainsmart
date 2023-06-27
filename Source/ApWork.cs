@@ -15,26 +15,26 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainTable(HtmlBuilder h, IList<Ap> lst, bool orgname)
+    protected static void MainTable(HtmlBuilder h, IList<Ap> lst, short level = 1)
     {
         h.TABLE_();
 
         h.THEAD_();
-        h.TH("日期");
-        h.TH("订单", css: "uk-text-right");
+        h.TH("机构");
+        h.TH("日期", css: "uk-text-right");
         h.TH("总额", css: "uk-text-right");
-        h.TH("返率％", css: "uk-text-right");
         h.TH("应收", css: "uk-text-right");
         h._THEAD();
 
         foreach (var o in lst)
         {
+            var org = GrabTwin<int, Org>(o.orgid);
+
             h.TR_();
-            h.TD(o.dt, time: 0);
-            h.TD(o.trans);
+            h.TD(level == 2 ? org.cover : org.name);
+            h.TD(o.dt, date: 2, time: 0);
             h.TD(o.amt, true, true);
-            h.TD(o.rate);
-            h.TD(o.topay, true, true);
+            h.TD_().ADIALOG_(o.orgid, "/", mode: 32, pick: false).T(o.topay)._A()._TD();
             h._TR();
         }
         h._TABLE();
@@ -56,7 +56,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
             dc.Let(out DateTime till);
             dc.Let(out DateTime last);
 
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 AND dt BETWEEN @1 AND @2 ORDER BY orgid");
+            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 2 AND dt BETWEEN @1 AND @2");
             arr = await dc.QueryAsync<Ap>(p => p.Set(last).Set(till));
         }
 
@@ -69,7 +69,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
                 return;
             }
 
-            MainTable(h, arr, false);
+            MainTable(h, arr, 2);
 
             h.PAGINATION(arr?.Length == 30);
         }, false, 120);
@@ -104,7 +104,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
                     h.ALERT("尚无结算");
                     return;
                 }
-                MainTable(h, arr, true);
+                MainTable(h, arr, 2);
                 h.PAGINATION(arr.Length == 40);
             }, false, 12);
         }
@@ -168,7 +168,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
                 h.ALERT("尚无结算");
                 return;
             }
-            MainTable(h, arr, true);
+            MainTable(h, arr);
             h.PAGINATION(arr.Length == 40);
         }, false, 12);
     }
@@ -202,7 +202,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
                     h.ALERT("尚无结算");
                     return;
                 }
-                MainTable(h, arr, true);
+                MainTable(h, arr, 2);
                 h.PAGINATION(arr.Length == 40);
             }, false, 12);
         }
@@ -230,7 +230,7 @@ public class RtllyBuyApWork : ApWork<PtylyApVarWork>
                 return;
             }
 
-            MainTable(h, arr, false);
+            MainTable(h, arr);
 
             h.PAGINATION(arr?.Length == 30);
         }, false, 120);
@@ -258,7 +258,7 @@ public class SuplyPurApWork : ApWork<PtylyApVarWork>
                 return;
             }
 
-            MainTable(h, arr, false);
+            MainTable(h, arr);
 
             h.PAGINATION(arr?.Length == 30);
         }, false, 120);

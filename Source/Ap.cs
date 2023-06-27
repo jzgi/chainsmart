@@ -6,7 +6,7 @@ namespace ChainSmart;
 /// <summary>
 /// An account payable record.
 /// </summary>
-public class Ap : IData, IKeyable<int>
+public class Ap : IData
 {
     public static readonly Ap Empty = new();
 
@@ -49,6 +49,4 @@ public class Ap : IData, IKeyable<int>
         s.Put(nameof(rate), rate);
         s.Put(nameof(topay), topay);
     }
-
-    public int Key => level;
 }

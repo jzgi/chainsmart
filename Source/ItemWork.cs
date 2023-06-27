@@ -133,7 +133,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             h._DIV();
 
-            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return call_buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._BOTTOMBAR();
 

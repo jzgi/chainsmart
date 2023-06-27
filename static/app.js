@@ -27,7 +27,7 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, flash) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -48,7 +48,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, fl
 
     // fill fprice
     var out_fprice = trig.querySelector('.fprice');
-    if (vip || flash > 0) {
+    if (vip || off > 0) {
         out_fprice.value = (price - off).toFixed(2);
         out_fprice.classList.add('vip');
     }
@@ -58,8 +58,8 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, avail, fl
 
     // fill qty options
     //
-    if (avail < max) {
-        max = avail;
+    if (stock < max) {
+        max = stock;
     }
     var sel_qtyselect = trig.querySelector('.qtyselect');
 
@@ -209,7 +209,7 @@ function posRemove(el) {
     posResum(form);
 }
 
-function call_smsvcode(trig) {
+function $smsvcode(trig) {
 
     var method = trig.formMethod;
     var action = trig.formAction || trig.name;
@@ -231,7 +231,7 @@ function call_smsvcode(trig) {
     return false;
 }
 
-function call_pos(trig) {
+function $pos(trig) {
 
     var method = 'post';
     var action = trig.formAction || trig.name;
@@ -264,7 +264,7 @@ function call_pos(trig) {
 }
 
 
-function call_buy(trig) {
+function $buy(trig) {
 
     var topay = parseFloat(trig.querySelector('output').value);
     if (topay <= 0) {
@@ -292,7 +292,7 @@ function call_buy(trig) {
     return false;
 }
 
-function call_pur(trig) {
+function $pur(trig) {
 
     var method = 'post';
     var action = trig.formAction || trig.name;

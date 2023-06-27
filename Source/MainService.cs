@@ -149,7 +149,7 @@ public abstract class MainService : WebService
 
                 h.FIELDSUL_("填写账号信息");
                 h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
-                h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return call_smsvcode(this);", css: "uk-button-secondary")._LI();
+                h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return $smsvcode(this);", css: "uk-button-secondary")._LI();
                 h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
                 h._FIELDSUL();
 

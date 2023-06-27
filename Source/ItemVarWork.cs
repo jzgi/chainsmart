@@ -256,7 +256,7 @@ public class RtllyItemVarWork : ItemVarWork
 
             // update db
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[16] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4)::StockOp, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
             await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
 
             wc.GivePane(200); // close dialog

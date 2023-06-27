@@ -107,7 +107,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.BOTTOMBAR_();
             for (short i = 2; i <= 3; i++)
             {
-                h.BUTTON_(nameof(buy), subscript: i, onclick: "return call_pos(this);", css: "uk-button-default");
+                h.BUTTON_(nameof(buy), subscript: i, onclick: "return $pos(this);", css: "uk-button-default");
                 h.ICON(Buy.Icons[i]).SP().T(Buy.Typs[i]);
                 h._BUTTON();
             }
