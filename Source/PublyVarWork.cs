@@ -112,7 +112,7 @@ public class PublyVarWork : WebWork
             h.MAINGRID(arr, o =>
             {
                 var open = o.IsOpen(now);
-                if (o.EqBrand)
+                if (o.IsBrand)
                 {
                     h.A_(o.addr, css: "uk-card-body uk-flex");
                 }

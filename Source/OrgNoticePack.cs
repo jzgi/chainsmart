@@ -4,35 +4,29 @@ using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-/// <summary>
-/// A notice pertaining to a particular org.
-/// </summary>
-public class OrgNoticePack : TwinEdgiePack
+/**
+ * The notice pack pertaining to a particular org.
+ */
+public class OrgNoticePack : TwinPack<Notice>
 {
     public const short
-        PUR_CREATED = 1,
-        PUR_ADAPTED = 2,
-        PUR_OKED = 3,
-        PUR_VOID = 4,
-        BUY_CREATED = 5,
-        BUY_ADAPTED = 6,
-        BUY_OKED = 7,
-        BUY_VOID = 8;
+        BUY_CREATED = 1,
+        BUY_OKED = 2,
+        BUY_VOID = 3,
+        PUR_CREATED = 4,
+        PUR_OKED = 5,
+        PUR_VOID = 6;
 
     public static readonly Map<short, string> Typs = new()
     {
+        { BUY_CREATED, "市场新单" },
+        { BUY_OKED, "市场发货" },
+        { BUY_VOID, "市场撤单" },
         { PUR_CREATED, "供应新单" },
-        { PUR_ADAPTED, "供应发货" },
-        { PUR_OKED, "供应收货" },
+        { PUR_OKED, "供应发货" },
         { PUR_VOID, "供应撤单" },
-        { BUY_CREATED, "消费新单" },
-        { BUY_ADAPTED, "消费发货" },
-        { BUY_OKED, "消费收货" },
-        { BUY_VOID, "消费撤单" },
     };
 
-
-    const int CAPACITY = 12;
 
     private static readonly char[] NUMS =
     {
@@ -40,25 +34,23 @@ public class OrgNoticePack : TwinEdgiePack
     };
 
 
-    // entries for push
-    readonly Slot[] slots = new Slot[CAPACITY];
-
     private int toPush;
 
 
     public void Put(short slot, int num, decimal amt)
     {
-        if (slot > CAPACITY)
-        {
-            return;
-        }
-
-        var idx = slot - 1;
-
         lock (this)
         {
-            // add push
-            slots[idx].Feed(slot, num, amt);
+            var idx = IndexOf(slot);
+            if (idx == -1)
+            {
+                Add(slot, new Notice(slot, num, amt));
+            }
+            else
+            {
+                entries[idx].Value.AddUp(num, amt);
+            }
+
             toPush += num;
         }
     }
@@ -69,15 +61,16 @@ public class OrgNoticePack : TwinEdgiePack
         lock (this)
         {
             var ord = 0;
-            for (var i = 0; i < slots.Length; i++)
+            for (var i = 0; i < Count; i++)
             {
-                if (slots[i].IsStuffed)
+                var v = ValueAt(i);
+                if (v.IsStuffed)
                 {
                     sb.Append(NUMS[ord++]).Append(' ');
 
-                    slots[i].PutToBuffer(sb);
+                    v.PutToBuffer(sb);
 
-                    slots[i].Reset();
+                    v.Reset();
                 }
             }
 
@@ -85,22 +78,19 @@ public class OrgNoticePack : TwinEdgiePack
         }
     }
 
-    public int CheckPully(short slot, bool clear = false)
+    public int Check(short slot, bool clear = false)
     {
-        if (slot > CAPACITY)
-        {
-            return 0;
-        }
-
-        var idx = slot - 1;
-
         lock (this)
         {
-            var ret = slots[idx].spyCount;
+            var idx = IndexOf(slot);
+
+            if (idx == -1) return 0;
+
+            var ret = entries[idx].Value.SpyCount;
 
             if (clear)
             {
-                slots[idx].spyCount = 0;
+                entries[idx].Value.SpyCount = 0;
             }
 
             return ret;
@@ -115,41 +105,6 @@ public class OrgNoticePack : TwinEdgiePack
             {
                 return toPush > 0;
             }
-        }
-    }
-
-
-    public struct Slot
-    {
-        internal short typ;
-
-        internal int count;
-
-        internal decimal sum;
-
-        internal int spyCount;
-
-        internal bool IsEmpty => typ == 0 || count == 0;
-
-        internal bool IsStuffed => typ != 0 && count != 0;
-
-        internal void Feed(short slot, int num, decimal amt)
-        {
-            typ = slot;
-            count += num;
-            spyCount += num;
-            sum += amt;
-        }
-
-        internal void Reset()
-        {
-            count = 0;
-            sum = 0;
-        }
-
-        internal void PutToBuffer(StringBuilder sb)
-        {
-            sb.Append(Typs[typ]).Append(' ').Append(count).Append(' ').Append('￥').Append(sum);
         }
     }
 }

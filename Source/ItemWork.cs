@@ -29,7 +29,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
-        var mkt = org.EqMarket ? org : GrabTwin<int, Org>(org.parentid);
+        var mkt = org.IsMarket ? org : GrabTwin<int, Org>(org.upperid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN off > 0::money THEN 1 ELSE 0 END, oked DESC");

@@ -30,6 +30,9 @@ public class MgtService : MainService
         }, true, 3600, title: "中惠农通运营管理");
     }
 
+    /**
+     * The callback by the payment gateway.
+     */
     public async Task onpay(WebContext wc)
     {
         var xe = await wc.ReadAsync<XElem>();
@@ -47,7 +50,7 @@ public class MgtService : MainService
         {
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
-            // verify that the ammount is correct
+
             if (await dc.QueryTopAsync("SELECT supid, hubid, lotid, qty, topay FROM purs WHERE id = @1 AND status = -1", p => p.Set(purid)))
             {
                 dc.Let(out int supid);
@@ -56,7 +59,7 @@ public class MgtService : MainService
                 dc.Let(out short qty);
                 dc.Let(out decimal topay);
 
-                if (topay == cash) // update data
+                if (topay == cash) // verify that the ammount is correct
                 {
                     // the order and the lot updates
                     dc.Sql("UPDATE purs SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lotstocks SET stock = stock - @4 WHERE lotid = @5 AND hubid = @6");
@@ -65,6 +68,11 @@ public class MgtService : MainService
                     // put a notice to the accepter
                     var sup = GrabTwin<int, Org>(supid);
                     sup.Notices.Put(OrgNoticePack.PUR_CREATED, 1, cash);
+                }
+                else // the pay differs from the order
+                {
+                    // refund
+                    await PostRefundAsync(sup: false, trade_no, cash, cash, trade_no, "支付金额与订单不符");
                 }
             }
         }

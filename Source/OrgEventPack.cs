@@ -8,7 +8,7 @@ namespace ChainSmart;
 /// <summary>
 /// The output event queue for an org which contains b 
 /// </summary>
-public class OrgEventPack : TwinEdgiePack
+public class OrgEventPack : TwinPack<Event>
 {
     public const short
         DELIVERY = 1,
@@ -19,8 +19,6 @@ public class OrgEventPack : TwinEdgiePack
     {
         { DELIVERY, "社区合单" },
         { PUR_ADAPTED, "供应发货" },
-
-
         { BUY_VOID, "消费撤单" },
     };
 

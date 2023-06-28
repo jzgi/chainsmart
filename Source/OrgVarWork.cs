@@ -24,7 +24,7 @@ public abstract class OrgVarWork : WebWork
             h.LI_().FIELD("商户名", m.name)._LI();
             h.LI_().FIELD("简介", m.tip)._LI();
             h.LI_().FIELD("工商登记名", m.legal)._LI();
-            if (m.IsExtended)
+            if (m.OfUpper)
             {
                 h.LI_().FIELD("延展名", m.cover)._LI();
             }
@@ -153,7 +153,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.EqMarket ? "市场机构" : "供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMarket ? "市场机构" : "供应机构");
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
@@ -162,9 +162,9 @@ public class AdmlyOrgVarWork : OrgVarWork
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (m.EqMarket)
+                    if (m.IsMarket)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.hubid), m.hubid, topOrgs, filter: v => v.EqCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中库", nameof(m.hubid), m.hubid, topOrgs, filter: v => v.IsCenter, required: true)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -354,7 +354,7 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.EqBrand ? "品牌信息" : "商户信息");
+                    h.FORM_().FIELDSUL_(m.IsBrand ? "品牌信息" : "商户信息");
 
                     if (m.typ == Org.TYP_RTL)
                     {
@@ -436,7 +436,7 @@ public class MktlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -474,7 +474,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND parentid = @2 AND status BETWEEN 1 AND 2");
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND upperid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -579,7 +579,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -602,7 +602,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         }
         await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -619,7 +619,7 @@ public class CtrlyOrgVarWork : OrgVarWork
 
         await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND parentid = @2 AND status BETWEEN 1 AND 2");
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND upperid = @2 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 

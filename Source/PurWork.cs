@@ -77,7 +77,6 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [OrgSpy(PUR_ADAPTED)]
     [Ui(tip: "待发货", icon: "eye", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {

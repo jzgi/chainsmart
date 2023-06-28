@@ -53,7 +53,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(0, filter: x => x.EqMarket, sorter: (x, y) => x.regid - y.regid);
+        var array = GrabTwinSet<int, Org>(0, filter: x => x.IsMarket, sorter: (x, y) => x.regid - y.regid);
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -73,7 +73,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void ctr(WebContext wc)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinSet<int, Org>(0, filter: x => x.EqCenter, sorter: (x, y) => y.id - x.id);
+        var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -119,7 +119,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联中库", nameof(o.hubid), o.hubid, orgs, filter: (_, v) => v.EqCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中库", nameof(o.hubid), o.hubid, orgs, filter: (_, v) => v.IsCenter, required: true)._LI();
                 }
 
                 h._FIELDSUL()._FORM();
@@ -173,7 +173,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.EqRetail, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -213,7 +213,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.regid == regid && x.EqRetail);
+            var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.regid == regid && x.IsRetail);
 
             wc.GivePage(200, h =>
             {
@@ -235,7 +235,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.EqBrand);
+        var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.IsBrand);
 
         wc.GivePage(200, h =>
         {
@@ -263,7 +263,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             typ = (short)typ,
             created = DateTime.Now,
             creator = prin.name,
-            parentid = org.id,
+            upperid = org.id,
             hubid = org.hubid,
             status = Entity.STU_CREATED
         };
@@ -423,7 +423,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var o = new Org
         {
             typ = Org.TYP_SUP,
-            parentid = zon.id,
+            upperid = zon.id,
             created = DateTime.Now,
             creator = prin.name,
         };

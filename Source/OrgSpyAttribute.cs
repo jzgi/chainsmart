@@ -8,10 +8,10 @@ public class OrgSpyAttribute : TwinSpyAttribute
     {
     }
 
-    public override int DoSpy(int orgid, bool clear = false)
+    public override int Do(int orgid, bool clear = false)
     {
         var org = Nodality.GrabTwin<int, Org>(orgid);
 
-        return org.Notices.CheckPully(slot, clear);
+        return org.Notices.Check(slot, clear);
     }
 }

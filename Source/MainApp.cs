@@ -17,9 +17,9 @@ public class MainApp : Application
     // periodic polling and concluding ended lots 
     // static readonly Thread cycler = new Thread(Cycle);
 
-    /// <summary>
-    /// The entry point of the application.
-    /// </summary>
+    /**
+     * The entry point of the application.
+     */
     public static async Task Main(string[] args)
     {
         // start the concluder thead
@@ -43,6 +43,11 @@ public class MainApp : Application
         WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
 
+        
+        var rtl = GrabTwin<int, Org>(9);
+        rtl.Notices.Put(OrgNoticePack.BUY_CREATED, 1, 3.4m);
+
+        
         await StartAsync();
     }
 

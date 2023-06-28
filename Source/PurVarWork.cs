@@ -49,8 +49,6 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    bool IsSpotTyp => (short)Parent.State == Pur.TYP_NORM;
-
     [OrglyAuthorize(0, User.ROL_LOG)]
     [Ui("备发", "授权品控库发货？", icon: "eye", status: 1), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
@@ -65,10 +63,6 @@ public class SuplyPurVarWork : PurVarWork
         {
             dc.Let(out int ctrid);
             dc.Let(out decimal topay);
-
-            // put a notice to the relevant center
-            var ctr = GrabTwin<int, Org>(ctrid);
-            ctr.Notices.Put(OrgNoticePack.PUR_ADAPTED, 1, topay);
         }
 
         wc.Give(204);

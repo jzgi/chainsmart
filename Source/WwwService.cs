@@ -33,7 +33,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinSet<int, Org>(0, x => x.EqMarket);
+        var mkts = GrabTwinSet<int, Org>(0, x => x.IsMarket);
 
         wc.GivePage(200, h =>
         {
@@ -84,6 +84,9 @@ public class WwwService : MainService
     }
 
 
+    /**
+     * The callback by the payment gateway.
+     */
     public async Task onpay(WebContext wc)
     {
         var xe = await wc.ReadAsync<XElem>();
@@ -101,13 +104,13 @@ public class WwwService : MainService
         {
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
-            // verify that the ammount is correct
+            
             if (await dc.QueryTopAsync("SELECT rtlid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
             {
                 dc.Let(out int rtlid);
                 dc.Let(out decimal topay);
 
-                if (topay == cash) // update data
+                if (topay == cash) // verify that the ammount is correct
                 {
                     dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1");
                     await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
@@ -115,6 +118,11 @@ public class WwwService : MainService
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
                     rtl.Notices.Put(OrgNoticePack.BUY_CREATED, 1, cash);
+                }
+                else // the pay differs from the order
+                {
+                    // refund
+                    await PostRefundAsync(sup: false, trade_no, cash, cash, trade_no, "支付金额与订单不符");
                 }
             }
         }

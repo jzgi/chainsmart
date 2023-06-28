@@ -14,12 +14,12 @@ public class Org : Entity, ITwin<int>
 
     public const short
         TYP_BRD = 0b00000, // brand
-        TYP_EXT = 0b01000, // extended
+        TYP_UPR = 0b01000, // upper
         TYP_RTL = 0b00001, // shop
         TYP_SUP = 0b00010, // source
         TYP_LOG = 0b00100, // logistic
-        TYP_MKT = TYP_EXT | TYP_RTL, // market
-        TYP_CTR = TYP_EXT | TYP_SUP | TYP_LOG; // center
+        TYP_MKT = TYP_UPR | TYP_RTL, // market
+        TYP_CTR = TYP_UPR | TYP_SUP | TYP_LOG; // center
 
 
     public const short
@@ -50,7 +50,7 @@ public class Org : Entity, ITwin<int>
     internal int id;
 
     // parent id, if rtl or sup
-    internal int parentid;
+    internal int upperid;
 
     // connected hub warehouse id, if market or retail 
     internal int hubid;
@@ -93,7 +93,7 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(parentid), ref parentid);
+                s.Get(nameof(upperid), ref upperid);
                 s.Get(nameof(hubid), ref hubid);
             }
 
@@ -141,8 +141,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                if (parentid > 0) s.Put(nameof(parentid), parentid);
-                else s.PutNull(nameof(parentid));
+                if (upperid > 0) s.Put(nameof(upperid), upperid);
+                else s.PutNull(nameof(upperid));
 
                 if (hubid > 0) s.Put(nameof(hubid), hubid);
                 else s.PutNull(nameof(hubid));
@@ -204,39 +204,39 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int ItsMarketId => EqMarket ? id : IsRetail ? parentid : 0;
+    public int ThisMarketId => IsMarket ? id : OfRetail ? upperid : 0;
 
-    public int ItsCenterId => EqCenter ? id : IsSupply ? parentid : 0;
+    public int ThisCenterId => IsCenter ? id : OfSupply ? upperid : 0;
 
-    public bool IsExtended => (typ & TYP_EXT) == TYP_EXT;
+    public bool OfUpper => (typ & TYP_UPR) == TYP_UPR;
 
-    public bool EqBrand => typ == TYP_BRD;
+    public bool IsBrand => typ == TYP_BRD;
 
-    public bool EqSupply => typ == TYP_SUP;
+    public bool IsSupply => typ == TYP_SUP;
 
-    public bool IsSupply => (typ & TYP_SUP) == TYP_SUP;
+    public bool OfSupply => (typ & TYP_SUP) == TYP_SUP;
 
-    public bool EqRetail => typ == TYP_RTL;
+    public bool IsRetail => typ == TYP_RTL;
 
-    public bool IsRetail => (typ & TYP_RTL) == TYP_RTL;
+    public bool OfRetail => (typ & TYP_RTL) == TYP_RTL;
 
-    public bool EqMarket => typ == TYP_MKT;
+    public bool IsMarket => typ == TYP_MKT;
 
-    public bool EqCenter => typ == TYP_CTR;
+    public bool IsCenter => typ == TYP_CTR;
 
-    public bool HasXy => EqMarket || EqSupply || EqCenter;
+    public bool HasXy => IsMarket || IsSupply || IsCenter;
 
-    public bool IsTopOrg => parentid == 0;
+    public bool IsTopOrg => upperid == 0;
 
     public string Name => name;
 
     private string title;
 
-    public string Title => title ??= EqMarket ? name : name + '（' + addr + '）';
+    public string Title => title ??= IsMarket ? name : name + '（' + addr + '）';
 
     public string Cover => cover;
 
-    public int SetKey => parentid;
+    public int SetKey => upperid;
 
     public bool IsOpen(TimeSpan now)
     {

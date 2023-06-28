@@ -62,7 +62,7 @@ public class Buy : Entity, IKeyable<long>
         typ = TYP_PLAT;
         name = rtl.Name;
         rtlid = rtl.id;
-        mktid = rtl.ItsMarketId;
+        mktid = rtl.ThisMarketId;
         items = arr;
         uid = prin.id;
         uname = prin.name;

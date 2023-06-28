@@ -548,7 +548,7 @@ public class SuplyLotVarWork : LotVarWork
 
         if (wc.IsGet)
         {
-            var arr = GrabTwinSet<int, Org>(0, filter: x => x.EqCenter, sorter: (x, y) => y.id - x.id);
+            var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
 
             using var dc = NewDbContext();
 

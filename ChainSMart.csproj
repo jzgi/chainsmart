@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="NPOI" Version="2.6.1-rc1" />
+      <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     </ItemGroup>
 
 </Project>

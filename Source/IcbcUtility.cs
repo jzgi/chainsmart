@@ -123,7 +123,7 @@ public static class IcbcUtility
                 row.CreateCell(11, CellType.String).SetCellValue(org.bankacct);
                 row.CreateCell(12, CellType.String).SetCellValue(org.bankacctname);
                 row.CreateCell(13, CellType.String).SetCellValue("" + ap.topay);
-                row.CreateCell(14, CellType.String).SetCellValue("其它应付款");
+                row.CreateCell(14, CellType.String).SetCellValue("其他应付款");
                 row.CreateCell(16, CellType.String).SetCellValue("1");
                 row.CreateCell(17, CellType.String).SetCellValue(org.tel);
             }

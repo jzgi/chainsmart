@@ -132,8 +132,8 @@ public class User : Entity, IKeyable<int>
         upper = false;
         ulevel = 0;
 
-        var orgid = org.IsSupply ? supid : rtlid;
-        var orgly = org.IsSupply ? suply : rtlly;
+        var orgid = org.OfSupply ? supid : rtlid;
+        var orgly = org.OfSupply ? suply : rtlly;
 
         // is of any role for the org
         if (org.id == orgid)
@@ -160,13 +160,13 @@ public class User : Entity, IKeyable<int>
             }
             else
             {
-                if (org.trust && orgid == org.parentid && (orgly > 0 && orgid > 0))
+                if (org.trust && orgid == org.upperid && (orgly > 0 && orgid > 0))
                 {
                     ret = orgly;
                     upper = true;
                     ulevel = 2;
                 }
-                else if (!org.trust && orgid == org.parentid && orgly == ROL_MGT && orgid > 0)
+                else if (!org.trust && orgid == org.upperid && orgly == ROL_MGT && orgid > 0)
                 {
                     ret = ROL_OPN; // downgraded role
                     upper = true;
