@@ -145,7 +145,7 @@ public class RtllyVarWork : OrglyVarWork
                 h.FORM_().FIELDSUL_("设置基本信息和参数");
                 h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
                 h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h.LI_().TIME("开档时间", nameof(m.opened), m.opened).TIME("收档时间", nameof(m.closed), m.closed)._LI();
+                h.LI_().TIME("开档时间", nameof(m.openat), m.openat).TIME("收档时间", nameof(m.closeat), m.closeat)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
             });
         }

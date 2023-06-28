@@ -22,20 +22,31 @@ public abstract class OrgVarWork : WebWork
         {
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("商户名", m.name)._LI();
-            h.LI_().FIELD("简介", m.tip)._LI();
+            h.LI_().FIELD("简介语", m.tip)._LI();
             h.LI_().FIELD("工商登记名", m.legal)._LI();
             if (m.OfUpper)
             {
-                h.LI_().FIELD("延展名", m.cover)._LI();
+                h.LI_().FIELD("涵盖市场名", m.cover)._LI();
             }
 
-            h.LI_().FIELD("联系电话", m.tel).FIELD("区域", regs[m.regid])._LI();
-            h.LI_().FIELD("联系地址", m.addr)._LI();
-            h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
-            h.LI_().FIELD("指标参数", m.specs)._LI();
-            h.LI_().FIELD("托管", m.trust)._LI();
+            h.LI_().FIELD(m.IsRetail ? "场区" : "区域", regs[m.regid]);
+            if (m.IsRetail)
+            {
+                h.FIELD("联系电话", m.addr);
+            }
+            h._LI();
+            h.LI_().FIELD("联系电话", m.tel).FIELD("托管", m.trust)._LI();
 
-            h.LI_().FIELD2("创编", m.created, m.creator)._LI();
+            if (!m.IsRetail)
+            {
+                h.LI_().FIELD("地址", m.addr)._LI();
+                h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
+                h.LI_().FIELD("指标参数", m.specs)._LI();
+            }
+            h.LI_().FIELD("收款账号", m.bankacct)._LI();
+            h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+
+            h.LI_().FIELD2("创建", m.created, m.creator)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
             if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
 
@@ -356,20 +367,20 @@ public class MktlyOrgVarWork : OrgVarWork
                 {
                     h.FORM_().FIELDSUL_(m.IsBrand ? "品牌信息" : "商户信息");
 
-                    if (m.typ == Org.TYP_RTL)
+                    if (m.IsRetail)
                     {
                         h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                        h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                         h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                        h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                        h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSection)._LI();
-                        h.LI_().TEXT("商户编号", nameof(m.addr), m.addr, max: 4)._LI();
-                        h.LI_().CHECKBOX("委托办理", nameof(m.trust), true, m.trust)._LI();
+                        h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSection).TEXT("商户编号", nameof(m.addr), m.addr, max: 4)._LI();
+                        h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
+                        h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                        h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
                     }
                     else // brand
                     {
                         h.LI_().TEXT("品牌名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                        h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                         h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
                     }
 

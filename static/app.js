@@ -660,6 +660,9 @@ function dialog(trig, mode, pick, title) {
 
     var div = '<div id="dialog" class="' + modalc + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical' + annimc + '">';
+    if (mode == SHOW) {
+        div += '<button class="uk-modal-close-outside" type="button" uk-close></button>';
+    }
     if (mode == PROMPT || mode == OPEN || mode == CROP) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
     }

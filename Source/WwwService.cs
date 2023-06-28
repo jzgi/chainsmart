@@ -57,7 +57,7 @@ public class WwwService : MainService
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
                 h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
@@ -79,7 +79,7 @@ public class WwwService : MainService
             h._ARTICLE();
 
             string tel = Application.Prog[nameof(tel)];
-            h.FOOTER_(css: "uk-position-bottom uk-flex-center").SPAN("平台监督：" + tel + " ☎", css: "uk-label uk-label-success uk-margin-small-bottom")._FOOTER();
+            h.SPAN("平台监督：☎&nbsp;" + tel, css: "uk-label uk-label-success uk-position-small uk-position-bottom-center uk-position-fixed");
         }, true, 720, title: Application.Name + "市场", onload: "fixAll();");
     }
 
@@ -104,7 +104,7 @@ public class WwwService : MainService
         {
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
-            
+
             if (await dc.QueryTopAsync("SELECT rtlid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
             {
                 dc.Let(out int rtlid);

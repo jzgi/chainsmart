@@ -44,20 +44,21 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             else
                 h.PIC_("/void-shop.webp");
 
-            h.AICON("../", "home", css: "uk-overlay uk-position-top-left");
-            h.ATEL(org.tel, css: "uk-overlay uk-position-top-right");
-            h._PIC();
+            h.AICON("../", "home", css: "uk-overlay uk-position-small uk-position-top-left");
+            h.ATEL(org.tel, css: "uk-overlay uk-position-small uk-position-top-right");
 
             if (!org.IsOked)
             {
-                h.ALERT("本店已下线", bell: true, css: "uk-alert-danger");
+                h.ALERT("本店已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-warning");
                 return;
             }
-
             if (!org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("本店已打烊，订单待明天发货", bell: true, css: "uk-alert-warning");
+                h.ALERT("本店已打烊，订单明天发货", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-warning");
             }
+
+            h._PIC();
+
 
             if (arr == null)
             {

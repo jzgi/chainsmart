@@ -278,12 +278,12 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
                     h.FORM_().FIELDSUL_("商户信息");
 
                     h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                    h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSection)._LI();
-                    h.LI_().TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
-                    h.LI_().CHECKBOX("委托办理", nameof(o.trust), true, o.trust)._LI();
+                    h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSection).TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
+                    h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("委托代办", nameof(o.trust), true, o.trust)._LI();
+                    h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                    h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
                 });
@@ -295,8 +295,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
                 {
                     h.FORM_().FIELDSUL_("品牌信息");
 
-                    h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                    h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                     h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();

@@ -65,8 +65,8 @@ public class Org : Entity, ITwin<int>
     internal bool trust;
     internal string link;
 
-    internal TimeSpan opened;
-    internal TimeSpan closed;
+    internal TimeSpan openat;
+    internal TimeSpan closeat;
 
     internal short credit;
     internal string bankacct;
@@ -113,8 +113,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(opened), ref opened);
-                s.Get(nameof(closed), ref closed);
+                s.Get(nameof(openat), ref openat);
+                s.Get(nameof(closeat), ref closeat);
                 s.Get(nameof(credit), ref credit);
                 s.Get(nameof(bankacct), ref bankacct);
                 s.Get(nameof(bankacctname), ref bankacctname);
@@ -165,8 +165,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(opened), opened);
-                s.Put(nameof(closed), closed);
+                s.Put(nameof(openat), openat);
+                s.Put(nameof(closeat), closeat);
                 s.Put(nameof(credit), credit);
                 s.Put(nameof(bankacct), bankacct);
                 s.Put(nameof(bankacctname), bankacctname);
@@ -240,7 +240,7 @@ public class Org : Entity, ITwin<int>
 
     public bool IsOpen(TimeSpan now)
     {
-        return IsOked && now > opened && now < closed;
+        return IsOked && now > openat && now < closeat;
     }
 
     public override string ToString() => name;
