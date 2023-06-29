@@ -1,0 +1,26 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:9.6.24
+    container_name: postgres_smart
+    restart: always
+    environment:
+      POSTGRES_DB: smart
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: CS123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./db/init-db:/docker-entrypoint-initdb.d
+  chainsmart:
+    build:
+      context: app
+      dockerfile: Dockerfile
+    container_name: chain_smart
+    ports:
+      - "80:80"
+      - "81:81"
+    depends_on:
+      - postgres
+    restart: always

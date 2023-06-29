@@ -24,6 +24,8 @@ public static class WeixinUtility
 
     static readonly WebConnector SmsApi = new WebConnector("https://sms.tencentcloudapi.com");
 
+    static readonly WebConnectorByIcbc IcbcApi;
+
     public static readonly string
         appid,
         appsecret;
@@ -43,6 +45,11 @@ public static class WeixinUtility
         smsvcodetempid,
         smsnotiftempid;
 
+    public static readonly string
+        icbcappid,
+        icbcmerid,
+        icbcprivatekey,
+        icbcapigwpublickkey;
 
     static WeixinUtility()
     {
@@ -60,11 +67,18 @@ public static class WeixinUtility
         s.Get(nameof(smsvcodetempid), ref smsvcodetempid);
         s.Get(nameof(smsnotiftempid), ref smsnotiftempid);
 
+        s.Get(nameof(icbcappid), ref icbcappid);
+        s.Get(nameof(icbcmerid), ref icbcmerid);
+        s.Get(nameof(icbcprivatekey), ref icbcprivatekey);
+        s.Get(nameof(icbcapigwpublickkey), ref icbcapigwpublickkey);
         try
         {
             SupPayApi = Set("sup_apiclient_cert.p12", supmchid);
 
             RtlPayApi = Set("rtl_apiclient_cert.p12", rtlmchid);
+            IcbcApi = new WebConnectorByIcbc("https://gw.open.icbc.com.cn", 
+                icbcappid, icbcmerid,icbcprivatekey,
+                icbcapigwpublickkey,appid);
         }
         catch (Exception e)
         {
@@ -92,7 +106,9 @@ public static class WeixinUtility
         int now = Environment.TickCount;
         if (accessToken == null || now < tick || now - tick > 3600000)
         {
-            var (_, jo) = OpenApi.GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret, null).Result;
+            var (_, jo) = OpenApi
+                .GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret,
+                    null).Result;
             string access_token = jo?[nameof(access_token)];
             accessToken = access_token;
             tick = now;
@@ -109,14 +125,17 @@ public static class WeixinUtility
 
         wc.SetHeader(
             "Location",
-            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appid + "&redirect_uri=" + redirect_url + "&response_type=code&scope=" + (userinfo ? "snsapi_userinfo" : "snsapi_base") + "&state=wxauth#wechat_redirect"
+            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appid + "&redirect_uri=" + redirect_url +
+            "&response_type=code&scope=" + (userinfo ? "snsapi_userinfo" : "snsapi_base") +
+            "&state=wxauth#wechat_redirect"
         );
         wc.Give(303);
     }
 
     public static async Task<(string access_token, string openid)> GetAccessorAsync(string code)
     {
-        string url = "/sns/oauth2/access_token?appid=" + appid + "&secret=" + appsecret + "&code=" + code + "&grant_type=authorization_code";
+        string url = "/sns/oauth2/access_token?appid=" + appid + "&secret=" + appsecret + "&code=" + code +
+                     "&grant_type=authorization_code";
         var (_, jo) = await OpenApi.GetAsync<JObj>(url, null);
         if (jo == null)
         {
@@ -135,7 +154,9 @@ public static class WeixinUtility
 
     public static async Task<User> GetUserInfoAsync(string access_token, string openid)
     {
-        var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
+        var (_, jo) =
+            await OpenApi.GetAsync<JObj>(
+                "/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
         string nickname = jo[nameof(nickname)];
         return new User { im = openid, name = nickname };
     }
@@ -228,7 +249,34 @@ public static class WeixinUtility
         }
     }
 
-    public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
+    public static async Task<decimal> PostOrderQueryAsync(bool icbc, bool sup, string orderno)
+    {
+        if (icbc)
+        {
+            return await IcbcApi.PostOrderQueryAsync(sup, orderno);
+        }
+        else
+        {
+            return await PostOrderQueryAsync(sup, orderno);
+        }
+    }
+
+    public static async Task<(string, string)> PostUnifiedOrderAsync(bool icbc, bool sup, string trade_no,
+        decimal amount,
+        string openid, string ip, string notifyurl, string descr)
+    {
+        if (icbc)
+        {
+            return await IcbcApi.PostUnifiedOrderAsync(sup, trade_no, amount, openid, ip, notifyurl, descr);
+        }
+        else
+        {
+            return await PostUnifiedOrderAsync(sup, trade_no, amount, openid, ip, notifyurl, descr);
+        }
+    }
+
+    public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount,
+        string openid, string ip, string notifyurl, string descr)
     {
         var mchid = sup ? supmchid : rtlmchid;
         var api = sup ? SupPayApi : RtlPayApi;
@@ -328,7 +376,8 @@ public static class WeixinUtility
         return cash_fee;
     }
 
-    public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
+    public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund,
+        string refoundno, string descr = null)
     {
         var mchid = sup ? supmchid : rtlmchid;
         var api = sup ? SupPayApi : RtlPayApi;
@@ -354,6 +403,7 @@ public static class WeixinUtility
         {
             return "TIMEOUT";
         }
+
         string return_code = xe.Child(nameof(return_code));
         if (return_code != "SUCCESS")
         {
@@ -434,6 +484,7 @@ public static class WeixinUtility
                 {
                     bdr.Add('&');
                 }
+
                 bdr.Add(tag);
                 bdr.Add('=');
                 bdr.Add(txt);
@@ -501,9 +552,11 @@ public static class WeixinUtility
             {
                 url.Append('&');
             }
+
             url.Append(k).Append('=').Append(v);
             num++;
         }
+
         return url.ToString();
     }
 
@@ -537,6 +590,7 @@ public static class WeixinUtility
         {
             dict.Add("TemplateParamSet." + i, templateParamSet[i]);
         }
+
         // for (var i = 0; i < phoneNumberSet.Length; i++)
         // {
         //     dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
@@ -558,6 +612,7 @@ public static class WeixinUtility
             {
                 url.Append('&');
             }
+
             url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
             num++;
         }
@@ -590,6 +645,7 @@ public static class WeixinUtility
         {
             dict.Add("TemplateParamSet." + i, templateParamSet[i]);
         }
+
         // for (var i = 0; i < phoneNumberSet.Length; i++)
         // {
         //     dict.Add("PhoneNumberSet." + i, phoneNumberSet[i]);
@@ -611,6 +667,7 @@ public static class WeixinUtility
             {
                 url.Append('&');
             }
+
             url.Append(k).Append('=').Append(WebUtility.UrlEncode(v));
             num++;
         }
