@@ -204,21 +204,21 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int ThisMarketId => IsMarket ? id : OfRetail ? upperid : 0;
+    public int ThisMarketId => IsMarket ? id : AsRetail ? upperid : 0;
 
-    public int ThisCenterId => IsCenter ? id : OfSupply ? upperid : 0;
+    public int ThisCenterId => IsCenter ? id : AsSupply ? upperid : 0;
 
-    public bool OfUpper => (typ & TYP_UPR) == TYP_UPR;
+    public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
 
     public bool IsBrand => typ == TYP_BRD;
 
     public bool IsSupply => typ == TYP_SUP;
 
-    public bool OfSupply => (typ & TYP_SUP) == TYP_SUP;
+    public bool AsSupply => (typ & TYP_SUP) == TYP_SUP;
 
     public bool IsRetail => typ == TYP_RTL;
 
-    public bool OfRetail => (typ & TYP_RTL) == TYP_RTL;
+    public bool AsRetail => (typ & TYP_RTL) == TYP_RTL;
 
     public bool IsMarket => typ == TYP_MKT;
 

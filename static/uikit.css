@@ -2446,8 +2446,8 @@ a.uk-inactive {
 }
 
 .uk-alert-primary {
-    background: #d8eafc;
-    color: #007aff;
+    background: rgb(102 102 102 / 40%);
+    color: #ffffff;
 }
 
 .uk-alert-success {

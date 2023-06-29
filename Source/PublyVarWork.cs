@@ -21,59 +21,62 @@ public class PublyVarWork : WebWork
 
         wc.GivePage(200, h =>
         {
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H2(org.Cover, css: "uk-card-header");
-            h.SECTION_("uk-card-body");
-            if (org.scene)
+            lock (org)
             {
-                h.PIC_("/org/", org.id, "/scene");
-            }
-            else
-            {
-                h.PIC_("/void.webp");
-            }
-            h._PIC();
-
-            h._SECTION();
-
-            h.FOOTER_("uk-card-footer").T("地处").T(org.addr);
-            if (org.tip != null)
-            {
-                h.T('，').T(org.tip);
-            }
-            h._FOOTER();
-
-            h._ARTICLE();
-
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H3("免费派送区域", css: "uk-card-header");
-            // h.SECTION_("uk-card-body");
-            var specs = org.specs;
-            for (int i = 0; i < specs?.Count; i++)
-            {
-                var spec = specs.EntryAt(i);
-                var v = spec.Value;
-                if (v.IsObject)
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H2(org.Cover, css: "uk-card-header");
+                h.SECTION_("uk-card-body");
+                if (org.scene)
                 {
-                    h.DL_(css: "uk-card-body");
-                    h.DT(spec.Key);
-
-                    h.DD_();
-                    var sub = (JObj)v;
-                    for (int k = 0; k < sub.Count; k++)
-                    {
-                        if (k > 0) h.T('，');
-                        var e = sub.EntryAt(k);
-                        h.T(e.Key);
-                    }
-                    h._DD();
-                    h._DL();
+                    h.PIC_("/org/", org.id, "/scene");
                 }
-            }
-            // h._SECTION();
-            h._ARTICLE();
+                else
+                {
+                    h.PIC_("/void.webp");
+                }
+                h._PIC();
 
-            h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+                h._SECTION();
+
+                h.FOOTER_("uk-card-footer").T("地处").T(org.addr);
+                if (org.tip != null)
+                {
+                    h.T('，').T(org.tip);
+                }
+                h._FOOTER();
+
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H3("免费派送区域", css: "uk-card-header");
+                // h.SECTION_("uk-card-body");
+                var specs = org.specs;
+                for (int i = 0; i < specs?.Count; i++)
+                {
+                    var spec = specs.EntryAt(i);
+                    var v = spec.Value;
+                    if (v.IsObject)
+                    {
+                        h.DL_(css: "uk-card-body");
+                        h.DT(spec.Key);
+
+                        h.DD_();
+                        var sub = (JObj)v;
+                        for (int k = 0; k < sub.Count; k++)
+                        {
+                            if (k > 0) h.T('，');
+                            var e = sub.EntryAt(k);
+                            h.T(e.Key);
+                        }
+                        h._DD();
+                        h._DL();
+                    }
+                }
+                // h._SECTION();
+                h._ARTICLE();
+
+                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+            }
         }, true, 720, org.Cover);
     }
 
@@ -109,32 +112,40 @@ public class PublyVarWork : WebWork
             }
 
             var now = DateTime.Now.TimeOfDay;
-            h.MAINGRID(arr, o =>
+            h.MAINGRID(arr, m =>
             {
-                var open = o.IsOpen(now);
-                if (o.IsBrand)
+                lock (m)
                 {
-                    h.A_(o.addr, css: "uk-card-body uk-flex");
-                }
-                else
-                {
-                    h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.Title, inactive: !open, "uk-card-body uk-flex");
-                }
+                    var open = m.IsOpen(now);
+                    if (m.IsBrand)
+                    {
+                        h.A_(m.addr, css: "uk-card-body uk-flex");
+                    }
+                    else
+                    {
+                        h.ADIALOG_(m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
+                    }
 
-                if (o.icon)
-                {
-                    h.PIC("/org/", o.id, "/icon", css: "uk-width-1-5");
+                    if (m.icon)
+                    {
+                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5");
+                    }
+                    else
+                        h.PIC("/void.webp", css: "uk-width-1-5");
+
+                    h.ASIDE_();
+                    h.HEADER_().H4(m.Name);
+                    if (m.AsRetail)
+                    {
+                        h.SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success");
+                    }
+                    h._HEADER();
+                    h.Q(m.tip, "uk-width-expand");
+                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+                    h._ASIDE();
+
+                    h._A();
                 }
-                else
-                    h.PIC("/void.webp", css: "uk-width-1-5");
-
-                h.ASIDE_();
-                h.HEADER_().H4(o.Name).SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success")._HEADER();
-                h.Q(o.tip, "uk-width-expand");
-                h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                h._ASIDE();
-
-                h._A();
             });
         }, true, 720, org.Cover);
     }

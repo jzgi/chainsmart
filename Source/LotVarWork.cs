@@ -552,7 +552,7 @@ public class SuplyLotVarWork : LotVarWork
 
             using var dc = NewDbContext();
 
-            await dc.ExecuteAsync("SELECT hubid, stock::varchar FROM lotstocks WHERE lotid = @1");
+            await dc.ExecuteAsync("SELECT hubid, stock::varchar FROM lotinvs WHERE lotid = @1");
             var map = dc.ToIntMap();
 
             wc.GivePane(200, h =>
@@ -589,7 +589,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Let(out int unitx);
             int qty = qtyx * unitx;
 
-            await dc.QueryTopAsync("INSERT INTO lotstocks VALUES (@1, @2, @3) ON CONFLICT (lotid, hubid) DO UPDATE SET stock = (lotstocks.stock + @3) RETURNING stock", p => p.Set(id).Set(hub).Set(qty));
+            await dc.QueryTopAsync("INSERT INTO lotinvs VALUES (@1, @2, @3) ON CONFLICT (lotid, hubid) DO UPDATE SET stock = (lotinvs.stock + @3) RETURNING stock", p => p.Set(id).Set(hub).Set(qty));
             dc.Let(out int stock);
 
             dc.Sql("UPDATE lots SET ops = ops || ROW(@1, @2, @3, @4, @5, @6)::StockOp WHERE id = @7 AND orgid = @8");

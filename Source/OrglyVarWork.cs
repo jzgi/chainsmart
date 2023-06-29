@@ -28,7 +28,7 @@ public abstract class OrglyVarWork : WebWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
-            if (org.OfUpper) h.H4(org.Cover);
+            if (org.AsUpper) h.H4(org.Cover);
             h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
             h._HEADER();
 
@@ -37,7 +37,7 @@ public abstract class OrglyVarWork : WebWork
                 h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
             }
             else
-                h.PIC(org.OfRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(org.AsRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
 
             h._TOPBARXL();
 

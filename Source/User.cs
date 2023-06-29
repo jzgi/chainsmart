@@ -132,8 +132,8 @@ public class User : Entity, IKeyable<int>
         upper = false;
         ulevel = 0;
 
-        var orgid = org.OfSupply ? supid : rtlid;
-        var orgly = org.OfSupply ? suply : rtlly;
+        var orgid = org.AsSupply ? supid : rtlid;
+        var orgly = org.AsSupply ? suply : rtlly;
 
         // is of any role for the org
         if (org.id == orgid)

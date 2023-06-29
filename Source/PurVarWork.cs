@@ -129,7 +129,7 @@ public class SuplyPurVarWork : PurVarWork
                 dc.Let(out decimal refund);
 
                 // adjust the stock
-                dc.Sql("UPDATE lotstocks SET stock = stock + @1 WHERE lotid = @2 AND hubid = @3");
+                dc.Sql("UPDATE lotinvs SET stock = stock + @1 WHERE lotid = @2 AND hubid = @3");
                 await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
 
                 // remote call to refund

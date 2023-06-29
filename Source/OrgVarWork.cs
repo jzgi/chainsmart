@@ -24,7 +24,7 @@ public abstract class OrgVarWork : WebWork
             h.LI_().FIELD("商户名", m.name)._LI();
             h.LI_().FIELD("简介语", m.tip)._LI();
             h.LI_().FIELD("工商登记名", m.legal)._LI();
-            if (m.OfUpper)
+            if (m.AsUpper)
             {
                 h.LI_().FIELD("涵盖市场名", m.cover)._LI();
             }
@@ -32,19 +32,22 @@ public abstract class OrgVarWork : WebWork
             h.LI_().FIELD(m.IsRetail ? "场区" : "区域", regs[m.regid]);
             if (m.IsRetail)
             {
-                h.FIELD("联系电话", m.addr);
+                h.FIELD("商户编号", m.addr);
             }
             h._LI();
             h.LI_().FIELD("联系电话", m.tel).FIELD("托管", m.trust)._LI();
 
-            if (!m.IsRetail)
+            if (m.AsUpper || m.AsSupply)
             {
                 h.LI_().FIELD("地址", m.addr)._LI();
                 h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                 h.LI_().FIELD("指标参数", m.specs)._LI();
             }
-            h.LI_().FIELD("收款账号", m.bankacct)._LI();
-            h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+            if (m.AsRetail || m.AsSupply)
+            {
+                h.LI_().FIELD("收款账号", m.bankacct)._LI();
+                h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+            }
 
             h.LI_().FIELD2("创建", m.created, m.creator)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
@@ -469,7 +472,11 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) => { return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1; });
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
+            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+        });
 
         wc.Give(205);
     }

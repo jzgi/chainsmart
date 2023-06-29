@@ -49,12 +49,12 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             if (!org.IsOked)
             {
-                h.ALERT("本店已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-warning");
+                h.ALERT("本店已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
                 return;
             }
             if (!org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("本店已打烊，订单明天发货", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-warning");
+                h.ALERT("本店已打烊，订单待营业时发货", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
 
             h._PIC();
