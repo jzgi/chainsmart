@@ -11,15 +11,24 @@ namespace ChainSmart;
 
 public class WebConnectorByIcbc : WebConnector
 {
-    private const string SIGN_TYPE = "sign_type",
-        SIGN_TYPE_RSA = "RSA",
-        SIGN_TYPE_RSA2 = "RSA2",
-        SIGN_TYPE_SM2 = "SM2",
-        SIGN_TYPE_CA = "CA",
-        SIGN_SHA1RSA_ALGORITHMS = "SHA1WithRSA",
-        SIGN_SHA256RSA_ALGORITHMS = "SHA256WithRSA",
-        ENCRYPT_TYPE_AES = "AES",
+    private const string
         APP_ID = "app_id",
+        MER_ID = "mer_id",
+        MSG_ID = "msg_id",
+        OUT_TRADE_NO = "out_trade_no",
+        MER_PRTCL_NO = "mer_prtcl_no",
+        ORDER_AMT = "order_amt",
+        ICBC_APPID = "icbc_appid",
+        SHOP_APPID = "shop_appid",
+        OPENID = "openId",
+        SALEDEPNAME = "saledepname",
+        BODY = "body",
+        ATTACH = "attach",
+        RET_TOTAL_AMT = "ret_total_amt",
+        TRNSC_CCY = "trnsc_ccy",
+        SIGN_TYPE = "sign_type",
+        SIGN_TYPE_RSA2 = "RSA2",
+        ENCRYPT_TYPE_AES = "AES",
         FORMAT = "format",
         TIMESTAMP = "timestamp",
         SIGN = "sign",
@@ -28,27 +37,16 @@ public class WebConnectorByIcbc : WebConnector
         NOTIFY_URL = "notify_url",
         RETURN_URL = "return_url",
         ENCRYPT_TYPE = "encrypt_type",
-        // -----===-------///
         BIZ_CONTENT_KEY = "biz_content",
-        /** 默认时间格式 **/
         DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss",
-        /** Date默认时区 **/
-        DATE_TIMEZONE = "GMT+8",
-        /** UTF-8字符集 **/
         CHARSET_UTF8 = "UTF-8",
-        /** GBK字符集 **/
-        CHARSET_GBK = "GBK",
-        /** JSON 应格式 */
         FORMAT_JSON = "json",
-        /** XML 应格式 */
-        FORMAT_XML = "xml",
         CA = "ca",
-        PASSWORD = "password",
         RESPONSE_BIZ_CONTENT = "response_biz_content",
-        /** 消息唯一编号 **/
-        MSG_ID = "msg_id",
-        /** sdk版本号在header中的key */
-        VERSION_HEADER_NAME = "APIGW-VERSION";
+        RETURN_CODE = "return_code",
+        TOTAL_AMT = "total_amt",
+        OUTTRX_SERIAL_NO = "outtrx_serial_no",
+        DEAL_FLAG = "deal_flag";
 
     private string appId;
     private string privateKey;
@@ -67,36 +65,31 @@ public class WebConnectorByIcbc : WebConnector
         this.shopAppid = shopAppid;
     }
 
-    /**
-     * 退款
-     */
-    public async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund,
-        string refoundno, string descr = null)
-    {
-        return null;
-    }
-
-    /**
-     * 退款查询
-     */
-    public async Task<string> PostRefundQueryAsync(bool sup, long orderid)
-    {
-        return null;
-    }
-
-    /**
-     * 订单查询 
-     */
-    public async Task<decimal> PostOrderQueryAsync(bool sup, string orderno)
+    /// <summary>
+    /// 退款
+    /// </summary>
+    /// <param name="sup"></param>
+    /// <param name="out_trade_no"></param>
+    /// <param name="total"></param>
+    /// <param name="refund"></param>
+    /// <param name="refoundno"></param>
+    /// <param name="descr"></param>
+    /// <returns></returns>
+    public async Task<string> PostRefundAsync(string out_trade_no, decimal refund,
+        string refoundno)
     {
         string msgId = DateTime.Now.ToString("yyyyMMddHHmmssms");
-        // const string path = "https://gw.open.icbc.com.cn/api/mybank/pay/qrcode/scanned/paystatus/V2";
-        const string path = "/api/mybank/pay/qrcode/scanned/paystatus/V2";
+        const string path = "/api/cardbusiness/aggregatepay/b2c/online/merrefund/V1";
         var biz = new JObj
         {
-            { "mer_id", merId }, //商户编号
-            { "out_trade_no", orderno }, //商户系统订单号
-            { "order_id", "" }, //工行系统订单号
+            { MER_ID, merId }, //商户编号
+            { OUTTRX_SERIAL_NO, refoundno }, //商户系统退货时生成的退款编号
+            { RET_TOTAL_AMT, refund.ToString() }, //商户系统退货时生成的退款编号
+            { TRNSC_CCY, "001" }, //商户系统订单号
+            { OUT_TRADE_NO, out_trade_no }, //商户系统订单号
+            { DEAL_FLAG, "0" }, //商户系统订单号
+            { ICBC_APPID, appId }, //商户系统订单号
+            { MER_PRTCL_NO, merId }, //商户系统订单号
         };
         var bizStr = biz.ToString();
         Dictionary<String, String> param = prepareParams(path, msgId, bizStr);
@@ -107,14 +100,64 @@ public class WebConnectorByIcbc : WebConnector
         FormBuilder builder = new FormBuilder(true, 4096);
         builder.Put(BIZ_CONTENT_KEY, bizStr);
         var (_, jo) = await PostAsync<JObj>(url, builder);
-        if (jo["return_code"] == 0)
+        JObj responseBiz = jo[RESPONSE_BIZ_CONTENT];
+        if (responseBiz != null)
         {
             //verif sign
-            string sign = jo["sign"];
-            var result = ((JObj)jo["response_biz_content"]).ToString();
+            string sign = jo[SIGN];
+            var result = responseBiz.ToString();
             if (VerifySign(result, gwPublicKey, sign))
             {
-                return jo["total_amt"];
+                if (responseBiz[RETURN_CODE] == "0")
+                {
+                    string serial_no = responseBiz["outtrx_serial_no"];
+                    return serial_no;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// 退款查詢
+    /// </summary>
+    /// <param name="sup">供应商</param>
+    /// <param name="trade_no">商户订单编号</param>
+    /// <param name="outtrx_serial_no">商户退款编号</param>
+    /// <returns></returns>
+    public async Task<decimal> PostRefundQueryAsync(string trade_no, string outtrx_serial_no)
+    {
+        string msgId = DateTime.Now.ToString("yyyyMMddHHmmssms");
+        const string path = "/api/cardbusiness/aggregatepay/b2c/online/refundqry/V1";
+        var biz = new JObj
+        {
+            { MER_ID, merId }, //商户编号
+            { OUT_TRADE_NO, trade_no }, //商户系统订单号
+            { OUTTRX_SERIAL_NO, outtrx_serial_no }, //商户系统退货时生成的退款编号
+        };
+        var bizStr = biz.ToString();
+        Dictionary<String, String> param = prepareParams(path, msgId, bizStr);
+
+        Dictionary<String, String> urlQueryParams = buildUrlQueryParams(param);
+
+        String url = BuildGetUrl(path, urlQueryParams, CHARSET_UTF8);
+        FormBuilder builder = new FormBuilder(true, 4096);
+        builder.Put(BIZ_CONTENT_KEY, bizStr);
+        var (_, jo) = await PostAsync<JObj>(url, builder);
+        JObj responseBiz = jo[RESPONSE_BIZ_CONTENT];
+        if (responseBiz != null)
+        {
+            //verif sign
+            string sign = jo[SIGN];
+            var result = responseBiz.ToString();
+            if (VerifySign(result, gwPublicKey, sign))
+            {
+                if (responseBiz[RETURN_CODE] == "0")
+                {
+                    string amt = responseBiz["real_reject_amt"];
+                    return Convert.ToDecimal(amt);
+                }
             }
         }
 
@@ -122,27 +165,74 @@ public class WebConnectorByIcbc : WebConnector
     }
 
     /**
-     * 公众号聚合支付
+     * 订单查询 
      */
-    public async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount,
-        string openid, string ip, string notifyurl, string descr)
+    public async Task<decimal> PostOrderQueryAsync(string trade_no)
     {
         string msgId = DateTime.Now.ToString("yyyyMMddHHmmssms");
-        // const string path = "https://gw.open.icbc.com.cn/ui/cardbusiness/aggregatepay/b2c/online/ui/consumepurchaseshowpay/V1";
+        const string path = "/api/cardbusiness/aggregatepay/b2c/online/orderqry/V1";
+        var biz = new JObj
+        {
+            { MER_ID, merId }, //商户编号
+            { OUT_TRADE_NO, trade_no }, //商户系统订单号
+            { DEAL_FLAG, "0" }, //0-查询；1-关单 2-关单（不支持二次支付）
+        };
+        var bizStr = biz.ToString();
+        Dictionary<String, String> param = prepareParams(path, msgId, bizStr);
+
+        Dictionary<String, String> urlQueryParams = buildUrlQueryParams(param);
+
+        String url = BuildGetUrl(path, urlQueryParams, CHARSET_UTF8);
+        FormBuilder builder = new FormBuilder(true, 4096);
+        builder.Put(BIZ_CONTENT_KEY, bizStr);
+        var (_, jo) = await PostAsync<JObj>(url, builder);
+        JObj responseBiz = jo[RESPONSE_BIZ_CONTENT];
+        if (responseBiz != null)
+        {
+            //verif sign
+            string sign = jo[SIGN];
+            var result = responseBiz.ToString();
+            if (VerifySign(result, gwPublicKey, sign))
+            {
+                if (responseBiz[RETURN_CODE] == "0")
+                {
+                    string totalAmount = responseBiz[TOTAL_AMT];
+                    return Convert.ToDecimal(totalAmount);
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    /// <summary>
+    /// 公众号聚合支付
+    /// </summary>
+    /// <param name="sup"></param>
+    /// <param name="trade_no">商户订单编号</param>
+    /// <param name="amount">支付金额</param>
+    /// <param name="openid">用户openid</param>
+    /// <param name="notifyurl">异步通知url</param>
+    /// <param name="descr">订单描述</param>
+    /// <returns></returns>
+    public async Task<(string, string)> PostUnifiedOrderAsync(string trade_no, decimal amount,
+        string openid, string notifyurl, string descr)
+    {
+        string msgId = DateTime.Now.ToString("yyyyMMddHHmmssms");
         const string path = "/ui/cardbusiness/aggregatepay/b2c/online/ui/consumepurchaseshowpay/V1";
         var biz = new JObj
         {
-            { "mer_id", merId },
-            { "out_trade_no", trade_no },
-            { "mer_prtcl_no", merId },
-            { "order_amt", amount.ToString() },
-            { "notify_url", notifyurl },
-            { "icbc_appid", appId },
-            { "shop_appid", shopAppid },
-            { "openId", openid },
-            { "saledepname", "中惠农通" },
-            { "body", "中惠农通" },
-            { "attach", descr },
+            { MER_ID, merId },
+            { OUT_TRADE_NO, trade_no },
+            { MER_PRTCL_NO, merId },
+            { ORDER_AMT, amount.ToString() },
+            { NOTIFY_URL, notifyurl },
+            { ICBC_APPID, appId },
+            { SHOP_APPID, shopAppid },
+            { OPENID, openid },
+            { SALEDEPNAME, "中惠农通" },
+            { BODY, descr },
+            { ATTACH, descr },
         };
         var bizStr = biz.ToString();
         Dictionary<String, String> param = prepareParams(path, msgId, bizStr);
@@ -153,10 +243,10 @@ public class WebConnectorByIcbc : WebConnector
             BuildGetUrl(
                 "https://gw.open.icbc.com.cn/ui/cardbusiness/aggregatepay/b2c/online/ui/consumepurchaseshowpay/V1",
                 urlQueryParams, CHARSET_UTF8);
-        return ("_", buildForm(url, new Dictionary<string, string>(){{"biz_content",bizStr}}));
+        return ("_", buildForm(url, new Dictionary<string, string>() { { "biz_content", bizStr } }));
     }
 
-    public static String buildForm(String baseUrl, Dictionary<String, String> parameters)
+    private static String buildForm(String baseUrl, Dictionary<String, String> parameters)
     {
         StringBuilder sb = new StringBuilder();
         sb.Append("<form name=\"auto_submit_form\" method=\"post\" action=\"");
@@ -285,7 +375,7 @@ public class WebConnectorByIcbc : WebConnector
         return sb.ToString();
     }
 
-    protected string Sign(string content, string privateKey)
+    public string Sign(string content, string privateKey)
     {
         _ = privateKey ?? throw new ArgumentException($"{nameof(privateKey)} 不能为 null！");
 
