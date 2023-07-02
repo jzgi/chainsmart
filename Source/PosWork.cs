@@ -21,14 +21,14 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     {
         h.TABLE(lst, o =>
         {
-            h.TD_().T(o.created, 0, 2)._TD();
+            h.TD_("uk-width-tiny").T(o.created, 0, 2)._TD();
             h.TD_().ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name);
             foreach (var v in o.items)
             {
-                h.PIC(MainApp.WwwUrl + "/item/", o.id, "/icon", css: "uk-width-tiny");
+                h.PIC(MainApp.WwwUrl + "/item/", o.id, "/icon", css: "uk-width-micro");
             }
             h._A()._TD();
-            h.TD_(css: "uk-text-right").SP().CNY(o.pay).SP().ICON(Buy.Icons[o.typ])._TD();
+            h.TD_(css: "uk-text-right").SP().CNY(o.pay).SP().T(o.IsCash ? '现' : '转')._TD();
         });
     }
 }
@@ -118,7 +118,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }, false, 60, onload: "fixAll();");
     }
 
-    [Ui(tip: "今日记录", icon: "table", status: 2), Tool(Anchor)]
+    [Ui(tip: "今日零售记录", icon: "table", status: 2), Tool(Anchor)]
     public async Task today(WebContext wc)
     {
         var org = wc[-1].As<Org>();

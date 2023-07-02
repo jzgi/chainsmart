@@ -9,10 +9,6 @@ public abstract class ApVarWork : WebWork
 {
 }
 
-public class AdmlyPurApVarWork : ApVarWork
-{
-}
-
 public class AdmlyBuyApVarWork : ApVarWork
 {
     public async Task @default(WebContext wc)
@@ -23,14 +19,19 @@ public class AdmlyBuyApVarWork : ApVarWork
         dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE xorgid = @1");
         var arr = await dc.QueryAsync<Ap>(p => p.Set(orgid));
 
-        var orgs = GrabTwinSet<int, Org>(orgid);
+        var org = GrabTwin<int, Org>(orgid);
+        var orgs = GrabTwinSet<int, Org>(orgid).AddOf(org, first: true);
 
 
         await wc.GiveXls(200, false, orgid, arr, orgs.ToMap<int, Org>());
     }
 }
 
-public class PtylyApVarWork : ApVarWork
+public class AdmlyPurApVarWork : ApVarWork
+{
+}
+
+public class OrglyApVarWork : ApVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)

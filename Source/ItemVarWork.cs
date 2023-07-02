@@ -15,7 +15,7 @@ public class ItemVarWork : WebWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        const short msk = 255 | MSK_EXTRA;
+        const short msk = 255 | MSK_AUX;
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND orgid = @2");
@@ -26,11 +26,12 @@ public class ItemVarWork : WebWork
             h.UL_("uk-list uk-list-divider");
 
             h.LI_().FIELD("商品名", m.name)._LI();
-            h.LI_().FIELD("简介", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
+            h.LI_().FIELD("简介语", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics)._LI();
-            h.LI_().FIELD("零售单价", m.price, money: true).FIELD("秒杀直降", m.off, money: true)._LI();
+            h.LI_().FIELD("单价", m.price, money: true).FIELD2("为整", m.step, m.unit)._LI();
+            h.LI_().FIELD("ＶＩＰ减价", m.off, money: true).FIELD("全民秒杀期", m.promo)._LI();
             h.LI_().FIELD2("起订量", m.min, m.unit).FIELD2("限订量", m.max, m.unit)._LI();
-            h.LI_().FIELD2("为整量", m.step, m.unit).FIELD2("剩余量", m.stock, m.unit)._LI();
+            h.LI_().FIELD2("数量", m.stock, m.unit)._LI();
 
             if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
             if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
@@ -156,6 +157,8 @@ public class RtllyItemVarWork : ItemVarWork
         var prin = (User)wc.Principal;
         var cats = Grab<short, Cat>();
 
+        const short MAX = 100;
+
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
@@ -167,7 +170,7 @@ public class RtllyItemVarWork : ItemVarWork
                 h.FORM_().FIELDSUL_("基本信息");
 
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 if (o.IsFromSupply)
                 {
                     h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, @readonly: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics, @readonly: true)._LI();
@@ -177,9 +180,9 @@ public class RtllyItemVarWork : ItemVarWork
                     h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 }
 
-                h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });

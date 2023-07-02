@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -88,19 +89,32 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
             // the first detail
-            var ln = o.items[0];
+            var items = o.items;
 
-            if (o.items.Length == 1)
+            if (items == null || items.Length == 0)
             {
-                h.PIC(MainApp.WwwUrl, "/lot/", ln.lotid, "/icon", css: "uk-width-1-5");
+                h.PIC("/void.webp", css: "uk-width-1-5");
+            }
+            else if (items.Length == 1)
+            {
+                h.PIC(MainApp.WwwUrl, "/lot/", items[0].lotid, "/icon", css: "uk-width-1-5");
             }
             else
-                h.PIC("/void.webp", css: "uk-width-1-5");
+            {
+                h.PIC("/solid.webp", css: "uk-width-1-5");
+            }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q(o.uaddr, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-width-1-3")._SPAN().SPAN_("uk-width-1-3").T(o.items.Length).SP().T("项商品")._SPAN().SPAN_("uk-margin-auto-left").CNY(o.pay)._SPAN()._FOOTER();
+            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0)._SPAN().SP().PICK(o.Key)._HEADER();
+            h.Q_("uk-width-expand");
+            for (int i = 0; i < o.items?.Length; i++)
+            {
+                var it = o.items[i];
+                if (i > 0) h.T('；');
+                h.T(it.name).SP().T(it.qty).T(it.unit);
+            }
+            h._Q();
+            h.FOOTER_().SPAN(string.IsNullOrEmpty(o.ucom) ? "非派送区" : o.ucom, "uk-width-expand").SPAN(o.utel, "uk-width-1-3 uk-output").SPAN_("uk-width-1-3 uk-flex-right").CNY(o.pay)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -115,7 +129,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 1 AND typ = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 1 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -128,16 +142,16 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
-    [Ui(tip: "已备发", icon: "eye", status: 2), Tool(Anchor)]
+    [Ui(tip: "已集合", icon: "shrink", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 2 AND typ = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 2 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -145,22 +159,22 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已备发订单");
+                h.ALERT("尚无已集合订单");
                 return;
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
     [OrgSpy(BUY_OKED)]
-    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
+    [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 4 AND typ = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -168,21 +182,21 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             h.TOOLBAR(twinid: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已发货订单");
+                h.ALERT("尚无已派发订单");
                 return;
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
-    [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
+    [Ui(tip: "已撤单", icon: "trash", status: 0), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 0 AND typ = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -195,7 +209,21 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
+    }
+
+    [Ui("集合", "", icon: "shrink", status: 1), Tool(ButtonPickOpen)]
+    public async Task adapt(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND rtlid = @4 AND status = 1");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+        wc.Give(204);
     }
 }
 
@@ -203,47 +231,34 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 [Ui("网售统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
-    [Ui("待发货", status: 1), Tool(Anchor)]
+    [Ui("待发货订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
-        const short msk = Entity.MSK_EXTRA;
-
         using var dc = NewDbContext();
         // group by commuity 
-        dc.Sql("SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 2 GROUP BY ucom");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id), msk);
+        dc.Sql($"SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND status = {Entity.STU_ADAPTED} GROUP BY ucom");
+        await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
 
-            if (arr == null) return;
-
-            h.MAIN_(grid: true);
-
-            int last = 0; // uid
-
-            foreach (var o in arr)
+            h.TABLE_();
+            while (dc.Next())
             {
-                if (o.uid != last)
-                {
-                    h.FORM_("uk-card uk-card-default");
-                    h.HEADER_("uk-card-header").T(o.uname).SP().T(o.utel).SP().T(o.uaddr)._HEADER();
-                    h.UL_("uk-card-body");
-                    // h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                }
+                dc.Let(out string ucom);
+                dc.Let(out int count);
 
-                h.LI_().T(o.name)._LI();
+                if (string.IsNullOrEmpty(ucom)) ucom = "非派送区";
 
-                last = o.uid;
+                h.TR_();
+                h.TD(ucom);
+                h.TD(count);
+                h._TR();
             }
-
-            h._UL();
-            h._FORM();
-
-            h._MAIN();
+            h._TABLE();
         });
     }
 

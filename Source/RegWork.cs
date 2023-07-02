@@ -19,7 +19,7 @@ public abstract class RegWork : WebWork
             h.PIC("/void.webp", css: "uk-width-1-5");
 
             h.ASIDE_();
-            h.HEADER_().H4(o.name).SPAN(Item.Statuses[o.status], "uk-badge")._HEADER();
+            h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
             h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
             h._ASIDE();

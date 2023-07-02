@@ -29,12 +29,13 @@ public class Buy : Entity, IKeyable<long>
         { TYP_TRANSF, "thumbnails" },
     };
 
+
     public new static readonly Map<short, string> Statuses = new()
     {
-        { STU_VOID, "撤单" },
-        { STU_CREATED, "下单" },
-        { STU_ADAPTED, "发货" },
-        { STU_OKED, "收货" },
+        { STU_VOID, "已撤单" },
+        { STU_CREATED, "已收单" },
+        { STU_ADAPTED, "已集合" },
+        { STU_OKED, "已派发" },
     };
 
 
@@ -172,6 +173,8 @@ public class Buy : Entity, IKeyable<long>
     }
 
     public bool IsPlat => typ == TYP_PLAT;
+
+    public bool IsCash => typ == TYP_CASH;
 
     public override string ToString() => uname + "购买" + name + "商品";
 

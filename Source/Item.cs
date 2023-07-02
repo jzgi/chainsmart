@@ -12,10 +12,9 @@ public class Item : Entity, IKeyable<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_DEF, "编外" },
-        { TYP_STD, "供应" },
+        { TYP_DEF, "其它" },
+        { TYP_STD, "供链" },
     };
-
 
     internal int id;
     internal int orgid;
@@ -25,6 +24,7 @@ public class Item : Entity, IKeyable<int>
     internal short unitw;
     internal decimal price;
     internal decimal off;
+    internal bool promo;
     internal short step;
     internal short max;
     internal short min;
@@ -55,9 +55,10 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(catid), ref catid);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
-            s.Get(nameof(step), ref step);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
+            s.Get(nameof(promo), ref promo);
+            s.Get(nameof(step), ref step);
             s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
         }
@@ -69,7 +70,7 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(pic), ref pic);
         }
 
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        if ((msk & MSK_AUX) == MSK_AUX)
         {
             s.Get(nameof(ops), ref ops);
         }
@@ -95,9 +96,10 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(catid), catid);
             s.Put(nameof(unit), unit);
-            s.Put(nameof(step), step);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
+            s.Put(nameof(promo), promo);
+            s.Put(nameof(step), step);
             s.Put(nameof(min), min);
             s.Put(nameof(max), max);
         }
@@ -109,7 +111,7 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(pic), pic);
         }
 
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        if ((msk & MSK_AUX) == MSK_AUX)
         {
             s.Put(nameof(ops), ops);
         }
@@ -137,7 +139,7 @@ public class Item : Entity, IKeyable<int>
 
     public decimal RealPrice => price - off;
 
-    public bool IsFlashing => off > 0;
+    public decimal GetRealOff(bool vip) => vip || promo ? off : 0;
 
     public bool IsFromSupply => lotid > 0;
 

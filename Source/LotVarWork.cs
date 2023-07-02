@@ -267,7 +267,7 @@ public class PublyLotVarWork : LotVarWork
     {
         int id = wc[0];
 
-        const short msk = 255 | MSK_EXTRA;
+        const short msk = 255 | MSK_AUX;
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Lot.Empty, msk).T(" FROM lots_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Lot>(p => p.Set(id), msk);

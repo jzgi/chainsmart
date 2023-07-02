@@ -107,7 +107,7 @@ public class PublyVarWork : WebWork
 
             if (sector != 0 && arr == null)
             {
-                h.ALERT("尚无商户");
+                h.ALERT("尚无上线商户");
                 return;
             }
 

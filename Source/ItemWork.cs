@@ -92,7 +92,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
                 // ran mark
-                if (o.IsFlashing)
+                if (o.promo)
                 {
                     h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
                 }
@@ -179,7 +179,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 var item = map[bi.itemid];
                 if (item != null)
                 {
-                    bi.Init(item, vip: prin.IsVipFor(orgid) || item.IsFlashing);
+                    bi.Init(item, vip: prin.IsVipFor(orgid) || item.promo);
                 }
             }
 
@@ -330,7 +330,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("编外", "新建编外非溯源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("其它", "新建编外非溯源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task def(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -338,6 +338,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         var prin = (User)wc.Principal;
         var cats = Grab<short, Cat>();
 
+        const short MAX = 100;
         var o = new Item
         {
             typ = Item.TYP_DEF,
@@ -347,7 +348,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             unit = "斤",
             unitw = 500,
             step = 1,
-            max = 1
+            max = MAX
         };
         if (wc.IsGet)
         {
@@ -356,11 +357,11 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_("商品信息");
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
             });
@@ -381,19 +382,21 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("供应", "导入来自供应链的溯源产品", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("供链", "导入来自供应链的溯源产品", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task std(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
+        const short MAX = 100;
         var o = new Item
         {
             typ = Item.TYP_STD,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,
-            max = 1
+            min = 1,
+            max = MAX
         };
 
         if (wc.IsGet)
@@ -408,9 +411,9 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_("产品信息");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
-                h.LI_().NUMBER("零售单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("整件含量", nameof(o.step), o.step, min: 1, money: false)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(std))._FORM();
             });

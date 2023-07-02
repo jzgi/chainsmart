@@ -95,9 +95,12 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(m4), ref m4);
         }
 
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        if ((msk & MSK_AUX) == MSK_AUX)
         {
             s.Get(nameof(ops), ref ops);
+        }
+        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        {
             s.Get(nameof(stock), ref stock);
         }
     }
@@ -144,9 +147,12 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(m4), m4);
         }
 
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        if ((msk & MSK_AUX) == MSK_AUX)
         {
             s.Put(nameof(ops), ops);
+        }
+        if ((msk & MSK_EXTRA) == MSK_EXTRA)
+        {
             s.Put(nameof(stock), stock);
         }
     }

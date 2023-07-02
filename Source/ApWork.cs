@@ -210,7 +210,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 }
 
 [Ui("网售结款")]
-public class RtllyBuyApWork : ApWork<PtylyApVarWork>
+public class RtllyBuyApWork : ApWork<OrglyApVarWork>
 {
     [Ui("网售结款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -238,7 +238,7 @@ public class RtllyBuyApWork : ApWork<PtylyApVarWork>
 }
 
 [Ui("销售业务结款")]
-public class SuplyPurApWork : ApWork<PtylyApVarWork>
+public class SuplyPurApWork : ApWork<OrglyApVarWork>
 {
     [Ui("销售结款", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)

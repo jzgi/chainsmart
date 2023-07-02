@@ -81,23 +81,23 @@ public class MyBuyVarWork : BuyVarWork
 
 public class RtllyBuyVarWork : BuyVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye", status: 1), Tool(ButtonConfirm)]
-    public async Task adapt(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-        var prin = (User)wc.Principal;
-
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND rtlid = @4 AND status = 1");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
-
-        wc.Give(204);
-    }
-
+    // [OrglyAuthorize(0, User.ROL_OPN)]
+    // [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye", status: 1), Tool(ButtonConfirm)]
+    // public async Task adapt(WebContext wc)
+    // {
+    //     int id = wc[0];
+    //     var org = wc[-2].As<Org>();
+    //     var prin = (User)wc.Principal;
+    //
+    //     using var dc = NewDbContext();
+    //     dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND rtlid = @4 AND status = 1");
+    //     await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+    //
+    //     wc.Give(204);
+    // }
+    //
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("发货", "确认自行发货？", icon: "arrow-right", status: 3), Tool(ButtonConfirm)]
+    [Ui("自派", "确认自行派送？", icon: "arrow-right", status: 3), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];

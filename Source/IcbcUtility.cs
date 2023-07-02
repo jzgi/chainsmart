@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
 
 namespace ChainSmart;
 
@@ -87,7 +87,7 @@ public static class IcbcUtility
     /// </summary>
     public static async Task GiveXls(this WebContext wc, short status, bool sup, int orgid, IList<Ap> aplst, Map<int, Org> orgmap)
     {
-        var workbook = new XSSFWorkbook();
+        var workbook = new HSSFWorkbook();
         var sheet = workbook.CreateSheet();
 
         var hdr = sheet.CreateRow(0);
@@ -134,6 +134,7 @@ public static class IcbcUtility
 
         var mem = new MemoryStream();
         workbook.Write(mem);
+        workbook.Close();
 
         var buf = mem.ToArray();
 
