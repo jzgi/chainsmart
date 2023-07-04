@@ -139,7 +139,7 @@ function posRecalc(trig) {
     var form = trig.form;
     var subtotal = form.subtotal;
     var price = form.price;
-    var qty = form. qty;
+    var qty = form.qty;
     subtotal.value = (qty.value * price.value).toFixed(2);
 }
 
@@ -531,11 +531,14 @@ function askSend(trig, tip) {
 
     var xhr = new XMLHttpRequest;
     xhr.onreadystatechange = function () {
+
+        window.parent.setModified();
+
         if (4 == this.readyState) {
             if (200 == this.status || 205 == this.status) { // reset content
                 window.location.reload();
             }
-            else if (204 == this.status) {
+            else if (204 == this.status) { // no content
                 window.parent.closeUp(true);
             }
         }
@@ -559,8 +562,8 @@ function goto(trigOrUrl, evt) {
     evt.preventDefault();
 
     if (trigOrUrl.tagName == 'A') {
-        var fr = trigOrUrl.target == '_parent' ? 
-            window.parent : 
+        var fr = trigOrUrl.target == '_parent' ?
+            window.parent :
             window;
         fr.location.replace(trigOrUrl.href);
     }
@@ -628,7 +631,9 @@ function dialog(trig, mode, pick, title) {
     var method = 'post';
     var src;
     var trigc;
+
     if (tag == 'BUTTON') {
+
         action = trig.formAction || trig.name;
         method = trig.formMethod || method;
         var qstr;
@@ -646,7 +651,9 @@ function dialog(trig, mode, pick, title) {
             src = action;
         }
         trigc = ' button-trig';
+
     } else if (tag == 'A') {
+
         src = action = decodeURI(trig.href);
         method = 'get';
         if (mode == ASTACK) {
@@ -661,10 +668,10 @@ function dialog(trig, mode, pick, title) {
     var div = '<div id="dialog" class="' + modalc + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical' + annimc + '">';
     if (mode == SHOW) {
-        div += '<button class="uk-modal-close-outside" type="button" uk-close></button>';
+        div += '<button class="uk-modal-close-outside uk-close" type="button" uk-icon="close" onclick="closeUp(true);"></button>';
     }
     if (mode == PROMPT || mode == OPEN || mode == CROP) {
-        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(false);"></button></header>';
+        div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(true);"></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';
     if (mode == PROMPT) {
@@ -679,13 +686,11 @@ function dialog(trig, mode, pick, title) {
 
         var dlg = $('#dialog');
         if (dlg) {
-
             // // if reload
             if (modified) {
-
                 // NOTE trick for page reload
                 var ifr = window.frameElement;
-                window.location.replace(ifr.src);
+                ifr.contentWindow.location.reload();
             } else {
                 UIkit.modal(dlg).hide().then(function () {
                     document.body.removeChild(dlg);
@@ -695,68 +700,61 @@ function dialog(trig, mode, pick, title) {
     });
 
     // display the modal
-    UIkit.modal(e).show().then(function () {
-        // add to navigation history
-        if (mode != SHOW) { // show has no history
-            var srcurl = new URL(src);
-            history.pushState(null, null, srcurl.hostname == location.hostname ? action : 'extern');
-        }
+    var m = UIkit.modal(e);
+    m.bgClose = false;
+    m.escClose = false;
+    m.show().then(function () {
+
+        var srcurl = new URL(src);
+        history.pushState(null, null, srcurl.hostname == location.hostname ? action : 'extern');
     });
 
     return false;
 }
 
-// need of refresh
+
+// if the window needs a refresh
 var modified;
 
+function setModified() {
+    modified = true;
+}
+
+// close the dialog from concurrent window
+// recursively, its parent windows mayu be reloaded, or closed.
 function closeUp(reload, delta) {
-
-    // set flags on parents
-    if (reload) {
-        var win = window;
-        while (win != win.parent) {
-
-            win.modified = true;
-
-            var d = win.$('#dialog');
-            if (d && d.classList.contains('uk-modal-full')) break;
-
-            win = win.parent;
-        };
-    }
 
     var dlg = $('#dialog');
     if (dlg) {
 
-        if (dlg.classList.contains('uk-modal-tall')) {
-            // // if reload
-            if (modified && reload) {
+        // cehck if stacked sub dialog
+        var subifr = dlg.querySelector('#modalbody')
+        var subdlg = subifr.contentDocument.querySelector('#dialog') != null;
 
-                // NOTE trick for page reload
-                var ifr = window.frameElement;
-                // window.location.replace(ifr.src);
-                ifr.contentWindow.location.reload();
+        UIkit.modal(dlg).hide().then(function () {
+            document.body.removeChild(dlg);
+        });
 
-                history.go(-1);
+        if (reload & modified) {
 
-            } else {
-                UIkit.modal(dlg).hide().then(function () {
-                    document.body.removeChild(dlg);
-                });
-            }
-        } else {
-            history.go(delta ? delta : -1);
+            // NOTE trick for page reload
+            var ifr = window.frameElement;
+            ifr.contentWindow.location.reload();
         }
+
+        history.go(subdlg ? -2 : -1);
     }
 }
 
-
 // when clicked on the OK button
 function ok(okbtn, mode, formid, tag, action, method) {
+
     var div = ancestorOf(okbtn, 'uk-modal');
     ifr = div.querySelector('iframe');
     form = ifr.contentDocument.querySelector('form');
+
     if (mode == PROMPT) {
+
         if (!form || !form.reportValidity()) return;
         if (tag == 'A') { // append to url and switch
             qstr = serialize(form);
@@ -765,7 +763,9 @@ function ok(okbtn, mode, formid, tag, action, method) {
                 history.back();
                 location.replace(uri);
             }
+
         } else if (tag == 'BUTTON') { // merge to the parent and submit
+
             if (method == 'get') {
                 var qstr = serialize(form);
                 if (qstr) {
@@ -776,6 +776,7 @@ function ok(okbtn, mode, formid, tag, action, method) {
                     history.back();
                     location.replace(action.split("?")[0] + '?' + qstr);
                 }
+
             } else if (method == 'post') {
                 var mform = $('#' + formid);
                 for (var pair of new FormData(form).entries()) {
@@ -816,38 +817,63 @@ function crop(trig, siz, title, subs) {
             wid = 480; hei = 640;
             break;
     }
-    var html = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
-    html += '<section class="uk-modal-dialog uk-margin-auto-vertical uk-animation-slide-bottom">';
+    var h = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
+    h += '<section class="uk-modal-dialog uk-margin-auto-vertical uk-animation-slide-bottom">';
+    h += '<button class="uk-modal-close-outside uk-close" type="button" uk-icon="close" onclick="closeUp(true);"></button>';
 
-    html += '<main id="imgbnd" class="uk-modal-body uk-padding-remove">'; // body
-    html += '<input type="file" id="imginp" style="display: none;" onchange="bind(this.parentNode, window.URL.createObjectURL(this.files[0]),' + wid + ',' + hei + ');">';
-    html += '</main>';
+    h += '<main id="imgbnd" class="uk-modal-body uk-padding-remove">'; // body
+    h += '<input type="file" id="imginp" style="display: none;" onchange="bind(this.parentNode, window.URL.createObjectURL(this.files[0]),' + wid + ',' + hei + ');">';
+    h += '</main>';
 
-    html += '<footer class="uk-modal-footer">';
-    html += '<div class="uk-button-group">';
+    h += '<footer class="uk-modal-footer">';
+    h += '<div class="uk-button-group">';
     if (subs > 0) {
-        html += '<select id="imgsub" class="uk-select uk-width-auto" style="position: absolute; left: 4px" onchange="bind($(\'#imgbnd\'),\'' + action + '-\' + this.value,' + wid + ',' + hei + ');">';
+        h += '<select id="imgsub" class="uk-select uk-width-auto" style="position: absolute; left: 4px" onchange="bind($(\'#imgbnd\'),\'' + action + '-\' + this.value,' + wid + ',' + hei + ');">';
         for (var i = 1; i <= subs; i++) {
-            html += '<option value="' + i + '">' + title + ' ' + i + '</option>';
+            h += '<option value="' + i + '">' + title + ' ' + i + '</option>';
         }
-        html += '</select>';
+        h += '</select>';
     } else {
-        html += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
+        h += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
-    html += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click();">选择</button>';
-    html += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
+    h += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click();">选择</button>';
+    h += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
     if (subs > 0) {
-        html += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
+        h += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
     }
-    html += '</div>'; // control group
+    h += '</div>'; // control group
     // html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
-    html += '</footer>'; // header
+    h += '</footer>'; // header
 
-    html += '</section>'; // dialog
-    html += '</div>'; // modal
+    h += '</section>'; // dialog
+    h += '</div>'; // modal
 
-    var e = appendTo(document.body, html);
-    UIkit.modal(e).show();
+    // history
+    window.addEventListener('popstate', (evt) => {
+
+        var dlg = $('#dialog');
+        if (dlg) {
+            // // if reload
+            if (modified) {
+                // NOTE trick for page reload
+                var ifr = window.frameElement;
+                ifr.contentWindow.location.reload();
+            } else {
+                UIkit.modal(dlg).hide().then(function () {
+                    document.body.removeChild(dlg);
+                });
+            }
+        }
+    });
+
+    var e = appendTo(document.body, h);
+    var m = UIkit.modal(e);
+    m.bgClose = false;
+    m.escClose = false;
+    m.show().then(function () {
+
+        history.pushState(null, null, action);
+    });
 
     bind($('#imgbnd'), subs == 0 ? action : action + '-1', wid, hei);
 
@@ -861,6 +887,7 @@ function crop(trig, siz, title, subs) {
             }
         }
     }, false);
+
     return false;
 }
 
@@ -919,11 +946,16 @@ function cropUpd(el, url, close) {
                 alert("上传成功");
 
                 // set a refresh flag
-                var div = ancestorOf(el, 'uk-modal');
-                div.classList.add('button-refresh-trig');
+                var dlg = ancestorOf(el, 'uk-modal');
+                dlg.classList.add('button-refresh-trig');
 
                 if (close) {
-                    UIkit.modal(div).hide();
+
+                    UIkit.modal(dlg).hide().then(function () {
+                        document.body.removeChild(dlg);
+                    });
+            
+                    history.go(-1);
                 }
             }
         };

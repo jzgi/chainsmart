@@ -21,25 +21,30 @@ public abstract class OrgVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("商户名", m.name)._LI();
+            h.LI_().FIELD(m.IsBrand ? "品牌名" : "商户名", m.name)._LI();
             h.LI_().FIELD("简介语", m.tip)._LI();
-            h.LI_().FIELD("工商登记名", m.legal)._LI();
+            if (!m.IsBrand)
+            {
+                h.LI_().FIELD("工商登记名", m.legal)._LI();
+            }
             if (m.AsUpper)
             {
                 h.LI_().FIELD("涵盖市场名", m.cover)._LI();
             }
 
-            h.LI_().FIELD(m.IsRetail ? "场区" : "区域", regs[m.regid]);
-            if (m.IsRetail)
+            if (m.regid > 0)
             {
-                h.FIELD("商户编号", m.addr);
+                h.LI_().FIELD(m.IsRetail ? "场区" : "区域", regs[m.regid])._LI();
             }
-            h._LI();
-            h.LI_().FIELD("联系电话", m.tel).FIELD("托管", m.trust)._LI();
+            h.LI_().FIELD("联系电话", m.tel)._LI();
+            h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsBrand ? "链接" : "地址", m.addr)._LI();
+            if (!m.IsRetail)
+            {
+                h.LI_().FIELD("说明", m.descr)._LI();
+            }
 
             if (m.AsUpper || m.AsSupply)
             {
-                h.LI_().FIELD("地址", m.addr)._LI();
                 h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                 h.LI_().FIELD("指标参数", m.specs)._LI();
             }
@@ -47,6 +52,7 @@ public abstract class OrgVarWork : WebWork
             {
                 h.LI_().FIELD("收款账号", m.bankacct)._LI();
                 h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+                h.LI_().FIELD("托管", m.trust)._LI();
             }
 
             h.LI_().FIELD2("创建", m.created, m.creator)._LI();
@@ -124,7 +130,7 @@ public abstract class OrgVarWork : WebWork
 
 public class PublyOrgVarWork : OrgVarWork
 {
-    const int MAXAGE = 3600;
+    const int MAXAGE = 3600 * 12;
 
     public async Task icon(WebContext wc)
     {
@@ -384,7 +390,9 @@ public class MktlyOrgVarWork : OrgVarWork
                     {
                         h.LI_().TEXT("品牌名", nameof(m.name), m.name, max: 12, required: true)._LI();
                         h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                        h.LI_().TEXT("链接地址", nameof(m.addr), m.addr, max: 50)._LI();
+                        h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
+                        h.LI_().TEXT("链接", nameof(m.addr), m.addr, max: 30)._LI();
+                        h.LI_().TEXTAREA("说明", nameof(m.descr), m.descr, max: 100)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -425,7 +433,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传影印", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
+    [Ui(tip: "上传资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 3);

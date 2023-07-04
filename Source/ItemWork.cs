@@ -31,6 +31,51 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
         var mkt = org.IsMarket ? org : GrabTwin<int, Org>(org.upperid);
 
+        //
+        // brand org
+        //
+        if (org.IsBrand)
+        {
+            wc.GivePage(200, h =>
+            {
+                if (org.pic)
+                {
+                    h.PIC_("/org/", org.id, "/pic");
+                }
+                else
+                {
+                    h.PIC_("/void-m.webp");
+                }
+                h.AICON("../", "home", css: "uk-overlay uk-position-small uk-position-top-left");
+                h.ATEL(org.tel, css: "uk-overlay uk-position-small uk-position-top-right");
+                h._PIC();
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.SECTION_("uk-card-body").T(org.tip)._SECTION();
+                if (org.m1)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-1")._SECTION();
+                }
+                h.SECTION_("uk-card-body").T(org.descr)._SECTION();
+                if (org.m2)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-2")._SECTION();
+                }
+                if (org.m3)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-3")._SECTION();
+                }
+                h._ARTICLE();
+
+                h.FOOTER_("uk-card-footer")._FOOTER();
+            }, true, 3600 * 8, title: org.Title);
+
+            return;
+        }
+
+        //
+        // item list
+        //
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN off > 0::money THEN 1 ELSE 0 END, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
@@ -42,23 +87,21 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.PIC_("/org/", org.id, "/pic");
             }
             else
-                h.PIC_("/void-shop.webp");
+                h.PIC_("/void-m.webp");
 
             h.AICON("../", "home", css: "uk-overlay uk-position-small uk-position-top-left");
             h.ATEL(org.tel, css: "uk-overlay uk-position-small uk-position-top-right");
 
             if (!org.IsOked)
             {
-                h.ALERT("本店已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
                 return;
             }
-            if (!org.IsOpen(DateTime.Now.TimeOfDay))
+            if (org.AsRetail && !org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("本店已打烊，订单待营业时发货", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                h.ALERT("商户已打烊，须待营业时再打理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
-
             h._PIC();
-
 
             if (arr == null)
             {

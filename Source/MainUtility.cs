@@ -207,7 +207,7 @@ public static class MainUtility
         // get root domain name for cookies
         // var host = wc.Header("Host");
         //
-        string root = null;
+        // string root = null;
         // if (host != null)
         // {
         //     var colon = host.LastIndexOf(':');
@@ -227,12 +227,12 @@ public static class MainUtility
 
         // token cookie
         var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, domain: root, httponly: true);
+        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, httponly: true);
 
         // cookie for vip, o means none
-        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), domain: root);
-        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), domain: root);
-        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), domain: root);
+        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip));
+        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name));
+        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel));
 
         // multiple cookie
         wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);

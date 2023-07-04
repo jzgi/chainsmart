@@ -307,19 +307,21 @@ public class PublyLotVarWork : LotVarWork
         }, true, 3600, title: "中惠农通产品溯源信息");
     }
 
+    const int MAXAGE = 3600 * 6;
+
     public async Task icon(WebContext wc)
     {
-        await doimg(wc, nameof(icon), true, 3600);
+        await doimg(wc, nameof(icon), true, MAXAGE);
     }
 
     public async Task pic(WebContext wc)
     {
-        await doimg(wc, nameof(pic), true, 3600);
+        await doimg(wc, nameof(pic), true, MAXAGE);
     }
 
     public async Task m(WebContext wc, int sub)
     {
-        await doimg(wc, nameof(m) + sub, true, 3600);
+        await doimg(wc, nameof(m) + sub, true, MAXAGE);
     }
 }
 
@@ -392,21 +394,21 @@ public class SuplyLotVarWork : LotVarWork
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
-        await doimg(wc, nameof(icon), false, 4);
+        await doimg(wc, nameof(icon), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
-        await doimg(wc, nameof(pic), false, 4);
+        await doimg(wc, nameof(pic), false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
-        await doimg(wc, nameof(m) + sub, false, 3);
+        await doimg(wc, nameof(m) + sub, false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]

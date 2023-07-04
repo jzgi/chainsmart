@@ -212,18 +212,44 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("集合", "", icon: "shrink", status: 1), Tool(ButtonPickOpen)]
+    [Ui("集合", tip: "集合", icon: "shrink", status: 1), Tool(ButtonPickOpen)]
     public async Task adapt(WebContext wc)
     {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
+        var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
+        int[] key;
+        bool print;
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND rtlid = @4 AND status = 1");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        if (wc.IsGet)
+        {
+            key = wc.Query[nameof(key)];
 
-        wc.Give(204);
+            wc.GivePane(200, h =>
+            {
+                h.FORM_();
+                h.ALERT("备好的货集合到统一派送区");
+                foreach (var k in key) h.HIDDEN(nameof(key), k);
+                h.CHECKBOX(null, nameof(print), true, tip: "是否打印");
+                h.BOTTOM_BUTTON("确认", nameof(adapt), post: true);
+                h._FORM();
+            });
+        }
+        else
+        {
+            var f = await wc.ReadAsync<Form>();
+            key = f[nameof(key)];
+            print = f[nameof(print)];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE rtlid = @3 AND id ")._IN_(key).T(" AND status = 1");
+            await dc.ExecuteAsync(p =>
+            {
+                p.Set(DateTime.Now).Set(prin.name).Set(org.id);
+                p.SetForIn(key);
+            });
+
+            wc.GivePane(200);
+        }
     }
 }
 

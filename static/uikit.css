@@ -3730,6 +3730,7 @@ ul.uk-nav-sub {
     transform: translateY(0);
     display: flex;
     flex-direction: column;
+    box-shadow: 0 0 2px 0 #888;
 }
 
 .uk-modal-small .uk-modal-body {
@@ -3787,7 +3788,7 @@ ul.uk-nav-sub {
     transform: translateY(0);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -1px 1px 0 #888;
+    box-shadow: 0px 0px 2px 0 #888;
 }
 
 .uk-modal-tall .uk-modal-body {
@@ -3893,11 +3894,11 @@ ul.uk-nav-sub {
 .uk-modal-close-outside {
     position: absolute;
     z-index: 1010;
-    top: -26px;
+    top: -28px;
     left: calc((100% - 38px) / 2);
     color: #f59604;
     background-color: #fff;
-    padding: 6px 12px;
+    padding: 4px 12px;
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     box-shadow: 0 -1px 0px 0px #888;

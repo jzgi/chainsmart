@@ -157,7 +157,9 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public const short STA_CANCELL = 1;
+    public const short
+        STA_CANCELLABLE = 1,
+        STA_REVERSABLE = 2;
 
     public override short State
     {
@@ -166,7 +168,11 @@ public class Buy : Entity, IKeyable<long>
             short v = 0;
             if (DateTime.Today == created.Date)
             {
-                v |= STA_CANCELL;
+                v |= STA_CANCELLABLE;
+            }
+            if (oker != null || adapter != null)
+            {
+                v |= STA_REVERSABLE;
             }
             return v;
         }

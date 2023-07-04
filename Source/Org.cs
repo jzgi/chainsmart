@@ -13,7 +13,7 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
-        TYP_BRD = 0b00000, // brand
+        TYP_STR = 0b00000, // brand
         TYP_UPR = 0b01000, // upper
         TYP_RTL = 0b00001, // shop
         TYP_SUP = 0b00010, // source
@@ -63,7 +63,7 @@ public class Org : Entity, ITwin<int>
     internal double y;
     internal string tel;
     internal bool trust;
-    internal string link;
+    internal string descr;
 
     internal TimeSpan openat;
     internal TimeSpan closeat;
@@ -107,7 +107,7 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(trust), ref trust);
-                s.Get(nameof(link), ref link);
+                s.Get(nameof(descr), ref descr);
                 s.Get(nameof(specs), ref specs);
             }
 
@@ -159,7 +159,7 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(y), y);
                 s.Put(nameof(trust), trust);
                 s.Put(nameof(tel), tel);
-                s.Put(nameof(link), link);
+                s.Put(nameof(descr), descr);
                 s.Put(nameof(specs), specs);
             }
 
@@ -210,7 +210,7 @@ public class Org : Entity, ITwin<int>
 
     public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
 
-    public bool IsBrand => typ == TYP_BRD;
+    public bool IsBrand => typ == TYP_STR;
 
     public bool IsSupply => typ == TYP_SUP;
 
@@ -232,7 +232,7 @@ public class Org : Entity, ITwin<int>
 
     private string title;
 
-    public string Title => title ??= IsMarket ? name : name + '（' + addr + '）';
+    public string Title => title ??= IsRetail ? name + '（' + addr + '）' : name;
 
     public string Cover => cover;
 

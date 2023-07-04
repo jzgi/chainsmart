@@ -5,7 +5,6 @@ using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainSmart.WeixinUtility;
 using static ChainFx.Application;
-using static ChainFx.Entity;
 using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
@@ -81,23 +80,21 @@ public class MyBuyVarWork : BuyVarWork
 
 public class RtllyBuyVarWork : BuyVarWork
 {
-    // [OrglyAuthorize(0, User.ROL_OPN)]
-    // [Ui("备发", "确认打印小票然后按社区集中派送？", icon: "eye", status: 1), Tool(ButtonConfirm)]
-    // public async Task adapt(WebContext wc)
-    // {
-    //     int id = wc[0];
-    //     var org = wc[-2].As<Org>();
-    //     var prin = (User)wc.Principal;
-    //
-    //     using var dc = NewDbContext();
-    //     dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND rtlid = @4 AND status = 1");
-    //     await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
-    //
-    //     wc.Give(204);
-    // }
-    //
+    [Ui("回退", tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    public async Task retcreated(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND rtlid = @2 AND (status = 2 OR status = 4)");
+        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+        wc.Give(200);
+    }
+
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("自派", "确认自行派送？", icon: "arrow-right", status: 3), Tool(ButtonConfirm)]
+    [Ui("自派", "确认自行派送？", icon: "arrow-right", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -105,20 +102,20 @@ public class RtllyBuyVarWork : BuyVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND rtlid = @4 AND status BETWEEN 1 AND 2 RETURNING uim, pay");
+        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND rtlid = @4 AND status = 1 RETURNING uim, pay");
         if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
         {
             dc.Let(out string uim);
             dc.Let(out decimal pay);
 
-            await PostSendAsync(uim, "您的订单已经发货，请留意接收（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + pay + "）");
+            await PostSendAsync(uim, $"商家自行派送，请留意收货（{org.name}，单号{id:D8}，￥{pay}）");
         }
 
-        wc.Give(204);
+        wc.Give(200);
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("撤销", "确认撤销并且退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Buy.STA_CANCELL)]
+    [Ui("撤单", "确认撤单并且退款？", icon: "trash", status: 1), Tool(ButtonConfirm, state: Buy.STA_CANCELLABLE)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -155,7 +152,7 @@ public class RtllyBuyVarWork : BuyVarWork
             return;
         }
 
-        wc.Give(204);
+        wc.Give(200);
     }
 }
 

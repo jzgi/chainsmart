@@ -19,6 +19,9 @@ public class PublyVarWork : WebWork
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
+        // whether in the intermediate dialog or full page
+        bool inner = wc.Query[nameof(inner)];
+
         wc.GivePage(200, h =>
         {
             lock (org)
@@ -49,7 +52,6 @@ public class PublyVarWork : WebWork
 
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H3("免费派送区域", css: "uk-card-header");
-                // h.SECTION_("uk-card-body");
                 var specs = org.specs;
                 for (int i = 0; i < specs?.Count; i++)
                 {
@@ -72,10 +74,9 @@ public class PublyVarWork : WebWork
                         h._DL();
                     }
                 }
-                // h._SECTION();
                 h._ARTICLE();
 
-                h.BOTTOMBAR_().A_(nameof(lst), parent: true, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
+                h.BOTTOMBAR_().A_(nameof(lst), parent: inner, css: "uk-button uk-button-default").T("　进入市场").ICON("chevron-right")._A()._BOTTOMBAR();
             }
         }, true, 720, org.Cover);
     }
@@ -117,14 +118,7 @@ public class PublyVarWork : WebWork
                 lock (m)
                 {
                     var open = m.IsOpen(now);
-                    if (m.IsBrand)
-                    {
-                        h.A_(m.addr, css: "uk-card-body uk-flex");
-                    }
-                    else
-                    {
-                        h.ADIALOG_(m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
-                    }
+                    h.ADIALOG_(m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
 
                     if (m.icon)
                     {

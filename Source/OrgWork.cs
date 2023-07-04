@@ -168,7 +168,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         });
     }
 
-    [Ui("成员商户", status: 7), Tool(Anchor)]
+    [Ui("成员商户", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -192,7 +192,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "分区", icon: "list", status: 8), Tool(AnchorPrompt)]
+    [Ui(tip: "按场区", icon: "list", status: 2), Tool(AnchorPrompt)]
     public void search(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -221,7 +221,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                 if (arr == null)
                 {
-                    h.ALERT("该分区尚无成员");
+                    h.ALERT("该场区尚无商户");
                     return;
                 }
 
@@ -230,7 +230,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [Ui(tip: "品牌链接", icon: "star", status: 16), Tool(Anchor)]
+    [Ui(tip: "品牌", icon: "star", status: 4), Tool(Anchor)]
     public void star(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -239,7 +239,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Org.TYP_BRD);
+            h.TOOLBAR(subscript: Org.TYP_STR);
 
             if (arr == null)
             {
@@ -252,7 +252,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 7), Tool(ButtonOpen)]
+    [Ui("新建", "新建成员商户", icon: "plus", status: 5), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -297,7 +297,9 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                     h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("链接地址", nameof(o.addr), o.addr, max: 50)._LI();
+                    h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
+                    h.LI_().TEXT("链接", nameof(o.addr), o.addr, max: 30)._LI();
+                    h.LI_().TEXTAREA("说明", nameof(o.descr), o.descr, max: 100)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
                 });

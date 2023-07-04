@@ -135,14 +135,16 @@ public class PublyItemVarWork : ItemVarWork
         }, true, 900);
     }
 
+    const int MAXAGE = 3600 * 6;
+
     public async Task icon(WebContext wc)
     {
-        await doimg(wc, nameof(icon), true, 3600);
+        await doimg(wc, nameof(icon), true, MAXAGE);
     }
 
     public async Task pic(WebContext wc)
     {
-        await doimg(wc, nameof(pic), true, 3600);
+        await doimg(wc, nameof(pic), true, MAXAGE);
     }
 }
 

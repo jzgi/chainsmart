@@ -10,7 +10,7 @@ namespace ChainSmart;
 
 public abstract class FabVarWork : WebWork
 {
-    protected async Task doimg(WebContext wc, string col, bool shared, short maxage)
+    protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
     {
         int id = wc[0];
         if (wc.IsGet)
@@ -123,20 +123,21 @@ public class PublyFabVarWork : FabVarWork
         }, true, 900, o.name);
     }
 
+    const int MAXAGE = 3600 * 12;
 
     public async Task icon(WebContext wc)
     {
-        await doimg(wc, nameof(icon), true, 7200);
+        await doimg(wc, nameof(icon), true, MAXAGE);
     }
 
     public async Task pic(WebContext wc)
     {
-        await doimg(wc, nameof(pic), true, 7200);
+        await doimg(wc, nameof(pic), true, MAXAGE);
     }
 
     public async Task m(WebContext wc, int sub)
     {
-        await doimg(wc, nameof(m) + sub, true, 7200);
+        await doimg(wc, nameof(m) + sub, true, MAXAGE);
     }
 }
 

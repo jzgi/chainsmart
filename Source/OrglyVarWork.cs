@@ -126,6 +126,14 @@ public class RtllyVarWork : OrglyVarWork
             h.QRCODE(MainApp.WwwUrl + "/" + org.upperid + "/" + org.id + "/", css: "uk-width-small");
             h.SPAN(org.name);
             h._NAV();
+
+            if (org.AsUpper)
+            {
+                h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
+                h.QRCODE(MainApp.WwwUrl + "/" + org.id + "/", css: "uk-width-small");
+                h.SPAN(org.Cover);
+                h._NAV();
+            }
         }, false, 720);
     }
 
