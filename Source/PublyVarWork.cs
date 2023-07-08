@@ -14,6 +14,9 @@ public class PublyVarWork : WebWork
         CreateVarWork<PublyItemWork>(); // home for one shop
     }
 
+    /// <summary>
+    /// The market homepage. 
+    /// </summary>
     public void @default(WebContext wc)
     {
         int orgid = wc[0];
@@ -51,7 +54,7 @@ public class PublyVarWork : WebWork
                 h._ARTICLE();
 
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H3("免费派送区域", css: "uk-card-header");
+                h.H3("统一派送区域", css: "uk-card-header");
                 var specs = org.specs;
                 for (int i = 0; i < specs?.Count; i++)
                 {
@@ -67,8 +70,7 @@ public class PublyVarWork : WebWork
                         for (int k = 0; k < sub.Count; k++)
                         {
                             if (k > 0) h.T('，');
-                            var e = sub.EntryAt(k);
-                            h.T(e.Key);
+                            h.T(sub.KeyAt(k));
                         }
                         h._DD();
                         h._DL();
@@ -82,31 +84,36 @@ public class PublyVarWork : WebWork
     }
 
     /// <summary>
-    /// The public home for a market.
+    /// The list of shops by sector
     /// </summary>
     public void lst(WebContext wc, int sector)
     {
-        int orgid = wc[0];
+        if (sector == 0)
+        {
+            sector = wc.Subscript = Reg.SVC_REG_ID;
+        }
+
+        int mktid = wc[0];
         var regs = Grab<short, Reg>();
 
-        var org = GrabTwin<int, Org>(orgid);
+        var mkt = GrabTwin<int, Org>(mktid);
 
         Org[] arr;
-        if (sector == 0) // when default sector
+        if (sector == Reg.SVC_REG_ID) // when default sector
         {
-            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == 0 && x.status == 4);
-            arr = arr.AddOf(org, first: true);
+            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == Reg.SVC_REG_ID && x.status == 4);
+            arr = arr.AddOf(mkt, first: true);
         }
         else
         {
-            arr = GrabTwinSet<int, Org>(orgid, x => x.regid == sector && x.status == 4);
+            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == sector && x.status == 4);
         }
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(nameof(lst), sector, regs, (_, v) => v.IsSection, "star");
+            h.NAVBAR(nameof(lst), sector, regs, (_, v) => v.IsSector);
 
-            if (sector != 0 && arr == null)
+            if (arr == null)
             {
                 h.ALERT("尚无上线商户");
                 return;
@@ -128,12 +135,7 @@ public class PublyVarWork : WebWork
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(m.Name);
-                    if (m.AsRetail)
-                    {
-                        h.SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success");
-                    }
-                    h._HEADER();
+                    h.HEADER_().H4(m.Name).SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success")._HEADER();
                     h.Q(m.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();
@@ -141,6 +143,6 @@ public class PublyVarWork : WebWork
                     h._A();
                 }
             });
-        }, true, 720, org.Cover);
+        }, true, 720, mkt.Cover);
     }
 }

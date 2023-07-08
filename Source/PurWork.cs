@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[Ui("采购")]
+[Ui("采购订单")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
@@ -77,7 +77,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "待发货", icon: "eye", status: 2), Tool(Anchor)]
+    [Ui(tip: "待中转库发货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -88,10 +88,10 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无待发货订单");
+                h.ALERT("尚无待中转库发货的订单");
                 return;
             }
 
@@ -122,7 +122,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 
     [OrgSpy(PUR_VOID)]
-    [Ui(tip: "已撤单", icon: "trash", status: 8), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -133,10 +133,10 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无撤单");
+                h.ALERT("尚无已撤销订单");
                 return;
             }
 
@@ -250,7 +250,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无新订单");
@@ -295,7 +295,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已发货订单");

@@ -20,6 +20,14 @@ public class Lot : Entity, IKeyable<int>
         { TYP_ADVC, "助农" },
     };
 
+    public static readonly Map<short, string> Ranks = new()
+    {
+        { 0, null },
+        { 1, "普标" },
+        { 2, "高标" },
+        { 4, "顶级" },
+    };
+
     internal int id;
     internal int orgid;
     internal short catid;

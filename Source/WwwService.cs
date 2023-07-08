@@ -78,7 +78,7 @@ public class WwwService : MainService
 
             h._ARTICLE();
 
-            string tel = Application.Prog[nameof(tel)];
+            string tel = Application.Program[nameof(tel)];
             h.SPAN("平台监督：☎&nbsp;" + tel, css: "uk-label uk-label-success uk-position-small uk-position-bottom-center uk-position-fixed");
         }, true, 720, title: Application.Name + "市场", onload: "fixAll();");
     }

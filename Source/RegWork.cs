@@ -68,16 +68,16 @@ public class AdmlyRegWork : RegWork
         }, false, 15);
     }
 
-    [Ui("场区", status: 4), Tool(Anchor)]
-    public void sect(WebContext wc)
+    [Ui("版块", status: 4), Tool(Anchor)]
+    public void sector(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTION).T(" ORDER BY id, status DESC");
+        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTOR).T(" ORDER BY id, status DESC");
         var arr = dc.Query<Reg>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Reg.TYP_SECTION);
+            h.TOOLBAR(subscript: Reg.TYP_SECTOR);
 
             MainGrid(h, arr);
         }, false, 15);

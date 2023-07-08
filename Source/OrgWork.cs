@@ -93,7 +93,6 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     {
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-        var orgs = Grab<int, Org>();
 
         var o = new Org
         {
@@ -106,6 +105,8 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         {
             o.Read(wc.Query, 0);
 
+            var ctrs = GrabTwinSet<int, Org>(0, x => x.IsCenter);
+
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(cmd == 1 ? "市场机构" : "供应机构");
@@ -113,14 +114,17 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().TEXT("范围延展名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
+                h.LI_().TEXT("涵盖市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联中库", nameof(o.hubid), o.hubid, orgs, filter: (_, v) => v.IsCenter, required: true)._LI();
+                    h.LI_().SELECT("关联中转库", nameof(o.hubid), o.hubid, ctrs, required: true)._LI();
                 }
+                h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
 
                 h._FIELDSUL()._FORM();
             });
@@ -178,7 +182,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Org.TYP_RTL);
+            h.TOOLBAR();
 
             if (arr.Count == 0)
             {
@@ -192,8 +196,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "按场区", icon: "list", status: 2), Tool(AnchorPrompt)]
-    public void search(WebContext wc)
+    [Ui(tip: "按版块", icon: "list", status: 2), Tool(AnchorPrompt)]
+    public void section(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var regs = Grab<short, Reg>();
@@ -203,12 +207,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         short regid = 0;
         if (inner)
         {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_();
-                h.RADIOSET(nameof(regid), regid, regs, filter: v => v.IsSection);
-                h._FORM();
-            });
+            wc.GivePane(200, h => h.FORM_().RADIOSET(nameof(regid), regid, regs, filter: v => v.IsSector)._FORM());
         }
         else // OUTER
         {
@@ -217,11 +216,11 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
             wc.GivePage(200, h =>
             {
-                h.TOOLBAR();
+                h.TOOLBAR(subscript: regid);
 
                 if (arr == null)
                 {
-                    h.ALERT("该场区尚无商户");
+                    h.ALERT("该版块尚无商户");
                     return;
                 }
 
@@ -230,80 +229,42 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [Ui(tip: "品牌", icon: "star", status: 4), Tool(Anchor)]
-    public void star(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-        var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.IsBrand);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: Org.TYP_STR);
-
-            if (arr == null)
-            {
-                h.ALERT("尚无成员品牌");
-                return;
-            }
-
-            MainGrid(h, arr, prin);
-        }, false, 6);
-    }
-
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 5), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int typ)
+    [Ui("新建", "新建成员商户", icon: "plus", status: 3), Tool(ButtonOpen)]
+    public async Task @new(WebContext wc, int regid)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
         var o = new Org
         {
-            typ = (short)typ,
+            typ = Org.TYP_RTL,
             created = DateTime.Now,
             creator = prin.name,
             upperid = org.id,
             hubid = org.hubid,
+            regid = (short)regid,
             status = Entity.STU_CREATED
         };
 
         if (wc.IsGet)
         {
-            if (typ == Org.TYP_RTL)
+            o.Read(wc.Query, 0);
+            wc.GivePane(200, h =>
             {
-                o.Read(wc.Query, 0);
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("商户信息");
+                h.FORM_().FIELDSUL_("商户信息");
 
-                    h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                    h.LI_().SELECT("场区", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSection).TEXT("商户编号", nameof(o.addr), o.addr, max: 4)._LI();
-                    h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("委托代办", nameof(o.trust), true, o.trust)._LI();
-                    h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
+                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSector, @readonly: regid > 0, required: true).TEXT("编号或场址", nameof(o.addr), o.addr, max: 12)._LI();
+                h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().TEXTAREA("说明", nameof(o.descr), o.descr, max: 100)._LI();
+                h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
-                });
-            }
-            else // TYP_VTL
-            {
-                o.Read(wc.Query, 0);
-                wc.GivePane(200, h =>
-                {
-                    h.FORM_().FIELDSUL_("品牌信息");
-
-                    h.LI_().TEXT("品牌名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                    h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
-                    h.LI_().TEXT("链接", nameof(o.addr), o.addr, max: 30)._LI();
-                    h.LI_().TEXTAREA("说明", nameof(o.descr), o.descr, max: 100)._LI();
-
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
-                });
-            }
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
+            });
         }
         else // POST
         {

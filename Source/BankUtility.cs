@@ -10,8 +10,10 @@ using NPOI.SS.UserModel;
 
 namespace ChainSmart;
 
-public static class IcbcUtility
+public static class BankUtility
 {
+    public static decimal fee;
+
     static readonly string
         bankprov,
         bankcity,
@@ -22,14 +24,16 @@ public static class IcbcUtility
         rtlbankacct,
         bankacctname;
 
-    static IcbcUtility()
+    static BankUtility()
     {
-        bankprov = Application.Prog[nameof(bankprov)];
-        bankcity = Application.Prog[nameof(bankcity)];
-        bankreg = Application.Prog[nameof(bankreg)];
-        supbankacct = Application.Prog[nameof(supbankacct)];
-        rtlbankacct = Application.Prog[nameof(rtlbankacct)];
-        bankacctname = Application.Prog[nameof(bankacctname)];
+        fee = Application.Program[nameof(fee)];
+
+        bankprov = Application.Program[nameof(bankprov)];
+        bankcity = Application.Program[nameof(bankcity)];
+        bankreg = Application.Program[nameof(bankreg)];
+        supbankacct = Application.Program[nameof(supbankacct)];
+        rtlbankacct = Application.Program[nameof(rtlbankacct)];
+        bankacctname = Application.Program[nameof(bankacctname)];
     }
 
     static readonly Map<int, string> ColDefs = new()

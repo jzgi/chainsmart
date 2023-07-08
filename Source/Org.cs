@@ -13,36 +13,23 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
-        TYP_STR = 0b00000, // brand
         TYP_UPR = 0b01000, // upper
-        TYP_RTL = 0b00001, // shop
-        TYP_SUP = 0b00010, // source
+        TYP_RTL = 0b00001, // retail
+        TYP_SUP = 0b00010, // supply
         TYP_LOG = 0b00100, // logistic
         TYP_MKT = TYP_UPR | TYP_RTL, // market
         TYP_CTR = TYP_UPR | TYP_SUP | TYP_LOG; // center
 
 
-    public const short
-        STA_VOID = 0,
-        STA_PRE = 1,
-        STA_FINE = 2,
-        STA_TOP = 4;
-
-    public static readonly Map<short, string> States = new()
+    public static readonly Map<short, string> Ranks = new()
     {
-        { STA_VOID, "停业" },
-        { STA_PRE, "放假" },
-        { STA_FINE, "正常" },
-        { STA_TOP, "满负" },
-    };
-
-
-    public new static readonly Map<short, string> Statuses = new()
-    {
-        { STU_VOID, null },
-        { STU_CREATED, "新建" },
-        { STU_ADAPTED, "修改" },
-        { STU_OKED, "上线" },
+        { 0, null },
+        { 1, "AAA" },
+        { 2, "AA" },
+        { 3, "A" },
+        { 4, "BBB" },
+        { 5, "BB" },
+        { 6, "B" },
     };
 
 
@@ -64,16 +51,16 @@ public class Org : Entity, ITwin<int>
     internal string tel;
     internal bool trust;
     internal string descr;
+    internal string bankacct;
+    internal string bankacctname;
+    internal JObj specs;
 
     internal TimeSpan openat;
     internal TimeSpan closeat;
-
-    internal short credit;
-    internal string bankacct;
-    internal string bankacctname;
+    internal short rank; // credit level
+    internal decimal carb; // carbon credits
 
     internal bool icon;
-    internal JObj specs;
     internal bool pic;
     internal bool m1;
     internal bool m2;
@@ -109,15 +96,16 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(trust), ref trust);
                 s.Get(nameof(descr), ref descr);
                 s.Get(nameof(specs), ref specs);
+                s.Get(nameof(bankacctname), ref bankacctname);
+                s.Get(nameof(bankacct), ref bankacct);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Get(nameof(openat), ref openat);
                 s.Get(nameof(closeat), ref closeat);
-                s.Get(nameof(credit), ref credit);
-                s.Get(nameof(bankacct), ref bankacct);
-                s.Get(nameof(bankacctname), ref bankacctname);
+                s.Get(nameof(rank), ref rank);
+                s.Get(nameof(carb), ref carb);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
@@ -161,15 +149,16 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(tel), tel);
                 s.Put(nameof(descr), descr);
                 s.Put(nameof(specs), specs);
+                s.Put(nameof(bankacctname), bankacctname);
+                s.Put(nameof(bankacct), bankacct);
             }
 
             if ((msk & MSK_LATER) == MSK_LATER)
             {
                 s.Put(nameof(openat), openat);
                 s.Put(nameof(closeat), closeat);
-                s.Put(nameof(credit), credit);
-                s.Put(nameof(bankacct), bankacct);
-                s.Put(nameof(bankacctname), bankacctname);
+                s.Put(nameof(rank), rank);
+                s.Put(nameof(carb), carb);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
                 s.Put(nameof(m1), m1);
@@ -204,13 +193,13 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int ThisMarketId => IsMarket ? id : AsRetail ? upperid : 0;
+    public int MarketId => IsMarket ? id : AsRetail ? upperid : 0;
 
-    public int ThisCenterId => IsCenter ? id : AsSupply ? upperid : 0;
+    public int CenterId => IsCenter ? id : AsSupply ? upperid : 0;
 
     public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
 
-    public bool IsBrand => typ == TYP_STR;
+    public bool IsService => IsMarket || regid == Reg.SVC_REG_ID;
 
     public bool IsSupply => typ == TYP_SUP;
 
@@ -232,7 +221,7 @@ public class Org : Entity, ITwin<int>
 
     private string title;
 
-    public string Title => title ??= IsRetail ? name + '（' + addr + '）' : name;
+    public string Title => title ??= string.IsNullOrEmpty(addr) ? name : name + '（' + addr + '）';
 
     public string Cover => cover;
 

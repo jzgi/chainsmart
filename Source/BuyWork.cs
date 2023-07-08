@@ -97,7 +97,13 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             }
             else if (items.Length == 1)
             {
-                h.PIC(MainApp.WwwUrl, "/lot/", items[0].lotid, "/icon", css: "uk-width-1-5");
+                var bi = items[0]; // buyitem
+                if (bi.lotid > 0)
+                {
+                    h.PIC(MainApp.WwwUrl, "/lot/", bi.lotid, "/icon", css: "uk-width-1-5");
+                }
+                else
+                    h.PIC(MainApp.WwwUrl, "/item/", bi.itemid, "/icon", css: "uk-width-1-5");
             }
             else
             {
@@ -134,7 +140,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无网售订单");
@@ -145,7 +151,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已集合", icon: "shrink", status: 2), Tool(Anchor)]
+    [Ui(tip: "已集合待派发", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -156,10 +162,10 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已集合订单");
+                h.ALERT("尚无已集合待派发的订单");
                 return;
             }
 
@@ -179,7 +185,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已派发订单");
@@ -190,7 +196,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已撤单", icon: "trash", status: 0), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 0), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -201,7 +207,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twinid: org.id);
+            h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
                 h.ALERT("尚无已撤销订单");
@@ -212,7 +218,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("集合", tip: "集合", icon: "shrink", status: 1), Tool(ButtonPickOpen)]
+    [Ui("集合", icon: "chevron-double-right", status: 1), Tool(ButtonPickOpen)]
     public async Task adapt(WebContext wc)
     {
         var org = wc[-1].As<Org>();

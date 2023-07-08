@@ -21,9 +21,9 @@ public abstract class OrgVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD(m.IsBrand ? "品牌名" : "商户名", m.name)._LI();
+            h.LI_().FIELD(m.IsService ? "品牌名" : "商户名", m.name)._LI();
             h.LI_().FIELD("简介语", m.tip)._LI();
-            if (!m.IsBrand)
+            if (!m.IsService)
             {
                 h.LI_().FIELD("工商登记名", m.legal)._LI();
             }
@@ -32,12 +32,14 @@ public abstract class OrgVarWork : WebWork
                 h.LI_().FIELD("涵盖市场名", m.cover)._LI();
             }
 
+            h.LI_();
             if (m.regid > 0)
             {
-                h.LI_().FIELD(m.IsRetail ? "场区" : "区域", regs[m.regid])._LI();
+                h.FIELD(m.IsRetail ? "版块" : "区域", regs[m.regid]);
+                h.FIELD("联系电话", m.tel);
             }
-            h.LI_().FIELD("联系电话", m.tel)._LI();
-            h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsBrand ? "链接" : "地址", m.addr)._LI();
+            h._LI();
+            h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsService ? "链接" : "地址", m.addr)._LI();
             if (!m.IsRetail)
             {
                 h.LI_().FIELD("说明", m.descr)._LI();
@@ -61,7 +63,7 @@ public abstract class OrgVarWork : WebWork
 
             h._UL();
 
-            h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
+            h.TOOLBAR(subscript: m.IsMarket ? 1 : 0, bottom: true, status: m.Status, state: m.State);
         }, false, 6);
     }
 
@@ -157,18 +159,18 @@ public class AdmlyOrgVarWork : OrgVarWork
 {
     [AdmlyAuthorize(User.ROL_OPN)]
     [Ui(tip: "修改机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task edit(WebContext wc)
+    public async Task edit(WebContext wc, int cmd)
     {
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
 
-        var topOrgs = GrabTwinSet<int, Org>(0);
-
         var m = GrabTwin<int, Org>(id);
 
         if (wc.IsGet)
         {
+            var ctrs = GrabTwinSet<int, Org>(0, x => x.IsCenter);
+
             wc.GivePane(200, h =>
             {
                 lock (m)
@@ -178,14 +180,17 @@ public class AdmlyOrgVarWork : OrgVarWork
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().TEXT("范围延展名", nameof(m.cover), m.cover, max: 12, required: true)._LI();
+                    h.LI_().TEXT("涵盖市场名", nameof(m.cover), m.cover, max: 12, required: true)._LI();
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (m.IsMarket)
+                    if (cmd == 1)
                     {
-                        h.LI_().SELECT("关联中库", nameof(m.hubid), m.hubid, topOrgs, filter: v => v.IsCenter, required: true)._LI();
+                        h.LI_().SELECT("关联中转库", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
                     }
+                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
+                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 }
@@ -374,26 +379,16 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsBrand ? "品牌信息" : "商户信息");
+                    h.FORM_().FIELDSUL_(m.IsService ? "品牌信息" : "商户信息");
 
-                    if (m.IsRetail)
-                    {
-                        h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                        h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                        h.LI_().SELECT("场区", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSection).TEXT("商户编号", nameof(m.addr), m.addr, max: 4)._LI();
-                        h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
-                        h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                        h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
-                    }
-                    else // brand
-                    {
-                        h.LI_().TEXT("品牌名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                        h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                        h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true)._LI();
-                        h.LI_().TEXT("链接", nameof(m.addr), m.addr, max: 30)._LI();
-                        h.LI_().TEXTAREA("说明", nameof(m.descr), m.descr, max: 100)._LI();
-                    }
+                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编号或场址", nameof(m.addr), m.addr, max: 12)._LI();
+                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
+                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
+                    h.LI_().TEXTAREA("说明", nameof(m.descr), m.descr, max: 100)._LI();
+                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 }

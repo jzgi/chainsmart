@@ -7,19 +7,27 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_DEF = 1,
-        TYP_STD = 2;
+        TYP_PRODUCT = 1,
+        TYP_SERVICE = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_DEF, "其它" },
-        { TYP_STD, "供链" },
+        { TYP_PRODUCT, "产品" },
+        { TYP_SERVICE, "服务" },
+    };
+
+    public static readonly Map<short, string> Ranks = new()
+    {
+        { 0, null },
+        { 1, "普标" },
+        { 2, "高标" },
+        { 4, "顶级" },
     };
 
     internal int id;
     internal int orgid;
     internal int lotid;
-    internal short catid;
+    internal short rank;
     internal string unit;
     internal short unitw;
     internal decimal price;
@@ -52,7 +60,7 @@ public class Item : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(catid), ref catid);
+            s.Get(nameof(rank), ref rank);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
             s.Get(nameof(price), ref price);
@@ -94,7 +102,7 @@ public class Item : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(catid), catid);
+            s.Put(nameof(rank), rank);
             s.Put(nameof(unit), unit);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);

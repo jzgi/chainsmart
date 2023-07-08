@@ -57,53 +57,17 @@ public class MyVarWork : WebWork
         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
         var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
 
-        // resend token cookie
-        wc.SetTokenCookies(o);
-
         wc.GivePane(200, h =>
         {
-            h.ARTICLE_("uk-card uk-card-default");
-            h.H4("我的最新身份和权限", css: "uk-card-header");
+            h.ARTICLE_("uk-card uk-card-primary");
+            h.H3("我的身份和权限", css: "uk-card-header");
             h.UL_("uk-card-body uk-list uk-list-divider");
 
             var any = 0;
-            var vip = o.vip;
-            if (vip != null)
-            {
-                h.LI_().LABEL("大客户").SPAN_("uk-static");
-                for (int i = 0; i < vip.Length; i++)
-                {
-                    if (i > 0)
-                    {
-                        h.BR();
-                    }
-
-                    var org = GrabTwin<int, Org>(vip[i]);
-                    if (org != null)
-                    {
-                        h.T(org.name);
-                    }
-                }
-
-                h._SPAN();
-                h._LI();
-
-                any++;
-            }
 
             if (o.admly > 0)
             {
-                h.LI_().FIELD(User.Admly[o.admly], "平台")._LI();
-
-                any++;
-            }
-
-            if (o.suply > 0 && o.supid > 0)
-            {
-                var org = GrabTwin<int, Org>(o.supid);
-
-                h.LI_().FIELD(User.Orgly[o.suply], org.name)._LI();
-
+                h.LI_().T(Application.Name).SPAN(User.Admly[o.admly], "uk-margin-auto-left")._LI();
                 any++;
             }
 
@@ -111,19 +75,42 @@ public class MyVarWork : WebWork
             {
                 var org = GrabTwin<int, Org>(o.rtlid);
 
-                h.LI_().FIELD(User.Orgly[o.rtlly], org.name)._LI();
-
+                h.LI_().T(org.name).SPAN(User.Orgly[o.rtlly], "uk-margin-auto-left")._LI();
                 any++;
+            }
+
+            if (o.suply > 0 && o.supid > 0)
+            {
+                var org = GrabTwin<int, Org>(o.supid);
+
+                h.LI_().T(org.name).SPAN(User.Orgly[o.suply], "uk-margin-auto-left")._LI();
+                any++;
+            }
+
+            var vip = o.vip;
+            for (var i = 0; i < vip?.Length; i++)
+            {
+                var orgid = vip[i];
+
+                var org = GrabTwin<int, Org>(orgid);
+                if (org != null)
+                {
+                    h.LI_().T(org.name).SPAN("大客户", "uk-margin-auto-left")._LI();
+                    any++;
+                }
             }
 
             if (any == 0)
             {
-                h.LI_().FIELD(null, "暂无特殊权限")._LI();
+                h.LI_().T(Application.Name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
             }
 
             h._UL();
             h._ARTICLE();
-        }, false, 60);
+        }, false, 12);
+
+        // resend token cookie
+        wc.SetTokenCookies(o);
     }
 
 

@@ -76,35 +76,43 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
 //
 function buyRecalc(trig) {
 
-    var footer = trig.parentElement;
+    if (trig) { // triggered from qty selection
 
-    var output_fprice = footer.querySelector('.fprice');
-    var output_subtotal = footer.querySelector('.subtotal');
+        var footer = trig.parentElement;
 
-    var fprice = parseFloat(output_fprice.value);
+        var output_fprice = footer.querySelector('.fprice');
+        var output_subtotal = footer.querySelector('.subtotal');
 
-    output_subtotal.value = (trig.value * fprice).toFixed(2);
+        var fprice = parseFloat(output_fprice.value);
 
-    // toggle visibility
-    if (trig.value == 0) {
-        output_subtotal.classList.add("uk-invisible");
-        trig.classList.remove('uk-active');
-    }
-    else {
-        output_subtotal.classList.remove("uk-invisible");
-        trig.classList.add('uk-active');
+        output_subtotal.value = (trig.value * fprice).toFixed(2);
+
+        // toggle visibility
+        if (trig.value == 0) {
+            output_subtotal.classList.add("uk-invisible");
+            trig.classList.remove('uk-active');
+        }
+        else {
+            output_subtotal.classList.remove("uk-invisible");
+            trig.classList.add('uk-active');
+        }
+
     }
 
     // sum up topay
-    var sum = 0.00;
-    var lst = trig.form.querySelectorAll('.subtotal');
+    var frm = trig ? trig.form : document.forms[0];
+
+    frm.fee.hidden = frm.com.value ? false: true;
+    
+    var sum = frm.com.value ? parseFloat(frm.fee.title) : 0.00; // add fee if community is selected
+    var lst = frm.querySelectorAll('.subtotal');
     for (var i = 0; i < lst.length; i++) {
         var v = lst[i].value;
         if (v) {
             sum += parseFloat(v);
         }
     }
-    trig.form.topay.value = sum.toFixed(2);
+    frm.topay.value = sum.toFixed(2);
 
 }
 
@@ -722,14 +730,18 @@ function setModified() {
 
 // close the dialog from concurrent window
 // recursively, its parent windows mayu be reloaded, or closed.
-function closeUp(reload, delta) {
+function closeUp(reload, roundtrip) {
 
     var dlg = $('#dialog');
     if (dlg) {
 
+        if (roundtrip) {
+            setModified();
+        }
+
         // cehck if stacked sub dialog
         var subifr = dlg.querySelector('#modalbody')
-        var subdlg = subifr.contentDocument.querySelector('#dialog') != null;
+        var subdlg = subifr && subifr.contentDocument && subifr.contentDocument.querySelector('#dialog') != null;
 
         UIkit.modal(dlg).hide().then(function () {
             document.body.removeChild(dlg);
@@ -742,7 +754,7 @@ function closeUp(reload, delta) {
             ifr.contentWindow.location.reload();
         }
 
-        history.go(subdlg ? -2 : -1);
+        history.go(subdlg || roundtrip ? -2 : -1);
     }
 }
 
@@ -954,7 +966,7 @@ function cropUpd(el, url, close) {
                     UIkit.modal(dlg).hide().then(function () {
                         document.body.removeChild(dlg);
                     });
-            
+
                     history.go(-1);
                 }
             }

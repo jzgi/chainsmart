@@ -20,10 +20,10 @@ public class Fab : Entity, ITwin<int>
 
     public static readonly Map<short, string> Ranks = new()
     {
-        { 0, "通货" },
-        { 1, "零添" },
-        { 2, "原生" },
-        { 4, "进口" },
+        { 0, null },
+        { 1, "普通" },
+        { 2, "高标" },
+        { 3, "特标" },
     };
 
     internal short id;
@@ -120,5 +120,4 @@ public class Fab : Entity, ITwin<int>
     public int SetKey => orgid;
 
     public override string ToString() => name;
-
 }

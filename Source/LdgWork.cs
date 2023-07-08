@@ -39,43 +39,6 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 
         h._TABLE();
     }
-
-    [Ui("结算", "结算代收款项", icon: "list", status: 1), Tool(ButtonOpen)]
-    public async Task gen(WebContext wc)
-    {
-        if (wc.IsGet)
-        {
-            var till = DateTime.Today.AddDays(-1);
-            wc.GivePane(200, h =>
-            {
-                h.FORM_(post: false).FIELDSUL_("选择截止（包含）日期");
-                h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // OUTER
-        {
-            DateTime till = wc.Query[nameof(till)];
-            using var dc = NewDbContext(IsolationLevel.RepeatableRead);
-
-            await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
-
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
-            var arr = await dc.QueryAsync<Ap>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    // h.TD(Clear.Typs[o.typ]);
-                    // h.TD(orgs[o.orgid]?.name);
-                    // h.TD_().T(o.till, 3, 0)._TD();
-                    // h.TD(o.amt, currency: true);
-                });
-            }, false, 3);
-        }
-    }
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
@@ -150,7 +113,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
         }, false, 60);
     }
 
-    [Ui("按交易", status: 2), Tool(Anchor)]
+    [Ui("按交易类型", status: 2), Tool(Anchor)]
     public async Task typ(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();

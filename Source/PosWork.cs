@@ -236,7 +236,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             typ = (short)payTyp,
             rtlid = rtl.id,
             name = rtl.name,
-            mktid = rtl.ThisMarketId,
+            mktid = rtl.MarketId,
             created = now,
             creator = prin.name,
             items = lst.ToArray(),
@@ -245,7 +245,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             oker = prin.name,
             pay = pay,
         };
-        m.SetToPay();
+        m.InitTopay();
 
         const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS | MSK_LATER;
 

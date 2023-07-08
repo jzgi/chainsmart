@@ -88,7 +88,6 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<OrglyEvalWork>("eval");
 
-        // retail shop
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
 
@@ -110,7 +109,7 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyEvalWork>("meval");
 
-        CreateWork<MktlyBuyWork>("mbuy"); // delivery
+        CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
     }

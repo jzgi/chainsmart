@@ -29,7 +29,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics)._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD2("为整", m.step, m.unit)._LI();
-            h.LI_().FIELD("ＶＩＰ减价", m.off, money: true).FIELD("全民秒杀期", m.promo)._LI();
+            h.LI_().FIELD("大客户优惠", m.off, money: true).FIELD("全民优惠", m.promo)._LI();
             h.LI_().FIELD2("起订量", m.min, m.unit).FIELD2("限订量", m.max, m.unit)._LI();
             h.LI_().FIELD2("数量", m.stock, m.unit)._LI();
 
@@ -40,13 +40,16 @@ public class ItemVarWork : WebWork
             h._UL();
 
             h.TABLE(m.ops, o =>
-            {
-                h.TD_().T(o.dt, date: 2, time: 1)._TD();
-                h.TD_("uk-text-right").T(o.typ)._TD();
-                h.TD(o.qty, right: true);
-                h.TD(o.stock, right: true);
-                h.TD(o.by);
-            }, caption: "库存操作记录", reverse: true);
+                {
+                    h.TD_().T(o.dt, date: 2, time: 1)._TD();
+                    h.TD_("uk-text-right").T(StockOp.Typs[o.typ])._TD();
+                    h.TD(o.qty, right: true);
+                    h.TD(o.stock, right: true);
+                    h.TD(o.by);
+                },
+                thead: () => h.TH("日期").TH("类型").TH("发生", css: "uk-text-right").TH("数量", css: "uk-text-right").TH("操作"),
+                reverse: true
+            );
 
             h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
         }, false, 6);
@@ -171,7 +174,7 @@ public class RtllyItemVarWork : ItemVarWork
             {
                 h.FORM_().FIELDSUL_("基本信息");
 
-                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.rank), o.rank, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 if (o.IsFromSupply)
                 {

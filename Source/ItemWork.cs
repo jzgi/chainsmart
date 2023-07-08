@@ -32,52 +32,10 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
         var mkt = org.IsMarket ? org : GrabTwin<int, Org>(org.upperid);
 
         //
-        // brand org
-        //
-        if (org.IsBrand)
-        {
-            wc.GivePage(200, h =>
-            {
-                if (org.pic)
-                {
-                    h.PIC_("/org/", org.id, "/pic");
-                }
-                else
-                {
-                    h.PIC_("/void-m.webp");
-                }
-                h.AICON("../", "home", css: "uk-overlay uk-position-small uk-position-top-left");
-                h.ATEL(org.tel, css: "uk-overlay uk-position-small uk-position-top-right");
-                h._PIC();
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.SECTION_("uk-card-body").T(org.tip)._SECTION();
-                if (org.m1)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-1")._SECTION();
-                }
-                h.SECTION_("uk-card-body").T(org.descr)._SECTION();
-                if (org.m2)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-2")._SECTION();
-                }
-                if (org.m3)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-3")._SECTION();
-                }
-                h._ARTICLE();
-
-                h.FOOTER_("uk-card-footer")._FOOTER();
-            }, true, 3600 * 8, title: org.Title);
-
-            return;
-        }
-
-        //
         // item list
         //
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY CASE WHEN off > 0::money THEN 1 ELSE 0 END, oked DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY promo, oked DESC");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -99,90 +57,114 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             }
             if (org.AsRetail && !org.IsOpen(DateTime.Now.TimeOfDay))
             {
-                h.ALERT("商户已打烊，须待营业时再打理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
             h._PIC();
 
             if (arr == null)
             {
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.SECTION_("uk-card-body").T(org.tip)._SECTION();
+                if (org.m1)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-1")._SECTION();
+                }
+                h.SECTION_("uk-card-body").T(org.descr)._SECTION();
+                if (org.m2)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-2")._SECTION();
+                }
+                if (org.m3)
+                {
+                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-3")._SECTION();
+                }
+                h._ARTICLE();
+
                 h.ALERT("暂无商品");
-                return;
             }
-
-            h.FORM_();
-
-            h.MAINGRID(arr, o =>
+            else
             {
-                h.SECTION_("uk-card-body uk-flex");
+                h.FORM_();
 
-                // the cclickable icon
-                //
-                if (o.icon)
+                h.MAINGRID(arr, o =>
                 {
-                    h.PIC("/item/", o.id, "/icon", css: "uk-width-1-5");
-                }
-                else
-                    h.PIC("/void.webp", css: "uk-width-1-5");
+                    h.SECTION_("uk-card-body uk-flex");
 
-                h.ASIDE_();
+                    // the cclickable icon
+                    //
+                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-width-1-5");
+                    if (o.icon)
+                    {
+                        h.IMG("/item/", o.id, "/icon");
+                    }
+                    else
+                    {
+                        h.IMG("/void.webp");
+                    }
+                    h._A();
 
-                h.HEADER_().H4(o.name);
-                if (o.step > 1)
-                {
-                    h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
-                }
+                    h.ASIDE_();
 
-                // top right corner span
-                h.SPAN_(css: "uk-badge");
-                // ran mark
-                if (o.promo)
-                {
-                    h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
-                }
-                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-display-contents").ICON("question", css: "uk-icon-link")._A();
-                h._SPAN();
-                h._HEADER();
+                    h.HEADER_().H4(o.name);
+                    if (o.step > 1)
+                    {
+                        h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
+                    }
+                    // top right corner span
+                    h.SPAN_(css: "uk-badge");
+                    if (o.promo)
+                    {
+                        h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
+                    }
+                    if (o.rank > 0)
+                    {
+                        h.MARK(Item.Ranks[o.rank]);
+                    }
+                    h._SPAN();
+                    h._HEADER();
 
-                h.Q(o.tip, "uk-width-expand");
+                    h.Q(o.tip, "uk-width-expand");
 
-                // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
-                h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
-                h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
-                h._FOOTER();
+                    // FOOTER: price and qty select & detail
+                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
+                    h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
+                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
+                    h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
+                    h._FOOTER();
 
-                h._ASIDE();
+                    h._ASIDE();
 
-                h._SECTION();
-            });
+                    h._SECTION();
+                });
 
-            var topay = 0.00M;
+                var topay = 0.00M;
 
-            h.BOTTOMBAR_(large: true);
+                h.BOTTOMBAR_(large: true);
 
-            h.DIV_(css: "uk-col");
+                h.DIV_(css: "uk-col");
 
-            h.DIV_("uk-flex uk-width-1-1");
-            h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
-            h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
-            h._DIV();
+                h.DIV_("uk-flex uk-width-1-1");
+                h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
+                h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
+                h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.fee).T("\">派送到楼下 +").T(BankUtility.fee).T("</output>");
+                h._DIV();
 
-            string com;
+                string com;
 
-            h.DIV_("uk-flex uk-width-1-1");
-            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '楼栋／单元': '详细收货地址'", css: "uk-width-medium");
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"楼栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-            h._DIV();
+                h.DIV_("uk-flex uk-width-1-1");
+                h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '完整收货地址'; buyRecalc();", css: "uk-width-medium");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"区栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+                h._DIV();
 
-            h._DIV();
+                h._DIV();
 
-            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
-            h._BOTTOMBAR();
+                h._BOTTOMBAR();
 
-            h._FORM();
-        }, true, 120, title: org.Title, onload: "fixAll();");
+                h._FORM();
+            }
+        }, true, arr == null ? 900 : 120, title: org.Title, onload: "fixAll(); buyRecalc();");
     }
 
     public async Task buy(WebContext wc)
@@ -232,9 +214,10 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 creator = prin.name,
                 ucom = com,
                 uaddr = addr,
+                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.fee,
                 status = -1, // before confirmed of payment
             };
-            m.SetToPay();
+            m.InitTopay();
 
             // NOTE single unsubmitted record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
@@ -305,7 +288,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         });
     }
 
-    [Ui("上线商品", status: 4), Tool(Anchor)]
+    [Ui("上线商品", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -328,7 +311,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "下线商品", icon: "cloud-download", status: 3), Tool(Anchor)]
+    [Ui(tip: "下线商品", icon: "cloud-download", status: 2), Tool(Anchor)]
     public async Task down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -350,7 +333,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已作废", icon: "trash", status: 0), Tool(Anchor)]
+    [Ui(tip: "已作废商品", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -373,37 +356,38 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("其它", "新建编外非溯源商品", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("自建", status: 2), Tool(ButtonOpen)]
     public async Task def(WebContext wc)
     {
         var org = wc[-1].As<Org>();
-
         var prin = (User)wc.Principal;
-        var cats = Grab<short, Cat>();
+
+        bool product = !org.IsService;
 
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_DEF,
+            typ = product ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unit = "斤",
-            unitw = 500,
+            unit = product ? "斤" : "位",
+            unitw = product ? (short)500 : (short)0,
             step = 1,
+            min = 1,
             max = MAX
         };
         if (wc.IsGet)
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("商品信息");
+                h.FORM_().FIELDSUL_("自建" + (product ? "非溯源产品型商品" : "服务型商品"));
 
-                h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("大客户优惠", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民优惠", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
@@ -425,8 +409,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("供链", "导入来自供应链的溯源产品", icon: "plus", status: 3), Tool(ButtonOpen)]
-    public async Task std(WebContext wc)
+    [Ui("导入", status: 2), Tool(ButtonOpen)]
+    public async Task imp(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -434,7 +418,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_STD,
+            typ = Item.TYP_PRODUCT,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,
@@ -451,14 +435,14 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("产品信息");
+                h.FORM_().FIELDSUL_("导入供应链产品");
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(std))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
             });
         }
         else // POST

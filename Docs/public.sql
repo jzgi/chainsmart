@@ -394,7 +394,7 @@ alter table public.items
     owner to postgres;
 
 create index items_catid_idx
-    on public.items (catid);
+    on public.items (rank);
 
 create table public.buygens
 (
@@ -463,9 +463,9 @@ create table public.carbs
         primary key (userid, dt)
 );
 
-comment on table public.carbs is 'carbon credits operations';
+comment on table public.carbaps is 'carbon credits operations';
 
-alter table public.carbs
+alter table public.carbaps
     owner to postgres;
 
 create table public.purgens

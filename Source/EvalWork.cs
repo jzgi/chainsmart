@@ -14,8 +14,7 @@ namespace ChainSmart
         }
     }
 
-    [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("评估")]
+    [Ui("评检情况")]
     public class OrglyEvalWork : EvalWork<OrglyEvalVarWork>
     {
         public void @default(WebContext wc, int page)
@@ -26,7 +25,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("评测管理")]
+    [Ui("评检管理")]
     public class MktlyEvalWork : EvalWork<MktlyEvalVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, IList<Eval> arr)

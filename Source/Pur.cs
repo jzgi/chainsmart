@@ -63,12 +63,12 @@ public class Pur : Entity, IKeyable<int>
         tip = lot.tip;
 
         rtlid = rtl.id;
-        mktid = rtl.ThisMarketId;
+        mktid = rtl.MarketId;
         hubid = rtl.hubid;
         supid = sup.id;
         supname = sup.name;
 
-        ctrid = sup.ThisCenterId;
+        ctrid = sup.CenterId;
 
         lotid = lot.id;
         unit = lot.unit;

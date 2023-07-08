@@ -52,6 +52,7 @@ public static class MainUtility
     {
         h.SELECT_(name, local: name, onchange: onchange, required: true, css: css);
 
+
         for (int i = 0; i < specs?.Count; i++)
         {
             var spec = specs.EntryAt(i);
@@ -205,34 +206,30 @@ public static class MainUtility
     public static void SetTokenCookies(this WebContext wc, User o, int maxage = 3600 * 12)
     {
         // get root domain name for cookies
-        // var host = wc.Header("Host");
-        //
-        // string root = null;
-        // if (host != null)
-        // {
-        //     var colon = host.LastIndexOf(':');
-        //     var end = colon == -1 ? host.Length : colon;
-        //     var dot = host.LastIndexOf('.', end - 1);
-        //
-        //     if (dot != -1)
-        //     {
-        //         dot = host.LastIndexOf('.', dot - 1);
-        //         root = dot == -1 ? null : host[(dot + 1)..end];
-        //     }
-        // }
-        //
-        // Application.War("host: " + host);
-        //
-        // Application.War("root: " + root);
+        var host = wc.Header("Host");
+
+        string root = null;
+        if (host != null)
+        {
+            var colon = host.LastIndexOf(':');
+            var end = colon == -1 ? host.Length : colon;
+            var dot = host.LastIndexOf('.', end - 1);
+
+            if (dot != -1)
+            {
+                dot = host.LastIndexOf('.', dot - 1);
+                root = dot == -1 ? null : host[(dot + 1)..end];
+            }
+        }
 
         // token cookie
         var token = AuthenticateAttribute.ToToken(o, 0x0fff);
-        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, httponly: true);
+        var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, domain: root, httponly: true);
 
         // cookie for vip, o means none
-        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip));
-        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name));
-        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel));
+        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), domain: root);
+        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), domain: root);
+        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), domain: root);
 
         // multiple cookie
         wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);

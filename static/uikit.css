@@ -22,10 +22,6 @@ body::-webkit-scrollbar {
     display: none;
 }
 
-body.uk-pane {
-    background-color: #fafafa;
-}
-
 form {
     display: block;
 }
@@ -286,7 +282,7 @@ h6,
     font-size: 0.75rem;
     font-weight: normal;
     margin: 2px 0;
-    color: #333;
+    color: #ff3b30;
 }
 
 ol>li {
@@ -2584,21 +2580,21 @@ label>input[type="checkbox"] {
 
 .uk-label-success {
     color: #7daa1d;
-    background-color: rgb(125 170 29 / 15%);
+    background-color: rgb(125 170 29 / 10%);
     padding: 4px 16px;
     border-radius: 16px;
 }
 
 .uk-label-warning {
     color: #f59604;
-    background-color: rgb(245 150 4 / 15%);
+    background-color: rgb(245 150 4 / 10%);
     padding: 4px 16px;
     border-radius: 16px;
 }
 
 .uk-label-danger {
     color: #7daa1d;
-    background-color: rgb(255 59 48 / 15%);
+    background-color: rgb(255 59 48 / 10%);
     padding: 4px 16px;
     border-radius: 16px;
 }

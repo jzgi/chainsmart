@@ -49,6 +49,7 @@ public class Buy : Entity, IKeyable<long>
     internal string uaddr; // address
     internal string uim;
     internal BuyItem[] items; // item lines
+    internal decimal fee;
     internal decimal topay;
     internal decimal pay;
     internal decimal ret;
@@ -63,7 +64,7 @@ public class Buy : Entity, IKeyable<long>
         typ = TYP_PLAT;
         name = rtl.Name;
         rtlid = rtl.id;
-        mktid = rtl.ThisMarketId;
+        mktid = rtl.MarketId;
         items = arr;
         uid = prin.id;
         uname = prin.name;
@@ -91,6 +92,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(uaddr), ref uaddr);
             s.Get(nameof(uim), ref uim);
             s.Get(nameof(items), ref items);
+            s.Get(nameof(fee), ref fee);
             s.Get(nameof(topay), ref topay);
         }
 
@@ -125,6 +127,7 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(uaddr), uaddr);
             s.Put(nameof(uim), uim);
             s.Put(nameof(items), items);
+            s.Put(nameof(fee), fee);
             s.Put(nameof(topay), topay);
         }
 
@@ -136,9 +139,9 @@ public class Buy : Entity, IKeyable<long>
         }
     }
 
-    public void SetToPay()
+    public void InitTopay()
     {
-        var sum = 0.00M;
+        var sum = fee;
         if (items != null)
         {
             foreach (var ln in items)
