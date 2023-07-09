@@ -463,9 +463,9 @@ create table public.carbs
         primary key (userid, dt)
 );
 
-comment on table public.carbaps is 'carbon credits operations';
+comment on table public.carbs is 'carbon credits operations';
 
-alter table public.carbaps
+alter table public.carbs
     owner to postgres;
 
 create table public.purgens

@@ -88,6 +88,8 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<OrglyEvalWork>("eval");
 
+        CreateWork<OrglyCarbApWork>("carb");
+
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
 
@@ -206,7 +208,8 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<OrglyEvalWork>("eval");
 
-        // supply shop
+        CreateWork<OrglyCarbApWork>("carb");
+
 
         CreateWork<SuplyFabWork>("sfab", header: "商户");
 

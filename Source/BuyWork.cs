@@ -17,68 +17,6 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("我的消费", "我的网购订单", icon: "cart")]
-public class MyBuyWork : BuyWork<MyBuyVarWork>
-{
-    static void MainGrid(HtmlBuilder h, IList<Buy> lst)
-    {
-        h.MAINGRID(lst, o =>
-        {
-            h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
-
-            h.UL_("uk-card-body uk-list uk-list-divider");
-
-            h.LI_().SPAN2(o.ucom, o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
-
-            foreach (var it in o.items)
-            {
-                h.LI_();
-
-                h.SPAN_("uk-width-expand").T(it.name);
-                if (it.unitw != 1)
-                {
-                    h.SP().SMALL_().T(it.unitw).T(it.unit).T("件")._SMALL();
-                }
-
-                h._SPAN();
-
-                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
-                h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
-                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
-                h._LI();
-            }
-
-            h._LI();
-
-            h._UL();
-
-            h.VARPAD(o.Key, css: "uk-card-footer uk-flex-right", status: o.status);
-        });
-    }
-
-    public async Task @default(WebContext wc, int page)
-    {
-        var prin = (User)wc.Principal;
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(tip: prin.name);
-            if (arr == null)
-            {
-                h.ALERT("尚无网购订单");
-                return;
-            }
-
-            MainGrid(h, arr);
-            h.PAGINATION(arr.Length > 10);
-        }, false, 4);
-    }
-}
-
 [Ui("网售订单")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {

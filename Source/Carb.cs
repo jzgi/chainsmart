@@ -10,29 +10,32 @@ public class Carb : IData, IKeyable<(int, DateTime)>
 {
     public static readonly Carb Empty = new();
 
-    internal int userid;
+    internal int orgid;
     internal DateTime dt;
     internal int typ;
-    internal decimal v;
-    internal string opr;
+    internal decimal amt;
+    internal short rate;
+    internal decimal topay;
 
     public void Read(ISource s, short msk = 0xff)
     {
-        s.Get(nameof(userid), ref userid);
+        s.Get(nameof(orgid), ref orgid);
         s.Get(nameof(dt), ref dt);
         s.Get(nameof(typ), ref typ);
-        s.Get(nameof(v), ref v);
-        s.Get(nameof(opr), ref opr);
+        s.Get(nameof(amt), ref amt);
+        s.Get(nameof(rate), ref rate);
+        s.Get(nameof(topay), ref topay);
     }
 
     public void Write(ISink s, short msk = 0xff)
     {
-        s.Put(nameof(userid), userid);
+        s.Put(nameof(orgid), orgid);
         s.Put(nameof(dt), dt);
         s.Put(nameof(typ), typ);
-        s.Put(nameof(v), v);
-        s.Put(nameof(opr), opr);
+        s.Put(nameof(amt), amt);
+        s.Put(nameof(rate), rate);
+        s.Put(nameof(topay), topay);
     }
 
-    public (int, DateTime) Key => (userid, dt);
+    public (int, DateTime) Key => (orgid, dt);
 }
