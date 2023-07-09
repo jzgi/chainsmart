@@ -10,10 +10,10 @@ var WCPay = function (data, sup) {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
 
                 if (sup) {
-                    alert('订购成功');
+                    alert('下单成功！');
                 }
                 else {
-                    alert('订购成功，请在「我的消费」查看');
+                    alert('下单成功！请在「我的个人账号」查看');
                 }
                 // close without refresh
                 window.parent.closeUp(false);

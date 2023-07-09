@@ -7,7 +7,7 @@ using static ChainFx.Web.Modal;
 namespace ChainSmart;
 
 [MyAuthorize]
-[Ui("我的个人账号／消费")]
+[Ui("我的个人账号")]
 [Summary("注册的用户可以管理个人账号以及相关的资源")]
 public class MyVarWork : BuyWork<MyBuyVarWork>
 {
@@ -21,41 +21,41 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOPBARXL_();
+            // top bar
 
+            h.TOPBARXL_();
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(prin.name);
             h.H4(prin.tel);
             if (prin.typ > 0) h.Q(User.Typs[prin.typ]);
             h._HEADER();
-
             if (prin.icon)
             {
-                h.PIC("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
+                h.IMG("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
             }
             else
-                h.PIC("/my.webp", circle: true, css: "uk-width-small");
-
+            {
+                h.IMG("/my.webp", circle: true, css: "uk-width-small");
+            }
             h._TOPBARXL();
 
-            h.WORKBOARD(compact: false);
+            // buy orders
 
             h.MAINGRID(arr, o =>
             {
-                h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
+                // h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
 
                 h.UL_("uk-card-body uk-list uk-list-divider");
-
-                h.LI_().SPAN2(o.ucom, o.uaddr).SPAN_("uk-margin-auto-left").T("金额：").CNY(o.topay)._SPAN()._LI();
+                h.LI_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
                 foreach (var it in o.items)
                 {
                     h.LI_();
 
                     h.SPAN_("uk-width-expand").T(it.name);
-                    if (it.unitw != 1)
+                    if (it.unitw > 0)
                     {
-                        h.SP().SMALL_().T(it.unitw).T(it.unit).T("件")._SMALL();
+                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
                     }
 
                     h._SPAN();
@@ -65,7 +65,15 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                     h._LI();
                 }
+                h._LI();
 
+                h.LI_();
+                h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
+                if (o.fee > 0)
+                {
+                    h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
+                }
+                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
                 h._LI();
 
                 h._UL();

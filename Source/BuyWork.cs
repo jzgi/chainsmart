@@ -201,14 +201,14 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 [Ui("网售统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
-    [Ui("待发货订单", status: 1), Tool(Anchor)]
+    [Ui("按社区", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
         // group by commuity 
-        dc.Sql($"SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND status = {Entity.STU_ADAPTED} GROUP BY ucom");
+        dc.Sql($"SELECT ucom, utel, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY ucom, utel");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
@@ -216,24 +216,62 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
+            h.THEAD_().TH("社区").TH("手机").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
             while (dc.Next())
             {
                 dc.Let(out string ucom);
+                dc.Let(out string utel);
                 dc.Let(out int count);
+                dc.Let(out int count2);
 
                 if (string.IsNullOrEmpty(ucom)) ucom = "非派送区";
 
                 h.TR_();
                 h.TD(ucom);
+                h.TD(utel);
                 h.TD(count);
+                h.TD(count2);
                 h._TR();
             }
             h._TABLE();
         });
     }
 
-    [Ui(tip: "个人发货任务", icon: "user", status: 2), Tool(Anchor)]
-    public async Task wait(WebContext wc)
+    [Ui("按商户", status: 2), Tool(Anchor)]
+    public async Task orgs(WebContext wc)
+    {
+        var mkt = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql($"SELECT rtlid, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY rtlid");
+        await dc.QueryAsync(p => p.Set(mkt.id));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            h.TABLE_();
+            h.THEAD_().TH("商户").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
+            while (dc.Next())
+            {
+                dc.Let(out int rtlid);
+                dc.Let(out int count);
+                dc.Let(out int adapted);
+
+                var rtl = GrabTwin<int, Org>(rtlid);
+
+                h.TR_();
+                h.TD(rtl.name);
+                h.TD(count);
+                h.TD(adapted);
+                h._TR();
+            }
+            h._TABLE();
+        }, false, 6);
+    }
+
+    [Ui("任务", tip: "个人派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
+    public async Task assign(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
@@ -243,8 +281,6 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
-
             if (arr == null) return;
 
             h.MAIN_(grid: true);
@@ -271,56 +307,5 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
             h._MAIN();
         });
-    }
-
-    [Ui(tip: "社区查询", icon: "search"), Tool(AnchorPrompt)]
-    public async Task search(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-
-        bool inner = wc.Query[nameof(inner)];
-        string com;
-        if (inner)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("选择社区");
-                h.LI_().SELECT_SPEC(nameof(com), org.specs)._LI();
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // OUTER
-        {
-            com = wc.Query[nameof(com)];
-
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ucom, oked, first(oker), count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 4 AND ucom = @2 GROUP BY oked DESC");
-
-            var arr = await dc.QueryAsync<User>(p => p.Set(org.id).Set(com));
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.MAINGRID(arr, o =>
-                {
-                    h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, css: "uk-card-body uk-flex");
-
-                    if (o.icon)
-                    {
-                        h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
-                    }
-                    else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
-
-                    h.ASIDE_();
-                    h.HEADER_().H4(o.name).SPAN("")._HEADER();
-                    h.Q(o.tel, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
-                    h._ASIDE();
-
-                    h._A();
-                });
-            }, false, 30);
-        }
     }
 }

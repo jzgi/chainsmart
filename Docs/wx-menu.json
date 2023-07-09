@@ -10,22 +10,22 @@
       "sub_button": [
         {
           "type": "view",
-          "name": "供应操作　　　　　　🔒",
+          "name": "关于「中惠农通」",
+          "url": "http://www.zhnt-x.com/about.html"
+        },
+        {
+          "type": "view",
+          "name": "供应操作　　　　　🔒",
           "url": "http://mgt.zhnt-x.com/suply//"
         },
         {
           "type": "view",
-          "name": "市场操作　　　　　　🔒",
+          "name": "市场操作　　　　　🔒",
           "url": "http://mgt.zhnt-x.com/rtlly//"
         },
         {
           "type": "view",
-          "name": "产品批次溯源　　　　\uD83D\uDD0E",
-          "url": "http://www.zhnt-x.com/lot/"
-        },
-        {
-          "type": "view",
-          "name": "我的个人账号／消费",
+          "name": "我的个人账号",
           "url": "http://www.zhnt-x.com/my//"
         }
       ]
