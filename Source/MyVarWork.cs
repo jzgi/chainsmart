@@ -40,45 +40,48 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             h._TOPBARXL();
 
             // buy orders
-
-            h.MAINGRID(arr, o =>
+            if (arr == null)
             {
-                h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
-
-                foreach (var it in o.items)
+                h.ALERT("尚无消费订单");
+            }
+            else
+            {
+                h.MAINGRID(arr, o =>
                 {
-                    h.LI_();
+                    h.UL_("uk-card-body uk-list uk-list-divider");
+                    h.LI_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-                    h.SPAN_("uk-width-expand").T(it.name);
-                    if (it.unitw > 0)
+                    foreach (var it in o.items)
                     {
-                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                        h.LI_();
+
+                        h.SPAN_("uk-width-expand").T(it.name);
+                        if (it.unitw > 0)
+                        {
+                            h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                        }
+
+                        h._SPAN();
+
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                        h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                        h._LI();
                     }
-
-                    h._SPAN();
-
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
-                    h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                     h._LI();
-                }
-                h._LI();
 
-                h.LI_();
-                h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
-                if (o.fee > 0)
-                {
-                    h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
-                }
-                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
-                h._LI();
+                    h.LI_();
+                    h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
+                    if (o.fee > 0)
+                    {
+                        h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
+                    }
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
+                    h._LI();
 
-                h._UL();
-
-                h.VARPAD(o.Key, css: "uk-card-footer uk-flex-right", status: o.status);
-            });
-
+                    h._UL();
+                });
+            }
 
             h.PAGINATION(arr?.Length > 10);
 
@@ -98,7 +101,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         wc.GivePane(200, h =>
         {
             h.ARTICLE_("uk-card uk-card-primary");
-            h.H3("我的身份和权限", css: "uk-card-header");
+            h.H2("我的身份和权限", css: "uk-card-header");
             h.UL_("uk-card-body uk-list uk-list-divider");
 
             var any = 0;
@@ -168,20 +171,18 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             password = string.IsNullOrEmpty(prin.credential) ? null : PASSWORD_MASK;
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("基本信息");
-
+                h.FORM_("uk-card uk-card-primary");
+                h.H2("设置个人账号信息", css: "uk-card-header");
+                h.FIELDSUL_(css: "uk-card-body");
                 h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true, @readonly: prin.IsStationOp)._LI();
                 h.LI_().TEXT("登录手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, @readonly: true);
-
-                h._FIELDSUL();
-
                 if (prin.IsStationOp)
                 {
-                    h.FIELDSUL_("工作台操作密码");
-                    h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
-                    h._FIELDSUL();
+                    h.LI_().PASSWORD("工作站密码", nameof(password), password, max: 12, min: 3)._LI();
                 }
-                h.BOTTOM_BUTTON("确定", nameof(setg))._FORM();
+                h._FIELDSUL();
+                h.BOTTOM_BUTTON("确定", nameof(setg));
+                h._FORM();
             });
         }
         else // POST
@@ -205,6 +206,40 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             wc.GivePane(200); // close
         }
+    }
+
+    [Ui("卡证", "智能卡证书", icon: "credit-card", status: 7), Tool(ButtonShow)]
+    public async Task mcard(WebContext wc, int dt)
+    {
+        int uid = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(MCard.Empty).T(" FROM mcards WHERE userid = @1");
+        var arr = await dc.QueryAsync<MCard>(p => p.Set(uid));
+
+        wc.GivePane(200, h =>
+        {
+            h.DIV_("uk-card uk-card-primary").H2("中惠农通帮扶孵化系列", css: "uk-card-header")._DIV();
+            for (int i = 0; i < MCard.Typs.Count; i++)
+            {
+                var e = MCard.Typs.EntryAt(i);
+                h.ARTICLE_("uk-card uk-card-default");
+                var card = arr.First(x => x.typ == e.Key);
+                h.HEADER_("uk-card-header").H3(e.Value).SPAN_("uk-badge");
+                if (card != null)
+                {
+                    h.T(card.created).SP().T("已领");
+                }
+                else
+                {
+                    h.T("未领");
+                }
+                h._SPAN();
+                h._HEADER();
+                h.SECTION_("uk-card-body").P(MCard.Tips[e.Key])._SECTION();
+                h._ARTICLE();
+            }
+        }, false, 120);
     }
 
     [Ui("协议", "本系统的使用条款", icon: "file-text", status: 7), Tool(ButtonShow)]

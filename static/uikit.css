@@ -249,6 +249,7 @@ h1,
 h2,
 .uk-h2 {
     font-size: 1.125rem;
+    font-weight: normal;
     margin: 4px 0;
     color: #ff3b30;
 }
@@ -272,7 +273,7 @@ h4,
 h5,
 .uk-h5 {
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: bold;
     margin: 0;
     color: #000;
 }
@@ -2210,9 +2211,8 @@ a.uk-inactive {
  * Primary
  */
 .uk-card-primary {
-    margin: 2px;
+    margin: 2p 0 6px 0x;
     background-color: #fff;
-    margin-bottom: 1rem;
 }
 
 

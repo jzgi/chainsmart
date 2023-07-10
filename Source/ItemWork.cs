@@ -215,15 +215,33 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 ucom = com,
                 uaddr = addr,
                 fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.fee,
-                status = -1, // before confirmed of payment
+                status = -1, // before confirmation of payment
             };
             m.InitTopay();
 
-            // NOTE single unsubmitted record
+            // check and try to use an existing record
+            int buyid = 0;
+            if (await dc.QueryTopAsync("SELECT id FROM buys WHERE uid = @1 AND status = -1 AND typ = 1 LIMIT 1", p => p.Set(prin.id)))
+            {
+                dc.Let(out buyid);
+            }
+            
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" ON CONFLICT (uid, typ, status) WHERE typ = 1 AND status = -1 DO UPDATE ")._SET_(Buy.Empty, msk).T(" RETURNING id, topay");
-            await dc.QueryTopAsync(p => m.Write(p, msk));
-            dc.Let(out int buyid);
+            if (buyid == 0)
+            {
+                dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" RETURNING id, topay");
+                await dc.QueryTopAsync(p => m.Write(p, msk));
+            }
+            else
+            {
+                dc.Sql("UPDATE buys ")._SET_(Buy.Empty, msk).T(" WHERE id = @1 RETURNING id, topay");
+                await dc.QueryTopAsync(p =>
+                {
+                    m.Write(p, msk);
+                    p.Set(buyid);
+                });
+            }
+            dc.Let(out buyid);
             dc.Let(out decimal topay);
 
             // // call WeChatPay to prepare order there
@@ -362,7 +380,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        bool product = !org.IsService;
+        bool product = !org.IsServiceSector;
 
         const short MAX = 100;
         var o = new Item

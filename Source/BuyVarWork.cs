@@ -142,7 +142,7 @@ public class RtllyBuyVarWork : BuyVarWork
                 else
                 {
                     // notify user
-                    await PostSendAsync(uim, "您的订单已经撤销，请查收退款（商户：" + org.name + "　单号：" + trade_no + "　￥" + refund + "）");
+                    await PostSendAsync(uim, "您的订单已经撤销，请查收退款（" + org.name + "　#" + trade_no + "　￥" + refund + "）");
                 }
             }
         }
@@ -174,7 +174,32 @@ public class MktlyBuyVarWork : BuyVarWork
 
             wc.GivePane(200, h =>
             {
-                h.TABLE(arr, o => h.TD(o.name).TD(o.topay));
+                h.MAINGRID(arr, o =>
+                {
+                    h.UL_("uk-card-body uk-list uk-list-divider");
+                    h.LI_().H4(o.utel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+
+                    foreach (var it in o.items)
+                    {
+                        h.LI_();
+
+                        h.SPAN_("uk-width-expand").T(it.name);
+                        if (it.unitw > 0)
+                        {
+                            h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                        }
+
+                        h._SPAN();
+
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                        h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                        h._LI();
+                    }
+                    h._LI();
+
+                    h._UL();
+                });
 
                 h.BOTTOM_BUTTON("确认", nameof(com), post: true);
             });

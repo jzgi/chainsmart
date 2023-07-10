@@ -208,7 +208,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
         using var dc = NewDbContext();
         // group by commuity 
-        dc.Sql($"SELECT ucom, utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY ucom, utel");
+        dc.Sql("SELECT ucom, utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY ucom, utel");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
@@ -231,7 +231,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
                 if (ucom != last)
                 {
-                    h.TR_().TD_("uk-padding-tiny-left uk-label", colspan: 2).ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD()._TR();
+                    h.TR_().TD_("uk-label", colspan: 2).ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD()._TR();
                 }
 
                 h.TR_();
@@ -252,7 +252,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql($"SELECT rtlid, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY rtlid");
+        dc.Sql($"SELECT rtlid, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
