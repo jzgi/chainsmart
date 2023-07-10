@@ -68,7 +68,7 @@ public class MainApp : Application
 
     public static void MakeGraphs()
     {
-        MakeGraph<OrgGraph>("org");
+        MakeGraph<OrgGraph>("org").Period = 360;
 
         MakeGraph<FabGraph>("fab");
 

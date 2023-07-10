@@ -52,27 +52,48 @@ public abstract class OrglyVarWork : WebWork
     [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
-        var org = wc[-1].As<Org>();
+        var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id));
+        var now = DateTime.Now;
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(org,
+            async (dc) =>
+            {
+                dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
+                return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(org.id)) == 1;
+            },
+            x =>
+            {
+                x.oked = now;
+                x.oker = prin.name;
+                x.status = 4;
+            }
+        );
 
-        wc.GivePane(200);
+        wc.Give(200);
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
     [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
-        var org = wc[-1].As<Org>();
+        var org = wc[0].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
-        await dc.ExecuteAsync(p => p.Set(org.id));
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(org,
+            async (dc) =>
+            {
+                dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
+                return await dc.ExecuteAsync(p => p.Set(org.id)) == 1;
+            },
+            x =>
+            {
+                x.oked = default;
+                x.oker = null;
+                x.status = 2;
+            }
+        );
 
-        wc.GivePane(200);
+        wc.Give(200);
     }
 }
 

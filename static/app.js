@@ -13,7 +13,7 @@ var WCPay = function (data, sup) {
                     alert('下单成功！');
                 }
                 else {
-                    alert('下单成功！请在「我的个人账号」查看');
+                    alert('下单成功！可查看「我的个人账号」');
                 }
                 // close without refresh
                 window.parent.closeUp(false);

@@ -168,8 +168,9 @@ public class Buy : Entity, IKeyable<long>
     {
         get
         {
+            var now = DateTime.Now;
             short v = 0;
-            if (DateTime.Today == created.Date)
+            if (now.Date == created.Date || (now.Date == created.AddDays(1).Date && now.Hour < 12))
             {
                 v |= STA_CANCELLABLE;
             }

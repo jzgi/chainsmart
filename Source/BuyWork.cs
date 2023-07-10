@@ -134,7 +134,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已撤销", icon: "trash", status: 0), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -208,7 +208,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
         using var dc = NewDbContext();
         // group by commuity 
-        dc.Sql($"SELECT ucom, utel, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY ucom, utel");
+        dc.Sql($"SELECT ucom, utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = {Buy.TYP_PLAT} AND (status = 1 OR status = 2) GROUP BY ucom, utel");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
@@ -216,22 +216,31 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("社区").TH("手机").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("地址").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
+
+            string last = null;
             while (dc.Next())
             {
                 dc.Let(out string ucom);
                 dc.Let(out string utel);
-                dc.Let(out int count);
-                dc.Let(out int count2);
+                dc.Let(out string uaddr);
+                dc.Let(out int created);
+                dc.Let(out int adapted);
 
                 if (string.IsNullOrEmpty(ucom)) ucom = "非派送区";
 
+                if (ucom != last)
+                {
+                    h.TR_().TD_("uk-padding-tiny-left uk-label", colspan: 2).ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD()._TR();
+                }
+
                 h.TR_();
-                h.TD(ucom);
-                h.TD(utel);
-                h.TD(count);
-                h.TD(count2);
+                h.TD2(utel, uaddr);
+                h.TD(created);
+                h.TD(adapted);
                 h._TR();
+
+                last = ucom;
             }
             h._TABLE();
         });

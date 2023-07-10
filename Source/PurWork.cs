@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[Ui("采购订单")]
+[Ui("采购")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()

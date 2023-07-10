@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
@@ -117,6 +118,7 @@ public class WwwService : MainService
 
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
+
                     rtl.Notices.Put(OrgNoticePack.BUY_CREATED, 1, cash);
                 }
                 else // the pay differs from the order
@@ -125,6 +127,10 @@ public class WwwService : MainService
                     await PostRefundAsync(sup: false, trade_no, cash, cash, trade_no, "支付金额与订单不符");
                 }
             }
+        }
+        catch (Exception e)
+        {
+            Application.War(e.Message);
         }
         finally
         {

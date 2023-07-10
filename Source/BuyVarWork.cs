@@ -22,18 +22,17 @@ public abstract class BuyVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-
-
             if (o.IsPlat)
             {
-                h.LI_().LABEL("买方").DIV_("uk-static").SPAN_().T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN().BR().T(string.IsNullOrEmpty(o.ucom) ? "非派送区" : o.ucom).T('-').T(o.uaddr)._DIV()._LI();
-                h.LI_().FIELD("卖方", o.name)._LI();
+                h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
+                h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.ucom).T('-').T(o.uaddr)._SPAN()._LI();
+                h.LI_().FIELD("服务费", o.fee, true)._LI();
             }
             h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
 
             if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-            if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "备发", o.adapted, o.adapter)._LI();
-            if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "发货", o.oked, o.oker)._LI();
+            if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "集合", o.adapted, o.adapter)._LI();
+            if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "派发", o.oked, o.oker)._LI();
 
             h._UL();
 
@@ -125,7 +124,7 @@ public class RtllyBuyVarWork : BuyVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND rtlid = @4 AND status BETWEEN 1 AND 4 RETURNING uim, topay, refund");
+            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND rtlid = @4 AND status = 1 RETURNING uim, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);
@@ -140,9 +139,11 @@ public class RtllyBuyVarWork : BuyVarWork
                     dc.Rollback();
                     Err(err);
                 }
-
-                // notify user
-                await PostSendAsync(uim, "您的订单已经撤销，请查收退款通知（" + org.name + "，单号 " + id.ToString("D8") + "，￥" + topay + "）");
+                else
+                {
+                    // notify user
+                    await PostSendAsync(uim, "您的订单已经撤销，请查收退款（商户：" + org.name + "　单号：" + trade_no + "　￥" + refund + "）");
+                }
             }
         }
         catch (Exception)
@@ -158,25 +159,29 @@ public class RtllyBuyVarWork : BuyVarWork
 
 public class MktlyBuyVarWork : BuyVarWork
 {
-    public async Task assign(WebContext wc)
+    public async Task com(WebContext wc)
     {
-        string com = wc[0];
+        string ucom = wc[0];
         var prin = (User)wc.Principal;
         var org = wc[-2].As<Org>();
 
         if (wc.IsGet)
         {
-            // job assign list
-        }
-        else
-        {
             using var dc = NewDbContext();
 
-            dc.Sql("UPDATE buys SET status = 4, oked = @1, oker = @2 WHERE rtlid = @3 AND status = 2 AND ucom = @4 RETURNING ").collst(Buy.Empty);
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(com));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) AND ucom = @2");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(ucom));
 
-            // iot event
-            // GrabTwin<int, Org>(org.id).EventQueue.PutDeliveryAssign(prin.name, arr);
+            wc.GivePane(200, h =>
+            {
+                h.TABLE(arr, o => h.TD(o.name).TD(o.topay));
+
+                h.BOTTOM_BUTTON("确认", nameof(com), post: true);
+            });
+        }
+        else // POST
+        {
+            wc.GivePane(200);
         }
     }
 }

@@ -16,7 +16,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > 0 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > -1 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -43,8 +43,6 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             h.MAINGRID(arr, o =>
             {
-                // h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
-
                 h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
@@ -82,7 +80,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             });
 
 
-            h.PAGINATION(arr.Length > 10);
+            h.PAGINATION(arr?.Length > 10);
 
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.State);
         }, false, 120);
