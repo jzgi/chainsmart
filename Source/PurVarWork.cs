@@ -38,7 +38,7 @@ public abstract class PurVarWork : WebWork
 
             h._UL();
 
-            h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         });
     }
 }

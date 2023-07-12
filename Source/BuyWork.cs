@@ -73,7 +73,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 1 ORDER BY created DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -95,7 +95,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 2 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 2 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -113,13 +113,13 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
     [OrgSpy(BUY_OKED)]
     [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
-    public async Task oked(WebContext wc)
+    public async Task oked(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 4 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 4 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
+        var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -131,6 +131,8 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             }
 
             MainGrid(h, arr);
+
+            h.PAGINATION(arr.Length == 20);
         }, false, 6);
     }
 
@@ -201,6 +203,36 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 [Ui("网售统一发货")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
+    internal void MainGrid(HtmlBuilder h, IList<Buy> arr)
+    {
+        h.MAINGRID(arr, o =>
+        {
+            h.UL_("uk-card-body uk-list uk-list-divider");
+            h.LI_().H4(o.utel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+
+            foreach (var it in o.items)
+            {
+                h.LI_();
+
+                h.SPAN_("uk-width-expand").T(it.name);
+                if (it.unitw > 0)
+                {
+                    h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                }
+
+                h._SPAN();
+
+                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                h._LI();
+            }
+            h._LI();
+
+            h._UL();
+        });
+    }
+
     [Ui("按社区", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
@@ -279,42 +311,25 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("任务", tip: "个人派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
-    public async Task assign(WebContext wc)
+    [Ui("我的", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
+    public async Task my(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ucom, count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status BETWEEN 1 AND 2 GROUP BY ucom");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id));
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 4  AND typ = 1 AND oker = @2");
+        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(prin.name));
 
         wc.GivePage(200, h =>
         {
-            if (arr == null) return;
-
-            h.MAIN_(grid: true);
-
-            int last = 0; // uid
-
-            foreach (var o in arr)
+            if (arr == null)
             {
-                if (o.uid != last)
-                {
-                    h.FORM_("uk-card uk-card-default");
-                    h.HEADER_("uk-card-header").T(o.uname).SP().T(o.utel).SP().T(o.uaddr)._HEADER();
-                    h.UL_("uk-card-body");
-                    // h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                }
-
-                h.LI_().T(o.name)._LI();
-
-                last = o.uid;
+                h.ALERT("尚无派送任务");
+                return;
             }
 
-            h._UL();
-            h._FORM();
-
-            h._MAIN();
+            MainGrid(h, arr);
         });
     }
 }

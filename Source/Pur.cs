@@ -155,18 +155,15 @@ public class Pur : Entity, IKeyable<int>
 
     public const short STA_CANCELL = 1;
 
-    public override short State
+    public override short ToState()
     {
-        get
+        var now = DateTime.Now;
+        short v = 0;
+        if (now.Date <= created.Date.AddDays(1) && now.Hour < 12)
         {
-            var now = DateTime.Now;
-            short v = 0;
-            if (now.Date <= created.Date.AddDays(1) && now.Hour < 12)
-            {
-                v |= STA_CANCELL;
-            }
-            return v;
+            v |= STA_CANCELL;
         }
+        return v;
     }
 
 

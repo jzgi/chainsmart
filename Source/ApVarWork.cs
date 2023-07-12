@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
@@ -13,17 +14,17 @@ public class AdmlyBuyApVarWork : ApVarWork
 {
     public async Task @default(WebContext wc)
     {
-        int orgid = wc[0];
+        int xorgid = wc[0];
+        DateTime dt = wc.Query[nameof(dt)];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE xorgid = @1");
-        var arr = await dc.QueryAsync<Ap>(p => p.Set(orgid));
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 AND dt = @1 AND xorgid = @2");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(dt).Set(xorgid));
 
-        var org = GrabTwin<int, Org>(orgid);
-        var orgs = GrabTwinSet<int, Org>(orgid).AddOf(org, first: true);
+        var xorg = GrabTwin<int, Org>(xorgid);
+        var orgs = GrabTwinSet<int, Org>(xorgid).AddOf(xorg, first: true);
 
-
-        await wc.GiveXls(200, false, orgid, arr, orgs.ToMap<int, Org>());
+        await wc.GiveXls(200, false, xorgid, dt, arr, orgs.ToMap<int, Org>());
     }
 }
 

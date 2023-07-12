@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Nodal.Nodality;
@@ -49,29 +50,35 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     {
         using var dc = NewDbContext();
 
-        var now = DateTime.Now;
-        Ap[] arr = null;
-        if (await dc.QueryTopAsync("SELECT till, last FROM buygens WHERE ended < @1 AND ended >= @2 LIMIT 1", p => p.Set(now).Set(now.Date)))
-        {
-            dc.Let(out DateTime till);
-            dc.Let(out DateTime last);
-
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 2 AND dt BETWEEN @1 AND @2");
-            arr = await dc.QueryAsync<Ap>(p => p.Set(last).Set(till));
-        }
+        var till = await dc.ScalarAsync("SELECT max(till) FROM buygens") as DateTime?;
+        
+        dc.Sql("SELECT xorgid, sum(trans), sum(amt), first(rate), sum(topay) FROM buyaps WHERE level = 1 AND dt = @1 GROUP BY xorgid");
+        await dc.QueryAsync(p => p.Set(till ?? default(DateTime)));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
-            if (arr == null)
+
+            h.TABLE_();
+            h.THEAD_().TH("机构").TH("笔数", "uk-text-right").TH("总营业额", "uk-text-right").TH("总应付额", "uk-text-right")._THEAD();
+            while (dc.Next())
             {
-                h.ALERT("今日尚无结算记录");
-                return;
+                dc.Let(out int xorgid);
+                dc.Let(out int trans);
+                dc.Let(out decimal amt);
+                dc.Let(out short rate);
+                dc.Let(out decimal topay);
+
+                var xorg = GrabTwin<int, Org>(xorgid);
+
+                h.TR_();
+                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.cover)._A()._TD();
+                h.TD(trans);
+                h.TD(amt, money: true, right: true);
+                h.TD(topay, money: true, right: true)._TD();
+                h._TR();
             }
-
-            MainTable(h, arr, 2);
-
-            h.PAGINATION(arr?.Length == 30);
+            h._TABLE();
         }, false, 120);
     }
 
@@ -114,37 +121,34 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
+        var prin = (User)wc.Principal;
+
         if (wc.IsGet)
         {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Gen.Empty).T(" FROM buygens ORDER BY till LIMIT 8");
+            var arr = await dc.QueryAsync<Gen>();
+
             var till = DateTime.Today.AddDays(-1);
             wc.GivePane(200, h =>
             {
-                h.FORM_(post: false).FIELDSUL_("选择截止（包含）日期");
+                h.FORM_();
+                h.FIELDSUL_("选择本次结算的截止日期（包含）");
                 h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
-                h._FIELDSUL()._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(gen));
+                h._FORM();
+
+                h.TABLE(arr, o => h.TD(o.till).TD(o.last).TD(o.opr), () => h.TH("截止").TH("上次").TH("操作"));
             });
         }
         else // OUTER
         {
-            DateTime till = wc.Query[nameof(till)];
+            var f = await wc.ReadAsync<Form>();
+            DateTime till = f[nameof(till)];
             using var dc = NewDbContext(IsolationLevel.RepeatableRead);
+            await dc.ExecuteAsync("SELECT buygen(@1, @2)", p => p.Set(till).Set(prin.name));
 
-            await dc.ExecuteAsync("SELECT recalc(@1)", p => p.Set(till));
-
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM clears WHERE status = 0 ORDER BY id ");
-            var arr = await dc.QueryAsync<Ap>();
-
-            wc.GivePage(200, h =>
-            {
-                h.TOOLBAR();
-                h.TABLE(arr, o =>
-                {
-                    // h.TD(Clear.Typs[o.typ]);
-                    // h.TD(orgs[o.orgid]?.name);
-                    // h.TD_().T(o.till, 3, 0)._TD();
-                    // h.TD(o.amt, currency: true);
-                });
-            }, false, 3);
+            wc.GivePane(200);
         }
     }
 }

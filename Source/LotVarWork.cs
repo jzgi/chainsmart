@@ -222,7 +222,7 @@ public class LotVarWork : WebWork
                 reverse: true
             );
 
-            h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         });
     }
 

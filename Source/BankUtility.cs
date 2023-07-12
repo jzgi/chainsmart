@@ -89,10 +89,10 @@ public static class BankUtility
     /// <summary>
     /// Gives a frame page.
     /// </summary>
-    public static async Task GiveXls(this WebContext wc, short status, bool sup, int orgid, IList<Ap> aplst, Map<int, Org> orgmap)
+    public static async Task GiveXls(this WebContext wc, short status, bool sup, int xorgid, DateTime dt, IList<Ap> aplst, Map<int, Org> orgmap)
     {
         var workbook = new HSSFWorkbook();
-        var sheet = workbook.CreateSheet();
+        var sheet = workbook.CreateSheet("Sheet1");
 
         var hdr = sheet.CreateRow(0);
         for (int i = 0; i < ColDefs.Count; i++)
@@ -143,7 +143,7 @@ public static class BankUtility
         var buf = mem.ToArray();
 
         wc.SetHeader("Content-Length", buf.Length);
-        wc.SetHeader("Content-Disposition", "attachment; filename=\"" + orgid + ".xls\"");
+        wc.SetHeader("Content-Disposition", $"attachment; filename=\"{dt:yyyyMMdd}-{xorgid}.xls\"");
         await wc.ResponseStream.WriteAsync(buf);
     }
 }

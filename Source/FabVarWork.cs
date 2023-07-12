@@ -165,7 +165,7 @@ public class SuplyFabVarWork : FabVarWork
             if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
             h._UL();
 
-            h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         }, false, 4);
     }
 

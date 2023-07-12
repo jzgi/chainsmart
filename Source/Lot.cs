@@ -172,17 +172,14 @@ public class Lot : Entity, IKeyable<int>
 
     public const short STA_OKABLE = 1;
 
-    public override short State
+    public override short ToState()
     {
-        get
+        short v = 0;
+        if (icon && pic)
         {
-            short v = 0;
-            if (icon && pic)
-            {
-                v |= STA_OKABLE;
-            }
-            return v;
+            v |= STA_OKABLE;
         }
+        return v;
     }
 
 

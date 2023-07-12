@@ -50,7 +50,7 @@ public abstract class BuyVarWork : WebWork
                 h.TD(d.SubTotal, true, true);
             });
 
-            h.TOOLBAR(bottom: true, status: o.Status, state: o.State);
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         });
     }
 }
@@ -79,8 +79,8 @@ public class MyBuyVarWork : BuyVarWork
 
 public class RtllyBuyVarWork : BuyVarWork
 {
-    [Ui("回退", tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
-    public async Task retcreated(WebContext wc)
+    [Ui("回退", tip: "回退到收单状态", icon: "triangle-left", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    public async Task back(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -114,7 +114,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("撤单", "确认撤单并且退款？", icon: "trash", status: 1), Tool(ButtonConfirm, state: Buy.STA_CANCELLABLE)]
+    [Ui("撤单", "确认撤单并且退款？", icon: "trash", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -163,14 +163,14 @@ public class MktlyBuyVarWork : BuyVarWork
     {
         string ucom = wc[0];
         var prin = (User)wc.Principal;
-        var org = wc[-2].As<Org>();
+        var mkt = wc[-2].As<Org>();
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) AND ucom = @2");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(ucom));
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND (status = 1 OR status = 2) AND typ = 1 AND ucom = @2");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(ucom));
 
             wc.GivePane(200, h =>
             {
@@ -201,11 +201,16 @@ public class MktlyBuyVarWork : BuyVarWork
                     h._UL();
                 });
 
-                h.BOTTOM_BUTTON("确认", nameof(com), post: true);
+                h.FORM_().HIDDEN(nameof(com), 1).BOTTOM_BUTTON(prin.name + " 确认", nameof(com), post: true)._FORM();
             });
         }
         else // POST
         {
+            // Note: update only status = 2
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE mktid = @3 AND status = 2 AND typ = 1 AND ucom = @4");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(mkt.id).Set(ucom));
+
             wc.GivePane(200);
         }
     }

@@ -196,25 +196,22 @@ public class User : Entity, IKeyable<int>
         STA_ORDI = 1,
         STA_OP = 2;
 
-    public override short State
+    public override short ToState()
     {
-        get
+        short v = 0;
+        if (supid > 0 || rtlid > 0)
         {
-            short v = 0;
-            if (supid > 0 || rtlid > 0)
+            if (credential != null)
             {
-                if (credential != null)
-                {
-                    v |= STA_OP;
-                }
+                v |= STA_OP;
             }
-            else
-            {
-                v |= STA_ORDI;
-            }
-            return v;
         }
+        else
+        {
+            v |= STA_ORDI;
+        }
+        return v;
     }
 
-    public bool IsStationOp => (supid > 0 || rtlid > 0) && credential != null;
+    public bool IsStationOp => admly > 0 || supid > 0 || rtlid > 0;
 }

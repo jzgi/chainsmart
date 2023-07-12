@@ -1,5 +1,4 @@
-﻿using System;
-using ChainFx;
+﻿using ChainFx;
 
 namespace ChainSmart;
 
@@ -11,22 +10,20 @@ public class Buy : Entity, IKeyable<long>
     public static readonly Buy Empty = new();
 
     public const short
-        TYP_PLAT = 1,
-        TYP_CASH = 2,
-        TYP_TRANSF = 3;
+        TYP_ECOM = 1,
+        TYP_POS = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_PLAT, "平台" },
-        { TYP_CASH, "现金" },
-        { TYP_TRANSF, "转账" },
+        { TYP_ECOM, "网售" },
+        { TYP_POS, "零售" },
     };
 
-    public static readonly Map<short, string> Icons = new()
+    public static readonly Map<short, string> Tips = new()
     {
-        { TYP_PLAT, "cloud-upload" },
-        { TYP_CASH, "bookmark" },
-        { TYP_TRANSF, "thumbnails" },
+        { 1, "现金" },
+        { 2, "转款" },
+        { 3, "赊账" },
     };
 
 
@@ -61,7 +58,7 @@ public class Buy : Entity, IKeyable<long>
 
     public Buy(User prin, Org rtl, BuyItem[] arr)
     {
-        typ = TYP_PLAT;
+        typ = TYP_ECOM;
         name = rtl.Name;
         rtlid = rtl.id;
         mktid = rtl.MarketId;
@@ -160,33 +157,25 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
+    public bool IsPlat => typ == TYP_ECOM;
+
+    public bool IsCash => typ == TYP_POS;
+
+    public override string ToString() => uname + "购买" + name + "商品";
+
     public const short
         STA_CANCELLABLE = 1,
         STA_REVERSABLE = 2;
 
-    public override short State
+    public override short ToState()
     {
-        get
+        short v = 0;
+        if (oker != null || adapter != null)
         {
-            var now = DateTime.Now;
-            short v = 0;
-            if (now.Date == created.Date || (now.Date == created.AddDays(1).Date && now.Hour < 12))
-            {
-                v |= STA_CANCELLABLE;
-            }
-            if (oker != null || adapter != null)
-            {
-                v |= STA_REVERSABLE;
-            }
-            return v;
+            v |= STA_REVERSABLE;
         }
+        return v;
     }
-
-    public bool IsPlat => typ == TYP_PLAT;
-
-    public bool IsCash => typ == TYP_CASH;
-
-    public override string ToString() => uname + "购买" + name + "商品";
 
     public static string GetOutTradeNo(int id, decimal topay) => (id + "-" + topay).Replace('.', '-');
 }

@@ -791,7 +791,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-table-divider>tr:not(:first-child),
-.uk-table-divider> tbody>tr:not(:first-child) {
+.uk-table-divider>tbody>tr:not(:first-child) {
     border-top: 1px solid #ededed;
 }
 
@@ -1216,7 +1216,7 @@ form legend {
     width: 100%;
     min-height: 2.5rem;
     align-items: center;
-} 
+}
 
 .uk-fieldset>ul>li:nth-child(n+2) {
     border-top: 1px solid #fff;
@@ -1299,11 +1299,16 @@ select.uk-border-rounded {
     width: 100%;
     padding: 4px;
     color: #333;
-    background-color: #f5f5f5;
     border: 0;
     font-size: inherit;
     transition: 0.2s ease-in-out;
     transition-property: color, background-color, border;
+}
+
+.uk-input,
+.uk-select,
+.uk-textarea {
+    background-color: #f5f5f5;
 }
 
 .uk-static {
@@ -2145,6 +2150,7 @@ section.uk-card-body,
 a.uk-card-body {
     height: calc(100% - 8px);
 }
+
 a.uk-inactive {
     background-color: rgb(238 238 238 / 30%);
 }
@@ -3176,7 +3182,7 @@ ul.uk-nav-sub {
     list-style: none;
     font-size: 1.5rem;
     justify-content: center;
-    pointer-events: none; 
+    pointer-events: none;
 }
 
 .uk-pagination>* {
@@ -3187,7 +3193,7 @@ ul.uk-nav-sub {
     border-radius: 50%;
     background-color: #ededed;
     padding: 2px 7px;
-    pointer-events: auto; 
+    pointer-events: auto;
 }
 
 .uk-pagination>a {

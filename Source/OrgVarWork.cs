@@ -63,7 +63,7 @@ public abstract class OrgVarWork : WebWork
 
             h._UL();
 
-            h.TOOLBAR(subscript: m.IsMarket ? 1 : 0, bottom: true, status: m.Status, state: m.State);
+            h.TOOLBAR(subscript: m.IsMarket ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
         }, false, 6);
     }
 

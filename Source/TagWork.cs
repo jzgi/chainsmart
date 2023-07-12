@@ -65,7 +65,7 @@ public class PublyTagWork : TagWork
         }
         else
         {
-            wc.GivePage(304, h => h.ALERT("此溯源码没有绑定产品"));
+            wc.GivePage(300, h => h.ALERT("此溯源码没有绑定产品"));
         }
     }
 }

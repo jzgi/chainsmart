@@ -105,13 +105,11 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h._NAV();
 
             h.BOTTOMBAR_();
-            for (short i = 2; i <= 3; i++)
+            for (short i = 0; i < Buy.Tips.Count; i++)
             {
-                h.BUTTON_(nameof(buy), subscript: i, onclick: "return $pos(this);", css: "uk-button-default");
-                h.ICON(Buy.Icons[i]).SP().T(Buy.Typs[i]);
-                h._BUTTON();
+                var e = Buy.Tips.EntryAt(i);
+                h.BUTTON_(nameof(buy), subscript: e.Key, onclick: "return $pos(this);", css: "uk-button-default").T(e.Value)._BUTTON();
             }
-
             h._BOTTOMBAR();
 
             h._FORM();
@@ -233,9 +231,10 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var now = DateTime.Now;
         var m = new Buy()
         {
-            typ = (short)payTyp,
+            typ = Buy.TYP_POS,
             rtlid = rtl.id,
             name = rtl.name,
+            tip = Buy.Tips[(short)payTyp],
             mktid = rtl.MarketId,
             created = now,
             creator = prin.name,

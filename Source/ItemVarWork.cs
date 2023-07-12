@@ -51,7 +51,7 @@ public class ItemVarWork : WebWork
                 reverse: true
             );
 
-            h.TOOLBAR(bottom: true, status: m.Status, state: m.State);
+            h.TOOLBAR(bottom: true, status: m.Status, state: m.ToState());
         }, false, 6);
     }
 

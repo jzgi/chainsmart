@@ -85,7 +85,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             h.PAGINATION(arr?.Length > 10);
 
-            h.TOOLBAR(bottom: true, status: prin.Status, state: prin.State);
+            h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());
         }, false, 120);
     }
 
@@ -172,13 +172,13 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             wc.GivePane(200, h =>
             {
                 h.FORM_("uk-card uk-card-primary");
-                h.H2("设置个人账号信息", css: "uk-card-header");
+                h.H2("我的账号信息设置", css: "uk-card-header");
                 h.FIELDSUL_(css: "uk-card-body");
                 h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true, @readonly: prin.IsStationOp)._LI();
                 h.LI_().TEXT("登录手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, @readonly: true);
                 if (prin.IsStationOp)
                 {
-                    h.LI_().PASSWORD("工作站密码", nameof(password), password, max: 12, min: 3)._LI();
+                    h.LI_().PASSWORD("终端密码", nameof(password), password, max: 12, min: 3)._LI();
                 }
                 h._FIELDSUL();
                 h.BOTTOM_BUTTON("确定", nameof(setg));
@@ -208,7 +208,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
-    [Ui("卡证", "智能卡证书", icon: "credit-card", status: 7), Tool(ButtonShow)]
+    [Ui("项目", "集体经济孵化项目", icon: "bolt", status: 7), Tool(ButtonShow)]
     public async Task mcard(WebContext wc, int dt)
     {
         int uid = wc[0];
@@ -219,7 +219,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
         wc.GivePane(200, h =>
         {
-            h.DIV_("uk-card uk-card-primary").H2("中惠农通帮扶孵化系列", css: "uk-card-header")._DIV();
+            h.DIV_("uk-card uk-card-primary").H2("我参与的集体经济孵化项目", css: "uk-card-header")._DIV();
             for (int i = 0; i < MCard.Typs.Count; i++)
             {
                 var e = MCard.Typs.EntryAt(i);
@@ -245,13 +245,12 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
     [Ui("协议", "本系统的使用条款", icon: "file-text", status: 7), Tool(ButtonShow)]
     public async Task agmt(WebContext wc, int dt)
     {
-        int orderid = wc[0];
-        if (wc.IsGet)
+        wc.GivePane(200, h =>
         {
-        }
-        else // POST
-        {
-            wc.GivePane(200); // close
-        }
+            h.ARTICLE_("uk-card uk-card-primary");
+            h.H2("平台用户协议", css: "uk-card-header");
+            h.SECTION_("uk-card-body")._SECTION();
+            h._ARTICLE();
+        }, false, 3600);
     }
 }
