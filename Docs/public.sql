@@ -265,7 +265,7 @@ create index lots_srcidstatus_idx
     on public.lots (orgid, status);
 
 create index lots_catid_idx
-    on public.lots (catid);
+    on public.lots (cattyp);
 
 create table public.fabs
 (

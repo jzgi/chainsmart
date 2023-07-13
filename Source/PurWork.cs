@@ -65,8 +65,19 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            var cat_ctr_id = Comp(0, org.hubid);
-            h.TOOLBAR(subscript: cat_ctr_id);
+            short cats = 0;
+            if (org.IsMarket)
+            {
+                cats = 0xff;
+            }
+            else
+            {
+                var reg = Grab<short, Reg>()[org.regid];
+                cats = reg.cats;
+            }
+
+            var reg_ctr_id = Comp(cats, org.hubid);
+            h.TOOLBAR(subscript: reg_ctr_id);
             if (arr == null)
             {
                 h.ALERT("尚无新采购订单");
@@ -144,35 +155,27 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    internal static (short catid, int ctrid) Decomp(int cat_ctr_id) => ((short)(cat_ctr_id >> 24), cat_ctr_id & 0x00ffffff);
+    internal static (short cats, int ctrid) Decomp(int cats_ctrid) => ((short)(cats_ctrid >> 20), cats_ctrid & 0x000fffff);
 
-    internal static int Comp(short catid, int ctrid) => (catid << 24) | ctrid;
+    internal static int Comp(short cats, int ctrid) => (cats << 20) | ctrid;
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("新建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int cat_ctr_id) // NOTE so that it is publicly cacheable
+    public async Task @new(WebContext wc, int cats_ctrid) // NOTE so that it is publicly cacheable
     {
-        var cats = Grab<short, Cat>();
+        (short cats, int ctrid) = Decomp(cats_ctrid);
 
-        (short catid, int ctrid) = Decomp(cat_ctr_id);
-
-        if (catid == 0)
-        {
-            catid = cats.KeyAt(0);
-            wc.Subscript = Comp(catid, ctrid);
-        }
+        var ctr = GrabTwin<int, Org>(ctrid);
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @2 AND o.status = 4 AND catid = @1");
-        var arr = await dc.QueryAsync<Lot>(p => p.Set(catid).Set(ctrid));
+        dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND o.cattyp & @2 > 0");
+        var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(cats));
 
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_().LOTNAVBAR(nameof(@new), catid, cats, ctrid)._TOPBAR();
-
             if (arr == null)
             {
-                h.ALERT("尚无上线产品");
+                h.ALERT("尚无上线产品投放", $"{ctr.cover}大区，当前市场版块");
                 return;
             }
 

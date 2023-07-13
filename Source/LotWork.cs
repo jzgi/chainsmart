@@ -180,7 +180,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.FORM_().FIELDSUL_("");
 
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
@@ -245,7 +245,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
                 h.FORM_().FIELDSUL_("助农（货入品控库之前先销售）");
 
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();

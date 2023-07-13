@@ -102,7 +102,7 @@ public class AdmlyRegWork : RegWork
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("子项数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
+                h.LI_().NUMBER("品类标志", nameof(o.cats), o.cats, min: 0, max: 0xff)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
             });
         }

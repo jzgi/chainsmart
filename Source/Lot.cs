@@ -30,7 +30,7 @@ public class Lot : Entity, IKeyable<int>
 
     internal int id;
     internal int orgid;
-    internal short catid;
+    internal short cattyp;
     internal DateTime started;
     internal int fabid;
     internal string unit;
@@ -79,7 +79,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Get(nameof(fabid), ref fabid);
-            s.Get(nameof(catid), ref catid);
+            s.Get(nameof(cattyp), ref cattyp);
             s.Get(nameof(started), ref started);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
@@ -130,7 +130,7 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Put(nameof(fabid), fabid);
-            s.Put(nameof(catid), catid);
+            s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitw), unitw);

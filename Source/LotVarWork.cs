@@ -28,7 +28,7 @@ public class LotVarWork : WebWork
         }
 
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("产品名", o.name).FIELD("分类", o.catid)._LI();
+        h.LI_().FIELD("产品名", o.name).FIELD("分类", o.cattyp)._LI();
         h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
         if (o.IsAdvance)
@@ -349,7 +349,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.FORM_().FIELDSUL_(o.IsSpot ? "现货（货入品控库之后再销售）" : "助农（货入品控库之前先销售）");
 
                 h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().SELECT("分类", nameof(o.catid), o.catid, cats, required: true)._LI();
+                h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
                 if (o.IsAdvance)

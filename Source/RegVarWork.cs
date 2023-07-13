@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainFx.Nodal.Nodality;
@@ -26,8 +25,7 @@ public class AdmlyRegVarWork : RegVarWork
                 h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("子项数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
-                // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States)._LI();
+                h.LI_().NUMBER("品类标志", nameof(o.cats), o.cats, min: 0, max: 0xff)._LI();
                 h._FIELDSUL()._FORM();
 
                 h.TOOLBAR(bottom: true);
@@ -62,8 +60,7 @@ public class AdmlyRegVarWork : RegVarWork
                 h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("子项数", nameof(o.num), o.num, min: 0, max: 9999)._LI();
-                // h.LI_().SELECT("状态", nameof(o.state), o.state, Entity.States)._LI();
+                h.LI_().NUMBER("品类标志", nameof(o.cats), o.cats, min: 0, max: 0xff)._LI();
                 h._FIELDSUL()._FORM();
             });
         }

@@ -136,7 +136,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 var org = GrabTwin<int, Org>(orgid);
                 if (org != null)
                 {
-                    h.LI_().T(org.name).SPAN("大客户", "uk-margin-auto-left")._LI();
+                    h.LI_().T(org.name).SPAN("ＶＩＰ", "uk-margin-auto-left")._LI();
                     any++;
                 }
             }

@@ -319,10 +319,10 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     }
 }
 
-[Ui("大客户")]
+[Ui("ＶＩＰ")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {
-    [Ui("大客户", status: 1), Tool(Anchor)]
+    [Ui("ＶＩＰ", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -337,7 +337,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无大客户");
+                h.ALERT("尚无ＶＩＰ");
                 return;
             }
 
@@ -386,7 +386,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("添加", "添加大客户", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("添加", "添加ＶＩＰ", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
         var org = wc[-1].As<Org>();
@@ -412,7 +412,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
                     {
                         if (o.IsVipOf(org.id))
                         {
-                            h.ALERT("该用户已经是大客户");
+                            h.ALERT("该用户已经是ＶＩＰ");
                         }
                         else
                         {

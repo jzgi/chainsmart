@@ -29,7 +29,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
             h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics)._LI();
             h.LI_().FIELD("单价", m.price, money: true).FIELD2("为整", m.step, m.unit)._LI();
-            h.LI_().FIELD("大客户优惠", m.off, money: true).FIELD("全民优惠", m.promo)._LI();
+            h.LI_().FIELD("ＶＩＰ立减", m.off, money: true).FIELD("全民立减", m.promo)._LI();
             h.LI_().FIELD2("起订量", m.min, m.unit).FIELD2("限订量", m.max, m.unit)._LI();
             h.LI_().FIELD2("数量", m.stock, m.unit)._LI();
 
