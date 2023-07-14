@@ -65,18 +65,18 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            short cats = 0;
+            short catmsk = 0;
             if (org.IsMarket)
             {
-                cats = 0xff;
+                catmsk = 0xff;
             }
             else
             {
                 var reg = Grab<short, Reg>()[org.regid];
-                cats = reg.cats;
+                catmsk = reg.catmsk;
             }
 
-            var reg_ctr_id = Comp(cats, org.hubid);
+            var reg_ctr_id = Comp(catmsk, org.hubid);
             h.TOOLBAR(subscript: reg_ctr_id);
             if (arr == null)
             {
@@ -155,21 +155,21 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    internal static (short cats, int ctrid) Decomp(int cats_ctrid) => ((short)(cats_ctrid >> 20), cats_ctrid & 0x000fffff);
+    internal static (short catmsk, int ctrid) Decomp(int catmsk_ctrid) => ((short)(catmsk_ctrid >> 20), catmsk_ctrid & 0x000fffff);
 
-    internal static int Comp(short cats, int ctrid) => (cats << 20) | ctrid;
+    internal static int Comp(short catmsk, int ctrid) => (catmsk << 20) | ctrid;
 
     [OrglyAuthorize(0, User.ROL_OPN)]
     [Ui("新建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int cats_ctrid) // NOTE so that it is publicly cacheable
+    public async Task @new(WebContext wc, int catmsk_ctrid) // NOTE so that it is publicly cacheable
     {
-        (short cats, int ctrid) = Decomp(cats_ctrid);
+        (short catmsk, int ctrid) = Decomp(catmsk_ctrid);
 
         var ctr = GrabTwin<int, Org>(ctrid);
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND o.cattyp & @2 > 0");
-        var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(cats));
+        var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(catmsk));
 
         wc.GivePage(200, h =>
         {

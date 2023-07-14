@@ -723,15 +723,31 @@ public class RtllyPurLotVarWork : LotVarWork
                 status = -1
             };
 
+
+            // check and try to use an existing record
+            int purid = 0;
+            if (await dc.QueryTopAsync("SELECT id FROM purs WHERE rtlid = @1 AND status = -1 LIMIT 1", p => p.Set(rtl.id)))
+            {
+                dc.Let(out purid);
+            }
+
             // make use of any existing abandoned record
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
-            dc.Sql("INSERT INTO purs ").colset(Pur.Empty, msk)._VALUES_(Pur.Empty, msk).T(" ON CONFLICT (rtlid, status) WHERE status = -1 DO UPDATE ")._SET_(Pur.Empty, msk).T(" RETURNING id, topay");
-            await dc.QueryTopAsync(p => m.Write(p));
-            dc.Let(out int ordid);
+            if (purid == 0)
+            {
+                dc.Sql("INSERT INTO purs ").colset(Pur.Empty, msk)._VALUES_(Pur.Empty, msk).T(" RETURNING id, topay");
+                await dc.QueryTopAsync(p => m.Write(p));
+            }
+            else
+            {
+                dc.Sql("UPDATE purs ")._SET_(Pur.Empty, msk).T(" WHERE id = @1 RETURNING id, topay");
+                await dc.QueryTopAsync(p => m.Write(p));
+            }
+            dc.Let(out purid);
             dc.Let(out decimal topay);
 
             // call WeChatPay to prepare order there
-            string trade_no = (ordid + "-" + topay).Replace('.', '-');
+            string trade_no = (purid + "-" + topay).Replace('.', '-');
             var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sup: true,
                 trade_no,
                 topay,

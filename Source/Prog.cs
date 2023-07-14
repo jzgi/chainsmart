@@ -3,11 +3,11 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A transport van data object. 
+/// A incubation program. 
 /// </summary>
-public class MCard : Entity, IKeyable<(int, short)>
+public class Prog : Entity, IKeyable<(int, short)>
 {
-    public static readonly MCard Empty = new();
+    public static readonly Prog Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {

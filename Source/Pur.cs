@@ -35,7 +35,6 @@ public class Pur : Entity, IKeyable<int>
     internal int mktid; // market
     internal int hubid; // hub warehouse
     internal int supid; // supply
-    internal string supname; // supplier name
     internal int ctrid; // info center
 
     internal int lotid;
@@ -46,6 +45,7 @@ public class Pur : Entity, IKeyable<int>
     internal decimal price;
     internal decimal off;
     internal int qty;
+    internal string fee; // transport fee
     internal decimal topay;
     internal decimal pay;
     internal int ret; // qty cut
@@ -66,7 +66,7 @@ public class Pur : Entity, IKeyable<int>
         mktid = rtl.MarketId;
         hubid = rtl.hubid;
         supid = sup.id;
-        supname = sup.name;
+        fee = sup.name;
 
         ctrid = sup.CenterId;
 
@@ -93,7 +93,6 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(mktid), ref mktid);
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(supid), ref supid);
-            s.Get(nameof(supname), ref supname);
             s.Get(nameof(ctrid), ref ctrid);
             s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(unit), ref unit);
@@ -102,6 +101,7 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(qty), ref qty);
+            s.Get(nameof(fee), ref fee);
             s.Get(nameof(topay), ref topay);
         }
 
@@ -128,7 +128,6 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(mktid), mktid);
             s.Put(nameof(hubid), hubid);
             s.Put(nameof(supid), supid);
-            s.Put(nameof(supname), supname);
             s.Put(nameof(ctrid), ctrid);
             s.Put(nameof(lotid), lotid);
             s.Put(nameof(unit), unit);
@@ -137,6 +136,7 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(qty), qty);
+            s.Put(nameof(fee), fee);
             s.Put(nameof(topay), topay);
         }
 

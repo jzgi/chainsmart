@@ -488,7 +488,7 @@ create table public.mcards
 (
 );
 
-alter table public.mcards
+alter table public.progs
     owner to postgres;
 
 create table public.ldgs

@@ -214,15 +214,15 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         int uid = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(MCard.Empty).T(" FROM mcards WHERE userid = @1");
-        var arr = await dc.QueryAsync<MCard>(p => p.Set(uid));
+        dc.Sql("SELECT ").collst(Prog.Empty).T(" FROM mcards WHERE userid = @1");
+        var arr = await dc.QueryAsync<Prog>(p => p.Set(uid));
 
         wc.GivePane(200, h =>
         {
             h.DIV_("uk-card uk-card-primary").H2("我参与的集体经济孵化项目", css: "uk-card-header")._DIV();
-            for (int i = 0; i < MCard.Typs.Count; i++)
+            for (int i = 0; i < Prog.Typs.Count; i++)
             {
-                var e = MCard.Typs.EntryAt(i);
+                var e = Prog.Typs.EntryAt(i);
                 h.ARTICLE_("uk-card uk-card-default");
                 var card = arr.First(x => x.typ == e.Key);
                 h.HEADER_("uk-card-header").H3(e.Value).SPAN_("uk-badge");
@@ -236,7 +236,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 }
                 h._SPAN();
                 h._HEADER();
-                h.SECTION_("uk-card-body").P(MCard.Tips[e.Key])._SECTION();
+                h.SECTION_("uk-card-body").P(Prog.Tips[e.Key])._SECTION();
                 h._ARTICLE();
             }
         }, false, 120);

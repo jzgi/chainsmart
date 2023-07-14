@@ -27,7 +27,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
 
     internal short idx;
 
-    internal short cats; // bitwise flag of categories
+    internal short catmsk; // mask for categories
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -39,7 +39,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Get(nameof(idx), ref idx);
-        s.Get(nameof(cats), ref cats);
+        s.Get(nameof(catmsk), ref catmsk);
     }
 
     public override void Write(ISink s, short msk = 0xff)
@@ -52,14 +52,14 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Put(nameof(idx), idx);
-        s.Put(nameof(cats), cats);
+        s.Put(nameof(catmsk), catmsk);
     }
 
     public short Key => id;
 
     public short Index => idx;
 
-    public short Size => cats;
+    public short Size => catmsk;
 
     public bool IsProvince => typ == TYP_PROVINCE;
 

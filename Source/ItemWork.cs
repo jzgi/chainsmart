@@ -128,7 +128,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                     // FOOTER: price and qty select & detail
                     h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
                     h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: "0")._SELECT();
+                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "缺货")._SELECT();
                     h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                     h._FOOTER();
 
@@ -146,7 +146,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.DIV_("uk-flex uk-width-1-1");
                 h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
                 h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
-                h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.fee).T("\">派送到楼下 +").T(BankUtility.fee).T("</output>");
+                h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
                 h._DIV();
 
                 string com;
@@ -214,7 +214,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 creator = prin.name,
                 ucom = com,
                 uaddr = addr,
-                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.fee,
+                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.rtlfee,
                 status = -1, // before confirmation of payment
             };
             m.InitTopay();
@@ -225,7 +225,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             {
                 dc.Let(out buyid);
             }
-            
+
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
             if (buyid == 0)
             {
@@ -374,7 +374,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("自建", status: 2), Tool(ButtonOpen)]
+    [Ui("自建", tip: "自建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task def(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -427,7 +427,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("导入", status: 2), Tool(ButtonOpen)]
+    [Ui("导入", tip: "导入", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task imp(WebContext wc)
     {
         var org = wc[-1].As<Org>();

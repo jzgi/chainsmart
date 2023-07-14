@@ -51,7 +51,7 @@ public class MainApp : Application
     {
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY id");
+                dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats WHERE status > 0 ORDER BY typ");
                 return dc.Query<short, Cat>();
             },
             60 * 60 * 12

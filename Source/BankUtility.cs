@@ -12,7 +12,9 @@ namespace ChainSmart;
 
 public static class BankUtility
 {
-    public static decimal fee;
+    public static decimal
+        supfee,
+        rtlfee;
 
     static readonly string
         bankprov,
@@ -26,7 +28,8 @@ public static class BankUtility
 
     static BankUtility()
     {
-        fee = Application.Program[nameof(fee)];
+        supfee = Application.Program[nameof(supfee)];
+        rtlfee = Application.Program[nameof(rtlfee)];
 
         bankprov = Application.Program[nameof(bankprov)];
         bankcity = Application.Program[nameof(bankcity)];

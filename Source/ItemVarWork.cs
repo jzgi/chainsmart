@@ -160,7 +160,6 @@ public class RtllyItemVarWork : ItemVarWork
         int itemid = wc[0];
         var rtl = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
-        var cats = Grab<short, Cat>();
 
         const short MAX = 100;
 
@@ -174,7 +173,7 @@ public class RtllyItemVarWork : ItemVarWork
             {
                 h.FORM_().FIELDSUL_("基本信息");
 
-                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12).SELECT("类别", nameof(o.rank), o.rank, cats, required: true)._LI();
+                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 if (o.IsFromSupply)
                 {
