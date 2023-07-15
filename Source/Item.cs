@@ -125,6 +125,10 @@ public class Item : Entity, IKeyable<int>
         }
     }
 
+    public bool IsProduct => typ == TYP_PRODUCT;
+
+    public bool IsService => typ == TYP_SERVICE;
+
     public int Key => id;
 
     // STATE

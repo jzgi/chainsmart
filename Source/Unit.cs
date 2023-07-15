@@ -16,8 +16,11 @@ public class Unit
         { "包", 0 },
         { "瓶", 0 },
         { "桶", 0 },
-        { "天", 0 },
+        { string.Empty, 0 },
         { "位", 0 },
+        { "单", 0 },
+        { "间天", 0 },
+        { "天", 0 },
     };
 
     public static readonly Map<short, string> Metrics = new()

@@ -116,9 +116,9 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<RtllyVipWork>("rvip");
 
-        CreateWork<RtllyPosWork>("rpos");
-
         CreateWork<RtllyBuyWork>("rbuy");
+
+        CreateWork<RtllyPosWork>("rpos");
 
         CreateWork<RtllyBuyApWork>("rbuyap");
 

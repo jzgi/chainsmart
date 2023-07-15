@@ -86,8 +86,12 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             {
                 h.FORM_();
 
+                int deliver = 0;
                 h.MAINGRID(arr, o =>
                 {
+                    // count deliverables
+                    if (o.IsProduct) deliver++;
+
                     h.SECTION_("uk-card-body uk-flex");
 
                     // the cclickable icon
@@ -128,7 +132,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                     // FOOTER: price and qty select & detail
                     h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
                     h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "缺货")._SELECT();
+                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "暂缺")._SELECT();
                     h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                     h._FOOTER();
 
@@ -143,19 +147,21 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
                 h.DIV_(css: "uk-col");
 
-                h.DIV_("uk-flex uk-width-1-1");
+                h.SPAN_("uk-flex uk-width-1-1");
                 h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
                 h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
                 h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
-                h._DIV();
+                h._SPAN();
 
-                string com;
+                if (deliver > 0)
+                {
+                    string com;
 
-                h.DIV_("uk-flex uk-width-1-1");
-                h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '完整收货地址'; buyRecalc();", css: "uk-width-medium");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"区栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-                h._DIV();
-
+                    h.SPAN_("uk-flex uk-width-1-1");
+                    h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
+                    h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"区栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+                    h._SPAN();
+                }
                 h._DIV();
 
                 h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -299,7 +305,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN3("剩余", o.stock, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN3("数量", o.stock, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -380,17 +386,17 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        bool product = !org.IsServiceSector;
+        bool nonSvcSect = !org.IsServiceSector;
 
         const short MAX = 100;
         var o = new Item
         {
-            typ = product ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
+            typ = nonSvcSect ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unit = product ? "斤" : "位",
-            unitw = product ? (short)500 : (short)0,
+            unit = nonSvcSect ? "斤" : "位",
+            unitw = nonSvcSect ? (short)500 : (short)0,
             step = 1,
             min = 1,
             max = MAX
@@ -399,12 +405,13 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("自建" + (product ? "非溯源产品型商品" : "服务型商品"));
+                h.FORM_().FIELDSUL_("自建非溯源商品");
 
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
@@ -447,7 +454,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT lotid, concat(supname, ' ', name), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
+            dc.Sql("SELECT DISTINCT lotid, concat(name, ' ￥', (price - off)::decimal ), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
             await dc.QueryAsync(p => p.Set(org.id));
             var lots = dc.ToIntMap();
 
@@ -457,7 +464,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
@@ -476,7 +483,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             // init by lot
             {
-                o.typ = lot.typ;
                 o.name = lot.name;
                 o.tip = lot.tip;
                 o.unit = lot.unit;

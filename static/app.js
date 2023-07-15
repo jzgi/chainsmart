@@ -102,9 +102,15 @@ function buyRecalc(trig) {
     // sum up topay
     var frm = trig ? trig.form : document.forms[0];
 
-    frm.fee.hidden = frm.com.value ? false: true;
-    
-    var sum = frm.com.value ? parseFloat(frm.fee.title) : 0.00; // add fee if community is selected
+    var fee = 0.00;
+    if (frm.com) {
+        frm.fee.hidden = frm.com.value ? false : true;
+        if (frm.com.value) {
+            fee = parseFloat(frm.fee.title);
+        }
+    }
+
+    var sum = fee; // add fee if community is selected
     var lst = frm.querySelectorAll('.subtotal');
     for (var i = 0; i < lst.length; i++) {
         var v = lst[i].value;

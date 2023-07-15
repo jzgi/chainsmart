@@ -173,6 +173,7 @@ public class RtllyItemVarWork : ItemVarWork
             {
                 h.FORM_().FIELDSUL_("基本信息");
 
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 if (o.IsFromSupply)
@@ -185,7 +186,7 @@ public class RtllyItemVarWork : ItemVarWork
                 }
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("ＶＩＰ减价", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民秒杀期", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
@@ -193,7 +194,7 @@ public class RtllyItemVarWork : ItemVarWork
         }
         else // POST
         {
-            const short msk = MSK_EDIT;
+            const short msk = MSK_TYP | MSK_EDIT;
             var m = await wc.ReadObjectAsync(msk, new Item
             {
                 adapted = DateTime.Now,

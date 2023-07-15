@@ -14,7 +14,7 @@ namespace ChainSmart
         }
     }
 
-    [Ui("评检情况")]
+    [Ui("评检")]
     public class OrglyEvalWork : EvalWork<OrglyEvalVarWork>
     {
         public void @default(WebContext wc, int page)
