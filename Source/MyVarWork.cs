@@ -209,12 +209,12 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
     }
 
     [Ui("项目", "集体经济孵化项目", icon: "bolt", status: 7), Tool(ButtonShow)]
-    public async Task mcard(WebContext wc, int dt)
+    public async Task prog(WebContext wc, int dt)
     {
         int uid = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prog.Empty).T(" FROM mcards WHERE userid = @1");
+        dc.Sql("SELECT ").collst(Prog.Empty).T(" FROM progs WHERE userid = @1");
         var arr = await dc.QueryAsync<Prog>(p => p.Set(uid));
 
         wc.GivePane(200, h =>

@@ -130,7 +130,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无消费记录");
+                h.ALERT("尚无场售记录");
                 return;
             }
             MainTable(h, arr);
@@ -150,7 +150,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("浏览以往一周记录");
+                h.FORM_().FIELDSUL_();
                 for (day = 1; day <= 7; day++)
                 {
                     var dt = today.AddDays(-day);

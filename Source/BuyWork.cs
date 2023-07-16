@@ -66,6 +66,8 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 
 
+    static string[] ExcludeActions = { nameof(adapted), nameof(adapt) };
+
     [OrgSpy(BUY_CREATED)]
     [Ui("网售订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -78,7 +80,8 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id);
+            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+
             if (arr == null)
             {
                 h.ALERT("尚无网售订单");
@@ -89,7 +92,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已集合待派发", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已集合", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -100,10 +103,11 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id);
+            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+
             if (arr == null)
             {
-                h.ALERT("尚无已集合待派发的订单");
+                h.ALERT("尚无已集合的订单");
                 return;
             }
 
@@ -123,7 +127,8 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id);
+            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+
             if (arr == null)
             {
                 h.ALERT("尚无已派发订单");
@@ -200,7 +205,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("网售统一发货")]
+[Ui("网售统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
     internal void MainGrid(HtmlBuilder h, IList<Buy> arr)
@@ -311,21 +316,21 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("我的", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
+    [Ui("我的派发", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
     public async Task my(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 4  AND typ = 1 AND oker = @2");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 4  AND typ = 1 AND oker = @2 ORDER BY oked DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(prin.name));
 
         wc.GivePage(200, h =>
         {
             if (arr == null)
             {
-                h.ALERT("尚无派送任务");
+                h.ALERT("尚无派发任务");
                 return;
             }
 

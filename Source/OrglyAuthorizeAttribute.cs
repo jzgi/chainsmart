@@ -23,8 +23,8 @@ public class OrglyAuthorizeAttribute : AuthorizeAttribute
     /// <param name="ulevel">user level, 1 = adm, 2 = mid, 4 = biz</param>
     public OrglyAuthorizeAttribute(short typ, short role = 1, int ulevel = 0)
     {
-        this.role = role;
         this.typ = typ;
+        this.role = role;
         this.ulevel = ulevel;
     }
 

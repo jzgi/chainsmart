@@ -333,7 +333,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一收货")]
+[Ui("采购统一接收")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]

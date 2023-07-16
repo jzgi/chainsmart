@@ -19,27 +19,29 @@ public class ItemVarWork : WebWork
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND orgid = @2");
-        var m = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
+        var o = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("商品名", m.name)._LI();
-            h.LI_().FIELD("简介语", string.IsNullOrEmpty(m.tip) ? "无" : m.tip)._LI();
-            h.LI_().FIELD("零售单位", m.unit).FIELD("单位含重", m.unitw, Unit.Metrics)._LI();
-            h.LI_().FIELD("单价", m.price, money: true).FIELD2("为整", m.step, m.unit)._LI();
-            h.LI_().FIELD("ＶＩＰ立减", m.off, money: true).FIELD("全民立减", m.promo)._LI();
-            h.LI_().FIELD2("起订量", m.min, m.unit).FIELD2("限订量", m.max, m.unit)._LI();
-            h.LI_().FIELD2("数量", m.stock, m.unit)._LI();
+            h.LI_().FIELD("商品名", o.name)._LI();
+            h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+            h.LI_().FIELD("零售单位", o.unit);
+            if (o.IsProduct) h.FIELD("单位含重", o.unitw, Unit.Metrics);
+            h._LI();
+            h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
+            h.LI_().FIELD("ＶＩＰ立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
+            h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
+            h.LI_().FIELD2("数量", o.stock, o.unit)._LI();
 
-            if (m.creator != null) h.LI_().FIELD2("创编", m.creator, m.created)._LI();
-            if (m.adapter != null) h.LI_().FIELD2("修改", m.adapter, m.adapted)._LI();
-            if (m.oker != null) h.LI_().FIELD2("上线", m.oker, m.oked)._LI();
+            if (o.creator != null) h.LI_().FIELD2("创编", o.creator, o.created)._LI();
+            if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
+            if (o.oker != null) h.LI_().FIELD2("上线", o.oker, o.oked)._LI();
 
             h._UL();
 
-            h.TABLE(m.ops, o =>
+            h.TABLE(o.ops, o =>
                 {
                     h.TD_().T(o.dt, date: 2, time: 1)._TD();
                     h.TD_("uk-text-right").T(StockOp.Typs[o.typ])._TD();
@@ -51,7 +53,7 @@ public class ItemVarWork : WebWork
                 reverse: true
             );
 
-            h.TOOLBAR(bottom: true, status: m.Status, state: m.ToState());
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         }, false, 6);
     }
 
@@ -120,18 +122,24 @@ public class PublyItemVarWork : ItemVarWork
             else
             {
                 h.ARTICLE_("uk-card uk-card-primary");
+                h.H2(o.name, css: "uk-card-header");
+                // h.SECTION_("uk-card-body");
                 if (o.pic)
                 {
-                    h.PIC("/item/", o.id, "/pic");
+                    h.IMG("/item/", o.id, "/pic", css: "uk-card-body");
                 }
-                h.H4("商品信息", "uk-card-header");
+                // h._SECTION();
 
-                h.SECTION_("uk-card-body");
-                h.UL_("uk-list uk-list-divider");
+                h.UL_("uk-card-body uk-list uk-list-divider");
                 h.LI_().FIELD("商品名", o.name)._LI();
-                h.LI_().FIELD("简介", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+                h.LI_().FIELD("零售单位", o.unit);
+                if (o.unitw > 0) h.FIELD("含重", o.unitw);
+                h._LI();
+                h.LI_().FIELD("单价", o.price, money: true);
+                if (o.off > 0) h.FIELD("ＶＩＰ立减", o.off);
+                h._LI();
                 h._UL();
-                h._SECTION();
 
                 h._ARTICLE();
             }
@@ -169,23 +177,23 @@ public class RtllyItemVarWork : ItemVarWork
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
+            var prod = !rtl.IsService;
+
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("基本信息");
+                h.FORM_().FIELDSUL_("自建" + (prod ? "产品型商品" : "服务型商品"));
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                if (o.IsFromSupply)
-                {
-                    h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, @readonly: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics, @readonly: true)._LI();
-                }
-                else
-                {
-                    h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                }
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, @readonly: o.IsFromSupply);
+                if (prod)
+                {
+                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics, @readonly: o.IsFromSupply);
+                }
+                h._LI();
+
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
@@ -194,7 +202,7 @@ public class RtllyItemVarWork : ItemVarWork
         }
         else // POST
         {
-            const short msk = MSK_TYP | MSK_EDIT;
+            const short msk = MSK_EDIT;
             var m = await wc.ReadObjectAsync(msk, new Item
             {
                 adapted = DateTime.Now,

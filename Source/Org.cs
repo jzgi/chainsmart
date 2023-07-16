@@ -196,7 +196,9 @@ public class Org : Entity, ITwin<int>
 
     public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
 
-    public bool IsServiceSector => regid == Reg.SVC_REG_ID;
+    public bool IsService => regid == Reg.SVC_REGID;
+
+    public bool AsService => regid == Reg.SVC_REGID || IsMarket;
 
     public bool IsSupply => typ == TYP_SUP;
 

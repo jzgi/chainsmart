@@ -72,7 +72,7 @@ public static class MainUtility
             }
         }
 
-        h.OPTION(string.Empty, "非派送区");
+        h.OPTION(string.Empty, "非派送区", selected: true);
 
         h._SELECT();
 

@@ -90,7 +90,7 @@ public class PublyVarWork : WebWork
     {
         if (sector == 0)
         {
-            sector = wc.Subscript = Reg.SVC_REG_ID;
+            sector = wc.Subscript = Reg.SVC_REGID;
         }
 
         int mktid = wc[0];
@@ -99,9 +99,9 @@ public class PublyVarWork : WebWork
         var mkt = GrabTwin<int, Org>(mktid);
 
         Org[] arr;
-        if (sector == Reg.SVC_REG_ID) // when default sector
+        if (sector == Reg.SVC_REGID) // when default sector
         {
-            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == Reg.SVC_REG_ID && x.status == 4);
+            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == Reg.SVC_REGID && x.status == 4);
             arr = arr.AddOf(mkt, first: true);
         }
         else

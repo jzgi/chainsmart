@@ -102,6 +102,8 @@ function buyRecalc(trig) {
     // sum up topay
     var frm = trig ? trig.form : document.forms[0];
 
+    if (!frm) return;
+
     var fee = 0.00;
     if (frm.com) {
         frm.fee.hidden = frm.com.value ? false : true;
@@ -707,7 +709,7 @@ function dialog(trig, mode, pick, title) {
                 ifr.contentWindow.location.reload();
             } else {
                 UIkit.modal(dlg).hide().then(function () {
-                    document.body.removeChild(dlg);
+                    dlg.remove();
                 });
             }
         }
@@ -750,7 +752,7 @@ function closeUp(reload, roundtrip) {
         var subdlg = subifr && subifr.contentDocument && subifr.contentDocument.querySelector('#dialog') != null;
 
         UIkit.modal(dlg).hide().then(function () {
-            document.body.removeChild(dlg);
+            dlg.remove();
         });
 
         if (reload & modified) {
@@ -805,8 +807,9 @@ function ok(okbtn, mode, formid, tag, action, method) {
                     mform.appendChild(hid);
                 }
                 // dispose the dialog
-                UIkit.modal(div).hide();
-                document.body.removeChild(div);
+                UIkit.modal(div).hide().then(function () {
+                    div.remove();
+                });
                 // submit
                 mform.setAttribute('action', action);
                 mform.setAttribute('method', method);
@@ -878,7 +881,7 @@ function crop(trig, siz, title, subs) {
                 ifr.contentWindow.location.reload();
             } else {
                 UIkit.modal(dlg).hide().then(function () {
-                    document.body.removeChild(dlg);
+                    dlg.remove();
                 });
             }
         }
@@ -901,7 +904,7 @@ function crop(trig, siz, title, subs) {
             if (dlg.classList.contains('button-refresh-trig')) {
                 location.reload(false);
             } else {
-                document.body.removeChild(dlg);
+                dlg.remove();
             }
         }
     }, false);
@@ -968,9 +971,8 @@ function cropUpd(el, url, close) {
                 dlg.classList.add('button-refresh-trig');
 
                 if (close) {
-
                     UIkit.modal(dlg).hide().then(function () {
-                        document.body.removeChild(dlg);
+                        dlg.remove();
                     });
 
                     history.go(-1);

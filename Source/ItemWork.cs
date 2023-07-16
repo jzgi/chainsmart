@@ -86,12 +86,8 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             {
                 h.FORM_();
 
-                int deliver = 0;
                 h.MAINGRID(arr, o =>
                 {
-                    // count deliverables
-                    if (o.IsProduct) deliver++;
-
                     h.SECTION_("uk-card-body uk-flex");
 
                     // the cclickable icon
@@ -132,7 +128,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                     // FOOTER: price and qty select & detail
                     h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
                     h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "暂缺")._SELECT();
+                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "无")._SELECT();
                     h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                     h._FOOTER();
 
@@ -153,13 +149,13 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
                 h._SPAN();
 
-                if (deliver > 0)
+                if (!org.IsService)
                 {
                     string com;
 
                     h.SPAN_("uk-flex uk-width-1-1");
                     h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
-                    h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"区栋／单元\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+                    h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                     h._SPAN();
                 }
                 h._DIV();
@@ -386,17 +382,17 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        bool nonSvcSect = !org.IsServiceSector;
+        bool prod = !org.IsService;
 
         const short MAX = 100;
         var o = new Item
         {
-            typ = nonSvcSect ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
+            typ = prod ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unit = nonSvcSect ? "斤" : "位",
-            unitw = nonSvcSect ? (short)500 : (short)0,
+            unit = prod ? "斤" : "位",
+            unitw = prod ? (short)500 : (short)0,
             step = 1,
             min = 1,
             max = MAX
@@ -405,9 +401,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("自建非溯源商品");
+                h.FORM_().FIELDSUL_("自建" + (prod ? "产品型商品" : "服务型商品"));
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, required: true)._LI();
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
