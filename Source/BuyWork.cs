@@ -66,7 +66,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 
 
-    static string[] ExcludeActions = { nameof(adapted), nameof(adapt) };
+    static readonly string[] ExcludeActions = { nameof(adapted), nameof(adapt) };
 
     [OrgSpy(BUY_CREATED)]
     [Ui("网售订单", status: 1), Tool(Anchor)]
@@ -245,40 +245,31 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
         using var dc = NewDbContext();
         // group by commuity 
-        dc.Sql("SELECT ucom, utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY ucom, utel");
+        dc.Sql("SELECT ucom, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY ucom");
         await dc.QueryAsync(p => p.Set(mkt.id));
+
+        var map = new Map<string, (int, int)>();
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("地址").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
 
-            string last = null;
             while (dc.Next())
             {
                 dc.Let(out string ucom);
-                dc.Let(out string utel);
-                dc.Let(out string uaddr);
                 dc.Let(out int created);
                 dc.Let(out int adapted);
 
-                if (string.IsNullOrEmpty(ucom)) ucom = "非派送区";
-
-                if (ucom != last)
-                {
-                    h.TR_().TD_("uk-label", colspan: 2).ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD()._TR();
-                }
-
                 h.TR_();
-                h.TD2(utel, uaddr);
-                h.TD(created);
-                h.TD(adapted);
+                h.TD_().ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD();
+                h.TD(created, right: null);
+                h.TD(adapted, right: null);
                 h._TR();
-
-                last = ucom;
             }
+
             h._TABLE();
         });
     }
@@ -289,7 +280,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql($"SELECT rtlid, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
+        dc.Sql($"SELECT rtlid, first(name), first(tip), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
@@ -297,19 +288,24 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("收单", css: "uk-text-right").TH("集合", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("商户").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
             while (dc.Next())
             {
                 dc.Let(out int rtlid);
-                dc.Let(out int count);
+                dc.Let(out string name);
+                dc.Let(out string tip);
+                dc.Let(out int created);
                 dc.Let(out int adapted);
 
-                var rtl = GrabTwin<int, Org>(rtlid);
-
                 h.TR_();
-                h.TD(rtl.name);
-                h.TD(count);
-                h.TD(adapted);
+                h.TD_().T(name);
+                if (!string.IsNullOrEmpty(tip))
+                {
+                    h.T('（').T(tip).T('）');
+                }
+                h._TD();
+                h.TD(created, right: null);
+                h.TD(adapted, right: null);
                 h._TR();
             }
             h._TABLE();

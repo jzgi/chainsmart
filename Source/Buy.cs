@@ -10,12 +10,12 @@ public class Buy : Entity, IKeyable<long>
     public static readonly Buy Empty = new();
 
     public const short
-        TYP_ECOM = 1,
+        TYP_NET = 1,
         TYP_POS = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_ECOM, "网售" },
+        { TYP_NET, "网售" },
         { TYP_POS, "零售" },
     };
 
@@ -58,8 +58,9 @@ public class Buy : Entity, IKeyable<long>
 
     public Buy(User prin, Org rtl, BuyItem[] arr)
     {
-        typ = TYP_ECOM;
-        name = rtl.Name;
+        typ = TYP_NET;
+        name = rtl.name;
+        tip = rtl.No;
         rtlid = rtl.id;
         mktid = rtl.MarketId;
         items = arr;
@@ -157,7 +158,7 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public bool IsPlat => typ == TYP_ECOM;
+    public bool IsPlat => typ == TYP_NET;
 
     public bool IsCash => typ == TYP_POS;
 

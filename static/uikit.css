@@ -272,7 +272,7 @@ h4,
 
 h5,
 .uk-h5 {
-    font-size: 0.875rem;
+    font-size: 0.825rem;
     font-weight: bold;
     margin: 0;
     color: #000;
@@ -787,7 +787,7 @@ a.uk-link-reset:hover,
 
 .uk-table>tr.uk-active,
 .uk-table tbody tr.uk-active {
-    background: rgb(143 195 33 / 10%);
+    background-color: rgb(255 59 48 / 10%);
 }
 
 .uk-table-divider>tr:not(:first-child),
@@ -1001,6 +1001,97 @@ button.uk-icon:not(:disabled) {
     color: #f59604;
 }
 
+
+.uk-notification {
+    /* 1 */
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1040;
+    box-sizing: border-box;
+    width: 350px;
+    box-shadow: 0 0 2px 0 #888;
+}
+
+.uk-notification-top-right,
+.uk-notification-bottom-right {
+    left: auto;
+    right: 10px;
+}
+
+.uk-notification-top-center,
+.uk-notification-bottom-center {
+    left: 50%;
+    margin-left: -175px;
+}
+
+.uk-notification-bottom-left,
+.uk-notification-bottom-right,
+.uk-notification-bottom-center {
+    top: auto;
+    bottom: 10px;
+}
+
+@media (max-width: 639px) {
+    .uk-notification {
+        left: 10px;
+        right: 10px;
+        width: auto;
+        margin: 0;
+    }
+}
+
+.uk-notification-message {
+    position: relative;
+    padding: 12px;
+    background: #f8f8f8;
+    color: #f59604;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+*+.uk-notification-message {
+    margin-top: 10px;
+}
+
+.uk-notification-close {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.uk-notification-message:hover .uk-notification-close {
+    display: block;
+}
+
+.uk-notification-message-primary {
+    color: #1e87f0;
+}
+
+/*
+   * Success
+   */
+.uk-notification-message-success {
+    color: #7daa1d;
+}
+
+/*
+   * Warning
+   */
+.uk-notification-message-warning {
+    color: #f59604;
+}
+
+/*
+   * Danger
+   */
+.uk-notification-message-danger {
+    color: #ff3b30;
+}
+
+
 .uk-range {
     box-sizing: border-box;
     margin: 0;
@@ -1083,7 +1174,6 @@ button.uk-icon:not(:disabled) {
     border: 1px solid #dddccc;
 }
 
-/* Edge + IE11 */
 .uk-range::-ms-tooltip {
     display: none;
 }
@@ -2127,7 +2217,7 @@ main.uk-grid>li {
 }
 
 .uk-card.uk-active {
-    background-color: rgb(143 195 33 / 10%);
+    background-color: rgb(255 59 48 / 10%);
 }
 
 .uk-card.uk-disabled {
@@ -3389,12 +3479,12 @@ ul.uk-nav-sub {
 }
 
 .uk-dotnav>*> :active {
-    background-color: rgba(102, 102, 102, 0.4);
+    background-color: rgb(255 59 48 / 10%);
     border-color: transparent;
 }
 
 .uk-dotnav>.uk-active>* {
-    background-color: rgba(102, 102, 102, 0.4);
+    background-color: rgb(255 59 48 / 10%);
     border-color: transparent;
 }
 

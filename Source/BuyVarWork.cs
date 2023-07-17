@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Web.Modal;
 using static ChainSmart.WeixinUtility;
@@ -161,57 +162,173 @@ public class MktlyBuyVarWork : BuyVarWork
 {
     public async Task com(WebContext wc)
     {
-        string ucom = wc[0];
+        string com = wc[0];
         var prin = (User)wc.Principal;
         var mkt = wc[-2].As<Org>();
 
-        if (wc.IsGet)
+        using var dc = NewDbContext();
+
+        dc.Sql("SELECT localtimestamp(0); SELECT utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND (status = 1 OR status = 2) AND typ = 1 AND ucom = @2 GROUP BY ucom, utel;");
+        await dc.QueryTopAsync(p => p.Set(mkt.id).Set(com));
+
+        // the time stamp to fence the range to update
+        dc.Let(out DateTime stamp);
+        var intstamp = MainUtility.ToInt2020(stamp);
+
+        wc.GivePane(200, h =>
         {
-            using var dc = NewDbContext();
+            h.TABLE_();
+            h.THEAD_().TH(css: "uk-width-micro").TH("地址").TH("收单").TH("集合")._THEAD();
 
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND (status = 1 OR status = 2) AND typ = 1 AND ucom = @2");
-            var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(ucom));
-
-            wc.GivePane(200, h =>
+            dc.NextResult();
+            while (dc.Next())
             {
-                h.MAINGRID(arr, o =>
+                dc.Let(out string utel);
+                dc.Let(out string uaddr);
+                dc.Let(out int created);
+                dc.Let(out int adapted);
+
+                h.TR_();
+                h.TD_();
+                if (adapted > 0)
                 {
-                    h.UL_("uk-card-body uk-list uk-list-divider");
-                    h.LI_().H4(o.utel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+                    h.PICK(utel);
+                }
+                h._TD();
+                h.TD2(utel, uaddr);
+                h.TD_();
+                if (created > 0)
+                {
+                    h.ADIALOG_(nameof(created), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-flex-center").T(created)._A();
+                }
+                h._TD();
+                h.TD_();
+                if (adapted > 0)
+                {
+                    h.ADIALOG_(nameof(adapted), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-flex-center").T(adapted)._A();
+                }
+                h._TD();
+                h._TR();
+            }
 
-                    foreach (var it in o.items)
-                    {
-                        h.LI_();
+            h._TABLE();
 
-                        h.SPAN_("uk-width-expand").T(it.name);
-                        if (it.unitw > 0)
-                        {
-                            h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
-                        }
 
-                        h._SPAN();
+            h.TOOLBAR(subscript: intstamp, bottom: true);
+        });
+    }
 
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
-                        h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
-                        h._LI();
-                    }
-                    h._LI();
+    public async Task created(WebContext wc)
+    {
+        string com = wc[0];
+        var mkt = wc[-2].As<Org>();
+        string utel = wc.Query[nameof(utel)];
 
-                    h._UL();
-                });
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 1 AND typ = 1 AND ucom = @2 AND utel = @3");
+        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(com).Set(utel));
 
-                h.FORM_().HIDDEN(nameof(com), 1).BOTTOM_BUTTON(prin.name + " 确认", nameof(com), post: true)._FORM();
-            });
-        }
-        else // POST
+        wc.GivePane(200, h =>
         {
-            // Note: update only status = 2
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE mktid = @3 AND status = 2 AND typ = 1 AND ucom = @4");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(mkt.id).Set(ucom));
+            h.MAINGRID(arr, o =>
+            {
+                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.LI_().H4_().T(o.name);
+                if (o.tip != null)
+                {
+                    h.T('（').T(o.tip).T('）');
+                }
+                h._H4();
+                h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-            wc.GivePane(200);
-        }
+                foreach (var it in o.items)
+                {
+                    h.LI_();
+
+                    h.SPAN_("uk-width-expand").T(it.name);
+                    if (it.unitw > 0)
+                    {
+                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                    }
+
+                    h._SPAN();
+
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                    h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                    h._LI();
+                }
+                h._LI();
+
+                h._UL();
+            });
+        }, false, 6);
+    }
+
+    public async Task adapted(WebContext wc)
+    {
+        string com = wc[0];
+        var mkt = wc[-2].As<Org>();
+        string utel = wc.Query[nameof(utel)];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 2 AND typ = 1 AND ucom = @2 AND utel = @3");
+        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(com).Set(utel));
+
+        wc.GivePane(200, h =>
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.LI_().H4_().T(o.name);
+                if (o.tip != null)
+                {
+                    h.T('（').T(o.tip).T('）');
+                }
+                h._H4();
+                h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+
+                foreach (var it in o.items)
+                {
+                    h.LI_();
+
+                    h.SPAN_("uk-width-expand").T(it.name);
+                    if (it.unitw > 0)
+                    {
+                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                    }
+
+                    h._SPAN();
+
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                    h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                    h._LI();
+                }
+                h._LI();
+
+                h._UL();
+            });
+        }, false, 6);
+    }
+
+    [OrglyAuthorize(0, User.ROL_LOG)]
+    [Ui("统派", "统一派发", icon: "cloud-upload"), Tool(ButtonPickConfirm)]
+    public async Task ok(WebContext wc, int v2020)
+    {
+        string com = wc[0];
+        var prin = (User)wc.Principal;
+        var mkt = wc[-2].As<Org>();
+        var stamp = MainUtility.ToDateTime(v2020);
+
+        var f = await wc.ReadAsync<Form>();
+        string[] key = f[nameof(key)];
+
+        // Note: update only status = 2
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE mktid = @3 AND status = 2 AND typ = 1 AND ucom = @4 AND utel")._IN_(key).T(" AND adapted <= @5");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(mkt.id).Set(com).SetForIn(key).Set(stamp));
+
+        wc.GivePane(200);
     }
 }

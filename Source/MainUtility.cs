@@ -7,6 +7,31 @@ namespace ChainSmart;
 
 public static class MainUtility
 {
+    /// <summary>
+    /// based since 2020
+    /// </summary>
+    public static int ToInt2020(DateTime v)
+    {
+        return (v.Year - 2020) << 26 |
+               v.Month << 22 | // 4 
+               v.Day << 17 | // 5
+               v.Hour << 12 | // 5
+               v.Minute << 6 | // 6 
+               v.Second; // 6
+    }
+
+    public static DateTime ToDateTime(int v2020)
+    {
+        return new DateTime(
+            (v2020 >> 26) + 2020,
+            v2020 >> 22 & 0b1111,
+            v2020 >> 17 & 0b11111,
+            v2020 >> 12 & 0b11111,
+            v2020 >> 6 & 0b111111,
+            v2020 & 0b111111
+        );
+    }
+
     public static double ComputeDistance(double lat1, double lng1, double lat2, double lng2)
     {
         const int EARTH_RADIUS_KM = 6371;
@@ -51,7 +76,6 @@ public static class MainUtility
     public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string onchange = null, string css = null)
     {
         h.SELECT_(name, local: name, onchange: onchange, required: true, css: css);
-
 
         for (int i = 0; i < specs?.Count; i++)
         {

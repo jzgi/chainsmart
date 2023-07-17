@@ -220,7 +220,20 @@ public class Org : Entity, ITwin<int>
 
     private string title;
 
-    public string Title => title ??= string.IsNullOrEmpty(addr) ? name : name + '（' + addr + '）';
+    public string Title
+    {
+        get
+        {
+            if (title == null)
+            {
+                var no = No;
+                Interlocked.CompareExchange(ref title, string.IsNullOrEmpty(no) ? name : name + '（' + no + '）', null);
+            }
+            return title;
+        }
+    }
+
+    public string No => IsRetail ? addr : null;
 
     public string Cover => cover;
 

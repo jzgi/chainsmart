@@ -535,7 +535,12 @@ function serialize(form, notEmpty) {
     return q.length == 0 ? null : q.join("&");
 }
 
-function askSend(trig, tip) {
+function askSend(trig, tip, pick) {
+
+    if (pick && !serialize(this.form)) {
+        UIkit.notification('请先勾选操作项');
+        return false;
+    }
 
     if (!window.confirm(tip)) return false;
 
@@ -654,7 +659,10 @@ function dialog(trig, mode, pick, title) {
         method = trig.formMethod || method;
         var qstr;
         if (pick) { // if must pick form fields
-            if (!serialize(trig.form)) return false; // exclude hidden fields
+            if (!serialize(trig.form)) {
+                UIkit.notification('请先勾选操作项');
+                return false; // exclude hidden fields
+            }
             qstr = serialize(trig.form);
             if (!qstr) return false;
         }
