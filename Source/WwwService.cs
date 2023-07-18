@@ -80,7 +80,9 @@ public class WwwService : MainService
             h._ARTICLE();
 
             string tel = Application.Program[nameof(tel)];
-            h.SPAN("平台监督：☎&nbsp;" + tel, css: "uk-label uk-label-success uk-position-small uk-position-bottom-center uk-position-fixed");
+            h.BOTTOMBAR_("uk-flex-between uk-padding");
+            h.SPAN("☎ " + tel).A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
+            h._BOTTOMBAR();
         }, true, 720, title: Application.Name + "市场", onload: "fixAll();");
     }
 

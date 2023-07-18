@@ -5578,7 +5578,7 @@ ul.uk-nav-sub {
 .uk-text-small {
     font-size: 0.75rem;
     font-weight: normal;
-    color: #777;
+    color: #666;
 }
 
 .uk-text-large {
@@ -5934,11 +5934,10 @@ iframe.uk-cover {
 
 .uk-background-muted {
     background-color: #ededed !important;
-    border: 1px solid #ddd
 }
 
 .uk-background-primary {
-    background-color: #7daa1d !important;
+    background-color: rgb(125 170 29 / 10%) !important;
 }
 
 .uk-background-secondary {

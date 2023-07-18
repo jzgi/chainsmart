@@ -16,7 +16,7 @@ public class Buy : Entity, IKeyable<long>
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_NET, "网售" },
-        { TYP_POS, "零售" },
+        { TYP_POS, "POS" },
     };
 
     public static readonly Map<short, string> Tips = new()

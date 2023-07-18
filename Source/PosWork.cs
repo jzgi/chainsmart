@@ -33,10 +33,10 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("场售终端")]
+[Ui("ＰＯＳ")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
-    [Ui("场售终端", status: 1), Tool(Anchor)]
+    [Ui("ＰＯＳ", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -130,7 +130,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无场售记录");
+                h.ALERT("尚无交易记录");
                 return;
             }
             MainTable(h, arr);
