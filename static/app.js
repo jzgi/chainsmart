@@ -120,8 +120,9 @@ function buyRecalc(trig) {
             sum += parseFloat(v);
         }
     }
-    frm.topay.value = sum.toFixed(2);
-
+    if (frm.topay) {
+        frm.topay.value = sum.toFixed(2);
+    }
 }
 
 

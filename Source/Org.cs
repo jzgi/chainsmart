@@ -180,10 +180,8 @@ public class Org : Entity, ITwin<int>
     public override short ToState()
     {
         short v = 0;
-        if (icon && pic)
-        {
-            v |= STA_OKABLE;
-        }
+        if (!icon || !pic) return v;
+        v |= STA_OKABLE;
         return v;
     }
 
@@ -211,6 +209,10 @@ public class Org : Entity, ITwin<int>
     public bool IsMarket => typ == TYP_MKT;
 
     public bool IsCenter => typ == TYP_CTR;
+
+    public bool IsShop => IsRetail || IsSupply;
+
+    public bool Orderable => bankacct != null && bankacctname != null;
 
     public bool HasXy => IsMarket || IsSupply || IsCenter;
 

@@ -63,110 +63,97 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
             if (arr == null)
             {
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.SECTION_("uk-card-body").T(org.tip)._SECTION();
-                if (org.m1)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-1")._SECTION();
-                }
-                h.SECTION_("uk-card-body").T(org.descr)._SECTION();
-                if (org.m2)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-2")._SECTION();
-                }
-                if (org.m3)
-                {
-                    h.SECTION_("uk-card-body").PIC("/org/", org.id, "/m-3")._SECTION();
-                }
-                h._ARTICLE();
-
-                h.ALERT("暂无商品");
+                h.ALERT("暂无上线商品");
+                return;
             }
-            else
+
+            h.FORM_();
+
+            h.MAINGRID(arr, o =>
             {
-                h.FORM_();
+                h.SECTION_("uk-card-body uk-flex");
 
-                h.MAINGRID(arr, o =>
+                // the cclickable icon
+                //
+                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-width-1-5");
+                if (o.icon)
                 {
-                    h.SECTION_("uk-card-body uk-flex");
+                    h.IMG("/item/", o.id, "/icon");
+                }
+                else
+                {
+                    h.IMG("/void.webp");
+                }
+                h._A();
 
-                    // the cclickable icon
-                    //
-                    h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-width-1-5");
-                    if (o.icon)
-                    {
-                        h.IMG("/item/", o.id, "/icon");
-                    }
-                    else
-                    {
-                        h.IMG("/void.webp");
-                    }
-                    h._A();
+                h.ASIDE_();
 
-                    h.ASIDE_();
+                h.HEADER_().H4(o.name);
+                if (o.step > 1)
+                {
+                    h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
+                }
+                // top right corner span
+                h.SPAN_(css: "uk-badge");
+                if (o.promo)
+                {
+                    h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
+                }
+                if (o.rank > 0)
+                {
+                    h.MARK(Item.Ranks[o.rank]);
+                }
+                h._SPAN();
+                h._HEADER();
 
-                    h.HEADER_().H4(o.name);
-                    if (o.step > 1)
-                    {
-                        h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
-                    }
-                    // top right corner span
-                    h.SPAN_(css: "uk-badge");
-                    if (o.promo)
-                    {
-                        h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
-                    }
-                    if (o.rank > 0)
-                    {
-                        h.MARK(Item.Ranks[o.rank]);
-                    }
-                    h._SPAN();
-                    h._HEADER();
+                h.Q(o.tip, "uk-width-expand");
 
-                    h.Q(o.tip, "uk-width-expand");
+                // FOOTER: price and qty select & detail
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
+                h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
+                h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "暂无")._SELECT();
+                h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
+                h._FOOTER();
 
-                    // FOOTER: price and qty select & detail
-                    h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
-                    h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                    h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : "暂无")._SELECT();
-                    h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
-                    h._FOOTER();
+                h._ASIDE();
 
-                    h._ASIDE();
+                h._SECTION();
+            });
 
-                    h._SECTION();
-                });
+            //
+            // payment area
+            //
+            if (!org.Orderable) return;
 
-                var topay = 0.00M;
+            var topay = 0.00M;
 
-                h.BOTTOMBAR_(large: true);
+            h.BOTTOMBAR_(large: true);
 
-                h.DIV_(css: "uk-col");
+            h.SECTION_(css: "uk-col");
+
+            h.SPAN_("uk-flex uk-width-1-1");
+            h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
+            h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
+            h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
+            h._SPAN();
+
+            if (!org.IsService)
+            {
+                string com;
 
                 h.SPAN_("uk-flex uk-width-1-1");
-                h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
-                h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
-                h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
+                h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
+                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
                 h._SPAN();
-
-                if (!org.IsService)
-                {
-                    string com;
-
-                    h.SPAN_("uk-flex uk-width-1-1");
-                    h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
-                    h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-                    h._SPAN();
-                }
-                h._DIV();
-
-                h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
-
-                h._BOTTOMBAR();
-
-                h._FORM();
             }
-        }, true, arr == null ? 900 : 120, title: org.Title, onload: "fixAll(); buyRecalc();");
+            h._SECTION();
+
+            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+
+            h._BOTTOMBAR();
+
+            h._FORM();
+        }, true, arr == null ? 720 : 120, title: org.Title, onload: "fixAll(); buyRecalc();");
     }
 
     public async Task buy(WebContext wc)

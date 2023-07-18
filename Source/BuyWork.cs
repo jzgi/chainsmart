@@ -75,7 +75,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 1 ORDER BY created DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 1 AND typ = 1 ORDER BY created DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -98,7 +98,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 2 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 2 AND typ = 1 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -107,7 +107,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已集合的订单");
+                h.ALERT("尚无已集合订单");
                 return;
             }
 
@@ -122,7 +122,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 4 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 4 AND typ = 1 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -147,7 +147,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ = 1 AND status = 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 0 AND typ = 1 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -163,13 +163,13 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("集合", icon: "chevron-double-right", status: 1), Tool(ButtonPickOpen)]
+    [Ui("集合", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
     public async Task adapt(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
         int[] key;
-        bool print;
+        bool print = false;
 
         if (wc.IsGet)
         {
@@ -177,10 +177,17 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_();
-                h.ALERT("备好的货集合到统一派送区");
-                foreach (var k in key) h.HIDDEN(nameof(key), k);
-                h.CHECKBOX(null, nameof(print), true, tip: "是否打印");
+                h.SECTION_("uk-card uk-card-primary");
+                h.H2("送存到集合区", css: "uk-card-header");
+                h.DIV_("uk-card-body").T("将备好的货贴上派送标签或小票，送存到集合区，等待统一派送")._DIV();
+                h._SECTION();
+
+                h.FORM_("uk-card uk-card-primary uk-margin-top");
+                foreach (var k in key)
+                {
+                    h.HIDDEN(nameof(key), k);
+                }
+                h.DIV_("uk-card-body").CHECKBOX(null, nameof(print), true, tip: "使用共享机打印小票", disabled: !print)._DIV();
                 h.BOTTOM_BUTTON("确认", nameof(adapt), post: true);
                 h._FORM();
             });
@@ -264,9 +271,19 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 dc.Let(out int adapted);
 
                 h.TR_();
-                h.TD_().ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom).T(ucom)._A()._TD();
-                h.TD(created, right: null);
-                h.TD(adapted, right: null);
+                h.TD_().ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom, css: "uk-link uk-button-link").T(ucom)._A()._TD();
+                h.TD_(css: "uk-text-center");
+                if (created > 0)
+                {
+                    h.T(created);
+                }
+                h._TD();
+                h.TD_(css: "uk-text-center");
+                if (adapted > 0)
+                {
+                    h.T(adapted);
+                }
+                h._TD();
                 h._TR();
             }
 

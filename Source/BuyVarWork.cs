@@ -178,7 +178,7 @@ public class MktlyBuyVarWork : BuyVarWork
         wc.GivePane(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH(css: "uk-width-micro").TH("地址").TH("收单").TH("集合")._THEAD();
+            h.THEAD_().TH("地址").TH("收单").TH("集合").TH(css: "uk-width-micro")._THEAD();
 
             dc.NextResult();
             while (dc.Next())
@@ -189,23 +189,23 @@ public class MktlyBuyVarWork : BuyVarWork
                 dc.Let(out int adapted);
 
                 h.TR_();
+                h.TD_().SPAN_().A_TEL(utel, utel).SP().T(uaddr)._SPAN()._TD();
+                h.TD_();
+                if (created > 0)
+                {
+                    h.ADIALOG_(nameof(created), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(created)._A();
+                }
+                h._TD();
+                h.TD_();
+                if (adapted > 0)
+                {
+                    h.ADIALOG_(nameof(adapted), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
+                }
+                h._TD();
                 h.TD_();
                 if (adapted > 0)
                 {
                     h.PICK(utel);
-                }
-                h._TD();
-                h.TD2(utel, uaddr);
-                h.TD_();
-                if (created > 0)
-                {
-                    h.ADIALOG_(nameof(created), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-flex-center").T(created)._A();
-                }
-                h._TD();
-                h.TD_();
-                if (adapted > 0)
-                {
-                    h.ADIALOG_(nameof(adapted), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-flex-center").T(adapted)._A();
                 }
                 h._TD();
                 h._TR();
