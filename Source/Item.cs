@@ -104,6 +104,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(rank), rank);
             s.Put(nameof(unit), unit);
+            s.Put(nameof(unitw), unitw);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);

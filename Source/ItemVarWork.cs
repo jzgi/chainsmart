@@ -186,10 +186,10 @@ public class RtllyItemVarWork : ItemVarWork
                 h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
 
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, @readonly: o.IsFromSupply);
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true);
                 if (prod)
                 {
-                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics, @readonly: o.IsFromSupply);
+                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics);
                 }
                 h._LI();
 

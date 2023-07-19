@@ -52,15 +52,15 @@ public abstract class OrglyVarWork : WebWork
     [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
-        var org = wc[0].As<Org>();
+        var m = wc[0].As<Org>();
         var prin = (User)wc.Principal;
 
         var now = DateTime.Now;
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(org,
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
-                return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(org.id)) == 1;
+                return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(m.id)) == 1;
             },
             x =>
             {
@@ -163,17 +163,15 @@ public class RtllyVarWork : OrglyVarWork
     [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
-        var org = wc[0].As<Org>();
+        var m = wc[0].As<Org>();
         var prin = (User)wc.Principal;
-
-        var m = GrabTwin<int, Org>(org.id);
 
         if (wc.IsGet)
         {
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("设置基本信息和参数");
-                h.LI_().TEXTAREA("简介", nameof(org.tip), org.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
                 h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                 h.LI_().TIME("开档时间", nameof(m.openat), m.openat).TIME("收档时间", nameof(m.closeat), m.closeat)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
@@ -182,10 +180,21 @@ public class RtllyVarWork : OrglyVarWork
         else
         {
             await wc.ReadObjectAsync(instance: m); // use existing object
+            lock (m)
+            {
+                m.oked = default;
+                m.oker = null;
+            }
 
-            using var dc = NewDbContext();
-            // update the db record
-            await dc.ExecuteAsync("UPDATE orgs SET tip = @1, tel = @2, adapted = @3, adapter = @4, status = 2 WHERE id = @5", p => p.Set(m.tip).Set(m.tel).Set(DateTime.Now).Set(prin.name).Set(org.id));
+            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m,
+                async (dc) =>
+                {
+                    return await dc.ExecuteAsync(
+                        "UPDATE orgs SET tip = @1, tel = @2, openat = @3, closeat = @4, adapted = @5, adapter = @6 WHERE id = @7",
+                        p => p.Set(m.tip).Set(m.tel).Set(m.openat).Set(m.closeat).Set(DateTime.Now).Set(prin.name).Set(m.id)
+                    ) == 1;
+                }
+            );
 
             wc.GivePane(200);
         }

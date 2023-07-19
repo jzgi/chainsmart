@@ -56,7 +56,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             // form input
 
             h.FORM_("uk-card uk-card-primary").FIELDSUL_();
-            h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);", empty: "", required: false);
+            h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);", empty: string.Empty, required: false);
 
             for (var i = 0; i < arr?.Length; i++)
             {

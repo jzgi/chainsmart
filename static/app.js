@@ -58,11 +58,12 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
 
     // fill qty options
     //
+    if (stock <= 0) return;
+
     if (stock < max) {
         max = stock;
     }
     var sel_qtyselect = trig.querySelector('.qtyselect');
-
     for (var i = step; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
         var opt = document.createElement("option");
         opt.value = i;
@@ -116,7 +117,7 @@ function buyRecalc(trig) {
     var lst = frm.querySelectorAll('.subtotal');
     for (var i = 0; i < lst.length; i++) {
         var v = lst[i].value;
-        if (v) {
+        if (v > 0) {
             sum += parseFloat(v);
         }
     }

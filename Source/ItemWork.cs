@@ -89,15 +89,15 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.ASIDE_();
 
                 h.HEADER_().H4(o.name);
-                if (o.step > 1)
+                if (o.unitw > 0)
                 {
-                    h.SP().SMALL_().T(o.step).T(o.unit).T("为整")._SMALL();
+                    h.SP().SMALL_().T(Unit.Metrics[o.unitw])._SMALL();
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
                 if (o.promo)
                 {
-                    h.SPAN_().T("秒杀 ").T(o.min).SP().T(o.unit)._SPAN().SP();
+                    h.SPAN_().T("原价 ").T(o.price)._SPAN().SP();
                 }
                 if (o.rank > 0)
                 {
@@ -110,8 +110,13 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 
                 // FOOTER: price and qty select & detail
                 h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
-                h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\"></output>&nbsp;<sub>").T(o.unit).T("</sub>")._SPAN();
-                h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ", empty: o.stock > 0 ? "0" : null)._SELECT();
+                h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\">")._SPAN();
+                h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ");
+                if (o.stock > 0)
+                {
+                    h.OPTION_(string.Empty).T("0 ").T(o.unit);
+                }
+                h._SELECT();
                 h.T("<output class=\"rmb subtotal uk-invisible uk-width-expand uk-text-end\"></output>");
                 h._FOOTER();
 
