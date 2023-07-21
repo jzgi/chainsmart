@@ -4,17 +4,17 @@ using ChainFx.Nodal;
 namespace ChainSmart;
 
 /// <summary>
-/// A fabrication of product lot. 
+/// A source of product lots. 
 /// </summary>
-public class Fab : Entity, ITwin<int>
+public class Src : Entity, ITwin<int>
 {
-    public static readonly Fab Empty = new();
+    public static readonly Src Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
         { 1, "地块" },
         { 2, "养殖" },
-        { 4, "屠宰" },
+        { 4, "养殖／加工" },
         { 8, "进口" },
     };
 

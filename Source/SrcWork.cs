@@ -9,14 +9,14 @@ using static ChainFx.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-public abstract class FabWork<V> : WebWork where V : FabVarWork, new()
+public abstract class SrcWork<V> : WebWork where V : SrcVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Fab> lst)
+    protected static void MainGrid(HtmlBuilder h, IList<Src> lst)
     {
         h.MAINGRID(lst, o =>
         {
@@ -24,7 +24,7 @@ public abstract class FabWork<V> : WebWork where V : FabVarWork, new()
 
             if (o.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/fab/", o.id, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/src/", o.id, "/icon", css: "uk-width-1-5");
             }
             else
                 h.PIC("/void.webp", css: "uk-width-1-5");
@@ -40,7 +40,7 @@ public abstract class FabWork<V> : WebWork where V : FabVarWork, new()
     }
 }
 
-public class PublyFabWork : FabWork<PublyFabVarWork>
+public class PublySrcWork : SrcWork<PublySrcVarWork>
 {
     public void @default(WebContext wc)
     {
@@ -48,15 +48,15 @@ public class PublyFabWork : FabWork<PublyFabVarWork>
     }
 }
 
-[Ui("产品源")]
-public class SuplyFabWork : FabWork<SuplyFabVarWork>
+[Ui("产源设施")]
+public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 {
-    [Ui("产品源", status: 1), Tool(Anchor)]
+    [Ui("产源设施", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Fab>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -64,7 +64,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无上线产品源");
+                h.ALERT("尚无上线产源设施");
                 return;
             }
 
@@ -77,7 +77,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Fab>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -85,7 +85,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无下线产品源");
+                h.ALERT("尚无下线产源设施");
                 return;
             }
 
@@ -98,7 +98,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Fab>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
+        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
 
         wc.GivePage(200, h =>
         {
@@ -106,7 +106,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无删除产品源");
+                h.ALERT("尚无删除产源设施");
                 return;
             }
 
@@ -115,7 +115,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("新建", "新建产品源", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("新建", "新建产源设施", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -123,7 +123,7 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
 
         if (wc.IsGet)
         {
-            var o = new Fab
+            var o = new Src
             {
                 created = DateTime.Now,
                 creator = prin.name
@@ -132,11 +132,11 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().TEXT("产品源名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Fab.Typs, required: true)._LI();
+                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true)._LI();
                 h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Fab.Ranks, required: true)._LI();
+                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
                 h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
@@ -147,17 +147,17 @@ public class SuplyFabWork : FabWork<SuplyFabVarWork>
         {
             const short msk = MSK_BORN | MSK_EDIT;
             // populate 
-            var m = await wc.ReadObjectAsync(msk, new Fab
+            var m = await wc.ReadObjectAsync(msk, new Src
             {
                 orgid = org.id,
                 created = DateTime.Now,
                 creator = prin.name,
             });
 
-            await GetGraph<FabGraph, int, Fab>().CreateAsync(async dc =>
+            await GetGraph<SrcGraph, int, Src>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO fabs_vw ").colset(Fab.Empty, msk)._VALUES_(Fab.Empty, msk).T(" RETURNING ").collst(Fab.Empty);
-                return await dc.QueryTopAsync<Fab>(p => m.Write(p, msk));
+                dc.Sql("INSERT INTO srcs_vw ").colset(Src.Empty, msk)._VALUES_(Src.Empty, msk).T(" RETURNING ").collst(Src.Empty);
+                return await dc.QueryTopAsync<Src>(p => m.Write(p, msk));
             });
 
             wc.GivePane(200); // close dialog

@@ -11,13 +11,13 @@ public class Lot : Entity, IKeyable<int>
     public static readonly Lot Empty = new();
 
     public const short
-        TYP_NORM = 1,
-        TYP_ADVC = 2;
+        TYP_HUB = 1,
+        TYP_SRC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_NORM, "现供" },
-        { TYP_ADVC, "助农" },
+        { TYP_HUB, "品控仓" },
+        { TYP_SRC, "产源" },
     };
 
     public static readonly Map<short, string> Ranks = new()
@@ -28,24 +28,31 @@ public class Lot : Entity, IKeyable<int>
         { 4, "顶级" },
     };
 
+    public static readonly Map<short, string> Warrants = new()
+    {
+        { 0, null },
+        { 7, "七天退货" },
+        { 15, "半月退货" },
+        { 30, "一月退货" },
+    };
+
     internal int id;
     internal int orgid;
     internal short cattyp;
     internal DateTime started;
-    internal int fabid;
+    internal int srcid;
     internal string unit;
     internal short unitw;
     internal short unitx;
     internal decimal price;
     internal decimal off;
 
-    internal int capx;
-
-    // internal int stock;
-    internal short minx;
-    internal short maxx;
+    internal short warrant;
+    internal int min;
+    internal int max;
 
     // traceability
+    internal int cap;
     internal int nstart;
     internal int nend;
 
@@ -59,8 +66,8 @@ public class Lot : Entity, IKeyable<int>
 
     internal StockOp[] ops;
 
-    // from the stock table
-    [NonSerialized] internal int stock;
+    // EXTRA: of either the lots or the lotinvs table
+    internal int stock;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -78,7 +85,7 @@ public class Lot : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(fabid), ref fabid);
+            s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(cattyp), ref cattyp);
             s.Get(nameof(started), ref started);
             s.Get(nameof(unit), ref unit);
@@ -86,13 +93,14 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(capx), ref capx);
-            s.Get(nameof(minx), ref minx);
-            s.Get(nameof(maxx), ref maxx);
+            s.Get(nameof(warrant), ref warrant);
+            s.Get(nameof(min), ref min);
+            s.Get(nameof(max), ref max);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
         {
+            s.Get(nameof(cap), ref cap);
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
             s.Get(nameof(icon), ref icon);
@@ -129,7 +137,7 @@ public class Lot : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(fabid), fabid);
+            s.Put(nameof(srcid), srcid);
             s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(started), started);
             s.Put(nameof(unit), unit);
@@ -137,13 +145,14 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
-            s.Put(nameof(capx), capx);
-            s.Put(nameof(minx), minx);
-            s.Put(nameof(maxx), maxx);
+            s.Put(nameof(warrant), warrant);
+            s.Put(nameof(min), min);
+            s.Put(nameof(max), max);
         }
 
         if ((msk & MSK_LATER) == MSK_LATER)
         {
+            s.Put(nameof(cap), cap);
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
 
@@ -189,9 +198,9 @@ public class Lot : Entity, IKeyable<int>
 
     public StockOp[] Ops => ops;
 
-    public bool IsSpot => typ == TYP_NORM;
+    public bool IsCtrBased => typ == TYP_HUB;
 
-    public bool IsAdvance => typ == TYP_ADVC;
+    public bool IsSrcBased => typ == TYP_SRC;
 
     public override string ToString() => name;
 

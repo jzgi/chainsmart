@@ -3,11 +3,11 @@ using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-public class FabGraph : TwinGraph<int, Fab>
+public class SrcGraph : TwinGraph<int, Src>
 {
     public override bool TryGetTwinSetKey(DbContext dc, int key, out int setkey)
     {
-        dc.Sql("SELECT orgid FROM fabs_vw WHERE id = @1 AND status > 0");
+        dc.Sql("SELECT orgid FROM srcs_vw WHERE id = @1 AND status > 0");
         if (dc.QueryTop(p => p.Set(key)))
         {
             dc.Let(out setkey);
@@ -19,9 +19,9 @@ public class FabGraph : TwinGraph<int, Fab>
         return false;
     }
 
-    public override Map<int, Fab> LoadTwinSet(DbContext dc, int setkey)
+    public override Map<int, Src> LoadTwinSet(DbContext dc, int setkey)
     {
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
-        return dc.Query<int, Fab>(p => p.Set(setkey));
+        dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE orgid = @1 AND status > 0 ORDER BY id");
+        return dc.Query<int, Src>(p => p.Set(setkey));
     }
 }

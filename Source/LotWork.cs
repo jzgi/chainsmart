@@ -76,10 +76,10 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
     }
 }
 
-[Ui("产品批次")]
+[Ui("批次")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
-    [Ui("产品批次", status: 1), Tool(Anchor)]
+    [Ui("批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -94,7 +94,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无上线产品批次");
+                h.ALERT("暂无上线批次");
                 return;
             }
 
@@ -117,7 +117,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无已下线产品批次");
+                h.ALERT("暂无已下线批次");
                 return;
             }
 
@@ -140,7 +140,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无已删除产品批次");
+                h.ALERT("暂无已删除批次");
                 return;
             }
 
@@ -149,8 +149,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("现供", "新建现供产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task newspot(WebContext wc, int typ)
+    [Ui("品控仓", "新建从品控仓发售的批次", icon: "plus", status: 1), Tool(ButtonOpen)]
+    public async Task newhub(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -158,40 +158,41 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         var o = new Lot
         {
-            typ = Lot.TYP_NORM,
+            typ = Lot.TYP_HUB,
             status = Entity.STU_CREATED,
             orgid = org.id,
             unit = "斤",
-            capx = 2000,
             created = DateTime.Now,
             creator = prin.name,
             off = 0,
             unitx = 1,
-            minx = 1,
-            maxx = 20,
+
+            cap = 2000,
+            min = 1,
+            max = 100,
         };
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinSet<int, Fab>(o.orgid);
+            var srcs = GrabTwinSet<int, Src>(o.orgid);
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("");
+                h.FORM_().FIELDSUL_("批次信息");
 
-                h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
+                h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
-                h._FIELDSUL().FIELDSUL_("销售及优惠");
+                h._FIELDSUL().FIELDSUL_("销售参数");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.StockX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.StockX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newspot));
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newhub));
 
                 h._FORM();
             });
@@ -212,52 +213,52 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("助农", "新建助农产品批次", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task newpre(WebContext wc)
+    [Ui("产源", "新建从产源发售的批次", icon: "plus", status: 1), Tool(ButtonOpen)]
+    public async Task newsrc(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var topOrgs = GrabTwinSet<int, Org>(0);
         var cats = Grab<short, Cat>();
 
         var o = new Lot
         {
-            typ = Lot.TYP_ADVC,
+            typ = Lot.TYP_SRC,
             status = Entity.STU_CREATED,
             orgid = org.id,
             started = DateTime.Today.AddDays(14),
             unit = "斤",
-            capx = 2000,
             created = DateTime.Now,
             creator = prin.name,
             off = 0,
             unitx = 1,
-            minx = 1,
-            maxx = 20,
+
+            cap = 2000,
+            min = 1,
+            max = 100,
         };
 
         if (wc.IsGet)
         {
-            var fabs = GrabTwinSet<int, Fab>(o.orgid);
+            var srcs = GrabTwinSet<int, Src>(o.orgid);
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("助农（货入品控库之前先销售）");
+                h.FORM_().FIELDSUL_("批次信息");
 
-                h.LI_().TEXT("产品名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.fabid), o.fabid, fabs)._LI();
-                h.LI_().DATE("输运起始日", nameof(o.started), o.started)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
+                h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.capx), o.capx)._LI();
+                h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
-                h._FIELDSUL().FIELDSUL_("销售及优惠");
+                h._FIELDSUL().FIELDSUL_("销售参数");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.minx), o.minx, min: 0, max: o.StockX).NUMBER("限订整件数", nameof(o.maxx), o.maxx, min: 1, max: o.StockX)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newpre));
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(newsrc));
 
                 h._FORM();
             });
@@ -267,7 +268,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             // populate 
             await wc.ReadObjectAsync(msk, instance: o);
-            o.stock = o.capx; // initial inventory
+            o.stock = o.cap; // initial inventory
 
             // db insert
             using var dc = NewDbContext();
@@ -276,34 +277,6 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             wc.GivePane(200); // close dialog
         }
-    }
-}
-
-[OrglyAuthorize(Org.TYP_CTR)]
-[Ui("中转库盘存")]
-public class CtrlyLotWork : LotWork<CtrlyLotVarWork>
-{
-    [Ui("中转库盘存", status: 1), Tool(Anchor)]
-    public async Task @default(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE hubid = @1 AND status = 4 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("暂无产品批次");
-                return;
-            }
-
-            MainGrid(h, arr);
-        }, false, 12);
     }
 }
 

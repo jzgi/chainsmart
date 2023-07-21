@@ -112,7 +112,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.FORM_().FIELDSUL_(cmd == 1 ? "市场机构" : "供应机构");
 
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("涵盖市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
@@ -120,7 +120,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联中转库", nameof(o.hubid), o.hubid, ctrs, required: true)._LI();
+                    h.LI_().SELECT("关联品控仓", nameof(o.hubid), o.hubid, ctrs, required: true)._LI();
                 }
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
@@ -397,7 +397,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
                 h.FORM_().FIELDSUL_();
 
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().SELECT("省份", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
                 h.LI_().TEXT("联系地址", nameof(o.addr), o.addr, max: 30)._LI();

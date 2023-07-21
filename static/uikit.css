@@ -82,7 +82,7 @@ a,
 }
 
 .uk-link:hover {
-    background-color: rgb(143 195 33 / 10%);
+    background-color: rgb(125 170 29 / 5%);
 }
 
 abbr[title] {
@@ -787,7 +787,7 @@ a.uk-link-reset:hover,
 
 .uk-table>tr.uk-active,
 .uk-table tbody tr.uk-active {
-    background-color: rgb(255 59 48 / 10%);
+    background-color: rgb(125 170 29 / 5%);
 }
 
 .uk-table-divider>tr:not(:first-child),
@@ -1287,11 +1287,12 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #000;
+    color: #333;
     min-height: 2.5rem;
     display: flex;
     align-items: center;
     font-size: 1rem;
+    font-weight: bold;
     box-sizing: border-box;
 }
 
@@ -2217,7 +2218,7 @@ main.uk-grid>li {
 }
 
 .uk-card.uk-active {
-    background-color: rgb(255 59 48 / 10%);
+    background-color: rgb(125 170 29 / 5%);
 }
 
 .uk-card.uk-disabled {

@@ -293,7 +293,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN3("数量", o.stock, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN3("货架", o.stock, o.unit).SPAN_("uk-margin-auto-left").CNY(o.price)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();

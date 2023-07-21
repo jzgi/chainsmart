@@ -540,7 +540,7 @@ function serialize(form, notEmpty) {
 function askSend(trig, tip, pick) {
 
     if (pick && !serialize(this.form)) {
-        UIkit.notification('请先勾选操作项');
+        alert('请先勾选操作项');
         return false;
     }
 
@@ -662,7 +662,7 @@ function dialog(trig, mode, pick, title) {
         var qstr;
         if (pick) { // if must pick form fields
             if (!serialize(trig.form)) {
-                UIkit.notification('请先勾选操作项');
+                alert('请先勾选操作项');
                 return false; // exclude hidden fields
             }
             qstr = serialize(trig.form);

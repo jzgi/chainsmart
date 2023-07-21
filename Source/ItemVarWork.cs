@@ -33,7 +33,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
             h.LI_().FIELD("ＶＩＰ立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
-            h.LI_().FIELD2("数量", o.stock, o.unit)._LI();
+            h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
 
             if (o.creator != null) h.LI_().FIELD2("创编", o.creator, o.created)._LI();
             if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
@@ -115,9 +115,9 @@ public class PublyItemVarWork : ItemVarWork
             if (o.lotid > 0)
             {
                 var org = GrabTwin<int, Org>(o.orgid);
-                var fab = lot?.fabid > 0 ? GrabTwin<int, Fab>(lot.fabid) : null;
+                var src = lot?.srcid > 0 ? GrabTwin<int, Src>(lot.srcid) : null;
 
-                LotVarWork.LotShow(h, lot, org, fab, false);
+                LotVarWork.LotShow(h, lot, org, src, false);
             }
             else
             {
@@ -238,7 +238,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("数量", icon: "database", status: 7), Tool(ButtonShow)]
+    [Ui("货架", icon: "database", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int itemid = wc[0];
@@ -253,7 +253,7 @@ public class RtllyItemVarWork : ItemVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("数量操作");
+                h.FORM_().FIELDSUL_("货架操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();

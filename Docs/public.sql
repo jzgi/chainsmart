@@ -180,9 +180,9 @@ create table public.fabs
 )
     inherits (public.entities);
 
-comment on table public.fabs is 'fabrications of product lots';
+comment on table public.srcs is 'fabrications of product lots';
 
-alter table public.fabs
+alter table public.srcs
     owner to postgres;
 
 create table public.lots
@@ -193,7 +193,7 @@ create table public.lots
     orgid   integer,
     fabid   integer
         constraint lots_fabid_fk
-            references public.fabs,
+            references public.srcs,
     cattyp  smallint
         constraint lots_cattyp_fk
             references public.cats
@@ -297,7 +297,7 @@ create index lots_statuscattyp_idx
     on public.lots (status, cattyp);
 
 create index fabs_orgidstatus_idx
-    on public.fabs (orgid, status);
+    on public.srcs (orgid, status);
 
 create table public.buys
 (

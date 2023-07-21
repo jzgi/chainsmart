@@ -27,7 +27,7 @@ public abstract class PurVarWork : WebWork
             h.LI_().LABEL("买方").ADIALOG_(MainApp.WwwUrl + "/org/", o.rtlid, "/", ToolAttribute.MOD_SHOW, false).T(rtl.name)._A()._LI();
             h.LI_().LABEL("卖方").ADIALOG_(MainApp.WwwUrl + "/org/", o.supid, "/", ToolAttribute.MOD_SHOW, false).T(o.ctrid)._A()._LI();
             h.LI_().FIELD("产品名", o.name)._LI();
-            h.LI_().FIELD("简介", o.tip)._LI();
+            h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("基准单位", o.unit).FIELD("每件含量", o.unitx)._LI();
             h.LI_().FIELD("基准单价", o.price, money: true).FIELD("件数", o.QtyX)._LI();
             h.LI_().FIELD("支付", o.pay, money: true).FIELD("状态", o.status, Pur.Statuses)._LI();

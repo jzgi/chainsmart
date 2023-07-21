@@ -8,7 +8,7 @@ using static ChainFx.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class FabVarWork : WebWork
+public abstract class SrcVarWork : WebWork
 {
     protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
     {
@@ -16,7 +16,7 @@ public abstract class FabVarWork : WebWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").T(col).T(" FROM fabs WHERE id = @1");
+            dc.Sql("SELECT ").T(col).T(" FROM srcs WHERE id = @1");
             if (await dc.QueryTopAsync(p => p.Set(id)))
             {
                 dc.Let(out byte[] bytes);
@@ -33,28 +33,28 @@ public abstract class FabVarWork : WebWork
             var f = await wc.ReadAsync<Form>();
             ArraySegment<byte> img = f[nameof(img)];
             using var dc = NewDbContext();
-            dc.Sql("UPDATE fabs SET ").T(col).T(" = @1 WHERE id = @2");
+            dc.Sql("UPDATE srcs SET ").T(col).T(" = @1 WHERE id = @2");
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
-                var m = GrabTwin<int, Fab>(id);
+                var m = GrabTwin<int, Src>(id);
                 switch (col)
                 {
-                    case nameof(Fab.icon):
+                    case nameof(Src.icon):
                         m.icon = true;
                         break;
-                    case nameof(Fab.pic):
+                    case nameof(Src.pic):
                         m.pic = true;
                         break;
-                    case nameof(Fab.m1):
+                    case nameof(Src.m1):
                         m.m1 = true;
                         break;
-                    case nameof(Fab.m2):
+                    case nameof(Src.m2):
                         m.m2 = true;
                         break;
-                    case nameof(Fab.m3):
+                    case nameof(Src.m3):
                         m.m3 = true;
                         break;
-                    case nameof(Fab.m4):
+                    case nameof(Src.m4):
                         m.m4 = true;
                         break;
                 }
@@ -66,24 +66,24 @@ public abstract class FabVarWork : WebWork
     }
 }
 
-public class PublyFabVarWork : FabVarWork
+public class PublySrcVarWork : SrcVarWork
 {
     public async Task @default(WebContext wc)
     {
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Fab>(p => p.Set(id));
+        dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Src>(p => p.Set(id));
 
         wc.GivePage(200, h =>
         {
             h.ARTICLE_("uk-card uk-card-primary");
             h.H4("产源设施", "uk-card-header");
             h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("名称", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Fab.Typs)._LI();
-            h.LI_().FIELD("简介", o.tip)._LI();
+            h.LI_().FIELD("产源设施名", o.name)._LI();
+            h.LI_().FIELD("类别", o.typ, Src.Typs)._LI();
+            h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("碳减排项目", o.co2ep)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
             h.LI_().FIELD2("创建", o.created, o.creator)._LI();
@@ -101,22 +101,22 @@ public class PublyFabVarWork : FabVarWork
 
             if (o.m1)
             {
-                h.PIC("/fab/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/src/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m2)
             {
-                h.PIC("/fab/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/src/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m3)
             {
-                h.PIC("/fab/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/src/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
             }
 
             if (o.m4)
             {
-                h.PIC("/fab/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
+                h.PIC("/src/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
             }
 
             h._ARTICLE();
@@ -141,22 +141,22 @@ public class PublyFabVarWork : FabVarWork
     }
 }
 
-public class SuplyFabVarWork : FabVarWork
+public class SuplySrcVarWork : SrcVarWork
 {
     public async Task @default(WebContext wc)
     {
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Fab>(p => p.Set(id));
+        dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Src>(p => p.Set(id));
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品源名称", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Fab.Typs)._LI();
-            h.LI_().FIELD("简介", o.tip)._LI();
+            h.LI_().FIELD("产源设施名", o.name)._LI();
+            h.LI_().FIELD("类别", o.typ, Src.Typs)._LI();
+            h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("说明", o.remark)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
 
@@ -180,17 +180,17 @@ public class SuplyFabVarWork : FabVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Fab.Empty).T(" FROM fabs_vw WHERE id = @1");
-            var o = dc.QueryTop<Fab>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE id = @1");
+            var o = dc.QueryTop<Src>(p => p.Set(id));
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().TEXT("产品源名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Fab.Typs, required: true)._LI();
-                h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Fab.Ranks, required: true)._LI();
+                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
                 h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
 
@@ -201,15 +201,15 @@ public class SuplyFabVarWork : FabVarWork
         {
             const short msk = MSK_EDIT;
             // populate 
-            var m = await wc.ReadObjectAsync(msk, new Fab
+            var m = await wc.ReadObjectAsync(msk, new Src
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
             });
 
-            await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async dc =>
+            await GetGraph<SrcGraph, int, Src>().UpdateAsync(m, async dc =>
             {
-                dc.Sql("UPDATE fabs_vw")._SET_(Fab.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+                dc.Sql("UPDATE srcs_vw")._SET_(Src.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
                 return await dc.ExecuteAsync(p =>
                 {
                     m.Write(p, msk);
@@ -250,7 +250,7 @@ public class SuplyFabVarWork : FabVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        var m = GrabTwin<int, Fab>(id);
+        var m = GrabTwin<int, Src>(id);
 
         var now = DateTime.Now;
         lock (m)
@@ -259,9 +259,9 @@ public class SuplyFabVarWork : FabVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async (dc) =>
+        await GetGraph<SrcGraph, int, Src>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE fabs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
+            dc.Sql("UPDATE srcs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -275,7 +275,7 @@ public class SuplyFabVarWork : FabVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, Fab>(id);
+        var m = GrabTwin<int, Src>(id);
 
         lock (m)
         {
@@ -283,9 +283,9 @@ public class SuplyFabVarWork : FabVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<FabGraph, int, Fab>().UpdateAsync(m, async (dc) =>
+        await GetGraph<SrcGraph, int, Src>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE fabs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE srcs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -299,11 +299,11 @@ public class SuplyFabVarWork : FabVarWork
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, Fab>(id);
+        var m = GrabTwin<int, Src>(id);
 
-        await GetGraph<FabGraph, int, Fab>().RemoveAsync(m, async (dc) =>
+        await GetGraph<SrcGraph, int, Src>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM fabs WHERE id = @1 AND orgid = @2");
+            dc.Sql("DELETE FROM srcs WHERE id = @1 AND orgid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,7 +89,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "待中转库发货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "要品控仓备货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -102,7 +103,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无待中转库发货的订单");
+                h.ALERT("尚无要品控仓备货的订单");
                 return;
             }
 
@@ -110,7 +111,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
+    [Ui(tip: "已由品控仓发货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -147,7 +148,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已撤销订单");
+                h.ALERT("尚无已撤销的订单");
                 return;
             }
 
@@ -229,7 +230,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
             var rtl = GrabTwin<int, Org>(o.rtlid);
 
-            h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
+            h.SPAN_("uk-badge").T(o.created, time: 0)._SPAN().SP().PICK(o.Key)._HEADER();
             h.Q_("uk-width-expand").T(rtl.name)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
@@ -264,7 +265,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已备发", icon: "eye", status: 2), Tool(Anchor)]
+    [Ui(tip: "要品控仓备货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -278,7 +279,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已备发订单");
+                h.ALERT("尚无要品控仓备货的订单");
                 return;
             }
 
@@ -301,7 +302,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已发货订单");
+                h.ALERT("尚无已发货的订单");
                 return;
             }
 
@@ -309,7 +310,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已撤单", icon: "trash", status: 8), Tool(Anchor)]
+    [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -323,12 +324,56 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已撤销订单");
+                h.ALERT("尚无已撤销的订单");
                 return;
             }
 
             MainGrid(h, arr);
         }, false, 6);
+    }
+
+    [Ui("备货", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
+    public async Task adapt(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
+        int[] key;
+
+        if (wc.IsGet)
+        {
+            key = wc.Query[nameof(key)];
+
+            wc.GivePane(200, h =>
+            {
+                h.SECTION_("uk-card uk-card-primary");
+                h.H2("要品控仓备货", css: "uk-card-header");
+                h.DIV_("uk-card-body").T("要品控仓备货")._DIV();
+                h._SECTION();
+
+                h.FORM_("uk-card uk-card-primary uk-margin-top");
+                foreach (var k in key)
+                {
+                    h.HIDDEN(nameof(key), k);
+                }
+                h.BOTTOM_BUTTON("确认", nameof(adapt), post: true);
+                h._FORM();
+            });
+        }
+        else
+        {
+            var f = await wc.ReadAsync<Form>();
+            key = f[nameof(key)];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE purs SET adapted = @1, adapter = @2, status = 2 WHERE supid = @3 AND id ")._IN_(key).T(" AND status = 1");
+            await dc.ExecuteAsync(p =>
+            {
+                p.Set(DateTime.Now).Set(prin.name).Set(org.id);
+                p.SetForIn(key);
+            });
+
+            wc.GivePane(200);
+        }
     }
 }
 
@@ -429,10 +474,10 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("中转库发货")]
+[Ui("品控仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("按产品批次", status: 2), Tool(Anchor)]
+    [Ui("按批次", status: 2), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var ctr = wc[-1].As<Org>();

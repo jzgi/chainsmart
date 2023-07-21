@@ -117,7 +117,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR)]
-    [Ui("评测管理")]
+    [Ui("评检管理")]
     public class CtrlyEvalWork : EvalWork<CtrlyEvalVarWork>
     {
         public void @default(WebContext wc, int page)

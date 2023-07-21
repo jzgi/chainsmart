@@ -171,7 +171,7 @@ public class RtllyVarWork : OrglyVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("设置基本信息和参数");
-                h.LI_().TEXTAREA("简介", nameof(m.tip), m.tip, max: 40)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                 h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                 h.LI_().TIME("开档时间", nameof(m.openat), m.openat).TIME("收档时间", nameof(m.closeat), m.closeat)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setg))._FORM();
@@ -241,25 +241,23 @@ public class SuplyVarWork : OrglyVarWork
         CreateWork<OrglyCarbApWork>("carb");
 
 
-        CreateWork<SuplyFabWork>("sfab", header: "商户");
+        CreateWork<SuplySrcWork>("ssrc", header: "商户");
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurnorm", state: Pur.TYP_NORM, ui: new("销售订单-现供"));
+        CreateWork<SuplyPurWork>("spurhub", state: Pur.TYP_NORM, ui: new("销售订单-品控仓"));
 
-        CreateWork<SuplyPurWork>("spuradvc", state: Pur.TYP_ADVC, ui: new("销售订单-助农"));
-
-        CreateWork<SuplyPurLdgWork>("spurldg");
+        CreateWork<SuplyPurWork>("spursrc", state: Pur.TYP_ADVC, ui: new("销售订单-产源"));
 
         CreateWork<SuplyPurApWork>("spurap");
+
+        CreateWork<SuplyPurLdgWork>("spurldg");
 
         // ctr
 
         CreateWork<CtrlyOrgWork>("corg", header: "机构");
 
         CreateWork<CtrlyEvalWork>("ceval");
-
-        CreateWork<CtrlyLotWork>("clot");
 
         CreateWork<CtrlyPurWork>("cpur");
 

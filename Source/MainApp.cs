@@ -70,7 +70,7 @@ public class MainApp : Application
     {
         MakeGraph<OrgGraph>("org").Period = 360;
 
-        MakeGraph<FabGraph>("fab");
+        MakeGraph<SrcGraph>("src");
 
         MakeGraph<VanGraph>("van");
     }

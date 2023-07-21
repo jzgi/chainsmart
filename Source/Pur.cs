@@ -45,11 +45,12 @@ public class Pur : Entity, IKeyable<int>
     internal decimal price;
     internal decimal off;
     internal int qty;
-    internal string fee; // transport fee
+    internal decimal fee; // transport fee
     internal decimal topay;
     internal decimal pay;
     internal int ret; // qty cut
     internal decimal refund; // pay refunded
+    internal string checker;
 
 
     public Pur()
@@ -66,7 +67,7 @@ public class Pur : Entity, IKeyable<int>
         mktid = rtl.MarketId;
         hubid = rtl.hubid;
         supid = sup.id;
-        fee = sup.name;
+        fee = BankUtility.supfee;
 
         ctrid = sup.CenterId;
 
@@ -110,6 +111,7 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
+            s.Get(nameof(checker), ref checker);
         }
     }
 
@@ -145,6 +147,7 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(pay), pay);
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
+            s.Put(nameof(checker), checker);
         }
     }
 

@@ -34,10 +34,10 @@ public class PublyTagWork : TagWork
             }
 
             var org = GrabTwin<int, Org>(lot.orgid);
-            Fab fab = null;
-            if (lot.fabid > 0)
+            Src src = null;
+            if (lot.srcid > 0)
             {
-                fab = GrabTwin<int, Fab>(lot.fabid);
+                src = GrabTwin<int, Src>(lot.srcid);
             }
 
             wc.GivePage(200, h =>
@@ -53,7 +53,7 @@ public class PublyTagWork : TagWork
 
                 h._TOPBARXL();
 
-                LotVarWork.LotShow(h, lot, org, fab, false, tracenum);
+                LotVarWork.LotShow(h, lot, org, src, false, tracenum);
 
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");

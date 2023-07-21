@@ -98,15 +98,10 @@ public class PublyVarWork : WebWork
 
         var mkt = GrabTwin<int, Org>(mktid);
 
-        Org[] arr;
-        if (sector == Reg.SVC_REGID) // when default sector
+        var arr = GrabTwinSet<int, Org>(mktid, x => x.regid == sector && x.status == 4);
+        if (sector == Reg.SVC_REGID && mkt.IsOked) // default sector
         {
-            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == Reg.SVC_REGID && x.status == 4);
             arr = arr.AddOf(mkt, first: true);
-        }
-        else
-        {
-            arr = GrabTwinSet<int, Org>(mktid, x => x.regid == sector && x.status == 4);
         }
 
         wc.GivePage(200, h =>

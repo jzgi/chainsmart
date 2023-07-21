@@ -8,7 +8,7 @@ namespace ChainSmart;
 /// </summary>
 public class Van : Entity, ITwin<int>
 {
-    public static readonly Fab Empty = new();
+    public static readonly Src Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {

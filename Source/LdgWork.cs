@@ -139,10 +139,10 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
-[Ui("销售业务日总")]
+[Ui("销售分类汇总")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
-    [Ui("按产品批次", status: 1), Tool(Anchor)]
+    [Ui("按批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -205,7 +205,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("中转库发货日总")]
+[Ui("品控仓发货汇总")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)

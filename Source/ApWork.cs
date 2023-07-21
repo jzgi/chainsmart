@@ -241,7 +241,7 @@ public class RtllyBuyApWork : ApWork<OrglyApVarWork>
     }
 }
 
-[Ui("销售业务结款")]
+[Ui("销售结款")]
 public class SuplyPurApWork : ApWork<OrglyApVarWork>
 {
     [Ui("销售结款", status: 1), Tool(Anchor)]
