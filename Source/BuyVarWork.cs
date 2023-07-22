@@ -163,7 +163,6 @@ public class MktlyBuyVarWork : BuyVarWork
     public async Task com(WebContext wc)
     {
         string com = wc[0];
-        var prin = (User)wc.Principal;
         var mkt = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
@@ -212,7 +211,6 @@ public class MktlyBuyVarWork : BuyVarWork
             }
 
             h._TABLE();
-
 
             h.TOOLBAR(subscript: intstamp, bottom: true);
         });

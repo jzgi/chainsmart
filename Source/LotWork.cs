@@ -79,7 +79,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
 [Ui("批次")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
-    [Ui("批次", status: 1), Tool(Anchor)]
+    [Ui("上线批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -149,7 +149,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("品控仓", "新建从品控仓发售的批次", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("品控仓", "新建从品控仓发售的批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -213,7 +213,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("产源", "新建从产源发售的批次", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("产源", "新建从产源发售的批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newsrc(WebContext wc)
     {
         var org = wc[-1].As<Org>();

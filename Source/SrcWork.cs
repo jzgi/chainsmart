@@ -115,7 +115,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("新建", "新建产源设施", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("新建", "新建产源设施", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();

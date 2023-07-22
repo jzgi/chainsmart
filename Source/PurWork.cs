@@ -378,16 +378,16 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一接收")]
+[Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("按产品批次", status: 1), Tool(Anchor)]
+    [Ui("采购收货", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT lotid, first(name), count(qty), first(unit) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
+        dc.Sql("SELECT lotid, first(name), count(qty), first(unitx), first(unit) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
         await dc.QueryAsync(p => p.Set(mkt.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -395,16 +395,20 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
+            h.THEAD_().TH("产品").TH("件数", css: "uk-text-right").TH("每件", "uk-width-tiny")._THEAD();
+
             int n = 0;
             while (dc.Next())
             {
                 dc.Let(out int lotid);
                 dc.Let(out string name);
                 dc.Let(out decimal qty);
+                dc.Let(out short unitx);
                 dc.Let(out string unit);
                 h.TR_();
                 h.TD(name);
-                h.TD_("uk-visible@l").T(qty).SP().T(unit)._TD();
+                h.TD_("uk-text-right").T(qty).SP().T('件');
+                h.TD_("uk-text-right").SMALL_().T(unitx).SP().T(unit)._SMALL()._TD();
                 h._TR();
                 n++;
             }
@@ -439,7 +443,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
     }
 
     [Ui("按商户", status: 4), Tool(Anchor)]
-    public async Task shop(WebContext wc)
+    public async Task rtl(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
@@ -471,104 +475,9 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.PAGINATION(n == 30);
         }, false, 6);
     }
-}
 
-[OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓统一发货")]
-public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
-{
-    [Ui("按批次", status: 2), Tool(Anchor)]
-    public async Task @default(WebContext wc)
-    {
-        var ctr = wc[-1].As<Org>();
-        var topOrgs = Grab<int, Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, lotid, last(name), sum(qty) AS qty FROM purs WHERE ctrid = @1 AND status = 2 GROUP BY mktid, lotid ORDER BY mktid");
-        await dc.QueryAsync(p => p.Set(ctr.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            h.MAIN_();
-            int last = 0;
-            while (dc.Next())
-            {
-                dc.Let(out int mktid);
-                dc.Let(out int itemid);
-                dc.Let(out string name);
-                dc.Let(out decimal qty
-                );
-                if (mktid != last)
-                {
-                    var spr = topOrgs[mktid];
-                    h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                }
-
-                h.TR_();
-                h.TD(name);
-                h.TD_("uk-visible@l").T(qty)._TD();
-                h._TR();
-
-                last = mktid;
-            }
-
-            h._MAIN();
-        }, false, 6);
-    }
-
-    [Ui("↳", "以往按产品批次", status: 4), Tool(Anchor)]
-    public async Task lotpast(WebContext wc)
-    {
-    }
-
-    [Ui("按市场", status: 8), Tool(Anchor)]
-    public async Task mkt(WebContext wc)
-    {
-        var ctr = wc[-1].As<Org>();
-        var topOrgs = Grab<int, Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, itemid, last(name), sum(qty - qtyre) AS qty FROM purs WHERE ctrid = @1 AND status = 4 GROUP BY mktid, itemid ORDER BY mktid");
-        await dc.QueryAsync(p => p.Set(ctr.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            h.MAIN_();
-            int last = 0;
-            while (dc.Next())
-            {
-                dc.Let(out int mktid);
-                dc.Let(out int itemid);
-                dc.Let(out string name);
-                dc.Let(out decimal qty
-                );
-                if (mktid != last)
-                {
-                    var spr = topOrgs[mktid];
-                    h.TR_().TD_("uk-label uk-padding-tiny-left", colspan: 6).T(spr.name)._TD()._TR();
-                }
-
-                h.TR_();
-                h.TD(name);
-                h.TD_("uk-visible@l").T(qty)._TD();
-                h._TR();
-
-                last = mktid;
-            }
-
-            h._MAIN();
-        }, false, 6);
-    }
-
-    [Ui("↳", "以往按市场", status: 16), Tool(Anchor)]
-    public async Task mktpast(WebContext wc)
-    {
-    }
-
-    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
-    public async Task send(WebContext wc)
+    [Ui("收货", icon: "download", status: 1), Tool(ButtonOpen)]
+    public async Task end(WebContext wc)
     {
         var prin = (User)wc.Principal;
         short orgid = wc[-1];
@@ -587,4 +496,60 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
             wc.GivePane(200); // close dialog
         }
     }
+}
+
+[OrglyAuthorize(Org.TYP_CTR)]
+[Ui("品控仓统一备发")]
+public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
+{
+    [Ui("统一备发", status: 8), Tool(Anchor)]
+    public async Task @default(WebContext wc)
+    {
+        var hub = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT mktid, sum(CASE WHEN status = 2 THEN qty END), count(CASE WHEN status = 4 THEN qty END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) GROUP BY mktid");
+        await dc.QueryAsync(p => p.Set(hub.id));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            h.TABLE_();
+            h.THEAD_().TH("市场").TH("备货", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+
+            while (dc.Next())
+            {
+                dc.Let(out int mktid);
+                dc.Let(out int adapted);
+                dc.Let(out int oked);
+
+                var mkt = GrabTwin<int, Org>(mktid);
+
+                h.TR_();
+                h.TD_().ADIALOG_(mktid, "/mkt", mode: ToolAttribute.MOD_OPEN, false, tip: mkt.Cover, css: "uk-link uk-button-link").T(mkt.Cover)._A()._TD();
+                h.TD_(css: "uk-text-center");
+                if (adapted > 0)
+                {
+                    h.T(adapted);
+                }
+                h._TD();
+                h.TD_(css: "uk-text-center");
+                if (oked > 0)
+                {
+                    h.T(oked);
+                }
+                h._TD();
+                h._TR();
+            }
+
+            h._TABLE();
+        }, false, 6);
+    }
+
+    [Ui(tip: "以往按市场", icon: "history", status: 2), Tool(Anchor)]
+    public async Task past(WebContext wc)
+    {
+    }
+
 }

@@ -159,6 +159,83 @@ public class SuplyPurVarWork : PurVarWork
 
 public class CtrlyPurVarWork : PurVarWork
 {
+    public async Task mkt(WebContext wc)
+    {
+        int mktid = wc[0];
+        var hub = wc[-2].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT localtimestamp(0); SELECT lotid, first(name), sum(CASE WHEN status = 2 THEN qty END), count(CASE WHEN status = 4 THEN qty END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) AND mktid = @2 GROUP BY mktid, lotid");
+        await dc.QueryTopAsync(p => p.Set(hub.id).Set(mktid));
+
+        // the time stamp to fence the range to update
+        dc.Let(out DateTime stamp);
+        var intstamp = MainUtility.ToInt2020(stamp);
+
+        wc.GivePage(200, h =>
+        {
+            h.TABLE_();
+            h.THEAD_().TH("产品").TH("备货", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+
+            dc.NextResult();
+            while (dc.Next())
+            {
+                dc.Let(out int lotid);
+                dc.Let(out string name);
+                dc.Let(out int adapted);
+                dc.Let(out int oked);
+
+                var mkt = GrabTwin<int, Org>(mktid);
+
+                h.TR_();
+                h.TD(name);
+                h.TD_();
+                if (adapted > 0)
+                {
+                    h.ADIALOG_(nameof(adapted), "?utel=", mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
+                }
+                h._TD();
+                h.TD_();
+                if (oked > 0)
+                {
+                    h.ADIALOG_(nameof(oked), "?utel=", mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(oked)._A();
+                }
+                h._TD();
+                h.TD_();
+                if (adapted > 0)
+                {
+                    h.PICK(lotid);
+                }
+                h._TD();
+                h._TR();
+            }
+
+            h._TABLE();
+
+            h.TOOLBAR(subscript: intstamp, bottom: true);
+        }, false, 6);
+    }
+
+    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
+    public async Task ok(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
+        short orgid = wc[-1];
+        short typ = 0;
+        decimal amt = 0;
+        if (wc.IsGet)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("指定统计区间");
+                h._FIELDSUL()._FORM();
+            });
+        }
+        else // POST
+        {
+            wc.GivePane(200); // close dialog
+        }
+    }
 }
 
 public class MktlyPurVarWork : PurVarWork

@@ -11,21 +11,22 @@ public class Pur : Entity, IKeyable<int>
     public static readonly Pur Empty = new();
 
     public const short
-        TYP_NORM = 1,
-        TYP_ADVC = 2;
+        TYP_HUB = 1,
+        TYP_SRC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_NORM, "现供" },
-        { TYP_ADVC, "助农" },
+        { TYP_HUB, "品控仓" },
+        { TYP_SRC, "产源" },
     };
 
     public new static readonly Map<short, string> Statuses = new()
     {
-        { STU_VOID, "撤单" },
-        { STU_CREATED, "下单" },
-        { STU_ADAPTED, "备发" },
+        { STU_VOID, "撤销" },
+        { STU_CREATED, "收单" },
+        { STU_ADAPTED, "备货" },
         { STU_OKED, "发货" },
+        { STU_ENDED, "收货" },
     };
 
 
@@ -67,6 +68,7 @@ public class Pur : Entity, IKeyable<int>
         mktid = rtl.MarketId;
         hubid = rtl.hubid;
         supid = sup.id;
+        ctrid = sup.CenterId;
         fee = BankUtility.supfee;
 
         ctrid = sup.CenterId;

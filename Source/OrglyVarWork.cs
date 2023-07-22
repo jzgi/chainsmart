@@ -245,9 +245,9 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<SuplyLotWork>("slot");
 
-        CreateWork<SuplyPurWork>("spurhub", state: Pur.TYP_NORM, ui: new("销售订单-品控仓"));
+        CreateWork<SuplyPurWork>("spurhub", state: Pur.TYP_HUB, ui: new("销售订单-品控仓"));
 
-        CreateWork<SuplyPurWork>("spursrc", state: Pur.TYP_ADVC, ui: new("销售订单-产源"));
+        CreateWork<SuplyPurWork>("spursrc", state: Pur.TYP_SRC, ui: new("销售订单-产源"));
 
         CreateWork<SuplyPurApWork>("spurap");
 
