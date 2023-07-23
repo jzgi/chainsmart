@@ -166,7 +166,7 @@ public class CtrlyPurVarWork : PurVarWork
         var hub = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT localtimestamp(0); SELECT lotid, first(name), sum(CASE WHEN status = 2 THEN (qty / unitx) END), sum(CASE WHEN status = 4 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) AND mktid = @2 GROUP BY mktid, lotid");
+        dc.Sql("SELECT localtimestamp(0); SELECT lotid, first(name), sum(CASE WHEN status = 1 THEN (qty / unitx) END), sum(CASE WHEN status = 2 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 1 OR status = 2) AND mktid = @2 GROUP BY mktid, lotid");
         await dc.QueryTopAsync(p => p.Set(hub.id).Set(mktid));
 
         // the time stamp to fence the range to update
@@ -176,36 +176,28 @@ public class CtrlyPurVarWork : PurVarWork
         wc.GivePage(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("备货", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())
             {
                 dc.Let(out int lotid);
                 dc.Let(out string name);
+                dc.Let(out int created);
                 dc.Let(out int adapted);
-                dc.Let(out int oked);
-
-                var mkt = GrabTwin<int, Org>(mktid);
 
                 h.TR_();
-                h.TD(name);
+                h.TD_().PICK(lotid).SP().T(name)._TD();
+                h.TD_();
+                if (created > 0)
+                {
+                    h.ADIALOG_(nameof(created), "?lotid=", lotid, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(created)._A();
+                }
+                h._TD();
                 h.TD_();
                 if (adapted > 0)
                 {
                     h.ADIALOG_(nameof(adapted), "?lotid=", lotid, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
-                }
-                h._TD();
-                h.TD_();
-                if (oked > 0)
-                {
-                    h.ADIALOG_(nameof(oked), "?lotid=", lotid, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(oked)._A();
-                }
-                h._TD();
-                h.TD_();
-                if (adapted > 0)
-                {
-                    h.PICK(lotid);
                 }
                 h._TD();
                 h._TR();
@@ -217,13 +209,13 @@ public class CtrlyPurVarWork : PurVarWork
         }, false, 6);
     }
 
-    public async Task adapted(WebContext wc)
+    public async Task created(WebContext wc)
     {
         int mktid = wc[0];
         int lotid = wc.Query[nameof(lotid)];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 2 AND lotid = @2");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 1 AND lotid = @2");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(mktid).Set(lotid));
 
         wc.GivePane(200, h =>
@@ -245,13 +237,13 @@ public class CtrlyPurVarWork : PurVarWork
         }, false, 6);
     }
 
-    public async Task oked(WebContext wc)
+    public async Task adapted(WebContext wc)
     {
         int mktid = wc[0];
         int lotid = wc.Query[nameof(lotid)];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 4 AND lotid = @2");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 2 AND lotid = @2");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(mktid).Set(lotid));
 
         wc.GivePane(200, h =>

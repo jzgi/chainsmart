@@ -130,11 +130,13 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyOrgWork>("morg", header: "机构");
 
-        CreateWork<MktlyEvalWork>("meval");
-
         CreateWork<MktlyBuyWork>("mbuy");
 
-        CreateWork<MktlyPurWork>("mpur");
+        CreateWork<MktlyPurWork>("mpurhub", state: Pur.TYP_HUB, ui: new("采购统一收货 - 品控仓"));
+
+        CreateWork<MktlyPurWork>("mpursrc", state: Pur.TYP_SRC, ui: new("采购统一收货 - 产源"));
+
+        CreateWork<MktlyEvalWork>("meval");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -204,6 +206,7 @@ public class RtllyVarWork : OrglyVarWork
     /// The polling of events that belong to the presented org.
     /// </summary>
     [OrglyAuthorize(Org.TYP_MKT)]
+    [Ui("智控台", icon: "desktop"), Tool(ButtonShow)]
     public void @event(WebContext wc)
     {
         var org = wc[0].As<Org>();

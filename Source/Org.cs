@@ -24,12 +24,12 @@ public class Org : Entity, ITwin<int>
     public static readonly Map<short, string> Ranks = new()
     {
         { 0, null },
-        { 1, "AAA" },
-        { 2, "AA" },
-        { 3, "A" },
-        { 4, "BBB" },
-        { 5, "BB" },
-        { 6, "B" },
+        { 1, "B" },
+        { 2, "BB" },
+        { 3, "BBB" },
+        { 4, "A" },
+        { 5, "AA" },
+        { 6, "AAA" },
     };
 
 
@@ -175,13 +175,21 @@ public class Org : Entity, ITwin<int>
     // STATE
     //
 
-    public const short STA_OKABLE = 1;
+    public const short
+        STA_OKABLE = 1,
+        STA_AAPLUS = 2;
 
     public override short ToState()
     {
         short v = 0;
-        if (!icon || !pic) return v;
-        v |= STA_OKABLE;
+        if (icon && pic)
+        {
+            v |= STA_OKABLE;
+        }
+        if (rank >= 5)
+        {
+            v |= STA_AAPLUS;
+        }
         return v;
     }
 

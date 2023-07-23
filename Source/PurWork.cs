@@ -378,16 +378,16 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓统一备发")]
+[Ui("品控仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("统一备发", status: 8), Tool(Anchor)]
+    [Ui("统一发货", status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var hub = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, sum(CASE WHEN status = 2 THEN (qty / unitx) END), sum(CASE WHEN status = 4 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) GROUP BY mktid");
+        dc.Sql("SELECT mktid, sum(CASE WHEN status = 1 THEN (qty / unitx) END), sum(CASE WHEN status = 2 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 1 OR status = 2) GROUP BY mktid");
         await dc.QueryAsync(p => p.Set(hub.id));
 
         wc.GivePage(200, h =>
@@ -395,7 +395,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("市场").TH("备货", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -436,13 +436,15 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 [Ui("采购统一接收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("采购接收货", status: 1), Tool(Anchor)]
+    public short PurTyp => (short)State;
+
+    [Ui("采购收货", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY rtlid");
+        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = ").T(PurTyp).T(" GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -450,7 +452,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("件数", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("商户").TH("已发货", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
@@ -474,7 +476,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT first(name), first(unitx), first(unit), sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid");
+        dc.Sql("SELECT first(name), first(unitx), first(unit), sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = ").T(PurTyp).T(" GROUP BY lotid");
         await dc.QueryAsync(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -482,7 +484,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("件数", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("产品").TH("已发货", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
@@ -539,7 +541,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             var dt = today.AddDays(days);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 8 AND (ended >= @2 AND ended < @3) GROUP BY rtlid");
+            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND typ = ").T(PurTyp).T(" AND (oked >= @2 AND oked < @3) GROUP BY rtlid");
             await dc.QueryAsync(p => p.Set(org.id).Set(dt).Set(dt.AddDays(1)));
 
             wc.GivePage(200, h =>

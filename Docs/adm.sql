@@ -26,7 +26,7 @@ ALTER INDEX purs_pk SET TABLESPACE sup;
 ALTER INDEX purs_uidx SET TABLESPACE sup;
 ALTER INDEX purs_hubidstatusmktid_idx SET TABLESPACE sup;
 ALTER INDEX purs_mktidstatus_idx SET TABLESPACE sup;
-ALTER INDEX purs_rtlidstatus_idx SET TABLESPACE sup;
+ALTER INDEX purs_rtlidstatustyp_idx SET TABLESPACE sup;
 ALTER INDEX purs_supidstatustyp_idx SET TABLESPACE sup;
 
 -- rtl

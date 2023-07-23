@@ -90,7 +90,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(state: org.ToState());
 
             if (arr == null)
             {
@@ -113,7 +113,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(state: org.ToState());
 
             if (arr == null)
             {
@@ -136,7 +136,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(state: org.ToState());
 
             if (arr == null)
             {
@@ -149,7 +149,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("品控仓", "新建从品控仓发售的批次", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("品控仓", "新建从品控仓快捷发售的批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
@@ -213,7 +213,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("产源", "新建从产源发售的批次", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("产源", "新建从产源预订发售的批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
     public async Task newsrc(WebContext wc)
     {
         var org = wc[-1].As<Org>();

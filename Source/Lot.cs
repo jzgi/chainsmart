@@ -28,14 +28,6 @@ public class Lot : Entity, IKeyable<int>
         { 4, "顶级" },
     };
 
-    public static readonly Map<short, string> Warrants = new()
-    {
-        { 0, null },
-        { 7, "七天退货" },
-        { 15, "半月退货" },
-        { 30, "一月退货" },
-    };
-
     internal int id;
     internal int orgid;
     internal short cattyp;
@@ -47,7 +39,6 @@ public class Lot : Entity, IKeyable<int>
     internal decimal price;
     internal decimal off;
 
-    internal short warrant;
     internal int min;
     internal int max;
 
@@ -93,7 +84,6 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
-            s.Get(nameof(warrant), ref warrant);
             s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
         }
@@ -145,7 +135,6 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
-            s.Put(nameof(warrant), warrant);
             s.Put(nameof(min), min);
             s.Put(nameof(max), max);
         }
