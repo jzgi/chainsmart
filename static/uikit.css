@@ -1283,6 +1283,7 @@ button.uk-icon:not(:disabled) {
     border: none;
     margin: 0 0 4px 0;
     padding: 4px;
+    width: 100%
 }
 
 form legend {
@@ -1307,10 +1308,6 @@ form legend {
     width: 100%;
     min-height: 2.5rem;
     align-items: center;
-}
-
-.uk-fieldset>ul>li:nth-child(n+2) {
-    border-top: 1px solid #fff;
 }
 
 .uk-radio,

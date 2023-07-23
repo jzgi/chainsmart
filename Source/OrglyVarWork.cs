@@ -262,7 +262,5 @@ public class SuplyVarWork : OrglyVarWork
         CreateWork<CtrlyPurWork>("cpur");
 
         CreateWork<CtrlyPurLdgWork>("cpurldg");
-
-        CreateWork<CtrlyTwinWork>("ctwin");
     }
 }

@@ -51,7 +51,8 @@ public class Pur : Entity, IKeyable<int>
     internal decimal pay;
     internal int ret; // qty cut
     internal decimal refund; // pay refunded
-    internal string checker;
+    internal DateTime ended;
+    internal string ender;
 
 
     public Pur()
@@ -113,7 +114,8 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
-            s.Get(nameof(checker), ref checker);
+            s.Get(nameof(ended), ref ended);
+            s.Get(nameof(ender), ref ender);
         }
     }
 
@@ -149,7 +151,8 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(pay), pay);
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
-            s.Put(nameof(checker), checker);
+            s.Put(nameof(ended), ended);
+            s.Put(nameof(ender), ender);
         }
     }
 

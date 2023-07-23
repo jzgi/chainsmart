@@ -71,8 +71,6 @@ public class MainApp : Application
         MakeGraph<OrgGraph>("org").Period = 360;
 
         MakeGraph<SrcGraph>("src");
-
-        MakeGraph<VanGraph>("van");
     }
 
     static async void Cycle(object state)

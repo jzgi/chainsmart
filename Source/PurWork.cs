@@ -377,127 +377,6 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一收货")]
-public class MktlyPurWork : PurWork<MktlyPurVarWork>
-{
-    [Ui("采购收货", status: 1), Tool(Anchor)]
-    public async Task @default(WebContext wc, int page)
-    {
-        var mkt = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT lotid, first(name), count(qty), first(unitx), first(unit) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid LIMIT 30 OFFSET 30 * @2");
-        await dc.QueryAsync(p => p.Set(mkt.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            h.TABLE_();
-            h.THEAD_().TH("产品").TH("件数", css: "uk-text-right").TH("每件", "uk-width-tiny")._THEAD();
-
-            int n = 0;
-            while (dc.Next())
-            {
-                dc.Let(out int lotid);
-                dc.Let(out string name);
-                dc.Let(out decimal qty);
-                dc.Let(out short unitx);
-                dc.Let(out string unit);
-                h.TR_();
-                h.TD(name);
-                h.TD_("uk-text-right").T(qty).SP().T('件');
-                h.TD_("uk-text-right").SMALL_().T(unitx).SP().T(unit)._SMALL()._TD();
-                h._TR();
-                n++;
-            }
-
-            h._TABLE();
-
-            h.PAGINATION(n == 30);
-        }, false, 6);
-    }
-
-    [Ui(tip: "历史", icon: "history", status: 2), Tool(Anchor)]
-    public async Task past(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, first(rtlname) AS rtlname, count(id) AS count FROM purs WHERE mktid = @1 AND status = 4 GROUP BY rtlid");
-        var arr = await dc.QueryAsync<PurAgg>(p => p.Set(org.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            h.TABLE(arr, o =>
-            {
-                h.TD_();
-                h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
-                h._A();
-                h._TD();
-            });
-        }, false, 6);
-    }
-
-    [Ui("按商户", status: 4), Tool(Anchor)]
-    public async Task rtl(WebContext wc)
-    {
-        var mkt = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, first(rtlname), count(qty) AS qty FROM purs WHERE mktid = @1 AND status > 0 GROUP BY rtlid, lotid");
-        var arr = await dc.QueryAsync<PurAgg>(p => p.Set(mkt.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            h.TABLE_();
-            int n = 0;
-            while (dc.Next())
-            {
-                dc.Let(out int lotid);
-                dc.Let(out string name);
-                dc.Let(out decimal qty);
-                dc.Let(out string unit);
-                h.TR_();
-                h.TD(name);
-                h.TD_("uk-visible@l").T(qty).SP().T(unit)._TD();
-                h._TR();
-                n++;
-            }
-
-            h._TABLE();
-
-            h.PAGINATION(n == 30);
-        }, false, 6);
-    }
-
-    [Ui("收货", icon: "download", status: 1), Tool(ButtonOpen)]
-    public async Task end(WebContext wc)
-    {
-        var prin = (User)wc.Principal;
-        short orgid = wc[-1];
-        short typ = 0;
-        decimal amt = 0;
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("指定统计区间");
-                h._FIELDSUL()._FORM();
-            });
-        }
-        else // POST
-        {
-            wc.GivePane(200); // close dialog
-        }
-    }
-}
-
 [OrglyAuthorize(Org.TYP_CTR)]
 [Ui("品控仓统一备发")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
@@ -508,7 +387,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
         var hub = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT mktid, sum(CASE WHEN status = 2 THEN qty END), count(CASE WHEN status = 4 THEN qty END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) GROUP BY mktid");
+        dc.Sql("SELECT mktid, sum(CASE WHEN status = 2 THEN (qty / unitx) END), sum(CASE WHEN status = 4 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) GROUP BY mktid");
         await dc.QueryAsync(p => p.Set(hub.id));
 
         wc.GivePage(200, h =>
@@ -527,7 +406,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
                 var mkt = GrabTwin<int, Org>(mktid);
 
                 h.TR_();
-                h.TD_().ADIALOG_(mktid, "/mkt", mode: ToolAttribute.MOD_OPEN, false, tip: mkt.Cover, css: "uk-link uk-button-link").T(mkt.Cover)._A()._TD();
+                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Cover, css: "uk-link uk-button-link").T(mkt.Cover)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (adapted > 0)
                 {
@@ -551,5 +430,139 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
     public async Task past(WebContext wc)
     {
     }
+}
 
+[OrglyAuthorize(Org.TYP_MKT)]
+[Ui("采购统一接收货")]
+public class MktlyPurWork : PurWork<MktlyPurVarWork>
+{
+    [Ui("采购接收货", status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY rtlid");
+        await dc.QueryAsync(p => p.Set(org.id));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            h.TABLE_();
+            h.THEAD_().TH("商户").TH("件数", css: "uk-text-right")._THEAD();
+
+            while (dc.Next())
+            {
+                dc.Let(out int rtlid);
+                dc.Let(out decimal qtyx);
+
+                var rtl = GrabTwin<int, Org>(rtlid);
+
+                h.TR_();
+                h.TD(rtl.name);
+                h.TD_().ADIALOG_(rtlid, "/rtl", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
+                h._TR();
+            }
+            h._TABLE();
+        }, false, 6);
+    }
+
+    [Ui(tip: "按产品批次", icon: "list", status: 2), Tool(Anchor)]
+    public async Task lot(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT first(name), first(unitx), first(unit), sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 GROUP BY lotid");
+        await dc.QueryAsync(p => p.Set(org.id));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            h.TABLE_();
+            h.THEAD_().TH("产品").TH("件数", css: "uk-text-right")._THEAD();
+
+            while (dc.Next())
+            {
+                dc.Let(out string name);
+                dc.Let(out short unitx);
+                dc.Let(out string unit);
+                dc.Let(out decimal qtyx);
+                h.TR_();
+                h.TD_().T(name).SMALL_().T('（').T(unitx).T(unit).T('）')._SMALL()._TD();
+                h.TD_().ADIALOG_("?utel=", "", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
+                h._TR();
+            }
+            h._TABLE();
+        }, false, 6);
+    }
+
+    static readonly string[] DAYS = { "日", "一", "二", "三", "四", "五", "六" };
+
+    [Ui(tip: "历史记录", icon: "history", status: 4), Tool(AnchorPrompt)]
+    public async Task past(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        var today = DateTime.Today;
+        int days; //  date offset
+
+        bool inner = wc.Query[nameof(inner)];
+        if (inner)
+        {
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_(css: "uk-list uk-list-divider");
+                for (days = 0; days < 7; days++)
+                {
+                    var dt = today.AddDays(-days);
+                    h.LI_().RADIO(nameof(days), days, dt.ToString("yy-MM-dd")).SP();
+                    if (days == 0)
+                    {
+                        h.T("今天");
+                    }
+                    else
+                    {
+                        h.T("周").T(DAYS[(int)dt.DayOfWeek]);
+                    }
+                    h._LI();
+                }
+                h._FIELDSUL()._FORM();
+            });
+        }
+        else // OUTER
+        {
+            days = wc.Query[nameof(days)];
+
+            var dt = today.AddDays(days);
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 8 AND (ended >= @2 AND ended < @3) GROUP BY rtlid");
+            await dc.QueryAsync(p => p.Set(org.id).Set(dt).Set(dt.AddDays(1)));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                h.TABLE_();
+                h.THEAD_().TH("商户").TH("件数", css: "uk-text-right")._THEAD();
+
+                while (dc.Next())
+                {
+                    dc.Let(out int rtlid);
+                    dc.Let(out int qtyx);
+
+                    var rtl = GrabTwin<int, Org>(rtlid);
+
+                    h.TR_();
+                    h.TD(rtl.name);
+                    h.TD_().ADIALOG_(rtlid, "/rtl", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
+                    h._TR();
+                }
+                h._TABLE();
+            }, false, 6);
+        }
+    }
 }

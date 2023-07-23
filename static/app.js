@@ -539,7 +539,7 @@ function serialize(form, notEmpty) {
 
 function askSend(trig, tip, pick) {
 
-    if (pick && !serialize(this.form)) {
+    if (pick && !serialize(trig.form)) {
         alert('请先勾选操作项');
         return false;
     }

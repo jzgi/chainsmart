@@ -137,7 +137,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }, false, 6);
     }
 
-    private static readonly string[] DAYS = { "日", "一", "二", "三", "四", "五", "六" };
+    static readonly string[] DAYS = { "日", "一", "二", "三", "四", "五", "六" };
 
     [Ui(tip: "以往记录", icon: "history", status: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc)

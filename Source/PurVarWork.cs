@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Application;
 using static ChainFx.Nodal.Nodality;
@@ -108,7 +109,7 @@ public class SuplyPurVarWork : PurVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("撤单", "确认撤单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
+    [Ui("撤销", "确认撤销订单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -165,7 +166,7 @@ public class CtrlyPurVarWork : PurVarWork
         var hub = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT localtimestamp(0); SELECT lotid, first(name), sum(CASE WHEN status = 2 THEN qty END), count(CASE WHEN status = 4 THEN qty END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) AND mktid = @2 GROUP BY mktid, lotid");
+        dc.Sql("SELECT localtimestamp(0); SELECT lotid, first(name), sum(CASE WHEN status = 2 THEN (qty / unitx) END), sum(CASE WHEN status = 4 THEN (qty / unitx) END) FROM purs WHERE hubid = @1 AND (status = 2 OR status = 4) AND mktid = @2 GROUP BY mktid, lotid");
         await dc.QueryTopAsync(p => p.Set(hub.id).Set(mktid));
 
         // the time stamp to fence the range to update
@@ -192,13 +193,13 @@ public class CtrlyPurVarWork : PurVarWork
                 h.TD_();
                 if (adapted > 0)
                 {
-                    h.ADIALOG_(nameof(adapted), "?utel=", mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
+                    h.ADIALOG_(nameof(adapted), "?lotid=", lotid, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
                 }
                 h._TD();
                 h.TD_();
                 if (oked > 0)
                 {
-                    h.ADIALOG_(nameof(oked), "?utel=", mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(oked)._A();
+                    h.ADIALOG_(nameof(oked), "?lotid=", lotid, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(oked)._A();
                 }
                 h._TD();
                 h.TD_();
@@ -215,6 +216,62 @@ public class CtrlyPurVarWork : PurVarWork
             h.TOOLBAR(subscript: intstamp, bottom: true);
         }, false, 6);
     }
+
+    public async Task adapted(WebContext wc)
+    {
+        int mktid = wc[0];
+        int lotid = wc.Query[nameof(lotid)];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 2 AND lotid = @2");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(mktid).Set(lotid));
+
+        wc.GivePane(200, h =>
+        {
+            h.MAINGRID(arr, o =>
+            {
+                h.UL_("uk-card-body uk-list uk-list-divider");
+                h.LI_().H4_().T(o.name);
+                if (o.tip != null)
+                {
+                    h.T('（').T(o.tip).T('）');
+                }
+                h._H4();
+                h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+                h._LI();
+
+                h._UL();
+            });
+        }, false, 6);
+    }
+
+    public async Task oked(WebContext wc)
+    {
+        int mktid = wc[0];
+        int lotid = wc.Query[nameof(lotid)];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE mktid = @1 AND status = 4 AND lotid = @2");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(mktid).Set(lotid));
+
+        wc.GivePane(200, h =>
+        {
+            h.TABLE_();
+            foreach (var o in arr)
+            {
+                var rtl = GrabTwin<int, Org>(o.rtlid);
+
+                h.TR_();
+                h.TD(rtl.name);
+                h.TD2(o.QtyX, "件", css: "uk-text-right");
+                // h.TD_().NUMBER(null, nameof(o.ret), o.ret)._TD();
+
+                h._TR();
+            }
+            h._TABLE();
+        }, false, 6);
+    }
+
 
     [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
     public async Task ok(WebContext wc)
@@ -240,4 +297,52 @@ public class CtrlyPurVarWork : PurVarWork
 
 public class MktlyPurVarWork : PurVarWork
 {
+    [Ui("代接收", icon: "download"), Tool(ButtonPickConfirm)]
+    public async Task rtl(WebContext wc)
+    {
+        int rtlid = wc[0];
+        var prin = (User)wc.Principal;
+        var org = wc[-2].As<Org>();
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT id, name, unitx, unit, (qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND rtlid = @2");
+            await dc.QueryAsync(p => p.Set(org.id).Set(rtlid));
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_();
+                h.TABLE_();
+                while (dc.Next())
+                {
+                    dc.Let(out int id);
+                    dc.Let(out string name);
+                    dc.Let(out short unitx);
+                    dc.Let(out string unit);
+                    dc.Let(out int qtyx);
+
+                    h.TR_();
+                    h.TD_().PICK(id).SP().T(name).SMALL_().T('（').T(unitx).T(unit).T('）')._SMALL()._TD();
+                    h.TD(qtyx);
+                    // h.TD_().NUMBER(null, nameof(o.ret), o.ret)._TD();
+                    h._TR();
+                }
+                h._TABLE();
+                h._FORM();
+
+                h.TOOLBAR(toggle: true, bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            int[] key = (await wc.ReadAsync<Form>())[nameof(key)];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE purs SET status = 8, ended = @1, ender = @2 WHERE mktid = @3 AND status = 4 AND rtlid = @4 AND id")._IN_(key);
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(rtlid).SetForIn(key));
+
+            wc.Give(204);
+        }
+    }
 }

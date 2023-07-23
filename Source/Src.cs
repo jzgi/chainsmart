@@ -16,6 +16,7 @@ public class Src : Entity, ITwin<int>
         { 2, "养殖" },
         { 4, "养殖／加工" },
         { 8, "进口" },
+        { 16, "运输" },
     };
 
     public static readonly Map<short, string> Ranks = new()
