@@ -509,13 +509,13 @@ create table public.purldgs_hub_lotid
     public.ldgs
 )tablespace sup ;
 
-comment on table public.purldgs_hub_lotid is 'purchase ledgers by type';
+comment on table public.purldgs_typ is 'purchase ledgers by type';
 
-comment on column public.purldgs_hub_lotid.orgid is 'hubid that handles the purchase';
+comment on column public.purldgs_typ.orgid is 'hubid that handles the purchase';
 
-comment on column public.purldgs_hub_lotid.xorgid is 'supid of that provides the lot';
+comment on column public.purldgs_typ.xorgid is 'supid of that provides the lot';
 
-alter table public.purldgs_hub_lotid
+alter table public.purldgs_typ
     owner to postgres;
 
 create table public.puraps

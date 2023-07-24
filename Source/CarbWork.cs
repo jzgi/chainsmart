@@ -39,7 +39,7 @@ public abstract class CarbWork<V> : WebWork where V : CarbVarWork, new()
     }
 }
 
-[Ui("碳积分", "采购生态环保产品的额外奖励", icon: "world")]
+[Ui("碳汇信用", "采购生态环保产品的额外奖励", icon: "world")]
 public class OrglyCarbApWork : CarbWork<OrglyCarbVarWork>
 {
     protected override void OnCreate()

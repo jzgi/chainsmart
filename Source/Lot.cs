@@ -31,7 +31,7 @@ public class Lot : Entity, IKeyable<int>
     internal int id;
     internal int orgid;
     internal short cattyp;
-    internal DateTime started;
+    internal DateTime shipon;
     internal int srcid;
     internal string unit;
     internal short unitw;
@@ -78,7 +78,7 @@ public class Lot : Entity, IKeyable<int>
         {
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(cattyp), ref cattyp);
-            s.Get(nameof(started), ref started);
+            s.Get(nameof(shipon), ref shipon);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitw), ref unitw);
             s.Get(nameof(unitx), ref unitx);
@@ -129,7 +129,7 @@ public class Lot : Entity, IKeyable<int>
         {
             s.Put(nameof(srcid), srcid);
             s.Put(nameof(cattyp), cattyp);
-            s.Put(nameof(started), started);
+            s.Put(nameof(shipon), shipon);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitw), unitw);
             s.Put(nameof(unitx), unitx);

@@ -33,7 +33,7 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
         if (o.IsSrcBased)
         {
-            h.FIELD("交货起始日", o.started);
+            h.FIELD("交货起始日", o.shipon);
         }
         h._LI();
 
@@ -196,10 +196,10 @@ public class LotVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("发售类型", Lot.Typs[o.typ]);
+            h.LI_().FIELD("发货点", Lot.Typs[o.typ]);
             h.LI_().FIELD("产品名", o.name)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            if (o.typ == 2) h.FIELD("交货起始日", o.started);
+            if (o.typ == 2) h.FIELD("交货起始日", o.shipon);
             h._LI();
 
             h.LI_().FIELD("零售单位", o.unit).FIELD("含重", Unit.Metrics[o.unitw])._LI();
@@ -348,21 +348,19 @@ public class SuplyLotVarWork : LotVarWork
             {
                 h.FORM_().FIELDSUL_("批次信息");
 
+                h.LI_().SELECT("发货点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
                 h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
-                if (o.IsSrcBased)
-                {
-                    h.LI_().DATE("交货起始日", nameof(o.started), o.started)._LI();
-                }
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
-                h.LI_().NUMBER("整件含单位", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次整件数", nameof(o.cap), o.cap)._LI();
+                h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
 
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("秒杀直降", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订整件数", nameof(o.min), o.min, min: 1, max: o.StockX).NUMBER("限订整件数", nameof(o.max), o.max, min: 1, max: o.StockX)._LI();
+                h.LI_().DATE("交货约在", nameof(o.shipon), o.shipon, disabled: true)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -412,7 +410,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("溯源", "溯源码绑定或印制", icon: "tag", status: 3), Tool(ButtonShow)]
+    [Ui("溯源", "溯源码绑定或印制", status: 3), Tool(ButtonShow)]
     public async Task tag(WebContext wc, int cmd)
     {
         int lotid = wc[0];
@@ -421,18 +419,6 @@ public class SuplyLotVarWork : LotVarWork
 
         if (wc.IsGet)
         {
-            // if (cmd == 0)
-            // {
-            //     wc.GivePane(200, h =>
-            //     {
-            //         h.FORM_().FIELDSUL_("溯源标签方式");
-            //         h.LI_().AGOTO("Ａ）绑定预制标签", nameof(tag), 1)._LI();
-            //         h.LI_().AGOTO("Ｂ）现场印制专属贴标", nameof(tag), 2)._LI();
-            //         h._FIELDSUL()._FORM();
-            //     });
-            //     return;
-            // }
-
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = dc.QueryTop<Lot>(p => p.Set(lotid).Set(org.id));
@@ -492,7 +478,7 @@ public class SuplyLotVarWork : LotVarWork
         }
         else // POST
         {
-            if (cmd == 1)
+            if (cmd == 0)
             {
                 var f = await wc.ReadAsync<Form>();
                 int nstart = f[nameof(nstart)];
@@ -503,16 +489,13 @@ public class SuplyLotVarWork : LotVarWork
                 dc.Sql("UPDATE lots SET nstart = @1, nend = @2, status = 2, adapted = @3, adapter = @4 WHERE id = @5");
                 await dc.ExecuteAsync(p => p.Set(nstart).Set(nend).Set(DateTime.Now).Set(prin.name).Set(lotid));
             }
-            else if (cmd == 2)
-            {
-            }
 
             wc.GivePane(200); // close
         }
     }
 
     [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
-    [Ui("货架", icon: "database", status: 7), Tool(ButtonShow)]
+    [Ui("货架", "管理供应数量", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int id = wc[0];
@@ -578,7 +561,7 @@ public class SuplyLotVarWork : LotVarWork
 
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Lot.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Lot.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -593,7 +576,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线以便修改", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -657,7 +640,7 @@ public class RtllyPurLotVarWork : LotVarWork
         {
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND o.id = @1");
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND o.id = @1");
             o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
         }
         else

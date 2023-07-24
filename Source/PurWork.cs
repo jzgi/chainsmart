@@ -166,46 +166,48 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     {
         var (catmsk, hubid) = Decomp(catmsk_hubid);
 
+        // the highest bit flag
+        bool src = false;
+        if ((hubid & 0x80000) > 0)
+        {
+            src = true;
+            hubid &= 0x7ffff;
+        }
+
         Lot[] arr;
         const short Msk = 0xff | Entity.MSK_EXTRA;
-        if (hubid > 0)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
-            arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(catmsk), Msk);
-        }
-        else
+        if (src)
         {
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE status = 4 AND typ = 2 AND cattyp & @1 > 0");
             arr = await dc.QueryAsync<Lot>(p => p.Set(catmsk), Msk);
         }
+        else
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
+            arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(catmsk), Msk);
+        }
 
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_("uk-padding");
-            if (hubid > 0)
-            {
-                var hub = GrabTwin<int, Org>(hubid);
-                h.H3_().T("从").T(hub.name).T("快捷发货的产品")._H3();
-                h.AGOTO_(nameof(@new), Comp(catmsk, 0), parent: false, css: "uk-button-secondary").T("从产源发货")._A();
-            }
-            else
-            {
-                h.H3_().T("从产源发货的产品")._H3();
-            }
-            h._TOPBAR();
+            h.TOPBAR_("uk-padding").UL_("uk-subnav");
+            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓发货")._A()._LI();
+            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源发货")._A()._LI();
+            h._UL()._TOPBAR();
 
             if (arr == null)
             {
-                h.ALERT(hubid > 0 ? "尚无从品控仓快捷发货的产品" : "尚无从产源发货的产品");
+                h.ALERT("尚无上线的产品");
                 return;
             }
+
+            var seg = src ? "/" : "/-" + hubid;
 
             h.MAINGRID(arr, o =>
             {
                 // anchor to the lot sub work
-                h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
+                h.ADIALOG_("lot/", o.Key, seg, MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
                 h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
@@ -455,18 +457,16 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一接收货")]
+[Ui("采购统一收货 - 品控仓")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    public short PurTyp => (short)State;
-
-    [Ui("采购收货", status: 1), Tool(Anchor)]
+    [Ui("采购统一收货", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = ").T(PurTyp).T(" GROUP BY rtlid");
+        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = 1 GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -498,7 +498,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT first(name), first(unitx), first(unit), sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = ").T(PurTyp).T(" GROUP BY lotid");
+        dc.Sql("SELECT first(name), first(unitx), first(unit), sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = 1 GROUP BY lotid");
         await dc.QueryAsync(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -563,7 +563,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             var dt = today.AddDays(days);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND typ = ").T(PurTyp).T(" AND (oked >= @2 AND oked < @3) GROUP BY rtlid");
+            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND typ = 1 AND (oked >= @2 AND oked < @3) GROUP BY rtlid");
             await dc.QueryAsync(p => p.Set(org.id).Set(dt).Set(dt.AddDays(1)));
 
             wc.GivePage(200, h =>

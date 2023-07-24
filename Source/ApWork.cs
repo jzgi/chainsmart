@@ -51,7 +51,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
         using var dc = NewDbContext();
 
         var till = await dc.ScalarAsync("SELECT max(till) FROM buygens") as DateTime?;
-        
+
         dc.Sql("SELECT xorgid, sum(trans), sum(amt), first(rate), sum(topay) FROM buyaps WHERE level = 1 AND dt = @1 GROUP BY xorgid");
         await dc.QueryAsync(p => p.Set(till ?? default(DateTime)));
 
@@ -100,7 +100,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
         else
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE level = 1 ORDER BY dt LIMIT 40 OFFSET @1 * 40");
+            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 ORDER BY dt LIMIT 40 OFFSET @1 * 40");
             var arr = await dc.QueryAsync<Ap>();
 
             wc.GivePage(200, h =>
@@ -133,7 +133,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
             wc.GivePane(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("选择本次结算的截止日期（包含）");
+                h.FIELDSUL_("生成汇总表及应付帐");
                 h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(gen));
                 h._FORM();
@@ -161,26 +161,42 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM puraps WHERE level = 1 ORDER BY dt LIMIT 40 OFFSET @1 * 40");
-        var arr = await dc.QueryAsync<Ap>();
+
+        var till = await dc.ScalarAsync("SELECT max(till) FROM purgens") as DateTime?;
+
+        dc.Sql("SELECT xorgid, sum(trans), sum(amt), first(rate), sum(topay) FROM puraps WHERE level = 1 AND dt = @1 GROUP BY xorgid");
+        await dc.QueryAsync(p => p.Set(till ?? default(DateTime)));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
-            if (arr == null)
+
+            h.TABLE_();
+            h.THEAD_().TH("机构").TH("笔数", "uk-text-right").TH("总营业额", "uk-text-right").TH("总应付额", "uk-text-right")._THEAD();
+            while (dc.Next())
             {
-                h.ALERT("尚无结算");
-                return;
+                dc.Let(out int xorgid);
+                dc.Let(out int trans);
+                dc.Let(out decimal amt);
+                dc.Let(out short rate);
+                dc.Let(out decimal topay);
+
+                var xorg = GrabTwin<int, Org>(xorgid);
+
+                h.TR_();
+                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.cover)._A()._TD();
+                h.TD(trans);
+                h.TD(amt, money: true, right: true);
+                h.TD(topay, money: true, right: true)._TD();
+                h._TR();
             }
-            MainTable(h, arr);
-            h.PAGINATION(arr.Length == 40);
-        }, false, 12);
+            h._TABLE();
+        }, false, 120);
     }
 
     [Ui(tip: "历史", icon: "history", status: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc, int page)
     {
-        var topOrgs = Grab<int, Org>();
         bool inner = wc.Query[nameof(inner)];
         int prv = 0;
         if (inner)
@@ -209,6 +225,41 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
                 MainTable(h, arr, 2);
                 h.PAGINATION(arr.Length == 40);
             }, false, 12);
+        }
+    }
+
+    [AdmlyAuthorize(User.ROL_FIN)]
+    [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
+    public async Task gen(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Gen.Empty).T(" FROM purgens ORDER BY till LIMIT 8");
+            var arr = await dc.QueryAsync<Gen>();
+
+            var till = DateTime.Today.AddDays(-1);
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_("生成汇总表及应付帐");
+                h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
+                h._FIELDSUL();
+                h.BOTTOM_BUTTON("确认", nameof(gen));
+                h._FORM();
+
+                h.TABLE(arr, o => h.TD(o.till).TD(o.last).TD(o.opr), () => h.TH("截止").TH("上次").TH("操作"));
+            });
+        }
+        else // OUTER
+        {
+            var f = await wc.ReadAsync<Form>();
+            DateTime till = f[nameof(till)];
+            using var dc = NewDbContext(IsolationLevel.RepeatableRead);
+            await dc.ExecuteAsync("SELECT purgen(@1, @2)", p => p.Set(till).Set(prin.name));
+
+            wc.GivePane(200);
         }
     }
 }

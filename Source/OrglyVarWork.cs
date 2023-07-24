@@ -49,7 +49,7 @@ public abstract class OrglyVarWork : WebWork
 
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         var m = wc[0].As<Org>();
@@ -74,7 +74,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线以便修改", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         var org = wc[0].As<Org>();
@@ -105,11 +105,11 @@ public class RtllyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", state: true, header: "常规"); // true = retail
-
-        CreateWork<OrglyEvalWork>("eval");
+        CreateWork<OrglyEvalWork>("eval", header: "常规");
 
         CreateWork<OrglyCarbApWork>("carb");
+
+        CreateWork<OrglyAccessWork>("access", state: true); // true = retail
 
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
@@ -130,13 +130,11 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyOrgWork>("morg", header: "机构");
 
+        CreateWork<MktlyEvalWork>("meval");
+
         CreateWork<MktlyBuyWork>("mbuy");
 
-        CreateWork<MktlyPurWork>("mpurhub", state: Pur.TYP_HUB, ui: new("采购统一收货 - 品控仓"));
-
-        CreateWork<MktlyPurWork>("mpursrc", state: Pur.TYP_SRC, ui: new("采购统一收货 - 产源"));
-
-        CreateWork<MktlyEvalWork>("meval");
+        CreateWork<MktlyPurWork>("mpur");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -162,7 +160,7 @@ public class RtllyVarWork : OrglyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("设置", icon: "cog", status: 7), Tool(ButtonShow)]
+    [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         var m = wc[0].As<Org>();
@@ -206,7 +204,7 @@ public class RtllyVarWork : OrglyVarWork
     /// The polling of events that belong to the presented org.
     /// </summary>
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("智控台", icon: "desktop"), Tool(ButtonShow)]
+    [Ui("遥控", "控制智能物联设备"), Tool(ButtonShow)]
     public void @event(WebContext wc)
     {
         var org = wc[0].As<Org>();
@@ -237,11 +235,11 @@ public class SuplyVarWork : OrglyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", state: false, header: "常规"); // false = supply
-
-        CreateWork<OrglyEvalWork>("eval");
+        CreateWork<OrglyEvalWork>("eval", header: "常规");
 
         CreateWork<OrglyCarbApWork>("carb");
+
+        CreateWork<OrglyAccessWork>("access", state: false); // false = supply
 
 
         CreateWork<SuplySrcWork>("ssrc", header: "商户");
