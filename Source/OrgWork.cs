@@ -88,7 +88,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui("新建", "新建机构", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("新建", icon: "plus", status: 3), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cmd)
     {
         var prin = (User)wc.Principal;
@@ -109,7 +109,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(cmd == 1 ? "市场机构" : "供应机构");
+                h.FORM_().FIELDSUL_(cmd == 1 ? "新建市场机构" : "新建供应机构");
 
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
@@ -126,7 +126,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
                 h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
 
-                h._FIELDSUL()._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }
         else // POST

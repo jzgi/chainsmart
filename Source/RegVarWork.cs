@@ -45,7 +45,7 @@ public class AdmlyRegVarWork : RegVarWork
         }
     }
 
-    [Ui("修改", icon: "edit"), Tool(Anchor)]
+    [Ui(tip: "修改", icon: "edit"), Tool(Anchor)]
     public async Task edit(WebContext wc)
     {
         short id = wc[0];
@@ -78,7 +78,7 @@ public class AdmlyRegVarWork : RegVarWork
         }
     }
 
-    [Ui("删除", icon: "close"), Tool(ButtonOpen)]
+    [Ui(tip: "删除", icon: "trash"), Tool(ButtonOpen)]
     public async Task rm(WebContext wc)
     {
         short id = wc[0];

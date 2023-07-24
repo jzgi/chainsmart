@@ -559,7 +559,6 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-
     [OrglyAuthorize(0, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Lot.STA_OKABLE)]
     public async Task ok(WebContext wc)

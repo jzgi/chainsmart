@@ -80,7 +80,7 @@ public class MyBuyVarWork : BuyVarWork
 
 public class RtllyBuyVarWork : BuyVarWork
 {
-    [Ui("回退", tip: "回退到收单状态", icon: "triangle-left", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    [Ui(tip: "回退到收单状态", icon: "triangle-left", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
     public async Task back(WebContext wc)
     {
         int id = wc[0];
@@ -94,7 +94,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("自派", "确认自行派送？", icon: "arrow-right", status: 1), Tool(ButtonConfirm)]
+    [Ui("自派", "自行派送此单", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -311,7 +311,7 @@ public class MktlyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("统派", "统一派发", icon: "cloud-upload"), Tool(ButtonPickConfirm)]
+    [Ui("统派", "统一派发"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {
         string com = wc[0];

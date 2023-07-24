@@ -175,7 +175,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMarket ? "市场机构" : "供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMarket ? "修改市场机构" : "修改供应机构");
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
@@ -247,7 +247,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("负责", "设置负责人", icon: "user"), Tool(ButtonShow)]
+    [Ui("授权"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
         if (wc.IsGet)
@@ -255,7 +255,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             string tel = wc.Query[nameof(tel)];
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("指定用户");
+                h.FORM_().FIELDSUL_("授予管理权限");
                 h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
                 if (cmd == 1) // search user
@@ -301,7 +301,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -325,7 +325,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停业或数据维护", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -435,7 +435,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -461,7 +461,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线营业或数据维护", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -582,7 +582,7 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -608,7 +608,7 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停业或数据维护", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];

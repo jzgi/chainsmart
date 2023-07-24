@@ -238,7 +238,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("货架", icon: "database", status: 7), Tool(ButtonShow)]
+    [Ui("货架", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int itemid = wc[0];
@@ -253,7 +253,7 @@ public class RtllyItemVarWork : ItemVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("货架操作");
+                h.FORM_().FIELDSUL_("货架数量");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
@@ -280,7 +280,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -295,7 +295,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: STU_OKED), Tool(ButtonConfirm)]
+    [Ui("下线", "下线以便修改", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -309,7 +309,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确认删除或者作废？", icon: "trash", status: 3), Tool(ButtonConfirm)]
+    [Ui(tip: "确认删除或者作废", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
@@ -323,7 +323,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "恢复", icon: "reply", status: 0), Tool(ButtonConfirm)]
+    [Ui(tip: "恢复", icon: "arrow-left", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
         int id = wc[0];
