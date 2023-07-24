@@ -1871,8 +1871,8 @@ a.uk-button-primary.uk-active {
 .uk-button-secondary {
     padding: 4px 8px;
     font-size: 0.875rem;
-    border: 1px solid #ddd;
-    border-radius: 25%;
+    border: 1px solid #888;
+    border-radius: 8px;
     color: #333;
 }
 

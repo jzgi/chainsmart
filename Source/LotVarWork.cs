@@ -33,15 +33,15 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
         if (o.IsSrcBased)
         {
-            h.FIELD("输运起始日", o.started);
+            h.FIELD("交货起始日", o.started);
         }
         h._LI();
 
         if (pricing)
         {
-            h.LI_().FIELD("零计单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
             h.LI_().FIELD2("每件含", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("单价", o.price, true).FIELD("秒杀直降", o.off, true)._LI();
+            h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
         }
 
@@ -185,7 +185,7 @@ public class LotVarWork : WebWork
         h._ARTICLE();
     }
 
-    public virtual async Task @default(WebContext wc)
+    public virtual async Task @default(WebContext wc, int v)
     {
         int id = wc[0];
 
@@ -263,7 +263,7 @@ public class LotVarWork : WebWork
 
 public class PublyLotVarWork : LotVarWork
 {
-    public override async Task @default(WebContext wc)
+    public override async Task @default(WebContext wc, int v)
     {
         int id = wc[0];
 
@@ -448,7 +448,7 @@ public class SuplyLotVarWork : LotVarWork
 
                     h._FIELDSUL().FIELDSUL_("Ｂ）打印贴标");
 
-                    h.LI_().LABEL(string.Empty).AGOTO("打印专属贴标", nameof(tag), 1, parent: false,css:"uk-button uk-button-secondary")._LI();
+                    h.LI_().LABEL(string.Empty).AGOTO_(nameof(tag), 1, parent: false, css: "uk-button uk-button-secondary").T("打印专属贴标")._A()._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(tag), subscript: cmd)._FORM();
                 });
@@ -509,10 +509,6 @@ public class SuplyLotVarWork : LotVarWork
 
             wc.GivePane(200); // close
         }
-    }
-
-    public async Task label(WebContext wc, int page)
-    {
     }
 
     [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
@@ -645,22 +641,32 @@ public class SuplyLotVarWork : LotVarWork
     }
 }
 
-public class CtrlyLotVarWork : LotVarWork
-{
-}
-
 public class RtllyPurLotVarWork : LotVarWork
 {
     //
     // NOTE: this page is made publicly cacheable, though under variable path
     //
-    public new async Task @default(WebContext wc)
+    public override async Task @default(WebContext wc, int hubid)
     {
         int lotid = wc[0];
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+
+        const short Msk = 0xff | MSK_EXTRA;
+        Lot o;
+        if (hubid > 0)
+        {
+            using var dc = NewDbContext();
+
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND o.id = @1");
+            o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
+        }
+        else
+        {
+            using var dc = NewDbContext();
+
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE id = @1");
+            o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
+        }
 
         var org = GrabTwin<int, Org>(o.orgid);
         Src src = null;
@@ -689,17 +695,17 @@ public class RtllyPurLotVarWork : LotVarWork
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
             for (int i = 1; i <= Math.Min(o.max, o.StockX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
             {
-                h.OPTION_(i).T(i)._OPTION();
+                h.OPTION_(i).T(i).SP().T('件')._OPTION();
             }
             h._SELECT().SP();
-            h.SPAN_("uk-width-expand").T(" 整件，共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
+            h.SPAN_("uk-width-expand").T(" 共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
 
             // pay button
             h.BUTTON_(nameof(pur), onclick: "return $pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._FORM();
             h._BOTTOMBAR();
-        }, true, 60); // NOTE publicly cacheable though within a private context
+        }, true, 120); // NOTE publicly cacheable though within a private context
     }
 
     public async Task pur(WebContext wc, int cmd)

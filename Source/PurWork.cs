@@ -77,8 +77,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
                 catmsk = reg.catmsk;
             }
 
-            var reg_ctr_id = Comp(catmsk, org.hubid);
-            h.TOOLBAR(subscript: reg_ctr_id);
+            var catmsk_hubid = Comp(catmsk, org.hubid);
+            h.TOOLBAR(subscript: catmsk_hubid);
             if (arr == null)
             {
                 h.ALERT("尚无新采购订单");
@@ -89,7 +89,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "要品控仓备货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "arrow-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -103,7 +103,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无要品控仓备货的订单");
+                h.ALERT("尚无已发货的订单");
                 return;
             }
 
@@ -111,7 +111,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已由品控仓发货", icon: "arrow-right", status: 4), Tool(Anchor)]
+    [Ui(tip: "已收货", icon: "sign-in", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -125,7 +125,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已发货订单");
+                h.ALERT("尚无已收货的订单");
                 return;
             }
 
@@ -156,27 +156,49 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    internal static (short catmsk, int ctrid) Decomp(int catmsk_ctrid) => ((short)(catmsk_ctrid >> 20), catmsk_ctrid & 0x000fffff);
+    internal static (short catmsk, int hubid) Decomp(int catmsk_ctrid) => ((short)(catmsk_ctrid >> 20), catmsk_ctrid & 0x000fffff);
 
-    internal static int Comp(short catmsk, int ctrid) => (catmsk << 20) | ctrid;
+    internal static int Comp(short catmsk, int hubid) => (catmsk << 20) | hubid;
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "创建采购订单", "plus", status: 1), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int catmsk_ctrid) // NOTE so that it is publicly cacheable
+    [Ui("采购", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
+    public async Task @new(WebContext wc, int catmsk_hubid) // NOTE publicly cacheable
     {
-        (short catmsk, int ctrid) = Decomp(catmsk_ctrid);
+        var (catmsk, hubid) = Decomp(catmsk_hubid);
 
-        var ctr = GrabTwin<int, Org>(ctrid);
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND o.cattyp & @2 > 0");
-        var arr = await dc.QueryAsync<Lot>(p => p.Set(ctrid).Set(catmsk));
+        Lot[] arr;
+        const short Msk = 0xff | Entity.MSK_EXTRA;
+        if (hubid > 0)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
+            arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(catmsk), Msk);
+        }
+        else
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE status = 4 AND typ = 2 AND cattyp & @1 > 0");
+            arr = await dc.QueryAsync<Lot>(p => p.Set(catmsk), Msk);
+        }
 
         wc.GivePage(200, h =>
         {
+            h.TOPBAR_("uk-padding");
+            if (hubid > 0)
+            {
+                var hub = GrabTwin<int, Org>(hubid);
+                h.H3_().T("从").T(hub.name).T("快捷发货的产品")._H3();
+                h.AGOTO_(nameof(@new), Comp(catmsk, 0), parent: false, css: "uk-button-secondary").T("从产源发货")._A();
+            }
+            else
+            {
+                h.H3_().T("从产源发货的产品")._H3();
+            }
+            h._TOPBAR();
+
             if (arr == null)
             {
-                h.ALERT("尚无上线产品投放", $"{ctr.cover}大区，当前市场版块");
+                h.ALERT(hubid > 0 ? "尚无从品控仓快捷发货的产品" : "尚无从产源发货的产品");
                 return;
             }
 
@@ -195,7 +217,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
                 h._A();
             });
-        }, true, 60); // NOTE we deliberately make the pages publicly cacheable though within a private context
+        }, true, 120); // NOTE we deliberately make the pages publicly cacheable though within a private context
     }
 }
 
