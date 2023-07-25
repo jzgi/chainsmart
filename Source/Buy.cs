@@ -29,10 +29,10 @@ public class Buy : Entity, IKeyable<long>
 
     public new static readonly Map<short, string> Statuses = new()
     {
-        { STU_VOID, "已撤单" },
-        { STU_CREATED, "已收单" },
-        { STU_ADAPTED, "已集合" },
-        { STU_OKED, "已派发" },
+        { STU_VOID, "撤销" },
+        { STU_CREATED, "收单" },
+        { STU_ADAPTED, "集合" },
+        { STU_OKED, "派发" },
     };
 
 
@@ -158,9 +158,9 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public bool IsPlat => typ == TYP_NET;
+    public bool IsOnNet => typ == TYP_NET;
 
-    public bool IsCash => typ == TYP_POS;
+    public bool IsOnPos => typ == TYP_POS;
 
     public override string ToString() => uname + "购买" + name + "商品";
 

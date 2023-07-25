@@ -17,7 +17,7 @@ public class LotVarWork : WebWork
         LotUrl = MainApp.WwwUrl + "/lot/",
         OrgUrl = MainApp.WwwUrl + "/org/";
 
-    internal static void LotShow(HtmlBuilder h, Lot o, Org org, Src src, bool pricing, int tracenum = 0)
+    internal static void ShowLot(HtmlBuilder h, Lot o, Org org, Src src, bool pricing, int tracenum = 0)
     {
         h.ARTICLE_("uk-card uk-card-primary");
         h.H4("产品信息", "uk-card-header");
@@ -26,40 +26,46 @@ public class LotVarWork : WebWork
         {
             h.PIC(LotUrl, o.id, "/pic", css: "uk-width-1-1");
         }
-
         h.UL_("uk-list uk-list-divider");
-        h.LI_().FIELD("产品名", o.name).FIELD("分类", o.cattyp)._LI();
-        h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-        h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-        if (o.IsOnSrc)
+        h.LI_().FIELD("产品名", o.name)._LI();
+
+        if (src != null)
         {
-            h.FIELD("交货起始日", o.shipon);
+            h.LI_().FIELD("产品源", src.name)._LI();
+            h.LI_().FIELD(string.Empty, src.tip)._LI();
+            h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
+            h.LI_().FIELD("说明", src.remark)._LI();
+            if (src.pic)
+            {
+                h.PIC(SrcUrl, src.id, "/pic", css: "uk-width-1-1");
+            }
+
+            if (src.m1)
+            {
+                h.PIC(SrcUrl, src.id, "/m-1", css: "uk-width-1-1");
+            }
+
+            if (src.m2)
+            {
+                h.PIC(SrcUrl, src.id, "/m-2", css: "uk-width-1-1");
+            }
+
+            if (src.m3)
+            {
+                h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1");
+            }
+
+            if (src.m4)
+            {
+                h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1");
+            }
         }
-        h._LI();
 
-        if (pricing)
-        {
-            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
-            h.LI_().FIELD2("每件含", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
-            h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
-        }
-
-        h._UL();
-        h._SECTION();
-        h._ARTICLE();
-
-        h.ARTICLE_("uk-card uk-card-primary");
-        h.H4("批次检验", "uk-card-header");
-        h.SECTION_("uk-card-body");
-        h.UL_("uk-list uk-list-divider");
         h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
-
         if (o.nstart > 0 && o.nend > 0)
         {
             h.LI_().FIELD2("溯源码范围", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
         }
-
         if (tracenum > 0)
         {
             h.LI_("uk-background-secondary").FIELD("本溯源码", $"{tracenum:0000 0000}")._LI();
@@ -68,12 +74,16 @@ public class LotVarWork : WebWork
                 h.LI_("uk-background-secondary").FIELD("品控仓操作", v.dt)._LI();
             }
         }
-
-        h.LI_().FIELD2("登记", o.created, o.creator)._LI();
-        if (o.adapter != null) h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
+        h._LI();
 
         h._UL();
+        h._SECTION();
+        h._ARTICLE();
 
+
+        h.ARTICLE_("uk-card uk-card-primary");
+        h.H4("批次检验", "uk-card-header");
+        h.SECTION_("uk-card-body");
         if (o.m1)
         {
             h.PIC(LotUrl, o.id, "/m-1", css: "uk-width-1-1");
@@ -99,46 +109,6 @@ public class LotVarWork : WebWork
 
         // ASSEET
 
-        if (src != null)
-        {
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H3("产源设施", "uk-card-header");
-            h.SECTION_("uk-card-body");
-            if (src.pic)
-            {
-                h.PIC(SrcUrl, src.id, "/pic", css: "uk-width-1-1");
-            }
-
-            h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产源设施", src.name)._LI();
-            h.LI_().FIELD("简介语", src.tip)._LI();
-            h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
-            h.LI_().FIELD("说明", src.remark)._LI();
-            h._UL();
-
-            if (src.m1)
-            {
-                h.PIC(SrcUrl, src.id, "/m-1", css: "uk-width-1-1");
-            }
-
-            if (src.m2)
-            {
-                h.PIC(SrcUrl, src.id, "/m-2", css: "uk-width-1-1");
-            }
-
-            if (src.m3)
-            {
-                h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1");
-            }
-
-            if (src.m4)
-            {
-                h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1");
-            }
-
-            h._SECTION();
-            h._ARTICLE();
-        }
         //
         // SUP
 
@@ -156,8 +126,22 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("工商登记名", org.legal)._LI();
         h.LI_().FIELD("联系电话", org.tel)._LI();
         h.LI_().FIELD("地址／场地", org.addr)._LI();
-        h.LI_().FIELD("指标参数", org.specs)._LI();
-        h.LI_().FIELD2("登记", org.created, org.creator)._LI();
+
+        h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+        h.LI_().FIELD("发货点", Lot.Typs[o.typ]);
+        if (o.IsOnSrc)
+        {
+            h.FIELD("交货起始日", o.shipon);
+        }
+
+        if (pricing)
+        {
+            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Metrics[o.unitw])._LI();
+            h.LI_().FIELD2("整件", o.unitx, o.unit)._LI();
+            h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
+            h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
+        }
+
 
         h._UL();
 
@@ -189,9 +173,16 @@ public class LotVarWork : WebWork
     {
         int id = wc[0];
 
+        const short Msk = 0xff | MSK_EXTRA;
+
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id));
+        dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE id = @1");
+        var o = await dc.QueryTopAsync<Lot>(p => p.Set(id), Msk);
+
+        if (o.IsOnHub)
+        {
+            await dc.QueryAsync("SELECT hubid, stock FROM lotinvs WHERE lotid = @1", p => p.Set(id));
+        }
 
         wc.GivePane(200, h =>
         {
@@ -208,19 +199,27 @@ public class LotVarWork : WebWork
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
             h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
 
-            h._UL();
-
-            h.TABLE(o.ops, o =>
+            h.LI_().LABEL("货架");
+            if (o.IsOnHub)
+            {
+                h.UL_("uk-static");
+                while (dc.Next())
                 {
-                    h.TD_().T(o.dt, time: 1)._TD();
-                    h.TD(o.typ);
-                    h.TD(o.qty, right: true);
-                    h.TD(o.stock, right: true);
-                    h.TD(o.by);
-                },
-                thead: () => h.TH("操作时间").TH("摘要").TH("数量").TH("余量").TH("操作"),
-                reverse: true
-            );
+                    dc.Let(out int hubid);
+                    dc.Let(out int stock);
+
+                    var hub = GrabTwin<int, Org>(hubid);
+
+                    h.LI_().T(hub.name).T('（').T(stock / o.unitx).T('）')._LI();
+                }
+                h._UL();
+            }
+            else
+            {
+                h.SPAN(o.stock, css: "uk-static");
+            }
+            h._LI();
+            h._UL();
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         });
@@ -298,7 +297,7 @@ public class PublyLotVarWork : LotVarWork
 
             h._TOPBARXL();
 
-            LotShow(h, o, org, src, false);
+            ShowLot(h, o, org, src, false);
 
             h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
             h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
@@ -503,33 +502,43 @@ public class SuplyLotVarWork : LotVarWork
         var prin = (User)wc.Principal;
 
         short optyp = 0;
-        int hub = 0;
+        int hubid = 0;
         int qtyx = 1;
 
         if (wc.IsGet)
         {
-            var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
-
             using var dc = NewDbContext();
+            await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
+            dc.Let(out StockOp[] ops);
 
-            await dc.ExecuteAsync("SELECT hubid, stock::varchar FROM lotinvs WHERE lotid = @1");
-            var map = dc.ToIntMap();
+            var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("品控仓");
-
-                for (var i = 0; i < arr.Length; i++)
-                {
-                    var o = arr[i];
-                    var stock = map?[o.id];
-                    h.RADIO(nameof(hub), o.id, label: o.name, required: i == 0, tip: stock);
-                }
-
-                h._FIELDSUL().FIELDSUL_("货架操作");
+                h.FORM_().FIELDSUL_("货架操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
+                h.LI_().SELECT("品控仓", nameof(hubid), hubid, arr)._LI();
+                h._FIELDSUL();
+
+                h.TABLE(ops, o =>
+                    {
+                        h.TD_().T(o.dt, date: 2, time: 1)._TD();
+                        h.TD2(StockOp.Typs[o.typ], o.qty, css: "uk-text-right");
+                        h.TD_();
+                        if (hubid > 0)
+                        {
+                            h.T(GrabTwin<int, Org>(o.hub).name);
+                        }
+                        h._TD();
+                        h.TD(o.stock, right: true);
+                        h.TD(o.by);
+                    },
+                    thead: () => h.TH("时间").TH("摘要").TH("品控仓").TH("余量").TH("操作"),
+                    reverse: true
+                );
+
+                h.BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
         }
         else // POST
@@ -537,7 +546,7 @@ public class SuplyLotVarWork : LotVarWork
             var f = await wc.ReadAsync<Form>();
             optyp = f[nameof(optyp)];
             qtyx = f[nameof(qtyx)];
-            hub = f[nameof(hub)];
+            hubid = f[nameof(hubid)];
 
             if (!StockOp.IsAddOp(optyp))
             {
@@ -549,11 +558,18 @@ public class SuplyLotVarWork : LotVarWork
             dc.Let(out int unitx);
             int qty = qtyx * unitx;
 
-            await dc.QueryTopAsync("INSERT INTO lotinvs VALUES (@1, @2, @3) ON CONFLICT (lotid, hubid) DO UPDATE SET stock = (lotinvs.stock + @3) RETURNING stock", p => p.Set(id).Set(hub).Set(qty));
+            if (hubid > 0)
+            {
+                await dc.QueryTopAsync("INSERT INTO lotinvs VALUES (@1, @2, @3) ON CONFLICT (lotid, hubid) DO UPDATE SET stock = (lotinvs.stock + @3) RETURNING stock", p => p.Set(id).Set(hubid).Set(qty));
+            }
+            else
+            {
+                await dc.QueryTopAsync("UPDATE lots SET stock = stock + @1 WHERE id = @2 RETURNING stock", p => p.Set(qty).Set(id));
+            }
             dc.Let(out int stock);
 
             dc.Sql("UPDATE lots SET ops = ops || ROW(@1, @2, @3, @4, @5, @6)::StockOp WHERE id = @7 AND orgid = @8");
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(stock).Set(optyp).Set(prin.name).Set(hub).Set(id).Set(org.id));
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(stock).Set(optyp).Set(prin.name).Set(hubid).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }
@@ -639,7 +655,7 @@ public class RtllyPurLotVarWork : LotVarWork
         {
             using var dc = NewDbContext();
 
-            dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND o.id = @1");
+            dc.Sql("SELECT ").collst(Lot.Empty, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND o.id = @1");
             o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
         }
         else
@@ -659,7 +675,7 @@ public class RtllyPurLotVarWork : LotVarWork
 
         wc.GivePane(200, h =>
         {
-            LotShow(h, o, org, src, true);
+            ShowLot(h, o, org, src, true);
 
             // bottom bar
             //

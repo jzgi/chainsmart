@@ -12,9 +12,11 @@ public class Src : Entity, ITwin<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "地块" },
+        { 1, "种植" },
+        { 5, "种植／加工" },
         { 2, "养殖" },
-        { 4, "养殖／加工" },
+        { 6, "养殖／加工" },
+        { 4, "加工" },
         { 8, "进口" },
         { 16, "运输" },
     };

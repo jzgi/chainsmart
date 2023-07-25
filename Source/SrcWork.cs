@@ -48,10 +48,10 @@ public class PublySrcWork : SrcWork<PublySrcVarWork>
     }
 }
 
-[Ui("产源设施")]
+[Ui("产品源")]
 public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 {
-    [Ui("产源设施", status: 1), Tool(Anchor)]
+    [Ui("产品源", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -64,7 +64,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无上线产源设施");
+                h.ALERT("尚无上线的产品源");
                 return;
             }
 

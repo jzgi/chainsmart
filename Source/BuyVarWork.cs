@@ -23,30 +23,32 @@ public abstract class BuyVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            if (o.IsPlat)
+            h.LI_().LABEL("时间").SPAN_("uk-static").T(o.created, time: 2)._SPAN()._LI();
+            if (o.IsOnNet)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.ucom).T('-').T(o.uaddr)._SPAN()._LI();
-                h.LI_().FIELD("服务费", o.fee, true)._LI();
+                h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
+                h.LI_().FIELD("状态", Buy.Statuses[o.status]).FIELD("创建", o.creator)._LI();
+                h.LI_().FIELD("集合", o.adapter).FIELD(o.IsVoid ? "撤销" : "派发", o.oker)._LI();
             }
-            h.LI_().FIELD("应付金额", o.topay, true).FIELD("实付金额", o.pay, true)._LI();
-
-            if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-            if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "集合", o.adapted, o.adapter)._LI();
-            if (o.oker != null) h.LI_().FIELD2(o.IsVoid ? "撤销" : "派发", o.oked, o.oker)._LI();
-
+            else
+            {
+                h.LI_().FIELD("金额", o.topay, true).FIELD("创建", o.creator)._LI();
+            }
             h._UL();
+
+            // buy items
 
             h.TABLE(o.items, d =>
             {
                 h.TD_().T(d.name);
-                if (d.unitw != 1)
+                if (d.unitw > 0)
                 {
-                    h.SP().SMALL_().T(d.unitw).T(d.unit).T("件")._SMALL();
+                    h.SP().SMALL_().T(Unit.Metrics[d.unitw])._SMALL();
                 }
-
                 h._TD();
-                h.TD_(css: "uk-text-right").CNY(d.RealPrice).SP().SUB(d.unit)._TD();
+                h.TD_(css: "uk-text-right").CNY(d.RealPrice)._TD();
                 h.TD2(d.qty, d.unit, css: "uk-text-right");
                 h.TD(d.SubTotal, true, true);
             });
@@ -80,7 +82,7 @@ public class MyBuyVarWork : BuyVarWork
 
 public class RtllyBuyVarWork : BuyVarWork
 {
-    [Ui(tip: "回退到收单状态", icon: "triangle-left", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
     public async Task back(WebContext wc)
     {
         int id = wc[0];
@@ -94,7 +96,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("自派", "自行派送此单", status: 1), Tool(ButtonConfirm)]
+    [Ui("派发", "商户自行安排派发？", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -115,7 +117,7 @@ public class RtllyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("撤单", "确认撤单并且退款？", icon: "trash", status: 1 | 2), Tool(ButtonConfirm)]
+    [Ui("撤销", "确认撤销并退款？", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -177,7 +179,7 @@ public class MktlyBuyVarWork : BuyVarWork
         wc.GivePane(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("地址").TH("已收单").TH("已集合").TH(css: "uk-width-micro")._THEAD();
+            h.THEAD_().TH("地址").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())
@@ -188,7 +190,7 @@ public class MktlyBuyVarWork : BuyVarWork
                 dc.Let(out int adapted);
 
                 h.TR_();
-                h.TD_().SPAN_().A_TEL(utel, utel).SP().T(uaddr)._SPAN()._TD();
+                h.TD_().PICK(utel).SP().SPAN_().A_TEL(utel, utel).SP().T(uaddr)._SPAN()._TD();
                 h.TD_();
                 if (created > 0)
                 {
@@ -201,18 +203,12 @@ public class MktlyBuyVarWork : BuyVarWork
                     h.ADIALOG_(nameof(adapted), "?utel=", utel, mode: ToolAttribute.MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-center").T(adapted)._A();
                 }
                 h._TD();
-                h.TD_();
-                if (adapted > 0)
-                {
-                    h.PICK(utel);
-                }
-                h._TD();
                 h._TR();
             }
 
             h._TABLE();
 
-            h.TOOLBAR(subscript: intstamp, bottom: true);
+            h.TOOLBAR(subscript: intstamp, toggle: true, bottom: true);
         });
     }
 
@@ -311,7 +307,7 @@ public class MktlyBuyVarWork : BuyVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("统派", "统一派发"), Tool(ButtonPickConfirm)]
+    [Ui("派发", "统一派发？"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {
         string com = wc[0];
@@ -324,7 +320,7 @@ public class MktlyBuyVarWork : BuyVarWork
 
         // Note: update only status = 2
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE mktid = @3 AND status = 2 AND typ = 1 AND ucom = @4 AND utel")._IN_(key).T(" AND adapted <= @5");
+        dc.Sql("UPDATE buys SET status = 4, oked = @1, oker = @2 WHERE mktid = @3 AND status = 2 AND typ = 1 AND ucom = @4 AND utel")._IN_(key).T(" AND adapted <= @5");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(mkt.id).Set(com).SetForIn(key).Set(stamp));
 
         wc.GivePane(200);

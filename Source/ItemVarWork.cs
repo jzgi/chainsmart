@@ -117,7 +117,7 @@ public class PublyItemVarWork : ItemVarWork
                 var org = GrabTwin<int, Org>(o.orgid);
                 var src = lot?.srcid > 0 ? GrabTwin<int, Src>(lot.srcid) : null;
 
-                LotVarWork.LotShow(h, lot, org, src, false);
+                LotVarWork.ShowLot(h, lot, org, src, false);
             }
             else
             {

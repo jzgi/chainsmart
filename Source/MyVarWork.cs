@@ -11,18 +11,16 @@ namespace ChainSmart;
 [Summary("注册的用户可以管理个人账号以及相关的资源")]
 public class MyVarWork : BuyWork<MyBuyVarWork>
 {
-    public async Task @default(WebContext wc, int page)
+    public async Task @default(WebContext wc)
     {
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > -1 ORDER BY id DESC LIMIT 10 OFFSET 10 * @2");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id).Set(page));
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > -1 ORDER BY id DESC LIMIT 20");
+        var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id));
 
         wc.GivePage(200, h =>
         {
-            // top bar
-
             h.TOPBARXL_();
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(prin.name);
@@ -83,13 +81,11 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 });
             }
 
-            h.PAGINATION(arr?.Length > 10);
-
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());
         }, false, 120);
     }
 
-    [Ui("身份", "刷新我的身份权限", icon: "user", status: 7), Tool(ButtonShow)]
+    [Ui("身份", "刷新我的身份权限", status: 7), Tool(ButtonShow)]
     public async Task access(WebContext wc)
     {
         int uid = wc[0];
@@ -155,7 +151,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
     }
 
 
-    [Ui("设置", "设置我的账号信息", icon: "cog", status: 7), Tool(ButtonShow)]
+    [Ui("设置", "设置我的账号信息", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         const string PASSWORD_MASK = "t#0^0z4R4pX7";
@@ -208,7 +204,19 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
-    [Ui("项目", "集体经济孵化项目", icon: "bolt", status: 7), Tool(ButtonShow)]
+    [Ui("协议", "本系统的使用条款", status: 7), Tool(ButtonShow)]
+    public async Task agmt(WebContext wc, int dt)
+    {
+        wc.GivePane(200, h =>
+        {
+            h.ARTICLE_("uk-card uk-card-primary");
+            h.H2("平台用户协议", css: "uk-card-header");
+            h.SECTION_("uk-card-body")._SECTION();
+            h._ARTICLE();
+        }, false, 3600);
+    }
+
+    [Ui("项目", "集体经济孵化项目", status: 7), Tool(ButtonShow)]
     public async Task prog(WebContext wc, int dt)
     {
         int uid = wc[0];
@@ -240,17 +248,5 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 h._ARTICLE();
             }
         }, false, 120);
-    }
-
-    [Ui("协议", "本系统的使用条款", icon: "file-text", status: 7), Tool(ButtonShow)]
-    public async Task agmt(WebContext wc, int dt)
-    {
-        wc.GivePane(200, h =>
-        {
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H2("平台用户协议", css: "uk-card-header");
-            h.SECTION_("uk-card-body")._SECTION();
-            h._ARTICLE();
-        }, false, 3600);
     }
 }

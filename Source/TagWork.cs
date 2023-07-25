@@ -53,7 +53,7 @@ public class PublyTagWork : TagWork
 
                 h._TOPBARXL();
 
-                LotVarWork.LotShow(h, lot, org, src, false, tracenum);
+                LotVarWork.ShowLot(h, lot, org, src, false, tracenum);
 
                 h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");

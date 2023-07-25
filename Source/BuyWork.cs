@@ -84,7 +84,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无网售订单");
+                h.ALERT("尚无新网售订单");
                 return;
             }
 
@@ -107,7 +107,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已集合订单");
+                h.ALERT("尚无已集合的订单");
                 return;
             }
 
@@ -131,7 +131,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已派发订单");
+                h.ALERT("尚无已派发的订单");
                 return;
             }
 
@@ -155,7 +155,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已撤销订单");
+                h.ALERT("尚无已撤销的订单");
                 return;
             }
 
@@ -245,7 +245,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         });
     }
 
-    [Ui("按社区", status: 1), Tool(Anchor)]
+    [Ui("网售统一派发", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
@@ -262,7 +262,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("社区").TH("已收单", css: "uk-width-tiny").TH("已集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -305,7 +305,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("已收单", css: "uk-width-tiny").TH("已集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("商户").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
             while (dc.Next())
             {
                 dc.Let(out int rtlid);
@@ -329,7 +329,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("我的派发", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
+    [Ui("我的", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
     public async Task my(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
