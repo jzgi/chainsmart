@@ -7,13 +7,13 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_PRODUCT = 1,
-        TYP_SERVICE = 2;
+        TYP_PROD = 1,
+        TYP_SVC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_PRODUCT, "产品" },
-        { TYP_SERVICE, "服务" },
+        { TYP_PROD, "产品" },
+        { TYP_SVC, "服务" },
     };
 
     public static readonly Map<short, string> Ranks = new()
@@ -126,9 +126,9 @@ public class Item : Entity, IKeyable<int>
         }
     }
 
-    public bool IsProduct => typ == TYP_PRODUCT;
+    public bool IsProduct => typ == TYP_PROD;
 
-    public bool IsService => typ == TYP_SERVICE;
+    public bool IsService => typ == TYP_SVC;
 
     public int Key => id;
 

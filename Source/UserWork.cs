@@ -319,10 +319,10 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
     }
 }
 
-[Ui("ＶＩＰ")]
+[Ui("VIP")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {
-    [Ui("ＶＩＰ", status: 1), Tool(Anchor)]
+    [Ui("VIP", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -337,7 +337,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无ＶＩＰ");
+                h.ALERT("尚无 VIP");
                 return;
             }
 
@@ -386,7 +386,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("添加", "添加ＶＩＰ", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("添加", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
         var org = wc[-1].As<Org>();

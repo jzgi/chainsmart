@@ -25,7 +25,7 @@ namespace ChainSmart
 
 
     [OrglyAuthorize(Org.TYP_MKT)]
-    [Ui("评检")]
+    [Ui("信用管理")]
     public class MktlyEvalWork : EvalWork<MktlyEvalVarWork>
     {
         protected static void MainGrid(HtmlBuilder h, IList<Eval> arr)
@@ -117,7 +117,7 @@ namespace ChainSmart
     }
 
     [OrglyAuthorize(Org.TYP_CTR)]
-    [Ui("评检管理")]
+    [Ui("信用管理")]
     public class CtrlyEvalWork : EvalWork<CtrlyEvalVarWork>
     {
         public void @default(WebContext wc, int page)

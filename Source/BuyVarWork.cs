@@ -177,7 +177,7 @@ public class MktlyBuyVarWork : BuyVarWork
         wc.GivePane(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("地址").TH("收单").TH("集合").TH(css: "uk-width-micro")._THEAD();
+            h.THEAD_().TH("地址").TH("已收单").TH("已集合").TH(css: "uk-width-micro")._THEAD();
 
             dc.NextResult();
             while (dc.Next())

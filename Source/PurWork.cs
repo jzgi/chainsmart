@@ -419,7 +419,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("市场").TH("已收单", css: "uk-width-tiny").TH("已发货", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {

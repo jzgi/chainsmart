@@ -33,10 +33,10 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("ＰＯＳ")]
+[Ui("POS")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
-    [Ui("ＰＯＳ", status: 1), Tool(Anchor)]
+    [Ui("POS", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -116,7 +116,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         }, false, 60, onload: "fixAll();");
     }
 
-    [Ui(tip: "今日零售记录", icon: "table", status: 2), Tool(Anchor)]
+    [Ui(tip: "今日业务", icon: "table", status: 2), Tool(Anchor)]
     public async Task today(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -130,7 +130,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无交易记录");
+                h.ALERT("尚无业务记录");
                 return;
             }
             MainTable(h, arr);
@@ -172,7 +172,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
                 h.TOOLBAR();
                 if (arr == null)
                 {
-                    h.ALERT("没有交易记录");
+                    h.ALERT("没有业务记录");
                     return;
                 }
                 MainTable(h, arr);
@@ -194,7 +194,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已作废记录");
+                h.ALERT("尚无已撤销的业务");
                 return;
             }
             MainTable(h, arr);

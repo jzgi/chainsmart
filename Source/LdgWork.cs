@@ -42,7 +42,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场业务日总表")]
+[Ui("市场业务报表")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
     [Ui("市场业务", status: 1), Tool(Anchor)]
@@ -75,7 +75,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应业务日总表")]
+[Ui("供应业务报表")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
     [Ui("供应业务", status: 1), Tool(Anchor)]
@@ -85,7 +85,7 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[Ui("销售分类汇总")]
+[Ui("销售报表")]
 public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]
@@ -113,7 +113,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
         }, false, 60);
     }
 
-    [Ui("按交易类型", status: 2), Tool(Anchor)]
+    [Ui("按业务类型", status: 2), Tool(Anchor)]
     public async Task typ(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -139,10 +139,10 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
-[Ui("销售分类汇总")]
+[Ui("销售报表")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
-    [Ui("按批次", status: 1), Tool(Anchor)]
+    [Ui("按产品批次", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -173,7 +173,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT * FROM puraggs_typ WHERE orgid = @1 ORDER BY dt DESC, typ LIMIT 30 OFFSET 30 * @2");
+        dc.Sql("SELECT * FROM purldgs_typ WHERE orgid = @1 ORDER BY dt DESC, acct LIMIT 30 OFFSET 30 * @2");
         var arr = await dc.QueryAsync<Ldg>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -205,7 +205,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓发货汇总")]
+[Ui("品控仓报表")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)

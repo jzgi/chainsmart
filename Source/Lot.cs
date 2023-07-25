@@ -187,9 +187,9 @@ public class Lot : Entity, IKeyable<int>
 
     public StockOp[] Ops => ops;
 
-    public bool IsCtrBased => typ == TYP_HUB;
+    public bool IsOnHub => typ == TYP_HUB;
 
-    public bool IsSrcBased => typ == TYP_SRC;
+    public bool IsOnSrc => typ == TYP_SRC;
 
     public override string ToString() => name;
 

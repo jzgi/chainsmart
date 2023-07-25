@@ -176,7 +176,7 @@ public class CtrlyPurVarWork : PurVarWork
         wc.GivePage(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("产品").TH("已收单", css: "uk-width-tiny").TH("已发货", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())

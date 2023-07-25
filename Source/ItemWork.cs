@@ -379,7 +379,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = prod ? Item.TYP_PRODUCT : Item.TYP_SERVICE,
+            typ = prod ? Item.TYP_PROD : Item.TYP_SVC,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
@@ -430,7 +430,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_PRODUCT,
+            typ = Item.TYP_PROD,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,

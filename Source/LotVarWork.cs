@@ -31,7 +31,7 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("产品名", o.name).FIELD("分类", o.cattyp)._LI();
         h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
         h.LI_().FIELD("交易类型", Lot.Typs[o.typ]);
-        if (o.IsSrcBased)
+        if (o.IsOnSrc)
         {
             h.FIELD("交货起始日", o.shipon);
         }
@@ -663,14 +663,16 @@ public class RtllyPurLotVarWork : LotVarWork
 
             // bottom bar
             //
-            decimal realprice = o.RealPrice;
+            var fee = BankUtility.supfee;
+
+            var realprice = o.RealPrice;
             int qtyx = 1;
             short unitx = o.unitx;
             int qty = qtyx * unitx;
-            decimal topay = qty * o.RealPrice;
+            decimal topay = qty * o.RealPrice + fee;
 
             h.BOTTOMBAR_();
-            h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(); topay.value = ({realprice} * qty.value).toFixed(2);");
+            h.FORM_("uk-flex uk-flex-middle uk-width-1-1 uk-height-1-1", oninput: $"qty.value = (qtyx.value * {unitx}).toFixed(); topay.value = ({realprice} * qty.value + (fee ? parseFloat(fee.value) : 0) ).toFixed(2);");
 
             h.HIDDEN(nameof(realprice), realprice);
 
@@ -680,7 +682,12 @@ public class RtllyPurLotVarWork : LotVarWork
                 h.OPTION_(i).T(i).SP().T('件')._OPTION();
             }
             h._SELECT().SP();
-            h.SPAN_("uk-width-expand").T(" 共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit)._SPAN();
+            h.SPAN_("uk-width-expand uk-padding").T("共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit);
+            if (o.IsOnHub)
+            {
+                h.H6_("uk-margin-auto-left").T("到市场运费 +").OUTPUT(nameof(fee), fee)._H6();
+            }
+            h._SPAN();
 
             // pay button
             h.BUTTON_(nameof(pur), onclick: "return $pur(this);", css: "uk-button-danger uk-width-medium uk-height-1-1").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -708,18 +715,18 @@ public class RtllyPurLotVarWork : LotVarWork
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
 
             var qty = qtyx * lot.unitx;
-
             var sup = GrabTwin<int, Org>(lot.orgid);
+            var fee = BankUtility.supfee;
 
-            var m = new Pur(lot, rtl, sup)
+            var o = new Pur(lot, rtl, sup)
             {
                 created = DateTime.Now,
                 creator = prin.name,
                 qty = qty,
-                topay = lot.RealPrice * qty,
+                fee = fee,
+                topay = lot.RealPrice * qty + fee,
                 status = -1
             };
-
 
             // check and try to use an existing record
             int purid = 0;
@@ -733,12 +740,16 @@ public class RtllyPurLotVarWork : LotVarWork
             if (purid == 0)
             {
                 dc.Sql("INSERT INTO purs ").colset(Pur.Empty, msk)._VALUES_(Pur.Empty, msk).T(" RETURNING id, topay");
-                await dc.QueryTopAsync(p => m.Write(p));
+                await dc.QueryTopAsync(p => o.Write(p));
             }
             else
             {
                 dc.Sql("UPDATE purs ")._SET_(Pur.Empty, msk).T(" WHERE id = @1 RETURNING id, topay");
-                await dc.QueryTopAsync(p => m.Write(p));
+                await dc.QueryTopAsync(p =>
+                {
+                    o.Write(p);
+                    p.Set(purid);
+                });
             }
             dc.Let(out purid);
             dc.Let(out decimal topay);
@@ -751,7 +762,7 @@ public class RtllyPurLotVarWork : LotVarWork
                 prin.im, // the payer
                 wc.RemoteIpAddress.ToString(),
                 MainApp.MgtUrl + "/" + nameof(MgtService.onpay),
-                m.ToString()
+                o.ToString()
             );
 
             if (prepay_id != null)

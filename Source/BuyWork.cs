@@ -262,7 +262,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("社区").TH("已收单", css: "uk-width-tiny").TH("已集合", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -305,7 +305,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("商户").TH("已收单", css: "uk-width-tiny").TH("已集合", css: "uk-width-tiny")._THEAD();
             while (dc.Next())
             {
                 dc.Let(out int rtlid);
