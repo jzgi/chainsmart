@@ -10,7 +10,7 @@ public class User : Entity, IKeyable<int>
     // pro types
     public static readonly Map<short, string> Typs = new()
     {
-        { 0, "普通" },
+        { 0, null },
         { 1, "市场运营师" },
         { 2, "健康管理师" },
     };

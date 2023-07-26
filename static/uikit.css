@@ -928,11 +928,13 @@ button.uk-icon:not(:disabled) {
 
 .uk-icon-link {
     color: #f59604;
+    padding: 4px;
 }
 
 .uk-icon-link:hover,
 .uk-icon-link:focus {
     color: #f59604;
+    background-color: #ededed;
     outline: none;
 }
 
@@ -2656,8 +2658,8 @@ label.uk-label {
     display: flex;
     color: #7daa1d;
     margin-right: 0.25rem;
-    width: 5.25rem;
-    min-width: 5.25rem;
+    width: 4.75rem;
+    min-width: 4.75rem;
     justify-content: flex-end;
     height: 2rem;
 }

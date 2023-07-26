@@ -20,48 +20,50 @@ public abstract class OrgVarWork : WebWork
 
         wc.GivePane(200, h =>
         {
-            h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD(m.IsService ? "品牌名" : "商户名", m.name)._LI();
-            h.LI_().FIELD("简介语", m.tip)._LI();
-            if (!m.IsService)
+            lock (m)
             {
-                h.LI_().FIELD("工商登记名", m.legal)._LI();
-            }
-            if (m.AsUpper)
-            {
-                h.LI_().FIELD("涵盖市场名", m.cover)._LI();
-            }
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("商户名", m.name)._LI();
+                h.LI_().FIELD("简介语", m.tip)._LI();
+                if (!m.IsService)
+                {
+                    h.LI_().FIELD("工商登记名", m.legal)._LI();
+                }
+                if (m.AsUpper)
+                {
+                    h.LI_().FIELD("涵盖市场名", m.cover)._LI();
+                }
 
-            h.LI_();
-            if (m.regid > 0)
-            {
-                h.FIELD(m.IsRetail ? "版块" : "区域", regs[m.regid]);
-                h.FIELD("联系电话", m.tel);
-            }
-            h._LI();
-            h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsService ? "链接" : "地址", m.addr)._LI();
-            if (!m.IsRetail)
-            {
-                h.LI_().FIELD("说明", m.descr)._LI();
-            }
+                h.LI_();
+                if (m.regid > 0)
+                {
+                    h.FIELD(m.IsRetail ? "版块" : "区域", regs[m.regid]);
+                    h.FIELD("联系电话", m.tel);
+                }
+                h._LI();
+                h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsService ? "链接" : "地址", m.addr)._LI();
+                if (!m.IsRetail)
+                {
+                    h.LI_().FIELD("说明", m.descr)._LI();
+                }
 
-            if (m.AsUpper || m.AsSupply)
-            {
-                h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
-                h.LI_().FIELD("指标参数", m.specs)._LI();
-            }
-            if (m.AsRetail || m.AsSupply)
-            {
-                h.LI_().FIELD("收款账号", m.bankacct)._LI();
-                h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
-                h.LI_().FIELD("托管", m.trust)._LI();
-            }
+                if (m.AsUpper || m.AsSupply)
+                {
+                    h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
+                    h.LI_().FIELD("指标参数", m.specs)._LI();
+                }
+                if (m.AsRetail || m.AsSupply)
+                {
+                    h.LI_().FIELD("收款账号", m.bankacct)._LI();
+                    h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+                    h.LI_().FIELD("托管", m.trust)._LI();
+                }
 
-            h.LI_().FIELD2("创建", m.created, m.creator)._LI();
-            if (m.adapter != null) h.LI_().FIELD2("修改", m.adapted, m.adapter)._LI();
-            if (m.oker != null) h.LI_().FIELD2("上线", m.oked, m.oker)._LI();
+                h.LI_().FIELD("状态", m.status, Org.Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
+                h.LI_().FIELD2(m.IsVoid ? "删除" : "修改", m.adapter, m.adapted, sep: "<br>").FIELD2("上线", m.oker, m.oked, sep: "<br>")._LI();
 
-            h._UL();
+                h._UL();
+            }
 
             h.TOOLBAR(subscript: m.IsMarket ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
         }, false, 6);

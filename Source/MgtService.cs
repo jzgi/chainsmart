@@ -18,18 +18,6 @@ public class MgtService : MainService
         CreateWork<RtllyWork>("rtlly"); // for markets and retail shops
     }
 
-    public void @default(WebContext wc)
-    {
-        wc.GivePage(200, h =>
-        {
-            h.FORM_().FIELDSUL_("运营管理模块");
-            h.LI_().A_("admly/").T("Ａ）平台管理")._A()._LI();
-            h.LI_().A_("suply//").T("Ｂ）供应操作")._A()._LI();
-            h.LI_().A_("rtlly//").T("Ｃ）市场操作")._A()._LI();
-            h._FIELDSUL()._FORM();
-        }, true, 3600, title: "中惠农通运营管理");
-    }
-
     /**
      * The callback by the payment gateway.
      */

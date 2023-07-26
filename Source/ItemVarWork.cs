@@ -31,13 +31,12 @@ public class ItemVarWork : WebWork
             if (o.IsProduct) h.FIELD("单位含重", o.unitw, Unit.Weights);
             h._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
-            h.LI_().FIELD("ＶＩＰ立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
+            h.LI_().FIELD("VIP立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
             h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
 
-            if (o.creator != null) h.LI_().FIELD2("创编", o.creator, o.created)._LI();
-            if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
-            if (o.oker != null) h.LI_().FIELD2("上线", o.oker, o.oked)._LI();
+            h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -137,7 +136,7 @@ public class PublyItemVarWork : ItemVarWork
                 if (o.unitw > 0) h.FIELD("含重", o.unitw);
                 h._LI();
                 h.LI_().FIELD("单价", o.price, money: true);
-                if (o.off > 0) h.FIELD("ＶＩＰ立减", o.off);
+                if (o.off > 0) h.FIELD("VIP立减", o.off);
                 h._LI();
                 h._UL();
 
@@ -194,7 +193,7 @@ public class RtllyItemVarWork : ItemVarWork
                 h._LI();
 
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();

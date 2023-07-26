@@ -219,6 +219,10 @@ public class LotVarWork : WebWork
                 h.SPAN(o.stock, css: "uk-static");
             }
             h._LI();
+
+            h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
+
             h._UL();
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());

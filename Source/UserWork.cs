@@ -337,7 +337,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无 VIP");
+                h.ALERT("尚无VIP");
                 return;
             }
 
@@ -412,7 +412,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
                     {
                         if (o.IsVipOf(org.id))
                         {
-                            h.ALERT("该用户已经是ＶＩＰ");
+                            h.ALERT("该用户已经是VIP");
                         }
                         else
                         {

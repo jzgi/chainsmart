@@ -137,7 +137,7 @@ public class OrglyAccessVarWork : UserVarWork
 public class RtllyVipVarWork : UserVarWork
 {
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "删除ＶＩＰ身份", icon: "trash"), Tool(ButtonConfirm)]
+    [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         var org = wc[-2].As<Org>();

@@ -85,7 +85,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无下线产源设施");
+                h.ALERT("尚无下线的产品源");
                 return;
             }
 
@@ -106,7 +106,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无删除产源设施");
+                h.ALERT("尚无删除的产品源");
                 return;
             }
 
@@ -115,7 +115,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("新建", "新建产源设施", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -130,15 +130,15 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
             };
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_();
+                h.FORM_().FIELDSUL_("新建产品源");
 
-                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true)._LI();
-                h.LI_().TEXTAREA("简述", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
+                h.LI_().TEXT("产品源名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true).SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
-                h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
+                h.LI_().TEXTAREA("规格", nameof(o.specs), o.specs, max: 300)._LI();
+                h.LI_().NUMBER("碳积分因子", nameof(o.co2ekg), o.co2ekg, min: 0.00M, max: 99.99M)._LI();
+                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });

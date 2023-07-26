@@ -3,6 +3,7 @@ using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using static ChainFx.Application;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
@@ -24,18 +25,16 @@ public abstract class PurVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("单号", o.id, digits: 10)._LI();
-            h.LI_().LABEL("买方").ADIALOG_(MainApp.WwwUrl + "/org/", o.rtlid, "/", ToolAttribute.MOD_SHOW, false).T(rtl.name)._A()._LI();
-            h.LI_().LABEL("卖方").ADIALOG_(MainApp.WwwUrl + "/org/", o.supid, "/", ToolAttribute.MOD_SHOW, false).T(o.ctrid)._A()._LI();
+            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
+            h.LI_().LABEL("买方").SPAN_("uk-static").T(rtl.name).SP().ATEL(rtl.tel)._SPAN()._LI();
             h.LI_().FIELD("产品名", o.name)._LI();
-            h.LI_().FIELD("简介语", o.tip)._LI();
-            h.LI_().FIELD("基准单位", o.unit).FIELD("每件含量", o.unitx)._LI();
-            h.LI_().FIELD("基准单价", o.price, money: true).FIELD("件数", o.QtyX)._LI();
-            h.LI_().FIELD("支付", o.pay, money: true).FIELD("状态", o.status, Pur.Statuses)._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD("含重", o.unitw, Unit.Weights)._LI();
+            h.LI_().FIELD2("整件", o.unitx, o.unit).FIELD("运费", o.fee, money: true)._LI();
+            h.LI_().FIELD("单价", o.price, money: true).FIELD("优惠立减", o.off)._LI();
+            h.LI_().FIELD("件数", o.QtyX).FIELD("支付金额", o.pay, money: true)._LI();
 
-            if (o.creator != null) h.LI_().FIELD2("下单", o.created, o.creator)._LI();
-            if (o.adapter != null) h.LI_().FIELD2(o.IsVoid ? "撤单" : "备发", o.adapted, o.adapter)._LI();
-            if (o.oker != null) h.LI_().FIELD2("发货", o.oked, o.oker)._LI();
+            h.LI_().FIELD("状态", o.status, Pur.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "撤销" : "发货", o.adapter, o.adapted, sep: "<br>").FIELD2("收货", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 

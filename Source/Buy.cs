@@ -36,7 +36,7 @@ public class Buy : Entity, IKeyable<long>
     };
 
 
-    internal long id;
+    internal int id;
     internal int rtlid;
     internal int mktid;
     internal int uid;

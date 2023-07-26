@@ -37,92 +37,42 @@ public abstract class SrcVarWork : WebWork
             if (await dc.ExecuteAsync(p => p.Set(img).Set(id)) > 0)
             {
                 var m = GrabTwin<int, Src>(id);
-                switch (col)
+                lock (m)
                 {
-                    case nameof(Src.icon):
-                        m.icon = true;
-                        break;
-                    case nameof(Src.pic):
-                        m.pic = true;
-                        break;
-                    case nameof(Src.m1):
-                        m.m1 = true;
-                        break;
-                    case nameof(Src.m2):
-                        m.m2 = true;
-                        break;
-                    case nameof(Src.m3):
-                        m.m3 = true;
-                        break;
-                    case nameof(Src.m4):
-                        m.m4 = true;
-                        break;
+                    switch (col)
+                    {
+                        case nameof(Src.icon):
+                            m.icon = true;
+                            break;
+                        case nameof(Src.pic):
+                            m.pic = true;
+                            break;
+                        case nameof(Src.m1):
+                            m.m1 = true;
+                            break;
+                        case nameof(Src.m2):
+                            m.m2 = true;
+                            break;
+                        case nameof(Src.m3):
+                            m.m3 = true;
+                            break;
+                        case nameof(Src.m4):
+                            m.m4 = true;
+                            break;
+                    }
                 }
-
                 wc.Give(200); // ok
             }
-            else wc.Give(500); // internal server error
+            else
+            {
+                wc.Give(500); // internal server error
+            }
         }
     }
 }
 
 public class PublySrcVarWork : SrcVarWork
 {
-    public async Task @default(WebContext wc)
-    {
-        int id = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE id = @1");
-        var o = await dc.QueryTopAsync<Src>(p => p.Set(id));
-
-        wc.GivePage(200, h =>
-        {
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H4("产源设施", "uk-card-header");
-            h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("产源设施名", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Src.Typs)._LI();
-            h.LI_().FIELD("简介语", o.tip)._LI();
-            h.LI_().FIELD("碳减排项目", o.co2ep)._LI();
-            h.LI_().FIELD("规格参数", o.specs)._LI();
-            h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-            if (o.adapter != null)
-            {
-                h.LI_().FIELD2("制码", o.adapted, o.adapter)._LI();
-            }
-
-            if (o.oker != null)
-            {
-                h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
-            }
-
-            h._UL();
-
-            if (o.m1)
-            {
-                h.PIC("/src/", o.id, "/m-1", css: "uk-width-1-1 uk-card-body");
-            }
-
-            if (o.m2)
-            {
-                h.PIC("/src/", o.id, "/m-2", css: "uk-width-1-1 uk-card-body");
-            }
-
-            if (o.m3)
-            {
-                h.PIC("/src/", o.id, "/m-3", css: "uk-width-1-1 uk-card-body");
-            }
-
-            if (o.m4)
-            {
-                h.PIC("/src/", o.id, "/m-4", css: "uk-width-1-1 uk-card-body");
-            }
-
-            h._ARTICLE();
-        }, true, 900, o.name);
-    }
-
     const int MAXAGE = 3600 * 12;
 
     public async Task icon(WebContext wc)
@@ -154,15 +104,17 @@ public class SuplySrcVarWork : SrcVarWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产源设施名", o.name)._LI();
-            h.LI_().FIELD("类别", o.typ, Src.Typs)._LI();
+            h.LI_().FIELD("产品源名", o.name)._LI();
+            h.LI_().FIELD("类别", o.typ, Src.Typs).FIELD("等级", o.rank, Src.Ranks)._LI();
             h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("说明", o.remark)._LI();
             h.LI_().FIELD("规格参数", o.specs)._LI();
+            h.LI_().FIELD("碳积分因子", o.co2ekg)._LI();
+            h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
 
-            h.LI_().FIELD2("创建", o.created, o.creator)._LI();
-            if (o.adapter != null) h.LI_().FIELD2("修改", o.adapted, o.adapter)._LI();
-            if (o.oker != null) h.LI_().FIELD2("上线", o.oked, o.oker)._LI();
+            h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
+            
             h._UL();
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
@@ -182,17 +134,18 @@ public class SuplySrcVarWork : SrcVarWork
             using var dc = NewDbContext();
             dc.Sql("SELECT ").collst(Src.Empty).T(" FROM srcs_vw WHERE id = @1");
             var o = dc.QueryTop<Src>(p => p.Set(id));
+
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true)._LI();
+                h.LI_().TEXT("产品源名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true).SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
-                h.LI_().TEXTAREA("规格参数", nameof(o.specs), o.specs, max: 100)._LI();
+                h.LI_().TEXTAREA("规格", nameof(o.specs), o.specs, max: 300)._LI();
+                h.LI_().NUMBER("碳积分因子", nameof(o.co2ekg), o.co2ekg, min: 0.00M, max: 99.99M)._LI();
+                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -243,7 +196,7 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", icon: "cloud-upload", status: 3), Tool(ButtonConfirm)]
+    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -269,7 +222,7 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", icon: "cloud-download", status: STU_OKED), Tool(ButtonConfirm)]
+    [Ui("下线", "下线暂停运行或者数据维护", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];

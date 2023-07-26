@@ -35,7 +35,6 @@ public class Src : Entity, ITwin<int>
     internal short rank;
     internal string remark;
     internal decimal co2ekg; // kg
-    internal decimal co2ep; // per
     internal double x;
     internal double y;
     internal JObj specs;
@@ -72,7 +71,6 @@ public class Src : Entity, ITwin<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(co2ekg), ref co2ekg);
-            s.Get(nameof(co2ep), ref co2ep);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -108,7 +106,6 @@ public class Src : Entity, ITwin<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(co2ekg), co2ekg);
-            s.Put(nameof(co2ep), co2ep);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);

@@ -23,19 +23,15 @@ public abstract class BuyVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().LABEL("时间").SPAN_("uk-static").T(o.created, time: 2)._SPAN()._LI();
+            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
             if (o.IsOnNet)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.ucom).T('-').T(o.uaddr)._SPAN()._LI();
-                h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
-                h.LI_().FIELD("状态", Buy.Statuses[o.status]).FIELD("创建", o.creator)._LI();
-                h.LI_().FIELD("集合", o.adapter).FIELD(o.IsVoid ? "撤销" : "派发", o.oker)._LI();
             }
-            else
-            {
-                h.LI_().FIELD("金额", o.topay, true).FIELD("创建", o.creator)._LI();
-            }
+            h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
+            h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "撤销" : "集合", o.adapter, o.adapted, sep: "<br>").FIELD2("派发", o.oker, o.oked, sep: "<br>")._LI();
             h._UL();
 
             // buy items
