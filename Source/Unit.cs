@@ -23,7 +23,7 @@ public class Unit
         { "天", 0 },
     };
 
-    public static readonly Map<short, string> Metrics = new()
+    public static readonly Map<short, string> Weights = new()
     {
         { 0, "未定义" },
         { 50, "1两" },

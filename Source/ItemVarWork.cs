@@ -28,7 +28,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("商品名", o.name)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("零售单位", o.unit);
-            if (o.IsProduct) h.FIELD("单位含重", o.unitw, Unit.Metrics);
+            if (o.IsProduct) h.FIELD("单位含重", o.unitw, Unit.Weights);
             h._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
             h.LI_().FIELD("ＶＩＰ立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
@@ -189,7 +189,7 @@ public class RtllyItemVarWork : ItemVarWork
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true);
                 if (prod)
                 {
-                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics);
+                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights);
                 }
                 h._LI();
 

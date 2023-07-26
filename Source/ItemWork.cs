@@ -91,7 +91,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
                 h.HEADER_().H4(o.name);
                 if (o.unitw > 0)
                 {
-                    h.SP().SMALL_().T(Unit.Metrics[o.unitw])._SMALL();
+                    h.SP().SMALL_().T(Unit.Weights[o.unitw])._SMALL();
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
@@ -397,7 +397,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Metrics)._LI();
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("ＶＩＰ立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();

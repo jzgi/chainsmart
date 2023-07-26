@@ -45,7 +45,7 @@ public abstract class BuyVarWork : WebWork
                 h.TD_().T(d.name);
                 if (d.unitw > 0)
                 {
-                    h.SP().SMALL_().T(Unit.Metrics[d.unitw])._SMALL();
+                    h.SP().SMALL_().T(Unit.Weights[d.unitw])._SMALL();
                 }
                 h._TD();
                 h.TD_(css: "uk-text-right").CNY(d.RealPrice)._TD();

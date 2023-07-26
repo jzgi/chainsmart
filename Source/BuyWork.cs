@@ -291,7 +291,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         });
     }
 
-    [Ui("按商户", status: 2), Tool(Anchor)]
+    [Ui(tip: "按商户", icon: "grid", status: 2), Tool(Anchor)]
     public async Task orgs(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
@@ -329,25 +329,99 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("我的", tip: "我的派发任务", icon: "user", status: 7), Tool(ButtonOpen)]
-    public async Task my(WebContext wc)
+    [Ui(tip: "已统一派发的订单", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]
+    public async Task oked(WebContext wc, int page)
     {
-        var mkt = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
+        var org = wc[-1].As<Org>();
 
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 4  AND typ = 1 AND oker = @2 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(prin.name));
+        string com;
 
-        wc.GivePage(200, h =>
+        bool inner = wc.Query[nameof(inner)];
+        if (inner)
         {
-            if (arr == null)
+            wc.GivePane(200, h =>
             {
-                h.ALERT("尚无派发任务");
-                return;
-            }
+                h.FORM_(css: "uk-card uk-card-primary uk-card-body");
 
-            MainGrid(h, arr);
-        });
+                var specs = org?.specs;
+                for (int i = 0; i < specs?.Count; i++)
+                {
+                    var spec = specs.EntryAt(i);
+                    var v = spec.Value;
+                    if (v.IsObject)
+                    {
+                        h.FIELDSUL_(spec.Key, css: "uk-list uk-list-divider");
+
+                        var sub = (JObj)v;
+                        for (int k = 0; k < sub.Count; k++)
+                        {
+                            var e = sub.EntryAt(k);
+
+                            h.LI_().RADIO(nameof(com), e.Key, e.Key)._LI();
+                        }
+
+                        h._FIELDSUL();
+                    }
+                }
+                h._FORM();
+            });
+        }
+        else // OUTER
+        {
+            com = wc.Query[nameof(com)];
+
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 4 AND (typ = 1 AND adapter IS NOT NULL) AND ucom = @2 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @3");
+            var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(com).Set(page));
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR();
+
+                if (arr == null)
+                {
+                    h.ALERT("没有找到记录");
+                    return;
+                }
+
+                h.MAINGRID(arr, o =>
+                {
+                    h.UL_("uk-card-body uk-list uk-list-divider");
+                    h.LI_().H4(o.name).SPAN_("uk-badge").T(o.oked, date: 2, time: 2).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
+
+                    foreach (var it in o.items)
+                    {
+                        h.LI_();
+
+                        h.SPAN_("uk-width-expand").T(it.name);
+                        if (it.unitw > 0)
+                        {
+                            h.SP().SMALL_().T(Unit.Weights[it.unitw])._SMALL();
+                        }
+
+                        h._SPAN();
+
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
+                        h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                        h._LI();
+                    }
+                    h._LI();
+
+                    h.LI_();
+                    h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
+                    if (o.fee > 0)
+                    {
+                        h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
+                    }
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
+                    h._LI();
+
+                    h._UL();
+                });
+
+                h.PAGINATION(arr.Length == 20);
+            }, false, 6);
+        }
     }
 }
