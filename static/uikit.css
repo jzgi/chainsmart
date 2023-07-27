@@ -3821,7 +3821,6 @@ ul.uk-nav-sub {
     transform: translateY(0);
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 2px 0 #888;
 }
 
 .uk-modal-small .uk-modal-body {

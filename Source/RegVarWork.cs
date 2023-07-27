@@ -45,7 +45,7 @@ public class AdmlyRegVarWork : RegVarWork
         }
     }
 
-    [Ui(tip: "修改", icon: "edit"), Tool(Anchor)]
+    [Ui(tip: "调整区域信息", icon: "edit"), Tool(Anchor)]
     public async Task edit(WebContext wc)
     {
         short id = wc[0];

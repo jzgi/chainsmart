@@ -26,8 +26,8 @@ public abstract class UserVarWork : WebWork
             h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
             h.LI_().FIELD("机构权限", User.Orgly[o.suply])._LI();
 
-            if (o.oker != null) h.LI_().FIELD2("创编", o.created, o.creator)._LI();
-            if (o.adapter != null) h.LI_().FIELD2("修改", o.adapter, o.adapted)._LI();
+            h.LI_().FIELD("状态", o.status, User.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -38,7 +38,7 @@ public abstract class UserVarWork : WebWork
 
 public class AdmlyUserVarWork : UserVarWork
 {
-    [Ui("修改", icon: "pencil"), Tool(ButtonShow)]
+    [Ui(tip: "调整用户信息", icon: "pencil"), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         short typ;

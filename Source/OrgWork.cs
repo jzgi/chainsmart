@@ -345,7 +345,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无下线商户");
+                h.ALERT("尚无下线的商户");
                 return;
             }
 

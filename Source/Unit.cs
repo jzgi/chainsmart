@@ -18,9 +18,10 @@ public class Unit
         { "桶", 0 },
         { string.Empty, 0 },
         { "位", 0 },
-        { "单", 0 },
-        { "间天", 0 },
         { "天", 0 },
+        { "次", 0 },
+        { "笔", 0 },
+        { "程", 0 },
     };
 
     public static readonly Map<short, string> Weights = new()

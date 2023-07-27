@@ -539,6 +539,8 @@ function serialize(form, notEmpty) {
 
 function askSend(trig, tip, pick) {
 
+    if (!trig.form.reportValidity()) return;
+
     if (pick && !serialize(trig.form)) {
         alert('请先勾选操作项');
         return false;
@@ -616,6 +618,9 @@ function formRefresh(trig, evt) {
     evt.preventDefault();
 
     if (trig.tagName = 'BUTTON') {
+
+        if (!trig.form.reportValidity()) return;
+
         var a = trig.formAction;
         var url = a + '?' + b;
         location.replace(url);
@@ -800,8 +805,9 @@ function ok(okbtn, mode, formid, tag, action, method) {
                 var qstr = serialize(form);
                 if (qstr) {
                     // dispose the dialog
-                    UIkit.modal(div).hide();
-                    UIkit.remove(div);
+                    UIkit.modal(div).hide().then(function () {
+                        div.remove();
+                    });
                     // load page
                     history.back();
                     location.replace(action.split("?")[0] + '?' + qstr);

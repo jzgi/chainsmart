@@ -6,6 +6,21 @@ public class Eval : Entity, IKeyable<int>
 {
     public static readonly Eval Empty = new();
 
+    public static readonly Map<short, string> Typs = new()
+    {
+        { 1, "检测" },
+        { 2, "事故" },
+    };
+
+
+    public new static readonly Map<short, string> Statuses = new()
+    {
+        { STU_VOID, "撤销" },
+        { STU_CREATED, "新建" },
+        { STU_ADAPTED, "调整" },
+        { STU_OKED, "上榜" },
+    };
+
     internal int id;
     internal int orgid;
     internal int level;

@@ -59,8 +59,8 @@ public abstract class OrgVarWork : WebWork
                     h.LI_().FIELD("托管", m.trust)._LI();
                 }
 
-                h.LI_().FIELD("状态", m.status, Org.Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
-                h.LI_().FIELD2(m.IsVoid ? "删除" : "修改", m.adapter, m.adapted, sep: "<br>").FIELD2("上线", m.oker, m.oked, sep: "<br>")._LI();
+                h.LI_().FIELD("状态", m.status, Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
+                h.LI_().FIELD2("调整", m.adapter, m.adapted, sep: "<br>").FIELD2(m.IsVoid ? "删除" : "上线", m.oker, m.oked, sep: "<br>")._LI();
 
                 h._UL();
             }
@@ -160,7 +160,7 @@ public class PublyOrgVarWork : OrgVarWork
 public class AdmlyOrgVarWork : OrgVarWork
 {
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui(tip: "修改机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc, int cmd)
     {
         int id = wc[0];
@@ -177,7 +177,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMarket ? "修改市场机构" : "修改供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMarket ? "调整市场机构" : "调整供应机构");
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
@@ -327,7 +327,7 @@ public class AdmlyOrgVarWork : OrgVarWork
     }
 
     [AdmlyAuthorize(User.ROL_OPN)]
-    [Ui("下线", "下线停业或数据维护", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -463,7 +463,7 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线营业或数据维护", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -508,7 +508,7 @@ public class MktlyOrgVarWork : OrgVarWork
 public class CtrlyOrgVarWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改供源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整供源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -610,7 +610,7 @@ public class CtrlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线停业或数据维护", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];

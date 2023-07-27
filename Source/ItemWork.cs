@@ -323,7 +323,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "下线商品", icon: "cloud-download", status: 2), Tool(Anchor)]
+    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
     public async Task down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -337,7 +337,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无下线商品");
+                h.ALERT("尚无已下线的商品");
                 return;
             }
 
@@ -345,7 +345,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已作废商品", icon: "trash", status: 4), Tool(Anchor)]
+    [Ui(tip: "已删除", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -359,7 +359,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无作废商品");
+                h.ALERT("尚无已删除的商品");
                 return;
             }
 
@@ -368,8 +368,8 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("自建", tip: "自建", icon: "plus", status: 2), Tool(ButtonOpen)]
-    public async Task def(WebContext wc)
+    [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
+    public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -393,7 +393,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("自建" + (prod ? "产品型商品" : "服务型商品"));
+                h.FORM_().FIELDSUL_("新建" + (prod ? "产品型商品" : "服务型商品"));
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
@@ -402,7 +402,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(def))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }
         else // POST
@@ -421,7 +421,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("导入", tip: "导入", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("导入", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task imp(WebContext wc)
     {
         var org = wc[-1].As<Org>();

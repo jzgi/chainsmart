@@ -221,7 +221,7 @@ public class LotVarWork : WebWork
             h._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -331,7 +331,7 @@ public class PublyLotVarWork : LotVarWork
 public class SuplyLotVarWork : LotVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改产品批次", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整产品批次", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int lotid = wc[0];
@@ -595,7 +595,7 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("下线", "下线以便修改", status: 4), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -609,15 +609,16 @@ public class SuplyLotVarWork : LotVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "删除或者作废该批次", icon: "trash", status: 3), Tool(ButtonConfirm)]
-    public async Task rm(WebContext wc)
+    [Ui(tip: "删除或者作废此产品批次", icon: "trash", status: 3), Tool(ButtonConfirm)]
+    public async Task @void(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE lots SET status = 0 WHERE id = @1 AND orgid = @2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        dc.Sql("UPDATE lots SET status = 0, oked = @1, oker = @2 WHERE id = @1 AND orgid = @2");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.Give(204); // no content
     }

@@ -113,8 +113,8 @@ public class SuplySrcVarWork : SrcVarWork
             h.LI_().FIELD("经度", o.x).FIELD("纬度", o.y)._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
-            
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
+
             h._UL();
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
@@ -122,7 +122,7 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui(tip: "修改产源设施", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整产品源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -222,7 +222,7 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线暂停运行或者数据维护", status: STU_OKED), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -246,18 +246,19 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确认删除或者作废此产品？", icon: "trash", status: 3), Tool(ButtonConfirm)]
-    public async Task rm(WebContext wc)
+    [Ui(tip: "删除作废此产品？", icon: "trash", status: 3), Tool(ButtonConfirm)]
+    public async Task @void(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
 
         var m = GrabTwin<int, Src>(id);
 
         await GetGraph<SrcGraph, int, Src>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM srcs WHERE id = @1 AND orgid = @2");
-            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+            dc.Sql("UPDATE srcs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4");
+            return await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
         wc.Give(204); // no content

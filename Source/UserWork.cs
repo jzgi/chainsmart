@@ -205,7 +205,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 [Ui("人员权限")]
 public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
 {
-    bool retail => (bool)State;
+    bool IsRetail => (bool)State;
 
     [Ui("人员权限"), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -213,7 +213,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(retail ? "rtlid" : "supid").T(" = @1 AND ").T(retail ? "rtlly" : "suply").T(" > 0");
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(IsRetail ? "rtlid" : "supid").T(" = @1 AND ").T(IsRetail ? "rtlly" : "suply").T(" > 0");
         var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -226,18 +226,17 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                 return;
             }
 
-            MainGrid(h, arr, retail);
+            MainGrid(h, arr, IsRetail);
         }, false, 6);
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("添加", tip: "添加人员权限", icon: "plus"), Tool(ButtonOpen)]
+    [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
         var org = wc[-1].As<Org>();
 
         var rtl = (bool)State;
-
         string password = null;
 
         short orgly = 0;
@@ -249,8 +248,8 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
             {
                 h.FORM_();
 
-                h.FIELDSUL_("指定用户");
-                h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                h.FIELDSUL_("添加人员权限");
+                h.LI_().TEXT("手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
 
                 if (cmd == 1) // search user
@@ -259,44 +258,45 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                     var o = dc.QueryTop<User>(p => p.Set(tel));
 
-                    if (o != null)
+                    if (o == null)
                     {
-                        h.FIELDSUL_();
+                        h.ALERT("该手机号没有注册！");
+                        return;
+                    }
+                    h.FIELDSUL_();
 
-                        h.HIDDEN(nameof(o.id), o.id);
-                        h.HIDDEN(nameof(o.tel), o.tel);
+                    h.HIDDEN(nameof(o.id), o.id);
+                    h.HIDDEN(nameof(o.tel), o.tel);
 
-                        h.LI_().FIELD("用户姓名", o.name)._LI();
-                        var yes = true;
-                        if (o.supid > 0)
+                    h.LI_().FIELD("用户名", o.name)._LI();
+                    var yes = true;
+                    if (o.supid > 0)
+                    {
+                        var exOrg = GrabTwin<int, Org>(rtl ? o.rtlid : o.supid);
+                        if (exOrg != null)
                         {
-                            var exOrg = GrabTwin<int, Org>(rtl ? o.rtlid : o.supid);
-                            if (exOrg != null)
+                            h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[rtl ? o.rtlly : o.suply])._LI();
+                            if (exOrg.id != org.id)
                             {
-                                h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[rtl ? o.rtlly : o.suply])._LI();
-                                if (exOrg.id != org.id)
-                                {
-                                    h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
-                                    yes = false;
-                                }
+                                h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
+                                yes = false;
                             }
                         }
-                        else
-                        {
-                            h.LI_().FIELD("现有权限", "无")._LI();
-                        }
-
-                        if (yes)
-                        {
-                            h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, _) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
-                            h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
-                        }
-
-                        h._FIELDSUL();
-                        h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
                     }
-                }
+                    else
+                    {
+                        h.LI_().FIELD("现有权限", "无")._LI();
+                    }
 
+                    if (yes)
+                    {
+                        h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, _) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                        h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
+                    }
+
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
+                }
                 h._FORM();
             });
         }

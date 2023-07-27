@@ -36,7 +36,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "删除" : "修改", o.adapter, o.adapted, sep: "<br>").FIELD2("上线", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -161,7 +161,7 @@ public class PublyItemVarWork : ItemVarWork
 public class RtllyItemVarWork : ItemVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int itemid = wc[0];
@@ -294,7 +294,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("下线", "下线以便修改", status: STU_OKED), Tool(ButtonConfirm)]
+    [Ui("下线", "下线停用或调整", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         int id = wc[0];
@@ -313,16 +313,17 @@ public class RtllyItemVarWork : ItemVarWork
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE items SET status = 0 WHERE id = @1 AND orgid = @2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        dc.Sql("UPDATE items SET status = 0, oked = @1, oker = @2 WHERE id = @1 AND orgid = @2");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.Give(204);
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui(tip: "恢复", icon: "arrow-left", status: 0), Tool(ButtonConfirm)]
+    [Ui(tip: "恢复此项删除的商品", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
         int id = wc[0];
