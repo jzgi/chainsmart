@@ -18,6 +18,11 @@ public class MgtService : MainService
         CreateWork<RtllyWork>("rtlly"); // for markets and retail shops
     }
 
+    public void @default(WebContext wc)
+    {
+        wc.GivePage(200, h => { h.ALERT_().T(Application.Name).T("平台管理")._ALERT(); }, true, 3600, title: "平台管理");
+    }
+
     /**
      * The callback by the payment gateway.
      */

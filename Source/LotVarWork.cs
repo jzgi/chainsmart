@@ -124,7 +124,6 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("商户名", org.name)._LI();
         h.LI_().FIELD("简介语", org.tip)._LI();
         h.LI_().FIELD("工商登记名", org.legal)._LI();
-        h.LI_().FIELD("联系电话", org.tel)._LI();
         h.LI_().FIELD("地址／场地", org.addr)._LI();
 
         h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
