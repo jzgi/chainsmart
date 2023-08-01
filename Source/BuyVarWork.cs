@@ -162,10 +162,10 @@ public class MktlyBuyVarWork : BuyVarWork
     {
         string com = wc[0];
         var mkt = wc[-2].As<Org>();
+        bool noncom = com == "_";
 
         using var dc = NewDbContext();
-
-        dc.Sql("SELECT localtimestamp(0); SELECT utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND (status = 1 OR status = 2) AND typ = 1 AND ucom = @2 GROUP BY ucom, utel;");
+        dc.Sql("SELECT localtimestamp(0); SELECT utel, first(uaddr), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND (status = 1 OR status = 2) AND typ = 1 AND ucom ").T(noncom ? "IS NULL" : "= @2").T(" GROUP BY ucom, utel;");
         await dc.QueryTopAsync(p => p.Set(mkt.id).Set(com));
 
         // the time stamp to fence the range to update
@@ -204,7 +204,10 @@ public class MktlyBuyVarWork : BuyVarWork
 
             h._TABLE();
 
-            h.TOOLBAR(subscript: intstamp, toggle: true, bottom: true);
+            if (!noncom)
+            {
+                h.TOOLBAR(subscript: intstamp, toggle: true, bottom: true);
+            }
         });
     }
 
@@ -214,8 +217,10 @@ public class MktlyBuyVarWork : BuyVarWork
         var mkt = wc[-2].As<Org>();
         string utel = wc.Query[nameof(utel)];
 
+        bool non = com == "_";
+
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 1 AND typ = 1 AND ucom = @2 AND utel = @3");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 1 AND typ = 1 AND ucom ").T(non ? "IS NULL" : "= @2").T(" AND utel = @3");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(com).Set(utel));
 
         wc.GivePane(200, h =>
@@ -240,10 +245,8 @@ public class MktlyBuyVarWork : BuyVarWork
                     {
                         h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
                     }
-
                     h._SPAN();
-
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
                     h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                     h._LI();
@@ -261,8 +264,10 @@ public class MktlyBuyVarWork : BuyVarWork
         var mkt = wc[-2].As<Org>();
         string utel = wc.Query[nameof(utel)];
 
+        bool non = com == "_";
+
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 2 AND typ = 1 AND ucom = @2 AND utel = @3");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND status = 2 AND typ = 1 AND ucom ").T(non ? "IS NULL" : "= @2").T(" AND utel = @3");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(mkt.id).Set(com).Set(utel));
 
         wc.GivePane(200, h =>
@@ -287,10 +292,8 @@ public class MktlyBuyVarWork : BuyVarWork
                     {
                         h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
                     }
-
                     h._SPAN();
-
-                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
+                    h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
                     h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                     h._LI();

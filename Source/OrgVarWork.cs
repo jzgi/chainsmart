@@ -416,21 +416,21 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
+    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "上传资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 3);
@@ -487,18 +487,55 @@ public class MktlyOrgVarWork : OrgVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
-    public async Task rm(WebContext wc)
+    [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
+    public async Task @void(WebContext wc)
     {
         int id = wc[0];
+        var prin = (User)wc.Principal;
         var org = wc[-2].As<Org>();
 
-        var m = GrabTwin<int, Org>(id);
+        var now = DateTime.Now;
 
-        await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
+        var m = GrabTwin<int, Org>(id);
+        lock (m)
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND upperid = @2 AND status BETWEEN 1 AND 2");
-            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
+            m.status = 0;
+            m.oked = now;
+            m.oker = prin.name;
+        }
+
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
+            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
+        });
+
+        wc.Give(204); // no content
+    }
+
+    [OrglyAuthorize(0, User.ROL_OPN)]
+    [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
+    public async Task unvoid(WebContext wc)
+    {
+        int id = wc[0];
+        var prin = (User)wc.Principal;
+        var org = wc[-2].As<Org>();
+
+        var now = DateTime.Now;
+
+        var m = GrabTwin<int, Org>(id);
+        lock (m)
+        {
+            m.status = 2;
+            m.oked = default;
+            m.oker = null;
+            m.adapted = now;
+            m.adapter = prin.name;
+        }
+        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        {
+            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
+            return await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
         wc.Give(204); // no content

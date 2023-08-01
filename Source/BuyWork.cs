@@ -251,11 +251,8 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        // group by commuity 
         dc.Sql("SELECT ucom, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY ucom");
         await dc.QueryAsync(p => p.Set(mkt.id));
-
-        var map = new Map<string, (int, int)>();
 
         wc.GivePage(200, h =>
         {
@@ -270,8 +267,10 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 dc.Let(out int created);
                 dc.Let(out int adapted);
 
+                string ucomlabel = string.IsNullOrEmpty(ucom) ? "非派送区" : ucom;
+
                 h.TR_();
-                h.TD_().ADIALOG_(ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucom, css: "uk-link uk-button-link").T(ucom)._A()._TD();
+                h.TD_().ADIALOG_(string.IsNullOrEmpty(ucom) ? "_" : ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucomlabel, css: "uk-link uk-button-link").T(ucomlabel)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (created > 0)
                 {

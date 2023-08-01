@@ -60,7 +60,7 @@ public class AdmlyWork : WebWork
     {
         string tel = null;
 
-        var jo = Application.Program;
+        var jo = Application.ProgramConf;
 
         jo.Get(nameof(tel), ref tel);
 

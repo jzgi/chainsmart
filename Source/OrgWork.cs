@@ -177,7 +177,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -186,7 +186,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无成员商户");
+                h.ALERT("尚无上线的成员商户");
                 return;
             }
 
@@ -196,7 +196,56 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "按版块", icon: "list", status: 2), Tool(AnchorPrompt)]
+    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
+    public void down(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.Segment(20 * page, 20);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr.Count == 0)
+            {
+                h.ALERT("尚无下线的成员商户");
+                return;
+            }
+
+            MainGrid(h, arr, prin);
+
+            h.PAGINATION(arr.Count == 20);
+        }, false, 6);
+    }
+
+    [Ui(tip: "已禁用", icon: "trash", status: 4), Tool(Anchor)]
+    public void @void(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
+        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status == 0, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.Segment(20 * page, 20);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr.Count == 0)
+            {
+                h.ALERT("尚无禁用的成员商户");
+                return;
+            }
+
+            MainGrid(h, arr, prin);
+
+            h.PAGINATION(arr.Count == 20);
+        }, false, 6);
+    }
+
+
+    [Ui(tip: "按版块查找", icon: "search", status: 8), Tool(AnchorPrompt)]
     public void section(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -230,7 +279,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
         var org = wc[-1].As<Org>();

@@ -28,15 +28,15 @@ public static class BankUtility
 
     static BankUtility()
     {
-        supfee = Application.Program[nameof(supfee)];
-        rtlfee = Application.Program[nameof(rtlfee)];
+        supfee = Application.ProgramConf[nameof(supfee)];
+        rtlfee = Application.ProgramConf[nameof(rtlfee)];
 
-        bankprov = Application.Program[nameof(bankprov)];
-        bankcity = Application.Program[nameof(bankcity)];
-        bankreg = Application.Program[nameof(bankreg)];
-        supbankacct = Application.Program[nameof(supbankacct)];
-        rtlbankacct = Application.Program[nameof(rtlbankacct)];
-        bankacctname = Application.Program[nameof(bankacctname)];
+        bankprov = Application.ProgramConf[nameof(bankprov)];
+        bankcity = Application.ProgramConf[nameof(bankcity)];
+        bankreg = Application.ProgramConf[nameof(bankreg)];
+        supbankacct = Application.ProgramConf[nameof(supbankacct)];
+        rtlbankacct = Application.ProgramConf[nameof(rtlbankacct)];
+        bankacctname = Application.ProgramConf[nameof(bankacctname)];
     }
 
     static readonly Map<int, string> ColDefs = new()
