@@ -19,6 +19,8 @@ public class AdmlyWork : WebWork
 
         CreateWork<AdmlyOrgWork>("org", header: "业务");
 
+        CreateWork<AdmlyEvalWork>("eval");
+
         CreateWork<AdmlyUserWork>("user");
 
         // fin

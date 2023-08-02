@@ -486,4 +486,18 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             wc.GivePane(200); // close dialog
         }
     }
+
+    [OrglyAuthorize(0, User.ROL_MGT)]
+    [Ui("清空", icon: "paint-bucket", status: 4), Tool(ButtonOpen)]
+    public async Task empty(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+
+        dc.Sql("DELETE FROM items WHERE orgid = @1 AND status = 0");
+        await dc.ExecuteAsync(p => p.Set(org.id));
+
+        wc.GivePane(200); // close dialog
+    }
 }

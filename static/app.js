@@ -874,14 +874,12 @@ function crop(trig, siz, title, subs) {
         h += '<span class="uk-modal-title" style="position: absolute; left: 4px">' + title + '</span>';
     }
     h += '<button class="uk-button uk-button-default" onclick="$(\'#imginp\').click();">选择</button>';
-    h += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
+    h += '<button class="uk-button uk-button-default" onclick="cropUpd($(\'#imginp\'),' + siz + ',' + (subs == 0 ? '\'' + action + '\', true)' : '\'' + action + '-\' + $(\'#imgsub\').value)') + '">保存</button>';
     if (subs > 0) {
         h += '<button uk-icon="bolt" class="uk-button uk-icon-button" style="position: absolute; right: 4px" onclick="bind($(\'#imgbnd\'),\'' + action + '-\' + $(\'#imgsub\').value);"></button>';
     }
     h += '</div>'; // control group
-    // html += '<button class="uk-modal-close-default" type="button" uk-close></button>';
     h += '</footer>'; // header
-
     h += '</section>'; // dialog
     h += '</div>'; // modal
 
@@ -963,17 +961,25 @@ function bind(el, url, wid, hei) {
 
 }
 
-function cropUpd(el, url, close) {
+function cropUpd(el, siz, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'webp', quality: 0.9
+            type: 'blob', size: { width: cropWid, height: cropHei }, format: 'jpeg', quality: 0.9
         }
     ).then(function (blob) {
 
+        var maxk = siz == 1 ? 20 : siz == 2 ? 60 : 120;
+        var blobk = blob.size / 1024;
+
+        if (blobk > maxk) {
+            alert('图片不能超过 ' + maxk + 'K（' + blobk + 'K）');
+            return;
+        }
+
         // build form data
         var dat = new FormData();
-        dat.append('img', blob, 'img.webp');
+        dat.append('img', blob, 'img.jpeg');
         // post
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, false);

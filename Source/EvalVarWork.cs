@@ -6,6 +6,11 @@ namespace ChainSmart
     {
     }
 
+    public class AdmlyEvalVarWork : EvalVarWork
+    {
+    }
+
+
     public class MktlyEvalVarWork : EvalVarWork
     {
     }

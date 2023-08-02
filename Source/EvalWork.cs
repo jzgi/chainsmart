@@ -42,9 +42,18 @@ public abstract class EvalWork<V> : WebWork where V : EvalVarWork, new()
     {
         var org = wc[-1].As<Org>();
 
+        Eval[] arr;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE orgid = @1 AND status = 4");
-        var arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        if (org == null)
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid IS NULL AND status = 4");
+            arr = await dc.QueryAsync<Eval>();
+        }
+        else
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid = @1 AND status = 4");
+            arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        }
 
         wc.GivePage(200, h =>
         {
@@ -63,9 +72,18 @@ public abstract class EvalWork<V> : WebWork where V : EvalVarWork, new()
     {
         var org = wc[-1].As<Org>();
 
+        Eval[] arr;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE orgid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        if (org == null)
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid IS NULL AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+            arr = await dc.QueryAsync<Eval>();
+        }
+        else
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+            arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        }
 
         wc.GivePage(200, h =>
         {
@@ -86,9 +104,18 @@ public abstract class EvalWork<V> : WebWork where V : EvalVarWork, new()
     {
         var org = wc[-1].As<Org>();
 
+        Eval[] arr;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE orgid = @1 AND status = 0 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        if (org == null)
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid IS NULL AND status = 0 ORDER BY adapted DESC");
+            arr = await dc.QueryAsync<Eval>();
+        }
+        else
+        {
+            dc.Sql("SELECT ").collst(Eval.Empty).T(" FROM evals WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+            arr = await dc.QueryAsync<Eval>(p => p.Set(org.id));
+        }
 
         wc.GivePage(200, h =>
         {
@@ -138,6 +165,12 @@ public abstract class EvalWork<V> : WebWork where V : EvalVarWork, new()
             wc.GivePane(200); // close dialog
         }
     }
+}
+
+[AdmlyAuthorize(User.ROL_MGT)]
+[Ui("信用管理")]
+public class AdmlyEvalWork : EvalWork<AdmlyEvalVarWork>
+{
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]

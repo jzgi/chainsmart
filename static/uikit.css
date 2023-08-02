@@ -63,7 +63,7 @@ aside {
 
 a:active,
 a.uk-active,
-a:hover {
+a:not(.uk-card-body):hover {
     outline: none;
     color: #f59604;
 }
@@ -2232,7 +2232,7 @@ main.uk-grid>li {
 }
 
 .uk-card-default>.uk-card-body {
-    box-shadow: 1px 1px 0px 0px #ededed;
+    box-shadow: 0px 1px 0px 0px #ededed;
 }
 
 section.uk-card-body,
