@@ -179,7 +179,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             {
                 h.FORM_().FIELDSUL_("批次信息");
 
-                h.LI_().SELECT("发货点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
+                h.LI_().SELECT("发货起点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
                 h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();

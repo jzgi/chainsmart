@@ -98,7 +98,6 @@ public class PublyItemVarWork : ItemVarWork
         int itemid = wc[0];
 
         using var dc = NewDbContext();
-
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
@@ -111,36 +110,42 @@ public class PublyItemVarWork : ItemVarWork
 
         wc.GivePane(200, h =>
         {
+            h.ARTICLE_("uk-card uk-card-primary");
+
+            h.H2(o.name, css: "uk-card-header");
+            if (o.pic)
+            {
+                h.IMG("/item/", o.id, "/pic", css: "uk-card-body");
+            }
+
+            h.UL_("uk-card-body uk-list uk-list-divider");
+            h.LI_().FIELD("商品名", o.name)._LI();
+            if (!string.IsNullOrEmpty(o.tip))
+            {
+                h.LI_().FIELD("简介语", o.tip)._LI();
+            }
+            h.LI_().FIELD("零售单位", o.unit);
+            if (o.unitw > 0)
+            {
+                h.FIELD("含重", o.unitw, Unit.Weights);
+            }
+            h._LI();
+            h.LI_().FIELD("单价", o.price, money: true);
+            if (o.off > 0)
+            {
+                h.FIELD("VIP立减", o.off);
+            }
+            h._LI();
+            h._UL();
+
+            h._ARTICLE();
+
             if (o.lotid > 0)
             {
                 var org = GrabTwin<int, Org>(o.orgid);
                 var src = lot?.srcid > 0 ? GrabTwin<int, Src>(lot.srcid) : null;
 
-                LotVarWork.ShowLot(h, lot, org, src, false);
-            }
-            else
-            {
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H2(o.name, css: "uk-card-header");
-                // h.SECTION_("uk-card-body");
-                if (o.pic)
-                {
-                    h.IMG("/item/", o.id, "/pic", css: "uk-card-body");
-                }
-                // h._SECTION();
-
-                h.UL_("uk-card-body uk-list uk-list-divider");
-                h.LI_().FIELD("商品名", o.name)._LI();
-                h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-                h.LI_().FIELD("零售单位", o.unit);
-                if (o.unitw > 0) h.FIELD("含重", o.unitw);
-                h._LI();
-                h.LI_().FIELD("单价", o.price, money: true);
-                if (o.off > 0) h.FIELD("VIP立减", o.off);
-                h._LI();
-                h._UL();
-
-                h._ARTICLE();
+                LotVarWork.ShowLot(h, lot, src, false);
             }
         }, true, 900);
     }
@@ -182,7 +187,7 @@ public class RtllyItemVarWork : ItemVarWork
             {
                 h.FORM_().FIELDSUL_("自建" + (prod ? "产品型商品" : "服务型商品"));
 
-                h.LI_().TEXT(o.IsFromSupply ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
 
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true);

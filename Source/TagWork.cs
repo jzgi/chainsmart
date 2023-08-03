@@ -18,7 +18,7 @@ public class PublyTagWork : TagWork
     public async Task @default(WebContext wc, int tracenum)
     {
         using var dc = NewDbContext();
-        
+
         dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
         if (await dc.QueryTopAsync(p => p.Set(tracenum)))
         {
@@ -33,7 +33,6 @@ public class PublyTagWork : TagWork
                 return;
             }
 
-            var org = GrabTwin<int, Org>(lot.orgid);
             Src src = null;
             if (lot.srcid > 0)
             {
@@ -43,7 +42,7 @@ public class PublyTagWork : TagWork
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(lot.name)._HEADER();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(lot.name)._HEADER();
                 if (lot.icon)
                 {
                     h.PIC("/lot/", lot.id, "/icon", circle: true, css: "uk-width-small");
@@ -53,9 +52,9 @@ public class PublyTagWork : TagWork
 
                 h._TOPBARXL();
 
-                LotVarWork.ShowLot(h, lot, org, src, false, tracenum);
+                LotVarWork.ShowLot(h, lot, src, false, tracenum);
 
-                h.FOOTER_("uk-col uk-flex-middle uk-margin-large-top uk-margin-bottom");
+                h.FOOTER_("uk-col uk-flex-middle uk-background-muted");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
                 h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
                 h._FOOTER();

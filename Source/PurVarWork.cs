@@ -3,7 +3,6 @@ using System.Data;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using NPOI.OpenXmlFormats.Wordprocessing;
 using static ChainFx.Application;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
@@ -34,7 +33,7 @@ public abstract class PurVarWork : WebWork
             h.LI_().FIELD("件数", o.QtyX).FIELD("支付金额", o.pay, money: true)._LI();
 
             h.LI_().FIELD("状态", o.status, Pur.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "撤销" : "发货", o.adapter, o.adapted, sep: "<br>").FIELD2("收货", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "撤销" : "输运", o.adapter, o.adapted, sep: "<br>").FIELD2("收货", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -49,28 +48,11 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
+    internal short PurTyp => ((SuplyPurWork)Parent).PurTyp;
+
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("备发", "授权品控库发货？", icon: "eye", status: 1), Tool(ButtonConfirm)]
+    [Ui("输运", "确认开始输运", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-        var prin = (User)wc.Principal;
-
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE purs SET adapted = @1, adapter = @2, status = 2 WHERE id = @3 AND supid = @4 AND status = 1 RETURNING ctrid, topay");
-        if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
-        {
-            dc.Let(out int ctrid);
-            dc.Let(out decimal topay);
-        }
-
-        wc.Give(204);
-    }
-
-    [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("发货", "确认从品控库发货？", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
-    public async Task ok(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -80,17 +62,26 @@ public class SuplyPurVarWork : PurVarWork
         try
         {
             // set status and decrease the stock
-            dc.Sql("UPDATE purs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND supid = @4 AND status = 2 RETURNING lotid, qty, rtlid, topay");
+            dc.Sql("UPDATE purs SET status = 2, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status = 1 RETURNING hubid, lotid, qty, rtlid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
+                dc.Let(out int hubid);
                 dc.Let(out int lotid);
                 dc.Let(out int qty);
                 dc.Let(out int rtlid);
                 dc.Let(out decimal topay);
 
-                // adjust the stock
-                dc.Sql("UPDATE lots SET stock = stock - @1 WHERE id = @2");
-                await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
+                // adjust stock
+                if (PurTyp == Pur.TYP_HUB)
+                {
+                    dc.Sql("UPDATE lotinvs SET stock = stock - @1 WHERE lotid = @2 AND hubid = @3");
+                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
+                }
+                else
+                {
+                    dc.Sql("UPDATE lots SET stock = stock - @1 WHERE id = @2");
+                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
+                }
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
@@ -100,11 +91,72 @@ public class SuplyPurVarWork : PurVarWork
         catch (Exception)
         {
             dc.Rollback();
-            Err("退款失败, purid " + id);
+            Err("输运操作失败, purid " + id);
             return;
         }
 
         wc.Give(204);
+    }
+
+    [Ui("返现", tip: "返回一定数量的支付款", status: 1 | 2 | 4), Tool(ButtonShow, state: Buy.STA_REVERSABLE)]
+    public async Task refund(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        decimal refund = 0;
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT pay FROM purs WHERE id = @1 AND rtlid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+            dc.Let(out decimal pay);
+
+            wc.GivePane(200, h =>
+            {
+                //
+                h.FORM_().FIELDSUL_("返现");
+                h.LI_().NUMBER("金额", nameof(refund), refund, min: 0.10M, max: pay)._LI();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(refund))._FORM();
+            });
+        }
+        else // POST
+        {
+            refund = (await wc.ReadAsync<Form>())[nameof(refund)];
+
+            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
+            try
+            {
+                dc.Sql("UPDATE purs SET refund = @1, refunder = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 4 RETURNING rtlid, pay");
+                if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
+                {
+                    dc.Let(out int rtlid);
+                    dc.Let(out decimal pay);
+
+                    // remote call to refund
+                    var trade_no = Buy.GetOutTradeNo(id, pay);
+                    string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, pay, refund, trade_no, "返现");
+                    if (err != null) // not success
+                    {
+                        dc.Rollback();
+                        Err(err);
+                    }
+
+                    // put a notice to the shop
+                    var rtl = GrabTwin<int, Org>(rtlid);
+                    rtl.Notices.Put(OrgNoticePack.PUR_REFUND, 1, refund);
+                }
+            }
+            catch (Exception)
+            {
+                dc.Rollback();
+                Err("返现失败, purid " + id);
+                return;
+            }
+        }
+
+        wc.Give(200);
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
@@ -134,7 +186,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // remote call to refund
                 var trade_no = Buy.GetOutTradeNo(id, topay);
-                string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no);
+                string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no, "撤单");
                 if (err != null) // not success
                 {
                     dc.Rollback();
@@ -149,7 +201,7 @@ public class SuplyPurVarWork : PurVarWork
         catch (Exception)
         {
             dc.Rollback();
-            Err("退款失败, purid " + id);
+            Err("撤单失败, purid " + id);
             return;
         }
 
@@ -175,7 +227,7 @@ public class CtrlyPurVarWork : PurVarWork
         wc.GivePage(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("输运", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())
@@ -264,7 +316,7 @@ public class CtrlyPurVarWork : PurVarWork
     }
 
 
-    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
+    [Ui("输运", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
     public async Task ok(WebContext wc)
     {
         var prin = (User)wc.Principal;

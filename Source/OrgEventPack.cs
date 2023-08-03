@@ -18,7 +18,7 @@ public class OrgEventPack : TwinPack<Event>
     public static readonly Map<short, string> Slots = new()
     {
         { DELIVERY, "社区合单" },
-        { PUR_ADAPTED, "供应发货" },
+        { PUR_ADAPTED, "供应输运" },
         { BUY_VOID, "消费撤单" },
     };
 

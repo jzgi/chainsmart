@@ -13,18 +13,22 @@ public class OrgNoticePack : TwinPack<Notice>
         BUY_CREATED = 1,
         BUY_OKED = 2,
         BUY_VOID = 3,
-        PUR_CREATED = 4,
-        PUR_OKED = 5,
-        PUR_VOID = 6;
+        BUY_REFUND = 4,
+        PUR_CREATED = 5,
+        PUR_OKED = 6,
+        PUR_VOID = 7,
+        PUR_REFUND = 8;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { BUY_CREATED, "市场新单" },
-        { BUY_OKED, "市场发货" },
-        { BUY_VOID, "市场撤单" },
-        { PUR_CREATED, "供应新单" },
-        { PUR_OKED, "供应发货" },
-        { PUR_VOID, "供应撤单" },
+        { BUY_CREATED, "新单" },
+        { BUY_OKED, "派发" },
+        { BUY_VOID, "撤单" },
+        { BUY_REFUND, "返现" },
+        { PUR_CREATED, "新单" },
+        { PUR_OKED, "输运" },
+        { PUR_VOID, "撤单" },
+        { PUR_REFUND, "返现" },
     };
 
 

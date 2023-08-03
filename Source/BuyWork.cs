@@ -20,7 +20,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
 [Ui("网售订单")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
-    static void MainGrid(HtmlBuilder h, IList<Buy> lst)
+    static void MainGrid(HtmlBuilder h, IList<Buy> lst, bool pick = false)
     {
         h.MAINGRID(lst, o =>
         {
@@ -49,7 +49,16 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0)._SPAN().SP().PICK(o.Key)._HEADER();
+            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP();
+            if (pick)
+            {
+                h.PICK(o.Key);
+            }
+            else
+            {
+                h.T(Buy.Statuses[o.status]);
+            }
+            h._SPAN()._HEADER();
             h.Q_("uk-width-expand");
             for (int i = 0; i < o.items?.Length; i++)
             {
@@ -117,12 +126,12 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
     [OrgSpy(BUY_OKED)]
     [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
-    public async Task oked(WebContext wc, int page)
+    public async Task after(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 4 AND typ = 1 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status >= 4 AND typ = 1 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -140,6 +149,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             h.PAGINATION(arr.Length == 20);
         }, false, 6);
     }
+
 
     [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)

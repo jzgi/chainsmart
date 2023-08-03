@@ -79,7 +79,7 @@ public class MyBuyVarWork : BuyVarWork
 public class RtllyBuyVarWork : BuyVarWork
 {
     [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
-    public async Task back(WebContext wc)
+    public async Task goback(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -107,6 +107,30 @@ public class RtllyBuyVarWork : BuyVarWork
             dc.Let(out decimal pay);
 
             await PostSendAsync(uim, $"商家自行派送，请留意收货（{org.name}，单号{id:D8}，￥{pay}）");
+        }
+
+        wc.Give(200);
+    }
+
+    [Ui("返款", tip: "返回一定数量的款", status: 1 | 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    public async Task refund(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT FROM buys WHERE id = @1 AND rtlid = @2");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+        }
+        else
+        {
+            using var dc = NewDbContext();
+            // dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND rtlid = @2 AND (status = 2 OR status = 4)");
+            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
         }
 
         wc.Give(200);

@@ -151,7 +151,7 @@ public class Item : Entity, IKeyable<int>
 
     public decimal GetRealOff(bool vip) => vip || promo ? off : 0;
 
-    public bool IsFromSupply => lotid > 0;
+    public bool IsImported => lotid > 0;
 
     public StockOp[] Ops => ops;
 }

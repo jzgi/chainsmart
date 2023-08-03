@@ -46,6 +46,8 @@ public class Lot : Entity, IKeyable<int>
     internal int cap;
     internal int nstart;
     internal int nend;
+    internal string linka;
+    internal string linkb;
 
     // media
     internal bool icon;
@@ -93,6 +95,8 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(cap), ref cap);
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
+            s.Get(nameof(linka), ref linka);
+            s.Get(nameof(linkb), ref linkb);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -144,6 +148,8 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(cap), cap);
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
+            s.Put(nameof(linka), linka);
+            s.Put(nameof(linkb), linkb);
 
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);

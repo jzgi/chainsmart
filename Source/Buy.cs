@@ -33,6 +33,7 @@ public class Buy : Entity, IKeyable<long>
         { STU_CREATED, "收单" },
         { STU_ADAPTED, "集合" },
         { STU_OKED, "派发" },
+        { STU_CLOSED, "关闭" },
     };
 
 
@@ -51,6 +52,7 @@ public class Buy : Entity, IKeyable<long>
     internal decimal pay;
     internal decimal ret;
     internal decimal refund;
+    internal string refunder;
 
     public Buy()
     {
@@ -99,6 +101,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
+            s.Get(nameof(refunder), ref refunder);
         }
     }
 
@@ -134,6 +137,7 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(pay), pay);
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
+            s.Put(nameof(refunder), refunder);
         }
     }
 

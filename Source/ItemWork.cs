@@ -345,7 +345,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [Ui(tip: "已删除", icon: "trash", status: 4), Tool(Anchor)]
+    [Ui(tip: "已作废", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -359,7 +359,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已删除的商品");
+                h.ALERT("尚无已作废的商品");
                 return;
             }
 

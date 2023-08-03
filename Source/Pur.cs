@@ -24,8 +24,9 @@ public class Pur : Entity, IKeyable<int>
     {
         { STU_VOID, "撤销" },
         { STU_CREATED, "收单" },
-        { STU_ADAPTED, "发货" },
+        { STU_ADAPTED, "输运" },
         { STU_OKED, "收货" },
+        { STU_CLOSED, "关闭" },
     };
 
 
@@ -50,6 +51,7 @@ public class Pur : Entity, IKeyable<int>
     internal decimal pay;
     internal int ret; // qty cut
     internal decimal refund; // pay refunded
+    internal string refunder;
 
 
     public Pur()
@@ -108,6 +110,7 @@ public class Pur : Entity, IKeyable<int>
             s.Get(nameof(pay), ref pay);
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
+            s.Get(nameof(refunder), ref refunder);
         }
     }
 
@@ -143,6 +146,7 @@ public class Pur : Entity, IKeyable<int>
             s.Put(nameof(pay), pay);
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
+            s.Put(nameof(refunder), refunder);
         }
     }
 

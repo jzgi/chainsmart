@@ -89,7 +89,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已发货", icon: "arrow-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已输运", icon: "arrow-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -103,7 +103,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已发货的订单");
+                h.ALERT("尚无已输运的订单");
                 return;
             }
 
@@ -192,8 +192,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         wc.GivePage(200, h =>
         {
             h.TOPBAR_("uk-padding").UL_("uk-subnav");
-            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓发货")._A()._LI();
-            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源发货")._A()._LI();
+            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓输运")._A()._LI();
+            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源输运")._A()._LI();
             h._UL()._TOPBAR();
 
             if (arr == null)
@@ -225,17 +225,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
 public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
-    // timer that automatically transfers orders 
-    const uint FIVE_MINUTES = 1000 * 300;
-
-    static readonly Timer TIMER = new(AutoProcess, null, FIVE_MINUTES, FIVE_MINUTES);
-
-    static async void AutoProcess(object x)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("");
-        await dc.ExecuteAsync();
-    }
+    internal short PurTyp => (short)State;
 
     private static void MainGrid(HtmlBuilder h, IList<Pur> lst)
     {
@@ -264,8 +254,6 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 
 
-    private short PurTyp => (short)State;
-
     [OrgSpy(PUR_CREATED)]
     [Ui("销售订单"), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -289,7 +277,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "要品控仓备货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "开始输运", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -303,7 +291,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无要品控仓备货的订单");
+                h.ALERT("尚无开始输运的订单");
                 return;
             }
 
@@ -312,7 +300,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 
     [OrgSpy(PUR_OKED)]
-    [Ui(tip: "已发货", icon: "arrow-right", status: 4), Tool(Anchor)]
+    [Ui(tip: "已收货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -326,7 +314,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已发货的订单");
+                h.ALERT("尚无已收货的订单");
                 return;
             }
 
@@ -355,57 +343,13 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             MainGrid(h, arr);
         }, false, 6);
     }
-
-    [Ui("备货", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
-    public async Task adapt(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-        int[] key;
-
-        if (wc.IsGet)
-        {
-            key = wc.Query[nameof(key)];
-
-            wc.GivePane(200, h =>
-            {
-                h.SECTION_("uk-card uk-card-primary");
-                h.H2("要品控仓备货", css: "uk-card-header");
-                h.DIV_("uk-card-body").T("要品控仓备货")._DIV();
-                h._SECTION();
-
-                h.FORM_("uk-card uk-card-primary uk-margin-top");
-                foreach (var k in key)
-                {
-                    h.HIDDEN(nameof(key), k);
-                }
-                h.BOTTOM_BUTTON("确认", nameof(adapt), post: true);
-                h._FORM();
-            });
-        }
-        else
-        {
-            var f = await wc.ReadAsync<Form>();
-            key = f[nameof(key)];
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE purs SET adapted = @1, adapter = @2, status = 2 WHERE supid = @3 AND id ")._IN_(key).T(" AND status = 1");
-            await dc.ExecuteAsync(p =>
-            {
-                p.Set(DateTime.Now).Set(prin.name).Set(org.id);
-                p.SetForIn(key);
-            });
-
-            wc.GivePane(200);
-        }
-    }
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓统一发货")]
+[Ui("品控仓统一输运")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("统一发货", status: 8), Tool(Anchor)]
+    [Ui("统一输运", status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var hub = wc[-1].As<Org>();
@@ -419,7 +363,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("输运", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -474,7 +418,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("已发货", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("商户").TH("已输运", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
@@ -506,7 +450,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("已发货", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("产品").TH("已输运", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
