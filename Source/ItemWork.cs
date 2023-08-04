@@ -488,7 +488,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("清空", icon: "paint-bucket", status: 4), Tool(ButtonOpen)]
+    [Ui("清空", "永久删除这些作废项", icon: "paint-bucket", status: 4), Tool(ButtonConfirm)]
     public async Task empty(WebContext wc)
     {
         var org = wc[-1].As<Org>();

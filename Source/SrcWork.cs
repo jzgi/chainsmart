@@ -135,7 +135,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
                 h.LI_().TEXT("产品源名", nameof(o.name), o.name, min: 2, max: 12)._LI();
                 h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true).SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 100)._LI();
+                h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 200)._LI();
                 h.LI_().TEXTAREA("规格", nameof(o.specs), o.specs, max: 300)._LI();
                 h.LI_().NUMBER("碳积分因子", nameof(o.co2ekg), o.co2ekg, min: 0.00M, max: 99.99M)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();

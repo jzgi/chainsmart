@@ -241,7 +241,6 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 {
                     h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
                 }
-
                 h._SPAN();
 
                 h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
@@ -338,7 +337,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已统一派发的订单", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]
+    [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]
     public async Task oked(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();

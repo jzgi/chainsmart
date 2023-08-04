@@ -185,13 +185,14 @@ create index users_vip_idx
 
 create table evals
 (
-    id    integer default nextval('tests_id_seq'::regclass) not null
+    id      integer default nextval('tests_id_seq'::regclass) not null
         constraint evals_pk
             primary key,
-    orgid integer
+    orgid   integer
         constraint evals_orgid_fk
             references orgs,
-    level integer
+    level   integer,
+    upperid integer
 )
     inherits (entities);
 
@@ -207,9 +208,8 @@ create table srcs
             primary key,
     orgid  integer,
     rank   smallint,
-    remark varchar(100),
+    remark varchar(200),
     co2ekg money,
-    co2ep  money,
     x      double precision,
     y      double precision,
     specs  jsonb,
@@ -261,6 +261,8 @@ create table lots
     m2     bytea,
     m3     bytea,
     m4     bytea,
+    linka  varchar(60),
+    linkb  varchar(60),
     constraint lots_chk
         check ((typ >= 1) AND (typ <= 2))
 )
@@ -275,36 +277,37 @@ alter table lots
 
 create table purs
 (
-    id     bigint   default nextval('books_id_seq'::regclass) not null
+    id       bigint   default nextval('books_id_seq'::regclass) not null
         constraint purs_pk
             primary key,
-    rtlid  integer                                            not null
+    rtlid    integer                                            not null
         constraint purs_rtlid_fk
             references orgs,
-    mktid  integer                                            not null
+    mktid    integer                                            not null
         constraint purs_mktid_fk
             references orgs,
-    hubid  integer                                            not null
+    hubid    integer                                            not null
         constraint purs_ctrid_fk
             references orgs,
-    supid  integer                                            not null
+    supid    integer                                            not null
         constraint purs_supid_fk
             references orgs,
-    ctrid  integer                                            not null,
-    lotid  integer
+    ctrid    integer                                            not null,
+    lotid    integer
         constraint purs_lotid_fk
             references lots,
-    unit   varchar(4),
-    unitw  smallint default 0                                 not null,
-    unitx  smallint,
-    price  money,
-    "off"  money,
-    qty    integer,
-    fee    money,
-    topay  money,
-    pay    money,
-    ret    integer,
-    refund money,
+    unit     varchar(4),
+    unitw    smallint default 0                                 not null,
+    unitx    smallint,
+    price    money,
+    "off"    money,
+    qty      integer,
+    fee      money,
+    topay    money,
+    pay      money,
+    ret      integer,
+    refund   money,
+    refunder varchar(10),
     constraint typ_chk
         check ((typ >= 1) AND (typ <= 2))
 )
@@ -349,29 +352,30 @@ create index srcs_orgidstatus_idx
 
 create table buys
 (
-    id     bigserial
+    id       serial
         constraint buys_pk
             primary key,
-    rtlid  integer not null
+    rtlid    integer not null
         constraint buys_rtlid_fk
             references orgs,
-    mktid  integer not null
+    mktid    integer not null
         constraint buys_mkt_fk
             references orgs,
-    uid    integer
+    uid      integer
         constraint buys_uid_fk
             references users,
-    uname  varchar(12),
-    utel   varchar(11),
-    ucom   varchar(12),
-    uaddr  varchar(30),
-    uim    varchar(28),
-    items  buyitem[],
-    fee    money,
-    topay  money,
-    pay    money,
-    ret    numeric(6, 1),
-    refund money,
+    uname    varchar(12),
+    utel     varchar(11),
+    ucom     varchar(12),
+    uaddr    varchar(30),
+    uim      varchar(28),
+    items    buyitem[],
+    fee      money,
+    topay    money,
+    pay      money,
+    ret      numeric(6, 1),
+    refund   money,
+    refunder varchar(10),
     constraint buys_chk
         check ((typ >= 1) AND (typ <= 2))
 )
@@ -494,11 +498,11 @@ create table buyldgs_typ
 (
     constraint buyldgs_typ_pk
         primary key (orgid, dt, acct)
-) inherits
+)
+    inherits
 (
     ldgs
-)
-  tablespace rtl;
+)tablespace rtl ;
 
 comment on table buyldgs_typ is 'buy ledgers by type';
 
@@ -529,10 +533,10 @@ create table purldgs_typ
     constraint purldgs_typ_pk
         primary key (orgid, dt, acct)
 )
-    inherits
+     inherits
 (
     ldgs
-)tablespace sup ;
+)tablespace sup;
 
 comment on table purldgs_typ is 'purchase ledgers by type';
 
@@ -638,40 +642,6 @@ create table progs
     inherits (entities);
 
 alter table progs
-    owner to postgres;
-
-create view srcs_vw
-            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, rank, remark, co2ekg,
-             co2ep, x, y, specs, icon, pic, m1, m2, m3, m4)
-as
-SELECT o.typ,
-       o.name,
-       o.tip,
-       o.created,
-       o.creator,
-       o.adapted,
-       o.adapter,
-       o.oked,
-       o.oker,
-       o.status,
-       o.id,
-       o.orgid,
-       o.rank,
-       o.remark,
-       o.co2ekg,
-       o.co2ep,
-       o.x,
-       o.y,
-       o.specs,
-       o.icon IS NOT NULL AS icon,
-       o.pic IS NOT NULL  AS pic,
-       o.m1 IS NOT NULL   AS m1,
-       o.m2 IS NOT NULL   AS m2,
-       o.m3 IS NOT NULL   AS m3,
-       o.m4 IS NOT NULL   AS m4
-FROM srcs o;
-
-alter table srcs_vw
     owner to postgres;
 
 create view users_vw
@@ -788,7 +758,8 @@ alter table items_vw
 
 create view lots_vw
             (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, srcid, cattyp, shipon,
-             unit, unitw, unitx, price, "off", stock, min, max, cap, nstart, nend, ops, icon, pic, m1, m2, m3, m4)
+             unit, unitw, unitx, price, "off", stock, min, max, cap, nstart, nend, linka, linkb, ops, icon, pic, m1, m2,
+             m3, m4)
 as
 SELECT o.typ,
        o.name,
@@ -816,6 +787,8 @@ SELECT o.typ,
        o.cap,
        o.nstart,
        o.nend,
+       o.linka,
+       o.linkb,
        o.ops,
        o.icon IS NOT NULL AS icon,
        o.pic IS NOT NULL  AS pic,
@@ -826,6 +799,39 @@ SELECT o.typ,
 FROM lots o;
 
 alter table lots_vw
+    owner to postgres;
+
+create view srcs_vw
+            (typ, name, tip, created, creator, adapted, adapter, oked, oker, status, id, orgid, rank, remark, co2ekg, x,
+             y, specs, icon, pic, m1, m2, m3, m4)
+as
+SELECT o.typ,
+       o.name,
+       o.tip,
+       o.created,
+       o.creator,
+       o.adapted,
+       o.adapter,
+       o.oked,
+       o.oker,
+       o.status,
+       o.id,
+       o.orgid,
+       o.rank,
+       o.remark,
+       o.co2ekg,
+       o.x,
+       o.y,
+       o.specs,
+       o.icon IS NOT NULL AS icon,
+       o.pic IS NOT NULL  AS pic,
+       o.m1 IS NOT NULL   AS m1,
+       o.m2 IS NOT NULL   AS m2,
+       o.m3 IS NOT NULL   AS m3,
+       o.m4 IS NOT NULL   AS m4
+FROM srcs o;
+
+alter table srcs_vw
     owner to postgres;
 
 create function first_agg(anyelement, anyelement) returns anyelement
@@ -944,6 +950,12 @@ BEGIN
             status = 4 AND oked >= laststamp AND oked < tillstamp
     GROUP BY rtlid;
 
+    -- close the buys 
+    UPDATE buys
+    SET status = 8
+    WHERE
+            status = 4 AND oked >= laststamp AND oked < tillstamp;
+
     -- post to accounts payable level 1
     INSERT INTO buyaps
     SELECT
@@ -952,7 +964,7 @@ BEGIN
         till,
         sum(trans),
         sum(amt),
-        100 - RATE,
+        RATE,
         sum(amt * RATE / 100),
         first(xorgid)
     FROM buyldgs_typ
@@ -984,7 +996,8 @@ DECLARE
 
     LVL_BIZ constant int = 1;
     LVL_FEE constant int = 2;
-    RATE constant int = 3;
+
+    RATE constant int = 97;
 
 BEGIN
 
@@ -1015,7 +1028,8 @@ BEGIN
     FROM purs
     WHERE
             status = 4 AND oked >= laststamp AND oked < tillstamp
-    GROUP BY supid, typ;
+    GROUP BY
+        supid, typ;
 
     -- aggregate by lotid
     INSERT INTO purldgs_lotid
@@ -1033,26 +1047,32 @@ BEGIN
     GROUP BY
         supid, lotid;
 
+    -- close the purchases 
+    UPDATE purs
+    SET status = 8
+    WHERE
+            status = 4 AND oked >= laststamp AND oked < tillstamp;
+
     -- accounts payable level 1
-    INSERT INTO buyaps
+    INSERT INTO puraps
     SELECT
         LVL_BIZ,
         orgid,
         till,
         sum(trans),
         sum(amt),
-        100 - RATE,
+        RATE,
         sum(amt * RATE / 100),
         first(xorgid)
-    FROM buyldgs_typ
+    FROM
+        purldgs_typ
     WHERE
-            acct = 1 AND dt > last AND dt <= till
-    GROUP BY orgid;
-
+            dt > last AND dt <= till
+    GROUP BY
+        orgid;
 
     INSERT INTO purgens (till, last, started, ended, opr)
-    VALUES
-        (till, last, now, localtimestamp(0), opr);
+    VALUES (till, last, now, localtimestamp(0), opr);
 
 END
 $$;

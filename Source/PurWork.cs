@@ -401,10 +401,10 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一收货 - 品控仓")]
+[Ui("采购统一接收 - 品控仓")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("采购统一收货", status: 1), Tool(Anchor)]
+    [Ui("采购统一接收", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -418,7 +418,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("已输运", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("商户").TH("输运", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
@@ -450,7 +450,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("已输运", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("产品").TH("输运", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {

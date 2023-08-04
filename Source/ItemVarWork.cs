@@ -36,7 +36,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "上线", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -142,10 +142,9 @@ public class PublyItemVarWork : ItemVarWork
 
             if (o.lotid > 0)
             {
-                var org = GrabTwin<int, Org>(o.orgid);
                 var src = lot?.srcid > 0 ? GrabTwin<int, Src>(lot.srcid) : null;
 
-                LotVarWork.ShowLot(h, lot, src, false);
+                LotVarWork.ShowLot(h, lot, src, false, false);
             }
         }, true, 900);
     }

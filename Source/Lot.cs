@@ -200,12 +200,12 @@ public class Lot : Entity, IKeyable<int>
     public override string ToString() => name;
 
 
-    public bool TryGetInvOp(int tracenum, out StockOp value)
+    public bool TryGetStockOp(int tracenum, out StockOp value)
     {
         if (ops != null)
         {
             var num = tracenum;
-            for (int i = ops.Length - 1; i >= 0; i--)
+            for (int i = 0; i < ops.Length; i--)
             {
                 var op = ops[i];
                 num -= op.qty;

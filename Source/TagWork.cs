@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ChainFx;
 using ChainFx.Web;
 using static ChainFx.Nodal.Nodality;
 
@@ -24,8 +25,10 @@ public class PublyTagWork : TagWork
         {
             dc.Let(out int lotid);
 
-            dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid));
+            const short Msk = 0xff | Entity.MSK_AUX;
+
+            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE id = @1");
+            var lot = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
 
             if (lot == null)
             {
@@ -52,7 +55,7 @@ public class PublyTagWork : TagWork
 
                 h._TOPBARXL();
 
-                LotVarWork.ShowLot(h, lot, src, false, tracenum);
+                LotVarWork.ShowLot(h, lot, src, false, true, tracenum);
 
                 h.FOOTER_("uk-col uk-flex-middle uk-background-muted");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
