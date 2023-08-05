@@ -85,7 +85,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.Notices.Put(OrgNoticePack.PUR_OKED, 1, topay);
+                rtl.NoticePack.Put(OrgNoticePack.PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -145,7 +145,7 @@ public class SuplyPurVarWork : PurVarWork
 
                     // put a notice to the shop
                     var rtl = GrabTwin<int, Org>(rtlid);
-                    rtl.Notices.Put(OrgNoticePack.PUR_REFUND, 1, refund);
+                    rtl.NoticePack.Put(OrgNoticePack.PUR_REFUND, 1, refund);
                 }
             }
             catch (Exception)
@@ -195,7 +195,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.Notices.Put(OrgNoticePack.PUR_VOID, 1, refund);
+                rtl.NoticePack.Put(OrgNoticePack.PUR_VOID, 1, refund);
             }
         }
         catch (Exception)

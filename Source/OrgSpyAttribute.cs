@@ -12,6 +12,6 @@ public class OrgSpyAttribute : TwinSpyAttribute
     {
         var org = Nodality.GrabTwin<int, Org>(orgid);
 
-        return org.Notices.Check(slot, clear);
+        return org.NoticePack.Check(slot, clear);
     }
 }

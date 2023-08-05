@@ -260,31 +260,31 @@ public class Org : Entity, ITwin<int>
     // EVENT 
 
 
-    private OrgNoticePack notices;
+    private OrgNoticePack noticep;
 
-    public OrgNoticePack Notices
+    public OrgNoticePack NoticePack
     {
         get
         {
-            if (notices == null)
+            if (noticep == null)
             {
-                Interlocked.CompareExchange(ref notices, new OrgNoticePack(), null);
+                Interlocked.CompareExchange(ref noticep, new OrgNoticePack(), null);
             }
-            return notices;
+            return noticep;
         }
     }
 
-    private OrgEventPack events;
+    private OrgEventPack eventp;
 
-    public OrgEventPack Events
+    public OrgEventPack EventPack
     {
         get
         {
-            if (events == null)
+            if (eventp == null)
             {
-                Interlocked.CompareExchange(ref events, new OrgEventPack(), null);
+                Interlocked.CompareExchange(ref eventp, new OrgEventPack(), null);
             }
-            return events;
+            return eventp;
         }
     }
 }

@@ -54,7 +54,7 @@ public abstract class OrglyVarWork : WebWork
         var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;
 
-        var es = org.Events;
+        var es = org.EventPack;
 
         var j = new JsonBuilder(true, 1024 * 32);
         try
@@ -226,22 +226,20 @@ public class RtllyVarWork : OrglyVarWork
     public void @event(WebContext wc)
     {
         var org = wc[0].As<Org>();
-        var prin = (User)wc.Principal;
+        var now = DateTime.Now;
 
-        var es = org.Events;
-
-        var j = new JsonBuilder(true, 1024 * 32);
-        try
+        // receive incoming events
+        if (wc.IsPost)
         {
-            j.ARR_();
-
-
-            j._ARR();
+            //
         }
-        finally
-        {
-            j.Clear();
-        }
+
+        // outgoing events
+        //
+        var bdr = new JsonBuilder(true, 1024 * 32);
+        org.EventPack.Dump(bdr, now);
+
+        wc.Give(200, bdr);
     }
 }
 

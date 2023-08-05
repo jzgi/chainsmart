@@ -43,6 +43,10 @@ public class MainApp : Application
         WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).VisitUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).VisitUrl;
 
+
+        var org = GrabTwin<int, Org>(9);
+        org.EventPack.Add(new Buy());
+        
         await StartAsync();
     }
 

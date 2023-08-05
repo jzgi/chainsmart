@@ -1,13 +1,14 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using ChainFx;
 using ChainFx.Nodal;
 
 namespace ChainSmart;
 
-/**
- * The notice pack pertaining to a particular org.
- */
-public class OrgNoticePack : TwinPack<Notice>
+/// <summary>
+/// The notice pack pertaining to a particular org. 
+/// </summary>
+public class OrgNoticePack : IPack<StringBuilder>
 {
     public const short
         BUY_CREATED = 1,
@@ -38,43 +39,40 @@ public class OrgNoticePack : TwinPack<Notice>
     };
 
 
+    readonly Entry[] entries = new Entry[Typs.Count];
+
     private int toPush;
 
+    private DateTime since = DateTime.Now;
 
-    public void Put(short slot, int num, decimal amt)
+    public void Put(short idx, int num, decimal amt)
     {
         lock (this)
         {
-            var idx = IndexOf(slot);
-            if (idx == -1)
-            {
-                Add(slot, new Notice(slot, num, amt));
-            }
-            else
-            {
-                entries[idx].Value.AddUp(num, amt);
-            }
+            entries[idx].AddUp(num, amt);
 
             toPush += num;
         }
     }
 
+    public DateTime Since => since;
 
-    public void PushToBuffer(StringBuilder sb)
+    public void Dump(StringBuilder bdr, DateTime now)
     {
         lock (this)
         {
             var ord = 0;
-            for (var i = 0; i < Count; i++)
+            for (var i = 0; i < entries.Length; i++)
             {
-                var v = ValueAt(i);
-                if (v.IsStuffed)
+                if (entries[i].IsStuffed)
                 {
-                    sb.Append(NUMS[ord++]).Append(' ');
+                    bdr.Append(NUMS[ord++]).Append(' ');
 
-                    v.PutToBuffer(sb);
+                    entries[i].PutToBuilder(bdr);
 
-                    v.Reset();
+                    entries[i].Reset();
+
+                    since = now;
                 }
             }
 
@@ -82,21 +80,16 @@ public class OrgNoticePack : TwinPack<Notice>
         }
     }
 
-    public int Check(short slot, bool clear = false)
+    public int Check(short idx, bool clear = false)
     {
         lock (this)
         {
-            var idx = IndexOf(slot);
-
-            if (idx == -1) return 0;
-
-            var ret = entries[idx].Value.SpyCount;
+            var ret = entries[idx].SpyCount;
 
             if (clear)
             {
-                entries[idx].Value.SpyCount = 0;
+                entries[idx].SpyCount = 0;
             }
-
             return ret;
         }
     }
@@ -110,5 +103,51 @@ public class OrgNoticePack : TwinPack<Notice>
                 return toPush > 0;
             }
         }
+    }
+
+
+    internal struct Entry : IKeyable<short>
+    {
+        internal readonly short typ;
+
+        internal int count;
+
+        internal decimal sum;
+
+        public int SpyCount;
+
+        internal bool IsEmpty => typ == 0 || count == 0;
+
+        internal bool IsStuffed => typ != 0 && count != 0;
+
+        public Entry(short slot, int num, decimal amt)
+        {
+            typ = slot;
+            count = num;
+            sum = amt;
+
+            SpyCount = num;
+        }
+
+        internal void AddUp(int num, decimal amt)
+        {
+            count += num;
+            sum += amt;
+
+            SpyCount += num;
+        }
+
+        internal void Reset()
+        {
+            count = 0;
+            sum = 0;
+        }
+
+        internal void PutToBuilder(StringBuilder sb)
+        {
+            sb.Append(Typs[typ]).Append(' ').Append(count).Append(' ').Append('￥').Append(sum);
+        }
+
+        public short Key => typ;
     }
 }

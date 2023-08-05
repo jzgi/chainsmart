@@ -60,7 +60,7 @@ public class MgtService : MainService
 
                     // put a notice to the accepter
                     var sup = GrabTwin<int, Org>(supid);
-                    sup.Notices.Put(OrgNoticePack.PUR_CREATED, 1, cash);
+                    sup.NoticePack.Put(OrgNoticePack.PUR_CREATED, 1, cash);
                 }
                 else // the pay differs from the order
                 {

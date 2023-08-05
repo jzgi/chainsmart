@@ -36,18 +36,18 @@ public class OrgGraph : TwinGraph<int, Org>
     protected override async Task<int> TwinSetIoCycleAsync(int setkey, Map<int, Org> set)
     {
         // use same builder for each and every sent notice
-        var sb = new StringBuilder();
-        var nowStr = DateTime.Now.ToString("yyyy-MM-dd HH mm");
+        var now = DateTime.Now;
+        var nowStr = now.ToString("yyyy-MM-dd HH mm");
 
         int num = 0;
-
+        var sb = new StringBuilder();
         foreach (var ety in set)
         {
             var org = ety.Value;
-            var pack = org.Notices;
+            var pack = org.NoticePack;
             if (pack.HasToPush)
             {
-                pack.PushToBuffer(sb);
+                pack.Dump(sb, now);
 
                 // send sms
                 await WeixinUtility.SendNotifSmsAsync(org.Tel, org.Name, nowStr, sb.ToString());
