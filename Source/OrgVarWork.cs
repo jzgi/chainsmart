@@ -545,7 +545,7 @@ public class MktlyOrgVarWork : OrgVarWork
 public class CtrlyOrgVarWork : OrgVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "调整供源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -560,7 +560,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_();
+                    h.FORM_().FIELDSUL_("调整商户信息");
 
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
@@ -569,7 +569,7 @@ public class CtrlyOrgVarWork : OrgVarWork
                     h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("委托代办", nameof(m.trust), true, m.trust)._LI();
+                    h.LI_().CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 }

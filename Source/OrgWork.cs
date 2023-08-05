@@ -358,7 +358,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         });
     }
 
-    [Ui("成员商户"), Tool(Anchor)]
+    [Ui("成员商户", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -372,7 +372,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无上线商户");
+                h.ALERT("尚无上线的商户");
                 return;
             }
 
@@ -380,7 +380,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已下线", icon: "cloud-download"), Tool(Anchor)]
+    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
     public void down(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -402,7 +402,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         }, false, 15);
     }
 
-    [Ui(tip: "已删除", icon: "trash"), Tool(Anchor)]
+    [Ui(tip: "已作废", icon: "trash", status: 4), Tool(Anchor)]
     public void @void(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -416,7 +416,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无删除商户");
+                h.ALERT("尚无作废的商户");
                 return;
             }
 
@@ -425,7 +425,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus"), Tool(ButtonOpen)]
+    [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var zon = wc[-1].As<Org>();
@@ -452,7 +452,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
                 h.LI_().TEXT("联系地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h.LI_().CHECKBOX("委托代办", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });

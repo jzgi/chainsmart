@@ -8,7 +8,7 @@ namespace ChainSmart;
 
 [MyAuthorize]
 [Ui("我的个人账号")]
-[Summary("注册的用户可以管理个人账号以及相关的资源")]
+[Help("注册的用户可以管理个人账号以及相关的资源")]
 public class MyVarWork : BuyWork<MyBuyVarWork>
 {
     public async Task @default(WebContext wc)

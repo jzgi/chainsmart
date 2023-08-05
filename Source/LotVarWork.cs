@@ -146,7 +146,7 @@ public class LotVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("供应输运点", Lot.Typs[o.typ]);
+            h.LI_().FIELD("供应点", Lot.Typs[o.typ]);
             h.LI_().FIELD("产品名", o.name)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             if (o.typ == 2) h.FIELD("交货起始日", o.shipon);
@@ -309,7 +309,7 @@ public class SuplyLotVarWork : LotVarWork
             {
                 h.FORM_().FIELDSUL_("批次信息");
 
-                h.LI_().SELECT("供应输运点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
+                h.LI_().SELECT("供应点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
                 h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();

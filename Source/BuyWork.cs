@@ -18,6 +18,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
 }
 
 [Ui("网售订单")]
+[Help("按照几个阶段，对所有的网售订单进行管理")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst, bool pick = false)
@@ -78,7 +79,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     static readonly string[] ExcludeActions = { nameof(adapted), nameof(adapt) };
 
     [OrgSpy(BUY_CREATED)]
-    [Ui("网售订单", status: 1), Tool(Anchor)]
+    [Ui("网售订单", "新收的网售订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

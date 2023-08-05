@@ -33,7 +33,7 @@ public abstract class PurVarWork : WebWork
             h.LI_().FIELD("件数", o.QtyX).FIELD("支付金额", o.pay, money: true)._LI();
 
             h.LI_().FIELD("状态", o.status, Pur.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "撤销" : "输运", o.adapter, o.adapted, sep: "<br>").FIELD2("收货", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "撤销" : "发货", o.adapter, o.adapted, sep: "<br>").FIELD2("收货", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
 
@@ -51,7 +51,7 @@ public class SuplyPurVarWork : PurVarWork
     internal short PurTyp => ((SuplyPurWork)Parent).PurTyp;
 
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("输运", "确认开始输运", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
+    [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
         int id = wc[0];
@@ -91,7 +91,7 @@ public class SuplyPurVarWork : PurVarWork
         catch (Exception)
         {
             dc.Rollback();
-            Err("输运操作失败, purid " + id);
+            Err("发货操作失败, purid " + id);
             return;
         }
 
@@ -227,7 +227,7 @@ public class CtrlyPurVarWork : PurVarWork
         wc.GivePage(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("输运", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("产品").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())
@@ -316,7 +316,7 @@ public class CtrlyPurVarWork : PurVarWork
     }
 
 
-    [Ui("输运", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
+    [Ui("发货", icon: "arrow-right", status: 255), Tool(ButtonOpen)]
     public async Task ok(WebContext wc)
     {
         var prin = (User)wc.Principal;
@@ -340,7 +340,7 @@ public class CtrlyPurVarWork : PurVarWork
 
 public class MktlyPurVarWork : PurVarWork
 {
-    [Ui("代接收", icon: "download"), Tool(ButtonPickConfirm)]
+    [Ui("代收货", icon: "download"), Tool(ButtonPickConfirm)]
     public async Task rtl(WebContext wc)
     {
         int rtlid = wc[0];

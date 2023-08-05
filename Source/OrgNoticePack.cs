@@ -26,7 +26,7 @@ public class OrgNoticePack : TwinPack<Notice>
         { BUY_VOID, "撤单" },
         { BUY_REFUND, "返现" },
         { PUR_CREATED, "新单" },
-        { PUR_OKED, "输运" },
+        { PUR_OKED, "发货" },
         { PUR_VOID, "撤单" },
         { PUR_REFUND, "返现" },
     };

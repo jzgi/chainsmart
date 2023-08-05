@@ -89,7 +89,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已输运", icon: "arrow-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "arrow-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -103,7 +103,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已输运的订单");
+                h.ALERT("尚无已发货的订单");
                 return;
             }
 
@@ -192,8 +192,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         wc.GivePage(200, h =>
         {
             h.TOPBAR_("uk-padding").UL_("uk-subnav");
-            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓输运")._A()._LI();
-            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源输运")._A()._LI();
+            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓")._A()._LI();
+            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源")._A()._LI();
             h._UL()._TOPBAR();
 
             if (arr == null)
@@ -277,7 +277,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "开始输运", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "开始发货", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -291,7 +291,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无开始输运的订单");
+                h.ALERT("尚无开始发货的订单");
                 return;
             }
 
@@ -346,10 +346,10 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓统一输运")]
+[Ui("品控仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("统一输运", status: 8), Tool(Anchor)]
+    [Ui("统一发货", status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var hub = wc[-1].As<Org>();
@@ -363,7 +363,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("输运", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("市场").TH("收单", css: "uk-width-tiny").TH("发货", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -401,10 +401,10 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一接收 - 品控仓")]
+[Ui("采购统一收货 - 品控仓")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("采购统一接收", status: 1), Tool(Anchor)]
+    [Ui("采购统一收货", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -418,7 +418,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("商户").TH("输运", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("商户").TH("发货", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {
@@ -450,7 +450,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("产品").TH("输运", css: "uk-text-right")._THEAD();
+            h.THEAD_().TH("产品").TH("发货", css: "uk-text-right")._THEAD();
 
             while (dc.Next())
             {

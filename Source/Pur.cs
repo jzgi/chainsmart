@@ -24,7 +24,7 @@ public class Pur : Entity, IKeyable<int>
     {
         { STU_VOID, "撤销" },
         { STU_CREATED, "收单" },
-        { STU_ADAPTED, "输运" },
+        { STU_ADAPTED, "发货" },
         { STU_OKED, "收货" },
         { STU_CLOSED, "关闭" },
     };

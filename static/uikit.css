@@ -305,6 +305,7 @@ dt {
     font-weight: bold;
     padding: 8px;
     margin-left: 0;
+    display: inline-flex;
 }
 
 dd {

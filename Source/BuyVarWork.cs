@@ -76,10 +76,12 @@ public class MyBuyVarWork : BuyVarWork
     }
 }
 
+[Ui("订单操作")]
+[Help("显示订单明细，并且提供各阶段下的订单处理操作")]
 public class RtllyBuyVarWork : BuyVarWork
 {
     [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
-    public async Task goback(WebContext wc)
+    public async Task ret(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -91,8 +93,14 @@ public class RtllyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
+    [Help(
+            "由商户自行安排对收单所涉的产品或服务进行派发，操作之后该单将置为「派发」状态",
+            "除了自行派发以外，也可以选择将产品送至集合区，由市场统一派发",
+            "注意：唯有派发了的订单才能结算返款"
+        )
+    ]
     [OrglyAuthorize(0, User.ROL_LOG)]
-    [Ui("派发", "商户自行安排派发？", status: 1), Tool(ButtonConfirm)]
+    [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -112,7 +120,7 @@ public class RtllyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [Ui("返款", tip: "返回一定数量的款", status: 1 | 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    [Ui("返现", tip: "退返指定数量的支付款", status: 1 | 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
     public async Task refund(WebContext wc)
     {
         int id = wc[0];
@@ -123,21 +131,19 @@ public class RtllyBuyVarWork : BuyVarWork
             using var dc = NewDbContext();
             dc.Sql("SELECT FROM buys WHERE id = @1 AND rtlid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-
         }
         else
         {
             using var dc = NewDbContext();
             // dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND rtlid = @2 AND (status = 2 OR status = 4)");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-
         }
 
         wc.Give(200);
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("撤销", "确认撤销并退款？", status: 1 | 2), Tool(ButtonConfirm)]
+    [Ui("撤销", "撤销该单并全款退回消费者", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
