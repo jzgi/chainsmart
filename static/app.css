@@ -12,7 +12,7 @@
     color: #000;
 }
 
-.fprice.vip  {
+.fprice.vip {
     color: #7daa1d;
 }
 
@@ -48,10 +48,12 @@ mark.state-4 {
     border-bottom-left-radius: 12px;
     text-align: right;
 }
+
 .qtyselect.uk-active {
     color: #fff;
     background-color: #f59604;
 }
+
 output.subtotal {
     flex: 1;
     min-width: 1px;
@@ -112,7 +114,18 @@ output.subtotal {
     height: 19.0mm;
 }
 
-
+.h1-lot {
+    font-size: 1.25rem;
+    color: #fff;
+    margin: 4px 0;
+    background-color: #7daa1d;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-weight: 400;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+}
 
 /* CROPPIE */
 

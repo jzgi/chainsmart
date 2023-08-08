@@ -45,7 +45,7 @@ public class PublyTagWork : TagWork
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
-                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(lot.name)._HEADER();
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(lot.name, css: "h1-lot")._HEADER();
                 if (lot.icon)
                 {
                     h.PIC("/lot/", lot.id, "/icon", circle: true, css: "uk-width-small");
@@ -57,13 +57,11 @@ public class PublyTagWork : TagWork
 
                 LotVarWork.ShowLot(h, lot, src, false, true, tracenum);
 
-                h.FOOTER_("uk-col uk-flex-middle uk-background-muted");
+                h.FOOTER_("uk-col uk-flex-middle uk-padding-large");
                 h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
                 h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
                 h._FOOTER();
             }, true, 3600, title: "中惠农通产品溯源信息");
-
-            // wc.GiveRedirect("/lot/" + lotid + "/");
         }
         else
         {

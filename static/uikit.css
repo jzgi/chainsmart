@@ -8,7 +8,6 @@ html {
 
 body {
     margin: 0;
-    background-color: #fff;
     font-size: 0.9375rem;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -206,7 +205,7 @@ svg:not(:root) {
 p {
     font-size: 0.8rem;
     margin: 4px 0;
-    color: #777;
+    color: #666;
 }
 
 label,
@@ -732,7 +731,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-description-list>dt {
-    color: #777;
+    color: #666;
     font-size: 14px;
     font-weight: normal;
     padding: 3px 0;
@@ -1643,7 +1642,7 @@ select.uk-form-width-xsmall {
     align-items: center;
     padding: 0.25rem;
     background-color: white;
-    border: 1px solid #777;
+    border: 1px solid #666;
 }
 
 .uk-qrcode>img {
@@ -1733,11 +1732,11 @@ select.uk-form-width-xsmall {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    color: #777;
+    color: #666;
 }
 
 .uk-form-icon:hover {
-    color: #777;
+    color: #666;
 }
 
 .uk-form-icon:not(a):not(button):not(input) {
@@ -2232,10 +2231,6 @@ main.uk-grid>li {
     width: -webkit-fill-available;
 }
 
-.uk-card-default>.uk-card-body {
-    box-shadow: 0px 1px 0px 0px #ededed;
-}
-
 section.uk-card-body,
 a.uk-card-body {
     height: calc(100% - 8px);
@@ -2292,6 +2287,7 @@ a.uk-inactive {
     background-color: transparent;
     border-radius: 4px;
     padding: 2px;
+    box-shadow: 0px 1px 0px 0px #ededed;
 }
 
 .uk-card .uk-card-title {
@@ -3336,7 +3332,7 @@ ul.uk-nav-sub {
     justify-content: center;
     padding: 0 12px;
     height: 100%;
-    color: #777;
+    color: #666;
     text-transform: uppercase;
     transition: color 0.1s ease-in-out;
     box-sizing: border-box;
@@ -4464,7 +4460,7 @@ ul.uk-nav-sub {
     width: 100%;
     background-color: #fff;
     height: 15px;
-    border: 1px solid #777;
+    border: 1px solid #666;
     border-radius: 12px;
     overflow: hidden;
 }

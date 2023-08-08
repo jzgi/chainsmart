@@ -80,14 +80,16 @@ public class LotVarWork : WebWork
         h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
         if (o.nstart > 0 && o.nend > 0)
         {
-            h.LI_().FIELD2("溯源码范围", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+            h.LI_().FIELD2("批次溯源码", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
         }
-        if (tracenum > 0)
+
+        var offset = tracenum - o.nstart;
+        if (offset > 0)
         {
-            h.LI_("uk-background-secondary").FIELD("本溯源码", $"{tracenum:0000 0000}")._LI();
-            if (o.TryGetStockOp(tracenum, out var v))
+            h.LI_().LABEL("本溯源码").SPAN($"{tracenum:0000 0000}", css: "uk-static uk-text-danger")._LI();
+            if (o.TryGetStockOp(offset, out var v))
             {
-                h.LI_("uk-background-secondary").FIELD("品控仓操作", v.dt)._LI();
+                h.LI_().LABEL("生效日期").SPAN(v.dt, css: "uk-static uk-text-danger")._LI();
             }
         }
         h._LI();
