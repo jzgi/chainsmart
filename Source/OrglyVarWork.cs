@@ -157,7 +157,7 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyPurWork>("mpur");
 
-        CreateWork<MktlyTwinWork>("mtwin");
+        CreateWork<MktlyFactWork>("mfact");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -278,6 +278,6 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<CtrlyPurLdgWork>("cpurldg");
 
-        CreateWork<CtrlyTwinWork>("ctwin");
+        CreateWork<CtrlyFactWork>("ctwin");
     }
 }
