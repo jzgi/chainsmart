@@ -22,11 +22,18 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         wc.GivePage(200, h =>
         {
             h.TOPBARXL_();
+
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(prin.name);
-            h.H4(prin.tel);
-            if (prin.typ > 0) h.Q(User.Typs[prin.typ]);
+            h.H4_().T(prin.tel);
+            if (prin.typ > 0)
+            {
+                h.SP().Q(User.Typs[prin.typ]);
+            }
+            h._H4();
+            h.Q_().T(prin.created, time: 0).SP().T("注册")._Q();
             h._HEADER();
+
             if (prin.icon)
             {
                 h.IMG("/user/", prin.id, "/icon/", circle: true, css: "uk-width-medium");
@@ -82,7 +89,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             }
 
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());
-        }, false, 120);
+        }, false, 12);
     }
 
     [Ui("身份", "刷新我的身份权限", status: 7), Tool(ButtonShow)]

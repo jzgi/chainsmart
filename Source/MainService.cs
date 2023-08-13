@@ -43,9 +43,11 @@ public abstract class MainService : WebService
                 url = wc.Query[nameof(url)];
                 url = HttpUtility.UrlDecode(url);
 
-                h.FORM_();
+                h.HEADER_(css: "uk-flex-center").ICON("user", ratio: 4, "uk-circle uk-background-muted uk-padding-large")._HEADER();
 
-                h.FIELDSUL_("通过预留密码登录");
+                h.ALERT("请通过「我的个人账号」来设置密码；新用户请从中惠农通微信公众号来注册", css: "uk-alert-warning");
+
+                h.FORM_().FIELDSUL_();
                 h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                 h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                 h._FIELDSUL();
@@ -76,7 +78,7 @@ public abstract class MainService : WebService
 
             // successfully signed in
             wc.Principal = prin;
-            
+
             wc.SetTokenCookies(prin);
 
             wc.GiveRedirect(url ?? "/");

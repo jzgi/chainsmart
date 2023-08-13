@@ -134,6 +134,7 @@ mark {
 
 q {
     font-size: .7rem;
+    font-weight: 200;
     margin: 0;
     color: #888;
     overflow: hidden;
@@ -2312,11 +2313,10 @@ a.uk-inactive {
  * Secondary
  */
 .uk-card-secondary {
-    margin: 6px 4px;
-    padding: 4px;
-    background-color: #fff;
-    border: 1px solid #ededed;
-    border-radius: 2px;
+    background-color: transparent;
+    border-radius: 4px;
+    padding: 2px;
+    box-shadow: 0 0px 0px 1px #f59604;
 }
 
 .uk-card-secondary .uk-card-title {
@@ -2506,8 +2506,8 @@ a.uk-inactive {
 
 .uk-alert {
     position: relative;
-    margin: 0;
-    padding: 12px;
+    margin: 8px;
+    padding: 8px;
     color: #333;
 }
 
@@ -2544,12 +2544,12 @@ a.uk-inactive {
 }
 
 .uk-alert-warning {
-    background: rgb(245 150 4 / 0.15);
+    background: rgb(245 150 4 / 0.05);
     color: #faa05a;
 }
 
 .uk-alert-danger {
-    background: rgb(255 59 48 / 0.15);
+    background: rgb(255 59 48 / 0.05);
     color: #ff3b30;
 }
 

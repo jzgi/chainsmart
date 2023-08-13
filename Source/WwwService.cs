@@ -121,7 +121,10 @@ public class WwwService : MainService
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
 
+                    // notice and event
+                    //
                     rtl.NoticePack.Put(OrgNoticePack.BUY_CREATED, 1, cash);
+                    rtl.EventPack.AddNew(rtl.name);
                 }
                 else // the pay differs from the order
                 {

@@ -43,15 +43,15 @@ public class MktlyFactVarWork : FactVarWork
     [Ui(tip: "调整事务信息", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
-        int evtid = wc[0];
+        int id = wc[0];
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM events WHERE id = @1");
-            var o = await dc.QueryTopAsync<Item>(p => p.Set(evtid));
+            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM facts WHERE id = @1");
+            var o = await dc.QueryTopAsync<Item>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
@@ -78,7 +78,7 @@ public class MktlyFactVarWork : FactVarWork
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
-                p.Set(evtid).Set(org.id);
+                p.Set(id).Set(org.id);
             });
 
             wc.GivePane(200); // close dialog

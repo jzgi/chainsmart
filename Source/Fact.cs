@@ -5,7 +5,7 @@ namespace ChainSmart;
 /// <summary>
 /// The data modal for an event..
 /// </summary>
-public class Fact : Entity, IKeyable<short>
+public class Fact : Entity, IKeyable<int>
 {
     public static readonly Fact Empty = new();
 
@@ -68,7 +68,7 @@ public class Fact : Entity, IKeyable<short>
         }
     }
 
-    public short Key => typ;
+    public int Key => id;
 
     public override string ToString() => name;
 
