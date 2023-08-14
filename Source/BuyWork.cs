@@ -300,42 +300,51 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         });
     }
 
-    [Ui(tip: "按商户", icon: "grid", status: 2), Tool(Anchor)]
-    public async Task orgs(WebContext wc)
+    public async Task lst(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql($"SELECT rtlid, first(name), first(tip), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
+        dc.Sql($"SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(mkt.id));
+
+        const int PAGESIZ = 5;
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.T("<main uk-slider>");
+            h.UL_("uk-slider-items uk-child-width-2-3");
 
-            h.TABLE_();
-            h.THEAD_().TH("商户").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
+            int num = 0;
             while (dc.Next())
             {
-                dc.Let(out int rtlid);
                 dc.Let(out string name);
-                dc.Let(out string tip);
                 dc.Let(out int created);
                 dc.Let(out int adapted);
 
-                h.TR_();
-                h.TD_().T(name);
-                if (!string.IsNullOrEmpty(tip))
+                if (num % PAGESIZ == 0)
                 {
-                    h.T('（').T(tip).T('）');
+                    h.LI_();
+                    h.TABLE_(dark: true);
+                    h.THEAD_().TH("商户").TH("收单", css: "uk-width-medium uk-text-center").TH("集合", css: "uk-width-medium uk-text-center")._THEAD();
                 }
-                h._TD();
+
+                // each row
+                //
+                h.TR_();
+                h.TD_().T(name)._TD();
                 h.TD(created, right: null);
                 h.TD(adapted, right: null);
                 h._TR();
+
+                num++;
             }
             h._TABLE();
-        }, false, 6);
+            h._LI();
+
+            h._UL();
+            h._MAIN();
+        }, false, 12, refresh: 60);
     }
 
     [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]

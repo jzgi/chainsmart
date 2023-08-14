@@ -762,7 +762,6 @@ a.uk-link-reset:hover,
     font-size: 0.875rem;
     font-weight: normal;
     color: #7daa1d;
-    background-color: #fafafa;
     text-transform: uppercase;
 }
 
@@ -875,6 +874,50 @@ a.uk-link-reset:hover,
 .uk-table tbody tr {
     transition: background-color 0.1s linear;
 }
+
+
+.uk-table-dark {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: -webkit-fill-available;
+    overflow-x: auto;
+    margin: 4px;
+}
+
+.uk-table-dark tbody {
+    background-color: #000;
+}
+
+.uk-table-dark th {
+    padding: 8px 16px;
+    vertical-align: bottom;
+    font-size: 1.75rem;
+    font-weight: normal;
+    color: #7daa1d;
+    text-transform: uppercase;
+}
+
+.uk-table-dark td {
+    padding: 8px 16px;
+    font-size: 4rem;
+}
+
+.uk-table-dark-divider>tr:not(:first-child),
+.uk-table-dark-divider>tbody>tr:not(:first-child) {
+    border-top: 2px solid #7daa1d;
+}
+
+.uk-table-dark caption {
+    text-transform: uppercase;
+    color: #333;
+    padding: 4px;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.75rem;
+    box-sizing: border-box;
+}
+
 
 .uk-icon {
     margin: 0;
@@ -5580,6 +5623,10 @@ ul.uk-nav-sub {
     font-size: 1.125rem;
 }
 
+.uk-text-xlarge {
+    font-size: 3rem;
+}
+
 .uk-text-bold {
     font-weight: bolder;
 }
@@ -5932,12 +5979,12 @@ iframe.uk-cover {
 }
 
 .uk-background-primary {
-    background-color: rgb(125 170 29 / 10%) !important;
+    background-color: black !important;
 }
 
 .uk-background-secondary {
-    background-color: #fff2f3;
-    color: #da1e28;
+    background-color: black !important;
+    color: #fff;
 }
 
 .uk-background-cover,
@@ -7112,7 +7159,7 @@ iframe.uk-cover {
 }
 
 .uk-padding-large {
-    padding: 12px;
+    padding: 12px !important;
 }
 
 /* Desktop and bigger */

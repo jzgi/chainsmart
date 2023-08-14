@@ -43,12 +43,13 @@ public abstract class MainService : WebService
                 url = wc.Query[nameof(url)];
                 url = HttpUtility.UrlDecode(url);
 
+                h.NAV_("uk-top-placeholder")._NAV();
                 h.HEADER_(css: "uk-flex-center").ICON("user", ratio: 4, "uk-circle uk-background-muted uk-padding-large")._HEADER();
 
                 h.ALERT("请通过「我的个人账号」来设置密码；新用户请从中惠农通微信公众号来注册", css: "uk-alert-warning");
 
                 h.FORM_().FIELDSUL_();
-                h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
+                h.LI_().TEXT("手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                 h.LI_().PASSWORD("密码", nameof(password), password, max: 12, min: 3)._LI();
                 h._FIELDSUL();
 
@@ -147,12 +148,17 @@ public abstract class MainService : WebService
         {
             webctx.GivePage(200, h =>
             {
+                h.NAV_("uk-top-placeholder")._NAV();
+                h.HEADER_(css: "uk-flex-center").ICON("user", ratio: 4, "uk-circle uk-background-muted uk-padding-large")._HEADER();
+
+                h.ALERT("为了服务更便利，请尽量照实填写", css: "uk-alert-success");
+
                 h.FORM_();
 
-                h.FIELDSUL_("填写账号信息");
+                h.FIELDSUL_();
                 h.LI_().TEXT("姓名", nameof(name), name, max: 10, min: 2, required: true)._LI();
                 h.LI_().LABEL("手机号").TEXT(null, nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, css: "uk-width-expand").BUTTON("获取验证码", action: nameof(smsvcode), onclick: "return $smsvcode(this);", css: "uk-button-secondary")._LI();
-                h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "填写收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
+                h.LI_().TEXT("验证码", nameof(vcode), vcode, tip: "短信收到的验证码", pattern: "[0-9]+", max: 4, min: 4)._LI();
                 h._FIELDSUL();
 
                 h.HIDDEN(nameof(url), url);
