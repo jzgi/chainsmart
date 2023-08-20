@@ -279,7 +279,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
         var org = wc[-1].As<Org>();
@@ -301,7 +301,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             o.Read(wc.Query, 0);
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("商户信息");
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_("新建成员商户");
 
                 h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSector, @readonly: regid > 0, required: true).TEXT("编号或场址", nameof(o.addr), o.addr, max: 12)._LI();
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();

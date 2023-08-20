@@ -102,7 +102,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已集合", icon: "chevron-double-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已合单", icon: "chevron-double-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -117,7 +117,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已集合的订单");
+                h.ALERT("尚无已合单的订单");
                 return;
             }
 
@@ -174,7 +174,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         }, false, 6);
     }
 
-    [Ui("集合", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
+    [Ui("合单", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
     public async Task adapt(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -189,8 +189,8 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             wc.GivePane(200, h =>
             {
                 h.SECTION_("uk-card uk-card-primary");
-                h.H2("送存到集合区", css: "uk-card-header");
-                h.DIV_("uk-card-body").T("将备好的货贴上派送标签或小票，送存到集合区，等待统一派送")._DIV();
+                h.H2("送存到合单区", css: "uk-card-header");
+                h.DIV_("uk-card-body").T("将备好的货贴上派送标签或小票，送存到合单区，等待统一派送")._DIV();
                 h._SECTION();
 
                 h.FORM_("uk-card uk-card-primary uk-margin-top");
@@ -269,7 +269,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("合单", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
@@ -326,7 +326,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 {
                     h.LI_();
                     h.TABLE_(dark: true);
-                    h.THEAD_().TH("商户").TH("收单", css: "uk-width-medium uk-text-center").TH("集合", css: "uk-width-medium uk-text-center")._THEAD();
+                    h.THEAD_().TH("商户").TH("收单", css: "uk-width-medium uk-text-center").TH("合单", css: "uk-width-medium uk-text-center")._THEAD();
                 }
 
                 // each row
@@ -344,7 +344,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
             h._UL();
             h._MAIN();
-        }, false, 12, refresh: 60);
+        }, false, 12, title: mkt.Cover, refresh: 60);
     }
 
     [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]

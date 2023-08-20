@@ -31,7 +31,7 @@ public abstract class BuyVarWork : WebWork
             }
             h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
             h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "撤销" : "集合", o.adapter, o.adapted, sep: "<br>").FIELD2("派发", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2(o.IsVoid ? "撤销" : "合单", o.adapter, o.adapted, sep: "<br>").FIELD2("派发", o.oker, o.oked, sep: "<br>")._LI();
             h._UL();
 
             // buy items
@@ -95,7 +95,7 @@ public class RtllyBuyVarWork : BuyVarWork
 
     [Help(
             "由商户自行安排对收单所涉的产品或服务进行派发，操作之后该单将置为「派发」状态",
-            "除了自行派发以外，也可以选择将产品送至集合区，由市场统一派发",
+            "除了自行派发以外，也可以选择将产品送至合单区，由市场统一派发",
             "注意：唯有派发了的订单才能结算返款"
         )
     ]
@@ -205,7 +205,7 @@ public class MktlyBuyVarWork : BuyVarWork
         wc.GivePane(200, h =>
         {
             h.TABLE_();
-            h.THEAD_().TH("地址").TH("收单", css: "uk-width-tiny").TH("集合", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("地址").TH("收单", css: "uk-width-tiny").TH("合单", css: "uk-width-tiny")._THEAD();
 
             dc.NextResult();
             while (dc.Next())

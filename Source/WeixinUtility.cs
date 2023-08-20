@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using ChainFx;
@@ -18,11 +16,13 @@ namespace ChainSmart;
 /// </summary>
 public static class WeixinUtility
 {
-    static readonly WebConnect OpenApi = new WebConnect("https://api.weixin.qq.com");
+    static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
 
-    static readonly WebConnect SupPayApi, RtlPayApi;
+    static readonly WebConnect PayApi;
 
-    static readonly WebConnect SmsApi = new WebConnect("https://sms.tencentcloudapi.com");
+    static readonly Map<int, WebConnect> PayConnects = new();
+
+    static readonly WebConnect SmsApi = new("https://sms.tencentcloudapi.com");
 
     public static readonly string
         appid,
@@ -32,7 +32,6 @@ public static class WeixinUtility
         supmchid,
         rtlmchid,
         noncestr;
-    // spbillcreateip;
 
     public static readonly string key;
 
@@ -62,9 +61,11 @@ public static class WeixinUtility
 
         try
         {
-            SupPayApi = Set("sup_apiclient_cert.p12", supmchid);
-
-            RtlPayApi = Set("rtl_apiclient_cert.p12", rtlmchid);
+            PayApi = new WebConnect("https://api.mch.weixin.qq.com")
+            {
+                { "sup_apiclient_cert.p12", supmchid }, // password same as mchid
+                { "rtl_apiclient_cert.p12", rtlmchid }
+            };
         }
         catch (Exception e)
         {
@@ -72,16 +73,16 @@ public static class WeixinUtility
         }
     }
 
-    static WebConnect Set(string fileName, string password)
+    public static void AddPayConnect(int orgid, byte[] raw, string password)
     {
-        var handler = new WebClientHandler
+        PayConnects.Add(orgid, new WebConnect("https://api.mch.weixin.qq.com")
         {
-            ClientCertificateOptions = ClientCertificateOption.Manual
-        };
-        var cert = new X509Certificate2(fileName, password, X509KeyStorageFlags.MachineKeySet);
-        handler.ClientCertificates.Add(cert);
-        return new WebConnect("https://api.mch.weixin.qq.com", handler);
+            { raw, password }
+        });
     }
+
+    public static bool TryGetPayConnect(int orgid, out WebConnect v) => PayConnects.TryGetValue(orgid, out v);
+
 
     static string accessToken;
 
@@ -92,7 +93,7 @@ public static class WeixinUtility
         int now = Environment.TickCount;
         if (accessToken == null || now < tick || now - tick > 3600000)
         {
-            var (_, jo) = OpenApi.GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret, null).Result;
+            var (_, jo) = OpenApi.GetAsync<JObj>("/cgi-bin/token?grant_type=client_credential&appid=" + appid + "&secret=" + appsecret).Result;
             string access_token = jo?[nameof(access_token)];
             accessToken = access_token;
             tick = now;
@@ -105,8 +106,6 @@ public static class WeixinUtility
     {
         string redirect_url = WebUtility.UrlEncode(wc.Url);
 
-        // War("redirect_url:" + redirect_url);
-
         wc.SetHeader(
             "Location",
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + appid + "&redirect_uri=" + redirect_url + "&response_type=code&scope=" + (userinfo ? "snsapi_userinfo" : "snsapi_base") + "&state=wxauth#wechat_redirect"
@@ -117,7 +116,7 @@ public static class WeixinUtility
     public static async Task<(string access_token, string openid)> GetAccessorAsync(string code)
     {
         string url = "/sns/oauth2/access_token?appid=" + appid + "&secret=" + appsecret + "&code=" + code + "&grant_type=authorization_code";
-        var (_, jo) = await OpenApi.GetAsync<JObj>(url, null);
+        var (_, jo) = await OpenApi.GetAsync<JObj>(url);
         if (jo == null)
         {
             return default((string, string));
@@ -135,13 +134,13 @@ public static class WeixinUtility
 
     public static async Task<User> GetUserInfoAsync(string access_token, string openid)
     {
-        var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN", null);
+        var (_, jo) = await OpenApi.GetAsync<JObj>("/sns/userinfo?access_token=" + access_token + "&openid=" + openid + "&lang=zh_CN");
         string nickname = jo[nameof(nickname)];
         return new User { im = openid, name = nickname };
     }
 
 
-    static readonly DateTime EPOCH = new DateTime(1970, 1, 1);
+    static readonly DateTime EPOCH = new(1970, 1, 1);
 
     public static long NowMillis => (long)(DateTime.Now - EPOCH).TotalMilliseconds;
 
@@ -175,8 +174,7 @@ public static class WeixinUtility
             j._OBJ();
             j._OBJ();
             j._OBJ();
-            var (_, jo) =
-                await OpenApi.PostAsync<JObj>("/cgi-bin/qrcode/create?access_token=" + GetAccessToken(), j);
+            var (_, jo) = await OpenApi.PostAsync<JObj>("/cgi-bin/qrcode/create?access_token=" + GetAccessToken(), j);
             return (jo["ticket"], jo["url"]);
         }
         finally
@@ -231,7 +229,6 @@ public static class WeixinUtility
     public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
     {
         var mchid = sup ? supmchid : rtlmchid;
-        var api = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {
@@ -249,7 +246,7 @@ public static class WeixinUtility
         var sign = Sign(x);
         x.Add("sign", sign);
 
-        var (_, xe) = (await api.PostAsync<XElem>("/pay/unifiedorder", x.Dump()));
+        var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/unifiedorder", x.Dump()));
         string prepay_id = xe.Child(nameof(prepay_id));
         string err_code = null;
         if (prepay_id == null)
@@ -297,7 +294,6 @@ public static class WeixinUtility
     public static async Task<decimal> PostOrderQueryAsync(bool sup, string orderno)
     {
         var mchid = sup ? supmchid : rtlmchid;
-        var api = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {
@@ -309,7 +305,7 @@ public static class WeixinUtility
         string sign = Sign(x);
         x.Add("sign", sign);
 
-        var (_, xe) = (await api.PostAsync<XElem>("/pay/orderquery", x.Dump()));
+        var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/orderquery", x.Dump()));
         sign = xe.Child(nameof(sign));
         xe.Sort();
         if (sign != Sign(xe, "sign"))
@@ -331,7 +327,6 @@ public static class WeixinUtility
     public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
     {
         var mchid = sup ? supmchid : rtlmchid;
-        var api = sup ? SupPayApi : RtlPayApi;
 
         // must be in ascii order
         var x = new XElem("xml")
@@ -349,7 +344,7 @@ public static class WeixinUtility
         var sign = Sign(x);
         x.Add("sign", sign);
 
-        var (_, xe) = (await api.PostAsync<XElem>("/secapi/pay/refund", x.Dump()));
+        var (_, xe) = (await PayApi.PostAsync<XElem>("/secapi/pay/refund", x.Dump()));
         if (xe == null)
         {
             return "TIMEOUT";
@@ -375,7 +370,6 @@ public static class WeixinUtility
     public static async Task<string> PostRefundQueryAsync(bool sup, long orderid)
     {
         var mchid = sup ? supmchid : rtlmchid;
-        var api = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {
@@ -386,7 +380,7 @@ public static class WeixinUtility
         };
         string sign = Sign(x);
         x.Add("sign", sign);
-        var (_, xe) = (await api.PostAsync<XElem>("/pay/refundquery", x.Dump()));
+        var (_, xe) = (await PayApi.PostAsync<XElem>("/pay/refundquery", x.Dump()));
 
         sign = xe.Child(nameof(sign));
         xe.Sort();

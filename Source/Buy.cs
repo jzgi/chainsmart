@@ -31,7 +31,7 @@ public class Buy : Entity, IKeyable<long>
     {
         { STU_VOID, "撤销" },
         { STU_CREATED, "收单" },
-        { STU_ADAPTED, "集合" },
+        { STU_ADAPTED, "合单" },
         { STU_OKED, "派发" },
         { STU_CLOSED, "关闭" },
     };

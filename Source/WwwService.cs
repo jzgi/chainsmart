@@ -38,6 +38,8 @@ public class WwwService : MainService
 
         wc.GivePage(200, h =>
         {
+            h.MAIN_(css: "uk-grid");
+
             bool exist = false;
             var last = 0;
 
@@ -54,7 +56,7 @@ public class WwwService : MainService
 
                     h.ARTICLE_("uk-card uk-card-default");
                     h.H3(regs[o.regid]?.name, "uk-card-header");
-                    h.UL_("uk-card-body uk-list-divider");
+                    h.UL_("uk-card-body");
                 }
 
                 h.LI_("uk-flex");
@@ -78,6 +80,7 @@ public class WwwService : MainService
             }
 
             h._ARTICLE();
+            h._MAIN();
 
             string tel = Application.ProgramConf[nameof(tel)];
             h.BOTTOMBAR_("uk-flex-around");
@@ -120,11 +123,12 @@ public class WwwService : MainService
 
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
+                    var mkt = GrabTwin<int, Org>(rtl.MarketId);
 
                     // notice and event
                     //
                     rtl.NoticePack.Put(OrgNoticePack.BUY_CREATED, 1, cash);
-                    rtl.EventPack.AddNew(rtl.name);
+                    mkt.EventPack.AddNew(rtl.name);
                 }
                 else // the pay differs from the order
                 {

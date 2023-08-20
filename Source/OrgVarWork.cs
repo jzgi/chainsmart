@@ -381,7 +381,7 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsService ? "品牌信息" : "商户信息");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsService ? "服务型商户" : "产品型商户");
 
                     h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编号或场址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
