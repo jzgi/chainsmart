@@ -22,6 +22,10 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+body.uk-light {
+    background-color: #fff;
+}
+
 form {
     display: block;
 }
@@ -138,9 +142,10 @@ mark {
 
 q {
     font-size: .7rem;
-    font-weight: 200;
+    font-weight: 300;
     margin: 0;
-    color: #888;
+    padding: 2px 0;
+    color: #666;
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1335,11 +1340,12 @@ button.uk-icon:not(:disabled) {
 
 form legend {
     text-transform: uppercase;
-    color: #ff3b30;
+    color: #333;
     min-height: 2.5rem;
     display: flex;
     align-items: center;
     font-size: 1rem;
+    font-weight: 600;
     box-sizing: border-box;
 }
 
@@ -2268,7 +2274,7 @@ main.uk-grid {
 }
 
 .uk-card-body {
-    padding: 4px 6px;
+    padding: 4px;
     width: -webkit-fill-available;
     background-color: #fff;
 }
@@ -2283,7 +2289,7 @@ a.uk-inactive {
 }
 
 .uk-card-header {
-    padding: 4px 6px;
+    padding: 4px;
     min-height: 2rem;
     display: flex;
     align-items: center;
@@ -2297,7 +2303,7 @@ a.uk-inactive {
 }
 
 .uk-card-footer {
-    padding: 4px 6px;
+    padding: 4px;
     min-height: 2rem;
     vertical-align: middle;
     display: flex;

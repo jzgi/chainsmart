@@ -27,9 +27,9 @@ public abstract class OrglyVarWork : WebWork
             string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1_().T(org.name).SP().Q(Org.Statuses[org.status])._H1();
+            h.H1_().T(org.name).SP().P(Org.Statuses[org.status])._H1();
             if (org.AsUpper) h.H4(org.Cover);
-            h.Q_().T(prin.name).T('（').T(rol).T('）')._Q();
+            h.P_().T(prin.name).T('（').T(rol).T('）')._P();
             h._HEADER();
 
             if (org.icon)
@@ -193,7 +193,7 @@ public class RtllyVarWork : OrglyVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("设置基本信息和参数");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
                 h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                 h.LI_().TEXT("营业电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
                 h.LI_().TIME("开档时间", nameof(m.openat), m.openat).TIME("收档时间", nameof(m.closeat), m.closeat)._LI();

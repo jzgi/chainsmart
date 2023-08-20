@@ -25,13 +25,13 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(prin.name);
-            h.H4_().T(prin.tel);
+            h.H4_().T(prin.tel)._H4();
+            h.P_().T(prin.created, time: 0).SP().T("注册");
             if (prin.typ > 0)
             {
-                h.SP().Q(User.Typs[prin.typ]);
+                h.T('，').T(User.Typs[prin.typ]);
             }
-            h._H4();
-            h.Q_().T(prin.created, time: 0).SP().T("注册")._Q();
+            h._P();
             h._HEADER();
 
             if (prin.icon)
@@ -68,8 +68,8 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
                         h._SPAN();
 
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice).SP().SUB(it.unit)._SPAN();
-                        h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
+                        h.SPAN_("uk-width-1-6 uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
                         h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                         h._LI();
                     }

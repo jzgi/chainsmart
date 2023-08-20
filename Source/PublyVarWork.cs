@@ -25,7 +25,7 @@ public class PublyVarWork : WebWork
         // whether in the intermediate dialog or full page
         bool inner = wc.Query[nameof(inner)];
 
-        wc.GivePage(200, h =>
+        wc.GivePane(200, h =>
         {
             lock (org)
             {
