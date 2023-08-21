@@ -97,7 +97,6 @@ function buyRecalc(trig) {
             output_subtotal.classList.remove("uk-invisible");
             trig.classList.add('uk-active');
         }
-
     }
 
     // sum up topay

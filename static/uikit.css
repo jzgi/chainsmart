@@ -141,7 +141,7 @@ mark {
 }
 
 q {
-    font-size: .7rem;
+    font-size: .675rem;
     font-weight: 300;
     margin: 0;
     padding: 2px 0;
@@ -1940,7 +1940,7 @@ a.uk-button-primary.uk-active {
  */
 .uk-button-danger {
     color: #fff;
-    background-color: #ff3b30;
+    background-color: #f59604;
     border: none;
     padding: 4px 16px;
     height: 2rem;
@@ -1949,13 +1949,13 @@ a.uk-button-primary.uk-active {
 
 .uk-button-danger:hover,
 .uk-button-danger:focus {
-    background-color: #ff3b30;
+    background-color: #f59604;
     color: #fff;
 }
 
 .uk-button-danger:active,
 .uk-button-danger.uk-active {
-    background-color: #ff3b30;
+    background-color: #f59604;
 }
 
 .uk-button-default:disabled,
@@ -2351,6 +2351,7 @@ a.uk-inactive {
  */
 .uk-card-primary {
     margin: 0 0 8px 0;
+    padding: 4px;
     background-color: #fff;
 }
 
