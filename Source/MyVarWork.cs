@@ -51,21 +51,21 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             }
             else
             {
-                h.MAINGRID(arr, o =>
+                foreach (var o in arr)
                 {
-                    h.UL_("uk-card-body uk-list uk-list-divider");
-                    h.LI_().H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
-
+                    h.ARTICLE_("uk-card uk-card-primary");
+                    h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
+                    h.UL_("uk-card-body uk-list-divider uk-background-secondary");
                     foreach (var it in o.items)
                     {
-                        h.LI_();
+                        h.LI_("uk-flex");
 
                         h.SPAN_("uk-width-expand").T(it.name);
                         if (it.unitw > 0)
                         {
                             h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
                         }
-
+                        // h.SP().CNY(it.RealPrice);
                         h._SPAN();
 
                         h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
@@ -73,19 +73,18 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                         h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
                         h._LI();
                     }
-                    h._LI();
+                    h._UL();
 
-                    h.LI_();
+                    h.FOOTER_("uk-card-footer");
                     h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
                         h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
                     }
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
-                    h._LI();
-
-                    h._UL();
-                });
+                    h._FOOTER();
+                    h._ARTICLE();
+                }
             }
 
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());

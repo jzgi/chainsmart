@@ -9,7 +9,7 @@ html {
 body {
     margin: 0;
     font-size: 0.9375rem;
-    background-color: #f8f8f8;
+    background-color: #f6f6f6;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -24,6 +24,11 @@ body::-webkit-scrollbar {
 
 body.uk-light {
     background-color: #fff;
+}
+
+body.uk-dark {
+    background-color: #000;
+    color: white;
 }
 
 form {
@@ -1098,7 +1103,7 @@ button.uk-icon:not(:disabled) {
 .uk-notification-message {
     position: relative;
     padding: 12px;
-    background: #f8f8f8;
+    background: #f6f6f6;
     color: #f59604;
     font-size: 0.875rem;
     line-height: 1.4;
@@ -1890,7 +1895,7 @@ button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    background-color: #f8f8f8;
+    background-color: #f6f6f6;
     color: #f59604;
     border: 1px solid #f59604;
 }
@@ -1916,7 +1921,7 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    background-color: #f8f8f8;
+    background-color: #f6f6f6;
     border-top: 2px solid #f59604;
 }
 
@@ -2334,7 +2339,7 @@ a.uk-inactive {
 .uk-card-default {
     background-color: transparent;
     border-radius: 4px;
-    border: 2px solid #f8f8f8;
+    padding: 2px;
 }
 
 .uk-card .uk-card-title {
@@ -5952,8 +5957,7 @@ iframe.uk-cover {
 }
 
 .uk-background-secondary {
-    background-color: black !important;
-    color: #fff;
+    background-color: rgb(255 59 48 / 5%)!important
 }
 
 .uk-background-cover,

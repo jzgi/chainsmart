@@ -305,15 +305,15 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql($"SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
+        dc.Sql("SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;
 
         wc.GivePage(200, h =>
         {
-            h.T("<main uk-slider>");
-            h.UL_("uk-slider-items uk-child-width-2-3");
+            h.T("<main uk-slider=\"autoplay: true; utoplay-interval: 6000; pause-on-hover: true; center: true\">");
+            h.UL_("uk-slider-items uk-grid uk-child-width-1-1");
 
             int num = 0;
             while (dc.Next())
@@ -324,6 +324,11 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
                 if (num % PAGESIZ == 0)
                 {
+                    if (num > 0)
+                    {
+                        h._TABLE();
+                        h._LI();
+                    }
                     h.LI_();
                     h.TABLE_(dark: true);
                     h.THEAD_().TH("商户").TH("收单", css: "uk-width-medium uk-text-center").TH("合单", css: "uk-width-medium uk-text-center")._THEAD();
@@ -343,6 +348,10 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h._LI();
 
             h._UL();
+
+            // h.T("<a class=\"uk-position-center-left uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-previous uk-slider-item=\"previous\"></a>");
+            // h.T("<a class=\"uk-position-center-right uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-next uk-slider-item=\"next\"></a>");
+
             h._MAIN();
         }, false, 12, title: mkt.Cover, refresh: 60);
     }
