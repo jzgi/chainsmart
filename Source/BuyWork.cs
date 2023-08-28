@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
+using Microsoft.AspNetCore.Components.Forms;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
 using static ChainSmart.OrgNoticePack;
@@ -316,6 +317,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.UL_("uk-slider-items uk-grid uk-child-width-1-1");
 
             int num = 0;
+
             while (dc.Next())
             {
                 dc.Let(out string name);
@@ -344,13 +346,18 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 
                 num++;
             }
-            h._TABLE();
-            h._LI();
 
+            if (num > 0)
+            {
+                h._TABLE();
+                h._LI();
+            }
             h._UL();
 
-            // h.T("<a class=\"uk-position-center-left uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-previous uk-slider-item=\"previous\"></a>");
-            // h.T("<a class=\"uk-position-center-right uk-position-small uk-hidden-hover\" href=\"#\" uk-slidenav-next uk-slider-item=\"next\"></a>");
+            if (num == 0)
+            {
+                h.DIV_(css: "uk-position-center uk-text-xlarge uk-text-success").T("当前无在处理订单")._DIV();
+            }
 
             h._MAIN();
         }, false, 12, title: mkt.Cover, refresh: 60);

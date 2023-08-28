@@ -2290,7 +2290,7 @@ a.uk-card-body {
 }
 
 a.uk-inactive {
-    background-color: rgb(238 238 238 / 30%);
+    background-color: #ededed;
 }
 
 .uk-card-header {
@@ -5627,7 +5627,7 @@ ul.uk-nav-sub {
 }
 
 .uk-text-success {
-    color: #33ad33 !important;
+    color: #7daa1d !important;
     font-weight: normal;
 }
 

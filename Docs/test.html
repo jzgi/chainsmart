@@ -1,71 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <title>
-        我的消费</title>
-    <link rel="shortcut icon"
-          href="/favicon.ico"/>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, user-scalable=no">
-    <link rel="stylesheet"
-          href="/uikit.min.css">
-    <link rel="stylesheet"
-          href="/app.min.css">
+<head><title>西湖抚河农贸市场</title>
+    <meta http-equiv="refresh" content="60">
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="/uikit.min.css">
+    <link rel="stylesheet" href="/app.min.css">
     <script src="/uikit.min.js"></script>
     <script src="/uikit-icons.min.js"></script>
     <script src="/app.min.js"></script>
 </head>
-<body>
-<form id="tool-bar-form"
-      class="uk-top-bar">
-    <nav></nav>
-    <span class="uk-label uk-padding">黄田</span>
-</form>
-<div class="uk-top-placeholder"></div>
-<main uk-grid
-      class="uk-child-width-1-1 uk-child-width-1-2@s uk-child-width-1-3@m uk-child-width-1-4@l uk-child-width-1-5@xl">
-    <article
-            class="uk-card uk-card-default">
-        <header class="uk-card-header">
-            <h4>
-                中惠农通孺子路体验中心</h4>
-        </header>
-        <ul class="uk-card-body uk-list uk-list-divider">
-            <li>
-                2023-01-05
-                09:50:46
-            </li>
-            <li>
-                <div class=" uk-width-micro">
-                    <img style="width: 100%"
-                         src="/ware/0/icon"
-                         alt="✰">
-                </div>
-                <span class="uk-width-expand">本地苋菜</span><span
-                    class="uk-width-1-6">2</span>
-            </li>
-            <li>
-                <div class=" uk-width-micro">
-                    <img style="width: 100%"
-                         src="/item/40/icon"
-                         alt="✰">
-                </div>
-                <span class="uk-width-expand">茂名市沃柑</span><span
-                    class="uk-width-1-6">1</span>
-            </li>
-        </ul>
-        <footer class="uk-card-footer">
-            合计：18.00
-        </footer>
-    </article>
+<body class="uk-dark">
+<main uk-slider="autoplay: true; utoplay-interval: 6000; pause-on-hover: true; center: true">
+    <ul class="uk-slider-items uk-grid uk-child-width-1-1"></ul>
 </main>
-<ul class="uk-pagination uk-flex-center">
-    <li class="uk-disabled">
-        ≪
-    </li>
-    <li class="uk-disabled">
-        ≫
-    </li>
-</ul>
 </body>
 </html>

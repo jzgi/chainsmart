@@ -44,7 +44,7 @@ public abstract class OrglyVarWork : WebWork
             h.WORKBOARD(twinSpy: org.id);
 
             h.TOOLBAR(bottom: true, status: org.Status, state: org.ToState());
-        }, false, 30, title: org.name);
+        }, false, 30, title: org.name, onload :"forWebview();");
     }
 
 
