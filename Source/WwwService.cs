@@ -82,7 +82,7 @@ public class WwwService : MainService
             h._ARTICLE();
             h._MAIN();
 
-            string tel = Application.ProgramConf[nameof(tel)];
+            string tel = Application.CustomConf[nameof(tel)];
             h.BOTTOMBAR_("uk-flex-around");
             h.SPAN2("☎", tel, css: "uk-label").A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();

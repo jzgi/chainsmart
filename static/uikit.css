@@ -800,7 +800,7 @@ a.uk-link-reset:hover,
 
 .uk-table>tr.uk-active,
 .uk-table tbody tr.uk-active {
-    background-color: rgb(125 170 29 / 5%);
+    background-color: rgb(125 170 29 / 10%);
 }
 
 .uk-table-divider>tr:not(:first-child),
@@ -912,7 +912,7 @@ a.uk-link-reset:hover,
 
 .uk-table-dark td {
     padding: 8px 16px;
-    font-size: 4rem;
+    font-size: 3.5rem;
 }
 
 .uk-table-dark-divider>tr:not(:first-child),
@@ -1291,6 +1291,7 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
+    background-color: #dcdcdc;
 }
 
 .uk-top-bar.uk-modal-title {
@@ -2268,7 +2269,7 @@ main.uk-grid {
 }
 
 .uk-card.uk-active {
-    background-color: rgb(125 170 29 / 5%);
+    background-color: rgb(125 170 29 / 10%);
 }
 
 .uk-card.uk-disabled {

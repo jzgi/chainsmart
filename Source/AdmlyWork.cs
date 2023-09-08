@@ -19,8 +19,6 @@ public class AdmlyWork : WebWork
 
         CreateWork<AdmlyOrgWork>("org", header: "业务");
 
-        CreateWork<AdmlyEvalWork>("eval");
-
         CreateWork<AdmlyUserWork>("user");
 
         // fin
@@ -62,7 +60,7 @@ public class AdmlyWork : WebWork
     {
         string tel = null;
 
-        var jo = Application.ProgramConf;
+        var jo = Application.CustomConf;
 
         jo.Get(nameof(tel), ref tel);
 

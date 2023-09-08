@@ -9,7 +9,7 @@ namespace ChainSmart;
 
 public abstract class FactVarWork : WebWork
 {
-    public virtual async Task @default(WebContext wc)
+    public  async Task @default(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();

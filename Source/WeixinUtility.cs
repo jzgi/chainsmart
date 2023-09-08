@@ -18,7 +18,7 @@ public static class WeixinUtility
 {
     static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
 
-    static readonly WebConnect PayApi;
+    static readonly WebConnect RtlPayApi, SupPayApi;
 
     static readonly Map<int, WebConnect> PayConnects = new();
 
@@ -45,7 +45,7 @@ public static class WeixinUtility
 
     static WeixinUtility()
     {
-        var s = ProgramConf;
+        var s = CustomConf;
         s.Get(nameof(appid), ref appid);
         s.Get(nameof(appsecret), ref appsecret);
         s.Get(nameof(supmchid), ref supmchid);
@@ -61,24 +61,13 @@ public static class WeixinUtility
 
         try
         {
-            PayApi = new WebConnect("https://api.mch.weixin.qq.com")
-            {
-                { "sup_apiclient_cert.p12", supmchid }, // password same as mchid
-                { "rtl_apiclient_cert.p12", rtlmchid }
-            };
+            SupPayApi = new WebConnect("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
+            RtlPayApi = new WebConnect("https://api.mch.weixin.qq.com", "rtl_apiclient_cert.p12", rtlmchid);
         }
         catch (Exception e)
         {
             War("Failed to load Weixin Pay certificate: " + e.Message);
         }
-    }
-
-    public static void AddPayConnect(int orgid, byte[] raw, string password)
-    {
-        PayConnects.Add(orgid, new WebConnect("https://api.mch.weixin.qq.com")
-        {
-            { raw, password }
-        });
     }
 
     public static bool TryGetPayConnect(int orgid, out WebConnect v) => PayConnects.TryGetValue(orgid, out v);
@@ -229,6 +218,7 @@ public static class WeixinUtility
     public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
     {
         var mchid = sup ? supmchid : rtlmchid;
+        var PayApi = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {
@@ -294,6 +284,7 @@ public static class WeixinUtility
     public static async Task<decimal> PostOrderQueryAsync(bool sup, string orderno)
     {
         var mchid = sup ? supmchid : rtlmchid;
+        var PayApi = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {
@@ -327,6 +318,7 @@ public static class WeixinUtility
     public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
     {
         var mchid = sup ? supmchid : rtlmchid;
+        var PayApi = sup ? SupPayApi : RtlPayApi;
 
         // must be in ascii order
         var x = new XElem("xml")
@@ -370,6 +362,7 @@ public static class WeixinUtility
     public static async Task<string> PostRefundQueryAsync(bool sup, long orderid)
     {
         var mchid = sup ? supmchid : rtlmchid;
+        var PayApi = sup ? SupPayApi : RtlPayApi;
 
         var x = new XElem("xml")
         {

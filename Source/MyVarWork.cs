@@ -55,7 +55,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 {
                     h.ARTICLE_("uk-card uk-card-primary");
                     h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
-                    h.UL_("uk-card-body uk-list-divider uk-background-secondary");
+                    h.UL_("uk-card-body uk-list-divider");
                     foreach (var it in o.items)
                     {
                         h.LI_("uk-flex");
@@ -89,6 +89,53 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());
         }, false, 12);
+    }
+
+    [Ui("碳积分", "购买绿色减排产品的奖励", status: 7), Tool(ButtonShow)]
+    public async Task carb(WebContext wc, int dt)
+    {
+        int uid = wc[0];
+
+        wc.GivePane(200, h =>
+        {
+            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
+            h.ALERT("计算方法依据国家相关标准");
+            h.ALERT("按照平台现时规则到体验中心兑换");
+        });
+    }
+
+    [Ui("爱农卡", "参与爱农孵化项目", status: 7), Tool(ButtonShow)]
+    public async Task prog(WebContext wc, int dt)
+    {
+        int uid = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Prog.Empty).T(" FROM progs WHERE userid = @1");
+        var arr = await dc.QueryAsync<Prog>(p => p.Set(uid));
+
+        wc.GivePane(200, h =>
+        {
+            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
+            for (int i = 0; i < Prog.Typs.Count; i++)
+            {
+                var e = Prog.Typs.EntryAt(i);
+                h.ARTICLE_("uk-card uk-card-default");
+                var card = arr.First(x => x.typ == e.Key);
+                h.HEADER_("uk-card-header").H3(e.Value).SPAN_("uk-badge");
+                if (card != null)
+                {
+                    h.T(card.created).SP().T("已领");
+                }
+                else
+                {
+                    h.T("未领");
+                }
+                h._SPAN();
+                h._HEADER();
+                h.SECTION_("uk-card-body").P(Prog.Tips[e.Key])._SECTION();
+                h._ARTICLE();
+            }
+        }, false, 120);
     }
 
     [Ui("身份", "刷新我的身份权限", status: 7), Tool(ButtonShow)]
@@ -210,7 +257,8 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
-    [Ui("协议", "本系统的使用条款", status: 7), Tool(ButtonShow)]
+
+    [Ui("须知", "本系统的使用条款", status: 7), Tool(ButtonShow)]
     public async Task agmt(WebContext wc, int dt)
     {
         wc.GivePane(200, h =>
@@ -220,39 +268,5 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             h.SECTION_("uk-card-body")._SECTION();
             h._ARTICLE();
         }, false, 3600);
-    }
-
-    [Ui("项目", "集体经济孵化项目", status: 7), Tool(ButtonShow)]
-    public async Task prog(WebContext wc, int dt)
-    {
-        int uid = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Prog.Empty).T(" FROM progs WHERE userid = @1");
-        var arr = await dc.QueryAsync<Prog>(p => p.Set(uid));
-
-        wc.GivePane(200, h =>
-        {
-            h.DIV_("uk-card uk-card-primary").H2("我参与的集体经济孵化项目", css: "uk-card-header")._DIV();
-            for (int i = 0; i < Prog.Typs.Count; i++)
-            {
-                var e = Prog.Typs.EntryAt(i);
-                h.ARTICLE_("uk-card uk-card-default");
-                var card = arr.First(x => x.typ == e.Key);
-                h.HEADER_("uk-card-header").H3(e.Value).SPAN_("uk-badge");
-                if (card != null)
-                {
-                    h.T(card.created).SP().T("已领");
-                }
-                else
-                {
-                    h.T("未领");
-                }
-                h._SPAN();
-                h._HEADER();
-                h.SECTION_("uk-card-body").P(Prog.Tips[e.Key])._SECTION();
-                h._ARTICLE();
-            }
-        }, false, 120);
     }
 }

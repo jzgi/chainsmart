@@ -196,10 +196,10 @@ create table evals
 )
     inherits (entities);
 
-alter table evals
+alter table tests
     owner to postgres;
 
-alter sequence evals_id_seq owned by evals.id;
+alter sequence evals_id_seq owned by tests.id;
 
 create table srcs
 (

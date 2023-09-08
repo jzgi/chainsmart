@@ -103,6 +103,40 @@ public static class MainUtility
         return h;
     }
 
+    public static HtmlBuilder SELECT_ORG(this HtmlBuilder h, string name, int orgid, Org[] orgs, Map<short, Reg> regs, string onchange = null, string css = null)
+    {
+        Array.Sort(orgs, (x, y) => x.regid - y.regid);
+
+        h.SELECT_(name, local: name, onchange: onchange, empty: string.Empty, css: css);
+
+        short last = 0;
+        for (int i = 0; i < orgs?.Length; i++)
+        {
+            var o = orgs[i];
+
+
+            if (last != o.regid)
+            {
+                if (i > 0)
+                {
+                    h._OPTGROUP();
+                }
+
+                var reg = regs[o.regid];
+                h.OPTGROUP_(reg.name);
+
+                last = o.regid;
+            }
+
+            h.OPTION(o.Key, o.Name, selected: o.id == orgid);
+        }
+        h._OPTGROUP();
+
+        h._SELECT();
+
+        return h;
+    }
+
     public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
     {
         h.T("<a class=\"uk-icon-button uk-light\" href=\"tel:").T(tel).T("\" uk-icon=\"icon: receiver\"></a>");

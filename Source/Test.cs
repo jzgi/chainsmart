@@ -2,14 +2,29 @@
 
 namespace ChainSmart;
 
-public class Eval : Entity, IKeyable<int>
+public class Test : Entity, IKeyable<int>
 {
-    public static readonly Eval Empty = new();
+    public static readonly Test Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "检测" },
-        { 2, "事故" },
+        { 1, "一般成分" },
+        { 2, "感官" },
+        { 3, "农药残留" },
+        { 4, "饲料及添加剂" },
+        { 5, "兽药渔药残留" },
+        { 6, "重金属污染物" },
+        { 7, "微生物" },
+        { 8, "土壤养分" },
+    };
+
+    public static readonly Map<short, string> Levels = new()
+    {
+        { 1, "极差" },
+        { 2, "异常" },
+        { 3, "正常" },
+        { 4, "优良" },
+        { 5, "最佳" },
     };
 
 
@@ -22,8 +37,10 @@ public class Eval : Entity, IKeyable<int>
     };
 
     internal int id;
+    internal int upperid;
     internal int orgid;
-    internal int level;
+    internal decimal val;
+    internal short level;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -35,10 +52,12 @@ public class Eval : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(upperid), ref upperid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(val), ref val);
             s.Get(nameof(level), ref level);
         }
     }
@@ -53,10 +72,12 @@ public class Eval : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(orgid), orgid);
+            s.Put(nameof(upperid), upperid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Put(nameof(orgid), orgid);
+            s.Put(nameof(val), val);
             s.Put(nameof(level), level);
         }
     }
