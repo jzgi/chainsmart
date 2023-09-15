@@ -105,7 +105,10 @@ public static class MainUtility
 
     public static HtmlBuilder SELECT_ORG(this HtmlBuilder h, string name, int orgid, Org[] orgs, Map<short, Reg> regs, string onchange = null, string css = null)
     {
-        Array.Sort(orgs, (x, y) => x.regid - y.regid);
+        if (orgs != null)
+        {
+            Array.Sort(orgs, (x, y) => x.regid - y.regid);
+        }
 
         h.SELECT_(name, local: name, onchange: onchange, empty: string.Empty, css: css);
 

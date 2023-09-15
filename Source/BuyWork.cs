@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFx;
 using ChainFx.Web;
-using Microsoft.AspNetCore.Components.Forms;
 using static ChainFx.Nodal.Nodality;
 using static ChainFx.Web.Modal;
 using static ChainSmart.OrgNoticePack;
@@ -18,8 +17,8 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("网售订单")]
-[Help("按照几个阶段，对所有的网售订单进行管理")]
+[Ui("网售")]
+[Help("对所收的网售订单进行处理")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst, bool pick = false)
@@ -35,19 +34,13 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             {
                 h.PIC("/void.webp", css: "uk-width-1-5");
             }
-            else if (items.Length == 1)
-            {
-                var bi = items[0]; // buyitem
-                if (bi.lotid > 0)
-                {
-                    h.PIC(MainApp.WwwUrl, "/lot/", bi.lotid, "/icon", css: "uk-width-1-5");
-                }
-                else
-                    h.PIC(MainApp.WwwUrl, "/item/", bi.itemid, "/icon", css: "uk-width-1-5");
-            }
             else
             {
-                h.PIC("/solid.webp", css: "uk-width-1-5");
+                var bi = items[0]; // buyitem
+                h.PIC(MainApp.WwwUrl, "/item/", bi.itemid, "/icon",
+                    marker: items.Length > 1 ? "more-vertical" : null,
+                    css: "uk-width-1-5"
+                );
             }
 
             h.ASIDE_();
@@ -95,7 +88,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无新网售订单");
+                h.ALERT("尚无新的订单");
                 return;
             }
 

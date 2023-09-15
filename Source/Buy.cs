@@ -10,22 +10,16 @@ public class Buy : Entity, IKeyable<long>
     public static readonly Buy Empty = new();
 
     public const short
-        TYP_NET = 1,
-        TYP_POS = 2;
+        TYP_ORDR = 1,
+        TYP_CASH = 2,
+        TYP_OTHR = 3;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_NET, "网售" },
-        { TYP_POS, "POS" },
+        { TYP_ORDR, "网售" },
+        { TYP_CASH, "现金" },
+        { TYP_OTHR, "其他" },
     };
-
-    public static readonly Map<short, string> Tips = new()
-    {
-        { 1, "现金" },
-        { 2, "转款" },
-        { 3, "赊账" },
-    };
-
 
     public new static readonly Map<short, string> Statuses = new()
     {
@@ -60,7 +54,7 @@ public class Buy : Entity, IKeyable<long>
 
     public Buy(User prin, Org rtl, BuyItem[] arr)
     {
-        typ = TYP_NET;
+        typ = TYP_ORDR;
         name = rtl.name;
         tip = rtl.No;
         rtlid = rtl.id;
@@ -162,9 +156,9 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public bool IsOnNet => typ == TYP_NET;
+    public bool IsFromNet => typ == TYP_ORDR;
 
-    public bool IsOnPos => typ == TYP_POS;
+    public bool IsOnPos => typ == TYP_CASH;
 
     public override string ToString() => uname + "购买" + name + "商品";
 

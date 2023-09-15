@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><title>西湖抚河农贸市场</title>
-    <meta http-equiv="refresh" content="60">
+<head><title>中惠百合广场体验中心</title>
     <link rel="shortcut icon" href="/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="/uikit.min.css">
@@ -10,9 +9,50 @@
     <script src="/uikit-icons.min.js"></script>
     <script src="/app.min.js"></script>
 </head>
-<body class="uk-dark">
-<main uk-slider="autoplay: true; utoplay-interval: 6000; pause-on-hover: true; center: true">
-    <ul class="uk-slider-items uk-grid uk-child-width-1-1"></ul>
+<body onload="forWebview();">
+<form class="uk-top-bar uk-flex uk-large" style="background-image: url(/wave.png)">
+<header class="uk-width-expand uk-col uk-padding-left">
+    <h1>中惠百合广场体验中心&nbsp;<p>上线</p></h2><h4>万载百合商业广场</h4>
+        <p>黄田（管理）</p>
+</header>
+<div class="uk-margin-auto-vertical uk-inline uk-width-small"><img style="width: 100%" class="uk-border-circle" loading="lazy" src="http://localhost:80/org/2/icon"></div>
+</form>
+<div class="uk-top-placeholder uk-large"></div>
+<main class="uk-grid">
+    <form class="uk-card uk-card-default" method="post"><h3 class="uk-card-header">常规</h3>
+        <ul class="uk-card-body uk-child-width-1-2" uk-grid>
+            <li><a class="uk-width-1-1 uk-link" href="access/" onclick="return dialog(this,64,false,'人员权限');"><span>人员权限</span><span uk-icon="icon: chevron-right"></span></a></li>
+        </ul>
+    </form>
+    <form class="uk-card uk-card-default" method="post"><h3 class="uk-card-header">商户</h3>
+        <ul class="uk-card-body uk-child-width-1-2" uk-grid>
+            <li><a class="uk-width-1-1 uk-link" href="ritem/" onclick="return dialog(this,64,false,'商品');"><span>商品</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rvip/" onclick="return dialog(this,64,false,'VIP');"><span>VIP</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rbuy/" onclick="return dialog(this,64,false,'网售订单');"><span>网售订单</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rpos/" onclick="return dialog(this,64,false,'POS');"><span>POS</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rbuyap/" onclick="return dialog(this,64,false,'网售结款');"><span>网售结款</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rbuyldg/" onclick="return dialog(this,64,false,'销售报表');"><span>销售报表</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="rpur/" onclick="return dialog(this,64,false,'采购');"><span>采购</span><span uk-icon="icon: chevron-right"></span></a></li>
+        </ul>
+    </form>
+    <form class="uk-card uk-card-default" method="post"><h3 class="uk-card-header">机构</h3>
+        <ul class="uk-card-body uk-child-width-1-2" uk-grid>
+            <li><a class="uk-width-1-1 uk-link" href="morg/" onclick="return dialog(this,64,false,'成员商户');"><span>成员商户</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="mtest/" onclick="return dialog(this,64,false,'检测管理');"><span>检测管理</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="mbuy/" onclick="return dialog(this,64,false,'网售统一派发');"><span>网售统一派发</span><span uk-icon="icon: chevron-right"></span></a></li>
+            <li><a class="uk-width-1-1 uk-link" href="mpur/" onclick="return dialog(this,64,false,'采购统一收货 - 品控仓');"><span>采购统一收货 - 品控仓</span><span uk-icon="icon: chevron-right"></span></a></li>
+        </ul>
+    </form>
 </main>
+<form id="tool-bar-form" class="uk-bottom-bar">
+    <nav class="uk-flex-center">
+        <button class="uk-button uk-button-primary" name="qrcode" formaction="qrcode" onclick="return dialog(this,16,false,'摊铺直通车');" title="摊铺直通车"><span uk-icon="thumbnails"></span></button>
+        <button class="uk-button uk-button-primary" name="setg" formaction="setg" onclick="return dialog(this,16,false,'设置基本信息和参数');" title="设置基本信息和参数">设置</button>
+        <button class="uk-button uk-button-primary" name="test" formaction="test" onclick="return dialog(this,16,false,'本单位的评测记录');" title="本单位的评测记录">检测</button>
+        <button class="uk-button uk-button-primary" name="unok" formaction="unok" formmethod="post" onclick="return askSend(this, '下线停用或调整',false);" title="下线停用或调整">下线</button>
+        <button class="uk-button uk-button-primary" name="help" formaction="help" onclick="return dialog(this,16,false,'');"><span uk-icon="question"></span></button>
+    </nav>
+</form>
+<div class="uk-bottom-placeholder"></div>
 </body>
 </html>

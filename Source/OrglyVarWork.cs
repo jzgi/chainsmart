@@ -158,7 +158,6 @@ public class RtllyVarWork : OrglyVarWork
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
-
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -255,7 +254,6 @@ public class SuplyVarWork : OrglyVarWork
         CreateWork<OrglyAccessWork>("access", header: "常规", state: false); // false = supply
 
 
-
         CreateWork<SuplySrcWork>("ssrc", header: "商户");
 
         CreateWork<SuplyLotWork>("slot");
@@ -277,6 +275,5 @@ public class SuplyVarWork : OrglyVarWork
         CreateWork<CtrlyPurWork>("cpur");
 
         CreateWork<CtrlyPurLdgWork>("cpurldg");
-
     }
 }

@@ -12,7 +12,9 @@ public class Test : Entity, IKeyable<int>
         { 2, "感官" },
         { 3, "农药残留" },
         { 4, "饲料及添加剂" },
+        { 401, "瘦肉精" },
         { 5, "兽药渔药残留" },
+        { 501, "抗生素" },
         { 6, "重金属污染物" },
         { 7, "微生物" },
         { 8, "土壤养分" },
@@ -26,7 +28,6 @@ public class Test : Entity, IKeyable<int>
         { 4, "优良" },
         { 5, "最佳" },
     };
-
 
     public new static readonly Map<short, string> Statuses = new()
     {
@@ -76,7 +77,9 @@ public class Test : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(orgid), orgid);
+            if (orgid > 0) s.Put(nameof(orgid), orgid);
+            else s.PutNull(nameof(orgid));
+
             s.Put(nameof(val), val);
             s.Put(nameof(level), level);
         }

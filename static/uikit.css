@@ -1291,7 +1291,8 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
-    background-color: #dcdcdc;
+    background-image: url(/wave.png);
+    background-size: cover;
 }
 
 .uk-top-bar.uk-modal-title {

@@ -126,10 +126,10 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Test.Typs)._LI();
-                h.LI_().TEXT("受检物", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().LABEL("受检单位").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
-                h.LI_().TEXTAREA("检测项目", nameof(o.tip), o.tip, min: 2, max: 10)._LI();
+                h.LI_().SELECT("检测类型", nameof(o.typ), o.typ, Test.Typs)._LI();
+                h.LI_().TEXT("受检商品", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().LABEL("受检商户").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
+                h.LI_().TEXTAREA("说明", nameof(o.tip), o.tip, min: 2, max: 20)._LI();
                 h.LI_().NUMBER("分值", nameof(o.val), o.val)._LI();
                 h.LI_().SELECT("结论", nameof(o.level), o.level, Test.Levels)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
@@ -158,7 +158,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT name, tip, val, level FROM tests WHERE upperid = @1 AND status = 4 ORDER BY typ");
+        dc.Sql("SELECT typ, name, tip, orgid, val, level FROM tests WHERE upperid = @1 AND status = 4 ORDER BY typ");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;
@@ -168,39 +168,54 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
             h.T("<main uk-slider=\"autoplay: true; utoplay-interval: 6000; pause-on-hover: true; center: true\">");
             h.UL_("uk-slider-items uk-grid uk-child-width-1-1");
 
+            short lasttyp = 0;
             int num = 0;
 
             while (dc.Next())
             {
+                dc.Let(out short typ);
                 dc.Let(out string name);
                 dc.Let(out string tip);
+                dc.Let(out int orgid);
                 dc.Let(out decimal val);
                 dc.Let(out short level);
 
-                if (num % PAGESIZ == 0)
+                if (typ != lasttyp || num % PAGESIZ == 0)
                 {
-                    if (num > 0)
+                    if (typ != lasttyp)
+                    {
+                        num = 0; // reset
+                    }
+                    if (lasttyp > 0 || (num % PAGESIZ == 0 && num > 0))
                     {
                         h._TABLE();
                         h._LI();
                     }
                     h.LI_();
                     h.TABLE_(dark: true);
-                    h.THEAD_().TH("检测项目").TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-medium uk-text-center")._THEAD();
+                    h.THEAD_().TH(Test.Typs[typ]).TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-large uk-text-center")._THEAD();
                 }
 
                 // each row
                 //
                 h.TR_();
-                h.TD_().T(name)._TD();
+                h.TD_().T(name);
+                if (orgid > 0)
+                {
+                    var org = GrabTwin<int, Org>(orgid);
+                    h.SP().T('-').SP().T(org.name);
+                }
+                h._TD();
                 h.TD(val, right: null);
                 h.TD(Test.Levels[level]);
                 h._TR();
 
                 num++;
+
+                lasttyp = typ;
             }
 
-            if (num > 0)
+            if (num % PAGESIZ == 0 && num > 0)
             {
                 h._TABLE();
                 h._LI();

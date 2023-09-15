@@ -8,7 +8,7 @@ namespace ChainSmart;
 
 [MyAuthorize]
 [Ui("我的个人账号")]
-[Help("注册的用户可以管理个人账号以及相关的资源")]
+[Help("用户可以查看自己的消费订单，获取平台发放的资源奖励、以及管理个人账号信息")]
 public class MyVarWork : BuyWork<MyBuyVarWork>
 {
     public async Task @default(WebContext wc)
@@ -51,9 +51,8 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             }
             else
             {
-                foreach (var o in arr)
+                h.MAINGRID(arr, o =>
                 {
-                    h.ARTICLE_("uk-card uk-card-primary");
                     h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
                     h.UL_("uk-card-body uk-list-divider");
                     foreach (var it in o.items)
@@ -83,8 +82,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                     }
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
                     h._FOOTER();
-                    h._ARTICLE();
-                }
+                });
             }
 
             h.TOOLBAR(bottom: true, status: prin.Status, state: prin.ToState());

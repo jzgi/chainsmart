@@ -25,9 +25,9 @@ public abstract class TestVarWork : WebWork
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("受检物", o.name)._LI();
-            h.LI_().FIELD("受检单位", suborg.name)._LI();
-            h.LI_().FIELD("检测项目", o.tip)._LI();
+            h.LI_().FIELD("受检商品", o.name)._LI();
+            h.LI_().FIELD("受检商户", suborg.name)._LI();
+            h.LI_().FIELD("说明", o.tip)._LI();
             h.LI_().FIELD("分值", o.val)._LI();
             h.LI_().FIELD("结论", o.level, Test.Levels)._LI();
 
@@ -41,7 +41,7 @@ public abstract class TestVarWork : WebWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "调整事务信息", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
+    [Ui(tip: "调整检测记录", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -59,10 +59,10 @@ public abstract class TestVarWork : WebWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Test.Typs)._LI();
-                h.LI_().TEXT("受检物", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
-                h.LI_().LABEL("受检单位").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
-                h.LI_().TEXTAREA("检测项目", nameof(o.tip), o.tip, min: 2, max: 10)._LI();
+                h.LI_().SELECT("检测类型", nameof(o.typ), o.typ, Test.Typs)._LI();
+                h.LI_().TEXT("受检商品", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().LABEL("受检商户").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
+                h.LI_().TEXTAREA("说明", nameof(o.tip), o.tip, min: 2, max: 20)._LI();
                 h.LI_().NUMBER("分值", nameof(o.val), o.val)._LI();
                 h.LI_().SELECT("结论", nameof(o.level), o.level, Test.Levels)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();

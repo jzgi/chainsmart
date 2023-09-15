@@ -24,12 +24,16 @@ public abstract class BuyVarWork : WebWork
         {
             h.UL_("uk-list uk-list-divider");
             h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
-            if (o.IsOnNet)
+            if (o.IsFromNet)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.ucom).T('-').T(o.uaddr)._SPAN()._LI();
             }
             h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
+            if (!string.IsNullOrEmpty(o.tip))
+            {
+                h.LI_().FIELD("支付", o.tip)._LI();
+            }
             h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2(o.IsVoid ? "撤销" : "合单", o.adapter, o.adapted, sep: "<br>").FIELD2("派发", o.oker, o.oked, sep: "<br>")._LI();
             h._UL();

@@ -23,12 +23,18 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
         {
             h.TD_("uk-width-tiny").T(o.created, 0, 2)._TD();
             h.TD_().ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name);
-            foreach (var v in o.items)
+            for (var i = 0; i < o.items.Length; i++)
             {
-                h.PIC(MainApp.WwwUrl + "/item/", o.id, "/icon", css: "uk-width-micro");
+                if (i > 0)
+                {
+                    h.SP();
+                }
+                var v = o.items[i];
+                h.IMG(MainApp.WwwUrl + "/item/", v.itemid, "/icon", css: "uk-width-micro");
             }
             h._A()._TD();
-            h.TD_(css: "uk-text-right").SP().CNY(o.pay).SP().T(o.IsOnPos ? '现' : '转')._TD();
+            h.TD_(css: "uk-width-tiny uk-text-right").SP().CNY(o.pay)._TD();
+            h.TD_(css: "uk-width-tiny").T(Buy.Typs[o.typ])._TD();
         });
     }
 }
@@ -105,9 +111,9 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h._NAV();
 
             h.BOTTOMBAR_();
-            for (short i = 0; i < Buy.Tips.Count; i++)
+            for (short i = 1; i < Buy.Typs.Count; i++)
             {
-                var e = Buy.Tips.EntryAt(i);
+                var e = Buy.Typs.EntryAt(i);
                 h.BUTTON_(nameof(buy), subscript: e.Key, onclick: "return $pos(this);", css: "uk-button-default").T(e.Value)._BUTTON();
             }
             h._BOTTOMBAR();
@@ -231,10 +237,9 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var now = DateTime.Now;
         var m = new Buy()
         {
-            typ = Buy.TYP_POS,
+            typ = (short)payTyp,
             rtlid = rtl.id,
             name = rtl.name,
-            tip = Buy.Tips[(short)payTyp],
             mktid = rtl.MarketId,
             created = now,
             creator = prin.name,

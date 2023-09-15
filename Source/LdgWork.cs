@@ -24,7 +24,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
         {
             if (o.dt != last)
             {
-                h.TR_().TD_("uk-padding-tiny-left uk-label", colspan: 4).T(o.dt, time: 0)._TD()._TR();
+                h.TR_().TD_("uk-padding-tiny-left uk-text-success", colspan: 4).T(o.dt, time: 0)._TD()._TR();
             }
 
             h.TR_();
