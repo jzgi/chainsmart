@@ -142,15 +142,13 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
             h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
             h._SPAN();
 
-            if (!org.IsService)
-            {
-                string com;
+            string com;
 
-                h.SPAN_("uk-flex uk-width-1-1");
-                h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
-                h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-                h._SPAN();
-            }
+            h.SPAN_("uk-flex uk-width-1-1");
+            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h._SPAN();
+
             h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -368,23 +366,21 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", tip: "创建新的商品信息", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        bool prod = !org.IsService;
-
         const short MAX = 100;
         var o = new Item
         {
-            typ = prod ? Item.TYP_PROD : Item.TYP_SVC,
+            typ = org.IsMisc ? Item.TYP_SVC : Item.TYP_PROD,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unit = prod ? "斤" : "位",
-            unitw = prod ? (short)500 : (short)0,
+            unit = org.IsMisc ? "位" : "斤",
+            unitw = org.IsMisc ? (short)0 : (short)500,
             step = 1,
             min = 1,
             max = MAX
@@ -393,9 +389,10 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("新建" + (prod ? "产品型商品" : "服务型商品"));
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();

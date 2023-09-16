@@ -25,10 +25,13 @@ public class ItemVarWork : WebWork
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("商品名", o.name)._LI();
+            h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("零售单位", o.unit);
-            if (o.IsProduct) h.FIELD("单位含重", o.unitw, Unit.Weights);
+            if (o.IsProdTyp)
+            {
+                h.FIELD("单位含重", o.unitw, Unit.Weights);
+            }
             h._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
             h.LI_().FIELD("VIP立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
@@ -119,7 +122,7 @@ public class PublyItemVarWork : ItemVarWork
             }
 
             h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("商品名", o.name)._LI();
+            h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
             if (!string.IsNullOrEmpty(o.tip))
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();
@@ -127,7 +130,7 @@ public class PublyItemVarWork : ItemVarWork
             h.LI_().FIELD("零售单位", o.unit);
             if (o.unitw > 0)
             {
-                h.FIELD("含重", o.unitw, Unit.Weights);
+                h.FIELD("单位含重", o.unitw, Unit.Weights);
             }
             h._LI();
             h.LI_().FIELD("单价", o.price, money: true);
@@ -180,22 +183,14 @@ public class RtllyItemVarWork : ItemVarWork
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
             var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
 
-            var prod = !rtl.IsService;
-
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("自建" + (prod ? "产品型商品" : "服务型商品"));
+                h.FORM_().FIELDSUL_("自建商品");
 
                 h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true);
-                if (prod)
-                {
-                    h.SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights);
-                }
-                h._LI();
-
+                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();

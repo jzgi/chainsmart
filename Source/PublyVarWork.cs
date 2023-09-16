@@ -90,16 +90,15 @@ public class PublyVarWork : WebWork
     {
         if (sector == 0)
         {
-            sector = wc.Subscript = Reg.SVC_REGID;
+            sector = wc.Subscript = Reg.MISC_REGID;
         }
 
         int mktid = wc[0];
         var regs = Grab<short, Reg>();
-
         var mkt = GrabTwin<int, Org>(mktid);
 
         var arr = GrabTwinSet<int, Org>(mktid, x => x.regid == sector && x.status == 4);
-        if (sector == Reg.SVC_REGID && mkt.IsOked) // default sector
+        if (sector == Reg.MISC_REGID && mkt.IsOked) // default sector
         {
             arr = arr.AddOf(mkt, first: true);
         }
@@ -130,7 +129,7 @@ public class PublyVarWork : WebWork
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(m.Name).SPAN(open ? "营业" : "打烊", css: "uk-badge uk-badge-success")._HEADER();
+                    h.HEADER_().H4(m.Name).SPAN(open ? "营业" : "休息", css: "uk-badge uk-badge-success")._HEADER();
                     h.Q(m.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();

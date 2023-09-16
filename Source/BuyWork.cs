@@ -70,8 +70,6 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 
 
-    static readonly string[] ExcludeActions = { nameof(adapted), nameof(adapt) };
-
     [OrgSpy(BUY_CREATED)]
     [Ui("网售订单", "新收的网售订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -84,7 +82,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+            h.TOOLBAR(twin: org.id);
 
             if (arr == null)
             {
@@ -107,7 +105,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+            h.TOOLBAR(twin: org.id);
 
             if (arr == null)
             {
@@ -131,7 +129,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(twin: org.id, exclude: org.IsService ? ExcludeActions : null);
+            h.TOOLBAR(twin: org.id);
 
             if (arr == null)
             {
