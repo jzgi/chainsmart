@@ -274,12 +274,7 @@ public class MktlyBuyVarWork : BuyVarWork
                 {
                     h.LI_();
 
-                    h.SPAN_("uk-width-expand").T(it.name);
-                    if (it.unitw > 0)
-                    {
-                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
-                    }
-                    h._SPAN();
+                    h.SPAN_("uk-width-expand").T(it.name)._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
                     h.SPAN_("uk-width-tiny uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();

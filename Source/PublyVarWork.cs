@@ -119,7 +119,14 @@ public class PublyVarWork : WebWork
                 lock (m)
                 {
                     var open = m.IsOpen(now);
-                    h.ADIALOG_(m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
+                    if (m.IsLink)
+                    {
+                        h.A_(m.addr, css: "uk-card-body uk-flex");
+                    }
+                    else
+                    {
+                        h.ADIALOG_(m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
+                    }
 
                     if (m.icon)
                     {
@@ -129,7 +136,7 @@ public class PublyVarWork : WebWork
                         h.PIC("/void.webp", css: "uk-width-1-5");
 
                     h.ASIDE_();
-                    h.HEADER_().H4(m.Name).SPAN(open ? "营业" : "休息", css: "uk-badge uk-badge-success")._HEADER();
+                    h.HEADER_().H4(m.Name).SPAN(m.IsLink ? string.Empty : open ? "营业" : "休息", css: "uk-badge uk-badge-success")._HEADER();
                     h.Q(m.tip, "uk-width-expand");
                     h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
                     h._ASIDE();

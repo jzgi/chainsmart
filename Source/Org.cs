@@ -193,7 +193,6 @@ public class Org : Entity, ITwin<int>
         return v;
     }
 
-
     public string Tel => tel;
 
     public int MarketId => IsMarket ? id : AsRetail ? upperid : 0;
@@ -203,6 +202,7 @@ public class Org : Entity, ITwin<int>
     public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
 
     public bool IsMisc => regid == Reg.MISC_REGID;
+
     //
     // public bool AsService => regid == Reg.SVC_REGID || IsMarket;
     //
@@ -225,6 +225,8 @@ public class Org : Entity, ITwin<int>
     public bool HasXy => IsMarket || IsSupply || IsCenter;
 
     public bool IsTopOrg => upperid == 0;
+
+    public bool IsLink => addr?.IndexOf('/') >= 0;
 
     public string Name => name;
 

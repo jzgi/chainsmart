@@ -90,7 +90,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
                 return;
             }
 
-            MainGrid(h, arr);
+            MainGrid(h, arr, pick: true);
         }, false, 6);
     }
 

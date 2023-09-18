@@ -7,16 +7,15 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_PROD = 1,
-        TYP_SVC = 2,
-        TYP_MIX = 4;
+        TYP_NEW = 1,
+        TYP_IMP = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_PROD, "产品" },
-        { TYP_SVC, "服务" },
-        { TYP_MIX, "综合" },
+        { TYP_NEW, "创建" },
+        { TYP_IMP, "导入" },
     };
+
 
     public static readonly Map<short, string> Ranks = new()
     {
@@ -127,10 +126,6 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(ops), ops);
         }
     }
-
-    public bool IsProdTyp => typ == TYP_PROD;
-
-    public bool IsSvcTyp => typ == TYP_SVC;
 
     public int Key => id;
 

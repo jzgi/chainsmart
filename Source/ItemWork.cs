@@ -375,12 +375,12 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = org.IsMisc ? Item.TYP_SVC : Item.TYP_PROD,
+            typ = Item.TYP_NEW,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            unit = org.IsMisc ? "位" : "斤",
-            unitw = org.IsMisc ? (short)0 : (short)500,
+            unit = "斤",
+            unitw = 500,
             step = 1,
             min = 1,
             max = MAX
@@ -392,7 +392,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().TEXT("商品名", nameof(o.name), o.name, max: 12)._LI();
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true, onchange: "this.form.unitw.value = this.selectedOptions[0].title").SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
@@ -418,7 +417,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("导入", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("导入", "导入已采购的供应链产品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task imp(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -427,7 +426,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_PROD,
+            typ = Item.TYP_IMP,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,
@@ -444,7 +443,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("导入供应链产品");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().SELECT("供应产品名", nameof(o.lotid), o.lotid, lots, required: true)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
@@ -464,7 +463,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1");
             var lot = await dc.QueryTopAsync<Lot>(p => p.Set(o.lotid));
-
             // init by lot
             {
                 o.name = lot.name;
@@ -485,7 +483,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_MGT)]
-    [Ui("清空", "永久删除这些作废项", icon: "paint-bucket", status: 4), Tool(ButtonConfirm)]
+    [Ui("清空", "永久删除已作废的数据项", status: 4), Tool(ButtonConfirm)]
     public async Task empty(WebContext wc)
     {
         var org = wc[-1].As<Org>();

@@ -28,7 +28,7 @@ public class LotVarWork : WebWork
 
         if (pricing)
         {
-            h.LI_().FIELD("零售单位", o.unit).FIELD("含重", o.unitw, Unit.Weights[o.unitw])._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Weights[o.unitw])._LI();
             h.LI_().FIELD2("整件", o.unitx, o.unit)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -39,7 +39,7 @@ public class LotVarWork : WebWork
         if (src != null)
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品源", src.name)._LI();
+            h.LI_().FIELD("产源设施", src.name)._LI();
             h.LI_().FIELD(string.Empty, src.tip)._LI();
             h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
             h._UL();
@@ -148,13 +148,13 @@ public class LotVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("供应点", Lot.Typs[o.typ]);
-            h.LI_().FIELD("产品名", o.name)._LI();
+            h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
+            h.LI_().FIELD("产品名", o.name).FIELD("供应点类型", Lot.Typs[o.typ])._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             if (o.typ == 2) h.FIELD("交货起始日", o.shipon);
             h._LI();
 
-            h.LI_().FIELD("零售单位", o.unit).FIELD("含重", Unit.Weights[o.unitw])._LI();
+            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", Unit.Weights[o.unitw])._LI();
             h.LI_().FIELD("总件数", o.cap)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -311,11 +311,11 @@ public class SuplyLotVarWork : LotVarWork
             {
                 h.FORM_().FIELDSUL_("批次信息");
 
-                h.LI_().SELECT("供应点", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
+                h.LI_().SELECT("供应点类型", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
                 h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产品源", nameof(o.srcid), o.srcid, srcs)._LI();
+                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 

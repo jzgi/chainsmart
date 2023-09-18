@@ -48,10 +48,10 @@ public class PublySrcWork : SrcWork<PublySrcVarWork>
     }
 }
 
-[Ui("产品源")]
+[Ui("产源设施")]
 public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 {
-    [Ui("产品源", status: 1), Tool(Anchor)]
+    [Ui("产源设施", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -64,7 +64,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无上线的产品源");
+                h.ALERT("尚无上线的产源设施");
                 return;
             }
 
@@ -85,7 +85,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无下线的产品源");
+                h.ALERT("尚无下线的产源设施");
                 return;
             }
 
@@ -106,7 +106,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无删除的产品源");
+                h.ALERT("尚无删除的产源设施");
                 return;
             }
 
@@ -115,7 +115,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", "新建产源设施",icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -130,9 +130,9 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
             };
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("新建产品源");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().TEXT("产品源名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
                 h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true).SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 200)._LI();

@@ -104,7 +104,7 @@ public class SuplySrcVarWork : SrcVarWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().FIELD("产品源名", o.name)._LI();
+            h.LI_().FIELD("产源设施名", o.name)._LI();
             h.LI_().FIELD("类别", o.typ, Src.Typs).FIELD("等级", o.rank, Src.Ranks)._LI();
             h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("说明", o.remark)._LI();
@@ -122,7 +122,7 @@ public class SuplySrcVarWork : SrcVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
-    [Ui(tip: "调整产品源信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "调整产源设施信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -139,7 +139,7 @@ public class SuplySrcVarWork : SrcVarWork
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().TEXT("产品源名", nameof(o.name), o.name, min: 2, max: 12)._LI();
+                h.LI_().TEXT("产源设施名", nameof(o.name), o.name, min: 2, max: 12)._LI();
                 h.LI_().SELECT("类别", nameof(o.typ), o.typ, Src.Typs, required: true).SELECT("等级", nameof(o.rank), o.rank, Src.Ranks, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.remark), o.remark, max: 200)._LI();

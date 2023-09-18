@@ -16,7 +16,6 @@ public class ItemVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         const short msk = 255 | MSK_AUX;
-
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND orgid = @2");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
@@ -28,7 +27,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("零售单位", o.unit);
-            if (o.IsProdTyp)
+            if (o.unitw > 0)
             {
                 h.FIELD("单位含重", o.unitw, Unit.Weights);
             }
@@ -122,7 +121,7 @@ public class PublyItemVarWork : ItemVarWork
             }
 
             h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
+            h.LI_().FIELD("商品名", o.name).FIELD("分类", o.typ, Item.Typs)._LI();
             if (!string.IsNullOrEmpty(o.tip))
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();
@@ -185,10 +184,9 @@ public class RtllyItemVarWork : ItemVarWork
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("自建商品");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
@@ -236,7 +234,7 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("货架", status: 7), Tool(ButtonShow)]
+    [Ui("货架", tip: "货架数量操作", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
         int itemid = wc[0];
@@ -251,7 +249,7 @@ public class RtllyItemVarWork : ItemVarWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("货架数量");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();

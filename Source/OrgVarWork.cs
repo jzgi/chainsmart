@@ -191,8 +191,8 @@ public class AdmlyOrgVarWork : OrgVarWork
                         h.LI_().SELECT("关联品控仓", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
+                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
+                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
                 }

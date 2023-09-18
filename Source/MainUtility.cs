@@ -96,7 +96,7 @@ public static class MainUtility
             }
         }
 
-        h.OPTION(string.Empty, "非派送区", selected: true);
+        h.OPTION(string.Empty, "非派送区（须自提）", selected: true);
 
         h._SELECT();
 
