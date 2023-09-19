@@ -192,7 +192,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         wc.GivePage(200, h =>
         {
             h.TOPBAR_("uk-padding").UL_("uk-subnav");
-            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从品控仓")._A()._LI();
+            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从云仓")._A()._LI();
             h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源")._A()._LI();
             h._UL()._TOPBAR();
 
@@ -346,7 +346,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓统一发货")]
+[Ui("云仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
     [Ui("统一发货", status: 8), Tool(Anchor)]
@@ -401,7 +401,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("采购统一收货 - 品控仓")]
+[Ui("采购统一收货（云仓）")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("采购统一收货", status: 1), Tool(Anchor)]

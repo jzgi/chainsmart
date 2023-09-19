@@ -16,7 +16,7 @@ public class Pur : Entity, IKeyable<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_HUB, "品控仓" },
+        { TYP_HUB, "云仓" },
         { TYP_SRC, "产源" },
     };
 

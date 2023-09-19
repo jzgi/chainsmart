@@ -42,7 +42,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("市场业务报表")]
+[Ui("市场业务汇总表")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
     [Ui("市场业务", status: 1), Tool(Anchor)]
@@ -75,7 +75,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 }
 
 [AdmlyAuthorize(User.ROL_FIN)]
-[Ui("供应业务报表")]
+[Ui("供应业务汇总表")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
     [Ui("供应业务", status: 1), Tool(Anchor)]
@@ -85,7 +85,7 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[Ui("销售报表")]
+[Ui("销售汇总表")]
 public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]
@@ -139,7 +139,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
-[Ui("销售报表")]
+[Ui("销售汇总表")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
@@ -205,7 +205,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("品控仓报表")]
+[Ui("云仓汇总表")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)
@@ -215,7 +215,7 @@ public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
-            h.ALERT("暂无生成报表");
+            h.ALERT("暂无汇总记录");
         }, false, 60);
     }
 }

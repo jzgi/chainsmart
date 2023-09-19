@@ -188,7 +188,7 @@ public class AdmlyOrgVarWork : OrgVarWork
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (cmd == 1)
                     {
-                        h.LI_().SELECT("关联品控仓", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
+                        h.LI_().SELECT("关联云仓", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();

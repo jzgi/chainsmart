@@ -488,7 +488,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.FORM_().FIELDSUL_("货架操作");
                 h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
-                h.LI_().SELECT("品控仓", nameof(hubid), hubid, arr)._LI();
+                h.LI_().SELECT("云仓", nameof(hubid), hubid, arr)._LI();
                 h._FIELDSUL();
 
                 h.TABLE(ops, o =>
@@ -504,7 +504,7 @@ public class SuplyLotVarWork : LotVarWork
                         h.TD(o.stock, right: true);
                         h.TD(o.by);
                     },
-                    thead: () => h.TH("时间").TH("摘要").TH("品控仓").TH("余量").TH("操作"),
+                    thead: () => h.TH("时间").TH("摘要").TH("云仓").TH("余量").TH("操作"),
                     reverse: true
                 );
 

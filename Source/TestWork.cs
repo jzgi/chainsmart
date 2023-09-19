@@ -38,7 +38,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     }
 
 
-    [Ui("公示检测", status: 1), Tool(Anchor)]
+    [Ui("检测记录", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -150,7 +150,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
 }
 
 [OrglyAuthorize(Org.TYP_MKT)]
-[Ui("检测管理")]
+[Ui("检测")]
 public class MktlyTestWork : TestWork<MktlyTestVarWork>
 {
     public async Task lst(WebContext wc)
