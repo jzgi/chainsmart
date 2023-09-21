@@ -149,8 +149,20 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
     }
 
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui("新建", "新建产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc)
+    [Ui("云仓", "新建从云仓供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
+    public async Task newhub(WebContext wc)
+    {
+        await @new(wc, Lot.TYP_HUB);
+    }
+
+    [OrglyAuthorize(0, User.ROL_OPN)]
+    [Ui("产源", "新建从产源供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
+    public async Task newsrc(WebContext wc)
+    {
+        await @new(wc, Lot.TYP_SRC);
+    }
+
+    async Task @new(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -158,6 +170,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         var o = new Lot
         {
+            typ = (short)typ,
             status = Entity.STU_CREATED,
             orgid = org.id,
             unit = "斤",
@@ -165,7 +178,6 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             creator = prin.name,
             off = 0,
             unitx = 1,
-
             cap = 2000,
             min = 1,
             max = 100,
@@ -179,21 +191,23 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("供应点类型", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
-                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: typ == Lot.TYP_SRC)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
+                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs, required: false)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
 
-                h.LI_().DATE("交货约在", nameof(o.shipon), o.shipon, disabled: true)._LI();
+                if (typ == Lot.TYP_SRC)
+                {
+                    h.LI_().DATE("交货约期", nameof(o.shipon), o.shipon, disabled: true)._LI();
+                }
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new));
+                h._FIELDSUL().BOTTOM_BUTTON("确认", o.typ == Lot.TYP_SRC ? nameof(newsrc) : nameof(newhub));
 
                 h._FORM();
             });

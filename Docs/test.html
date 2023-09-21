@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head><title>商品</title>
+<head><title>万载百合商业广场</title>
+    <meta http-equiv="refresh" content="60">
     <link rel="shortcut icon" href="/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <link rel="stylesheet" href="/uikit.min.css">
@@ -9,17 +10,53 @@
     <script src="/uikit-icons.min.js"></script>
     <script src="/app.min.js"></script>
 </head>
-<body>
-<form id="tool-bar-form" class="uk-top-bar"><a class="uk-icon-button" href="javascript: window.parent.closeUp(false);" uk-icon="icon: chevron-left; ratio: 1.75"></a>
-    <nav><a class="uk-button uk-button-primary" href="./?astack=true" onclick="goto(this.href, event);">上线商品</a><a class="uk-button uk-button-primary uk-active" href="down?astack=true" onclick="goto(this.href, event);" title="已下线"><span uk-icon="cloud-download"></span></a><a class="uk-button uk-button-primary" href="void?astack=true" onclick="goto(this.href, event);" title="已作废"><span uk-icon="trash"></span></a>
-        <button class="uk-button uk-button-primary" name="new" formaction="new" onclick="return dialog(this,32,false,'新建');" title="创建新的商品信息"><span uk-icon="plus"></span>新建</button>
-        <button class="uk-button uk-button-primary" name="imp" formaction="imp" onclick="return dialog(this,32,false,'导入');" title="导入已采购的供应链产品"><span uk-icon="plus"></span>导入</button>
-        <button class="uk-button uk-button-primary" name="help" formaction="help" onclick="return dialog(this,16,false,'');"><span uk-icon="question"></span></button>
-    </nav>
-</form>
-<div class="uk-top-placeholder"></div>
-<div uk-alert>
-    <header>尚无已下线的商品</header>
-</div>
+<body class="uk-dark">
+<main uk-slider="autoplay: true; autoplay-interval: 6000; center: true;">
+    <ul class="uk-slider-items uk-grid uk-child-width-1-1">
+        <li>
+            <table class="uk-table-dark uk-table-dark-divider uk-table-dark-hover">
+                <thead>
+                <th>农药残留</th>
+                <th class="uk-width-medium uk-text-center">分值</th>
+                <th class="uk-width-large uk-text-center">结论</th>
+                </thead>
+                <tr>
+                    <td>红脆李&nbsp;-&nbsp;老兵水果店</td>
+                    <td class="uk-text-center">0.32</td>
+                    <td>正常</td>
+                </tr>
+                <tr>
+                    <td>青椒&nbsp;-&nbsp;江兴平蔬菜</td>
+                    <td class="uk-text-center">0.26</td>
+                    <td>正常</td>
+                </tr>
+            </table>
+        </li>
+        <li>
+            <table class="uk-table-dark uk-table-dark-divider uk-table-dark-hover">
+                <thead>
+                <th>瘦肉精</th>
+                <th class="uk-width-medium uk-text-center">分值</th>
+                <th class="uk-width-large uk-text-center">结论</th>
+                </thead>
+                <tr>
+                    <td>瘦肉&nbsp;-&nbsp;巢美根肉铺</td>
+                    <td class="uk-text-center">0.20</td>
+                    <td>正常</td>
+                </tr>
+                <tr>
+                    <td>瘦肉&nbsp;-&nbsp;巢美根肉铺</td>
+                    <td class="uk-text-center">0.20</td>
+                    <td>正常</td>
+                </tr>
+                <tr>
+                    <td>瘦肉&nbsp;-&nbsp;巢美根肉铺</td>
+                    <td class="uk-text-center">0.20</td>
+                    <td>正常</td>
+                </tr>
+            </table>
+        </li>
+    </ul>
+</main>
 </body>
 </html>

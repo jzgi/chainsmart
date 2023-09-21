@@ -133,7 +133,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
             wc.GivePane(200, h =>
             {
                 h.FORM_();
-                h.FIELDSUL_("生成汇总表及应付帐");
+                h.FIELDSUL_("生成业务汇总及应付帐");
                 h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(gen));
                 h._FORM();
@@ -243,7 +243,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
             var till = DateTime.Today.AddDays(-1);
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("生成汇总表及应付帐");
+                h.FORM_().FIELDSUL_("生成业务汇总及应付帐");
                 h.LI_().DATE("截止日期", nameof(till), till, max: till)._LI();
                 h._FIELDSUL();
                 h.BOTTOM_BUTTON("确认", nameof(gen));

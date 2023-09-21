@@ -3,16 +3,24 @@
 namespace ChainSmart;
 
 /// <summary>
-/// The data modal for an event..
+/// The data modal for a general message.
 /// </summary>
-public class Fact : Entity, IKeyable<int>
+public class Msg : Entity, IKeyable<int>
 {
-    public static readonly Fact Empty = new();
+    public static readonly Msg Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "通知" },
-        { 2, "其他" },
+        { 1, "广播" },
+        { 2, "屏显" },
+        { 4, "综合" },
+    };
+
+    public static readonly Map<short, string> Ranks = new()
+    {
+        { 1, "普通" },
+        { 2, "重要" },
+        { 3, "特别" },
     };
 
 
@@ -26,9 +34,12 @@ public class Fact : Entity, IKeyable<int>
 
 
     internal int id;
-    internal int orgid;
-    internal short num;
 
+    internal int orgid;
+
+    internal short rank;
+
+    internal string content;
 
     // must have an icon
 
@@ -44,9 +55,10 @@ public class Fact : Entity, IKeyable<int>
         {
             s.Get(nameof(orgid), ref orgid);
         }
-        if ((msk & MSK_LATER) == MSK_LATER)
+        if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(num), ref num);
+            s.Get(nameof(content), ref content);
+            s.Get(nameof(rank), ref rank);
         }
     }
 
@@ -62,9 +74,10 @@ public class Fact : Entity, IKeyable<int>
         {
             s.Put(nameof(orgid), orgid);
         }
-        if ((msk & MSK_LATER) == MSK_LATER)
+        if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(num), num);
+            s.Put(nameof(content), content);
+            s.Put(nameof(rank), rank);
         }
     }
 
@@ -72,5 +85,5 @@ public class Fact : Entity, IKeyable<int>
 
     public override string ToString() => name;
 
-    public short Index => num;
+    public short Index => rank;
 }

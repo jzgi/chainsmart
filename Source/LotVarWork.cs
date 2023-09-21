@@ -309,19 +309,21 @@ public class SuplyLotVarWork : LotVarWork
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("批次信息");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("供应点类型", nameof(o.typ), o.typ, Lot.Typs, required: true, onchange: "this.form.shipon.disabled = this.value == 1 ? true : false;")._LI();
                 h.LI_().TEXT("产品名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs)._LI();
+                h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs, required: o.typ == Lot.TYP_SRC)._LI();
                 h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
                 h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
 
-                h.LI_().DATE("发货约期", nameof(o.shipon), o.shipon, disabled: true)._LI();
+                if (o.typ == Lot.TYP_SRC)
+                {
+                    h.LI_().DATE("发货约期", nameof(o.shipon), o.shipon, disabled: true)._LI();
+                }
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
                 h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 

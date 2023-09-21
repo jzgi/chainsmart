@@ -131,7 +131,7 @@ public class Lot : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(srcid), srcid);
+            if (srcid > 0) s.Put(nameof(srcid), srcid); else s.PutNull(nameof(srcid));
             s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(shipon), shipon);
             s.Put(nameof(unit), unit);

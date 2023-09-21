@@ -8,16 +8,16 @@ public class Test : Entity, IKeyable<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "一般成分" },
-        { 2, "感官" },
-        { 3, "农药残留" },
-        { 4, "饲料及添加剂" },
-        { 401, "瘦肉精" },
-        { 5, "兽药渔药残留" },
-        { 501, "抗生素" },
-        { 6, "重金属污染物" },
-        { 7, "微生物" },
-        { 8, "土壤养分" },
+        { 10, "一般成分" },
+        { 20, "感官" },
+        { 30, "农药残留" },
+        { 40, "饲料及添加剂" },
+        { 41, "瘦肉精" },
+        { 50, "兽药渔药残留" },
+        { 51, "抗生素" },
+        { 60, "重金属污染物" },
+        { 70, "微生物" },
+        { 80, "土壤养分" },
     };
 
     public static readonly Map<short, string> Levels = new()
@@ -32,9 +32,9 @@ public class Test : Entity, IKeyable<int>
     public new static readonly Map<short, string> Statuses = new()
     {
         { STU_VOID, "撤销" },
-        { STU_CREATED, "新建" },
+        { STU_CREATED, "创建" },
         { STU_ADAPTED, "调整" },
-        { STU_OKED, "上榜" },
+        { STU_OKED, "生效" },
     };
 
     internal int id;

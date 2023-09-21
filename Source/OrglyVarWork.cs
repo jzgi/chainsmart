@@ -153,11 +153,15 @@ public class RtllyVarWork : OrglyVarWork
 
         CreateWork<MktlyOrgWork>("morg", header: "机构");
 
-        CreateWork<MktlyTestWork>("mtest");
+        CreateWork<MktlyMsgWork>("mmsg");
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
+
+        CreateWork<MktlyTestWork>("mtest");
+
+        CreateWork<MktlyJobWork>("mjob");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -270,10 +274,12 @@ public class SuplyVarWork : OrglyVarWork
 
         CreateWork<CtrlyOrgWork>("corg", header: "机构");
 
-        CreateWork<CtrlyTestWork>("ceval");
+        CreateWork<CtrlyTestWork>("ctest");
 
         CreateWork<CtrlyPurWork>("cpur");
 
         CreateWork<CtrlyPurLdgWork>("cpurldg");
+
+        CreateWork<CtrlyJobWork>("cprog");
     }
 }

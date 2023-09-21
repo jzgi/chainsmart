@@ -14,8 +14,7 @@ public class OrgEventPack : IPack<JsonBuilder>
 
     readonly List<Buy> buys = new(16);
 
-    readonly List<Fact> facts = new(16);
-
+    readonly List<Msg> msgs = new(16);
 
     private DateTime since = DateTime.Now;
 
@@ -31,7 +30,7 @@ public class OrgEventPack : IPack<JsonBuilder>
         }
     }
 
-    public void Add(Buy v)
+    public void AddBuy(Buy v)
     {
         lock (this)
         {
@@ -39,11 +38,11 @@ public class OrgEventPack : IPack<JsonBuilder>
         }
     }
 
-    public void AddFact(Fact v)
+    public void AddMsg(Msg v)
     {
         lock (this)
         {
-            facts.Add(v);
+            msgs.Add(v);
         }
     }
 
@@ -53,9 +52,12 @@ public class OrgEventPack : IPack<JsonBuilder>
         lock (this)
         {
             // bix names 
-            bdr.OBJ_();
-            bdr.Put(nameof(news), news);
-            bdr._OBJ();
+            if (news.Count > 0)
+            {
+                bdr.OBJ_();
+                bdr.Put(nameof(news), news);
+                bdr._OBJ();
+            }
 
             // buying orders
             foreach (var o in buys)
@@ -63,8 +65,8 @@ public class OrgEventPack : IPack<JsonBuilder>
                 bdr.Put(null, o);
             }
 
-            // facts 
-            foreach (var o in facts)
+            // msgs
+            foreach (var o in msgs)
             {
                 bdr.Put(null, o);
             }
@@ -72,7 +74,7 @@ public class OrgEventPack : IPack<JsonBuilder>
             // clear
             news.Clear();
             buys.Clear();
-            facts.Clear();
+            msgs.Clear();
 
             since = now;
         }

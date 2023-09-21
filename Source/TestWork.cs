@@ -39,7 +39,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
 
 
     [Ui("检测记录", status: 1), Tool(Anchor)]
-    public async Task @default(WebContext wc, int page)
+    public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
@@ -52,14 +52,14 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无公示记录");
+                h.ALERT("尚无生效的检测记录");
                 return;
             }
             MainGrid(h, arr);
-        }, false, 12);
+        }, false, 6);
     }
 
-    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
+    [Ui(tip: "已下线的检测记录", icon: "cloud-download", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -79,10 +79,10 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
-    [Ui(tip: "已作废", icon: "trash", status: 8), Tool(Anchor)]
+    [Ui(tip: "已作废的检测记录", icon: "trash", status: 4), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -101,7 +101,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
     [Ui("新建", tip: "新建检测记录", icon: "plus", status: 1 | 2), Tool(ButtonOpen)]
@@ -125,7 +125,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(wc.Action.Tip);
+                h.FORM_().FIELDSUL_(wc.Action.Tip + "'" + Test.Statuses[o.typ] + "'");
                 h.LI_().SELECT("检测类型", nameof(o.typ), o.typ, Test.Typs)._LI();
                 h.LI_().TEXT("受检商品", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().LABEL("受检商户").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
@@ -158,31 +158,30 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT typ, name, tip, orgid, val, level FROM tests WHERE upperid = @1 AND status = 4 ORDER BY typ");
-        await dc.QueryAsync(p => p.Set(mkt.id));
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND status = 4 ORDER BY typ");
+        var arr = await dc.QueryAsync<Test>(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;
 
         wc.GivePage(200, h =>
         {
-            h.T("<main uk-slider=\"autoplay: true; utoplay-interval: 6000; pause-on-hover: true; center: true\">");
+            if (arr == null)
+            {
+                h.DIV_(css: "uk-position-center uk-text-xlarge uk-text-success").T("当前无检测记录公示")._DIV();
+                return;
+            }
+
+            h.T("<main uk-slider=\"autoplay: true; autoplay-interval: 6000; center: true;\">");
             h.UL_("uk-slider-items uk-grid uk-child-width-1-1");
 
             short lasttyp = 0;
             int num = 0;
 
-            while (dc.Next())
+            foreach (var o in arr)
             {
-                dc.Let(out short typ);
-                dc.Let(out string name);
-                dc.Let(out string tip);
-                dc.Let(out int orgid);
-                dc.Let(out decimal val);
-                dc.Let(out short level);
-
-                if (typ != lasttyp || num % PAGESIZ == 0)
+                if (o.typ != lasttyp || num % PAGESIZ == 0)
                 {
-                    if (typ != lasttyp)
+                    if (o.typ != lasttyp)
                     {
                         num = 0; // reset
                     }
@@ -193,47 +192,38 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
                     }
                     h.LI_();
                     h.TABLE_(dark: true);
-                    h.THEAD_().TH(Test.Typs[typ]).TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-large uk-text-center")._THEAD();
+                    h.THEAD_().TH(Test.Typs[o.typ]).TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-large uk-text-center")._THEAD();
                 }
 
                 // each row
                 //
                 h.TR_();
-                h.TD_().T(name);
-                if (orgid > 0)
+                h.TD_().T(o.name);
+                if (o.orgid > 0)
                 {
-                    var org = GrabTwin<int, Org>(orgid);
+                    var org = GrabTwin<int, Org>(o.orgid);
                     h.SP().T('-').SP().T(org.name);
                 }
                 h._TD();
-                h.TD(val, right: null);
-                h.TD(Test.Levels[level]);
+                h.TD(o.val, right: null);
+                h.TD(Test.Levels[o.level]);
                 h._TR();
 
                 num++;
 
-                lasttyp = typ;
+                lasttyp = o.typ;
             }
 
-            if (num % PAGESIZ == 0 && num > 0)
-            {
-                h._TABLE();
-                h._LI();
-            }
+            h._TABLE();
+            h._LI();
             h._UL();
-
-            if (num == 0)
-            {
-                h.DIV_(css: "uk-position-center uk-text-xlarge uk-text-success").T("当前无检测记录公示")._DIV();
-            }
-
             h._MAIN();
         }, false, 12, title: mkt.Cover, refresh: 60);
     }
 }
 
 [OrglyAuthorize(Org.TYP_CTR)]
-[Ui("检测管理")]
+[Ui("检测")]
 public class CtrlyTestWork : TestWork<CtrlyTestVarWork>
 {
 }

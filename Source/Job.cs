@@ -3,17 +3,17 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A incubation program. 
+/// An job incubation program. 
 /// </summary>
-public class Prog : Entity, IKeyable<(int, short)>
+public class Job : Entity, IKeyable<int>
 {
-    public static readonly Prog Empty = new();
+    public static readonly Job Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "城乡振兴卡" },
-        { 2, "民生创业卡" },
-        { 4, "民生助农卡" },
+        { 1, "创业卡" },
+        { 2, "助农卡" },
+        { 4, "振兴卡" },
     };
 
     public static readonly Map<short, string> Tips = new()
@@ -23,20 +23,32 @@ public class Prog : Entity, IKeyable<(int, short)>
         { 4, "发放对象：流动商贩安置、零星种植兼职售卖、困难人群、不便人群及老人等。" },
     };
 
+    internal int id;
+    internal int upperid;
     internal int userid;
+    internal string idno;
+    internal string cardno;
     internal decimal bal;
 
     public override void Read(ISource s, short msk = 0xff)
     {
         base.Read(s, msk);
 
+        if ((msk & MSK_ID) == MSK_ID)
+        {
+            s.Get(nameof(id), ref id);
+        }
+
         if ((msk & MSK_BORN) == MSK_BORN)
         {
+            s.Get(nameof(upperid), ref upperid);
             s.Get(nameof(userid), ref userid);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Get(nameof(idno), ref idno);
+            s.Get(nameof(cardno), ref cardno);
             s.Get(nameof(bal), ref bal);
         }
     }
@@ -45,18 +57,24 @@ public class Prog : Entity, IKeyable<(int, short)>
     {
         base.Write(s, msk);
 
+        if ((msk & MSK_ID) == MSK_ID)
+        {
+            s.Put(nameof(id), id);
+        }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
+            s.Put(nameof(upperid), upperid);
             s.Put(nameof(userid), userid);
         }
-
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Put(nameof(idno), idno);
+            s.Put(nameof(cardno), cardno);
             s.Put(nameof(bal), bal);
         }
     }
 
-    public (int, short) Key => (userid, typ);
+    public int Key => id;
 
     public override string ToString() => name;
 }

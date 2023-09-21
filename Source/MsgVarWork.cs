@@ -7,9 +7,9 @@ using static ChainFx.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class FactVarWork : WebWork
+public abstract class MsgVarWork : WebWork
 {
-    public  async Task @default(WebContext wc)
+    public async Task @default(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -17,17 +17,17 @@ public abstract class FactVarWork : WebWork
         const short msk = 255 | MSK_AUX;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Fact.Empty, msk).T(" FROM facts WHERE id = @1 AND orgid = @2");
-        var o = await dc.QueryTopAsync<Fact>(p => p.Set(id).Set(org.id), msk);
+        dc.Sql("SELECT ").collst(Msg.Empty, msk).T(" FROM msgs WHERE id = @1 AND orgid = @2");
+        var o = await dc.QueryTopAsync<Msg>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("事务名", o.name)._LI();
-            h.LI_().FIELD("内容", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-
-            h.LI_().FIELD("状态", o.status, Fact.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD("消息标题", o.name)._LI();
+            h.LI_().FIELD("内容", o.content)._LI();
+            h.LI_().FIELD("注解", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+            h.LI_().FIELD("状态", o.status, Msg.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
@@ -37,10 +37,10 @@ public abstract class FactVarWork : WebWork
     }
 }
 
-public class MktlyFactVarWork : FactVarWork
+public class MktlyMsgVarWork : MsgVarWork
 {
     [OrglyAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "调整事务信息", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
+    [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
@@ -50,15 +50,18 @@ public class MktlyFactVarWork : FactVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM facts WHERE id = @1");
-            var o = await dc.QueryTopAsync<Item>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Msg.Empty).T(" FROM msgs WHERE id = @1");
+            var o = await dc.QueryTopAsync<Msg>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("新建" + Fact.Typs[o.typ]);
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().TEXT("事务名", nameof(o.name), o.name, max: 12)._LI();
-                h.LI_().TEXTAREA("内容", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Msg.Typs)._LI();
+                h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
+                h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().SELECT("级别", nameof(o.rank), o.rank, Msg.Ranks)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -66,7 +69,7 @@ public class MktlyFactVarWork : FactVarWork
         else // POST
         {
             const short msk = MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, new Fact
+            var m = await wc.ReadObjectAsync(msk, new Msg
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -74,7 +77,7 @@ public class MktlyFactVarWork : FactVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE facts ")._SET_(Fact.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE msgs ")._SET_(Msg.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -95,15 +98,15 @@ public class MktlyFactVarWork : FactVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE facts SET status = 4, oked = @1, oker = @2, num = num + 1 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Fact.Empty);
-        var o = await dc.QueryTopAsync<Fact>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        dc.Sql("UPDATE msgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Msg.Empty);
+        var o = await dc.QueryTopAsync<Msg>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
-        org.EventPack.AddFact(o);
+        org.EventPack.AddMsg(o);
 
         wc.GivePane(200);
     }
 }
 
-public class CtrlyFactVarWork : FactVarWork
+public class CtrlyMsgVarWork : MsgVarWork
 {
 }
