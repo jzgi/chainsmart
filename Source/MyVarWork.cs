@@ -102,13 +102,13 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         });
     }
 
-    [Ui("爱农卡", "参与爱农孵化项目", status: 7), Tool(ButtonShow)]
+    [Ui("民生卡", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
     public async Task prog(WebContext wc, int dt)
     {
         int uid = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM progs WHERE userid = @1");
+        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE userid = @1");
         var arr = await dc.QueryAsync<Job>(p => p.Set(uid));
 
         wc.GivePane(200, h =>
@@ -119,10 +119,10 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 var e = Job.Typs.EntryAt(i);
                 h.ARTICLE_("uk-card uk-card-default");
                 var card = arr.First(x => x.typ == e.Key);
-                h.HEADER_("uk-card-header").H3(e.Value).SPAN_("uk-badge");
+                h.HEADER_("uk-card-header").ICON("credit-card").SP().H3(e.Value).SPAN_("uk-badge");
                 if (card != null)
                 {
-                    h.T(card.created).SP().T("已领");
+                    h.T(card.created, time: 0).SP().T("已领");
                 }
                 else
                 {
