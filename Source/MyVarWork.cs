@@ -89,53 +89,6 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }, false, 12);
     }
 
-    [Ui("碳积分", "购买绿色减排产品的奖励", status: 7), Tool(ButtonShow)]
-    public async Task carb(WebContext wc, int dt)
-    {
-        int uid = wc[0];
-
-        wc.GivePane(200, h =>
-        {
-            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
-            h.ALERT("计算方法依据国家相关标准");
-            h.ALERT("按照平台现时规则到体验中心兑换");
-        });
-    }
-
-    [Ui("民生卡", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
-    public async Task prog(WebContext wc, int dt)
-    {
-        int uid = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE userid = @1");
-        var arr = await dc.QueryAsync<Job>(p => p.Set(uid));
-
-        wc.GivePane(200, h =>
-        {
-            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
-            for (int i = 0; i < Job.Typs.Count; i++)
-            {
-                var e = Job.Typs.EntryAt(i);
-                h.ARTICLE_("uk-card uk-card-default");
-                var card = arr.First(x => x.typ == e.Key);
-                h.HEADER_("uk-card-header").ICON("credit-card").SP().H3(e.Value).SPAN_("uk-badge");
-                if (card != null)
-                {
-                    h.T(card.created, time: 0).SP().T("已领");
-                }
-                else
-                {
-                    h.T("未领");
-                }
-                h._SPAN();
-                h._HEADER();
-                h.SECTION_("uk-card-body").P(Job.Tips[e.Key])._SECTION();
-                h._ARTICLE();
-            }
-        }, false, 120);
-    }
-
     [Ui("身份", "刷新我的身份权限", status: 7), Tool(ButtonShow)]
     public async Task access(WebContext wc)
     {
@@ -255,6 +208,52 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
+    [Ui("碳积分", "购买绿色减排产品的奖励", status: 7), Tool(ButtonShow)]
+    public async Task carb(WebContext wc, int dt)
+    {
+        int uid = wc[0];
+
+        wc.GivePane(200, h =>
+        {
+            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
+            h.ALERT("计算方法依据国家相关标准");
+            h.ALERT("按照平台现时规则到体验中心兑换");
+        });
+    }
+
+    [Ui("民生卡", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
+    public async Task job(WebContext wc, int dt)
+    {
+        int uid = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE userid = @1");
+        var arr = await dc.QueryAsync<Job>(p => p.Set(uid));
+
+        wc.GivePane(200, h =>
+        {
+            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
+            for (int i = 0; i < Job.Typs.Count; i++)
+            {
+                var e = Job.Typs.EntryAt(i);
+                h.ARTICLE_("uk-card uk-card-default");
+                var card = arr.First(x => x.typ == e.Key);
+                h.HEADER_("uk-card-header").ICON("credit-card").SP().H3(e.Value).SPAN_("uk-badge");
+                if (card != null)
+                {
+                    h.T(card.created, time: 0).SP().T("已领");
+                }
+                else
+                {
+                    h.T("未领");
+                }
+                h._SPAN();
+                h._HEADER();
+                h.SECTION_("uk-card-body").P(Job.Tips[e.Key])._SECTION();
+                h._ARTICLE();
+            }
+        }, false, 120);
+    }
 
     [Ui("须知", "本系统的使用条款", status: 7), Tool(ButtonShow)]
     public async Task agmt(WebContext wc, int dt)

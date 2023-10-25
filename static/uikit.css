@@ -9,7 +9,7 @@ html {
 body {
     margin: 0;
     font-size: 0.9375rem;
-    background-color: #f6f6f6;
+    background-color: #ededed;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -87,6 +87,7 @@ a,
     color: #333;
     text-decoration: none;
     cursor: pointer;
+    padding: 2px 0;
 }
 
 .uk-link {
@@ -1915,22 +1916,21 @@ a.uk-button-primary {
     height: 3rem;
     padding: 0 12px;
     margin: 0 2px;
-    border-top: 2px solid transparent;
-    border-bottom: 2px solid transparent;
+    background-color: #ddd;
 }
 
 a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    background-color: #f6f6f6;
-    border-top: 2px solid #f59604;
+    background-color: #666;
+    color: #fff;
 }
 
 .uk-button-secondary {
     padding: 4px 8px;
     font-size: 0.875rem;
-    border: 1px solid #888;
+    border: 1px solid #666;
     border-radius: 8px;
     color: #333;
 }
@@ -2284,6 +2284,7 @@ main.uk-grid {
     padding: 4px;
     width: -webkit-fill-available;
     background-color: #fff;
+    border-radius: inherit;
 }
 
 section.uk-card-body,
@@ -2292,7 +2293,7 @@ a.uk-card-body {
 }
 
 a.uk-inactive {
-    background-color: #ededed;
+    background-color: #f6f6f6;
 }
 
 .uk-card-header {
@@ -2302,6 +2303,7 @@ a.uk-inactive {
     align-items: center;
     width: -webkit-fill-available;
     background-color: #fff;
+    border-radius: inherit;
 }
 
 .uk-card-header .uk-checkbox {
@@ -2316,6 +2318,7 @@ a.uk-inactive {
     display: flex;
     align-items: center;
     background-color: #fff;
+    border-radius: inherit;
 }
 
 .uk-card-body::before,
@@ -3215,28 +3218,17 @@ ul.uk-nav-sub {
 
 .uk-subnav>* {
     flex: none;
-    padding: 6px;
+    padding: 4px;
     position: relative;
+    margin: 0 2px;
     border: 2px solid transparent;
-}
-
-.uk-subnav>*> :first-child {
-    color: #7daa1d;
-    text-transform: uppercase;
-    transition: 0.1s ease-in-out;
-    transition-property: color, background-color;
 }
 
 .uk-subnav> :hover,
 .uk-subnav> :focus,
 .uk-subnav>.uk-active {
-    border-bottom: 2px solid #f59604;
-}
-
-.uk-subnav> :hover>:first-child,
-.uk-subnav> :focus>:first-child,
-.uk-subnav>.uk-active>:first-child {
     color: #f59604;
+    border-bottom: 2px solid #f59604;
 }
 
 .uk-subnav-divider>* {
@@ -3978,7 +3970,7 @@ ul.uk-nav-sub {
     min-height: 3rem;
     box-sizing: border-box;
     color: #fff;
-    background-color: #888;
+    background-color: #666;
 }
 
 .uk-modal-footer {
