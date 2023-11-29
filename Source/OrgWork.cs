@@ -18,7 +18,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
     }
 }
 
-public class PublyOrgWork : OrgWork<PublyOrgVarWork>
+public class PubOrgWork : OrgWork<PublyOrgVarWork>
 {
 }
 

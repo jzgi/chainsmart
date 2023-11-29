@@ -9,7 +9,7 @@ namespace ChainSmart;
 
 public abstract class OrglyVarWork : WebWork
 {
-    public void @default(WebContext wc)
+    public virtual void @default(WebContext wc)
     {
         var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;

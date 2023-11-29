@@ -9,7 +9,7 @@ public abstract class TagWork : WebWork
 {
 }
 
-public class PublyTagWork : TagWork
+public class PubTagWork : TagWork
 {
     protected override void OnCreate()
     {

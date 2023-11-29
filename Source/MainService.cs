@@ -43,6 +43,8 @@ public abstract class MainService : WebService
                 url = wc.Query[nameof(url)];
                 url = HttpUtility.UrlDecode(url);
 
+                h.TOPBAR_()._TOPBAR();
+                
                 h.NAV_("uk-top-placeholder")._NAV();
                 h.HEADER_(css: "uk-flex-center").ICON("user", ratio: 4, "uk-circle uk-background-muted uk-padding-large")._HEADER();
 

@@ -1,4 +1,1 @@
-# Introduction  
-
-ChainSmart (品链供销) is a decentralized agricultural supply & marketing platform system.
-
+ChainSmart (品链供销) is a decentralized agricultural supply & market retail platform system. This is a master-nodal project.

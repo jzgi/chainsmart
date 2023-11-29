@@ -11,17 +11,17 @@ public class WwwService : MainService
 {
     protected override void OnCreate()
     {
-        CreateVarWork<PublyVarWork>(); // home for market
+        CreateVarWork<WwwVarWork>(); // home for market
 
-        CreateWork<PublyTagWork>("tag");
+        CreateWork<PubTagWork>("tag");
 
-        CreateWork<PublyLotWork>("lot");
+        CreateWork<PubLotWork>("lot");
 
-        CreateWork<PublyOrgWork>("org");
+        CreateWork<PubOrgWork>("org");
 
-        CreateWork<PublySrcWork>("src");
+        CreateWork<PubSrcWork>("src");
 
-        CreateWork<PublyItemWork>("item");
+        CreateWork<PubItemWork>("item");
 
         CreateWork<MyWork>("my");
     }
@@ -38,8 +38,6 @@ public class WwwService : MainService
 
         wc.GivePage(200, h =>
         {
-            h.MAIN_(css: "uk-grid");
-
             bool exist = false;
             var last = 0;
 
@@ -54,13 +52,13 @@ public class WwwService : MainService
                         h._ARTICLE();
                     }
 
-                    h.ARTICLE_("uk-card uk-card-default");
+                    h.ARTICLE_("uk-card uk-card-primary");
                     h.H3(regs[o.regid]?.name, "uk-card-header");
                     h.UL_("uk-card-body");
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false,'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
                 h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
@@ -80,10 +78,9 @@ public class WwwService : MainService
             }
 
             h._ARTICLE();
-            h._MAIN();
 
             string tel = Application.CustomConf[nameof(tel)];
-            h.BOTTOMBAR_("uk-flex-around");
+            h.BOTTOMBAR_("uk-col uk-flex-center uk-flex-middle");
             h.SPAN2("☎", tel, css: "uk-label").A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
         }, true, 720, title: Application.Name + "市场", onload: "fixAll();");

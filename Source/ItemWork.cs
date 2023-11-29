@@ -19,7 +19,7 @@ public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
     }
 }
 
-public class PublyItemWork : ItemWork<PublyItemVarWork>
+public class PubItemWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>
     /// The home for a retail shop.

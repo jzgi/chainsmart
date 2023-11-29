@@ -7,11 +7,11 @@ using static ChainFx.Web.ToolAttribute;
 namespace ChainSmart;
 
 [UserAuthenticate(OmitDefault = true)]
-public class PublyVarWork : WebWork
+public class WwwVarWork : WebWork
 {
     protected override void OnCreate()
     {
-        CreateVarWork<PublyItemWork>(); // home for one shop
+        CreateVarWork<PubItemWork>(); // home for one shop
     }
 
     /// <summary>
@@ -30,7 +30,6 @@ public class PublyVarWork : WebWork
             lock (org)
             {
                 h.ARTICLE_("uk-card uk-card-primary");
-                h.H2(org.Cover, css: "uk-card-header");
                 h.SECTION_("uk-card-body");
                 if (org.scene)
                 {
@@ -51,7 +50,7 @@ public class PublyVarWork : WebWork
                 }
                 h._FOOTER();
 
-                h._ARTICLE();
+                // h._ARTICLE();
 
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H3("统一派送区域", css: "uk-card-header");
