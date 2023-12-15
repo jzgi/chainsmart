@@ -1,5 +1,5 @@
 ﻿using System;
-using ChainFx.Web;
+using ChainFX.Web;
 
 namespace ChainSmart;
 

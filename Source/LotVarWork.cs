@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -290,7 +290,7 @@ public class PublyLotVarWork : LotVarWork
 
 public class SuplyLotVarWork : LotVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "调整产品批次", icon: "pencil", status: 3), Tool(Modal.ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -305,7 +305,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var srcs = GrabTwinSet<int, Src>(o.orgid);
+            var srcs = GrabTwinArray<int, Src>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -353,28 +353,28 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(Modal.ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(Modal.ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(Modal.ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
+    [UserAuthorize(0, User.ROL_OPN, ulevel: 2)]
     [Ui("质控", "溯源码以及质检材料", status: 3), Tool(Modal.ButtonShow)]
     public async Task tag(WebContext wc, int cmd)
     {
@@ -465,7 +465,7 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_LOG, ulevel: 2)]
+    [UserAuthorize(0, User.ROL_LOG, ulevel: 2)]
     [Ui("货架", "管理供应数量", status: 7), Tool(Modal.ButtonShow)]
     public async Task stock(WebContext wc)
     {
@@ -483,7 +483,7 @@ public class SuplyLotVarWork : LotVarWork
             await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
             dc.Let(out StockOp[] ops);
 
-            var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
+            var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {
@@ -547,7 +547,7 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(Modal.ButtonConfirm, state: Lot.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -562,7 +562,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(Modal.ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -576,7 +576,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "作废此产品批次", icon: "trash", status: 3), Tool(Modal.ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -591,7 +591,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "恢复", icon: "reply", status: 0), Tool(Modal.ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {

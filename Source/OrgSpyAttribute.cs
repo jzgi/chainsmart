@@ -1,4 +1,4 @@
-﻿using ChainFx.Nodal;
+﻿using ChainFX.Nodal;
 
 namespace ChainSmart;
 

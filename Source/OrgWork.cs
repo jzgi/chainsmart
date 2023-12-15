@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Nodal;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Nodal;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -22,7 +22,7 @@ public class PubOrgWork : OrgWork<PublyOrgVarWork>
 {
 }
 
-[AdmlyAuthorize(User.ROL_OPN)]
+[UserAuthorize(User.ROL_OPN)]
 [Ui("机构管理")]
 public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 {
@@ -53,7 +53,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(0, filter: x => x.IsMarket, sorter: (x, y) => x.regid - y.regid);
+        var array = GrabTwinArray<int, Org>(0, filter: x => x.IsMarket, sorter: (x, y) => x.regid - y.regid);
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -73,7 +73,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void ctr(WebContext wc)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinSet<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
@@ -105,7 +105,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         {
             o.Read(wc.Query, 0);
 
-            var ctrs = GrabTwinSet<int, Org>(0, x => x.IsCenter);
+            var ctrs = GrabTwinArray<int, Org>(0, x => x.IsCenter);
 
             wc.GivePane(200, h =>
             {
@@ -134,7 +134,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
             const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(Msk, o);
 
-            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
@@ -145,7 +145,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT)]
 [Ui("成员商户")]
 public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
@@ -177,7 +177,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.IsRetail && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -201,7 +201,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.IsRetail && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -225,7 +225,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.IsRetail && x.status == 0, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.IsRetail && x.status == 0, sorter: (x, y) => x.addr.CompareWith(y.addr));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -261,7 +261,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinSet<int, Org>(org.id, filter: x => x.regid == regid && x.IsRetail);
+            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.IsRetail);
 
             wc.GivePage(200, h =>
             {
@@ -278,7 +278,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
@@ -320,7 +320,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: o);
 
-            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
@@ -331,7 +331,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_CTR)]
+[UserAuthorize(Org.TYP_CTR)]
 [Ui("成员商户")]
 public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
 {
@@ -364,7 +364,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -386,7 +386,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -408,7 +408,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var array = GrabTwinSet<int, Org>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
         var arr = array.Segment(20 * page, 20);
 
         wc.GivePage(200, h =>
@@ -424,7 +424,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         }, false, 15);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -462,7 +462,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: o);
 
-            await GetGraph<OrgGraph, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));

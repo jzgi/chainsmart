@@ -1,8 +1,8 @@
 ﻿using System;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -96,7 +96,7 @@ public class WwwVarWork : WebWork
         var regs = Grab<short, Reg>();
         var mkt = GrabTwin<int, Org>(mktid);
 
-        var arr = GrabTwinSet<int, Org>(mktid, x => x.regid == sector && x.status == 4);
+        var arr = GrabTwinArray<int, Org>(mktid, x => x.regid == sector && x.status == 4);
         if (sector == Reg.MISC_REGID && mkt.IsOked) // default sector
         {
             arr = arr.AddOf(mkt, first: true);

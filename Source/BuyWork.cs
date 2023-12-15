@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 using static ChainSmart.OrgNoticePack;
 
 namespace ChainSmart;
@@ -214,7 +214,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT)]
 [Ui("网售统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {

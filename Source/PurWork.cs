@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 using static ChainSmart.OrgNoticePack;
 
 namespace ChainSmart;
@@ -160,7 +160,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
     internal static int Comp(short catmsk, int hubid) => (catmsk << 20) | hubid;
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("采购", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int catmsk_hubid) // NOTE publicly cacheable
     {
@@ -345,7 +345,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_CTR)]
+[UserAuthorize(Org.TYP_CTR)]
 [Ui("云仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
@@ -400,7 +400,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT)]
 [Ui("采购统一收货（云仓）")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {

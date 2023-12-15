@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.CryptoUtility;
-using static ChainFx.Application;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.CryptoUtility;
+using static ChainFX.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace ChainSmart;

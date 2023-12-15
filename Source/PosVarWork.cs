@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx.Nodal;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
+using ChainFX.Nodal;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
 public class RtllyPosVarWork : BuyVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确认撤销该笔记录？", icon: "trash", status: 4), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {

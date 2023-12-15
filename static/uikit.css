@@ -1293,7 +1293,7 @@ button.uk-icon:not(:disabled) {
     min-height: 6rem;
     padding: 4px;
     background-color: #ededed;
-    box-shadow: #999 0px 2px 3px 1px;
+    box-shadow: #999 0px 1px 2px 1px;
 }
 
 .uk-top-bar.uk-modal-title {

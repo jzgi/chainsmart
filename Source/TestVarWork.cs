@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -40,14 +40,14 @@ public abstract class TestVarWork : WebWork
         }, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整检测记录", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
         var regs = Grab<short, Reg>();
         var org = wc[-2].As<Org>();
-        var orgs = GrabTwinSet<int, Org>(org.id);
+        var orgs = GrabTwinArray<int, Org>(org.id);
         var prin = (User)wc.Principal;
 
         if (wc.IsGet)
@@ -90,7 +90,7 @@ public abstract class TestVarWork : WebWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -105,7 +105,7 @@ public abstract class TestVarWork : WebWork
         wc.GivePane(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {

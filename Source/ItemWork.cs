@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -365,7 +365,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("新建", tip: "创建新的商品信息", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -416,7 +416,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("导入", "导入已采购的供应链产品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task imp(WebContext wc)
     {
@@ -482,7 +482,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("清空", "永久删除已作废的数据项", status: 4), Tool(ButtonConfirm)]
     public async Task empty(WebContext wc)
     {

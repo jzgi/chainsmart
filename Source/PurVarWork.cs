@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Application;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Application;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -50,7 +50,7 @@ public class SuplyPurVarWork : PurVarWork
 {
     internal short PurTyp => ((SuplyPurWork)Parent).PurTyp;
 
-    [OrglyAuthorize(0, User.ROL_LOG)]
+    [UserAuthorize(0, User.ROL_LOG)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
@@ -159,7 +159,7 @@ public class SuplyPurVarWork : PurVarWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("撤销", "确认撤销订单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {

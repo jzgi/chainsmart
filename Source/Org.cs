@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
-using ChainFx;
-using ChainFx.Nodal;
+using ChainFX;
+using ChainFX.Nodal;
 
 namespace ChainSmart;
 
@@ -249,7 +249,7 @@ public class Org : Entity, ITwin<int>
 
     public string Cover => cover;
 
-    public int SetKey => upperid;
+    public int ForkKey => upperid;
 
     public bool IsOpen(TimeSpan now)
     {

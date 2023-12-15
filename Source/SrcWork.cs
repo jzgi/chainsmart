@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -56,7 +56,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinArray<int, Src>(org.id, filter: x => x.status == 4, sorter: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -77,7 +77,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
+        var arr = GrabTwinArray<int, Src>(org.id, filter: x => x.status is 1 or 2, sorter: (x, y) => x.oked.CompareTo(y.oked));
 
         wc.GivePage(200, h =>
         {
@@ -98,7 +98,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var arr = GrabTwinSet<int, Src>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
+        var arr = GrabTwinArray<int, Src>(org.id, filter: x => x.status == 0, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
 
         wc.GivePage(200, h =>
         {
@@ -114,7 +114,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
         }, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN, ulevel: 2)]
+    [UserAuthorize(0, User.ROL_OPN, ulevel: 2)]
     [Ui("新建", "新建产源设施",icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -154,7 +154,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
                 creator = prin.name,
             });
 
-            await GetGraph<SrcGraph, int, Src>().CreateAsync(async dc =>
+            await GetTwinCache<SrcCache, int, Src>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO srcs_vw ").colset(Src.Empty, msk)._VALUES_(Src.Empty, msk).T(" RETURNING ").collst(Src.Empty);
                 return await dc.QueryTopAsync<Src>(p => m.Write(p, msk));

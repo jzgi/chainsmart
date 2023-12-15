@@ -1,39 +1,39 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Nodal;
+using ChainFX;
+using ChainFX.Nodal;
 
 namespace ChainSmart;
 
-public class OrgGraph : TwinGraph<int, Org>
+public class OrgCache : DbTwinCache<int, Org>
 {
-    public override bool TryGetTwinSetKey(DbContext dc, int key, out int setkey)
+    public override bool IsAsync => false;
+
+    public override bool TryGetForkKey(DbContext dc, int key, out int forkKey)
     {
         if (dc.QueryTop("SELECT upperid FROM orgs_vw WHERE id = @1", p => p.Set(key)))
         {
-            dc.Let(out setkey);
+            dc.Let(out forkKey);
             return true;
         }
-        setkey = -1;
+        forkKey = -1;
         return false;
     }
 
-    public override Map<int, Org> LoadTwinSet(DbContext dc, int setkey)
+    public override Map<int, Org> LoadFork(DbContext dc, int forkKey)
     {
-        if (setkey == 0)
+        if (forkKey == 0)
         {
             dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE upperid IS NULL ORDER BY regid, id");
             return dc.Query<int, Org>();
         }
-        else
-        {
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE upperid = @1 ORDER BY regid, id");
-            return dc.Query<int, Org>(p => p.Set(setkey));
-        }
+
+        dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE upperid = @1 ORDER BY regid, id");
+        return dc.Query<int, Org>(p => p.Set(forkKey));
     }
 
-    protected override async Task<int> TwinSetIoCycleAsync(int setkey, Map<int, Org> set)
+    protected override async Task<int> ForkIoCycleAsync(int forkKey, Map<int, Org> fork)
     {
         // use same builder for each and every sent notice
         var now = DateTime.Now;
@@ -41,7 +41,7 @@ public class OrgGraph : TwinGraph<int, Org>
 
         int num = 0;
         var sb = new StringBuilder();
-        foreach (var ety in set)
+        foreach (var ety in fork)
         {
             var org = ety.Value;
             var pack = org.NoticePack;

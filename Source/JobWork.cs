@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -145,13 +145,13 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT)]
 [Ui("孵化")]
 public class MktlyJobWork : JobWork<MktlyJobVarWork>
 {
 }
 
-[OrglyAuthorize(Org.TYP_CTR)]
+[UserAuthorize(Org.TYP_CTR)]
 [Ui("孵化")]
 public class CtrlyJobWork : JobWork<CtrlyJobVarWork>
 {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ChainFx;
+using ChainFX;
 using static System.Data.IsolationLevel;
 
 namespace ChainSmart;
@@ -28,12 +28,10 @@ public class MainApp : Application
         //
         // db and caches and graphs
 
-        MapComposite<BuyItem>();
-        MapComposite<StockOp>();
+        MapCompositeDbType<BuyItem>();
+        MapCompositeDbType<StockOp>();
 
-        MakeCaches();
-
-        MakeGraphs();
+        SetupCaches();
 
         //
         // create web services
@@ -47,7 +45,7 @@ public class MainApp : Application
     }
 
 
-    public static void MakeCaches()
+    public static void SetupCaches()
     {
         MakeCache(dc =>
             {
@@ -64,13 +62,10 @@ public class MainApp : Application
             },
             60 * 60 * 12
         );
-    }
 
-    public static void MakeGraphs()
-    {
-        MakeGraph<OrgGraph>("org").Period = 360;
+        MakeCache<OrgCache>("org").Period = 360;
 
-        MakeGraph<SrcGraph>("src");
+        MakeCache<SrcCache>("src");
     }
 
     static async void Cycle(object state)

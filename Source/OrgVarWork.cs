@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -159,7 +159,7 @@ public class PublyOrgVarWork : OrgVarWork
 
 public class AdmlyOrgVarWork : OrgVarWork
 {
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc, int cmd)
     {
@@ -171,7 +171,7 @@ public class AdmlyOrgVarWork : OrgVarWork
 
         if (wc.IsGet)
         {
-            var ctrs = GrabTwinSet<int, Org>(0, x => x.IsCenter);
+            var ctrs = GrabTwinArray<int, Org>(0, x => x.IsCenter);
 
             wc.GivePane(200, h =>
             {
@@ -220,35 +220,35 @@ public class AdmlyOrgVarWork : OrgVarWork
         }
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(tip: "全景", icon: "camera", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task scene(WebContext wc)
     {
         await doimg(wc, nameof(scene), false, 6);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui("授权"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
@@ -302,7 +302,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         }
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -317,7 +317,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
@@ -326,7 +326,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -339,7 +339,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -348,14 +348,14 @@ public class AdmlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [AdmlyAuthorize(User.ROL_OPN)]
+    [UserAuthorize(User.ROL_OPN)]
     [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
         int id = wc[0];
         var m = GrabTwin<int, Org>(id);
 
-        await GetGraph<OrgGraph, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -367,7 +367,7 @@ public class AdmlyOrgVarWork : OrgVarWork
 
 public class MktlyOrgVarWork : OrgVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -401,7 +401,7 @@ public class MktlyOrgVarWork : OrgVarWork
             const short Msk = MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: m);
 
-            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -415,28 +415,28 @@ public class MktlyOrgVarWork : OrgVarWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 3);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -453,7 +453,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -462,7 +462,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -477,7 +477,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -486,7 +486,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -504,7 +504,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oker = prin.name;
         }
 
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -513,7 +513,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {
@@ -523,7 +523,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -543,7 +543,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
 public class CtrlyOrgVarWork : OrgVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -584,7 +584,7 @@ public class CtrlyOrgVarWork : OrgVarWork
                 m.adapter = prin.name;
             }
 
-            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -598,28 +598,28 @@ public class CtrlyOrgVarWork : OrgVarWork
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -636,7 +636,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -645,7 +645,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -659,7 +659,7 @@ public class CtrlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -668,7 +668,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -679,7 +679,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         var now = DateTime.Now;
 
         var m = GrabTwin<int, Org>(id);
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -694,7 +694,7 @@ public class CtrlyOrgVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {
@@ -704,7 +704,7 @@ public class CtrlyOrgVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;

@@ -1,5 +1,5 @@
 using System;
-using ChainFx;
+using ChainFX;
 
 namespace ChainSmart;
 

@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
+using ChainFX;
+using ChainFX.Web;
 using static ChainSmart.WeixinUtility;
-using static ChainFx.Nodal.Nodality;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 

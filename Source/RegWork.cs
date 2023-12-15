@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -29,7 +29,7 @@ public abstract class RegWork : WebWork
     }
 }
 
-[AdmlyAuthorize(User.ROL_MGT)]
+[UserAuthorize(User.ROL_MGT)]
 [Ui("区域设置")]
 public class AdmlyRegWork : RegWork
 {

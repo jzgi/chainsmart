@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
-using ChainFx;
-using ChainFx.Nodal;
-using ChainFx.Web;
-using static ChainFx.Entity;
+using ChainFX;
+using ChainFX.Nodal;
+using ChainFX.Web;
+using static ChainFX.Entity;
 
 namespace ChainSmart;
 

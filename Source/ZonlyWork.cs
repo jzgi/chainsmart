@@ -1,11 +1,16 @@
-﻿using ChainFx;
-using ChainFx.Web;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-[UserAuthenticate, AdmlyAuthorize]
+public abstract class ZonlyWork : WebWork
+{
+}
+
+[UserAuthenticate, UserAuthorize(0)]
 [Ui("平台管理")]
-public class AdmlyWork : WebWork
+public class AdmlyWork : ZonlyWork
 {
     protected override void OnCreate()
     {
@@ -73,5 +78,37 @@ public class AdmlyWork : WebWork
 
             h.TOOLBAR(bottom: true);
         });
+    }
+}
+
+[UserAuthenticate]
+[Ui("市场操作")]
+public class RtllyWork : ZonlyWork
+{
+    protected override void OnCreate()
+    {
+        // id of either current user or the specified
+        CreateVarWork<RtllyVarWork>((prin, key) =>
+            {
+                var orgid = key?.ToInt() ?? ((User)prin).rtlid;
+                return GrabTwin<int, Org>(orgid);
+            }
+        );
+    }
+}
+
+[UserAuthenticate]
+[Ui("供应操作")]
+public class SuplyWork : ZonlyWork
+{
+    protected override void OnCreate()
+    {
+        // id of either current user or the specified
+        CreateVarWork<SuplyVarWork>((prin, key) =>
+            {
+                var orgid = key?.ToInt() ?? ((User)prin).supid;
+                return GrabTwin<int, Org>(orgid);
+            }
+        );
     }
 }

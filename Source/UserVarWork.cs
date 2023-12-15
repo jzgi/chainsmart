@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -101,7 +101,7 @@ public class AdmlyUserVarWork : UserVarWork
 
 public class AdmlyAccessVarWork : UserVarWork
 {
-    [AdmlyAuthorize(User.ROL_MGT)]
+    [UserAuthorize(User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -119,7 +119,7 @@ public class OrglyAccessVarWork : UserVarWork
 {
     bool IsShop => (bool)Parent.State;
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -136,7 +136,7 @@ public class OrglyAccessVarWork : UserVarWork
 
 public class RtllyVipVarWork : UserVarWork
 {
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

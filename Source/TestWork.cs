@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -111,7 +111,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
 
         var regs = Grab<short, Reg>();
         var org = wc[-1].As<Org>();
-        var orgs = GrabTwinSet<int, Org>(org.id);
+        var orgs = GrabTwinArray<int, Org>(org.id);
 
         var o = new Test
         {
@@ -149,7 +149,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     }
 }
 
-[OrglyAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT)]
 [Ui("检测")]
 public class MktlyTestWork : TestWork<MktlyTestVarWork>
 {
@@ -222,7 +222,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_CTR)]
+[UserAuthorize(Org.TYP_CTR)]
 [Ui("检测")]
 public class CtrlyTestWork : TestWork<CtrlyTestVarWork>
 {

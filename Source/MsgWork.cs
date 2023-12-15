@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -89,7 +89,7 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
         }, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("新建", "新建指定类型的消息", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

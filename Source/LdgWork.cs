@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -41,7 +40,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
     }
 }
 
-[AdmlyAuthorize(User.ROL_FIN)]
+[UserAuthorize(User.ROL_FIN)]
 [Ui("市场业务汇总")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
@@ -74,7 +73,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
     }
 }
 
-[AdmlyAuthorize(User.ROL_FIN)]
+[UserAuthorize(User.ROL_FIN)]
 [Ui("供应业务汇总")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
@@ -204,7 +203,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
     }
 }
 
-[OrglyAuthorize(Org.TYP_CTR)]
+[UserAuthorize(Org.TYP_CTR)]
 [Ui("云仓业务汇总")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {

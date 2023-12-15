@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx.Web;
-using static ChainFx.Entity;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
+using ChainFX.Web;
+using static ChainFX.Entity;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
@@ -39,7 +39,7 @@ public abstract class MsgVarWork : WebWork
 
 public class MktlyMsgVarWork : MsgVarWork
 {
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -89,7 +89,7 @@ public class MktlyMsgVarWork : MsgVarWork
     }
 
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("发布", "安排发布", status: 1 | 2 | 4), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {

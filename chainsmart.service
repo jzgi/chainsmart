@@ -1,5 +1,5 @@
 [Unit]
-Description=Supply & Marketing System
+Description=Smart supply chain management
 
 [Service]
 EnvironmentFile=/etc/environment

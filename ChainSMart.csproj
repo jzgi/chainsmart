@@ -11,11 +11,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChainFx\ChainFx.csproj" />
+      <ProjectReference Include="..\ChainFX\ChainFX.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="rtl_apiclient_cert.p12" />
+      <None Remove="sup_apiclient_cert.p12" />
+      <None Remove=".gitignore" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="C:\Users\hismi\.nuget\packages\dotnetcore.npoi\1.2.3\contentFiles\any\netstandard2.0\NOTICE.TXT" />
     </ItemGroup>
 
 </Project>

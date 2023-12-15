@@ -1,5 +1,5 @@
-﻿using ChainFx;
-using ChainFx.Nodal;
+﻿using ChainFX;
+using ChainFX.Nodal;
 
 namespace ChainSmart;
 
@@ -117,7 +117,7 @@ public class Src : Entity, ITwin<int>
 
     public int Key => id;
 
-    public int SetKey => orgid;
+    public int ForkKey => orgid;
 
     public override string ToString() => name;
 }

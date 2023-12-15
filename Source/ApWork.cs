@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -117,7 +117,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
         }
     }
 
-    [AdmlyAuthorize(User.ROL_FIN)]
+    [UserAuthorize(User.ROL_FIN)]
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
@@ -153,7 +153,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     }
 }
 
-[AdmlyAuthorize(User.ROL_FIN)]
+[UserAuthorize(User.ROL_FIN)]
 [Ui("供应端应付")]
 public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {
@@ -228,7 +228,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
         }
     }
 
-    [AdmlyAuthorize(User.ROL_FIN)]
+    [UserAuthorize(User.ROL_FIN)]
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {

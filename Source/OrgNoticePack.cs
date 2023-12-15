@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
-using ChainFx;
-using ChainFx.Nodal;
+using ChainFX;
+using ChainFX.Nodal;
 
 namespace ChainSmart;
 

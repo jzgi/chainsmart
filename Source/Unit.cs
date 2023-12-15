@@ -1,4 +1,4 @@
-﻿using ChainFx;
+﻿using ChainFX;
 
 namespace ChainSmart;
 

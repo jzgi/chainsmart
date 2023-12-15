@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Web;
-using ChainFx.Nodal;
-using ChainFx.Web;
+using ChainFX.Nodal;
+using ChainFX.Web;
 
 namespace ChainSmart;
 

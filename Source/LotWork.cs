@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.Modal;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.Modal;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -148,14 +148,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("云仓", "新建从云仓供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc)
     {
         await @new(wc, Lot.TYP_HUB);
     }
 
-    [OrglyAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(0, User.ROL_OPN)]
     [Ui("产源", "新建从产源供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
     public async Task newsrc(WebContext wc)
     {
@@ -185,7 +185,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var srcs = GrabTwinSet<int, Src>(o.orgid);
+            var srcs = GrabTwinArray<int, Src>(o.orgid);
 
             wc.GivePane(200, h =>
             {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
-using static ChainFx.Web.ToolAttribute;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
+using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
@@ -63,7 +63,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
         }, false, 12);
     }
 
-    [AdmlyAuthorize(User.ROL_MGT)]
+    [UserAuthorize(User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -124,7 +124,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     }
 }
 
-[AdmlyAuthorize(User.ROL_OPN)]
+[UserAuthorize(User.ROL_OPN)]
 [Ui("用户管理")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
@@ -230,7 +230,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
         }, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -385,7 +385,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
         }
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {

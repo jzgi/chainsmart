@@ -1,12 +1,12 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
 using static ChainSmart.WeixinUtility;
-using static ChainFx.Application;
-using static ChainFx.Nodal.Nodality;
+using static ChainFX.Application;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -103,7 +103,7 @@ public class RtllyBuyVarWork : BuyVarWork
             "注意：唯有派发了的订单才能结算返款"
         )
     ]
-    [OrglyAuthorize(0, User.ROL_LOG)]
+    [UserAuthorize(0, User.ROL_LOG)]
     [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -146,7 +146,7 @@ public class RtllyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("撤销", "撤销该单并全款退回消费者", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -334,7 +334,7 @@ public class MktlyBuyVarWork : BuyVarWork
         }, false, 6);
     }
 
-    [OrglyAuthorize(0, User.ROL_LOG)]
+    [UserAuthorize(0, User.ROL_LOG)]
     [Ui("派发", "统一派发？"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {

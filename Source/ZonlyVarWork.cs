@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Web.Modal;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Web.Modal;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class OrglyVarWork : WebWork
+public abstract class ZonlyVarWork : WebWork
 {
-    public virtual void @default(WebContext wc)
+    public void @default(WebContext wc)
     {
         var org = wc[0].As<Org>();
         var prin = (User)wc.Principal;
@@ -75,7 +75,7 @@ public abstract class OrglyVarWork : WebWork
     }
 
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -83,7 +83,7 @@ public abstract class OrglyVarWork : WebWork
         var prin = (User)wc.Principal;
 
         var now = DateTime.Now;
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(m,
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
@@ -100,13 +100,13 @@ public abstract class OrglyVarWork : WebWork
         wc.Give(200);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
         var org = wc[0].As<Org>();
 
-        await GetGraph<OrgGraph, int, Org>().UpdateAsync(org,
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(org,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
@@ -124,9 +124,9 @@ public abstract class OrglyVarWork : WebWork
     }
 }
 
-[OrglyAuthorize(Org.TYP_RTL)]
+[UserAuthorize(Org.TYP_RTL)]
 [Ui("市场操作")]
-public class RtllyVarWork : OrglyVarWork
+public class RtllyVarWork : ZonlyVarWork
 {
     protected override void OnCreate()
     {
@@ -186,7 +186,7 @@ public class RtllyVarWork : OrglyVarWork
         }, false, 720);
     }
 
-    [OrglyAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
@@ -213,7 +213,7 @@ public class RtllyVarWork : OrglyVarWork
                 m.oker = null;
             }
 
-            await GetGraph<OrgGraph, int, Org>().UpdateAsync(m,
+            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
                 async (dc) =>
                 {
                     return await dc.ExecuteAsync(
@@ -247,9 +247,9 @@ public class RtllyVarWork : OrglyVarWork
     }
 }
 
-[OrglyAuthorize(Org.TYP_SUP)]
+[UserAuthorize(Org.TYP_SUP)]
 [Ui("供应操作")]
-public class SuplyVarWork : OrglyVarWork
+public class SuplyVarWork : ZonlyVarWork
 {
     protected override void OnCreate()
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChainFx;
-using ChainFx.Web;
-using static ChainFx.Nodal.Nodality;
+using ChainFX;
+using ChainFX.Web;
+using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
@@ -22,7 +22,7 @@ public class AdmlyBuyApVarWork : ApVarWork
         var arr = await dc.QueryAsync<Ap>(p => p.Set(dt).Set(xorgid));
 
         var xorg = GrabTwin<int, Org>(xorgid);
-        var orgs = GrabTwinSet<int, Org>(xorgid).AddOf(xorg, first: true);
+        var orgs = GrabTwinArray<int, Org>(xorgid).AddOf(xorg, first: true);
 
         await wc.GiveXls(200, false, xorgid, dt, arr, orgs.ToMap<int, Org>());
     }
