@@ -22,7 +22,7 @@ public class PubOrgWork : OrgWork<PublyOrgVarWork>
 {
 }
 
-[UserAuthorize(User.ROL_OPN)]
+[UserAuthorize(0, User.ROL_OPN)]
 [Ui("机构管理")]
 public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 {
@@ -42,7 +42,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q2(o.Cover, o.tip, css: "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -145,7 +145,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT, Org.TYP_MKT)]
 [Ui("成员商户")]
 public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
@@ -165,7 +165,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/rtlly/", o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/rtlly/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -278,7 +278,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
@@ -351,7 +351,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/suply/", o.Key, "/", icon: "link", disabled: !prin.CanBeUpperOf(o))._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/suply/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -424,7 +424,7 @@ public class CtrlyOrgWork : OrgWork<CtrlyOrgVarWork>
         }, false, 15);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

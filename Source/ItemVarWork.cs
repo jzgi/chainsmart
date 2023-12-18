@@ -166,7 +166,7 @@ public class PublyItemVarWork : ItemVarWork
 
 public class RtllyItemVarWork : ItemVarWork
 {
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui(tip: "调整商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -219,21 +219,21 @@ public class RtllyItemVarWork : ItemVarWork
     }
 
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui("货架", tip: "货架数量操作", status: 7), Tool(ButtonShow)]
     public async Task stock(WebContext wc)
     {
@@ -275,7 +275,7 @@ public class RtllyItemVarWork : ItemVarWork
         }
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -290,7 +290,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -304,7 +304,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui(tip: "确认删除或者作废", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -319,7 +319,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.Give(204);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_MGT)]
     [Ui(tip: "恢复此项删除的商品", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {

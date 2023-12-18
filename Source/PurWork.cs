@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -160,7 +159,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
     internal static int Comp(short catmsk, int hubid) => (catmsk << 20) | hubid;
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
     [Ui("采购", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int catmsk_hubid) // NOTE publicly cacheable
     {

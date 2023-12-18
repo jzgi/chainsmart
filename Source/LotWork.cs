@@ -148,14 +148,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("云仓", "新建从云仓供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc)
     {
         await @new(wc, Lot.TYP_HUB);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("产源", "新建从产源供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
     public async Task newsrc(WebContext wc)
     {

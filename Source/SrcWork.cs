@@ -114,7 +114,7 @@ public class SuplySrcWork : SrcWork<SuplySrcVarWork>
         }, false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN, ulevel: 2)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("新建", "新建产源设施",icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

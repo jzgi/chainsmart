@@ -6,66 +6,67 @@ namespace ChainSmart;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
 public class UserAuthorizeAttribute : AuthorizeAttribute
 {
-    // org role requirement (bitwise)
-    readonly short role;
-
     // org typ requirement (bitwise) 
     readonly short orgtyp;
 
-    // user level
-    readonly int ulevel;
 
     /// <summary>
     /// Used for the management service. 
     /// </summary>
     /// <param name="orgtyp">0 = adm, 1 and above represents org</param>
     /// <param name="role"></param>
-    /// <param name="ulevel">user level, 1 = adm, 2 = mid, 4 = biz</param>
-    public UserAuthorizeAttribute(short orgtyp, short role = 1, int ulevel = 0)
+    public UserAuthorizeAttribute(short orgtyp, short role = 1) : base(role)
     {
         this.orgtyp = orgtyp;
-        this.role = role;
-        this.ulevel = ulevel;
     }
 
-    public override bool Do(WebContext wc, bool mock)
+    public override bool DoCheck(WebContext wc, out bool super)
     {
         var prin = (User)wc.Principal;
+        var role = Role;
+        super = false;
 
-        if (orgtyp == 0)
+        if (orgtyp == 0) // admly required
         {
-            // admly required
             if (role > 0)
             {
-                if (!mock)
-                {
-                    wc.Role = prin.admly;
-                }
-
                 return (prin.admly & role) == role;
             }
-
+            return false;
         }
 
         var seg = wc[typeof(ZonlyVarWork)];
         var org = seg.As<Org>();
 
-        // var and task group check
-        if ((org.typ & orgtyp) != orgtyp)
+        if ((orgtyp & Org.TYP_RTL) == Org.TYP_RTL)
         {
-            return false;
-        }
-
-        var ret = prin.GetRoleForOrg(org, out var super, out var ulvl);
-        if ((role & ret) == role && (ulevel == 0 || (ulevel | ulvl) == ulvl))
-        {
-            if (!mock)
+            if ((prin.rtlly & role) == role)
             {
-                wc.Super = super;
-                wc.Role = ret;
+                if (prin.rtlid == org.id)
+                {
+                    return true;
+                }
+                if (prin.rtlid == org.upperid && org.trust)
+                {
+                    super = true;
+                    return true;
+                }
             }
-
-            return true;
+        }
+        else if ((orgtyp & Org.TYP_SUP) == Org.TYP_SUP)
+        {
+            if ((prin.suply & role) == role)
+            {
+                if (prin.supid == org.id)
+                {
+                    return true;
+                }
+                if (prin.supid == org.upperid && org.trust)
+                {
+                    super = true;
+                    return true;
+                }
+            }
         }
 
         return false;

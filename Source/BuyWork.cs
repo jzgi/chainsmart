@@ -214,7 +214,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_MKT)]
+[UserAuthorize(Org.TYP_MKT, User.ROL_VST)]
 [Ui("网售统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {

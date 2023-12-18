@@ -50,7 +50,7 @@ public class SuplyPurVarWork : PurVarWork
 {
     internal short PurTyp => ((SuplyPurWork)Parent).PurTyp;
 
-    [UserAuthorize(0, User.ROL_LOG)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_LOG)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
@@ -159,7 +159,7 @@ public class SuplyPurVarWork : PurVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("撤销", "确认撤销订单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {

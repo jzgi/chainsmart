@@ -13,14 +13,16 @@ public class MyAuthorizeAttribute : AuthorizeAttribute
     readonly short typ;
 
 
-    public MyAuthorizeAttribute(short typ = 0)
+    public MyAuthorizeAttribute(short typ = 0) : base(0)
     {
         this.typ = typ;
     }
 
-    public override bool Do(WebContext wc, bool mock)
+    public override bool DoCheck(WebContext wc, out bool super)
     {
         var prin = (User)wc.Principal;
+
+        super = false;
 
         // if meet typ
         if (typ == 0 || (prin.typ & typ) == typ)

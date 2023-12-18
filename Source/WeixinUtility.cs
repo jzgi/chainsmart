@@ -45,7 +45,7 @@ public static class WeixinUtility
 
     static WeixinUtility()
     {
-        var s = CustomConf;
+        var s = CustomConfig;
         s.Get(nameof(appid), ref appid);
         s.Get(nameof(appsecret), ref appsecret);
         s.Get(nameof(supmchid), ref supmchid);

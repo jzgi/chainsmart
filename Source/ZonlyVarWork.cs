@@ -24,7 +24,7 @@ public abstract class ZonlyVarWork : WebWork
                 h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
             }
 
-            string rol = wc.Super ? "代" + User.Orgly[wc.Role] : User.Orgly[wc.Role];
+            string rol = wc.Super ? "代" + User.Roles[wc.Role] : User.Roles[wc.Role];
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1_().T(org.name).SP().P(Org.Statuses[org.status])._H1();
@@ -75,7 +75,6 @@ public abstract class ZonlyVarWork : WebWork
     }
 
 
-    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -100,7 +99,6 @@ public abstract class ZonlyVarWork : WebWork
         wc.Give(200);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -186,7 +184,7 @@ public class RtllyVarWork : ZonlyVarWork
         }, false, 720);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {

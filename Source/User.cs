@@ -16,25 +16,22 @@ public class User : Entity, IKeyable<int>
     };
 
     public const short
-        ROL_ = 0b000001, // common
-        ROL_OPN = 0b0000011, // operation
-        ROL_LOG = 0b0000101, // logistic
-        ROL_FIN = 0b0001001, // finance
-        ROL_MGT = 0b0011111; // management
+        ROL_VST = 0b000001, // visit
+        ROL_OPN = 0b000011, // operation
+        ROL_LOG = 0b000101, // logistic
+        ROL_OPN_LOG = ROL_OPN | ROL_LOG,
+        ROL_FIN = 0b001001, // finance
+        ROL_OPN_FIN = ROL_OPN | ROL_FIN,
+        ROL_MGT = 0b111111; // management
 
-    public static readonly Map<short, string> Admly = new()
+    public static readonly Map<short, string> Roles = new()
     {
+        { ROL_VST, "访客" },
         { ROL_OPN, "业务" },
         { ROL_LOG, "物流" },
+        { ROL_OPN_LOG, "业务＋物流" },
         { ROL_FIN, "财务" },
-        { ROL_MGT, "管理" },
-    };
-
-    public static readonly Map<short, string> Orgly = new()
-    {
-        { ROL_OPN, "业务" },
-        { ROL_LOG, "物流" },
-        { ROL_FIN, "财务" },
+        { ROL_OPN_FIN, "业务＋财务" },
         { ROL_MGT, "管理" },
     };
 
@@ -120,69 +117,6 @@ public class User : Entity, IKeyable<int>
     public bool HasAdmlyMgt => (admly & ROL_MGT) == ROL_MGT;
 
     public bool IsVipOf(int orgid) => vip != null && vip.Contains(orgid);
-
-
-    /// <summary>
-    /// admly, supid + suply, rtlid + rtlly
-    /// </summary>
-    public short GetRoleForOrg(Org org, out bool upper, out int ulevel)
-    {
-        short ret = 0;
-
-        upper = false;
-        ulevel = 0;
-
-        var orgid = org.AsSupply ? supid : rtlid;
-        var orgly = org.AsSupply ? suply : rtlly;
-
-        // is of any role for the org
-        if (org.id == orgid)
-        {
-            ret = orgly;
-            ulevel = org.IsTopOrg ? 2 : 4;
-        }
-        else //  diving role
-        {
-            if (org.IsTopOrg)
-            {
-                if (org.trust && admly > 0)
-                {
-                    ret = admly;
-                    upper = true;
-                    ulevel = 1;
-                }
-                else if (!org.trust && admly == ROL_MGT)
-                {
-                    ret = ROL_OPN; // downgraded role
-                    upper = true;
-                    ulevel = 1;
-                }
-            }
-            else
-            {
-                if (org.trust && orgid == org.upperid && (orgly > 0 && orgid > 0))
-                {
-                    ret = orgly;
-                    upper = true;
-                    ulevel = 2;
-                }
-                else if (!org.trust && orgid == org.upperid && orgly == ROL_MGT && orgid > 0)
-                {
-                    ret = ROL_OPN; // downgraded role
-                    upper = true;
-                    ulevel = 2;
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    public bool CanBeUpperOf(Org org)
-    {
-        var role = GetRoleForOrg(org, out var upper, out _);
-        return upper && role > 0;
-    }
 
     public bool IsVipFor(int orgid) => vip == null || vip.Contains(orgid);
 

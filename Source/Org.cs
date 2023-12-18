@@ -13,7 +13,7 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
-        TYP_UPR = 0b01000, // upper
+        TYP_UPR = 0b01000, // parent
         TYP_RTL = 0b00001, // retail
         TYP_SUP = 0b00010, // supply
         TYP_LOG = 0b00100, // logistic

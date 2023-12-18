@@ -121,7 +121,7 @@ public class SuplySrcVarWork : SrcVarWork
         }, false, 4);
     }
 
-    [UserAuthorize(0, User.ROL_OPN, ulevel: 2)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui(tip: "调整产源设施信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -174,28 +174,28 @@ public class SuplySrcVarWork : SrcVarWork
         }
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -221,7 +221,7 @@ public class SuplySrcVarWork : SrcVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -245,7 +245,7 @@ public class SuplySrcVarWork : SrcVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui(tip: "删除作废此产品？", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {

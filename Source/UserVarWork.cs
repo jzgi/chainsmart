@@ -23,8 +23,8 @@ public abstract class UserVarWork : WebWork
             h.LI_().FIELD("用户名", o.name)._LI();
             h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
             h.LI_().FIELD("电话", o.tel)._LI();
-            h.LI_().FIELD("平台权限", User.Admly[o.admly])._LI();
-            h.LI_().FIELD("机构权限", User.Orgly[o.suply])._LI();
+            h.LI_().FIELD("平台权限", User.Roles[o.admly])._LI();
+            h.LI_().FIELD("机构权限", User.Roles[o.suply])._LI();
 
             h.LI_().FIELD("状态", o.status, User.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "删除" : "上线", o.oker, o.oked, sep: "<br>")._LI();
@@ -101,7 +101,7 @@ public class AdmlyUserVarWork : UserVarWork
 
 public class AdmlyAccessVarWork : UserVarWork
 {
-    [UserAuthorize(User.ROL_MGT)]
+    [UserAuthorize(0,User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -136,7 +136,7 @@ public class OrglyAccessVarWork : UserVarWork
 
 public class RtllyVipVarWork : UserVarWork
 {
-    [UserAuthorize(0, User.ROL_MGT)]
+    [UserAuthorize(Org.TYP_RTL, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

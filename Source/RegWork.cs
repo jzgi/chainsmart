@@ -29,7 +29,7 @@ public abstract class RegWork : WebWork
     }
 }
 
-[UserAuthorize(User.ROL_MGT)]
+[UserAuthorize(0, User.ROL_MGT)]
 [Ui("区域设置")]
 public class AdmlyRegWork : RegWork
 {

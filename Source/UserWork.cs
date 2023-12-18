@@ -31,7 +31,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
             h.ASIDE_();
 
             h.HEADER_().H4(o.name);
-            var role = rtl.HasValue ? rtl.Value ? User.Orgly[o.rtlly] : User.Orgly[o.suply] : User.Admly[o.admly];
+            var role = rtl.HasValue ? rtl.Value ? User.Roles[o.rtlly] : User.Roles[o.suply] : User.Roles[o.admly];
             h.SPAN(role, "uk-badge");
 
             h._HEADER();
@@ -63,7 +63,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
         }, false, 12);
     }
 
-    [UserAuthorize(User.ROL_MGT)]
+    [UserAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -94,14 +94,14 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
                         if (o.supid > 0)
                         {
                             var org = GrabTwin<int, Org>(o.supid);
-                            h.LI_().FIELD2("现有权限", org.name, User.Orgly[o.suply])._LI();
+                            h.LI_().FIELD2("现有权限", org.name, User.Roles[o.suply])._LI();
                         }
                         else
                         {
                             h.LI_().FIELD("现有权限", "无")._LI();
                         }
 
-                        h.LI_().SELECT("权限", nameof(admly), admly, User.Orgly, filter: (k, _) => k > 0)._LI();
+                        h.LI_().SELECT("权限", nameof(admly), admly, User.Roles, filter: (k, _) => k > 0)._LI();
                         h._FIELDSUL();
                         h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
                     }
@@ -124,7 +124,7 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     }
 }
 
-[UserAuthorize(User.ROL_OPN)]
+[UserAuthorize(0, User.ROL_OPN)]
 [Ui("用户管理")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
@@ -275,7 +275,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
                         var exOrg = GrabTwin<int, Org>(rtl ? o.rtlid : o.supid);
                         if (exOrg != null)
                         {
-                            h.LI_().FIELD2("现有权限", exOrg.name, User.Orgly[rtl ? o.rtlly : o.suply])._LI();
+                            h.LI_().FIELD2("现有权限", exOrg.name, User.Roles[rtl ? o.rtlly : o.suply])._LI();
                             if (exOrg.id != org.id)
                             {
                                 h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
@@ -290,7 +290,7 @@ public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
 
                     if (yes)
                     {
-                        h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Orgly, filter: (k, _) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
+                        h.LI_().SELECT("授予权限", nameof(orgly), orgly, User.Roles, filter: (k, _) => k > 1 && k <= User.ROL_MGT, required: true)._LI();
                         h.LI_().PASSWORD("操作密码", nameof(password), password, tip: "四到八位数", min: 4, max: 8)._LI();
                     }
 

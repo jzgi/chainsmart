@@ -47,7 +47,7 @@ public class AdmlyWork : ZonlyWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(Application.Name);
-            h.P2(prin.name, User.Orgly[wc.Role], brace: true);
+            h.P2(prin.name, User.Roles[wc.Role], brace: true);
             h._HEADER();
 
             h.PIC("/logo.webp", circle: true, css: "uk-width-small");
@@ -65,7 +65,7 @@ public class AdmlyWork : ZonlyWork
     {
         string tel = null;
 
-        var jo = Application.CustomConf;
+        var jo = Application.CustomConfig;
 
         jo.Get(nameof(tel), ref tel);
 

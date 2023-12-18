@@ -108,7 +108,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             if (o.admly > 0)
             {
-                h.LI_().T(Application.Name).SPAN(User.Admly[o.admly], "uk-margin-auto-left")._LI();
+                h.LI_().T(Application.Name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
                 any++;
             }
 
@@ -116,7 +116,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             {
                 var org = GrabTwin<int, Org>(o.rtlid);
 
-                h.LI_().T(org.name).SPAN(User.Orgly[o.rtlly], "uk-margin-auto-left")._LI();
+                h.LI_().T(org.name).SPAN(User.Roles[o.rtlly], "uk-margin-auto-left")._LI();
                 any++;
             }
 
@@ -124,7 +124,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             {
                 var org = GrabTwin<int, Org>(o.supid);
 
-                h.LI_().T(org.name).SPAN(User.Orgly[o.suply], "uk-margin-auto-left")._LI();
+                h.LI_().T(org.name).SPAN(User.Roles[o.suply], "uk-margin-auto-left")._LI();
                 any++;
             }
 
