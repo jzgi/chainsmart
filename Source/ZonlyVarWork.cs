@@ -18,18 +18,10 @@ public abstract class ZonlyVarWork : WebWork
         {
             h.TOPBARXL_();
 
-            bool astack = wc.Query[nameof(astack)];
-            if (astack)
-            {
-                h.T("<a class=\"uk-icon-button\" href=\"javascript: window.parent.closeUp(false);\" uk-icon=\"icon: chevron-left; ratio: 1.75\"></a>");
-            }
-
-            string rol = wc.Super ? "代" + User.Roles[wc.Role] : User.Roles[wc.Role];
-
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1_().T(org.name).SP().P(Org.Statuses[org.status])._H1();
             if (org.AsUpper) h.H4(org.Cover);
-            h.P_().T(prin.name).T('（').T(rol).T('）')._P();
+            h.P_().T(prin.name)._P();
             h._HEADER();
 
             if (org.icon)
@@ -37,7 +29,9 @@ public abstract class ZonlyVarWork : WebWork
                 h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
             }
             else
+            {
                 h.PIC(org.AsRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+            }
 
             h._TOPBARXL();
 

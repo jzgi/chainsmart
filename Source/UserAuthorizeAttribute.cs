@@ -46,7 +46,12 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
                 {
                     return true;
                 }
-                if (prin.rtlid == org.upperid && org.trust)
+                if (prin.rtlid == org.upperid && org.trust) // upper org
+                {
+                    super = true;
+                    return true;
+                }
+                if ((prin.admly & role) == role) // admin
                 {
                     super = true;
                     return true;
@@ -62,6 +67,11 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
                     return true;
                 }
                 if (prin.supid == org.upperid && org.trust)
+                {
+                    super = true;
+                    return true;
+                }
+                if ((prin.admly & role) == role) // admin
                 {
                     super = true;
                     return true;

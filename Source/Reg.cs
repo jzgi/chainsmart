@@ -7,7 +7,7 @@ namespace ChainSmart;
 /// 
 public class Reg : Entity, IKeyable<short>, IFolderable
 {
-    public const short MISC_REGID = 100;
+    public const short HOME_REGID = 90;
 
     public static readonly Reg Empty = new();
 

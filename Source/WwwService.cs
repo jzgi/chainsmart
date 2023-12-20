@@ -58,7 +58,7 @@ public class WwwService : MainService
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false,'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/lst\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this);'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
                 h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
