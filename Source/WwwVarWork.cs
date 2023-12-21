@@ -278,7 +278,7 @@ public class WwwVarWork : WebWork
 
         if (!org.IsMarket)
         {
-            wc.GiveMsg(404, "NOT A MARKET");
+            wc.GiveMsg(304, "not a market");
             return;
         }
 
@@ -302,14 +302,11 @@ public class WwwVarWork : WebWork
 
             var now = DateTime.Now.TimeOfDay;
 
-            h.MAIN_(grid: true);
-
             if (sector == Reg.HOME_REGID)
             {
-                h.T("<div class=\"uk-position-relative uk-visible-toggle uk-light\" tabindex=\"-1\" uk-slider=\"clsActivated: uk-transition-active; center: true\">");
+                h.SLIDERUL_();
 
-                h.UL_("uk-slider-items uk-grid");
-                h.LI_();
+                h.LI_("uk-tile");
                 if (org.scene)
                 {
                     h.PIC_("/org/", org.id, "/scene");
@@ -320,10 +317,9 @@ public class WwwVarWork : WebWork
                 }
                 h._PIC();
                 h._LI();
-                
-                
-                h.LI_("uk-card uk-card-primary");
-                h.H3("统一派送区域", css: "uk-card-header");
+
+                h.LI_("uk-tile");
+                h.H3("统一派送区域");
                 var specs = org.specs;
                 for (int i = 0; i < specs?.Count; i++)
                 {
@@ -331,7 +327,7 @@ public class WwwVarWork : WebWork
                     var v = spec.Value;
                     if (v.IsObject)
                     {
-                        h.DL_(css: "uk-card-body");
+                        h.DL_();
                         h.DT(spec.Key);
 
                         h.DD_();
@@ -347,10 +343,10 @@ public class WwwVarWork : WebWork
                 }
                 h._LI();
 
-                h._UL();
-                h._DIV();
+                h._SLIDERUL();
             }
 
+            h.MAIN_(grid: true);
             foreach (var m in arr)
             {
                 h.ARTICLE_("uk-card uk-card-default");
