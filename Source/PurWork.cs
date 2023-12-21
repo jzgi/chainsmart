@@ -65,19 +65,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         wc.GivePage(200, h =>
         {
-            short catmsk = 0;
-            if (org.IsMarket)
-            {
-                catmsk = 0xff;
-            }
-            else
-            {
-                var reg = Grab<short, Reg>()[org.regid];
-                catmsk = reg.catmsk;
-            }
-
-            var catmsk_hubid = Comp(catmsk, org.hubid);
-            h.TOOLBAR(subscript: catmsk_hubid);
+            var hubid_cat = Comp(org.hubid, 0);
+            h.TOOLBAR(subscript: hubid_cat);
             if (arr == null)
             {
                 h.ALERT("尚无新采购订单");
@@ -155,45 +144,31 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         }, false, 6);
     }
 
-    internal static (short catmsk, int hubid) Decomp(int catmsk_ctrid) => ((short)(catmsk_ctrid >> 20), catmsk_ctrid & 0x000fffff);
+    internal static (int hubid, short cat) Decomp(int hubid_cat) => ((hubid_cat >> 8), (short)(hubid_cat & 0xff));
 
-    internal static int Comp(short catmsk, int hubid) => (catmsk << 20) | hubid;
+    internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
     [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
-    [Ui("采购", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int catmsk_hubid) // NOTE publicly cacheable
+    [Ui("云仓下单", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
+    public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
-        var (catmsk, hubid) = Decomp(catmsk_hubid);
+        var cats = Grab<short, Cat>();
 
-        // the highest bit flag
-        bool src = false;
-        if ((hubid & 0x80000) > 0)
+        var (hubid, cat) = Decomp(hubid_cat);
+        if (cat == 0)
         {
-            src = true;
-            hubid &= 0x7ffff;
+            cat = cats.KeyAt(0);
+            wc.Subscript = hubid_cat = Comp(hubid, cat);
         }
 
-        Lot[] arr;
         const short Msk = 0xff | Entity.MSK_EXTRA;
-        if (src)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty, Msk).T(" FROM lots_vw WHERE status = 4 AND typ = 2 AND cattyp & @1 > 0");
-            arr = await dc.QueryAsync<Lot>(p => p.Set(catmsk), Msk);
-        }
-        else
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
-            arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(catmsk), Msk);
-        }
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
+        var arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(cat), Msk);
 
         wc.GivePage(200, h =>
         {
-            h.TOPBAR_("uk-padding").UL_("uk-subnav");
-            h.LI_(css: src ? null : "uk-active").AGOTO_(nameof(@new), Comp(catmsk, hubid), parent: false).T("从云仓")._A()._LI();
-            h.LI_(css: src ? "uk-active" : null).AGOTO_(nameof(@new), Comp(catmsk, hubid | 0x80000), parent: false).T("从产源")._A()._LI();
-            h._UL()._TOPBAR();
+            h.NAVBAR(nameof(@new), cat, cats, (_, v) => v.IsEnabled, (k) => Comp(hubid, k));
 
             if (arr == null)
             {
@@ -201,12 +176,10 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
                 return;
             }
 
-            var seg = src ? "/" : "/-" + hubid;
-
             h.MAINGRID(arr, o =>
             {
                 // anchor to the lot sub work
-                h.ADIALOG_("lot/", o.Key, seg, MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
+                h.ADIALOG_("lot/", o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-card-body uk-flex");
 
                 h.PIC(MainApp.WwwUrl, "/lot/", o.id, "/icon", css: "uk-width-1-5");
 
