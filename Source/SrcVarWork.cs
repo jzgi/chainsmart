@@ -71,7 +71,7 @@ public abstract class SrcVarWork : WebWork
     }
 }
 
-public class PublySrcVarWork : SrcVarWork
+public class WwwSrcVarWork : SrcVarWork
 {
     const int MAXAGE = 3600 * 12;
 

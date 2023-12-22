@@ -145,7 +145,7 @@ public class RtllyVarWork : ZonlyVarWork
 
         CreateWork<MktlyOrgWork>("morg", header: "机构");
 
-        CreateWork<MktlyMsgWork>("mmsg");
+        CreateWork<MktlyAdWork>("mmsg");
 
         CreateWork<MktlyBuyWork>("mbuy");
 

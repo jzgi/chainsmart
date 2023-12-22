@@ -13,15 +13,15 @@ public class WwwService : MainService
     {
         CreateVarWork<WwwVarWork>(); // home for market
 
-        CreateWork<PubTagWork>("tag");
+        CreateWork<WwwTagWork>("tag");
 
-        CreateWork<PubLotWork>("lot");
+        CreateWork<WwwLotWork>("lot");
 
-        CreateWork<PubOrgWork>("org");
+        CreateWork<WwwOrgWork>("org");
 
-        CreateWork<PubSrcWork>("src");
+        CreateWork<WwwSrcWork>("src");
 
-        CreateWork<PubItemWork>("item");
+        CreateWork<WwwItemWork>("item");
 
         CreateWork<MyWork>("my");
     }
@@ -38,7 +38,7 @@ public class WwwService : MainService
 
         wc.GivePage(200, h =>
         {
-            bool exist = false;
+            bool found = false;
             var last = 0;
 
             foreach (var o in mkts)
@@ -66,13 +66,13 @@ public class WwwService : MainService
                 h.A_POI(o.x, o.y, o.Cover, o.addr, o.Tel, o.x > 0 && o.y > 0)._SPAN();
                 h._LI();
 
-                exist = true;
+                found = true;
                 last = o.regid;
             }
 
             h._UL();
 
-            if (!exist)
+            if (!found)
             {
                 h.LI_().T("（暂无市场）")._LI();
             }

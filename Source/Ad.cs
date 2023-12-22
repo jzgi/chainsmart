@@ -3,17 +3,17 @@
 namespace ChainSmart;
 
 /// <summary>
-/// The data modal for a general message.
+/// An ad item to publish.
 /// </summary>
-public class Msg : Entity, IKeyable<int>
+public class Ad : Entity, IKeyable<int>
 {
-    public static readonly Msg Empty = new();
+    public static readonly Ad Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "广播" },
-        { 2, "屏显" },
-        { 4, "综合" },
+        { 1, "文字" },
+        { 2, "图片" },
+        { 4, "视频" },
     };
 
     public static readonly Map<short, string> Ranks = new()

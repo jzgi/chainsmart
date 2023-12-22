@@ -93,7 +93,7 @@ public class ItemVarWork : WebWork
     }
 }
 
-public class PublyItemVarWork : ItemVarWork
+public class WwwItemVarWork : ItemVarWork
 {
     public override async Task @default(WebContext wc)
     {

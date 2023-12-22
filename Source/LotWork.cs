@@ -39,7 +39,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
     }
 }
 
-public class PubLotWork : LotWork<PublyLotVarWork>
+public class WwwLotWork : LotWork<WwwLotVarWork>
 {
     static readonly string[] TAGS = { "", "label" };
 

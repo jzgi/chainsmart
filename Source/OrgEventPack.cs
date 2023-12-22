@@ -14,7 +14,7 @@ public class OrgEventPack : IPack<JsonBuilder>
 
     readonly List<Buy> buys = new(16);
 
-    readonly List<Msg> msgs = new(16);
+    readonly List<Ad> msgs = new(16);
 
     private DateTime since = DateTime.Now;
 
@@ -38,7 +38,7 @@ public class OrgEventPack : IPack<JsonBuilder>
         }
     }
 
-    public void AddMsg(Msg v)
+    public void AddMsg(Ad v)
     {
         lock (this)
         {

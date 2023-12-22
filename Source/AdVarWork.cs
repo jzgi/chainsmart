@@ -7,7 +7,7 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class MsgVarWork : WebWork
+public abstract class AdVarWork : WebWork
 {
     public async Task @default(WebContext wc)
     {
@@ -17,8 +17,8 @@ public abstract class MsgVarWork : WebWork
         const short msk = 255 | MSK_AUX;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Msg.Empty, msk).T(" FROM msgs WHERE id = @1 AND orgid = @2");
-        var o = await dc.QueryTopAsync<Msg>(p => p.Set(id).Set(org.id), msk);
+        dc.Sql("SELECT ").collst(Ad.Empty, msk).T(" FROM ads WHERE id = @1 AND orgid = @2");
+        var o = await dc.QueryTopAsync<Ad>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
         {
@@ -27,7 +27,7 @@ public abstract class MsgVarWork : WebWork
             h.LI_().FIELD("消息标题", o.name)._LI();
             h.LI_().FIELD("内容", o.content)._LI();
             h.LI_().FIELD("注解", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            h.LI_().FIELD("状态", o.status, Msg.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD("状态", o.status, Ad.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
@@ -37,7 +37,7 @@ public abstract class MsgVarWork : WebWork
     }
 }
 
-public class MktlyMsgVarWork : MsgVarWork
+public class MktlyAdVarWork : AdVarWork
 {
     [UserAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
@@ -50,18 +50,18 @@ public class MktlyMsgVarWork : MsgVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Msg.Empty).T(" FROM msgs WHERE id = @1");
-            var o = await dc.QueryTopAsync<Msg>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Ad.Empty).T(" FROM ads WHERE id = @1");
+            var o = await dc.QueryTopAsync<Ad>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Msg.Typs)._LI();
+                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Ad.Typs)._LI();
                 h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("级别", nameof(o.rank), o.rank, Msg.Ranks)._LI();
+                h.LI_().SELECT("级别", nameof(o.rank), o.rank, Ad.Ranks)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -69,7 +69,7 @@ public class MktlyMsgVarWork : MsgVarWork
         else // POST
         {
             const short msk = MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, new Msg
+            var m = await wc.ReadObjectAsync(msk, new Ad
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -77,7 +77,7 @@ public class MktlyMsgVarWork : MsgVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE msgs ")._SET_(Msg.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE ads ")._SET_(Ad.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -98,8 +98,8 @@ public class MktlyMsgVarWork : MsgVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE msgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Msg.Empty);
-        var o = await dc.QueryTopAsync<Msg>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        dc.Sql("UPDATE ads SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Ad.Empty);
+        var o = await dc.QueryTopAsync<Ad>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         org.EventPack.AddMsg(o);
 
@@ -107,6 +107,6 @@ public class MktlyMsgVarWork : MsgVarWork
     }
 }
 
-public class CtrlyMsgVarWork : MsgVarWork
+public class CtrlyAdVarWork : AdVarWork
 {
 }

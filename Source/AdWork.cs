@@ -9,14 +9,14 @@ using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-public abstract class MsgWork<V> : WebWork where V : MsgVarWork, new()
+public abstract class AdWork<V> : WebWork where V : AdVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Msg> arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Ad> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -26,7 +26,7 @@ public abstract class MsgWork<V> : WebWork where V : MsgVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN(Msg.Statuses[o.status], "uk-badge");
+            h.SPAN(Ad.Statuses[o.status], "uk-badge");
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
@@ -37,17 +37,17 @@ public abstract class MsgWork<V> : WebWork where V : MsgVarWork, new()
     }
 }
 
-[Ui("消息")]
-public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
+[Ui("广告")]
+public class MktlyAdWork : AdWork<MktlyAdVarWork>
 {
-    [Ui("消息发布", status: 1), Tool(Anchor)]
+    [Ui("广告发布", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Msg.Empty).T(" FROM msgs WHERE orgid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Msg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ad.Empty).T(" FROM ads WHERE orgid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Ad>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -55,7 +55,7 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无消息发布");
+                h.ALERT("尚无广告发布");
                 return;
             }
 
@@ -65,14 +65,14 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已作废消息", icon: "trash", status: 2), Tool(Anchor)]
+    [Ui(tip: "已作废广告", icon: "trash", status: 2), Tool(Anchor)]
     public async Task @void(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Msg.Empty).T(" FROM msgs WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Msg>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Ad.Empty).T(" FROM ads WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Ad>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -80,7 +80,7 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已作废消息");
+                h.ALERT("尚无已作废广告");
                 return;
             }
 
@@ -90,13 +90,13 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
     }
 
     [UserAuthorize(0, User.ROL_MGT)]
-    [Ui("新建", "新建指定类型的消息", icon: "plus", status: 7), Tool(ButtonOpen)]
+    [Ui("新建", "新建指定类型的广告", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var o = new Msg
+        var o = new Ad
         {
             orgid = org.id,
             created = DateTime.Now,
@@ -108,11 +108,11 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Msg.Typs)._LI();
+                h.LI_().SELECT("广告类型", nameof(o.typ), o.typ, Ad.Typs)._LI();
                 h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("级别", nameof(o.rank), o.rank, Msg.Ranks)._LI();
+                h.LI_().SELECT("级别", nameof(o.rank), o.rank, Ad.Ranks)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
@@ -125,7 +125,7 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO facts ").colset(Msg.Empty, msk)._VALUES_(Msg.Empty, msk);
+            dc.Sql("INSERT INTO ads ").colset(Ad.Empty, msk)._VALUES_(Ad.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -134,6 +134,6 @@ public class MktlyMsgWork : MsgWork<MktlyMsgVarWork>
 }
 
 [Ui("事项")]
-public class CtrlyMsgWork : MsgWork<CtrlyMsgVarWork>
+public class CtrlyAdWork : AdWork<CtrlyAdVarWork>
 {
 }

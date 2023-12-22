@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
-using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Entity;
 using static ChainFX.Web.Modal;
@@ -19,7 +17,7 @@ public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
     }
 }
 
-public class PubItemWork : ItemWork<PublyItemVarWork>
+public class WwwItemWork : ItemWork<WwwItemVarWork>
 {
 }
 

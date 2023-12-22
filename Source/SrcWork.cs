@@ -40,7 +40,7 @@ public abstract class SrcWork<V> : WebWork where V : SrcVarWork, new()
     }
 }
 
-public class PubSrcWork : SrcWork<PublySrcVarWork>
+public class WwwSrcWork : SrcWork<WwwSrcVarWork>
 {
     public void @default(WebContext wc)
     {

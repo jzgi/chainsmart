@@ -9,11 +9,11 @@ public abstract class TagWork : WebWork
 {
 }
 
-public class PubTagWork : TagWork
+public class WwwTagWork : TagWork
 {
     protected override void OnCreate()
     {
-        CreateVarWork<PublyTagVarWork>();
+        CreateVarWork<WwwTagVarWork>();
     }
 
     public async Task @default(WebContext wc, int tracenum)

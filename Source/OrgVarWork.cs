@@ -132,7 +132,7 @@ public abstract class OrgVarWork : WebWork
     }
 }
 
-public class PublyOrgVarWork : OrgVarWork
+public class WwwOrgVarWork : OrgVarWork
 {
     const int MAXAGE = 3600 * 12;
 

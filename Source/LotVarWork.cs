@@ -225,7 +225,7 @@ public class LotVarWork : WebWork
     }
 }
 
-public class PublyLotVarWork : LotVarWork
+public class WwwLotVarWork : LotVarWork
 {
     public override async Task @default(WebContext wc, int tracenum)
     {
