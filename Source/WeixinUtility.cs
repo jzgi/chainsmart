@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.CryptoUtility;
-using static ChainFX.Application;
 using WebUtility = System.Net.WebUtility;
 
 namespace ChainSmart;
@@ -45,7 +44,7 @@ public static class WeixinUtility
 
     static WeixinUtility()
     {
-        var s = CustomConfig;
+        var s = Application.CustomConfig;
         s.Get(nameof(appid), ref appid);
         s.Get(nameof(appsecret), ref appsecret);
         s.Get(nameof(supmchid), ref supmchid);
@@ -66,7 +65,7 @@ public static class WeixinUtility
         }
         catch (Exception e)
         {
-            War("Failed to load Weixin Pay certificate: " + e.Message);
+            Application.War("Failed to load Weixin Pay certificate: " + e.Message);
         }
     }
 
@@ -516,7 +515,7 @@ public static class WeixinUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Name },
+            { "SignName", Application.Node.name },
             { "TemplateId", smsvcodetempid }
         };
 
@@ -569,7 +568,7 @@ public static class WeixinUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Name },
+            { "SignName", Application.Node.name },
             { "TemplateId", smsnotiftempid }
         };
 

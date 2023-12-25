@@ -153,7 +153,6 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     }
 }
 
-[UserAuthorize(0, User.ROL_FIN)]
 [Ui("供应端应付")]
 public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {

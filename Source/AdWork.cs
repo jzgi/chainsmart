@@ -133,7 +133,7 @@ public class MktlyAdWork : AdWork<MktlyAdVarWork>
     }
 }
 
-[Ui("事项")]
-public class CtrlyAdWork : AdWork<CtrlyAdVarWork>
+[Ui("广告")]
+public class AdmlyAdWork : AdWork<AdmlyAdVarWork>
 {
 }

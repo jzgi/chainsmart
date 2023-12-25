@@ -124,7 +124,6 @@ public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
     }
 }
 
-[UserAuthorize(0, User.ROL_OPN)]
 [Ui("用户管理")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {

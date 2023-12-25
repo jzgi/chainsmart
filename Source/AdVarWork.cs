@@ -107,6 +107,6 @@ public class MktlyAdVarWork : AdVarWork
     }
 }
 
-public class CtrlyAdVarWork : AdVarWork
+public class AdmlyAdVarWork : AdVarWork
 {
 }

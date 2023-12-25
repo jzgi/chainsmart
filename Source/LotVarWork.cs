@@ -427,7 +427,7 @@ public class SuplyLotVarWork : LotVarWork
 
                         h.HEADER_();
                         h.QRCODE(MainApp.WwwUrl + "/lot/" + o.id + "/", css: "uk-width-1-3");
-                        h.ASIDE_().H6_().T(Application.Name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
+                        h.ASIDE_().H6_().T(Application.Node.name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                         h._HEADER();
 
                         h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Src.Ranks[src?.rank ?? 0], "uk-margin-auto-left")._H6();

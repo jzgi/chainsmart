@@ -13,12 +13,12 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
-        TYP_UPR = 0b01000, // parent
+        TYP_UPR = 0b01000, // upper
         TYP_RTL = 0b00001, // retail
         TYP_SUP = 0b00010, // supply
-        TYP_LOG = 0b00100, // logistic
+        TYP_SRC = 0b00100, // source
         TYP_MKT = TYP_UPR | TYP_RTL, // market
-        TYP_CTR = TYP_UPR | TYP_SUP | TYP_LOG; // center
+        TYP_CTR = TYP_UPR | TYP_SUP | TYP_SRC; // center
 
 
     public static readonly Map<short, string> Ranks = new()

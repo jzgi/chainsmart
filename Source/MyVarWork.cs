@@ -108,7 +108,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             if (o.admly > 0)
             {
-                h.LI_().T(Application.Name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
+                h.LI_().T(Application.Node.name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
                 any++;
             }
 
@@ -143,7 +143,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             if (any == 0)
             {
-                h.LI_().T(Application.Name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
+                h.LI_().T(Application.Node.name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
             }
 
             h._UL();
@@ -208,20 +208,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
-    [Ui("碳积分", "购买绿色减排产品的奖励", status: 7), Tool(ButtonShow)]
-    public async Task carb(WebContext wc, int dt)
-    {
-        int uid = wc[0];
-
-        wc.GivePane(200, h =>
-        {
-            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
-            h.ALERT("计算方法依据国家相关标准");
-            h.ALERT("按照平台现时规则到体验中心兑换");
-        });
-    }
-
-    [Ui("民生卡", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
+    [Ui("孵化", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
     public async Task job(WebContext wc, int dt)
     {
         int uid = wc[0];

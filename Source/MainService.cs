@@ -43,12 +43,11 @@ public abstract class MainService : WebService
                 url = wc.Query[nameof(url)];
                 url = HttpUtility.UrlDecode(url);
 
-                h.TOPBAR_()._TOPBAR();
-                
-                h.NAV_("uk-top-placeholder")._NAV();
-                h.HEADER_(css: "uk-flex-center").ICON("user", ratio: 4, "uk-circle uk-background-muted uk-padding-large")._HEADER();
+                h.TOPBARXL_();
+                h.NAV_(css: "uk-flex-center").ICON("user", ratio: 3, "uk-circle uk-background-muted uk-padding-large")._NAV();
+                h._TOPBARXL();
 
-                h.ALERT("请通过「我的个人账号」来设置密码；新用户请从中惠农通微信公众号来注册", css: "uk-alert-warning");
+                h.ALERT("注：新用户请从中惠农通微信公众号来注册", css: "uk-alert-warning");
 
                 h.FORM_().FIELDSUL_();
                 h.LI_().TEXT("手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);

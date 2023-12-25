@@ -13,14 +13,14 @@ public class MgtService : MainService
     {
         CreateWork<AdmlyWork>("admly"); // for admin
 
-        CreateWork<SuplyWork>("suply"); // for centers and supply shops
+        CreateWork<RtllyWork>("rtlly"); // for markets and retail
 
-        CreateWork<RtllyWork>("rtlly"); // for markets and retail shops
+        CreateWork<SuplyWork>("suply"); // for centers and supply
     }
 
     public void @default(WebContext wc)
     {
-        wc.GivePage(200, h => { h.ALERT_().T(Application.Name).T("平台管理")._ALERT(); }, true, 3600, title: "平台管理");
+        wc.GivePage(200, h => { h.ALERT_().T(Application.Node.name).T("平台管理")._ALERT(); }, true, 3600, title: "平台管理");
     }
 
     /**

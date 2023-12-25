@@ -83,7 +83,7 @@ public class WwwService : MainService
             h.BOTTOMBAR_("uk-col uk-flex-center uk-flex-middle");
             h.SPAN2("☎", tel, css: "uk-label").A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
-        }, true, 720, title: Application.Name + "市场", onload: "fixAll();");
+        }, true, 720, title: Application.Node.name + "市场", onload: "fixAll();");
     }
 
 

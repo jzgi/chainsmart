@@ -19,9 +19,12 @@ public abstract class ZonlyVarWork : WebWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1_().T(org.name).SP().P(Org.Statuses[org.status])._H1();
-            if (org.AsUpper) h.H4(org.Cover);
-            h.P_().T(prin.name)._P();
+            h.H1(org.name);
+            if (org.AsUpper)
+            {
+                h.H4(org.Cover);
+            }
+            h.P(prin.name);
             h._HEADER();
 
             if (org.icon)
@@ -249,22 +252,22 @@ public class SuplyVarWork : ZonlyVarWork
 
         CreateWork<OrglyAccessWork>("access", header: "常规", state: false); // false = supply
 
+        CreateWork<SuplyLotWork>("slot", header: "商户");
 
-        CreateWork<SuplySrcWork>("ssrc", header: "商户");
-
-        CreateWork<SuplyLotWork>("slot");
-
-        CreateWork<SuplyPurWork>("spurhub", state: Pur.TYP_HUB, ui: new("销售（云仓）"));
-
-        CreateWork<SuplyPurWork>("spursrc", state: Pur.TYP_SRC, ui: new("销售（产源）"));
+        CreateWork<SuplyPurWork>("spurhub");
 
         CreateWork<SuplyPurApWork>("spurap");
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
+        // src
+
+
         // ctr
 
-        CreateWork<CtrlyOrgWork>("corg", header: "机构");
+        CreateWork<CtrlySupWork>("csup", header: "机构");
+
+        CreateWork<CtrlySrcWork>("csrc");
 
         CreateWork<CtrlyTestWork>("ctest");
 

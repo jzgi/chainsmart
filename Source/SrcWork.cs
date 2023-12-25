@@ -48,10 +48,10 @@ public class WwwSrcWork : SrcWork<WwwSrcVarWork>
     }
 }
 
-[Ui("产源设施")]
-public class SuplySrcWork : SrcWork<SuplySrcVarWork>
+[Ui("分管产源")]
+public class SuplySrcOldWork : SrcWork<SuplySrcVarWork>
 {
-    [Ui("产源设施", status: 1), Tool(Anchor)]
+    [Ui("分管产源", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

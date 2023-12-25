@@ -195,10 +195,9 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 }
 
+[Ui("销售业务")]
 public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
-    internal short PurTyp => (short)State;
-
     private static void MainGrid(HtmlBuilder h, IList<Pur> lst)
     {
         h.MAINGRID(lst, o =>
@@ -233,8 +232,8 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 1 ORDER BY created DESC");
-        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE supid = @1 AND status = 1 ORDER BY created DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -255,8 +254,8 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 2 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE supid = @1 AND status = 2 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -278,8 +277,8 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 4 ORDER BY oked DESC");
-        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE supid = @1 AND status = 4 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -300,8 +299,8 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE typ = @1 AND supid = @2 AND status = 0 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Pur>(p => p.Set(PurTyp).Set(org.id));
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE supid = @2 AND status = 0 ORDER BY id DESC");
+        var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {

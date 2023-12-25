@@ -48,8 +48,6 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    internal short PurTyp => ((SuplyPurWork)Parent).PurTyp;
-
     [UserAuthorize(Org.TYP_SUP, User.ROL_LOG)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
@@ -72,16 +70,8 @@ public class SuplyPurVarWork : PurVarWork
                 dc.Let(out decimal topay);
 
                 // adjust stock
-                if (PurTyp == Pur.TYP_HUB)
-                {
-                    dc.Sql("UPDATE lotinvs SET stock = stock - @1 WHERE lotid = @2 AND hubid = @3");
-                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
-                }
-                else
-                {
-                    dc.Sql("UPDATE lots SET stock = stock - @1 WHERE id = @2");
-                    await dc.ExecuteAsync(p => p.Set(qty).Set(lotid));
-                }
+                dc.Sql("UPDATE lotinvs SET stock = stock - @1 WHERE lotid = @2 AND hubid = @3");
+                await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
 
                 // put a notice to the shop
                 var rtl = GrabTwin<int, Org>(rtlid);

@@ -40,7 +40,6 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
     }
 }
 
-[UserAuthorize(0, User.ROL_FIN)]
 [Ui("市场业务汇总")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
@@ -73,7 +72,6 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
     }
 }
 
-[UserAuthorize(0, User.ROL_FIN)]
 [Ui("供应业务汇总")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {

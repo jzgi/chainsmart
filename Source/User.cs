@@ -48,6 +48,8 @@ public class User : Entity, IKeyable<int>
     internal short suply;
     internal int rtlid;
     internal short rtlly;
+    // internal int srcid;
+    // internal short srcly;
     internal int[] vip;
     internal DateTime agreed;
     internal bool icon;

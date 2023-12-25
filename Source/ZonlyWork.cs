@@ -24,7 +24,11 @@ public class AdmlyWork : ZonlyWork
 
         CreateWork<AdmlyOrgWork>("org", header: "业务");
 
+        CreateWork<AdmlySrcWork>("src");
+
         CreateWork<AdmlyUserWork>("user");
+
+        CreateWork<AdmlyAdWork>("ad");
 
         // fin
 
@@ -46,8 +50,8 @@ public class AdmlyWork : ZonlyWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1(Application.Name);
-            h.P2(prin.name, User.Roles[wc.Role], brace: true);
+            h.H1(Application.Node.name);
+            h.P(prin.name);
             h._HEADER();
 
             h.PIC("/logo.webp", circle: true, css: "uk-width-small");

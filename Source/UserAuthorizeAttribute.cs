@@ -6,7 +6,7 @@ namespace ChainSmart;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
 public class UserAuthorizeAttribute : AuthorizeAttribute
 {
-    // org typ requirement (bitwise) 
+    // minimal org typ to check 
     readonly short orgtyp;
 
 
@@ -26,13 +26,9 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
         var role = Role;
         super = false;
 
-        if (orgtyp == 0) // admly required
+        if (prin.admly > 0) // admly has all
         {
-            if (role > 0)
-            {
-                return (prin.admly & role) == role;
-            }
-            return false;
+            return (prin.admly & role) == role;
         }
 
         var seg = wc[typeof(ZonlyVarWork)];
