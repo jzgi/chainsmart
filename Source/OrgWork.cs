@@ -473,7 +473,7 @@ public class CtrlySupWork : OrgWork<CtrlySupVarWork>
 }
 
 [UserAuthorize(Org.TYP_CTR)]
-[Ui("分管商户")]
+[Ui("分管产源")]
 public class CtrlySrcWork : OrgWork<CtrlySrcVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)
@@ -499,7 +499,7 @@ public class CtrlySrcWork : OrgWork<CtrlySrcVarWork>
         });
     }
 
-    [Ui("分管商户", status: 1), Tool(Anchor)]
+    [Ui("分管产源", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -513,7 +513,7 @@ public class CtrlySrcWork : OrgWork<CtrlySrcVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无上线的商户");
+                h.ALERT("尚无上线的产源");
                 return;
             }
 

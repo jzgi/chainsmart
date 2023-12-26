@@ -29,11 +29,11 @@ public abstract class ZonlyVarWork : WebWork
 
             if (org.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
+                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true);
             }
             else
             {
-                h.PIC(org.AsRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(org.AsRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true);
             }
 
             h._TOPBARXL();
@@ -127,7 +127,7 @@ public class RtllyVarWork : ZonlyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", header: "常规", state: true); // true = retail
+        CreateWork<OrglyMbrWork>("access", header: "常规", state: true); // true = retail
 
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
@@ -250,7 +250,9 @@ public class SuplyVarWork : ZonlyVarWork
     {
         // org
 
-        CreateWork<OrglyAccessWork>("access", header: "常规", state: false); // false = supply
+        CreateWork<OrglyMbrWork>("mbr", header: "常规", state: false); // false = supply
+
+        // biz
 
         CreateWork<SuplyLotWork>("slot", header: "商户");
 
@@ -261,7 +263,6 @@ public class SuplyVarWork : ZonlyVarWork
         CreateWork<SuplyPurLdgWork>("spurldg");
 
         // src
-
 
         // ctr
 

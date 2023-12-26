@@ -112,14 +112,12 @@ public class WwwItemVarWork : ItemVarWork
 
         wc.GivePane(200, h =>
         {
-            h.ARTICLE_("uk-card uk-card-primary");
-
-            h.H2(o.name, css: "uk-card-header");
             if (o.pic)
             {
                 h.IMG("/item/", o.id, "/pic", css: "uk-card-body");
             }
 
+            h.ARTICLE_("uk-card uk-card-primary");
             h.UL_("uk-card-body uk-list uk-list-divider");
             h.LI_().FIELD("商品名", o.name).FIELD("分类", o.typ, Item.Typs)._LI();
             if (!string.IsNullOrEmpty(o.tip))

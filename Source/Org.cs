@@ -13,11 +13,14 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
+        
         TYP_UPR = 0b01000, // upper
-        TYP_RTL = 0b00001, // retail
-        TYP_SUP = 0b00010, // supply
-        TYP_SRC = 0b00100, // source
+        TYP_RTL = 0b00001, // retailer
         TYP_MKT = TYP_UPR | TYP_RTL, // market
+        
+        TYP_SUP = 0b00010, // supplier
+        TYP_SRC = 0b00100, // source
+        TYP_SUPSRC = TYP_SUP | TYP_SRC, // reserved for convertion
         TYP_CTR = TYP_UPR | TYP_SUP | TYP_SRC; // center
 
 

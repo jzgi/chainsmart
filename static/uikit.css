@@ -1294,6 +1294,24 @@ button.uk-icon:not(:disabled) {
     padding: 4px;
 }
 
+.uk-top-bar.uk-large {
+    height: 6rem;
+    min-height: 6rem;
+    padding: 4px;
+}
+
+.uk-top-bar.uk-large {
+    height: 6rem;
+    min-height: 6rem;
+    padding: 4px;
+}
+
+.uk-top-bar.uk-large .uk-border-circle {
+    border: 8px solid #ededed;
+    width: 5.5rem;
+    height: 5.5rem;
+}
+
 .uk-top-bar.uk-modal-title {
     background-color: #ededed;
 }
@@ -6398,7 +6416,6 @@ iframe.uk-cover {
 .uk-border-circle {
     border-radius: 50%;
     max-width: 150px;
-    border: 1px solid #999;
 }
 
 .uk-border-rounded {

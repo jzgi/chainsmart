@@ -11,7 +11,7 @@ using static ChainFX.Entity;
 namespace ChainSmart;
 
 [UserAuthenticate(OmitDefault = true)]
-public class WwwVarWork : WebWork
+public class WwwVarWork : ItemWork<WwwItemVarWork>
 {
     /// <summary>
     /// The home for a retail shop.
@@ -70,7 +70,7 @@ public class WwwVarWork : WebWork
 
                 // the cclickable icon
                 //
-                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, css: "uk-width-1-5");
+                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-5");
                 if (o.icon)
                 {
                     h.IMG("/item/", o.id, "/icon");

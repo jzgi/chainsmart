@@ -202,7 +202,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 }
 
 [Ui("人员权限")]
-public class OrglyAccessWork : UserWork<OrglyAccessVarWork>
+public class OrglyMbrWork : UserWork<OrglyAccessVarWork>
 {
     bool IsRetail => (bool)State;
 
