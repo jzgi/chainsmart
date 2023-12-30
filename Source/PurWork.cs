@@ -148,7 +148,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
-    [UserAuthorize(Org.TYP_RTL, User.ROL_OPN)]
+    [UserAuthorize(Org._RTL, User.ROL_OPN)]
     [Ui("云仓下单", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {

@@ -46,7 +46,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
 }
 
 [Ui("人员权限")]
-public class AdmlyAccessWork : UserWork<AdmlyAccessVarWork>
+public class AdmlyMbrWork : UserWork<AdmlyAccessVarWork>
 {
     [Ui("人员权限"), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -202,7 +202,7 @@ public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 }
 
 [Ui("人员权限")]
-public class OrglyMbrWork : UserWork<OrglyAccessVarWork>
+public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
 {
     bool IsRetail => (bool)State;
 

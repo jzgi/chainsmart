@@ -29,11 +29,11 @@ public abstract class ZonlyVarWork : WebWork
 
             if (org.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true);
+                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
             }
             else
             {
-                h.PIC(org.AsRetail ? "/rtl.webp" : org.IsCenter ? "/ctr.webp" : "/sup.webp", circle: true);
+                h.PIC(org.AsRtl ? "/rtl.webp" : org.AsCtr ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
             }
 
             h._TOPBARXL();
@@ -79,7 +79,7 @@ public abstract class ZonlyVarWork : WebWork
         var prin = (User)wc.Principal;
 
         var now = DateTime.Now;
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
@@ -101,7 +101,7 @@ public abstract class ZonlyVarWork : WebWork
     {
         var org = wc[0].As<Org>();
 
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(org,
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(org,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
@@ -119,7 +119,7 @@ public abstract class ZonlyVarWork : WebWork
     }
 }
 
-[UserAuthorize(Org.TYP_RTL)]
+[UserAuthorize(Org._RTL)]
 [Ui("市场操作")]
 public class RtllyVarWork : ZonlyVarWork
 {
@@ -127,7 +127,7 @@ public class RtllyVarWork : ZonlyVarWork
     {
         // org
 
-        CreateWork<OrglyMbrWork>("access", header: "常规", state: true); // true = retail
+        CreateWork<OrglyMbrWork>("mbr", header: "常规", state: true); // true = retail
 
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
@@ -148,7 +148,7 @@ public class RtllyVarWork : ZonlyVarWork
 
         CreateWork<MktlyOrgWork>("morg", header: "机构");
 
-        CreateWork<MktlyAdWork>("mmsg");
+        CreateWork<MktlyAdWork>("mad");
 
         CreateWork<MktlyBuyWork>("mbuy");
 
@@ -208,7 +208,7 @@ public class RtllyVarWork : ZonlyVarWork
                 m.oker = null;
             }
 
-            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
+            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m,
                 async (dc) =>
                 {
                     return await dc.ExecuteAsync(
@@ -242,7 +242,7 @@ public class RtllyVarWork : ZonlyVarWork
     }
 }
 
-[UserAuthorize(Org.TYP_SUP)]
+[UserAuthorize(Org._SUP)]
 [Ui("供应操作")]
 public class SuplyVarWork : ZonlyVarWork
 {

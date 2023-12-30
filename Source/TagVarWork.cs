@@ -8,7 +8,7 @@ public abstract class TagVarWork : WebWork
 {
 }
 
-public class WwwTagVarWork : TagVarWork
+public class PublyTagVarWork : TagVarWork
 {
     public async Task @default(WebContext wc)
     {

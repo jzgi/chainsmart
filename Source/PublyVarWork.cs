@@ -11,20 +11,19 @@ using static ChainFX.Entity;
 namespace ChainSmart;
 
 [UserAuthenticate(OmitDefault = true)]
-public class WwwVarWork : ItemWork<WwwItemVarWork>
+public class PublyVarWork : ItemWork<PubItemVarWork>
 {
     /// <summary>
-    /// The home for a retail shop.
+    /// The home for a retail biz.
     /// </summary>
     public async Task @default(WebContext wc)
     {
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
-        var mkt = org.IsMarket ? org : GrabTwin<int, Org>(org.upperid);
+        var mkt = org.IsMkt ? org : GrabTwin<int, Org>(org.upperid);
 
-        //
-        // item list
+        // show availlable item list
         //
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY promo, oked DESC");
@@ -32,26 +31,25 @@ public class WwwVarWork : ItemWork<WwwItemVarWork>
 
         wc.GivePage(200, h =>
         {
+            h.SLIDERUL_();
+
+            h.LI_("uk-section uk-padding-remove");
             if (org.pic)
             {
                 h.PIC_("/org/", org.id, "/pic");
             }
             else
+            {
                 h.PIC_("/void-m.webp");
-
-            h.AICON("../", "home", css: "uk-overlay uk-position-small uk-position-top-left");
-            h.ATEL(org.tel, css: "uk-overlay uk-position-small uk-position-top-right");
-
-            if (!org.IsOked)
-            {
-                h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
-                return;
-            }
-            if (org.AsRetail && !org.IsOpen(DateTime.Now.TimeOfDay))
-            {
-                h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
             h._PIC();
+            h._LI();
+
+            h.LI_("uk-section uk-padding-remove");
+            h.DIV_("uk-flex-center").T(org.tip)._DIV();
+            h._LI();
+
+            h._SLIDERUL();
 
             if (arr == null)
             {
@@ -236,17 +234,17 @@ public class WwwVarWork : ItemWork<WwwItemVarWork>
 
             // // call WeChatPay to prepare order there
             string trade_no = Buy.GetOutTradeNo(buyid, topay);
-            var (prepay_id, _) = await WeixinUtility.PostUnifiedOrderAsync(sup: false,
+            var (prepay_id, _) = await WeChatUtility.PostUnifiedOrderAsync(sup: false,
                 trade_no,
                 topay,
                 prin.im, // the payer
                 wc.RemoteIpAddress.ToString(),
-                MainApp.WwwUrl + "/" + nameof(WwwService.onpay),
+                MainApp.WwwUrl + "/" + nameof(PublyService.onpay),
                 m.ToString()
             );
             if (prepay_id != null)
             {
-                wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
+                wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
             }
             else
             {
@@ -276,7 +274,7 @@ public class WwwVarWork : ItemWork<WwwItemVarWork>
         var regs = Grab<short, Reg>();
         var org = GrabTwin<int, Org>(orgid);
 
-        if (!org.IsMarket)
+        if (!org.IsMkt)
         {
             wc.GiveMsg(304, "not a market");
             return;
@@ -306,7 +304,7 @@ public class WwwVarWork : ItemWork<WwwItemVarWork>
             {
                 h.SLIDERUL_();
 
-                h.LI_("uk-tile");
+                h.LI_("uk-section uk-padding-remove");
                 if (org.scene)
                 {
                     h.PIC_("/org/", org.id, "/scene");
@@ -318,7 +316,7 @@ public class WwwVarWork : ItemWork<WwwItemVarWork>
                 h._PIC();
                 h._LI();
 
-                h.LI_("uk-tile");
+                h.LI_("uk-section uk-padding-remove");
                 h.H3("统一派送区域");
                 var specs = org.specs;
                 for (int i = 0; i < specs?.Count; i++)

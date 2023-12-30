@@ -2,26 +2,24 @@ using System;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainSmart.WeixinUtility;
+using static ChainSmart.WeChatUtility;
 using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public class WwwService : MainService
+public class PublyService : MainService
 {
     protected override void OnCreate()
     {
-        CreateVarWork<WwwVarWork>(); // home for market
+        CreateVarWork<PublyVarWork>();
 
-        CreateWork<WwwTagWork>("tag");
+        CreateWork<PublyTagWork>("tag");
 
-        CreateWork<WwwLotWork>("lot");
+        CreateWork<PublyLotWork>("lot");
 
-        CreateWork<WwwOrgWork>("org");
+        CreateWork<PublyOrgWork>("org");
 
-        CreateWork<WwwSrcWork>("src");
-
-        CreateWork<WwwItemWork>("item");
+        CreateWork<PublyItemWork>("item");
 
         CreateWork<MyWork>("my");
     }
@@ -34,7 +32,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinArray<int, Org>(0, x => x.IsMarket);
+        var mkts = GrabTwinArray<int, Org>(0, x => x.IsMkt);
 
         wc.GivePage(200, h =>
         {

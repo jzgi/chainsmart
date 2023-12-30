@@ -4,7 +4,7 @@ using ChainFX;
 namespace ChainSmart;
 
 /// <summary>
-/// A record of accounting generation.
+/// A record of accounting reconcilation and generation.
 /// </summary>
 public class Gen : IData, IKeyable<DateTime>
 {

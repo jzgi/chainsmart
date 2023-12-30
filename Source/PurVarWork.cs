@@ -48,7 +48,7 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    [UserAuthorize(Org.TYP_SUP, User.ROL_LOG)]
+    [UserAuthorize(Org._SUP, User.ROL_LOG)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
@@ -126,7 +126,7 @@ public class SuplyPurVarWork : PurVarWork
 
                     // remote call to refund
                     var trade_no = Buy.GetOutTradeNo(id, pay);
-                    string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, pay, refund, trade_no, "返现");
+                    string err = await WeChatUtility.PostRefundAsync(sup: true, trade_no, pay, refund, trade_no, "返现");
                     if (err != null) // not success
                     {
                         dc.Rollback();
@@ -149,7 +149,7 @@ public class SuplyPurVarWork : PurVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui("撤销", "确认撤销订单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {
@@ -176,7 +176,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // remote call to refund
                 var trade_no = Buy.GetOutTradeNo(id, topay);
-                string err = await WeixinUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no, "撤单");
+                string err = await WeChatUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no, "撤单");
                 if (err != null) // not success
                 {
                     dc.Rollback();

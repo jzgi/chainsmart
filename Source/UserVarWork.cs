@@ -92,7 +92,7 @@ public class AdmlyUserVarWork : UserVarWork
             var f = await wc.ReadAsync<Form>();
             text = f[nameof(text)];
 
-            await WeixinUtility.PostSendAsync(im, text);
+            await WeChatUtility.PostSendAsync(im, text);
 
             wc.GivePane(200);
         }
@@ -115,7 +115,7 @@ public class AdmlyAccessVarWork : UserVarWork
     }
 }
 
-public class OrglyAccessVarWork : UserVarWork
+public class OrglyMbrVarWork : UserVarWork
 {
     bool IsShop => (bool)Parent.State;
 
@@ -136,7 +136,7 @@ public class OrglyAccessVarWork : UserVarWork
 
 public class RtllyVipVarWork : UserVarWork
 {
-    [UserAuthorize(Org.TYP_RTL, User.ROL_MGT)]
+    [UserAuthorize(Org._RTL, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

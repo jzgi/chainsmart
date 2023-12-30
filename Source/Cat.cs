@@ -3,7 +3,7 @@
 namespace ChainSmart;
 
 /// <summary>
-/// The data modal for an standard category.
+/// A standard category for product lots.
 /// </summary>
 public class Cat : Entity, IKeyable<short>, IFolderable
 {

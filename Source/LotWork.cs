@@ -39,7 +39,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
     }
 }
 
-public class WwwLotWork : LotWork<WwwLotVarWork>
+public class PublyLotWork : LotWork<PublyLotVarWork>
 {
     static readonly string[] TAGS = { "", "label" };
 
@@ -148,14 +148,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui("云仓", "新建从云仓供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc)
     {
         await @new(wc, Lot.TYP_HUB);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui("产源", "新建从产源供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
     public async Task newsrc(WebContext wc)
     {
@@ -185,7 +185,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
         if (wc.IsGet)
         {
-            var srcs = GrabTwinArray<int, Src>(o.orgid);
+            var srcs = GrabTwinArray<int, Org>(o.orgid);
 
             wc.GivePane(200, h =>
             {

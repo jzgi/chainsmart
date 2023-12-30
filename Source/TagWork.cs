@@ -9,11 +9,11 @@ public abstract class TagWork : WebWork
 {
 }
 
-public class WwwTagWork : TagWork
+public class PublyTagWork : TagWork
 {
     protected override void OnCreate()
     {
-        CreateVarWork<WwwTagVarWork>();
+        CreateVarWork<PublyTagVarWork>();
     }
 
     public async Task @default(WebContext wc, int tracenum)
@@ -36,10 +36,10 @@ public class WwwTagWork : TagWork
                 return;
             }
 
-            Src src = null;
+            Org src = null;
             if (lot.srcid > 0)
             {
-                src = GrabTwin<int, Src>(lot.srcid);
+                src = GrabTwin<int, Org>(lot.srcid);
             }
 
             wc.GivePage(200, h =>

@@ -13,7 +13,7 @@ namespace ChainSmart;
 /// <summary>
 /// A hub of operation that has its own weixin official acount.
 /// </summary>
-public static class WeixinUtility
+public static class WeChatUtility
 {
     static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
 
@@ -42,7 +42,7 @@ public static class WeixinUtility
         smsnotiftempid;
 
 
-    static WeixinUtility()
+    static WeChatUtility()
     {
         var s = Application.CustomConfig;
         s.Get(nameof(appid), ref appid);
@@ -257,7 +257,7 @@ public static class WeixinUtility
         string mch_id = xe.Child(nameof(mch_id));
         string nonce_str = xe.Child(nameof(nonce_str));
 
-        if (appid != WeixinUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
+        if (appid != WeChatUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
 
         string result_code = xe.Child(nameof(result_code));
 

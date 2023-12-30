@@ -16,15 +16,13 @@ public class AdmlyWork : ZonlyWork
     {
         // basic 
 
-        CreateWork<AdmlyAccessWork>("access", header: "常规");
+        CreateWork<AdmlyMbrWork>("mbr", header: "常规");
 
         CreateWork<AdmlyRegWork>("reg");
 
         // biz
 
         CreateWork<AdmlyOrgWork>("org", header: "业务");
-
-        CreateWork<AdmlySrcWork>("src");
 
         CreateWork<AdmlyUserWork>("user");
 

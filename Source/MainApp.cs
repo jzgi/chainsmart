@@ -38,7 +38,7 @@ public class MainApp : Application
 
         const string STATIC_ROOT = "static";
 
-        WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).PublicUrl;
+        WwwUrl = CreateService<PublyService>("www", STATIC_ROOT).PublicUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).PublicUrl;
 
         await StartAsync();
@@ -63,9 +63,7 @@ public class MainApp : Application
             60 * 60 * 12
         );
 
-        MakeCache<OrgCache>("org").Period = 360;
-
-        MakeCache<SrcCache>("src");
+        MakeCache<OrgTwinCache>("org").Period = 360;
     }
 
     static async void Cycle(object state)

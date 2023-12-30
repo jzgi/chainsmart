@@ -37,22 +37,22 @@ public abstract class OrgVarWork : WebWork
                 h.LI_();
                 if (m.regid > 0)
                 {
-                    h.FIELD(m.IsRetail ? "版块" : "区域", regs[m.regid]);
+                    h.FIELD(m.AsRtl ? "版块" : "区域", regs[m.regid]);
                     h.FIELD("联系电话", m.tel);
                 }
                 h._LI();
-                h.LI_().FIELD(m.IsRetail ? "商户编号" : m.IsMisc ? "链接" : "地址", m.addr)._LI();
-                if (!m.IsRetail)
+                h.LI_().FIELD(m.AsRtl ? "商户编号" : m.IsMisc ? "链接" : "地址", m.addr)._LI();
+                if (!m.AsRtl)
                 {
                     h.LI_().FIELD("说明", m.descr)._LI();
                 }
 
-                if (m.AsUpper || m.AsSupply)
+                if (m.AsUpper || m.AsSup)
                 {
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                     h.LI_().FIELD("指标参数", m.specs)._LI();
                 }
-                if (m.AsRetail || m.AsSupply)
+                if (m.AsRtl || m.AsSup)
                 {
                     h.LI_().FIELD("收款账号", m.bankacct)._LI();
                     h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
@@ -65,7 +65,7 @@ public abstract class OrgVarWork : WebWork
                 h._UL();
             }
 
-            h.TOOLBAR(subscript: m.IsMarket ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
+            h.TOOLBAR(subscript: m.IsMkt ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
         }, false, 6);
     }
 
@@ -132,7 +132,7 @@ public abstract class OrgVarWork : WebWork
     }
 }
 
-public class WwwOrgVarWork : OrgVarWork
+public class PublyOrgVarWork : OrgVarWork
 {
     const int MAXAGE = 3600 * 12;
 
@@ -171,14 +171,15 @@ public class AdmlyOrgVarWork : OrgVarWork
 
         if (wc.IsGet)
         {
-            var ctrs = GrabTwinArray<int, Org>(0, x => x.IsCenter);
+            var ctrs = GrabTwinArray<int, Org>(0, x => x.AsCtr);
 
             wc.GivePane(200, h =>
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMarket ? "调整市场机构" : "调整供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMkt ? "调整市场机构" : "调整供应机构");
 
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, cmd == 1 ? Org.MktTyps : Org.CtrTyps, required: true)._LI();
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
@@ -317,7 +318,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
@@ -339,7 +340,7 @@ public class AdmlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -355,9 +356,9 @@ public class AdmlyOrgVarWork : OrgVarWork
         int id = wc[0];
         var m = GrabTwin<int, Org>(id);
 
-        await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org._RTL);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 
@@ -401,7 +402,7 @@ public class MktlyOrgVarWork : OrgVarWork
             const short Msk = MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: m);
 
-            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -453,7 +454,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -477,7 +478,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -504,7 +505,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oker = prin.name;
         }
 
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -523,7 +524,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -584,7 +585,7 @@ public class CtrlySupVarWork : OrgVarWork
                 m.adapter = prin.name;
             }
 
-            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -636,7 +637,7 @@ public class CtrlySupVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -659,7 +660,7 @@ public class CtrlySupVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -679,7 +680,7 @@ public class CtrlySupVarWork : OrgVarWork
         var now = DateTime.Now;
 
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -704,7 +705,7 @@ public class CtrlySupVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -765,7 +766,7 @@ public class CtrlySrcVarWork : OrgVarWork
                 m.adapter = prin.name;
             }
 
-            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -817,7 +818,7 @@ public class CtrlySrcVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -840,7 +841,7 @@ public class CtrlySrcVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -860,7 +861,7 @@ public class CtrlySrcVarWork : OrgVarWork
         var now = DateTime.Now;
 
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -885,188 +886,7 @@ public class CtrlySrcVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
-        {
-            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
-            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
-        });
-        lock (m)
-        {
-            m.status = 2;
-            m.oked = default;
-            m.oker = null;
-            m.adapted = now;
-            m.adapter = prin.name;
-        }
-
-        wc.Give(204); // no content
-    }
-}
-
-public class AdmlySrcVarWork : OrgVarWork
-{
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task edit(WebContext wc)
-    {
-        int id = wc[0];
-        var regs = Grab<short, Reg>();
-        var prin = (User)wc.Principal;
-
-        var m = GrabTwin<int, Org>(id);
-
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                lock (m)
-                {
-                    h.FORM_().FIELDSUL_("调整商户信息");
-
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().SELECT("省份", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
-                    h.LI_().TEXT("联系地址", nameof(m.addr), m.addr, max: 30)._LI();
-                    h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                    h.LI_().CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
-                }
-            });
-        }
-        else
-        {
-            const short Msk = MSK_EDIT;
-            await wc.ReadObjectAsync(Msk, instance: m);
-            lock (m)
-            {
-                m.adapted = DateTime.Now;
-                m.adapter = prin.name;
-            }
-
-            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
-            {
-                dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
-                return await dc.ExecuteAsync(p =>
-                {
-                    m.Write(p, Msk);
-                    p.Set(id);
-                }) == 1;
-            });
-
-            wc.GivePane(200); // close
-        }
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
-    public async Task icon(WebContext wc)
-    {
-        await doimg(wc, nameof(icon), false, 6);
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
-    public async Task pic(WebContext wc)
-    {
-        await doimg(wc, nameof(pic), false, 6);
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
-    public async Task m(WebContext wc, int sub)
-    {
-        await doimg(wc, nameof(m) + sub, false, 6);
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
-    public async Task ok(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var m = GrabTwin<int, Org>(id);
-
-        var now = DateTime.Now;
-        lock (m)
-        {
-            m.status = 4;
-            m.oked = now;
-            m.oker = prin.name;
-        }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
-        {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
-            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
-        });
-
-        wc.Give(205);
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
-    public async Task unok(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-        var m = GrabTwin<int, Org>(id);
-
-        lock (m)
-        {
-            m.status = 1;
-            m.oked = default;
-            m.oker = null;
-        }
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
-        {
-            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
-            return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
-        });
-
-        wc.Give(205);
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
-    public async Task @void(WebContext wc)
-    {
-        int id = wc[0];
-        var prin = (User)wc.Principal;
-        var org = wc[-2].As<Org>();
-
-        var now = DateTime.Now;
-
-        var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
-        {
-            dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
-            return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
-        });
-        lock (m)
-        {
-            m.status = 0;
-            m.oked = now;
-            m.oker = prin.name;
-        }
-
-        wc.Give(204); // no content
-    }
-
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
-    public async Task unvoid(WebContext wc)
-    {
-        int id = wc[0];
-        var prin = (User)wc.Principal;
-        var org = wc[-2].As<Org>();
-
-        var now = DateTime.Now;
-        var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;

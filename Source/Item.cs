@@ -2,6 +2,9 @@
 
 namespace ChainSmart;
 
+/// <summary>
+/// A retail item record.
+/// </summary>
 public class Item : Entity, IKeyable<int>
 {
     public static readonly Item Empty = new();

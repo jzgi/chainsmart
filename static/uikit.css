@@ -1306,12 +1306,6 @@ button.uk-icon:not(:disabled) {
     padding: 4px;
 }
 
-.uk-top-bar.uk-large .uk-border-circle {
-    border: 8px solid #ededed;
-    width: 5.5rem;
-    height: 5.5rem;
-}
-
 .uk-top-bar.uk-modal-title {
     background-color: #ededed;
 }
@@ -3999,7 +3993,7 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-tall .uk-modal-title {
-    color: #ff3b30;
+    color: #f59604;
     font-weight: 400;
     font-size: 1rem;
 }

@@ -3,7 +3,7 @@
 namespace ChainSmart;
 
 /// <summary>
-/// An ad item to publish.
+/// An advertising item.
 /// </summary>
 public class Ad : Entity, IKeyable<int>
 {

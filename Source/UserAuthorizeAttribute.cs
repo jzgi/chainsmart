@@ -34,7 +34,7 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
         var seg = wc[typeof(ZonlyVarWork)];
         var org = seg.As<Org>();
 
-        if ((orgtyp & Org.TYP_RTL) == Org.TYP_RTL)
+        if ((orgtyp & Org._RTL) == Org._RTL)
         {
             if ((prin.rtlly & role) == role)
             {
@@ -54,7 +54,7 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
                 }
             }
         }
-        else if ((orgtyp & Org.TYP_SUP) == Org.TYP_SUP)
+        else if ((orgtyp & Org._SUP) == Org._SUP)
         {
             if ((prin.suply & role) == role)
             {

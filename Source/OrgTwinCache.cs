@@ -6,7 +6,7 @@ using ChainFX.Nodal;
 
 namespace ChainSmart;
 
-public class OrgCache : DbTwinCache<int, Org>
+public class OrgTwinCache : DbTwinCache<int, Org>
 {
     public override bool IsAsync => false;
 
@@ -50,7 +50,7 @@ public class OrgCache : DbTwinCache<int, Org>
                 pack.Dump(sb, now);
 
                 // send sms
-                await WeixinUtility.SendNotifSmsAsync(org.Tel, org.Name, nowStr, sb.ToString());
+                await WeChatUtility.SendNotifSmsAsync(org.Tel, org.Name, nowStr, sb.ToString());
 
                 num++;
             }

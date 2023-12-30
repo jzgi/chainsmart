@@ -186,6 +186,6 @@ public abstract class MainService : WebService
 
         string vcode = CryptoUtility.ComputeVCode(tel);
 
-        string ret = await WeixinUtility.SendVCodeSmsAsync(tel, vcode);
+        string ret = await WeChatUtility.SendVCodeSmsAsync(tel, vcode);
     }
 }

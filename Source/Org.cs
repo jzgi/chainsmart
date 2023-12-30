@@ -6,22 +6,58 @@ using ChainFX.Nodal;
 namespace ChainSmart;
 
 /// <summary>
-/// An organizational unit.
+/// An organizational unit record.
 /// </summary>
 public class Org : Entity, ITwin<int>
 {
     public static readonly Org Empty = new();
 
     public const short
-        
-        TYP_UPR = 0b01000, // upper
-        TYP_RTL = 0b00001, // retailer
-        TYP_MKT = TYP_UPR | TYP_RTL, // market
-        
-        TYP_SUP = 0b00010, // supplier
-        TYP_SRC = 0b00100, // source
-        TYP_SUPSRC = TYP_SUP | TYP_SRC, // reserved for convertion
-        TYP_CTR = TYP_UPR | TYP_SUP | TYP_SRC; // center
+        _FRT = 0b000001, // front
+        _BCK = 0b000010, // back
+        _UPR = 0b010000, // upper
+        _RTL = 0b000100, // retailer
+        _SUP = 0b001000, // supplier
+        //
+        TYP_RTL_SAL = _RTL | _FRT,
+        TYP_RTL_PUR = _RTL | _BCK,
+        TYP_RTL_FUL = _RTL | _FRT | _BCK,
+        //
+        TYP_MKT = _UPR | _RTL,
+        TYP_MKT_FUL = _UPR | TYP_RTL_FUL,
+        //
+        TYP_SUP_SAL = _SUP | _FRT,
+        TYP_SUP_SRC = _SUP | _BCK,
+        TYP_SUP_FUL = _SUP | _FRT | _BCK,
+        //
+        TYP_CTR = _UPR | _SUP, // center
+        TYP_CTR_FUL = _UPR | TYP_SUP_FUL;
+
+    public static readonly Map<short, string> RtlTyps = new()
+    {
+        { TYP_RTL_SAL, "零售" },
+        { TYP_RTL_PUR, "采购" },
+        { TYP_RTL_FUL, "零售＋采购" },
+    };
+
+    public static readonly Map<short, string> MktTyps = new()
+    {
+        { TYP_MKT, "市场" },
+        { TYP_MKT_FUL, "市场＋自营业务" },
+    };
+
+    public static readonly Map<short, string> SupTyps = new()
+    {
+        { TYP_SUP_SAL, "批发" },
+        { TYP_SUP_SRC, "产源" },
+        { TYP_SUP_FUL, "批发＋产源" },
+    };
+
+    public static readonly Map<short, string> CtrTyps = new()
+    {
+        { TYP_CTR, "品控" },
+        { TYP_CTR_FUL, "品控＋自营业务" },
+    };
 
 
     public static readonly Map<short, string> Ranks = new()
@@ -198,34 +234,36 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int MarketId => IsMarket ? id : AsRetail ? upperid : 0;
+    public int MarketId => IsMkt ? id : AsRtl ? upperid : 0;
 
-    public int CenterId => IsCenter ? id : AsSupply ? upperid : 0;
+    public int CenterId => AsCtr ? id : AsSup ? upperid : 0;
 
-    public bool AsUpper => (typ & TYP_UPR) == TYP_UPR;
+    public bool AsUpper => (typ & _UPR) == _UPR;
 
     public bool IsMisc => regid == Reg.HOME_REGID;
 
     //
     // public bool AsService => regid == Reg.SVC_REGID || IsMarket;
     //
-    public bool IsSupply => typ == TYP_SUP;
+    public bool IsSup => typ == _SUP;
 
-    public bool AsSupply => (typ & TYP_SUP) == TYP_SUP;
+    public bool AsSup => (typ & _SUP) == _SUP;
 
-    public bool IsRetail => typ == TYP_RTL;
+    public bool IsSrc => typ == TYP_SUP_SRC;
 
-    public bool AsRetail => (typ & TYP_RTL) == TYP_RTL;
+    public bool AsSrc => (typ & TYP_SUP_SRC) == TYP_SUP_SRC;
 
-    public bool IsMarket => typ == TYP_MKT;
+    // public bool IsRtl => typ == _RTL;
 
-    public bool IsCenter => typ == TYP_CTR;
+    public bool AsRtl => (typ & _RTL) == _RTL;
 
-    public bool IsShop => IsRetail || IsSupply;
+    public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
+
+    public bool AsCtr => (typ & TYP_CTR) == TYP_CTR;
 
     public bool Orderable => bankacct != null && bankacctname != null;
 
-    public bool HasXy => IsMarket || IsSupply || IsCenter;
+    public bool HasXy => IsMkt || IsSup || AsCtr;
 
     public bool IsTopOrg => upperid == 0;
 
@@ -248,7 +286,7 @@ public class Org : Entity, ITwin<int>
         }
     }
 
-    public string No => IsRetail ? addr : null;
+    public string No => AsRtl ? addr : null;
 
     public string Cover => cover;
 

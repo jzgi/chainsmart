@@ -14,7 +14,7 @@ public class LotVarWork : WebWork
         SrcUrl = MainApp.WwwUrl + "/src/",
         LotUrl = MainApp.WwwUrl + "/lot/";
 
-    internal static void ShowLot(HtmlBuilder h, Lot o, Src src, bool pricing, bool linking, int tracenum = 0)
+    internal static void ShowLot(HtmlBuilder h, Lot o, Org src, bool pricing, bool linking, int tracenum = 0)
     {
         h.ARTICLE_("uk-card uk-card-primary");
         h.H2("产品信息", "uk-card-header");
@@ -41,12 +41,12 @@ public class LotVarWork : WebWork
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("产源设施", src.name)._LI();
             h.LI_().FIELD(string.Empty, src.tip)._LI();
-            h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
+            // h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
             h._UL();
 
-            if (src.remark != null)
+            if (src.tip != null)
             {
-                h.ALERT_().T(src.remark)._ALERT();
+                h.ALERT_().T(src.tip)._ALERT();
             }
             if (src.pic)
             {
@@ -64,9 +64,9 @@ public class LotVarWork : WebWork
             {
                 h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
             }
-            if (src.m4)
+            if (src.scene)
             {
-                h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                h.PIC(SrcUrl, src.id, "/m-scene", css: "uk-width-1-1 uk-padding-bottom");
             }
         }
         h._SECTION();
@@ -225,7 +225,7 @@ public class LotVarWork : WebWork
     }
 }
 
-public class WwwLotVarWork : LotVarWork
+public class PublyLotVarWork : LotVarWork
 {
     public override async Task @default(WebContext wc, int tracenum)
     {
@@ -242,10 +242,10 @@ public class WwwLotVarWork : LotVarWork
             return;
         }
 
-        Src src = null;
+        Org src = null;
         if (o.srcid > 0)
         {
-            src = GrabTwin<int, Src>(o.srcid);
+            src = GrabTwin<int, Org>(o.srcid);
         }
 
         wc.GivePage(200, h =>
@@ -290,7 +290,7 @@ public class WwwLotVarWork : LotVarWork
 
 public class SuplyLotVarWork : LotVarWork
 {
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui(tip: "调整产品批次", icon: "pencil", status: 3), Tool(Modal.ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -305,7 +305,7 @@ public class SuplyLotVarWork : LotVarWork
             dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots_vw WHERE id = @1 AND orgid = @2");
             var o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid).Set(org.id));
 
-            var srcs = GrabTwinArray<int, Src>(o.orgid);
+            var srcs = GrabTwinArray<int, Org>(o.orgid);
 
             wc.GivePane(200, h =>
             {
@@ -353,28 +353,28 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(Modal.ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(Modal.ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(Modal.ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 6);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [UserAuthorize(Org._SUP, User.ROL_OPN)]
     [Ui("质控", "溯源码以及质检材料", status: 3), Tool(Modal.ButtonShow)]
     public async Task tag(WebContext wc, int cmd)
     {
@@ -413,7 +413,7 @@ public class SuplyLotVarWork : LotVarWork
             {
                 const short NUM = 90;
 
-                var src = o.srcid == 0 ? null : GrabTwin<int, Src>(o.srcid);
+                var src = o.srcid == 0 ? null : GrabTwin<int, Org>(o.srcid);
 
                 wc.GivePane(200, h =>
                 {
@@ -430,7 +430,7 @@ public class SuplyLotVarWork : LotVarWork
                         h.ASIDE_().H6_().T(Application.Node.name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                         h._HEADER();
 
-                        h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Src.Ranks[src?.rank ?? 0], "uk-margin-auto-left")._H6();
+                        // h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Src.Ranks[src?.rank ?? 0], "uk-margin-auto-left")._H6();
 
                         h._LI();
 
@@ -465,7 +465,7 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_LOG)]
+    [UserAuthorize(Org._SUP, User.ROL_LOG)]
     [Ui("货架", "管理供应数量", status: 7), Tool(Modal.ButtonShow)]
     public async Task stock(WebContext wc)
     {
@@ -483,7 +483,7 @@ public class SuplyLotVarWork : LotVarWork
             await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
             dc.Let(out StockOp[] ops);
 
-            var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsCenter, sorter: (x, y) => y.id - x.id);
+            var arr = GrabTwinArray<int, Org>(0, filter: x => x.AsCtr, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {
@@ -547,7 +547,7 @@ public class SuplyLotVarWork : LotVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [UserAuthorize(Org._SUP, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(Modal.ButtonConfirm, state: Lot.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -562,7 +562,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [UserAuthorize(Org._SUP, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(Modal.ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -576,7 +576,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [UserAuthorize(Org._SUP, User.ROL_MGT)]
     [Ui(tip: "作废此产品批次", icon: "trash", status: 3), Tool(Modal.ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -591,7 +591,7 @@ public class SuplyLotVarWork : LotVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [UserAuthorize(Org._SUP, User.ROL_MGT)]
     [Ui(tip: "恢复", icon: "reply", status: 0), Tool(Modal.ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {
@@ -633,10 +633,10 @@ public class RtllyPurLotVarWork : LotVarWork
             o = await dc.QueryTopAsync<Lot>(p => p.Set(lotid), Msk);
         }
 
-        Src src = null;
+        Org src = null;
         if (o.srcid > 0)
         {
-            src = GrabTwin<int, Src>(o.srcid);
+            src = GrabTwin<int, Org>(o.srcid);
         }
 
         wc.GivePane(200, h =>
@@ -738,7 +738,7 @@ public class RtllyPurLotVarWork : LotVarWork
 
             // call WeChatPay to prepare order there
             string trade_no = (purid + "-" + topay).Replace('.', '-');
-            var (prepay_id, err_code) = await WeixinUtility.PostUnifiedOrderAsync(sup: true,
+            var (prepay_id, err_code) = await WeChatUtility.PostUnifiedOrderAsync(sup: true,
                 trade_no,
                 topay,
                 prin.im, // the payer
@@ -749,7 +749,7 @@ public class RtllyPurLotVarWork : LotVarWork
 
             if (prepay_id != null)
             {
-                wc.Give(200, WeixinUtility.BuildPrepayContent(prepay_id));
+                wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
             }
             else
             {
