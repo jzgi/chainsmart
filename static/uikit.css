@@ -1292,19 +1292,9 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
+    background-color: #ddd;
 }
 
-.uk-top-bar.uk-large {
-    height: 6rem;
-    min-height: 6rem;
-    padding: 4px;
-}
-
-.uk-top-bar.uk-large {
-    height: 6rem;
-    min-height: 6rem;
-    padding: 4px;
-}
 
 .uk-top-bar.uk-modal-title {
     background-color: #ededed;
@@ -1336,7 +1326,7 @@ button.uk-icon:not(:disabled) {
     box-sizing: border-box;
     justify-content: center;
     align-items: center;
-    background-color: #fff;
+    background-color: #ddd;
 }
 
 .uk-bottom-bar.uk-large {

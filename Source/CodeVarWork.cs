@@ -7,7 +7,7 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class JobVarWork : WebWork
+public abstract class CodeVarWork : WebWork
 {
     public async Task @default(WebContext wc)
     {
@@ -15,8 +15,8 @@ public abstract class JobVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE id = @1 AND upperid = @2");
-        var o = await dc.QueryTopAsync<Job>(p => p.Set(id).Set(org.id));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE id = @1 AND upperid = @2");
+        var o = await dc.QueryTopAsync<Code>(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200, h =>
         {
@@ -50,14 +50,14 @@ public abstract class JobVarWork : WebWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE id = @1");
-            var o = await dc.QueryTopAsync<Job>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE id = @1");
+            var o = await dc.QueryTopAsync<Code>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
                 h.LI_().TEXT("身份证号", nameof(o.idno), o.idno, min: 18, max: 18)._LI();
-                h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Job.Typs, filter: (k, _) => k <= 2, required: true)._LI();
+                h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
                 h.LI_().TEXT("民生卡号", nameof(o.cardno), o.cardno, min: 4, max: 8)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -114,10 +114,10 @@ public abstract class JobVarWork : WebWork
     }
 }
 
-public class MktlyJobVarWork : JobVarWork
+public class SuplyCodeVarWork : CodeVarWork
 {
 }
 
-public class CtrlyJobVarWork : JobVarWork
+public class CtrlyCodeVarWork : CodeVarWork
 {
 }

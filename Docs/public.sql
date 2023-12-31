@@ -641,7 +641,7 @@ create table progs
 )
     inherits (entities);
 
-alter table jobs
+alter table codes
     owner to postgres;
 
 create view users_vw

@@ -127,7 +127,7 @@ public class RtllyVarWork : ZonlyVarWork
     {
         // org
 
-        CreateWork<OrglyMbrWork>("mbr", header: "常规", state: true); // true = retail
+        CreateWork<OrglyMbrWork>("mbr", state: true, header: "常规"); // true = retail
 
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
@@ -146,17 +146,19 @@ public class RtllyVarWork : ZonlyVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("morg", header: "机构");
+        CreateWork<MktlyRtlWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("所辖商户"), header: "机构");
 
-        CreateWork<MktlyAdWork>("mad");
+        CreateWork<MktlyRtlWork>("mrtlsal", state: Org.TYP_RTL_SAL, ui: new UiAttribute("所辖唯售商户"));
+
+        CreateWork<MktlyRtlWork>("mrtlpur", state: Org.TYP_RTL_PUR, ui: new UiAttribute("所辖唯采商户"));
+
+        CreateWork<MktlyTestWork>("mtest");
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
 
-        CreateWork<MktlyTestWork>("mtest");
-
-        CreateWork<MktlyJobWork>("mjob");
+        CreateWork<MktlyAdWork>("mad");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -250,7 +252,7 @@ public class SuplyVarWork : ZonlyVarWork
     {
         // org
 
-        CreateWork<OrglyMbrWork>("mbr", header: "常规", state: false); // false = supply
+        CreateWork<OrglyMbrWork>("mbr", state: false, header: "常规"); // false = supply
 
         // biz
 
@@ -264,11 +266,15 @@ public class SuplyVarWork : ZonlyVarWork
 
         // src
 
+        CreateWork<SuplyCodeWork>("sxcode");
+
         // ctr
 
-        CreateWork<CtrlySupWork>("csup", header: "机构");
+        CreateWork<CtrlySupWork>("csupsal", state: Org.TYP_SUP_SAL, ui: new UiAttribute("分管商户"), header: "机构");
 
-        CreateWork<CtrlySrcWork>("csrc");
+        CreateWork<CtrlySupWork>("csupsrc", state: Org.TYP_SUP_SRC, ui: new UiAttribute("分管产源"));
+
+        CreateWork<CtrlySupWork>("csupful", state: Org.TYP_SUP_FUL, ui: new UiAttribute("分管产源型商户"));
 
         CreateWork<CtrlyTestWork>("ctest");
 
@@ -276,6 +282,6 @@ public class SuplyVarWork : ZonlyVarWork
 
         CreateWork<CtrlyPurLdgWork>("cpurldg");
 
-        CreateWork<CtrlyJobWork>("cprog");
+        CreateWork<CtrlyCodeWork>("cxcode");
     }
 }

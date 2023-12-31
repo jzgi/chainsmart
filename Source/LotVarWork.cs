@@ -11,7 +11,7 @@ namespace ChainSmart;
 public class LotVarWork : WebWork
 {
     static readonly string
-        SrcUrl = MainApp.WwwUrl + "/src/",
+        SrcUrl = MainApp.WwwUrl + "/org/",
         LotUrl = MainApp.WwwUrl + "/lot/";
 
     internal static void ShowLot(HtmlBuilder h, Lot o, Org src, bool pricing, bool linking, int tracenum = 0)

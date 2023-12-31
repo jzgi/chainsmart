@@ -372,7 +372,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [UserAuthorize(Org.TYP_MKT)]
-[Ui("采购统一收货（云仓）")]
+[Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
     [Ui("采购统一收货", status: 1), Tool(Anchor)]

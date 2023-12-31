@@ -45,6 +45,7 @@ public class PublyTagWork : TagWork
             wc.GivePage(200, h =>
             {
                 h.TOPBARXL_();
+                
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(lot.name, css: "h1-lot")._HEADER();
                 if (lot.icon)
                 {

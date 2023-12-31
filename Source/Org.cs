@@ -35,9 +35,9 @@ public class Org : Entity, ITwin<int>
 
     public static readonly Map<short, string> RtlTyps = new()
     {
-        { TYP_RTL_SAL, "零售" },
-        { TYP_RTL_PUR, "采购" },
-        { TYP_RTL_FUL, "零售＋采购" },
+        { TYP_RTL_SAL, "唯售商户" },
+        { TYP_RTL_PUR, "唯采商户" },
+        { TYP_RTL_FUL, "商户" },
     };
 
     public static readonly Map<short, string> MktTyps = new()
@@ -48,9 +48,9 @@ public class Org : Entity, ITwin<int>
 
     public static readonly Map<short, string> SupTyps = new()
     {
-        { TYP_SUP_SAL, "批发" },
+        { TYP_SUP_SAL, "商户" },
         { TYP_SUP_SRC, "产源" },
-        { TYP_SUP_FUL, "批发＋产源" },
+        { TYP_SUP_FUL, "产原型商户" },
     };
 
     public static readonly Map<short, string> CtrTyps = new()

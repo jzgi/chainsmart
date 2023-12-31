@@ -5,15 +5,15 @@ namespace ChainSmart;
 /// <summary>
 /// An job incubation program. 
 /// </summary>
-public class Job : Entity, IKeyable<int>
+public class Code : Entity, IKeyable<int>
 {
-    public static readonly Job Empty = new();
+    public static readonly Code Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "创业卡" },
-        { 2, "助农卡" },
-        { 4, "振兴卡" },
+        { 1, "标牌" },
+        { 2, "贴标" },
+        { 4, "RFID" },
     };
 
     public static readonly Map<short, string> Tips = new()

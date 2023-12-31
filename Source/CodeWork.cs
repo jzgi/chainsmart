@@ -8,14 +8,14 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
+public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Job> arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Code> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -25,7 +25,7 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN((Job.Typs[o.typ]), "uk-badge");
+            h.SPAN((Code.Typs[o.typ]), "uk-badge");
             h._HEADER();
 
             h.Q(o.idno, "uk-width-expand");
@@ -43,8 +43,8 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE upperid = @1 AND status > 0");
-        var arr = await dc.QueryAsync<Job>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE upperid = @1 AND status > 0");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -64,8 +64,8 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
-        var arr = await dc.QueryAsync<Job>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
@@ -86,7 +86,7 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
         var prin = (User)wc.Principal;
         var org = wc[-1].As<Org>();
 
-        var o = new Job
+        var o = new Code
         {
             created = DateTime.Now,
             creator = prin.name,
@@ -122,7 +122,7 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
                     h.HIDDEN(nameof(o.userid), u.id);
                     h.LI_().TEXT("用户名", nameof(o.name), u.name, @readonly: true)._LI();
                     h.LI_().TEXT("身份证号", nameof(o.idno), o.idno, min: 18, max: 18)._LI();
-                    h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Job.Typs, filter: (k, _) => k <= 2, required: true)._LI();
+                    h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
                     h.LI_().TEXT("民生卡号", nameof(o.cardno), o.cardno, min: 4, max: 8)._LI();
 
                     h._FIELDSUL();
@@ -137,7 +137,7 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
             o.Read(f);
 
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO jobs ").colset(Job.Empty)._VALUES_(o);
+            dc.Sql("INSERT INTO jobs ").colset(Code.Empty)._VALUES_(o);
             await dc.ExecuteAsync(p => o.Write(p));
 
             wc.GivePane(200); // ok
@@ -146,13 +146,13 @@ public abstract class JobWork<V> : WebWork where V : JobVarWork, new()
 }
 
 [UserAuthorize(Org.TYP_MKT)]
-[Ui("孵化")]
-public class MktlyJobWork : JobWork<MktlyJobVarWork>
+[Ui("溯源码")]
+public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 {
 }
 
 [UserAuthorize(Org.TYP_CTR)]
-[Ui("孵化")]
-public class CtrlyJobWork : JobWork<CtrlyJobVarWork>
+[Ui("溯源码")]
+public class CtrlyCodeWork : CodeWork<CtrlyCodeVarWork>
 {
 }

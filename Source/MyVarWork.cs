@@ -208,40 +208,6 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }
     }
 
-    [Ui("孵化", "参与民生孵化项目", status: 7), Tool(ButtonShow)]
-    public async Task job(WebContext wc, int dt)
-    {
-        int uid = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Job.Empty).T(" FROM jobs WHERE userid = @1");
-        var arr = await dc.QueryAsync<Job>(p => p.Set(uid));
-
-        wc.GivePane(200, h =>
-        {
-            h.DIV_("uk-card uk-card-primary").H2(wc.Action.Tip, css: "uk-card-header")._DIV();
-            for (int i = 0; i < Job.Typs.Count; i++)
-            {
-                var e = Job.Typs.EntryAt(i);
-                h.ARTICLE_("uk-card uk-card-default");
-                var card = arr.First(x => x.typ == e.Key);
-                h.HEADER_("uk-card-header").ICON("credit-card").SP().H3(e.Value).SPAN_("uk-badge");
-                if (card != null)
-                {
-                    h.T(card.created, time: 0).SP().T("已领");
-                }
-                else
-                {
-                    h.T("未领");
-                }
-                h._SPAN();
-                h._HEADER();
-                h.SECTION_("uk-card-body").P(Job.Tips[e.Key])._SECTION();
-                h._ARTICLE();
-            }
-        }, false, 120);
-    }
-
     [Ui("须知", "本系统的使用条款", status: 7), Tool(ButtonShow)]
     public async Task agmt(WebContext wc, int dt)
     {
