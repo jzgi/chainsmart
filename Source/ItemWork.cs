@@ -121,7 +121,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [UserAuthorize(Org._RTL, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui("新建", tip: "创建新的商品信息", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -172,7 +172,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }
     }
 
-    [UserAuthorize(Org._RTL, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui("导入", "导入已采购的供应链产品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task imp(WebContext wc)
     {
@@ -238,7 +238,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }
     }
 
-    [UserAuthorize(Org._RTL, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui("清空", "永久删除已作废的数据项", status: 4), Tool(ButtonConfirm)]
     public async Task empty(WebContext wc)
     {

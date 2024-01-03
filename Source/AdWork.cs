@@ -89,7 +89,7 @@ public class MktlyAdWork : AdWork<MktlyAdVarWork>
         }, false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui("新建", "新建指定类型的广告", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

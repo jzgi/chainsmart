@@ -4,20 +4,17 @@ using ChainFX.Web;
 namespace ChainSmart;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-public class UserAuthorizeAttribute : AuthorizeAttribute
+public class MgtAuthorizeAttribute : AuthorizeAttribute
 {
-    // minimal org typ to check 
-    readonly short orgtyp;
-
-
     /// <summary>
     /// Used for the management service. 
     /// </summary>
-    /// <param name="orgtyp">0 = adm, 1 and above represents org</param>
+    /// <param name="accessTyp">-1 = adm; 0 = any; 1 and above represents org</param>
     /// <param name="role"></param>
-    public UserAuthorizeAttribute(short orgtyp, short role = 1) : base(role)
+    public MgtAuthorizeAttribute(short accessTyp, short role = 1)
     {
-        this.orgtyp = orgtyp;
+        AccessTyp = accessTyp;
+        Role = role;
     }
 
     public override bool DoCheck(WebContext wc, out bool super)
@@ -31,10 +28,12 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
             return (prin.admly & role) == role;
         }
 
-        var seg = wc[typeof(ZonlyVarWork)];
+        var seg = wc[typeof(MgtVarWork)];
         var org = seg.As<Org>();
 
-        if ((orgtyp & Org._RTL) == Org._RTL)
+        var atyp = AccessTyp;
+
+        if ((atyp & Org.TYP_RTL_) == Org.TYP_RTL_)
         {
             if ((prin.rtlly & role) == role)
             {
@@ -54,7 +53,7 @@ public class UserAuthorizeAttribute : AuthorizeAttribute
                 }
             }
         }
-        else if ((orgtyp & Org._SUP) == Org._SUP)
+        else if ((atyp & Org.TYP_SUP_) == Org.TYP_SUP_)
         {
             if ((prin.suply & role) == role)
             {

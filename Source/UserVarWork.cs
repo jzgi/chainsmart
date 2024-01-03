@@ -101,7 +101,7 @@ public class AdmlyUserVarWork : UserVarWork
 
 public class AdmlyAccessVarWork : UserVarWork
 {
-    [UserAuthorize(0,User.ROL_MGT)]
+    [MgtAuthorize(-1, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -119,7 +119,7 @@ public class OrglyMbrVarWork : UserVarWork
 {
     bool IsShop => (bool)Parent.State;
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -136,7 +136,7 @@ public class OrglyMbrVarWork : UserVarWork
 
 public class RtllyVipVarWork : UserVarWork
 {
-    [UserAuthorize(Org._RTL, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

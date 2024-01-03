@@ -18,7 +18,8 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[Ui("采购")]
+[MgtAuthorize(Org._BCK)]
+[Ui("采购业务")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
@@ -148,7 +149,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
-    [UserAuthorize(Org._RTL, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
     [Ui("云仓下单", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
@@ -195,6 +196,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 }
 
+[MgtAuthorize(Org._BIZ)]
 [Ui("销售业务")]
 public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
@@ -226,7 +228,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 
 
     [OrgSpy(PUR_CREATED)]
-    [Ui("销售订单"), Tool(Anchor)]
+    [Ui, Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -316,7 +318,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_CTR)]
 [Ui("云仓统一发货")]
 public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
 {
@@ -371,7 +373,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKT)]
 [Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {

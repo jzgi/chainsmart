@@ -13,30 +13,30 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
-        _FRT = 0b000001, // front
-        _BCK = 0b000010, // back
+        _BIZ = 0b000001, // biz
+        _BCK = 0b000010, // backing
         _UPR = 0b010000, // upper
-        _RTL = 0b000100, // retailer
-        _SUP = 0b001000, // supplier
+        TYP_RTL_ = 0b000100, // retail
+        TYP_SUP_ = 0b001000, // supply
         //
-        TYP_RTL_SAL = _RTL | _FRT,
-        TYP_RTL_PUR = _RTL | _BCK,
-        TYP_RTL_FUL = _RTL | _FRT | _BCK,
+        TYP_RTL_SAL = TYP_RTL_ | _BIZ,
+        TYP_RTL_PUR = TYP_RTL_ | _BCK,
+        TYP_RTL_FUL = TYP_RTL_ | _BIZ | _BCK,
         //
-        TYP_MKT = _UPR | _RTL,
+        TYP_MKT = _UPR | TYP_RTL_,
         TYP_MKT_FUL = _UPR | TYP_RTL_FUL,
         //
-        TYP_SUP_SAL = _SUP | _FRT,
-        TYP_SUP_SRC = _SUP | _BCK,
-        TYP_SUP_FUL = _SUP | _FRT | _BCK,
+        TYP_SUP_SAL = TYP_SUP_ | _BIZ,
+        TYP_SUP_SRC = TYP_SUP_ | _BCK,
+        TYP_SUP_FUL = TYP_SUP_ | _BIZ | _BCK,
         //
-        TYP_CTR = _UPR | _SUP, // center
+        TYP_CTR = _UPR | TYP_SUP_, // center
         TYP_CTR_FUL = _UPR | TYP_SUP_FUL;
 
     public static readonly Map<short, string> RtlTyps = new()
     {
-        { TYP_RTL_SAL, "唯售商户" },
-        { TYP_RTL_PUR, "唯采商户" },
+        { TYP_RTL_SAL, "网售主" },
+        { TYP_RTL_PUR, "采购主" },
         { TYP_RTL_FUL, "商户" },
     };
 
@@ -245,9 +245,9 @@ public class Org : Entity, ITwin<int>
     //
     // public bool AsService => regid == Reg.SVC_REGID || IsMarket;
     //
-    public bool IsSup => typ == _SUP;
+    public bool IsSup => typ == TYP_SUP_;
 
-    public bool AsSup => (typ & _SUP) == _SUP;
+    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
 
     public bool IsSrc => typ == TYP_SUP_SRC;
 
@@ -255,7 +255,7 @@ public class Org : Entity, ITwin<int>
 
     // public bool IsRtl => typ == _RTL;
 
-    public bool AsRtl => (typ & _RTL) == _RTL;
+    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
 
     public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 

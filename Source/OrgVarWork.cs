@@ -159,7 +159,7 @@ public class PublyOrgVarWork : OrgVarWork
 
 public class AdmlyOrgVarWork : OrgVarWork
 {
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc, int cmd)
     {
@@ -221,35 +221,35 @@ public class AdmlyOrgVarWork : OrgVarWork
         }
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "全景", icon: "camera", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task scene(WebContext wc)
     {
         await doimg(wc, nameof(scene), false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui("授权"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
@@ -303,7 +303,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         }
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -327,7 +327,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -349,7 +349,7 @@ public class AdmlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "确定删除此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -358,7 +358,7 @@ public class AdmlyOrgVarWork : OrgVarWork
 
         await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org._RTL);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 
@@ -368,7 +368,7 @@ public class AdmlyOrgVarWork : OrgVarWork
 
 public class MktlyOrgVarWork : OrgVarWork
 {
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -416,28 +416,28 @@ public class MktlyOrgVarWork : OrgVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 3);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -463,7 +463,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -487,7 +487,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -514,7 +514,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {
@@ -544,7 +544,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
 public class CtrlySupVarWork : OrgVarWork
 {
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -599,28 +599,28 @@ public class CtrlySupVarWork : OrgVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -646,7 +646,7 @@ public class CtrlySupVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -669,7 +669,7 @@ public class CtrlySupVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -695,7 +695,7 @@ public class CtrlySupVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {
@@ -725,7 +725,7 @@ public class CtrlySupVarWork : OrgVarWork
 
 public class CtrlySrcVarWork : OrgVarWork
 {
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -780,28 +780,28 @@ public class CtrlySrcVarWork : OrgVarWork
         }
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 6);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -827,7 +827,7 @@ public class CtrlySrcVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -850,7 +850,7 @@ public class CtrlySrcVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -876,7 +876,7 @@ public class CtrlySrcVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {

@@ -145,13 +145,13 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
     }
 }
 
-[UserAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org._BCK)]
 [Ui("溯源码")]
 public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 {
 }
 
-[UserAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_CTR)]
 [Ui("溯源码")]
 public class CtrlyCodeWork : CodeWork<CtrlyCodeVarWork>
 {

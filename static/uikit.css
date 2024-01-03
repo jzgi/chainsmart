@@ -1890,7 +1890,7 @@ button.uk-button-primary {
 }
 
 .uk-bottom-bar button.uk-button-primary {
-    background-color: #999;
+    background-color: #666;
     color: #fff;
 }
 
@@ -1898,7 +1898,15 @@ button.uk-button-primary:hover,
 button.uk-button-primary:focus,
 button.uk-button-primary:active,
 button.uk-button-primary.uk-active {
-    background-color: #888;
+    background-color: #ededed;
+}
+
+.uk-bottom-bar button.uk-button-primary:hover,
+.uk-bottom-bar button.uk-button-primary:focus,
+.uk-bottom-bar button.uk-button-primary:active,
+.uk-bottom-bar button.uk-button-primary.uk-active {
+    background-color: #666;
+    color: #f59604;
 }
 
 select.uk-button-primary {
@@ -3972,8 +3980,8 @@ ul.uk-nav-sub {
     justify-content: center;
     min-height: 3rem;
     box-sizing: border-box;
-    color: #fff;
-    background-color: #999;
+    color: #333;
+    background-color: #ddd;
 }
 
 .uk-modal-tall .uk-modal-header {
@@ -3983,7 +3991,7 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-tall .uk-modal-title {
-    color: #f59604;
+    color: #ff3b30;
     font-weight: 400;
     font-size: 1rem;
 }
@@ -4027,7 +4035,7 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #fff;
+    color: #333;
     font-weight: 400;
     font-size: 1rem;
     font-weight: bold;

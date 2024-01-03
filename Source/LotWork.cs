@@ -76,10 +76,11 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
     }
 }
 
+[MgtAuthorize(Org._BIZ)]
 [Ui("产品批次")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
-    [Ui("产品批次", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -148,14 +149,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         }, false, 12);
     }
 
-    [UserAuthorize(Org._SUP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
     [Ui("云仓", "新建从云仓供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task newhub(WebContext wc)
     {
         await @new(wc, Lot.TYP_HUB);
     }
 
-    [UserAuthorize(Org._SUP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
     [Ui("产源", "新建从产源供应的产品批次", icon: "plus", status: 2), Tool(ButtonOpen, state: Org.STA_AAPLUS)]
     public async Task newsrc(WebContext wc)
     {

@@ -149,7 +149,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     }
 }
 
-[UserAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKT)]
 [Ui("检测")]
 public class MktlyTestWork : TestWork<MktlyTestVarWork>
 {
@@ -222,7 +222,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_CTR)]
 [Ui("检测")]
 public class CtrlyTestWork : TestWork<CtrlyTestVarWork>
 {

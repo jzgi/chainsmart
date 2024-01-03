@@ -48,7 +48,7 @@ public class RtllyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    [UserAuthorize(Org._SUP, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_LOG)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {
@@ -149,7 +149,7 @@ public class SuplyPurVarWork : PurVarWork
         wc.Give(200);
     }
 
-    [UserAuthorize(Org._SUP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
     [Ui("撤销", "确认撤销订单并退款？", icon: "trash", status: 7), Tool(ButtonConfirm, state: Pur.STA_CANCELL)]
     public async Task @void(WebContext wc)
     {

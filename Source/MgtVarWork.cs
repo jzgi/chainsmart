@@ -7,7 +7,7 @@ using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class ZonlyVarWork : WebWork
+public abstract class MgtVarWork : WebWork
 {
     public void @default(WebContext wc)
     {
@@ -38,7 +38,7 @@ public abstract class ZonlyVarWork : WebWork
 
             h._TOPBARXL();
 
-            h.WORKBOARD(twinSpy: org.id);
+            h.WORKBOARD(accessTyp: org.typ, twinSpy: org.id);
 
             h.TOOLBAR(bottom: true, status: org.Status, state: org.ToState());
         }, false, 30, title: org.name, onload: "forWebview();");
@@ -119,9 +119,9 @@ public abstract class ZonlyVarWork : WebWork
     }
 }
 
-[UserAuthorize(Org._RTL)]
+[MgtAuthorize(Org.TYP_RTL_)]
 [Ui("市场操作")]
-public class RtllyVarWork : ZonlyVarWork
+public class RtllyVarWork : MgtVarWork
 {
     protected override void OnCreate()
     {
@@ -146,13 +146,13 @@ public class RtllyVarWork : ZonlyVarWork
 
         // mkt
 
-        CreateWork<MktlyRtlWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("所辖商户"), header: "机构");
-
-        CreateWork<MktlyRtlWork>("mrtlsal", state: Org.TYP_RTL_SAL, ui: new UiAttribute("所辖唯售商户"));
-
-        CreateWork<MktlyRtlWork>("mrtlpur", state: Org.TYP_RTL_PUR, ui: new UiAttribute("所辖唯采商户"));
+        CreateWork<MktlyRtlWork>("mrtlf", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyTestWork>("mtest");
+
+        CreateWork<MktlyRtlWork>("mrtls", state: Org.TYP_RTL_SAL, ui: new UiAttribute("成员网售主"));
+
+        CreateWork<MktlyRtlWork>("mrtlp", state: Org.TYP_RTL_PUR, ui: new UiAttribute("成员采购主"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
@@ -183,7 +183,7 @@ public class RtllyVarWork : ZonlyVarWork
         }, false, 720);
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
@@ -244,9 +244,9 @@ public class RtllyVarWork : ZonlyVarWork
     }
 }
 
-[UserAuthorize(Org._SUP)]
+[MgtAuthorize(Org.TYP_SUP_)]
 [Ui("供应操作")]
-public class SuplyVarWork : ZonlyVarWork
+public class SuplyVarWork : MgtVarWork
 {
     protected override void OnCreate()
     {
@@ -254,17 +254,15 @@ public class SuplyVarWork : ZonlyVarWork
 
         CreateWork<OrglyMbrWork>("mbr", state: false, header: "常规"); // false = supply
 
-        // biz
+        // sup
 
         CreateWork<SuplyLotWork>("slot", header: "商户");
 
-        CreateWork<SuplyPurWork>("spurhub");
+        CreateWork<SuplyPurWork>("spur");
 
         CreateWork<SuplyPurApWork>("spurap");
 
         CreateWork<SuplyPurLdgWork>("spurldg");
-
-        // src
 
         CreateWork<SuplyCodeWork>("sxcode");
 

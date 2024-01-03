@@ -4,13 +4,13 @@ using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public abstract class ZonlyWork : WebWork
+public abstract class MgtWork : WebWork
 {
 }
 
-[UserAuthenticate, UserAuthorize(0)]
+[UserAuthenticate, MgtAuthorize(-1)]
 [Ui("平台管理")]
-public class AdmlyWork : ZonlyWork
+public class AdmlyWork : MgtWork
 {
     protected override void OnCreate()
     {
@@ -56,7 +56,7 @@ public class AdmlyWork : ZonlyWork
 
             h._TOPBARXL();
 
-            h.WORKBOARD();
+            h.WORKBOARD(accessTyp: -1);
 
             h.TOOLBAR(bottom: true);
         }, false, 900);
@@ -85,7 +85,7 @@ public class AdmlyWork : ZonlyWork
 
 [UserAuthenticate]
 [Ui("市场操作")]
-public class RtllyWork : ZonlyWork
+public class RtllyWork : MgtWork
 {
     protected override void OnCreate()
     {
@@ -101,7 +101,7 @@ public class RtllyWork : ZonlyWork
 
 [UserAuthenticate]
 [Ui("供应操作")]
-public class SuplyWork : ZonlyWork
+public class SuplyWork : MgtWork
 {
     protected override void OnCreate()
     {

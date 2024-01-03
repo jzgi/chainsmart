@@ -136,6 +136,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
+[MgtAuthorize(Org._BIZ)]
 [Ui("销售业务汇总")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
@@ -201,7 +202,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_CTR)]
 [Ui("云仓业务汇总")]
 public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
 {

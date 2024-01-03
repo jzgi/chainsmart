@@ -63,7 +63,7 @@ public class AdmlyMbrWork : UserWork<AdmlyAccessVarWork>
         }, false, 12);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(-1, User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -229,7 +229,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
         }, false, 6);
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -384,7 +384,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
         }
     }
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {

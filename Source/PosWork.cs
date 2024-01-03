@@ -39,10 +39,10 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("POS")]
+[Ui("场售")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
-    [Ui("POS", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

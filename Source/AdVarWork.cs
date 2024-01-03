@@ -39,7 +39,7 @@ public abstract class AdVarWork : WebWork
 
 public class MktlyAdVarWork : AdVarWork
 {
-    [UserAuthorize(0, User.ROL_OPN)]
+    [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -89,7 +89,7 @@ public class MktlyAdVarWork : AdVarWork
     }
 
 
-    [UserAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui("发布", "安排发布", status: 1 | 2 | 4), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {

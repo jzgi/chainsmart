@@ -45,7 +45,7 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
 [Ui("市场端应付")]
 public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 {
-    [Ui("市场端应付", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -117,7 +117,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
         }
     }
 
-    [UserAuthorize(0, User.ROL_FIN)]
+    [MgtAuthorize(-1, User.ROL_FIN)]
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
@@ -156,7 +156,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 [Ui("供应端应付")]
 public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {
-    [Ui("供应端应付", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -227,7 +227,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
         }
     }
 
-    [UserAuthorize(0, User.ROL_FIN)]
+    [MgtAuthorize(-1, User.ROL_FIN)]
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
@@ -263,10 +263,10 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
     }
 }
 
-[Ui("网售结款")]
+[Ui("网售业务结款")]
 public class RtllyBuyApWork : ApWork<OrglyApVarWork>
 {
-    [Ui("网售结款", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -291,10 +291,11 @@ public class RtllyBuyApWork : ApWork<OrglyApVarWork>
     }
 }
 
-[Ui("销售结款")]
+[MgtAuthorize(Org._BIZ)]
+[Ui("销售业务结款")]
 public class SuplyPurApWork : ApWork<OrglyApVarWork>
 {
-    [Ui("销售结款", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();

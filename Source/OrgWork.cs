@@ -145,7 +145,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_MKT, Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKT, Org.TYP_MKT)]
 public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 {
     private short RtlTyp => (short)State;
@@ -173,7 +173,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
         });
     }
 
-    [Ui("上线商户", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -279,7 +279,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [UserAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
@@ -288,7 +288,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
         var regs = Grab<short, Reg>();
         var o = new Org
         {
-            typ = Org._RTL,
+            typ = Org.TYP_RTL_,
             created = DateTime.Now,
             creator = prin.name,
             upperid = org.id,
@@ -332,7 +332,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
     }
 }
 
-[UserAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_CTR)]
 public class CtrlySupWork : OrgWork<CtrlySupVarWork>
 {
     short SupTyp => (short)State;
@@ -426,7 +426,7 @@ public class CtrlySupWork : OrgWork<CtrlySupVarWork>
         }, false, 15);
     }
 
-    [UserAuthorize(Org.TYP_CTR, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
     [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

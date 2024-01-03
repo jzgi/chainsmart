@@ -9,13 +9,9 @@ namespace ChainSmart;
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
 public class MyAuthorizeAttribute : AuthorizeAttribute
 {
-    // user type 
-    readonly short typ;
-
-
-    public MyAuthorizeAttribute(short typ = 0) : base(0)
+    public MyAuthorizeAttribute(short typ = 0)
     {
-        this.typ = typ;
+        AccessTyp = typ;
     }
 
     public override bool DoCheck(WebContext wc, out bool super)
@@ -24,7 +20,7 @@ public class MyAuthorizeAttribute : AuthorizeAttribute
 
         super = false;
 
-        // if meet typ
+        var typ = AccessTyp;
         if (typ == 0 || (prin.typ & typ) == typ)
         {
             return true;
