@@ -1862,7 +1862,7 @@ select.uk-form-width-xsmall {
     padding: 6px 16px;
     margin: 4px;
     font-size: .9375rem;
-    background-color: #7daa1d;
+    background-color: #666;
     color: #fff;
     border-radius: 16px;
     border: 0;
@@ -1873,8 +1873,7 @@ select.uk-form-width-xsmall {
 .uk-button-default:focus,
 .uk-button-default:active,
 .uk-button-default.uk-active {
-    background-color: #739d18;
-    color: #fff;
+    color: #f59604;
 }
 
 button.uk-button-primary {
@@ -2603,17 +2602,14 @@ a.uk-inactive {
 }
 
 .uk-alert-success {
-    background: rgb(125 170 29 / 0.05);
     color: #7daa1d;
 }
 
 .uk-alert-warning {
-    background: rgb(245 150 4 / 0.05);
     color: #faa05a;
 }
 
 .uk-alert-danger {
-    background: rgb(255 59 48 / 0.05);
     color: #ff3b30;
 }
 
@@ -3875,6 +3871,7 @@ ul.uk-nav-sub {
     transform: translateY(0);
     display: flex;
     flex-direction: column;
+    box-shadow: #999 2px 0 12px 0px;
 }
 
 .uk-modal-small .uk-modal-body {
@@ -5801,8 +5798,88 @@ td.uk-text-break {
     word-break: break-all;
 }
 
-/* Component: Column */
 
+.uk-tile {
+    display: flow-root;
+    position: relative;
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  @media (min-width: 640px) {
+    .uk-tile {
+      padding-left: 30px;
+      padding-right: 30px;
+    }
+  }
+
+  @media (min-width: 960px) {
+    .uk-tile {
+      padding-left: 40px;
+      padding-right: 40px;
+      padding-top: 70px;
+      padding-bottom: 70px;
+    }
+  }
+
+  .uk-tile > :last-child {
+    margin-bottom: 0;
+  }
+
+  .uk-tile-xsmall {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .uk-tile-small {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .uk-tile-large {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+
+  @media (min-width: 960px) {
+    .uk-tile-large {
+      padding-top: 140px;
+      padding-bottom: 140px;
+    }
+  }
+
+  .uk-tile-xlarge {
+    padding-top: 140px;
+    padding-bottom: 140px;
+  }
+
+  @media (min-width: 960px) {
+    .uk-tile-xlarge {
+      padding-top: 210px;
+      padding-bottom: 210px;
+    }
+  }
+
+  .uk-tile-default {
+    background-color: #fff;
+  }
+
+  .uk-tile-muted {
+    background-color: #f8f8f8;
+  }
+
+  .uk-tile-primary {
+    background-color: #1e87f0;
+  }
+
+  .uk-tile-secondary {
+    background-color: #222;
+  }
+
+  
 [class*='uk-column-'] {
     column-gap: 30px;
 }

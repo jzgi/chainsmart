@@ -15,7 +15,7 @@ public abstract class CodeVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE id = @1 AND upperid = @2");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1 AND upperid = @2");
         var o = await dc.QueryTopAsync<Code>(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200, h =>
@@ -37,7 +37,7 @@ public abstract class CodeVarWork : WebWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
     [Ui(tip: "修改或调整孵化对象", icon: "pencil", status: 1), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -50,7 +50,7 @@ public abstract class CodeVarWork : WebWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE id = @1");
+            dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1");
             var o = await dc.QueryTopAsync<Code>(p => p.Set(id));
 
             wc.GivePane(200, h =>
@@ -73,7 +73,7 @@ public abstract class CodeVarWork : WebWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE jobs ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND upperid = @2");
+            dc.Sql("UPDATE codes ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND upperid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -84,7 +84,7 @@ public abstract class CodeVarWork : WebWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
     [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -93,13 +93,13 @@ public abstract class CodeVarWork : WebWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE jobs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
+        dc.Sql("UPDATE codes SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -107,7 +107,7 @@ public abstract class CodeVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE jobs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
+        dc.Sql("UPDATE codes SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);

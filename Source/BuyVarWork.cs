@@ -334,7 +334,7 @@ public class MktlyBuyVarWork : BuyVarWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_LOG)]
     [Ui("派发", "统一派发？"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {

@@ -33,7 +33,7 @@ public abstract class MgtVarWork : WebWork
             }
             else
             {
-                h.PIC(org.AsRtl ? "/rtl.webp" : org.AsCtr ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(org.AsRtl ? "/rtl.webp" : org.IsHub ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
             }
 
             h._TOPBARXL();
@@ -146,19 +146,17 @@ public class RtllyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyRtlWork>("mrtlf", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyRtlWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyTestWork>("mtest");
 
-        CreateWork<MktlyRtlWork>("mrtls", state: Org.TYP_RTL_SAL, ui: new UiAttribute("成员网售主"));
+        CreateWork<MktlyRtlWork>("mrtlsal", state: Org.TYP_RTL_BUY, ui: new UiAttribute("成员网售主"));
 
-        CreateWork<MktlyRtlWork>("mrtlp", state: Org.TYP_RTL_PUR, ui: new UiAttribute("成员采购主"));
+        CreateWork<MktlyRtlWork>("mrtlpur", state: Org.TYP_RTL_PUR, ui: new UiAttribute("成员采购主"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
-
-        CreateWork<MktlyAdWork>("mad");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -183,7 +181,7 @@ public class RtllyVarWork : MgtVarWork
         }, false, 720);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
@@ -256,7 +254,7 @@ public class SuplyVarWork : MgtVarWork
 
         // sup
 
-        CreateWork<SuplyLotWork>("slot", header: "商户");
+        CreateWork<SuplyLotWork>("slot", header: "供应");
 
         CreateWork<SuplyPurWork>("spur");
 
@@ -264,22 +262,15 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SuplyCodeWork>("sxcode");
+        CreateWork<SuplyCodeWork>("scode");
 
-        // ctr
+        // hub
 
-        CreateWork<CtrlySupWork>("csupsal", state: Org.TYP_SUP_SAL, ui: new UiAttribute("分管商户"), header: "机构");
+        CreateWork<HublyTestWork>("htest", header: "云仓");
 
-        CreateWork<CtrlySupWork>("csupsrc", state: Org.TYP_SUP_SRC, ui: new UiAttribute("分管产源"));
+        CreateWork<HublyPurWork>("hpur");
 
-        CreateWork<CtrlySupWork>("csupful", state: Org.TYP_SUP_FUL, ui: new UiAttribute("分管产源型商户"));
+        CreateWork<HublyPurLdgWork>("hpurldg");
 
-        CreateWork<CtrlyTestWork>("ctest");
-
-        CreateWork<CtrlyPurWork>("cpur");
-
-        CreateWork<CtrlyPurLdgWork>("cpurldg");
-
-        CreateWork<CtrlyCodeWork>("cxcode");
     }
 }

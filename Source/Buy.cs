@@ -58,7 +58,7 @@ public class Buy : Entity, IKeyable<long>
         name = rtl.name;
         tip = rtl.No;
         rtlid = rtl.id;
-        mktid = rtl.MarketId;
+        mktid = rtl.MktId;
         items = arr;
         uid = prin.id;
         uname = prin.name;

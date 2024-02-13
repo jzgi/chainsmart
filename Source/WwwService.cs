@@ -7,7 +7,7 @@ using static ChainFX.Nodal.Nodality;
 
 namespace ChainSmart;
 
-public class PublyService : MainService
+public class WwwService : MainService
 {
     protected override void OnCreate()
     {
@@ -118,7 +118,7 @@ public class PublyService : MainService
 
                     // put a notice
                     var rtl = GrabTwin<int, Org>(rtlid);
-                    var mkt = GrabTwin<int, Org>(rtl.MarketId);
+                    var mkt = GrabTwin<int, Org>(rtl.MktId);
 
                     // notice and event
                     //

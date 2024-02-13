@@ -483,7 +483,7 @@ public class SuplyLotVarWork : LotVarWork
             await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
             dc.Let(out StockOp[] ops);
 
-            var arr = GrabTwinArray<int, Org>(0, filter: x => x.AsCtr, sorter: (x, y) => y.id - x.id);
+            var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {

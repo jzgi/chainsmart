@@ -47,7 +47,7 @@ public abstract class MainService : WebService
                 h.NAV_(css: "uk-flex-center").ICON("user", ratio: 3, "uk-circle uk-background-muted uk-padding-large")._NAV();
                 h._TOPBARXL();
 
-                h.ALERT("注：新用户请从中惠农通微信公众号来注册", css: "uk-alert-warning");
+                h.ALERT("注：新用户请通过中惠农通微信公众号注册", css: "uk-alert-warning");
 
                 h.FORM_().FIELDSUL_();
                 h.LI_().TEXT("手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true);

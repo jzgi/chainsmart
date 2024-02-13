@@ -43,7 +43,7 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE upperid = @1 AND status > 0");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status > 0");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -64,7 +64,7 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM jobs WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -149,10 +149,16 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
 [Ui("溯源码")]
 public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 {
+    public void @default(WebContext wc)
+    {
+    }
 }
 
-[MgtAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(0)]
 [Ui("溯源码")]
-public class CtrlyCodeWork : CodeWork<CtrlyCodeVarWork>
+public class AdmlyCodeWork : CodeWork<CtrlyCodeVarWork>
 {
+    public void @default(WebContext wc)
+    {
+    }
 }

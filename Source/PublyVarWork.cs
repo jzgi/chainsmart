@@ -46,7 +46,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             h._LI();
 
             h.LI_("uk-section uk-padding-remove");
-            h.DIV_("uk-flex-center").T(org.tip)._DIV();
+            h.DIV_("uk-flex-center uk-tile uk-tile-primary").T(org.tip)._DIV();
             h._LI();
 
             h._SLIDERUL();
@@ -239,7 +239,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 topay,
                 prin.im, // the payer
                 wc.RemoteIpAddress.ToString(),
-                MainApp.WwwUrl + "/" + nameof(PublyService.onpay),
+                MainApp.WwwUrl + "/" + nameof(WwwService.onpay),
                 m.ToString()
             );
             if (prepay_id != null)
@@ -317,6 +317,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h._LI();
 
                 h.LI_("uk-section uk-padding-remove");
+                h.DIV_(" uk-tile uk-tile-primary");
                 h.H3("统一派送区域");
                 var specs = org.specs;
                 for (int i = 0; i < specs?.Count; i++)
@@ -339,6 +340,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                         h._DL();
                     }
                 }
+                h._DIV();
                 h._LI();
 
                 h._SLIDERUL();

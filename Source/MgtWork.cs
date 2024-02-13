@@ -26,7 +26,7 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyAdWork>("ad");
+        CreateWork<AdmlyCodeWork>("code");
 
         // fin
 
@@ -37,6 +37,7 @@ public class AdmlyWork : MgtWork
         CreateWork<AdmlyBuyLdgWork>("buyldg");
 
         CreateWork<AdmlyPurLdgWork>("purldg");
+
     }
 
     public void @default(WebContext wc)

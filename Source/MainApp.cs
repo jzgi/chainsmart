@@ -38,7 +38,7 @@ public class MainApp : Application
 
         const string STATIC_ROOT = "static";
 
-        WwwUrl = CreateService<PublyService>("www", STATIC_ROOT).PublicUrl;
+        WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).PublicUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).PublicUrl;
 
         await StartAsync();

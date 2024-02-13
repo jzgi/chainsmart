@@ -318,9 +318,9 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_SUP_HUB)]
 [Ui("云仓统一发货")]
-public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
+public class HublyPurWork : PurWork<CtrlyPurVarWork>
 {
     [Ui("统一发货", status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -373,7 +373,7 @@ public class CtrlyPurWork : PurWork<CtrlyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_RTL_MKT)]
 [Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {

@@ -40,7 +40,7 @@ public abstract class TestVarWork : WebWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
     [Ui(tip: "修改或调整检测记录", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -90,7 +90,7 @@ public abstract class TestVarWork : WebWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
     [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -105,7 +105,7 @@ public abstract class TestVarWork : WebWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {

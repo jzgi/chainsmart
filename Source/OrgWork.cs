@@ -48,7 +48,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         });
     }
 
-    [Ui("市场机构", status: 1), Tool(Anchor)]
+    [Ui("市场", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
@@ -60,7 +60,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
             h.TOOLBAR(subscript: 1);
             if (arr == null)
             {
-                h.ALERT("尚无市场机构");
+                h.ALERT("尚无市场");
                 return;
             }
 
@@ -68,18 +68,18 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui("供应机构", status: 2), Tool(Anchor)]
-    public void ctr(WebContext wc)
+    [Ui("品控云仓", status: 2), Tool(Anchor)]
+    public void hub(WebContext wc)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.AsCtr, sorter: (x, y) => y.id - x.id);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 2);
             if (arr == null)
             {
-                h.ALERT("尚无供应机构");
+                h.ALERT("尚无品控云仓");
                 return;
             }
 
@@ -87,7 +87,26 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui("新建", icon: "plus", status: 3), Tool(ButtonOpen)]
+    [Ui("供应源", status: 4), Tool(Anchor)]
+    public void sup(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.AsSup && !x.IsHub, sorter: (x, y) => y.id - x.id);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 4);
+            if (arr == null)
+            {
+                h.ALERT("尚无供应源");
+                return;
+            }
+
+            MainGrid(h, arr, prin, true);
+        }, false, 6);
+    }
+
+    [Ui("新建", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cmd)
     {
         var prin = (User)wc.Principal;
@@ -95,22 +114,28 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
 
         var o = new Org
         {
-            typ = cmd == 1 ? Org.TYP_MKT : Org.TYP_CTR,
+            typ = cmd switch
+            {
+                1 => Org.TYP_RTL_MKT, 2 => Org.TYP_SUP_HUB, _ => Org.TYP_SUP_
+            },
             created = DateTime.Now,
             creator = prin.name,
         };
+
 
         if (wc.IsGet)
         {
             o.Read(wc.Query, 0);
 
-            var ctrs = GrabTwinArray<int, Org>(0, x => x.AsCtr);
-
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(cmd == 1 ? "新建市场机构" : "新建供应机构");
+                h.FORM_().FIELDSUL_(cmd switch { 1 => "新建市场", 2 => "新建品控云仓", _ => "新建供应源" });
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, cmd == 1 ? Org.MktTyps : Org.CtrTyps, required: true)._LI();
+                if (o.typ == Org.TYP_SUP_)
+                {
+                    h.LI_().SELECT("类型", nameof(o.typ), o.typ, Org.Typs, filter: (k, v) => Org.IsNormalSup(k), required: true)._LI();
+                }
+
                 h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
@@ -120,7 +145,8 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (cmd == 1)
                 {
-                    h.LI_().SELECT("关联云仓", nameof(o.hubid), o.hubid, ctrs, required: true)._LI();
+                    var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
+                    h.LI_().SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
                 }
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
@@ -145,7 +171,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT, Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_RTL_MKT, Org.TYP_RTL_MKT)]
 public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 {
     private short RtlTyp => (short)State;
@@ -187,7 +213,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无上线的成户");
+                h.ALERT("尚无上线的主体");
                 return;
             }
 
@@ -211,7 +237,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无下线的商户");
+                h.ALERT("尚无下线的主体");
                 return;
             }
 
@@ -235,7 +261,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无禁用的商户");
+                h.ALERT("尚无禁用的主体");
                 return;
             }
 
@@ -270,7 +296,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
 
                 if (arr == null)
                 {
-                    h.ALERT("该版块尚无商户");
+                    h.ALERT("该版块尚无主体");
                     return;
                 }
 
@@ -279,7 +305,7 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {
@@ -305,156 +331,13 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
                 h.FORM_("uk-card uk-card-primary").FIELDSUL_("新建成员商户");
 
                 h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSector, @readonly: regid > 0, required: true).TEXT("编号或场址", nameof(o.addr), o.addr, max: 12)._LI();
-                h.LI_().TEXT("商户名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                h.LI_().TEXT("主体名", nameof(o.name), o.name, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.descr), o.descr, max: 100)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                 h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20)._LI();
-
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
-            });
-        }
-        else // POST
-        {
-            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-            await wc.ReadObjectAsync(Msk, instance: o);
-
-            await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
-            {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
-                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
-            });
-
-            wc.GivePane(201); // created
-        }
-    }
-}
-
-[MgtAuthorize(Org.TYP_CTR)]
-public class CtrlySupWork : OrgWork<CtrlySupVarWork>
-{
-    short SupTyp => (short)State;
-
-    static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)
-    {
-        h.MAINGRID(lst, o =>
-        {
-            h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-
-            if (o.icon)
-            {
-                h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
-            }
-            else
-                h.PIC("/void.webp", css: "uk-width-1-5");
-
-            h.ASIDE_();
-            h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
-            h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/suply/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
-            h._ASIDE();
-
-            h._A();
-        });
-    }
-
-    [Ui("商户", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status == 4 && x.typ == SupTyp, sorter: (x, y) => x.oked.CompareTo(y.oked));
-        var arr = array.Segment(20 * page, 20);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            if (arr == null)
-            {
-                h.ALERT("尚无上线的商户");
-                return;
-            }
-
-            MainGrid(h, arr, prin);
-        }, false, 12);
-    }
-
-    [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
-    public void down(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status is 1 or 2 && x.typ == SupTyp, sorter: (x, y) => x.oked.CompareTo(y.oked));
-        var arr = array.Segment(20 * page, 20);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            if (arr == null)
-            {
-                h.ALERT("尚无下线的商户");
-                return;
-            }
-
-            MainGrid(h, arr, prin);
-        }, false, 15);
-    }
-
-    [Ui(tip: "已作废", icon: "trash", status: 4), Tool(Anchor)]
-    public void @void(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.status == 0 && x.typ == SupTyp, sorter: (x, y) => x.adapted.CompareTo(y.adapted));
-        var arr = array.Segment(20 * page, 20);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            if (arr == null)
-            {
-                h.ALERT("尚无作废的商户");
-                return;
-            }
-
-            MainGrid(h, arr, prin);
-        }, false, 15);
-    }
-
-    [MgtAuthorize(Org.TYP_CTR, User.ROL_OPN)]
-    [Ui("新建", "新建成员商户", icon: "plus", status: 2), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc)
-    {
-        var zon = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-        var regs = Grab<short, Reg>();
-
-        var o = new Org
-        {
-            typ = SupTyp,
-            upperid = zon.id,
-            created = DateTime.Now,
-            creator = prin.name,
-        };
-        if (wc.IsGet)
-        {
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_();
-
-                h.LI_().TEXT("户名", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().SELECT("省份", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsProvince, required: true)._LI();
-                h.LI_().TEXT("联系地址", nameof(o.addr), o.addr, max: 30)._LI();
-                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.0000, max: 180.0000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true);
-                h.LI_().CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });

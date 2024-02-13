@@ -19,46 +19,25 @@ public class Org : Entity, ITwin<int>
         TYP_RTL_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         //
-        TYP_RTL_SAL = TYP_RTL_ | _BIZ,
+        TYP_RTL_BUY = TYP_RTL_ | _BIZ,
         TYP_RTL_PUR = TYP_RTL_ | _BCK,
         TYP_RTL_FUL = TYP_RTL_ | _BIZ | _BCK,
-        //
-        TYP_MKT = _UPR | TYP_RTL_,
-        TYP_MKT_FUL = _UPR | TYP_RTL_FUL,
+        TYP_RTL_MKT = _UPR | TYP_RTL_FUL,
         //
         TYP_SUP_SAL = TYP_SUP_ | _BIZ,
         TYP_SUP_SRC = TYP_SUP_ | _BCK,
         TYP_SUP_FUL = TYP_SUP_ | _BIZ | _BCK,
-        //
-        TYP_CTR = _UPR | TYP_SUP_, // center
-        TYP_CTR_FUL = _UPR | TYP_SUP_FUL;
+        TYP_SUP_HUB = _UPR | TYP_SUP_FUL;
 
-    public static readonly Map<short, string> RtlTyps = new()
+    public static readonly Map<short, string> Typs = new()
     {
-        { TYP_RTL_SAL, "网售主" },
-        { TYP_RTL_PUR, "采购主" },
+        { TYP_RTL_BUY, "卖家" },
         { TYP_RTL_FUL, "商户" },
-    };
-
-    public static readonly Map<short, string> MktTyps = new()
-    {
-        { TYP_MKT, "市场" },
-        { TYP_MKT_FUL, "市场＋自营业务" },
-    };
-
-    public static readonly Map<short, string> SupTyps = new()
-    {
-        { TYP_SUP_SAL, "商户" },
+        { TYP_RTL_MKT, "市场" },
         { TYP_SUP_SRC, "产源" },
-        { TYP_SUP_FUL, "产原型商户" },
+        { TYP_SUP_FUL, "供应户" },
+        { TYP_SUP_HUB, "云仓" },
     };
-
-    public static readonly Map<short, string> CtrTyps = new()
-    {
-        { TYP_CTR, "品控" },
-        { TYP_CTR_FUL, "品控＋自营业务" },
-    };
-
 
     public static readonly Map<short, string> Ranks = new()
     {
@@ -97,7 +76,7 @@ public class Org : Entity, ITwin<int>
     internal TimeSpan openat;
     internal TimeSpan closeat;
     internal short rank; // credit level
-    internal decimal carb; // carbon credits
+    internal short style;
 
     internal bool icon;
     internal bool pic;
@@ -144,7 +123,7 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(openat), ref openat);
                 s.Get(nameof(closeat), ref closeat);
                 s.Get(nameof(rank), ref rank);
-                s.Get(nameof(carb), ref carb);
+                s.Get(nameof(style), ref style);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
@@ -197,7 +176,7 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(openat), openat);
                 s.Put(nameof(closeat), closeat);
                 s.Put(nameof(rank), rank);
-                s.Put(nameof(carb), carb);
+                s.Put(nameof(style), style);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
                 s.Put(nameof(m1), m1);
@@ -234,17 +213,14 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int MarketId => IsMkt ? id : AsRtl ? upperid : 0;
+    public int MktId => IsMkt ? id : AsRtl ? upperid : 0;
 
-    public int CenterId => AsCtr ? id : AsSup ? upperid : 0;
+    public int HubId => IsHub ? id : AsSup ? upperid : 0;
 
     public bool AsUpper => (typ & _UPR) == _UPR;
 
     public bool IsMisc => regid == Reg.HOME_REGID;
 
-    //
-    // public bool AsService => regid == Reg.SVC_REGID || IsMarket;
-    //
     public bool IsSup => typ == TYP_SUP_;
 
     public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
@@ -253,17 +229,15 @@ public class Org : Entity, ITwin<int>
 
     public bool AsSrc => (typ & TYP_SUP_SRC) == TYP_SUP_SRC;
 
-    // public bool IsRtl => typ == _RTL;
-
     public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
 
-    public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
+    public bool IsMkt => (typ & TYP_RTL_MKT) == TYP_RTL_MKT;
 
-    public bool AsCtr => (typ & TYP_CTR) == TYP_CTR;
+    public bool IsHub => typ == TYP_SUP_HUB;
 
     public bool Orderable => bankacct != null && bankacctname != null;
 
-    public bool HasXy => IsMkt || IsSup || AsCtr;
+    public bool HasXy => IsMkt || AsSup || IsHub;
 
     public bool IsTopOrg => upperid == 0;
 
@@ -330,4 +304,7 @@ public class Org : Entity, ITwin<int>
             return eventp;
         }
     }
+
+
+    public static bool IsNormalSup(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_SUP_HUB;
 }

@@ -202,9 +202,9 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_CTR)]
+[MgtAuthorize(Org.TYP_SUP_HUB)]
 [Ui("云仓业务汇总")]
-public class CtrlyPurLdgWork : LdgWork<LdgVarWork>
+public class HublyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)
     {
