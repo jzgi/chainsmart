@@ -20,7 +20,7 @@ public abstract class MgtVarWork : WebWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(org.name);
-            if (org.AsUpper)
+            if (org.AsUpr)
             {
                 h.H4(org.Cover);
             }
@@ -146,17 +146,15 @@ public class RtllyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyRtlWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
 
-        CreateWork<MktlyTestWork>("mtest");
-
-        CreateWork<MktlyRtlWork>("mrtlsal", state: Org.TYP_RTL_BUY, ui: new UiAttribute("成员网售主"));
-
-        CreateWork<MktlyRtlWork>("mrtlpur", state: Org.TYP_RTL_PUR, ui: new UiAttribute("成员采购主"));
+        CreateWork<MktlyOrgWork>("mrtlbuy", state: Org.TYP_RTL_BUY, ui: new UiAttribute("成员销售户"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
+
+        CreateWork<MktlyTestWork>("mtest");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -171,7 +169,7 @@ public class RtllyVarWork : MgtVarWork
             h.SPAN(org.name);
             h._NAV();
 
-            if (org.AsUpper)
+            if (org.AsUpr)
             {
                 h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
                 h.QRCODE(MainApp.WwwUrl + "/" + org.id + "/", css: "uk-width-small");
@@ -256,6 +254,8 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyLotWork>("slot", header: "供应");
 
+        CreateWork<SuplyLotOpWork>("slotop");
+
         CreateWork<SuplyPurWork>("spur");
 
         CreateWork<SuplyPurApWork>("spurap");
@@ -266,11 +266,12 @@ public class SuplyVarWork : MgtVarWork
 
         // hub
 
-        CreateWork<HublyTestWork>("htest", header: "云仓");
-
-        CreateWork<HublyPurWork>("hpur");
+        CreateWork<HublyPurWork>("hpur", header: "云仓");
 
         CreateWork<HublyPurLdgWork>("hpurldg");
 
+        CreateWork<HublyTestWork>("htest");
+
+        CreateWork<HublyLotOpWork>("hlotop");
     }
 }

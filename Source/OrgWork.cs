@@ -23,7 +23,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 }
 
 [Ui("成员机构")]
-public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
+public class AdmlyUprWork : OrgWork<AdmlyOrgVarWork>
 {
     protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool rtlly)
     {
@@ -52,8 +52,7 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(0, filter: x => x.IsMkt, sorter: (x, y) => x.regid - y.regid);
-        var arr = array.Segment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsMkt, sorter: (x, y) => x.regid - y.regid).GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -72,6 +71,148 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     public void hub(WebContext wc)
     {
         var prin = (User)wc.Principal;
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (k, v) => v.id - k.id);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 2);
+            if (arr == null)
+            {
+                h.ALERT("尚无品控云仓");
+                return;
+            }
+
+            MainGrid(h, arr, prin, true);
+        }, false, 6);
+    }
+
+    [Ui("新建", icon: "plus", status: 3), Tool(ButtonOpen)]
+    public async Task @new(WebContext wc, int cmd)
+    {
+        var prin = (User)wc.Principal;
+        var regs = Grab<short, Reg>();
+
+        var o = new Org
+        {
+            typ = cmd switch
+            {
+                1 => Org.TYP_RTL_MKT, _ => Org.TYP_SUP_HUB
+            },
+            created = DateTime.Now,
+            creator = prin.name,
+        };
+
+        if (wc.IsGet)
+        {
+            o.Read(wc.Query, 0);
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_(cmd switch { 1 => "新建市场", _ => "新建品控云仓" });
+
+                h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
+                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                h.LI_().TEXT("涵盖市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
+                h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
+                h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
+                h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
+                if (cmd == 1)
+                {
+                    var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
+                    h.LI_().SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
+                }
+                h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
+
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
+            });
+        }
+        else // POST
+        {
+            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+            await wc.ReadObjectAsync(Msk, o);
+
+            await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
+            {
+                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
+                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
+            });
+
+            wc.GivePane(201); // created
+        }
+    }
+}
+
+[Ui("成员供应源")]
+public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
+{
+    protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool rtlly)
+    {
+        h.MAINGRID(lst, o =>
+        {
+            h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
+
+            if (o.icon)
+            {
+                h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
+            }
+            else
+                h.PIC("/void.webp", css: "uk-width-1-5");
+
+            h.ASIDE_();
+            h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
+            h.Q2(o.Cover, o.tip, css: "uk-width-expand");
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link")._SPAN()._FOOTER();
+            h._ASIDE();
+
+            h._A();
+        });
+    }
+
+    [Ui("供应户", status: 1), Tool(Anchor)]
+    public void @default(WebContext wc, int page)
+    {
+        var prin = (User)wc.Principal;
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSupFul, sorter: (x, y) => x.regid - y.regid).GetSegment(20 * page, 20);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 1);
+            if (arr == null)
+            {
+                h.ALERT("尚无供应户");
+                return;
+            }
+
+            MainGrid(h, arr, prin, true);
+        }, false, 6);
+    }
+
+    [Ui("产源", status: 2), Tool(Anchor)]
+    public void src(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSupSrc, sorter: (k, v) => v.id - k.id);
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 4);
+            if (arr == null)
+            {
+                h.ALERT("尚无产源");
+                return;
+            }
+
+            MainGrid(h, arr, prin, true);
+        }, false, 6);
+    }
+
+    [Ui(icon: "cloud-download", status: 2), Tool(Anchor)]
+    public void down(WebContext wc)
+    {
+        var prin = (User)wc.Principal;
         var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id);
 
         wc.GivePage(200, h =>
@@ -87,24 +228,6 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
         }, false, 6);
     }
 
-    [Ui("供应源", status: 4), Tool(Anchor)]
-    public void sup(WebContext wc)
-    {
-        var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.AsSup && !x.IsHub, sorter: (x, y) => y.id - x.id);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: 4);
-            if (arr == null)
-            {
-                h.ALERT("尚无供应源");
-                return;
-            }
-
-            MainGrid(h, arr, prin, true);
-        }, false, 6);
-    }
 
     [Ui("新建", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cmd)
@@ -171,10 +294,10 @@ public class AdmlyOrgWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_MKT, Org.TYP_RTL_MKT)]
-public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
+[MgtAuthorize(Org.TYP_RTL_MKT)]
+public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
-    private short RtlTyp => (short)State;
+    private short OrgTyp => (short)State;
 
     static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)
     {
@@ -204,8 +327,8 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == RtlTyp && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.Segment(20 * page, 20);
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -228,8 +351,8 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == RtlTyp && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.Segment(20 * page, 20);
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -252,8 +375,8 @@ public class MktlyRtlWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == RtlTyp && x.status == 0, sorter: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.Segment(20 * page, 20);
+        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status == 0, sorter: (x, y) => x.addr.CompareWith(y.addr));
+        var arr = array.GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {

@@ -77,7 +77,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
 }
 
 [MgtAuthorize(Org._BIZ)]
-[Ui("产品批次")]
+[Ui("产品")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -95,7 +95,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无上线的产品批次");
+                h.ALERT("暂无上线的产品");
                 return;
             }
 

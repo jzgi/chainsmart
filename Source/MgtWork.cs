@@ -22,7 +22,9 @@ public class AdmlyWork : MgtWork
 
         // biz
 
-        CreateWork<AdmlyOrgWork>("org", header: "业务");
+        CreateWork<AdmlyUprWork>("upr", header: "业务");
+
+        CreateWork<AdmlySupWork>("sup");
 
         CreateWork<AdmlyUserWork>("user");
 
@@ -37,7 +39,6 @@ public class AdmlyWork : MgtWork
         CreateWork<AdmlyBuyLdgWork>("buyldg");
 
         CreateWork<AdmlyPurLdgWork>("purldg");
-
     }
 
     public void @default(WebContext wc)

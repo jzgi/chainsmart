@@ -15,23 +15,21 @@ public class Org : Entity, ITwin<int>
     public const short
         _BIZ = 0b000001, // biz
         _BCK = 0b000010, // backing
-        _UPR = 0b010000, // upper
+        TYP_UPR_ = 0b010000, // upper institute
         TYP_RTL_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         //
         TYP_RTL_BUY = TYP_RTL_ | _BIZ,
-        TYP_RTL_PUR = TYP_RTL_ | _BCK,
         TYP_RTL_FUL = TYP_RTL_ | _BIZ | _BCK,
-        TYP_RTL_MKT = _UPR | TYP_RTL_FUL,
+        TYP_RTL_MKT = TYP_UPR_ | TYP_RTL_FUL,
         //
-        TYP_SUP_SAL = TYP_SUP_ | _BIZ,
         TYP_SUP_SRC = TYP_SUP_ | _BCK,
         TYP_SUP_FUL = TYP_SUP_ | _BIZ | _BCK,
-        TYP_SUP_HUB = _UPR | TYP_SUP_FUL;
+        TYP_SUP_HUB = TYP_UPR_ | TYP_SUP_FUL;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_RTL_BUY, "卖家" },
+        { TYP_RTL_BUY, "零售户" },
         { TYP_RTL_FUL, "商户" },
         { TYP_RTL_MKT, "市场" },
         { TYP_SUP_SRC, "产源" },
@@ -217,23 +215,21 @@ public class Org : Entity, ITwin<int>
 
     public int HubId => IsHub ? id : AsSup ? upperid : 0;
 
-    public bool AsUpper => (typ & _UPR) == _UPR;
-
-    public bool IsMisc => regid == Reg.HOME_REGID;
-
-    public bool IsSup => typ == TYP_SUP_;
-
-    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
-
-    public bool IsSrc => typ == TYP_SUP_SRC;
-
-    public bool AsSrc => (typ & TYP_SUP_SRC) == TYP_SUP_SRC;
-
-    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
-
     public bool IsMkt => (typ & TYP_RTL_MKT) == TYP_RTL_MKT;
 
     public bool IsHub => typ == TYP_SUP_HUB;
+
+    public bool AsUpr => (typ & TYP_UPR_) == TYP_UPR_;
+
+    public bool IsHome => regid == Reg.HOME_REGID;
+
+    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
+
+    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
+
+    public bool IsSupSrc => typ == TYP_SUP_SRC;
+
+    public bool IsSupFul => typ == TYP_SUP_FUL;
 
     public bool Orderable => bankacct != null && bankacctname != null;
 
