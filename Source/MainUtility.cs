@@ -178,8 +178,9 @@ public static class MainUtility
             h.T(' ');
             h.T(css);
         }
+        h.T("<span>联系商户</span><span uk-icon=\"receiver\">");
 
-        h.T("\" uk-icon=\"receiver\" href=\"tel:").T(tel).T("\"></a>");
+        h.T("\" href=\"tel:").T(tel).T("\"></a>");
         return h;
     }
 

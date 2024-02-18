@@ -142,7 +142,7 @@ public class LotVarWork : WebWork
 
         if (o.IsOnHub)
         {
-            await dc.QueryAsync("SELECT hubid, num FROM lotinvs WHERE lotid = @1", p => p.Set(id));
+            await dc.QueryAsync("SELECT hubid, stock FROM lotinvs WHERE lotid = @1", p => p.Set(id));
         }
 
         wc.GivePane(200, h =>

@@ -133,7 +133,7 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
     }
 }
 
-[Ui("产品云仓作业")]
+[Ui("产品作业")]
 public class HublyLotOpWork : LotOpWork<HublyLotOpVarWork>
 {
 }

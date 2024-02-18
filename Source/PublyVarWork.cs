@@ -31,25 +31,25 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.SLIDERUL_();
-
-            h.LI_("uk-section uk-padding-remove");
             if (org.pic)
             {
                 h.PIC_("/org/", org.id, "/pic");
             }
             else
-            {
                 h.PIC_("/void-m.webp");
+
+            h.ATEL(org.tel, "uk-overlay uk-position-bottom-right");
+
+            if (!org.IsOked)
+            {
+                h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                return;
+            }
+            if (org.AsRtl && !org.IsOpen(DateTime.Now.TimeOfDay))
+            {
+                h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
             h._PIC();
-            h._LI();
-
-            h.LI_("uk-section uk-padding-remove");
-            h.DIV_("uk-flex-center uk-tile uk-tile-primary").T(org.tip)._DIV();
-            h._LI();
-
-            h._SLIDERUL();
 
             if (arr == null)
             {

@@ -35,36 +35,41 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
             h._A();
         });
     }
+}
 
-
-    [Ui("孵化对象", status: 1), Tool(Anchor)]
+[MgtAuthorize(Org._BCK)]
+[Ui("溯源码申请")]
+public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
+{
+    [Ui("新申请", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status > 0");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 1 LIMIT 20 OFFSET @1");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page * 20));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无生效的孵化对象");
+                h.ALERT("尚无新申请");
                 return;
             }
             MainGrid(h, arr);
+            h.PAGINATION(arr.Length == 20);
         }, false, 12);
     }
 
-    [Ui(tip: "已作废的孵化对象", icon: "trash", status: 2), Tool(Anchor)]
-    public async Task @void(WebContext wc)
+    [Ui(tip: "已提交", icon: "arrow-right", status: 2), Tool(Anchor)]
+    public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 2 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -72,7 +77,7 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已作废的孵化对象");
+                h.ALERT("尚无已提交的申请");
                 return;
             }
 
@@ -80,7 +85,30 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
         }, false, 12);
     }
 
-    [Ui("新建", tip: "新建孵化对象", icon: "plus", status: 1), Tool(ButtonOpen)]
+
+    [Ui(tip: "已拒绝", icon: "trash", status: 4), Tool(Anchor)]
+    public async Task @void(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page * 20));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+            if (arr == null)
+            {
+                h.ALERT("尚无已拒绝的申请");
+                return;
+            }
+
+            MainGrid(h, arr);
+        }, false, 12);
+    }
+
+    [Ui("新建", tip: "新建溯源码申请", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cmd)
     {
         var prin = (User)wc.Principal;
@@ -137,7 +165,7 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
             o.Read(f);
 
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO jobs ").colset(Code.Empty)._VALUES_(o);
+            dc.Sql("INSERT INTO codes ").colset(Code.Empty)._VALUES_(o);
             await dc.ExecuteAsync(p => o.Write(p));
 
             wc.GivePane(200); // ok
@@ -145,20 +173,68 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
     }
 }
 
-[MgtAuthorize(Org._BCK)]
-[Ui("溯源码")]
-public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
-{
-    public void @default(WebContext wc)
-    {
-    }
-}
-
 [MgtAuthorize(0)]
-[Ui("溯源码")]
-public class AdmlyCodeWork : CodeWork<CtrlyCodeVarWork>
+[Ui("溯源码发放")]
+public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
 {
-    public void @default(WebContext wc)
+    [Ui("溯源码申请", status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
     {
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(20 & page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 1);
+            if (arr == null)
+            {
+                h.ALERT("尚无收到申请");
+                return;
+            }
+            MainGrid(h, arr);
+            h.PAGINATION(arr.Length == 20);
+        }, false, 12);
+    }
+
+    [Ui(tip: "已批准", icon: "check", status: 2), Tool(Anchor)]
+    public async Task adapted(WebContext wc, int page)
+    {
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 ORDER BY adapted DESC LIMIT 20 OFFSET @1");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(20 * page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+            if (arr == null)
+            {
+                h.ALERT("尚无已批准申请");
+                return;
+            }
+            MainGrid(h, arr);
+            h.PAGINATION(arr.Length == 20);
+        }, false, 12);
+    }
+
+
+    [Ui(tip: "已拒绝", icon: "close", status: 4), Tool(Anchor)]
+    public async Task @void(WebContext wc, int page)
+    {
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 ORDER BY adapted DESC LIMIT 20 OFFSET @1");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(20 * page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+            if (arr == null)
+            {
+                h.ALERT("尚无已拒绝申请");
+                return;
+            }
+
+            MainGrid(h, arr);
+        }, false, 12);
     }
 }

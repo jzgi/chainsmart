@@ -252,7 +252,7 @@ public class SuplyVarWork : MgtVarWork
 
         // sup
 
-        CreateWork<SuplyLotWork>("slot", header: "供应");
+        CreateWork<SuplyLotWork>("slot", header: "供应源");
 
         CreateWork<SuplyLotOpWork>("slotop");
 

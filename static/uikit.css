@@ -3330,8 +3330,8 @@ ul.uk-nav-sub {
     position: relative;
     justify-content: center;
     border-radius: 50%;
-    background-color: #ededed;
-    padding: 2px 7px;
+    background-color: #ddd;
+    padding: 2px 10px;
     pointer-events: auto;
 }
 

@@ -17,7 +17,7 @@ public abstract class LotOpVarWork : WebWork
         const short msk = 255 | MSK_AUX;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(LotOp.Empty, msk).T(" FROM ads WHERE id = @1 AND orgid = @2");
+        dc.Sql("SELECT ").collst(LotOp.Empty, msk).T(" FROM lotops WHERE id = @1 AND orgid = @2");
         var o = await dc.QueryTopAsync<LotOp>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
@@ -50,7 +50,7 @@ public class SuplyLotOpVarWork : LotOpVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM ads WHERE id = @1");
+            dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM lotops WHERE id = @1");
             var o = await dc.QueryTopAsync<LotOp>(p => p.Set(id));
 
             wc.GivePane(200, h =>
@@ -77,7 +77,7 @@ public class SuplyLotOpVarWork : LotOpVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE ads ")._SET_(LotOp.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE lotops ")._SET_(LotOp.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -98,7 +98,7 @@ public class SuplyLotOpVarWork : LotOpVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE ads SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(LotOp.Empty);
+        dc.Sql("UPDATE lotops SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(LotOp.Empty);
         var o = await dc.QueryTopAsync<LotOp>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         // org.EventPack.AddMsg(o);

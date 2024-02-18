@@ -118,6 +118,6 @@ public class SuplyCodeVarWork : CodeVarWork
 {
 }
 
-public class CtrlyCodeVarWork : CodeVarWork
+public class AdmlyCodeVarWork : CodeVarWork
 {
 }
