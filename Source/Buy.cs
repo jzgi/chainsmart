@@ -40,7 +40,7 @@ public class Buy : Entity, IKeyable<long>
     internal string ucom; // community
     internal string uaddr; // address
     internal string uim;
-    internal BuyItem[] items; // item lines
+    internal BuyLn[] items; // item lines
     internal decimal fee;
     internal decimal topay;
     internal decimal pay;
@@ -52,7 +52,7 @@ public class Buy : Entity, IKeyable<long>
     {
     }
 
-    public Buy(User prin, Org rtl, BuyItem[] arr)
+    public Buy(User prin, Org rtl, BuyLn[] arr)
     {
         typ = TYP_ORDR;
         name = rtl.name;

@@ -28,7 +28,7 @@ public class MainApp : Application
         //
         // db and caches and graphs
 
-        MapCompositeDbType<BuyItem>();
+        MapCompositeDbType<BuyLn>();
         MapCompositeDbType<StockOp>();
 
         SetupCaches();
@@ -40,6 +40,7 @@ public class MainApp : Application
 
         WwwUrl = CreateService<WwwService>("www", STATIC_ROOT).PublicUrl;
         MgtUrl = CreateService<MgtService>("mgt", STATIC_ROOT).PublicUrl;
+
 
         await StartAsync();
     }

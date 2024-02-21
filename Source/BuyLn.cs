@@ -5,7 +5,7 @@ namespace ChainSmart;
 /// <summary>
 /// A line item of buy record..
 /// </summary>
-public class BuyItem : IData, IKeyable<int>
+public class BuyLn : IData, IKeyable<int>
 {
     public int itemid;
 
@@ -15,7 +15,7 @@ public class BuyItem : IData, IKeyable<int>
 
     public string unit; // basic unit
 
-    public short unitw; // number of units per pack
+    public string unitip;
 
     public decimal price;
 
@@ -23,11 +23,11 @@ public class BuyItem : IData, IKeyable<int>
 
     public decimal qty;
 
-    public BuyItem()
+    public BuyLn()
     {
     }
 
-    public BuyItem(int itemid, short qty)
+    public BuyLn(int itemid, short qty)
     {
         this.itemid = itemid;
         this.qty = qty;
@@ -38,14 +38,14 @@ public class BuyItem : IData, IKeyable<int>
     /// </summary>
     /// <param name="itemid"></param>
     /// <param name="comp"></param>
-    public BuyItem(int itemid, string[] comp)
+    public BuyLn(int itemid, string[] comp)
     {
         this.itemid = itemid;
 
         lotid = int.Parse(comp[0]);
         name = comp[1];
         unit = comp[2];
-        unitw = short.Parse(comp[3]);
+        unitip = comp[3];
         price = decimal.Parse(comp[4]);
         qty = decimal.Parse(comp[5]);
     }
@@ -56,7 +56,7 @@ public class BuyItem : IData, IKeyable<int>
         s.Get(nameof(lotid), ref lotid);
         s.Get(nameof(name), ref name);
         s.Get(nameof(unit), ref unit);
-        s.Get(nameof(unitw), ref unitw);
+        s.Get(nameof(unitip), ref unitip);
         s.Get(nameof(price), ref price);
         s.Get(nameof(off), ref off);
         s.Get(nameof(qty), ref qty);
@@ -68,7 +68,7 @@ public class BuyItem : IData, IKeyable<int>
         s.Put(nameof(lotid), lotid);
         s.Put(nameof(name), name);
         s.Put(nameof(unit), unit);
-        s.Put(nameof(unitw), unitw);
+        s.Put(nameof(unitip), unitip);
         s.Put(nameof(price), price);
         s.Put(nameof(off), off);
         s.Put(nameof(qty), qty);
@@ -85,7 +85,7 @@ public class BuyItem : IData, IKeyable<int>
         name = m.name;
         lotid = m.lotid;
         unit = m.unit;
-        unitw = m.unitw;
+        unitip = m.unitip;
         price = m.price;
 
         if (vip)

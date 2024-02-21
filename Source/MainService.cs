@@ -68,7 +68,7 @@ public abstract class MainService : WebService
 
             var credential = MainUtility.ComputeCredential(tel, password);
 
-            using var dc = Nodality.NewDbContext();
+            using var dc = Storage.NewDbContext();
             dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
             var prin = dc.QueryTop<User>(p => p.Set(tel));
 
@@ -129,7 +129,7 @@ public abstract class MainService : WebService
             else
             {
                 // insert or update
-                using var dc = Nodality.NewDbContext();
+                using var dc = Storage.NewDbContext();
                 const short msk = MSK_BORN | MSK_EDIT;
                 dc.Sql("INSERT INTO users ").colset(m, msk)._VALUES_(m, msk).T(" ON CONFLICT (tel) DO UPDATE SET im = @1 RETURNING ").collst(User.Empty);
                 m = await dc.QueryTopAsync<User>(p =>

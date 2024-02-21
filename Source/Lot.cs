@@ -34,7 +34,7 @@ public class Lot : Entity, IKeyable<int>
     internal DateTime shipon;
     internal int srcid;
     internal string unit;
-    internal short unitw;
+    internal string unitip;
     internal short unitx;
     internal decimal price;
     internal decimal off;
@@ -82,7 +82,7 @@ public class Lot : Entity, IKeyable<int>
             s.Get(nameof(cattyp), ref cattyp);
             s.Get(nameof(shipon), ref shipon);
             s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitw), ref unitw);
+            s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
@@ -131,11 +131,12 @@ public class Lot : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            if (srcid > 0) s.Put(nameof(srcid), srcid); else s.PutNull(nameof(srcid));
+            if (srcid > 0) s.Put(nameof(srcid), srcid);
+            else s.PutNull(nameof(srcid));
             s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(shipon), shipon);
             s.Put(nameof(unit), unit);
-            s.Put(nameof(unitw), unitw);
+            s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);

@@ -74,7 +74,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
         HasGotOpenId:
 
         // create principal
-        using var dc = Nodality.NewDbContext();
+        using var dc = Storage.NewDbContext();
         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE im = @1");
         if (await dc.QueryTopAsync(p => p.Set(openid)))
         {

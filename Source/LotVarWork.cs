@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
@@ -28,7 +28,7 @@ public class LotVarWork : WebWork
 
         if (pricing)
         {
-            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", o.unitw, Unit.Weights[o.unitw])._LI();
+            h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip, o.unitip)._LI();
             h.LI_().FIELD2("整件", o.unitx, o.unit)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -154,7 +154,7 @@ public class LotVarWork : WebWork
             if (o.typ == 2) h.FIELD("交货起始日", o.shipon);
             h._LI();
 
-            h.LI_().FIELD("零售单位", o.unit).FIELD("单位含重", Unit.Weights[o.unitw])._LI();
+            h.LI_().FIELD("基本单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("总件数", o.cap)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
@@ -315,7 +315,7 @@ public class SuplyLotVarWork : LotVarWork
                 h.LI_().SELECT("分类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产源设施", nameof(o.srcid), o.srcid, srcs, required: o.typ == Lot.TYP_SRC)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
+                h.LI_().SELECT("基本单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 8)._LI();
                 h.LI_().NUMBER("整件", nameof(o.unitx), o.unitx, min: 1, money: false).NUMBER("批次件数", nameof(o.cap), o.cap)._LI();
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
@@ -427,7 +427,7 @@ public class SuplyLotVarWork : LotVarWork
 
                         h.HEADER_();
                         h.QRCODE(MainApp.WwwUrl + "/lot/" + o.id + "/", css: "uk-width-1-3");
-                        h.ASIDE_().H6_().T(Application.Node.name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
+                        h.ASIDE_().H6_().T(Application.Nodal.name)._H6().SMALL_().T(today, date: 3, time: 0)._SMALL()._ASIDE();
                         h._HEADER();
 
                         // h.H6_("uk-flex").T(lotid, digits: 8).T('-').T(idx + 1).SPAN(Src.Ranks[src?.rank ?? 0], "uk-margin-auto-left")._H6();

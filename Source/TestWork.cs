@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX.Web;
 using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 
 namespace ChainSmart;

@@ -16,7 +16,7 @@ public class RtllyPosVarWork : BuyVarWork
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        using var dc = Nodality.NewDbContext();
+        using var dc = Storage.NewDbContext();
         dc.Sql("UPDATE buys SET refund = pay, status = 0, oked = @1, oker = @2 WHERE id = @3 AND rtlid = @4 AND status = 4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 

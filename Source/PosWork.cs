@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 using static ChainFX.Web.ToolAttribute;
 
@@ -68,7 +68,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             {
                 var o = arr[i];
 
-                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitw).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
+                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.lotid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitip).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
                 h.T(o.name);
                 if (o.step > 1)
                 {
@@ -217,7 +217,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         decimal pay = frm[nameof(pay)];
 
         // detail lines
-        var lst = new List<BuyItem>();
+        var lst = new List<BuyLn>();
         for (var i = 0; i < frm.Count; i++)
         {
             var ety = frm.EntryAt(i);
@@ -229,7 +229,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
 
             var comp = ((string)ety.Value).Split('-');
 
-            lst.Add(new BuyItem(itemid, comp));
+            lst.Add(new BuyLn(itemid, comp));
         }
 
         if (lst.Count == 0) return;

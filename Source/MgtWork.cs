@@ -1,6 +1,6 @@
 using ChainFX;
 using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
@@ -50,7 +50,7 @@ public class AdmlyWork : MgtWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1(Application.Node.name);
+            h.H1(Application.Nodal.name);
             h.P(prin.name);
             h._HEADER();
 

@@ -33,7 +33,7 @@ public class Item : Entity, IKeyable<int>
     internal int lotid;
     internal short rank;
     internal string unit;
-    internal short unitw;
+    internal string unitip;
     internal decimal price;
     internal decimal off;
     internal bool promo;
@@ -66,7 +66,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Get(nameof(rank), ref rank);
             s.Get(nameof(unit), ref unit);
-            s.Get(nameof(unitw), ref unitw);
+            s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
@@ -108,7 +108,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(rank), rank);
             s.Put(nameof(unit), unit);
-            s.Put(nameof(unitw), unitw);
+            s.Put(nameof(unitip), unitip);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);

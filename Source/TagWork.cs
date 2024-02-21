@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 

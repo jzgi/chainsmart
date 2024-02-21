@@ -515,7 +515,7 @@ public static class WeChatUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Application.Node.name },
+            { "SignName", Application.Nodal.name },
             { "TemplateId", smsvcodetempid }
         };
 
@@ -568,7 +568,7 @@ public static class WeChatUtility
             { "SecretId", smssecretid },
             { "Region", "ap-guangzhou" },
             { "SmsSdkAppId", smssdkappid },
-            { "SignName", Application.Node.name },
+            { "SignName", Application.Nodal.name },
             { "TemplateId", smsnotiftempid }
         };
 

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Entity;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
@@ -26,12 +26,7 @@ public class ItemVarWork : WebWork
 
             h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            h.LI_().FIELD("零售单位", o.unit);
-            if (o.unitw > 0)
-            {
-                h.FIELD("单位含重", o.unitw, Unit.Weights);
-            }
-            h._LI();
+            h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.step, o.unit)._LI();
             h.LI_().FIELD("VIP立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
@@ -124,12 +119,7 @@ public class PubItemVarWork : ItemVarWork
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();
             }
-            h.LI_().FIELD("零售单位", o.unit);
-            if (o.unitw > 0)
-            {
-                h.FIELD("单位含重", o.unitw, Unit.Weights);
-            }
-            h._LI();
+            h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("单价", o.price, money: true);
             if (o.off > 0)
             {
@@ -186,7 +176,7 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("零售单位", nameof(o.unit), o.unit, Unit.Typs, showkey: true).SELECT("单位含重", nameof(o.unitw), o.unitw, Unit.Weights)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max:6)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();

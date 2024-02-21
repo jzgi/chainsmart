@@ -6,7 +6,7 @@ using ChainFX.Web;
 using static ChainFX.Web.Modal;
 using static ChainSmart.WeChatUtility;
 using static ChainFX.Application;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
@@ -43,9 +43,9 @@ public abstract class BuyVarWork : WebWork
             h.TABLE(o.items, d =>
             {
                 h.TD_().T(d.name);
-                if (d.unitw > 0)
+                if (d.unitip != null)
                 {
-                    h.SP().SMALL_().T(Unit.Weights[d.unitw])._SMALL();
+                    h.SP().SMALL_().T(d.unitip)._SMALL();
                 }
                 h._TD();
                 h.TD_(css: "uk-text-right").CNY(d.RealPrice)._TD();
@@ -317,9 +317,9 @@ public class MktlyBuyVarWork : BuyVarWork
                     h.LI_();
 
                     h.SPAN_("uk-width-expand").T(it.name);
-                    if (it.unitw > 0)
+                    if (it.unitip != null)
                     {
-                        h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                        h.SP().SMALL_().T(it.unitip).T(it.unit)._SMALL();
                     }
                     h._SPAN();
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();

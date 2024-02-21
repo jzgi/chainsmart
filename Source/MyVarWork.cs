@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
@@ -60,9 +60,9 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                         h.LI_("uk-flex");
 
                         h.SPAN_("uk-width-expand").T(it.name);
-                        if (it.unitw > 0)
+                        if (it.unitip != null)
                         {
-                            h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                            h.SP().SMALL_().T(it.unitip).T(it.unit)._SMALL();
                         }
                         // h.SP().CNY(it.RealPrice);
                         h._SPAN();
@@ -108,7 +108,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             if (o.admly > 0)
             {
-                h.LI_().T(Application.Node.name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
+                h.LI_().T(Application.Nodal.name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
                 any++;
             }
 
@@ -143,7 +143,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             if (any == 0)
             {
-                h.LI_().T(Application.Node.name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
+                h.LI_().T(Application.Nodal.name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
             }
 
             h._UL();

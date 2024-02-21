@@ -4,7 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.ToolAttribute;
 using static ChainFX.Entity;
 
@@ -82,9 +82,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.ASIDE_();
 
                 h.HEADER_().H4(o.name);
-                if (o.unitw > 0)
+                if (o.unitip != null)
                 {
-                    h.SP().SMALL_().T(Unit.Weights[o.unitw])._SMALL();
+                    h.SP().SMALL_().T(o.unitip)._SMALL();
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
@@ -166,7 +166,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
         string addr = f[nameof(addr)];
 
         // lines of detail
-        var lst = new List<BuyItem>();
+        var lst = new List<BuyLn>();
         for (int i = 0; i < f.Count; i++)
         {
             var ety = f.EntryAt(i);
@@ -178,7 +178,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 continue;
             }
 
-            lst.Add(new BuyItem(id, qty));
+            lst.Add(new BuyLn(id, qty));
         }
 
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);

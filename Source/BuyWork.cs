@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 using static ChainSmart.OrgNoticePack;
 
@@ -231,9 +231,9 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 h.LI_();
 
                 h.SPAN_("uk-width-expand").T(it.name);
-                if (it.unitw > 0)
+                if (it.unitip != null)
                 {
-                    h.SP().SMALL_().T(it.unitw).T(it.unit)._SMALL();
+                    h.SP().SMALL_().T(it.unitip).T(it.unit)._SMALL();
                 }
                 h._SPAN();
 
@@ -420,9 +420,9 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                         h.LI_();
 
                         h.SPAN_("uk-width-expand").T(it.name);
-                        if (it.unitw > 0)
+                        if (it.unitip != null)
                         {
-                            h.SP().SMALL_().T(Unit.Weights[it.unitw])._SMALL();
+                            h.SP().SMALL_().T(it.unitip)._SMALL();
                         }
 
                         h._SPAN();

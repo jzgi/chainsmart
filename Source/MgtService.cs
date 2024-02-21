@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainSmart.WeChatUtility;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
@@ -20,7 +20,7 @@ public class MgtService : MainService
 
     public void @default(WebContext wc)
     {
-        wc.GivePage(200, h => { h.ALERT_().T(Application.Node.name).T("平台管理")._ALERT(); }, true, 3600, title: "平台管理");
+        wc.GivePage(200, h => { h.ALERT_().T(Application.Nodal.name).T("平台管理")._ALERT(); }, true, 3600, title: "平台管理");
     }
 
     /**

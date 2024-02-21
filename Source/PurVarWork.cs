@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Application;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
@@ -27,7 +27,7 @@ public abstract class PurVarWork : WebWork
             h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
             h.LI_().LABEL("买方").SPAN_("uk-static").T(rtl.name).SP().ATEL(rtl.tel)._SPAN()._LI();
             h.LI_().FIELD("产品名", o.name)._LI();
-            h.LI_().FIELD("零售单位", o.unit).FIELD("含重", o.unitw, Unit.Weights)._LI();
+            h.LI_().FIELD("基本单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD2("整件", o.unitx, o.unit).FIELD("运费", o.fee, money: true)._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD("优惠立减", o.off)._LI();
             h.LI_().FIELD("件数", o.QtyX).FIELD("支付金额", o.pay, money: true)._LI();

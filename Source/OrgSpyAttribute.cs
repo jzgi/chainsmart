@@ -10,7 +10,7 @@ public class OrgSpyAttribute : TwinSpyAttribute
 
     public override int Do(int orgid, bool clear = false)
     {
-        var org = Nodality.GrabTwin<int, Org>(orgid);
+        var org = Storage.GrabTwin<int, Org>(orgid);
 
         return org.NoticePack.Check(slot, clear);
     }

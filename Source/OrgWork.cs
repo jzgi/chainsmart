@@ -5,7 +5,7 @@ using ChainFX;
 using ChainFX.Nodal;
 using ChainFX.Web;
 using static ChainFX.Web.Modal;
-using static ChainFX.Nodal.Nodality;
+using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
