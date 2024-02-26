@@ -7,8 +7,6 @@ namespace ChainSmart;
 /// 
 public class Reg : Entity, IKeyable<short>, IFolderable
 {
-    public const short HOME_REGID = 90;
-
     public static readonly Reg Empty = new();
 
     public const short
@@ -27,7 +25,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
 
     internal short idx;
 
-    internal short catmsk; // mask for categories
+    internal short style;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -39,7 +37,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Get(nameof(idx), ref idx);
-        s.Get(nameof(catmsk), ref catmsk);
+        s.Get(nameof(style), ref style);
     }
 
     public override void Write(ISink s, short msk = 0xff)
@@ -52,14 +50,14 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Put(nameof(idx), idx);
-        s.Put(nameof(catmsk), catmsk);
+        s.Put(nameof(style), style);
     }
 
     public short Key => id;
 
     public short Index => idx;
 
-    public short Size => catmsk;
+    public short Size => style;
 
     public bool IsProvince => typ == TYP_PROVINCE;
 

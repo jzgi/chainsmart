@@ -25,7 +25,7 @@ public abstract class OrgVarWork : WebWork
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("商户名", m.name)._LI();
                 h.LI_().FIELD("简介语", m.tip)._LI();
-                if (!m.IsHome)
+                if (!m.IsHomeOrg)
                 {
                     h.LI_().FIELD("工商登记名", m.legal)._LI();
                 }
@@ -41,7 +41,7 @@ public abstract class OrgVarWork : WebWork
                     h.FIELD("联系电话", m.tel);
                 }
                 h._LI();
-                h.LI_().FIELD(m.AsRtl ? "商户编号" : m.IsHome ? "链接" : "地址", m.addr)._LI();
+                h.LI_().FIELD(m.AsRtl ? "商户编号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
                 if (!m.AsRtl)
                 {
                     h.LI_().FIELD("说明", m.descr)._LI();
@@ -393,7 +393,7 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsHome ? "服务型商户" : "产品型商户");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsHomeOrg ? "服务型商户" : "产品型商户");
 
                     h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编号或场址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();

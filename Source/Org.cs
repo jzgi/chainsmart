@@ -221,7 +221,7 @@ public class Org : Entity, ITwin<int>
 
     public bool AsUpr => (typ & TYP_UPR_) == TYP_UPR_;
 
-    public bool IsHome => regid == Reg.HOME_REGID;
+    public bool IsHomeOrg => regid == 0;
 
     public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
 

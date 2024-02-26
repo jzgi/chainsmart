@@ -265,11 +265,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
     /// </summary>
     public void lst(WebContext wc, int sector)
     {
-        if (sector == 0)
-        {
-            sector = wc.Subscript = Reg.HOME_REGID;
-        }
-
         int orgid = wc[0];
         var regs = Grab<short, Reg>();
         var org = GrabTwin<int, Org>(orgid);
@@ -281,7 +276,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
         }
 
         var arr = GrabTwinArray<int, Org>(orgid, x => x.regid == sector && x.status == 4);
-        if (sector == Reg.HOME_REGID && org.IsOked) // default sector
+        if (sector == 0 && org.IsOked) // default sector
         {
             arr = arr.AddOf(org, first: true);
         }
@@ -300,7 +295,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
             var now = DateTime.Now.TimeOfDay;
 
-            if (sector == Reg.HOME_REGID)
+            if (sector == 0)
             {
                 h.SLIDERUL_();
 
