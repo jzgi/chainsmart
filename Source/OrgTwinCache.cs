@@ -12,7 +12,7 @@ public class OrgTwinCache : DbTwinCache<int, Org>
 
     public override bool TryGetForkKey(DbContext dc, int key, out int forkKey)
     {
-        if (dc.QueryTop("SELECT upperid FROM orgs_vw WHERE id = @1", p => p.Set(key)))
+        if (dc.QueryTop("SELECT parentid FROM orgs_vw WHERE id = @1", p => p.Set(key)))
         {
             dc.Let(out forkKey);
             return true;
@@ -25,11 +25,11 @@ public class OrgTwinCache : DbTwinCache<int, Org>
     {
         if (forkKey == 0)
         {
-            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE upperid IS NULL ORDER BY regid, id");
+            dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parentid IS NULL ORDER BY regid, id");
             return dc.Query<int, Org>();
         }
 
-        dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE upperid = @1 ORDER BY regid, id");
+        dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parentid = @1 ORDER BY regid, id");
         return dc.Query<int, Org>(p => p.Set(forkKey));
     }
 

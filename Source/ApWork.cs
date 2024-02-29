@@ -263,7 +263,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
     }
 }
 
-[Ui("网售业务结款")]
+[Ui("网售结款")]
 public class RtllyBuyApWork : ApWork<OrglyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

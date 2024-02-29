@@ -82,7 +82,7 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[Ui("销售业务汇总")]
+[Ui("销售汇总")]
 public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]

@@ -8,9 +8,9 @@ using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-public abstract class RegWork : WebWork
+public abstract class CatWork : WebWork
 {
-    protected static void MainGrid(HtmlBuilder h, Reg[] arr)
+    protected static void MainGrid(HtmlBuilder h, Cat[] arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -29,64 +29,35 @@ public abstract class RegWork : WebWork
     }
 }
 
-[Ui("区域")]
-public class AdmlyRegWork : RegWork
+[Ui("品类")]
+public class AdmlyCatWork : CatWork
 {
     protected override void OnCreate()
     {
-        CreateVarWork<AdmlyRegVarWork>();
+        CreateVarWork<AdmlyCatVarWork>();
     }
 
-    [Ui("版块", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_SECTOR).T(" ORDER BY id, status DESC");
-        var arr = dc.Query<Reg>();
+        dc.Sql("SELECT ").collst(Cat.Empty).T(" FROM cats ORDER BY typ, status DESC");
+        var arr = dc.Query<Cat>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Reg.TYP_SECTOR);
+            h.TOOLBAR();
 
             MainGrid(h, arr);
         }, false, 15);
     }
 
-    [Ui("地市", status: 2), Tool(Anchor)]
-    public void city(WebContext wc)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_CITY).T(" ORDER BY id, status DESC");
-        var arr = dc.Query<Reg>();
 
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: Reg.TYP_CITY);
-
-            MainGrid(h, arr);
-        }, false, 15);
-    }
-
-    [Ui("省份", status: 4), Tool(Anchor)]
-    public void prov(WebContext wc)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE typ = ").T(Reg.TYP_PROVINCE).T(" ORDER BY id, status DESC");
-        var arr = dc.Query<Reg>();
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
-
-            MainGrid(h, arr);
-        }, false, 12);
-    }
-
-    [Ui("新建", "新建区域", icon: "plus", status: 7), Tool(ButtonOpen)]
+    [Ui("新建", "创建新的品类", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int typ)
     {
         var prin = (User)wc.Principal;
-        var o = new Reg
+        var o = new Cat
         {
             typ = (short)typ,
             created = DateTime.Now,
@@ -96,12 +67,11 @@ public class AdmlyRegWork : RegWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("区域信息");
-                h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
+                h.FORM_().FIELDSUL_("品类信息");
+                h.LI_().NUMBER("品类编号", nameof(o.typ), o.typ, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("品类标志", nameof(o.style), o.style, min: 0, max: 0xff)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
             });
         }
@@ -111,7 +81,7 @@ public class AdmlyRegWork : RegWork
 
             o = await wc.ReadObjectAsync(msk, instance: o);
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO regs ").colset(Reg.Empty, msk)._VALUES_(Item.Empty, msk);
+            dc.Sql("INSERT INTO Cats ").colset(Cat.Empty, msk)._VALUES_(Cat.Empty, msk);
             await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // close dialog

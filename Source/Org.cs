@@ -15,17 +15,17 @@ public class Org : Entity, ITwin<int>
     public const short
         _BIZ = 0b000001, // biz
         _BCK = 0b000010, // backing
-        TYP_UPR_ = 0b010000, // upper institute
         TYP_RTL_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
+        TYP_EST_ = 0b010000, // establishment
         //
         TYP_RTL_BUY = TYP_RTL_ | _BIZ,
         TYP_RTL_FUL = TYP_RTL_ | _BIZ | _BCK,
-        TYP_RTL_MKT = TYP_UPR_ | TYP_RTL_FUL,
+        TYP_RTL_MKT = TYP_EST_ | TYP_RTL_FUL,
         //
         TYP_SUP_SRC = TYP_SUP_ | _BCK,
         TYP_SUP_FUL = TYP_SUP_ | _BIZ | _BCK,
-        TYP_SUP_HUB = TYP_UPR_ | TYP_SUP_FUL;
+        TYP_SUP_HUB = TYP_EST_ | TYP_SUP_FUL;
 
     public static readonly Map<short, string> Typs = new()
     {
@@ -53,7 +53,7 @@ public class Org : Entity, ITwin<int>
     internal int id;
 
     // parent id, if rtl or sup
-    internal int upperid;
+    internal int parentid;
 
     // connected hub warehouse id, if market or retail 
     internal int hubid;
@@ -96,7 +96,7 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                s.Get(nameof(upperid), ref upperid);
+                s.Get(nameof(parentid), ref parentid);
                 s.Get(nameof(hubid), ref hubid);
             }
 
@@ -145,8 +145,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_BORN) == MSK_BORN)
             {
-                if (upperid > 0) s.Put(nameof(upperid), upperid);
-                else s.PutNull(nameof(upperid));
+                if (parentid > 0) s.Put(nameof(parentid), parentid);
+                else s.PutNull(nameof(parentid));
 
                 if (hubid > 0) s.Put(nameof(hubid), hubid);
                 else s.PutNull(nameof(hubid));
@@ -211,15 +211,15 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public int MktId => IsMkt ? id : AsRtl ? upperid : 0;
+    public int MktId => IsMkt ? id : AsRtl ? parentid : 0;
 
-    public int HubId => IsHub ? id : AsSup ? upperid : 0;
+    public int HubId => IsHub ? id : AsSup ? parentid : 0;
 
     public bool IsMkt => (typ & TYP_RTL_MKT) == TYP_RTL_MKT;
 
     public bool IsHub => typ == TYP_SUP_HUB;
 
-    public bool AsUpr => (typ & TYP_UPR_) == TYP_UPR_;
+    public bool AsUpr => (typ & TYP_EST_) == TYP_EST_;
 
     public bool IsHomeOrg => regid == 0;
 
@@ -235,7 +235,7 @@ public class Org : Entity, ITwin<int>
 
     public bool HasXy => IsMkt || AsSup || IsHub;
 
-    public bool IsTopOrg => upperid == 0;
+    public bool IsTopOrg => parentid == 0;
 
     public bool IsLink => addr?.IndexOf('/') >= 0;
 
@@ -260,7 +260,7 @@ public class Org : Entity, ITwin<int>
 
     public string Cover => cover;
 
-    public int ForkKey => upperid;
+    public int ForkKey => parentid;
 
     public bool IsOpen(TimeSpan now)
     {

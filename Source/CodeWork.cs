@@ -28,8 +28,8 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
             h.SPAN((Code.Typs[o.typ]), "uk-badge");
             h._HEADER();
 
-            h.Q(o.idno, "uk-width-expand");
-            h.FOOTER_().SPAN(o.cardno).SPAN_("uk-margin-auto-left").T(o.bal)._SPAN()._FOOTER();
+            h.Q(o.nstart, "uk-width-expand");
+            // h.FOOTER_().SPAN(o.nend).SPAN_("uk-margin-auto-left").T(o.bal)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -38,16 +38,16 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
 }
 
 [MgtAuthorize(Org._BCK)]
-[Ui("溯源码申请")]
+[Ui("溯源码领单")]
 public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 {
-    [Ui("新申请", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 1 LIMIT 20 OFFSET @1");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE parentid = @1 AND status = 1 LIMIT 20 OFFSET @1");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page * 20));
 
         wc.GivePage(200, h =>
@@ -55,7 +55,7 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无新申请");
+                h.ALERT("尚无新的领单");
                 return;
             }
             MainGrid(h, arr);
@@ -69,7 +69,7 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 2 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE parentid = @1 AND status = 2 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -92,7 +92,7 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE parentid = @1 AND status = 0 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page * 20));
 
         wc.GivePage(200, h =>
@@ -118,7 +118,7 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
         {
             created = DateTime.Now,
             creator = prin.name,
-            upperid = org.id,
+            orgid = org.id,
             status = 4,
         };
 
@@ -147,11 +147,11 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
                     }
                     h.FIELDSUL_();
 
-                    h.HIDDEN(nameof(o.userid), u.id);
+                    h.HIDDEN(nameof(o.cnt), u.id);
                     h.LI_().TEXT("用户名", nameof(o.name), u.name, @readonly: true)._LI();
-                    h.LI_().TEXT("身份证号", nameof(o.idno), o.idno, min: 18, max: 18)._LI();
+                    // h.LI_().TEXT("身份证号", nameof(o.nstart), o.nstart, min: 18, max: 18)._LI();
                     h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
-                    h.LI_().TEXT("民生卡号", nameof(o.cardno), o.cardno, min: 4, max: 8)._LI();
+                    // h.LI_().TEXT("民生卡号", nameof(o.nend), o.nend, min: 4, max: 8)._LI();
 
                     h._FIELDSUL();
                     h.BOTTOMBAR_().BUTTON("确认", nameof(@new), 2)._BOTTOMBAR();
@@ -170,71 +170,5 @@ public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 
             wc.GivePane(200); // ok
         }
-    }
-}
-
-[MgtAuthorize(0)]
-[Ui("溯源码发放")]
-public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
-{
-    [Ui("溯源码申请", status: 1), Tool(Anchor)]
-    public async Task @default(WebContext wc, int page)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(20 & page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: 1);
-            if (arr == null)
-            {
-                h.ALERT("尚无收到申请");
-                return;
-            }
-            MainGrid(h, arr);
-            h.PAGINATION(arr.Length == 20);
-        }, false, 12);
-    }
-
-    [Ui(tip: "已批准", icon: "check", status: 2), Tool(Anchor)]
-    public async Task adapted(WebContext wc, int page)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 ORDER BY adapted DESC LIMIT 20 OFFSET @1");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(20 * page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            if (arr == null)
-            {
-                h.ALERT("尚无已批准申请");
-                return;
-            }
-            MainGrid(h, arr);
-            h.PAGINATION(arr.Length == 20);
-        }, false, 12);
-    }
-
-
-    [Ui(tip: "已拒绝", icon: "close", status: 4), Tool(Anchor)]
-    public async Task @void(WebContext wc, int page)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 ORDER BY adapted DESC LIMIT 20 OFFSET @1");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(20 * page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-            if (arr == null)
-            {
-                h.ALERT("尚无已拒绝申请");
-                return;
-            }
-
-            MainGrid(h, arr);
-        }, false, 12);
     }
 }

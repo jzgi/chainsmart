@@ -16,19 +16,23 @@ public class AdmlyWork : MgtWork
     {
         // basic 
 
-        CreateWork<AdmlyMbrWork>("mbr", header: "常规");
+        CreateWork<AdmlyRegWork>("reg", header: "常规");
 
-        CreateWork<AdmlyRegWork>("reg");
+        CreateWork<AdmlySymWork>("sym");
+
+        CreateWork<AdmlyCatWork>("cat");
+
+        CreateWork<AdmlyMbrWork>("mbr");
 
         // biz
 
-        CreateWork<AdmlyUprWork>("upr", header: "业务");
+        CreateWork<AdmlyEstWork>("est", header: "业务");
 
         CreateWork<AdmlySupWork>("sup");
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyCodeWork>("code");
+        CreateWork<AdmlyFlowWork>("flow");
 
         // fin
 

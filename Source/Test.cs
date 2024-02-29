@@ -38,7 +38,7 @@ public class Test : Entity, IKeyable<int>
     };
 
     internal int id;
-    internal int upperid;
+    internal int parentid;
     internal int orgid;
     internal decimal val;
     internal short level;
@@ -53,7 +53,7 @@ public class Test : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(upperid), ref upperid);
+            s.Get(nameof(parentid), ref parentid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
@@ -73,7 +73,7 @@ public class Test : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(upperid), upperid);
+            s.Put(nameof(parentid), parentid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {

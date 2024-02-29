@@ -2,28 +2,34 @@
 
 namespace ChainSmart;
 
-/// <summary>
-/// A range of tracebility codes. 
-/// </summary>
-public class Code : Entity, IKeyable<int>
+public class Flow : Entity, IKeyable<int>
 {
-    public static readonly Code Empty = new();
+    public static readonly Flow Empty = new();
+
+    public const short
+        TYP_ITEM = 1,
+        TYP_LOT = 2,
+        TYP_CODE = 5;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "特牌" },
-        { 2, "普牌" },
-        { 3, "特贴" },
-        { 4, "普贴" },
-        { 5, "RFID" },
+        { TYP_ITEM, "商品" },
+        { TYP_LOT, "产品" },
+        { TYP_CODE, "溯源码" },
     };
 
+    public new static readonly Map<short, string> Statuses = new()
+    {
+        { STU_VOID, "撤销" },
+        { STU_CREATED, "创建" },
+        { STU_ADAPTED, "调整" },
+        { STU_OKED, "生效" },
+    };
 
     internal int id;
     internal int orgid;
-    internal int cnt;
-    internal int nstart;
-    internal int nend;
+    internal int from;
+    internal int dataid;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -33,17 +39,14 @@ public class Code : Entity, IKeyable<int>
         {
             s.Get(nameof(id), ref id);
         }
-
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(from), ref from);
         }
-
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(cnt), ref cnt);
-            s.Get(nameof(nstart), ref nstart);
-            s.Get(nameof(nend), ref nend);
+            s.Get(nameof(dataid), ref dataid);
         }
     }
 
@@ -57,17 +60,16 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(orgid), orgid);
+            if (orgid > 0) s.Put(nameof(orgid), orgid);
+            else s.PutNull(nameof(orgid));
+
+            s.Put(nameof(from), from);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(cnt), cnt);
-            s.Put(nameof(nstart), nstart);
-            s.Put(nameof(nend), nend);
+            s.Put(nameof(dataid), dataid);
         }
     }
 
     public int Key => id;
-
-    public override string ToString() => name;
 }

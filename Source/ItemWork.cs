@@ -54,7 +54,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         });
     }
 
-    [Ui("上线商品", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

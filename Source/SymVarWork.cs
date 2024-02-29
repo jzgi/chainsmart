@@ -4,11 +4,11 @@ using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
-public abstract class TagVarWork : WebWork
+public abstract class SymVarWork : WebWork
 {
 }
 
-public class PublyTagVarWork : TagVarWork
+public class PublySymVarWork : SymVarWork
 {
     public async Task @default(WebContext wc)
     {
@@ -28,6 +28,6 @@ public class PublyTagVarWork : TagVarWork
     }
 }
 
-public class AdmlyTagVarWork : TagVarWork
+public class AdmlySymVarWork : SymVarWork
 {
 }

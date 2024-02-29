@@ -10,15 +10,15 @@ public class Reg : Entity, IKeyable<short>, IFolderable
     public static readonly Reg Empty = new();
 
     public const short
-        TYP_PROVINCE = 1,
+        TYP_SECTOR = 1,
         TYP_CITY = 2,
-        TYP_SECTOR = 3;
+        TYP_PROVINCE = 3;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_PROVINCE, "省份" },
-        { TYP_CITY, "地市" },
         { TYP_SECTOR, "版块" },
+        { TYP_CITY, "地市" },
+        { TYP_PROVINCE, "省份" },
     };
 
     internal short id;

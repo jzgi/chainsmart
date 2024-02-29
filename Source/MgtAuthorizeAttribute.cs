@@ -41,7 +41,7 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
                 {
                     return true;
                 }
-                if (prin.rtlid == org.upperid && org.trust) // upper org
+                if (prin.rtlid == org.parentid && org.trust) // parent org
                 {
                     super = true;
                     return true;
@@ -61,7 +61,7 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
                 {
                     return true;
                 }
-                if (prin.supid == org.upperid && org.trust)
+                if (prin.supid == org.parentid && org.trust)
                 {
                     super = true;
                     return true;

@@ -15,7 +15,7 @@ public abstract class CodeVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1 AND upperid = @2");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1 AND parentid = @2");
         var o = await dc.QueryTopAsync<Code>(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200, h =>
@@ -25,8 +25,8 @@ public abstract class CodeVarWork : WebWork
             h.LI_().FIELD("用户名", o.name)._LI();
             h.LI_().FIELD("受检商户", o.name)._LI();
             h.LI_().FIELD("说明", o.tip)._LI();
-            h.LI_().FIELD("身份证号", o.idno)._LI();
-            h.LI_().FIELD("民生卡号", o.cardno)._LI();
+            h.LI_().FIELD("身份证号", o.nstart)._LI();
+            h.LI_().FIELD("民生卡号", o.nend)._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "生效", o.oker, o.oked, sep: "<br>")._LI();
@@ -56,9 +56,9 @@ public abstract class CodeVarWork : WebWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().TEXT("身份证号", nameof(o.idno), o.idno, min: 18, max: 18)._LI();
+                // h.LI_().TEXT("身份证号", nameof(o.nstart), o.nstart, min: 18, max: 18)._LI();
                 h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
-                h.LI_().TEXT("民生卡号", nameof(o.cardno), o.cardno, min: 4, max: 8)._LI();
+                // h.LI_().TEXT("民生卡号", nameof(o.nend), o.nend, min: 4, max: 8)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
         }
@@ -73,7 +73,7 @@ public abstract class CodeVarWork : WebWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE codes ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND upperid = @2");
+            dc.Sql("UPDATE codes ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND parentid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -93,7 +93,7 @@ public abstract class CodeVarWork : WebWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE codes SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
+        dc.Sql("UPDATE codes SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -107,7 +107,7 @@ public abstract class CodeVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE codes SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
+        dc.Sql("UPDATE codes SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);

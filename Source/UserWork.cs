@@ -124,10 +124,10 @@ public class AdmlyMbrWork : UserWork<AdmlyAccessVarWork>
     }
 }
 
-[Ui("用户管理")]
+[Ui("用户")]
 public class AdmlyUserWork : UserWork<AdmlyUserVarWork>
 {
-    [Ui("用户管理", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -318,10 +318,10 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
     }
 }
 
-[Ui("VIP")]
+[Ui("大客户")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {
-    [Ui("VIP", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -336,7 +336,7 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无VIP");
+                h.ALERT("尚无大客户");
                 return;
             }
 

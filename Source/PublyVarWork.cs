@@ -21,7 +21,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
-        var mkt = org.IsMkt ? org : GrabTwin<int, Org>(org.upperid);
+        var mkt = org.IsMkt ? org : GrabTwin<int, Org>(org.parentid);
 
         // show availlable item list
         //

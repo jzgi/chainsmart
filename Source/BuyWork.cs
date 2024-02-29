@@ -18,7 +18,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
 }
 
 [MgtAuthorize(Org._BIZ)]
-[Ui("网售业务")]
+[Ui("网售")]
 [Help("对所收的网售订单进行处理")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 {
@@ -72,7 +72,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
 
     [OrgSpy(BUY_CREATED)]
-    [Ui(tip: "新收的网售订单", status: 1), Tool(Anchor)]
+    [Ui(tip: "新订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -87,7 +87,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无新的订单");
+                h.ALERT("尚无新订单");
                 return;
             }
 

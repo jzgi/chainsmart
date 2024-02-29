@@ -19,7 +19,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
 }
 
 [MgtAuthorize(Org._BCK)]
-[Ui("采购业务")]
+[Ui("采购")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
     protected override void OnCreate()
@@ -55,7 +55,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         });
     }
 
-    [Ui("采购订单", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

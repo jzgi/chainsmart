@@ -52,7 +52,7 @@ public abstract class MgtVarWork : WebWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND orgid = @2 AND status > 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND orgid = @2 AND status > 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Test>(p => p.Set(org.id));
 
         wc.GivePane(200, h =>
@@ -146,15 +146,17 @@ public class RtllyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("入驻商户"), header: "机构");
 
-        CreateWork<MktlyOrgWork>("mrtlbuy", state: Org.TYP_RTL_BUY, ui: new UiAttribute("成员销售户"));
+        CreateWork<MktlyOrgWork>("mrtlbuy", state: Org.TYP_RTL_BUY, ui: new UiAttribute("入驻销售户"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
 
         CreateWork<MktlyTestWork>("mtest");
+
+        CreateWork<MktlyFlowWork>("mflow");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -165,7 +167,7 @@ public class RtllyVarWork : MgtVarWork
         wc.GivePane(200, h =>
         {
             h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
-            h.QRCODE(MainApp.WwwUrl + "/" + org.upperid + "/" + org.id + "/", css: "uk-width-small");
+            h.QRCODE(MainApp.WwwUrl + "/" + org.parentid + "/" + org.id + "/", css: "uk-width-small");
             h.SPAN(org.name);
             h._NAV();
 

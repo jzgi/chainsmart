@@ -44,7 +44,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND status = 4");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND status = 4");
         var arr = await dc.QueryAsync<Test>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -65,7 +65,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND status BETWEEN 1 AND 2 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Test>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -88,7 +88,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND status = 0 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND status = 0 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Test>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -115,7 +115,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
 
         var o = new Test
         {
-            upperid = org.id,
+            parentid = org.id,
             created = DateTime.Now,
             creator = prin.name,
             level = 3,
@@ -158,7 +158,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE upperid = @1 AND status = 4 ORDER BY typ");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND status = 4 ORDER BY typ");
         var arr = await dc.QueryAsync<Test>(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;

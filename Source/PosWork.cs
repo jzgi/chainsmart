@@ -39,7 +39,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[Ui("场售")]
+[Ui("ＰＯＳ")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

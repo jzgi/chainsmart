@@ -7,7 +7,7 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class TestVarWork : WebWork
+public abstract class FlowVarWork : WebWork
 {
     public async Task @default(WebContext wc)
     {
@@ -15,8 +15,8 @@ public abstract class TestVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE id = @1 AND parentid = @2");
-        var o = await dc.QueryTopAsync<Test>(p => p.Set(id).Set(org.id));
+        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE id = @1 AND parentid = @2");
+        var o = await dc.QueryTopAsync<Flow>(p => p.Set(id).Set(org.id));
 
         var suborg = GrabTwin<int, Org>(o.orgid);
 
@@ -28,10 +28,9 @@ public abstract class TestVarWork : WebWork
             h.LI_().FIELD("受检商品", o.name)._LI();
             h.LI_().FIELD("受检商户", suborg.name)._LI();
             h.LI_().FIELD("说明", o.tip)._LI();
-            h.LI_().FIELD("分值", o.val)._LI();
-            h.LI_().FIELD("结论", o.level, Test.Levels)._LI();
+            h.LI_().FIELD("分值", o.dataid)._LI();
 
-            h.LI_().FIELD("状态", o.status, Test.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD("状态", o.status, Flow.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
@@ -53,25 +52,24 @@ public abstract class TestVarWork : WebWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE id = @1");
-            var o = await dc.QueryTopAsync<Test>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE id = @1");
+            var o = await dc.QueryTopAsync<Flow>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("检测类型", nameof(o.typ), o.typ, Test.Typs)._LI();
+                h.LI_().SELECT("检测类型", nameof(o.typ), o.typ, Flow.Typs)._LI();
                 h.LI_().TEXT("受检商品", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().LABEL("受检商户").SELECT_ORG(nameof(o.orgid), o.orgid, orgs, regs)._LI();
                 h.LI_().TEXTAREA("说明", nameof(o.tip), o.tip, min: 2, max: 20)._LI();
-                h.LI_().NUMBER("分值", nameof(o.val), o.val)._LI();
-                h.LI_().SELECT("结论", nameof(o.level), o.level, Test.Levels)._LI();
+                h.LI_().NUMBER("分值", nameof(o.dataid), o.dataid)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
         }
         else // POST
         {
             const short msk = MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, new Test
+            var m = await wc.ReadObjectAsync(msk, new Flow
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -79,7 +77,7 @@ public abstract class TestVarWork : WebWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE tests ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND parentid = @2");
+            dc.Sql("UPDATE flows ")._SET_(Flow.Empty, msk).T(" WHERE id = @1 AND parentid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -99,7 +97,7 @@ public abstract class TestVarWork : WebWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE tests SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
+        dc.Sql("UPDATE flows SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -113,17 +111,17 @@ public abstract class TestVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE tests SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
+        dc.Sql("UPDATE flows SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);
     }
 }
 
-public class MktlyTestVarWork : TestVarWork
+public class AdmlyFlowVarWork : FlowVarWork
 {
 }
 
-public class CtrlyTestVarWork : TestVarWork
+public class MktlyFlowVarWork : FlowVarWork
 {
 }

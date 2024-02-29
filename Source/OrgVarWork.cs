@@ -467,7 +467,7 @@ public class MktlyOrgVarWork : OrgVarWork
         }
         await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4");
+            dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -491,7 +491,7 @@ public class MktlyOrgVarWork : OrgVarWork
         }
         await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND upperid = @2");
+            dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
         });
 
@@ -518,7 +518,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
+            dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
 
@@ -537,7 +537,7 @@ public class MktlyOrgVarWork : OrgVarWork
         var m = GrabTwin<int, Org>(id);
         await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
-            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND upperid = @4 AND status BETWEEN 1 AND 2");
+            dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND parentid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
         });
         lock (m)

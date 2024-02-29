@@ -46,7 +46,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 }
 
 [Ui("入驻机构")]
-public class AdmlyUprWork : OrgWork<AdmlyOrgVarWork>
+public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
 {
     [Ui("市场", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -408,7 +408,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             typ = Org.TYP_RTL_,
             created = DateTime.Now,
             creator = prin.name,
-            upperid = org.id,
+            parentid = org.id,
             hubid = org.hubid,
             regid = (short)regid,
             status = Entity.STU_CREATED

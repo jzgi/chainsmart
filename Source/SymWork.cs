@@ -6,7 +6,7 @@ using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
-public abstract class TagWork<V> : WebWork where V : WebWork, new()
+public abstract class SymWork<V> : WebWork where V : WebWork, new()
 {
     protected override void OnCreate()
     {
@@ -14,7 +14,7 @@ public abstract class TagWork<V> : WebWork where V : WebWork, new()
     }
 }
 
-public class PublyTagWork : TagWork<PublyTagVarWork>
+public class PublySymWork : SymWork<PublySymVarWork>
 {
     public async Task @default(WebContext wc, int tracenum)
     {
@@ -71,10 +71,10 @@ public class PublyTagWork : TagWork<PublyTagVarWork>
     }
 }
 
-[Ui("标号设置")]
-public class AdmlyTagWork : TagWork<AdmlyTagVarWork>
+[Ui("标志")]
+public class AdmlySymWork : SymWork<AdmlySymVarWork>
 {
-    static void MainGrid(HtmlBuilder h, IList<Code> arr)
+    static void MainGrid(HtmlBuilder h, IList<Sym> arr)
     {
     }
 
@@ -82,15 +82,16 @@ public class AdmlyTagWork : TagWork<AdmlyTagVarWork>
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(20 & page));
+        dc.Sql("SELECT ").collst(Sym.Empty).T(" FROM syms WHERE status = 2 LIMIT 20 OFFSET @1");
+        var arr = await dc.QueryAsync<Sym>(p => p.Set(20 & page));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 1);
+
             if (arr == null)
             {
-                h.ALERT("尚无收到申请");
+                h.ALERT("尚无新的标志");
                 return;
             }
             MainGrid(h, arr);
