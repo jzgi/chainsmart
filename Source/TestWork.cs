@@ -38,7 +38,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     }
 
 
-    [Ui("检测记录", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -70,7 +70,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: 1);
+            h.TOOLBAR(subscript: 2);
 
             if (arr == null)
             {
