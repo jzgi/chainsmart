@@ -37,7 +37,7 @@ public abstract class CodeWork<V> : WebWork where V : CodeVarWork, new()
     }
 }
 
-[MgtAuthorize(Org._BCK)]
+[MgtAuthorize(Org.TYP_SRC)]
 [Ui("溯源码")]
 public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
 {

@@ -37,7 +37,8 @@ public abstract class LotOpWork<V> : WebWork where V : LotOpVarWork, new()
     }
 }
 
-[Ui("产品仓管")]
+[MgtAuthorize(Org.TYP_SUP_)]
+[Ui("云仓货管")]
 public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -133,7 +134,8 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
     }
 }
 
-[Ui("产品仓管")]
+[MgtAuthorize(Org.TYP_HUB)]
+[Ui("货管")]
 public class HublyLotOpWork : LotOpWork<HublyLotOpVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

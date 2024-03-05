@@ -136,7 +136,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
     }
 }
 
-[MgtAuthorize(Org._BIZ)]
+[MgtAuthorize(Org.TYP_SUP)]
 [Ui("销售汇总")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
@@ -203,7 +203,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 }
 
 [MgtAuthorize(Org.TYP_HUB)]
-[Ui("云仓业务汇总")]
+[Ui("销售汇总")]
 public class HublyPurLdgWork : LdgWork<LdgVarWork>
 {
     public void @default(WebContext wc, int page)

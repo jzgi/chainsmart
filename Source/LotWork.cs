@@ -76,7 +76,7 @@ public class PublyLotWork : LotWork<PublyLotVarWork>
     }
 }
 
-[MgtAuthorize(Org._BIZ)]
+[MgtAuthorize(Org.TYP_SUP)]
 [Ui("产品")]
 public class SuplyLotWork : LotWork<SuplyLotVarWork>
 {

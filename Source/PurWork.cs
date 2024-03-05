@@ -196,8 +196,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org._BIZ)]
-[Ui("网售")]
+[MgtAuthorize(Org.TYP_SUP)]
+[Ui("销售")]
 public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
     private static void MainGrid(HtmlBuilder h, IList<Pur> lst)
@@ -319,10 +319,10 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 }
 
 [MgtAuthorize(Org.TYP_HUB)]
-[Ui("云仓统一发货")]
+[Ui("销售统一发货")]
 public class HublyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui("统一发货", status: 8), Tool(Anchor)]
+    [Ui( status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var hub = wc[-1].As<Org>();

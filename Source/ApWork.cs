@@ -291,8 +291,8 @@ public class RtllyBuyApWork : ApWork<OrglyApVarWork>
     }
 }
 
-[MgtAuthorize(Org._BIZ)]
-[Ui("网售结款")]
+[MgtAuthorize(Org.TYP_SUP)]
+[Ui("销售结款")]
 public class SuplyPurApWork : ApWork<OrglyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
