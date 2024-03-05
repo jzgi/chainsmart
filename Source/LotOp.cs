@@ -17,6 +17,8 @@ public class LotOp : Entity, IKeyable<int>
         { 4, "盘亏 －" },
         { 5, "增益 ＋" },
         { 6, "损耗 －" },
+        { 7, "冲加 ＋" },
+        { 8, "冲减 －" },
     };
 
 
@@ -31,13 +33,19 @@ public class LotOp : Entity, IKeyable<int>
 
     internal int id;
 
-    internal int orgid;
+    internal int supid;
+
+    internal int srcid;
 
     internal int lotid;
 
     internal int hubid;
 
     internal int qty;
+
+    internal int nstart;
+
+    internal int nend;
 
     // must have an icon
 
@@ -51,13 +59,19 @@ public class LotOp : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(supid), ref supid);
+            s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(lotid), ref lotid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(qty), ref qty);
+        }
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
+            s.Get(nameof(nstart), ref nstart);
+            s.Get(nameof(nend), ref nend);
         }
     }
 
@@ -71,13 +85,19 @@ public class LotOp : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(orgid), orgid);
+            s.Put(nameof(supid), supid);
+            s.Put(nameof(srcid), srcid);
             s.Put(nameof(lotid), lotid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Put(nameof(hubid), hubid);
             s.Put(nameof(qty), qty);
+        }
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
+            s.Put(nameof(nstart), nstart);
+            s.Put(nameof(nend), nend);
         }
     }
 

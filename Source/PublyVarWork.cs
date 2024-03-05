@@ -92,9 +92,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 {
                     h.SPAN_().T("原价 ").T(o.price)._SPAN().SP();
                 }
-                if (o.rank > 0)
+                if (o.cattyp > 0)
                 {
-                    h.MARK(Item.Ranks[o.rank]);
+                    h.MARK(Item.Ranks[o.cattyp]);
                 }
                 h._SPAN();
                 h._HEADER();

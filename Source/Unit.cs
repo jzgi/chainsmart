@@ -22,10 +22,4 @@ public class Unit
         "次",
         "笔",
     };
-
-
-    public static int Convert(string u1, int v, string u2, short pieceful)
-    {
-        return 0;
-    }
 }

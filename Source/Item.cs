@@ -10,13 +10,13 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_NEW = 1,
-        TYP_IMP = 2;
+        TYP_GDS = 1,
+        TYP_SVC = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_NEW, "创建" },
-        { TYP_IMP, "导入" },
+        { TYP_GDS, "货品" },
+        { TYP_SVC, "服务" },
     };
 
 
@@ -30,10 +30,17 @@ public class Item : Entity, IKeyable<int>
 
     internal int id;
     internal int orgid;
+
+    internal int srcid;
     internal int lotid;
-    internal short rank;
+
+    // internal int lotid;
+    internal short cattyp;
+    internal short symtyp;
+
     internal string unit;
     internal string unitip;
+
     internal decimal price;
     internal decimal off;
     internal bool promo;
@@ -45,7 +52,8 @@ public class Item : Entity, IKeyable<int>
     internal bool icon;
     internal bool pic;
 
-    internal StockOp[] ops;
+
+    internal ItemOp[] ops;
 
     public override void Read(ISource s, short msk = 255)
     {
@@ -64,7 +72,7 @@ public class Item : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(rank), ref rank);
+            s.Get(nameof(cattyp), ref cattyp);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(price), ref price);
@@ -106,7 +114,7 @@ public class Item : Entity, IKeyable<int>
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(rank), rank);
+            s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(price), price);
@@ -153,5 +161,5 @@ public class Item : Entity, IKeyable<int>
 
     public bool IsImported => lotid > 0;
 
-    public StockOp[] Ops => ops;
+    public ItemOp[] Ops => ops;
 }

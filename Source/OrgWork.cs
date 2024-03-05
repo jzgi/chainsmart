@@ -97,7 +97,7 @@ public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
         {
             typ = cmd switch
             {
-                1 => Org.TYP_RTL_MKT, _ => Org.TYP_SUP_HUB
+                1 => Org.TYP_MKT, _ => Org.TYP_HUB
             },
             created = DateTime.Now,
             creator = prin.name,
@@ -215,7 +215,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
         {
             typ = cmd switch
             {
-                1 => Org.TYP_SUP_FUL, _ => Org.TYP_SUP_SRC
+                1 => Org.TYP_SUP, _ => Org.TYP_SRC
             },
             created = DateTime.Now,
             creator = prin.name,
@@ -262,7 +262,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_MKT)]
+[MgtAuthorize(Org.TYP_MKT)]
 public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
     private short OrgTyp => (short)State;
@@ -363,8 +363,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     }
 
 
-    [Ui(tip: "按版块查找", icon: "search", status: 8), Tool(AnchorPrompt)]
-    public void section(WebContext wc)
+    [Ui(tip: "按版块", icon: "search", status: 8), Tool(AnchorPrompt)]
+    public void search(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var regs = Grab<short, Reg>();
@@ -396,7 +396,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         }
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int regid)
     {

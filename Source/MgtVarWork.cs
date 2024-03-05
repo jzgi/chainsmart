@@ -146,9 +146,9 @@ public class RtllyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mrtlful", state: Org.TYP_RTL_FUL, ui: new UiAttribute("入驻商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mrtr", state: Org.TYP_RTL, ui: new UiAttribute("入驻商户"), header: "机构");
 
-        CreateWork<MktlyOrgWork>("mrtlbuy", state: Org.TYP_RTL_BUY, ui: new UiAttribute("入驻销售户"));
+        CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("入驻门店"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
@@ -156,7 +156,7 @@ public class RtllyVarWork : MgtVarWork
 
         CreateWork<MktlyTestWork>("mtest");
 
-        CreateWork<MktlyFlowWork>("mflow");
+        CreateWork<MktlyAidWork>("maid");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -181,7 +181,7 @@ public class RtllyVarWork : MgtVarWork
         }, false, 720);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {

@@ -21,7 +21,7 @@ public abstract class LotOpWork<V> : WebWork where V : LotOpVarWork, new()
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-5");
+            h.PIC("/void.webp", css: "uk-width-1-6");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -37,7 +37,7 @@ public abstract class LotOpWork<V> : WebWork where V : LotOpVarWork, new()
     }
 }
 
-[Ui("产品云仓作业")]
+[Ui("产品仓管")]
 public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -46,7 +46,7 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM lotops WHERE orgid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM lotops WHERE (supid = @1 OR srcid = @1) AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
         var arr = await dc.QueryAsync<LotOp>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -55,7 +55,7 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无产品作业");
+                h.ALERT("尚无调运操作");
                 return;
             }
 
@@ -80,7 +80,7 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已作废作业");
+                h.ALERT("尚无已作废的调运操作");
                 return;
             }
 
@@ -133,7 +133,55 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
     }
 }
 
-[Ui("产品作业")]
+[Ui("产品仓管")]
 public class HublyLotOpWork : LotOpWork<HublyLotOpVarWork>
 {
+    [Ui(status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM lotops WHERE hubid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<LotOp>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("尚无产品仓管请求");
+                return;
+            }
+
+            MainGrid(h, arr);
+
+            h.PAGINATION(arr?.Length == 20);
+        }, false, 6);
+    }
+
+    [Ui(tip: "已作废", icon: "trash", status: 2), Tool(Anchor)]
+    public async Task @void(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(LotOp.Empty).T(" FROM lotops WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<LotOp>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("尚无已作废的调运操作");
+                return;
+            }
+
+            MainGrid(h, arr);
+            h.PAGINATION(arr?.Length == 20);
+        }, false, 6);
+    }
 }

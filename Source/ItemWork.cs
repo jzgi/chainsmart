@@ -131,7 +131,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_NEW,
+            typ = Item.TYP_GDS,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
@@ -181,7 +181,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_IMP,
+            typ = Item.TYP_SVC,
             created = DateTime.Now,
             creator = prin.name,
             step = 1,

@@ -15,7 +15,7 @@ public abstract class TestVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE id = @1 AND parentid = @2");
+        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE id = @1 AND estid = @2");
         var o = await dc.QueryTopAsync<Test>(p => p.Set(id).Set(org.id));
 
         var suborg = GrabTwin<int, Org>(o.orgid);
@@ -40,7 +40,7 @@ public abstract class TestVarWork : WebWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "修改或调整检测记录", icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -79,7 +79,7 @@ public abstract class TestVarWork : WebWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE tests ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND parentid = @2");
+            dc.Sql("UPDATE tests ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND estid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -90,7 +90,7 @@ public abstract class TestVarWork : WebWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -99,13 +99,13 @@ public abstract class TestVarWork : WebWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE tests SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
+        dc.Sql("UPDATE tests SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND estid = @4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -113,7 +113,7 @@ public abstract class TestVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE tests SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
+        dc.Sql("UPDATE tests SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND estid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200);
@@ -124,6 +124,6 @@ public class MktlyTestVarWork : TestVarWork
 {
 }
 
-public class CtrlyTestVarWork : TestVarWork
+public class HublyTestVarWork : TestVarWork
 {
 }

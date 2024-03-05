@@ -2,9 +2,9 @@
 
 namespace ChainSmart;
 
-public class Flow : Entity, IKeyable<int>
+public class Aid : Entity, IKeyable<int>
 {
-    public static readonly Flow Empty = new();
+    public static readonly Aid Empty = new();
 
     public const short
         TYP_ITEM = 1,

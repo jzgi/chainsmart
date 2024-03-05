@@ -43,7 +43,7 @@ public abstract class LdgWork<V> : WebWork where V : LdgVarWork, new()
 [Ui("市场业务汇总")]
 public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 {
-    [Ui("市场业务", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -75,7 +75,7 @@ public class AdmlyBuyLdgWork : LdgWork<AdmlyBuyLdgVarWork>
 [Ui("供应业务汇总")]
 public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
 {
-    [Ui("供应业务", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         wc.GivePage(200, h => { h.TOOLBAR(); });
@@ -137,7 +137,7 @@ public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 }
 
 [MgtAuthorize(Org._BIZ)]
-[Ui("销售业务汇总")]
+[Ui("销售汇总")]
 public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
 {
     [Ui("按产品批次", status: 1), Tool(Anchor)]
@@ -202,7 +202,7 @@ public class SuplyPurLdgWork : LdgWork<SuplyPurLdgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SUP_HUB)]
+[MgtAuthorize(Org.TYP_HUB)]
 [Ui("云仓业务汇总")]
 public class HublyPurLdgWork : LdgWork<LdgVarWork>
 {

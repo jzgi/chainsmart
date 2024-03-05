@@ -27,7 +27,3 @@ public class PublyTagVarWork : TagVarWork
         }
     }
 }
-
-public class AdmlyTagVarWork : TagVarWork
-{
-}

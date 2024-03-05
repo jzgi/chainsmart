@@ -95,7 +95,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无上线的产品");
+                h.ALERT("暂无有效产品");
                 return;
             }
 
@@ -201,12 +201,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
 
-                if (typ == Lot.TYP_SRC)
-                {
-                    h.LI_().DATE("交货约期", nameof(o.shipon), o.shipon, disabled: true)._LI();
-                }
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
+                // h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", o.typ == Lot.TYP_SRC ? nameof(newsrc) : nameof(newhub));
 

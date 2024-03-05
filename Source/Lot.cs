@@ -1,5 +1,4 @@
-﻿using System;
-using ChainFX;
+﻿using ChainFX;
 
 namespace ChainSmart;
 
@@ -30,24 +29,19 @@ public class Lot : Entity, IKeyable<int>
 
     internal int id;
     internal int orgid;
-    internal short cattyp;
-    internal DateTime shipon;
     internal int srcid;
+    internal short cattyp;
+    internal short symtyp;
     internal string unit;
     internal string unitip;
     internal short unitx;
     internal decimal price;
     internal decimal off;
-
+    internal int step;
     internal int min;
     internal int max;
-
-    // traceability
     internal int cap;
-    internal int nstart;
-    internal int nend;
-    internal string linka;
-    internal string linkb;
+    internal string link;
 
     // media
     internal bool icon;
@@ -56,11 +50,6 @@ public class Lot : Entity, IKeyable<int>
     internal bool m2;
     internal bool m3;
     internal bool m4;
-
-    internal StockOp[] ops;
-
-    // EXTRA: of either the lots or the lotinvs table
-    internal int stock;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -80,7 +69,7 @@ public class Lot : Entity, IKeyable<int>
         {
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(cattyp), ref cattyp);
-            s.Get(nameof(shipon), ref shipon);
+            s.Get(nameof(symtyp), ref symtyp);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
@@ -93,25 +82,14 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(cap), ref cap);
-            s.Get(nameof(nstart), ref nstart);
-            s.Get(nameof(nend), ref nend);
-            s.Get(nameof(linka), ref linka);
-            s.Get(nameof(linkb), ref linkb);
+            s.Get(nameof(step), ref step);
+            s.Get(nameof(link), ref link);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
             s.Get(nameof(m2), ref m2);
             s.Get(nameof(m3), ref m3);
             s.Get(nameof(m4), ref m4);
-        }
-
-        if ((msk & MSK_AUX) == MSK_AUX)
-        {
-            s.Get(nameof(ops), ref ops);
-        }
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
-        {
-            s.Get(nameof(stock), ref stock);
         }
     }
 
@@ -134,7 +112,7 @@ public class Lot : Entity, IKeyable<int>
             if (srcid > 0) s.Put(nameof(srcid), srcid);
             else s.PutNull(nameof(srcid));
             s.Put(nameof(cattyp), cattyp);
-            s.Put(nameof(shipon), shipon);
+            s.Put(nameof(symtyp), symtyp);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);
@@ -147,10 +125,8 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(cap), cap);
-            s.Put(nameof(nstart), nstart);
-            s.Put(nameof(nend), nend);
-            s.Put(nameof(linka), linka);
-            s.Put(nameof(linkb), linkb);
+            s.Put(nameof(step), step);
+            s.Put(nameof(link), link);
 
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
@@ -158,15 +134,6 @@ public class Lot : Entity, IKeyable<int>
             s.Put(nameof(m2), m2);
             s.Put(nameof(m3), m3);
             s.Put(nameof(m4), m4);
-        }
-
-        if ((msk & MSK_AUX) == MSK_AUX)
-        {
-            s.Put(nameof(ops), ops);
-        }
-        if ((msk & MSK_EXTRA) == MSK_EXTRA)
-        {
-            s.Put(nameof(stock), stock);
         }
     }
 
@@ -190,34 +157,10 @@ public class Lot : Entity, IKeyable<int>
 
     public decimal RealPrice => price - off;
 
-    public int StockX => stock / unitx;
-
-    public StockOp[] Ops => ops;
 
     public bool IsOnHub => typ == TYP_HUB;
 
     public bool IsOnSrc => typ == TYP_SRC;
 
     public override string ToString() => name;
-
-
-    public bool TryGetStockOp(int offset, out StockOp value)
-    {
-        if (ops != null)
-        {
-            var num = offset;
-            for (int i = 0; i < ops.Length; i++)
-            {
-                var op = ops[i];
-                num -= op.qty;
-                if (num <= 0)
-                {
-                    value = op;
-                    return true;
-                }
-            }
-        }
-        value = default;
-        return false;
-    }
 }

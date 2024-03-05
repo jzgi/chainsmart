@@ -40,13 +40,12 @@ public class ItemVarWork : WebWork
             h.TABLE(o.ops, o =>
                 {
                     h.TD_().T(o.dt, date: 2, time: 1)._TD();
-                    h.TD_("uk-text-right").T(StockOp.Typs[o.typ])._TD();
+                    h.TD_("uk-text-right").T(ItemOp.Typs[o.typ])._TD();
                     h.TD(o.qty, right: true);
                     h.TD(o.stock, right: true);
                     h.TD(o.by);
                 },
-                thead: () => h.TH("日期").TH("类型").TH("发生", css: "uk-text-right").TH("数量", css: "uk-text-right").TH("操作"),
-                reverse: true
+                thead: () => h.TH("日期").TH("类型").TH("发生", css: "uk-text-right").TH("数量", css: "uk-text-right").TH("操作")
             );
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
@@ -176,7 +175,7 @@ public class RtllyItemVarWork : ItemVarWork
 
                 h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max:6)._LI();
+                h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.step), o.step, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
@@ -238,7 +237,7 @@ public class RtllyItemVarWork : ItemVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, ItemOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
@@ -249,7 +248,7 @@ public class RtllyItemVarWork : ItemVarWork
             optyp = f[nameof(optyp)];
             qty = f[nameof(qty)];
 
-            if (!StockOp.IsAddOp(optyp))
+            if (!ItemOp.IsAddOp(optyp))
             {
                 qty = -qty;
             }

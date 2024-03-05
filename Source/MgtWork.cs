@@ -32,7 +32,7 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyFlowWork>("flow");
+        CreateWork<AdmlyAidWork>("aid");
 
         // fin
 

@@ -42,7 +42,7 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
     }
 }
 
-[Ui("市场端应付")]
+[Ui("市场应付款")]
 public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -153,7 +153,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     }
 }
 
-[Ui("供应端应付")]
+[Ui("供应应付款")]
 public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -292,7 +292,7 @@ public class RtllyBuyApWork : ApWork<OrglyApVarWork>
 }
 
 [MgtAuthorize(Org._BIZ)]
-[Ui("销售业务结款")]
+[Ui("网售结款")]
 public class SuplyPurApWork : ApWork<OrglyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

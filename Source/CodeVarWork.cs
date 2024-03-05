@@ -9,7 +9,7 @@ namespace ChainSmart;
 
 public abstract class CodeVarWork : WebWork
 {
-    public async Task @default(WebContext wc)
+    public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -37,7 +37,7 @@ public abstract class CodeVarWork : WebWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "修改或调整孵化对象", icon: "pencil", status: 1), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
@@ -84,7 +84,7 @@ public abstract class CodeVarWork : WebWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -99,7 +99,7 @@ public abstract class CodeVarWork : WebWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -115,9 +115,5 @@ public abstract class CodeVarWork : WebWork
 }
 
 public class SuplyCodeVarWork : CodeVarWork
-{
-}
-
-public class AdmlyCodeVarWork : CodeVarWork
 {
 }

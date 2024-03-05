@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Nodal.Storage;
@@ -14,6 +13,9 @@ public abstract class TagWork<V> : WebWork where V : WebWork, new()
     }
 }
 
+/// <summary>
+/// Searching for traceability tags.
+/// </summary>
 public class PublyTagWork : TagWork<PublyTagVarWork>
 {
     public async Task @default(WebContext wc, int tracenum)
@@ -68,33 +70,5 @@ public class PublyTagWork : TagWork<PublyTagVarWork>
         {
             wc.GivePage(300, h => h.ALERT("此溯源码没有绑定产品"));
         }
-    }
-}
-
-[Ui("标号设置")]
-public class AdmlyTagWork : TagWork<AdmlyTagVarWork>
-{
-    static void MainGrid(HtmlBuilder h, IList<Code> arr)
-    {
-    }
-
-    [Ui(status: 1), Tool(Modal.Anchor)]
-    public async Task @default(WebContext wc, int page)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(20 & page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: 1);
-            if (arr == null)
-            {
-                h.ALERT("尚无收到申请");
-                return;
-            }
-            MainGrid(h, arr);
-            h.PAGINATION(arr.Length == 20);
-        }, false, 12);
     }
 }

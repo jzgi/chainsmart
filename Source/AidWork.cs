@@ -6,14 +6,14 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class FlowWork<V> : WebWork where V : FlowVarWork, new()
+public abstract class AidWork<V> : WebWork where V : AidVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Flow> arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Aid> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -37,22 +37,22 @@ public abstract class FlowWork<V> : WebWork where V : FlowVarWork, new()
 }
 
 [MgtAuthorize(-1, User.ROL_MGT)]
-[Ui("工作流")]
-public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
+[Ui("协助")]
+public class AdmlyAidWork : AidWork<AdmlyAidVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid IS NULL AND status = 1");
-        var arr = await dc.QueryAsync<Flow>();
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid IS NULL AND status = 1");
+        var arr = await dc.QueryAsync<Aid>();
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 1);
             if (arr == null)
             {
-                h.ALERT("尚无新的工作流");
+                h.ALERT("尚无新的协助任务");
                 return;
             }
             MainGrid(h, arr);
@@ -63,8 +63,8 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
     public async Task adapted(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid IS NULL AND status = 4");
-        var arr = await dc.QueryAsync<Flow>();
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid IS NULL AND status = 4");
+        var arr = await dc.QueryAsync<Aid>();
 
         wc.GivePage(200, h =>
         {
@@ -72,7 +72,7 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已处理的工作流");
+                h.ALERT("尚无已处理的协助任务");
                 return;
             }
 
@@ -84,15 +84,15 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
     public async Task @void(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid IS NULL AND status = 0");
-        var arr = await dc.QueryAsync<Flow>();
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid IS NULL AND status = 0");
+        var arr = await dc.QueryAsync<Aid>();
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无已作废的工作流");
+                h.ALERT("尚无已否决的协助任务");
                 return;
             }
 
@@ -105,8 +105,8 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE parentid = @1 AND status = 4 ORDER BY typ");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(mkt.id));
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE parentid = @1 AND status = 4 ORDER BY typ");
+        var arr = await dc.QueryAsync<Aid>(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;
 
@@ -139,7 +139,7 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
                     }
                     h.LI_();
                     h.TABLE_(dark: true);
-                    h.THEAD_().TH(Flow.Typs[o.typ]).TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-large uk-text-center")._THEAD();
+                    h.THEAD_().TH(Aid.Typs[o.typ]).TH("分值", css: "uk-width-medium uk-text-center").TH("结论", css: "uk-width-large uk-text-center")._THEAD();
                 }
 
                 // each row
@@ -169,9 +169,9 @@ public class AdmlyFlowWork : FlowWork<AdmlyFlowVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_MKT)]
-[Ui("工作流")]
-public class MktlyFlowWork : FlowWork<MktlyFlowVarWork>
+[MgtAuthorize(Org.TYP_MKT)]
+[Ui("协助")]
+public class MktlyAidWork : AidWork<MktlyAidVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -179,15 +179,15 @@ public class MktlyFlowWork : FlowWork<MktlyFlowVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid = @1 AND status = 1");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id));
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid = @1 AND status = 1");
+        var arr = await dc.QueryAsync<Aid>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 1);
             if (arr == null)
             {
-                h.ALERT("尚无新的工作流");
+                h.ALERT("尚无新的协助任务");
                 return;
             }
             MainGrid(h, arr);
@@ -198,8 +198,8 @@ public class MktlyFlowWork : FlowWork<MktlyFlowVarWork>
     public async Task adapted(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid IS NULL AND status = 4");
-        var arr = await dc.QueryAsync<Flow>();
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid IS NULL AND status = 4");
+        var arr = await dc.QueryAsync<Aid>();
 
         wc.GivePage(200, h =>
         {
@@ -207,7 +207,7 @@ public class MktlyFlowWork : FlowWork<MktlyFlowVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已处理的工作流");
+                h.ALERT("尚无已处理的协助任务");
                 return;
             }
 
@@ -219,15 +219,15 @@ public class MktlyFlowWork : FlowWork<MktlyFlowVarWork>
     public async Task @void(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid IS NULL AND status = 0");
-        var arr = await dc.QueryAsync<Flow>();
+        dc.Sql("SELECT ").collst(Aid.Empty).T(" FROM aids WHERE orgid IS NULL AND status = 0");
+        var arr = await dc.QueryAsync<Aid>();
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无已作废的工作流");
+                h.ALERT("尚无已否决的协助任务");
                 return;
             }
 

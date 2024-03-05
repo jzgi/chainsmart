@@ -197,7 +197,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 }
 
 [MgtAuthorize(Org._BIZ)]
-[Ui("销售业务")]
+[Ui("网售")]
 public class SuplyPurWork : PurWork<SuplyPurVarWork>
 {
     private static void MainGrid(HtmlBuilder h, IList<Pur> lst)
@@ -318,7 +318,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SUP_HUB)]
+[MgtAuthorize(Org.TYP_HUB)]
 [Ui("云仓统一发货")]
 public class HublyPurWork : PurWork<CtrlyPurVarWork>
 {
@@ -373,7 +373,7 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_MKT)]
+[MgtAuthorize(Org.TYP_MKT)]
 [Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {

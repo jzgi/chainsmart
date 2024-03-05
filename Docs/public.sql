@@ -16,7 +16,7 @@ create type stockop as
     hub   integer
 );
 
-alter type stockop owner to postgres;
+alter type itemop owner to postgres;
 
 create type buyln as
 (
@@ -205,7 +205,7 @@ create table lots
     cap    integer,
     nstart integer,
     nend   integer,
-    ops    stockop[],
+    ops    itemop[],
     icon   bytea,
     pic    bytea,
     m1     bytea,
@@ -298,7 +298,7 @@ create index lots_orgidstatustyp_idx
     on lots (orgid, status, typ);
 
 create index lots_statuscattyp_idx
-    on lots (status, cattyp);
+    on lots (status, symtyp);
 
 create table buys
 (
@@ -375,7 +375,7 @@ create table items
     max    smallint,
     min    smallint    default 0 not null,
     stock  smallint    default 0 not null,
-    ops    stockop[],
+    ops    itemop[],
     icon   bytea,
     pic    bytea,
     promo  boolean,
@@ -636,7 +636,7 @@ create table orgties
     adapted timestamp(0)
 );
 
-alter table orgties
+alter table orgrels
     owner to postgres;
 
 create table labels
@@ -721,14 +721,14 @@ SELECT o.typ,
        o.id,
        o.orgid,
        o.srcid,
-       o.cattyp,
+       o.symtyp,
        o.shipon,
        o.unit,
        o.unitw,
        o.unitx,
        o.price,
        o.off,
-       o.stock,
+       o.step,
        o.min,
        o.max,
        o.cap,

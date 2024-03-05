@@ -71,7 +71,7 @@ public class PublySymWork : SymWork<PublySymVarWork>
     }
 }
 
-[Ui("标志")]
+[Ui("标符")]
 public class AdmlySymWork : SymWork<AdmlySymVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Sym> arr)
@@ -91,7 +91,7 @@ public class AdmlySymWork : SymWork<AdmlySymVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无新的标志");
+                h.ALERT("尚无新的标符");
                 return;
             }
             MainGrid(h, arr);

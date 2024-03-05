@@ -13,28 +13,33 @@ public class Org : Entity, ITwin<int>
     public static readonly Org Empty = new();
 
     public const short
+        TYP_ADM = 0b10000000; // admin
+
+    public const short
         _BIZ = 0b000001, // biz
         _BCK = 0b000010, // backing
         TYP_RTL_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_RTL_BUY = TYP_RTL_ | _BIZ,
-        TYP_RTL_FUL = TYP_RTL_ | _BIZ | _BCK,
-        TYP_RTL_MKT = TYP_EST_ | TYP_RTL_FUL,
+        TYP_SHP = TYP_RTL_ | _BIZ, // shop
+        TYP_RTL = TYP_RTL_ | _BIZ | _BCK, // retailer
+        TYP_MKT = TYP_EST_ | TYP_RTL, // market
         //
-        TYP_SUP_SRC = TYP_SUP_ | _BCK,
-        TYP_SUP_FUL = TYP_SUP_ | _BIZ | _BCK,
-        TYP_SUP_HUB = TYP_EST_ | TYP_SUP_FUL;
+        TYP_SUP = TYP_SUP_ | _BIZ, // supplier
+        TYP_SRC = TYP_SUP_ | _BCK, // source
+        TYP_SRCSUP = TYP_SUP_ | _BIZ | _BCK, // supplier
+        TYP_HUB = TYP_EST_ | TYP_SUP; // hub
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_RTL_BUY, "零售户" },
-        { TYP_RTL_FUL, "商户" },
-        { TYP_RTL_MKT, "市场" },
-        { TYP_SUP_SRC, "产源" },
-        { TYP_SUP_FUL, "供应户" },
-        { TYP_SUP_HUB, "云仓" },
+        { TYP_SHP, "门市" },
+        { TYP_RTL, "商户" },
+        { TYP_MKT, "市场" },
+        { TYP_SRC, "产源" },
+        { TYP_SUP, "供应" },
+        { TYP_SRCSUP, "产供" },
+        { TYP_HUB, "云仓" },
     };
 
     public static readonly Map<short, string> Ranks = new()
@@ -215,9 +220,9 @@ public class Org : Entity, ITwin<int>
 
     public int HubId => IsHub ? id : AsSup ? parentid : 0;
 
-    public bool IsMkt => (typ & TYP_RTL_MKT) == TYP_RTL_MKT;
+    public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 
-    public bool IsHub => typ == TYP_SUP_HUB;
+    public bool IsHub => typ == TYP_HUB;
 
     public bool AsUpr => (typ & TYP_EST_) == TYP_EST_;
 
@@ -227,9 +232,9 @@ public class Org : Entity, ITwin<int>
 
     public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
 
-    public bool IsSupSrc => typ == TYP_SUP_SRC;
+    public bool IsSupSrc => typ == TYP_SRC;
 
-    public bool IsSupFul => typ == TYP_SUP_FUL;
+    public bool IsSupFul => typ == TYP_SUP;
 
     public bool Orderable => bankacct != null && bankacctname != null;
 
@@ -302,5 +307,5 @@ public class Org : Entity, ITwin<int>
     }
 
 
-    public static bool IsNormalSup(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_SUP_HUB;
+    public static bool IsNormalSup(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_HUB;
 }

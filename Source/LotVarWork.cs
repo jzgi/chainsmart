@@ -78,19 +78,19 @@ public class LotVarWork : WebWork
 
         h.UL_("uk-list uk-list-divider");
         h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
-        if (o.nstart > 0 && o.nend > 0)
-        {
-            h.LI_().FIELD2("批次溯源码", $"{o.nstart:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
-        }
+        // if (o.steo > 0 && o.nend > 0)
+        // {
+        //     h.LI_().FIELD2("批次溯源码", $"{o.steo:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+        // }
 
-        var offset = tracenum - o.nstart;
+        var offset = tracenum - o.step;
         if (offset > 0)
         {
             h.LI_().LABEL("本溯源码").SPAN($"{tracenum:0000 0000}", css: "uk-static uk-text-danger")._LI();
-            if (o.TryGetStockOp(offset, out var v))
-            {
-                h.LI_().LABEL("生效日期").SPAN(v.dt, css: "uk-static uk-text-danger")._LI();
-            }
+            // if (o.TryGetStockOp(offset, out var v))
+            // {
+            //     h.LI_().LABEL("生效日期").SPAN(v.dt, css: "uk-static uk-text-danger")._LI();
+            // }
         }
         h._LI();
         h._UL();
@@ -115,13 +115,9 @@ public class LotVarWork : WebWork
         if (linking)
         {
             h.UL_("uk-list uk-list-divider");
-            if (!string.IsNullOrEmpty(o.linka))
+            if (!string.IsNullOrEmpty(o.link))
             {
-                h.LI_("uk-flex-center").A_(o.linka, css: "uk-button uk-icon-link").ICON("file-text").SP().T("合格证")._A()._LI();
-            }
-            if (!string.IsNullOrEmpty(o.linkb))
-            {
-                h.LI_("uk-flex-center").A_(o.linkb, css: "uk-button uk-icon-link").ICON("file-pdf").SP().T("质检报告")._A()._LI();
+                h.LI_("uk-flex-center").A_(o.link, css: "uk-button uk-icon-link").ICON("file-text").SP().T("合格证")._A()._LI();
             }
             h._UL();
         }
@@ -151,14 +147,14 @@ public class LotVarWork : WebWork
             h.LI_().FIELD("批次编号", o.id, digits: 8)._LI();
             h.LI_().FIELD("产品名", o.name).FIELD("供应点类型", Lot.Typs[o.typ])._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            if (o.typ == 2) h.FIELD("交货起始日", o.shipon);
+            if (o.typ == 2) h.FIELD("交货起始日", o.symtyp);
             h._LI();
 
             h.LI_().FIELD("基本单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("总件数", o.cap)._LI();
             h.LI_().FIELD("单价", o.price, true).FIELD("优惠立减", o.off, true)._LI();
             h.LI_().FIELD("起订件数", o.min).FIELD("限订件数", o.max)._LI();
-            h.LI_().FIELD2("溯源编号", o.nstart, o.nend, "－")._LI();
+            // h.LI_().FIELD2("溯源编号", o.steo, o.nend, "－")._LI();
 
             h.LI_().LABEL("货架");
             if (o.IsOnHub)
@@ -177,7 +173,7 @@ public class LotVarWork : WebWork
             }
             else
             {
-                h.SPAN(o.stock, css: "uk-static");
+                // h.SPAN(o.stock, css: "uk-static");
             }
             h._LI();
 
@@ -250,16 +246,17 @@ public class PublyLotVarWork : LotVarWork
 
         wc.GivePage(200, h =>
         {
-            h.TOPBARXL_();
-            h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H2(o.name)._HEADER();
+            h.TOPBAR_();
+            h.HEADER_("uk-width-expand uk-padding-left").H1(o.name)._HEADER();
             if (o.icon)
             {
-                h.PIC("/lot/", o.id, "/icon", circle: true, css: "uk-width-small");
+                h.IMG("/lot/", o.id, "/icon", circle: true, css: "uk-height-1-1");
             }
             else
-                h.PIC("/void.webp", circle: true, css: "uk-width-small");
-
-            h._TOPBARXL();
+            {
+                h.IMG("/void.webp", circle: true, css: "uk-height-1-1");
+            }
+            h._TOPBAR();
 
             ShowLot(h, o, src, false, true, tracenum);
 
@@ -285,6 +282,15 @@ public class PublyLotVarWork : LotVarWork
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, true, MAXAGE);
+    }
+}
+
+public class AdmlyLotVarWork : LotVarWork
+{
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
+    [Ui(tip: "调整产品批次", icon: "pencil", status: 3), Tool(Modal.ButtonShow)]
+    public async Task edit(WebContext wc)
+    {
     }
 }
 
@@ -320,12 +326,9 @@ public class SuplyLotVarWork : LotVarWork
 
                 h._FIELDSUL().FIELDSUL_("销售参数");
 
-                if (o.typ == Lot.TYP_SRC)
-                {
-                    h.LI_().DATE("发货约期", nameof(o.shipon), o.shipon, disabled: true)._LI();
-                }
+           
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
+                // h.LI_().NUMBER("起订件数", nameof(o.min), o.min, min: 0, max: o.stock).NUMBER("限订件数", nameof(o.max), o.max, min: 1, max: o.stock)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
@@ -394,13 +397,9 @@ public class SuplyLotVarWork : LotVarWork
                 {
                     h.FORM_().FIELDSUL_("溯源编号绑定");
 
-                    h.LI_().NUMBER("起始编号", nameof(o.nstart), o.nstart)._LI();
-                    h.LI_().NUMBER("截止编号", nameof(o.nend), o.nend)._LI();
-
                     h._FIELDSUL().FIELDSUL_("质控材料链接");
 
-                    h.LI_().URL("合格证", nameof(o.linka), o.linka)._LI();
-                    h.LI_().URL("检测报告", nameof(o.linkb), o.linkb)._LI();
+                    h.LI_().URL("合格证", nameof(o.link), o.link)._LI();
 
                     h._FIELDSUL().FIELDSUL_("打印溯源贴标");
 
@@ -481,14 +480,14 @@ public class SuplyLotVarWork : LotVarWork
         {
             using var dc = NewDbContext();
             await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
-            dc.Let(out StockOp[] ops);
+            dc.Let(out ItemOp[] ops);
 
             var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("货架操作");
-                h.LI_().SELECT("操作", nameof(optyp), optyp, StockOp.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, ItemOp.Typs, required: true)._LI();
                 h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
                 h.LI_().SELECT("云仓", nameof(hubid), hubid, arr)._LI();
                 h._FIELDSUL();
@@ -496,18 +495,11 @@ public class SuplyLotVarWork : LotVarWork
                 h.TABLE(ops, o =>
                     {
                         h.TD_().T(o.dt, date: 2, time: 1)._TD();
-                        h.TD2(StockOp.Typs[o.typ], o.qty, css: "uk-text-right");
-                        h.TD_();
-                        if (hubid > 0)
-                        {
-                            h.T(GrabTwin<int, Org>(o.hub).name);
-                        }
-                        h._TD();
+                        h.TD2(ItemOp.Typs[o.typ], o.qty, css: "uk-text-right");
                         h.TD(o.stock, right: true);
                         h.TD(o.by);
                     },
-                    thead: () => h.TH("时间").TH("摘要").TH("云仓").TH("余量").TH("操作"),
-                    reverse: true
+                    thead: () => h.TH("时间").TH("摘要").TH("云仓").TH("余量").TH("操作")
                 );
 
                 h.BOTTOM_BUTTON("确认", nameof(stock))._FORM();
@@ -520,7 +512,7 @@ public class SuplyLotVarWork : LotVarWork
             qtyx = f[nameof(qtyx)];
             hubid = f[nameof(hubid)];
 
-            if (!StockOp.IsAddOp(optyp))
+            if (!ItemOp.IsAddOp(optyp))
             {
                 qtyx = -qtyx;
             }
@@ -659,10 +651,10 @@ public class RtllyPurLotVarWork : LotVarWork
             h.HIDDEN(nameof(realprice), realprice);
 
             h.SELECT_(null, nameof(qtyx), css: "uk-width-small");
-            for (int i = 1; i <= Math.Min(o.max, o.StockX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
-            {
-                h.OPTION_(i).T(i).SP().T('件')._OPTION();
-            }
+            // for (int i = 1; i <= Math.Min(o.max, o.StockX); i += (i >= 120 ? 5 : i >= 60 ? 2 : 1))
+            // {
+            //     h.OPTION_(i).T(i).SP().T('件')._OPTION();
+            // }
             h._SELECT().SP();
             h.SPAN_("uk-width-expand uk-padding").T("共").SP().OUTPUT(nameof(qty), qty).SP().T(o.unit);
             if (o.IsOnHub)
