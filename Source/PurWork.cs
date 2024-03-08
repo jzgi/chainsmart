@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[MgtAuthorize(Org._BCK)]
+[MgtAuthorize(Org.TYP_RTL)]
 [Ui("采购")]
 public class RtllyPurWork : PurWork<RtllyPurVarWork>
 {
@@ -150,7 +150,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
     [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
-    [Ui("云仓下单", "新建采购订单", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("云仓便捷", "新建云仓便捷采购", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
         var cats = Grab<short, Cat>();
@@ -322,7 +322,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
 [Ui("销售统一发货")]
 public class HublyPurWork : PurWork<CtrlyPurVarWork>
 {
-    [Ui( status: 8), Tool(Anchor)]
+    [Ui(status: 8), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var hub = wc[-1].As<Org>();

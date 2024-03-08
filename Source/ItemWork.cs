@@ -21,6 +21,7 @@ public class PublyItemWork : ItemWork<PubItemVarWork>
 {
 }
 
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("商品")]
 public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 {

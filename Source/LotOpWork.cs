@@ -41,6 +41,8 @@ public abstract class LotOpWork<V> : WebWork where V : LotOpVarWork, new()
 [Ui("云仓货管")]
 public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 {
+    static readonly string[] NewAction = { nameof(@new) };
+
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
@@ -52,7 +54,7 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(exclude: org.IsSup ? null : NewAction);
 
             if (arr == null)
             {
@@ -90,8 +92,8 @@ public class SuplyLotOpWork : LotOpWork<SuplyLotOpVarWork>
         }, false, 6);
     }
 
-    [MgtAuthorize(0, User.ROL_MGT)]
-    [Ui("新建", "新建产品云仓作业", icon: "plus", status: 7), Tool(ButtonOpen)]
+    [MgtAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    [Ui("新建", "新建货管操作", icon: "plus", status: 7), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();

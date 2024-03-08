@@ -318,6 +318,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
     }
 }
 
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("大客户")]
 public class RtllyVipWork : UserWork<RtllyVipVarWork>
 {

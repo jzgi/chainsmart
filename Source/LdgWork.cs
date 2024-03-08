@@ -82,6 +82,7 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
+[MgtAuthorize(0)]
 [Ui("销售汇总")]
 public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
 {

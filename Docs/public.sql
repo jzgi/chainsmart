@@ -609,13 +609,13 @@ create table codes
 )
     inherits (entities);
 
-alter table codes
+alter table tags
     owner to postgres;
 
-alter sequence jobs_id_seq owned by codes.id;
+alter sequence jobs_id_seq owned by tags.id;
 
 create index jobs_upperid_idx
-    on codes (orgid);
+    on tags (orgid);
 
 create table peers
 (

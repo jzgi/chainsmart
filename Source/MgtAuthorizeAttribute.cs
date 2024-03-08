@@ -22,7 +22,6 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
         var prin = (User)wc.Principal;
         var role = Role;
         super = false;
-        bool ret;
         var atyp = AccessTyp;
 
 

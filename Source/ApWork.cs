@@ -263,6 +263,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
     }
 }
 
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("网售结款")]
 public class RtllyBuyApWork : ApWork<OrglyApVarWork>
 {

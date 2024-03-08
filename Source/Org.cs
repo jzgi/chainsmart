@@ -33,7 +33,7 @@ public class Org : Entity, ITwin<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_SHP, "门市" },
+        { TYP_SHP, "门店" },
         { TYP_RTL, "商户" },
         { TYP_MKT, "市场" },
         { TYP_SRC, "产源" },
@@ -80,6 +80,11 @@ public class Org : Entity, ITwin<int>
     internal TimeSpan closeat;
     internal short rank; // credit level
     internal short style;
+    internal short cattyp;
+    internal short symtyp;
+    internal short tagtyp;
+    internal int[] ties; // ties to other orgs
+
 
     internal bool icon;
     internal bool pic;
@@ -127,6 +132,10 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(closeat), ref closeat);
                 s.Get(nameof(rank), ref rank);
                 s.Get(nameof(style), ref style);
+                s.Get(nameof(cattyp), ref cattyp);
+                s.Get(nameof(symtyp), ref symtyp);
+                s.Get(nameof(tagtyp), ref tagtyp);
+                s.Get(nameof(ties), ref ties);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
                 s.Get(nameof(m1), ref m1);
@@ -180,6 +189,10 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(closeat), closeat);
                 s.Put(nameof(rank), rank);
                 s.Put(nameof(style), style);
+                s.Put(nameof(cattyp), cattyp);
+                s.Put(nameof(symtyp), symtyp);
+                s.Put(nameof(tagtyp), tagtyp);
+                s.Put(nameof(ties), ties);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);
                 s.Put(nameof(m1), m1);
@@ -216,25 +229,25 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
+    public bool AsUpr => (typ & TYP_EST_) == TYP_EST_;
+
+    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
+
+    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
+
     public int MktId => IsMkt ? id : AsRtl ? parentid : 0;
 
     public int HubId => IsHub ? id : AsSup ? parentid : 0;
 
     public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 
-    public bool IsHub => typ == TYP_HUB;
-
-    public bool AsUpr => (typ & TYP_EST_) == TYP_EST_;
+    public bool IsHub => (typ & TYP_HUB) == TYP_HUB;
 
     public bool IsHomeOrg => regid == 0;
 
-    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
+    public bool IsSrc => (typ & TYP_SRC) == TYP_SRC;
 
-    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
-
-    public bool IsSupSrc => typ == TYP_SRC;
-
-    public bool IsSupFul => typ == TYP_SUP;
+    public bool IsSup => (typ & TYP_SUP) == TYP_SUP;
 
     public bool Orderable => bankacct != null && bankacctname != null;
 

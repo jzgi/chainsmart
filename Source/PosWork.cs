@@ -39,6 +39,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("ＰＯＳ")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {

@@ -5,25 +5,26 @@ namespace ChainSmart;
 /// <summary>
 /// A range of tracebility codes. 
 /// </summary>
-public class Code : Entity, IKeyable<int>
+public class Tag : Entity, IKeyable<int>
 {
-    public static readonly Code Empty = new();
+    public static readonly Tag Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
         { 1, "特牌" },
         { 2, "普牌" },
-        { 3, "特贴" },
-        { 4, "普贴" },
-        { 5, "RFID" },
+        { 4, "特贴" },
+        { 8, "普贴" },
+        { 16, "RFID" },
     };
 
 
     internal int id;
     internal int orgid;
-    internal int cnt;
+    internal int num;
     internal int nstart;
     internal int nend;
+    internal int cnt;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -33,17 +34,20 @@ public class Code : Entity, IKeyable<int>
         {
             s.Get(nameof(id), ref id);
         }
-
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
         }
-
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(cnt), ref cnt);
+            s.Get(nameof(typ), ref typ);
+            s.Get(nameof(num), ref num);
+        }
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
+            s.Get(nameof(cnt), ref cnt);
         }
     }
 
@@ -61,9 +65,14 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(cnt), cnt);
+            s.Put(nameof(typ), typ);
+            s.Put(nameof(num), num);
+        }
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
+            s.Put(nameof(cnt), cnt);
         }
     }
 

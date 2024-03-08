@@ -17,7 +17,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[MgtAuthorize(Org._BIZ)]
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("网售")]
 [Help("对所收的网售订单进行处理")]
 public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
@@ -215,7 +215,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT, User.ROL_VST)]
+[MgtAuthorize(Org.TYP_MKT)]
 [Ui("网售统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {

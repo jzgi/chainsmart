@@ -552,3 +552,8 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 }
+
+public class SuplyTieVarWork : OrgVarWork
+{
+    
+}

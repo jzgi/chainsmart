@@ -8,7 +8,7 @@ public abstract class MgtWork : WebWork
 {
 }
 
-[UserAuthenticate, MgtAuthorize(-1)]
+[UserAuthenticate, MgtAuthorize(0)]
 [Ui("平台管理")]
 public class AdmlyWork : MgtWork
 {

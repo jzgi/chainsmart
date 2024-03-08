@@ -151,7 +151,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSupFul, sorter: (x, y) => x.regid - y.regid).GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSup, sorter: (x, y) => x.regid - y.regid).GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -170,7 +170,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
     public void src(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSupSrc, sorter: (k, v) => v.id - k.id).GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSrc, sorter: (k, v) => v.id - k.id).GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -237,7 +237,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
-                if (o.IsSupFul)
+                if (o.IsSup)
                 {
                     h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
                     h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
@@ -374,7 +374,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         short regid = 0;
         if (inner)
         {
-            wc.GivePane(200, h => h.FORM_().RADIOSET(nameof(regid), regid, regs, filter: v => v.IsSector)._FORM());
+            wc.GivePane(200, h => h.FORM_().RADIOSET(nameof(regid), regid, regs, filter: (k, v) => v.IsSector)._FORM());
         }
         else // OUTER
         {
@@ -445,6 +445,94 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             });
 
             wc.GivePane(201); // created
+        }
+    }
+}
+
+[MgtAuthorize(Org.TYP_SRC)]
+[Ui("产销关联")]
+public class SuplyTieWork : OrgWork<SuplyTieVarWork>
+{
+    [Ui(status: 1), Tool(Anchor)]
+    public void @default(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+        var prin = (User)wc.Principal;
+        List<Org> lst = null;
+        if (org.ties != null)
+        {
+            lst = new List<Org>();
+            foreach (var id in org.ties)
+            {
+                var o = GrabTwin<int, Org>(id);
+                lst.Add(o);
+            }
+        }
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (lst == null)
+            {
+                h.ALERT("尚无上线的主体");
+                return;
+            }
+
+            MainGrid(h, lst, prin, false);
+        }, false, 6);
+    }
+
+    [MgtAuthorize(Org.TYP_SRC, User.ROL_MGT)]
+    [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
+    public async Task add(WebContext wc, int cmd)
+    {
+        var org = wc[-1].As<Org>();
+        int orgid;
+
+        if (wc.IsGet)
+        {
+            string tel = wc.Query[nameof(tel)];
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_();
+
+                h.FIELDSUL_("添加产销关联");
+                h.LI_().TEXT("联系电话", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                h._FIELDSUL();
+
+                if (cmd == 1) // search user
+                {
+                    var arr = GrabTwinArray<int, Org>(0, filter: x => x.tel == tel);
+                    h.FIELDSUL_();
+
+                    h.RADIOSET(nameof(orgid), 0, arr);
+
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
+                }
+                h._FORM();
+            });
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            orgid = f[nameof(orgid)];
+            var other = GrabTwin<int, Org>(orgid);
+            lock (org)
+            {
+                org.ties = org.ties.AddOf(orgid);
+
+                // update the opposite org
+                other.ties = other.ties.AddOf(org.id);
+            }
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE orgs SET ties = @1 WHERE id = @2; UPDATE orgs SET ties = @3 WHERE id = @4");
+            await dc.ExecuteAsync(p => p.Set(org.ties).Set(org.id).Set(other.ties).Set(orgid));
+
+            wc.GivePane(200); // ok
         }
     }
 }

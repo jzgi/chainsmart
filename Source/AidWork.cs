@@ -36,7 +36,7 @@ public abstract class AidWork<V> : WebWork where V : AidVarWork, new()
     }
 }
 
-[MgtAuthorize(-1, User.ROL_MGT)]
+[MgtAuthorize(0, User.ROL_MGT)]
 [Ui("协助")]
 public class AdmlyAidWork : AidWork<AdmlyAidVarWork>
 {

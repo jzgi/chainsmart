@@ -254,9 +254,9 @@ public class SuplyVarWork : MgtVarWork
 
         // sup
 
-        CreateWork<SuplyLotWork>("slot", header: "供应源");
+        CreateWork<SuplyLotOpWork>("slotop", header: "供应源");
 
-        CreateWork<SuplyLotOpWork>("slotop");
+        CreateWork<SuplyLotWork>("slot");
 
         CreateWork<SuplyPurWork>("spur");
 
@@ -264,7 +264,9 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SuplyCodeWork>("scode");
+        CreateWork<SuplyTagWork>("stag");
+
+        CreateWork<SuplyTieWork>("stie");
 
         // hub
 
