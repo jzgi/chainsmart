@@ -146,17 +146,15 @@ public class RtllyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mrtr", state: Org.TYP_RTL, ui: new UiAttribute("入驻商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mrtl", state: Org.TYP_RTL, ui: new UiAttribute("成员商户"), header: "机构");
 
-        CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("入驻门店"));
+        CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 
         CreateWork<MktlyPurWork>("mpur");
 
         CreateWork<MktlyTestWork>("mtest");
-
-        CreateWork<MktlyAidWork>("maid");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
@@ -254,9 +252,9 @@ public class SuplyVarWork : MgtVarWork
 
         // sup
 
-        CreateWork<SuplyLotOpWork>("slotop", header: "供应源");
+        CreateWork<SuplyLotWork>("slot", header: "供应源");
 
-        CreateWork<SuplyLotWork>("slot");
+        CreateWork<SuplyItemWork>("sitem");
 
         CreateWork<SuplyPurWork>("spur");
 
@@ -264,7 +262,7 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SuplyTagWork>("stag");
+        CreateWork<SuplyCodeWork>("stag");
 
         CreateWork<SuplyTieWork>("stie");
 
@@ -274,8 +272,8 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<HublyPurLdgWork>("hpurldg");
 
-        CreateWork<HublyTestWork>("htest");
+        CreateWork<HublyLotWork>("hflow");
 
-        CreateWork<HublyLotOpWork>("hlotop");
+        CreateWork<HublyTestWork>("htest");
     }
 }

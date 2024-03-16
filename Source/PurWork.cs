@@ -27,7 +27,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         base.OnCreate();
 
         // add sub work for purchase creation
-        CreateWork<RtllyPurLotWork>("lot");
+        CreateWork<RtllyPurLotVarWork>("lot");
     }
 
 
@@ -164,8 +164,8 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
         const short Msk = 0xff | Entity.MSK_EXTRA;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Lot.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
-        var arr = await dc.QueryAsync<Lot>(p => p.Set(hubid).Set(cat), Msk);
+        dc.Sql("SELECT ").collst(Item.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
+        var arr = await dc.QueryAsync<Item>(p => p.Set(hubid).Set(cat), Msk);
 
         wc.GivePage(200, h =>
         {

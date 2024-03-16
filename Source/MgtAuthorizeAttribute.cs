@@ -32,6 +32,11 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
 
         var seg = wc[typeof(MgtVarWork)];
         var org = seg.As<Org>();
+        
+        if ((org.typ & atyp) != atyp)
+        {
+            return false;
+        }
 
         if ((atyp & Org.TYP_RTL_) == Org.TYP_RTL_) // check retail
         {

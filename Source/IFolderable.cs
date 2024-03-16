@@ -2,7 +2,7 @@
 
 public interface IFolderable
 {
-    short Index { get; }
+    short Idx { get; }
 
-    short Size { get; }
+    short Style { get; }
 }

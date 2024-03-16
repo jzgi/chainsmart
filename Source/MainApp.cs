@@ -58,6 +58,22 @@ public class MainApp : Application
 
         MakeCache(dc =>
             {
+                dc.Sql("SELECT ").collst(Sym.Empty).T(" FROM syms WHERE status > 0 ORDER BY typ");
+                return dc.Query<short, Sym>();
+            },
+            60 * 60 * 12
+        );
+
+        MakeCache(dc =>
+            {
+                dc.Sql("SELECT ").collst(Env.Empty).T(" FROM envs WHERE status > 0 ORDER BY typ");
+                return dc.Query<short, Env>();
+            },
+            60 * 60 * 12
+        );
+
+        MakeCache(dc =>
+            {
                 dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                 return dc.Query<short, Reg>();
             },

@@ -42,7 +42,7 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
     }
 }
 
-[Ui("市场应付款")]
+[Ui("市场端应付")]
 public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -117,7 +117,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
         }
     }
 
-    [MgtAuthorize(-1, User.ROL_FIN)]
+    [MgtAuthorize(0, User.ROL_FIN)]
     [Ui("结算", icon: "plus-circle", status: 1), Tool(ButtonOpen)]
     public async Task gen(WebContext wc)
     {
@@ -153,7 +153,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     }
 }
 
-[Ui("供应应付款")]
+[Ui("供应端应付")]
 public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

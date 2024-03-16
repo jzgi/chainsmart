@@ -5,17 +5,19 @@ namespace ChainSmart;
 /// <summary>
 /// A range of tracebility codes. 
 /// </summary>
-public class Tag : Entity, IKeyable<int>
+public class Code : Entity, IKeyable<int>
 {
-    public static readonly Tag Empty = new();
+    public static readonly Code Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "特牌" },
-        { 2, "普牌" },
-        { 4, "特贴" },
-        { 8, "普贴" },
-        { 16, "RFID" },
+        { 1, "特金" },
+        { 2, "普金" },
+        { 3, "特塑" },
+        { 4, "普塑" },
+        { 5, "特贴" },
+        { 6, "普贴" },
+        { 7, "RFID" },
     };
 
 

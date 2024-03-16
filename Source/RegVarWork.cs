@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChainFX.Web;
 using static ChainFX.Web.Modal;
 using static ChainFX.Nodal.Storage;
@@ -14,38 +15,30 @@ public class AdmlyRegVarWork : RegVarWork
     public async Task @default(WebContext wc, int typ)
     {
         short id = wc[0];
-        if (wc.IsGet)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE id = @1");
-            var o = await dc.QueryTopAsync<Reg>(p => p.Set(id));
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_("区域属性");
-                h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
-                h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
-                h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("品类标志", nameof(o.style), o.style, min: 0, max: 0xff)._LI();
-                h._FIELDSUL()._FORM();
 
-                h.TOOLBAR(bottom: true);
-            });
-        }
-        else
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs WHERE id = @1");
+        var o = await dc.QueryTopAsync<Reg>(p => p.Set(id));
+
+        wc.GivePane(200, h =>
         {
-            var o = await wc.ReadObjectAsync<Reg>();
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE regs")._SET_(o).T(" WHERE id = @1");
-            await dc.ExecuteAsync(p =>
-            {
-                o.Write(p);
-                p.Set(id);
-            });
-            wc.GivePane(200);
-        }
+            h.UL_("uk-list uk-list-divider");
+
+            h.LI_().FIELD("区域编号", o.id)._LI();
+            h.LI_().FIELD("名称", o.name)._LI();
+            h.LI_().FIELD("简介语", o.tip)._LI();
+            h.LI_().FIELD("序号", o.idx)._LI();
+            h.LI_().FIELD("风格", o.style, Reg.Styles)._LI();
+            h.LI_().FIELD("状态", o.status, Reg.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
+
+            h._UL();
+
+            h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
+        }, false, 6);
     }
 
-    [Ui(tip: "调整区域信息", icon: "edit"), Tool(Anchor)]
+    [Ui(icon: "pencil", status: 1 | 2), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         short id = wc[0];
@@ -59,8 +52,9 @@ public class AdmlyRegVarWork : RegVarWork
                 h.FORM_().FIELDSUL_("区域属性");
                 h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
+                h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().NUMBER("品类标志", nameof(o.style), o.style, min: 0, max: 0xff)._LI();
+                h.LI_().SELECT("风格", nameof(o.style), o.style, Reg.Styles)._LI();
                 h._FIELDSUL()._FORM();
             });
         }
@@ -78,26 +72,30 @@ public class AdmlyRegVarWork : RegVarWork
         }
     }
 
-    [Ui(tip: "删除", icon: "trash"), Tool(ButtonOpen)]
-    public async Task rm(WebContext wc)
+    [MgtAuthorize(0, User.ROL_MGT)]
+    [Ui("上线", "上线投入使用", status: 1 | 2), Tool(ButtonConfirm)]
+    public async Task ok(WebContext wc)
     {
-        short id = wc[0];
-        if (wc.IsGet)
-        {
-            const bool ok = true;
-            wc.GivePane(200, h =>
-            {
-                h.ALERT("确定删除此项？");
-                h.FORM_().HIDDEN(nameof(ok), ok)._FORM();
-            });
-        }
-        else
-        {
-            using var dc = NewDbContext();
-            dc.Sql("DELETE FROM regs WHERE id = @1");
-            await dc.ExecuteAsync(p => p.Set(id));
+        int id = wc[0];
+        var prin = (User)wc.Principal;
 
-            wc.GivePane(200);
-        }
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE regs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND status BETWEEN 1 AND 2");
+        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id));
+
+        wc.Give(200);
+    }
+
+    [MgtAuthorize(0, User.ROL_MGT)]
+    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
+    public async Task unok(WebContext wc)
+    {
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE regs SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND status = 4")._MEET_(wc);
+        await dc.ExecuteAsync(p => p.Set(id));
+
+        wc.Give(200);
     }
 }

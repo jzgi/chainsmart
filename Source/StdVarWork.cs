@@ -5,11 +5,11 @@ using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
-public abstract class CatVarWork : WebWork
+public abstract class StdVarWork : WebWork
 {
 }
 
-public class AdmlyCatVarWork : CatVarWork
+public class AdmlyStdVarWork : StdVarWork
 {
     public async Task @default(WebContext wc, int typ)
     {

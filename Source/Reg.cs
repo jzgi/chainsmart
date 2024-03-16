@@ -21,6 +21,11 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         { TYP_PROVINCE, "省份" },
     };
 
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" },
+    };
+
     internal short id;
 
     internal short idx;
@@ -55,15 +60,15 @@ public class Reg : Entity, IKeyable<short>, IFolderable
 
     public short Key => id;
 
-    public short Index => idx;
+    public short Idx => idx;
 
-    public short Size => style;
+    public short Style => style;
 
-    public bool IsProvince => typ == TYP_PROVINCE;
+    public bool IsSector => typ == TYP_SECTOR;
 
     public bool IsCity => typ == TYP_CITY;
 
-    public bool IsSector => typ == TYP_SECTOR;
+    public bool IsProvince => typ == TYP_PROVINCE;
 
     public override string ToString() => name;
 }

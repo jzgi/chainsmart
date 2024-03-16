@@ -10,13 +10,13 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_GDS = 1,
-        TYP_SVC = 2;
+        TYP_RTL = 1,
+        TYP_SUP = 2;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_GDS, "货品" },
-        { TYP_SVC, "服务" },
+        { TYP_RTL, "市场" },
+        { TYP_SUP, "供应" },
     };
 
 
@@ -32,28 +32,28 @@ public class Item : Entity, IKeyable<int>
     internal int orgid;
 
     internal int srcid;
-    internal int lotid;
-
-    // internal int lotid;
     internal short cattyp;
-    internal short symtyp;
-
     internal string unit;
     internal string unitip;
-
+    internal short unitx;
     internal decimal price;
     internal decimal off;
     internal bool promo;
     internal short step;
-    internal short max;
     internal short min;
+    internal short max;
+
     internal short stock;
+    internal string link;
+    internal int nstart;
+    internal int nend;
 
     internal bool icon;
     internal bool pic;
-
-
-    internal ItemOp[] ops;
+    internal bool m1;
+    internal bool m2;
+    internal bool m3;
+    internal bool m4;
 
     public override void Read(ISource s, short msk = 255)
     {
@@ -67,14 +67,15 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(lotid), ref lotid);
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(cattyp), ref cattyp);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
+            s.Get(nameof(unitx), ref unitx);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
@@ -86,13 +87,15 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(stock), ref stock);
+            s.Get(nameof(link), ref link);
+            s.Get(nameof(nstart), ref nstart);
+            s.Get(nameof(nend), ref nend);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
-        }
-
-        if ((msk & MSK_AUX) == MSK_AUX)
-        {
-            s.Get(nameof(ops), ref ops);
+            s.Get(nameof(m1), ref m1);
+            s.Get(nameof(m2), ref m2);
+            s.Get(nameof(m3), ref m3);
+            s.Get(nameof(m4), ref m4);
         }
     }
 
@@ -108,15 +111,15 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
-            if (lotid > 0) s.Put(nameof(lotid), lotid);
-            else s.PutNull(nameof(lotid));
         }
 
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
+            s.Put(nameof(srcid), srcid);
             s.Put(nameof(cattyp), cattyp);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
+            s.Put(nameof(unitx), unitx);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);
@@ -128,13 +131,15 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(stock), stock);
+            s.Put(nameof(link), link);
+            s.Put(nameof(nstart), nstart);
+            s.Put(nameof(nend), nend);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
-        }
-
-        if ((msk & MSK_AUX) == MSK_AUX)
-        {
-            s.Put(nameof(ops), ops);
+            s.Put(nameof(m1), m1);
+            s.Put(nameof(m2), m2);
+            s.Put(nameof(m3), m3);
+            s.Put(nameof(m4), m4);
         }
     }
 
@@ -159,7 +164,5 @@ public class Item : Entity, IKeyable<int>
 
     public decimal GetRealOff(bool vip) => vip || promo ? off : 0;
 
-    public bool IsImported => lotid > 0;
-
-    public ItemOp[] Ops => ops;
+    public bool IsImported => srcid > 0;
 }

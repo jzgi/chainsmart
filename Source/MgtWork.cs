@@ -18,9 +18,7 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyRegWork>("reg", header: "常规");
 
-        CreateWork<AdmlySymWork>("sym");
-
-        CreateWork<AdmlyCatWork>("cat");
+        CreateWork<AdmlyStdWork>("std");
 
         CreateWork<AdmlyMbrWork>("mbr");
 
@@ -32,7 +30,7 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyAidWork>("aid");
+        CreateWork<AdmlyCodeWork>("tag");
 
         // fin
 

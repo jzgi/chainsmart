@@ -83,7 +83,7 @@ public class BuyLn : IData, IKeyable<int>
     internal void Init(Item m, bool vip)
     {
         name = m.name;
-        lotid = m.lotid;
+        lotid = m.srcid;
         unit = m.unit;
         unitip = m.unitip;
         price = m.price;

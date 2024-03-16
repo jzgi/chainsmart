@@ -3,7 +3,7 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A lot operation to particular hub.
+/// A lot operation flow to particular hub.
 /// </summary>
 public class LotOp : Entity, IKeyable<int>
 {
@@ -33,11 +33,11 @@ public class LotOp : Entity, IKeyable<int>
 
     internal int id;
 
-    internal int supid;
+    internal int orgid;
 
     internal int srcid;
 
-    internal int lotid;
+    internal int itemid;
 
     internal int hubid;
 
@@ -59,9 +59,9 @@ public class LotOp : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(supid), ref supid);
+            s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(srcid), ref srcid);
-            s.Get(nameof(lotid), ref lotid);
+            s.Get(nameof(itemid), ref itemid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
@@ -85,9 +85,9 @@ public class LotOp : Entity, IKeyable<int>
         }
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(supid), supid);
+            s.Put(nameof(orgid), orgid);
             s.Put(nameof(srcid), srcid);
-            s.Put(nameof(lotid), lotid);
+            s.Put(nameof(itemid), itemid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {

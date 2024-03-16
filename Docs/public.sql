@@ -4,7 +4,7 @@ alter sequence purs_id_seq owner to postgres;
 
 create sequence jobs_id_seq;
 
-alter sequence jobs_id_seq owner to postgres;
+alter sequence tags_id_seq owner to postgres;
 
 create type stockop as
 (
@@ -219,11 +219,11 @@ create table lots
 )
     inherits (entities);
 
-comment on table lots is 'product lots for wholesale';
+comment on table toremovelots is 'product lots for wholesale';
 
-comment on column lots.unitw is 'unit weight';
+comment on column toremovelots.unitw is 'unit weight';
 
-alter table lots
+alter table toremovelots
     owner to postgres;
 
 create table purs
@@ -246,7 +246,7 @@ create table purs
     ctrid    integer                                              not null,
     lotid    integer
         constraint purs_lotid_fk
-            references lots,
+            references toremovelots,
     unit     varchar(4),
     unitip   varchar(8) default 0                                 not null,
     unitx    smallint,
@@ -295,10 +295,10 @@ create index purs_gen_idx
     where (status = 4);
 
 create index lots_orgidstatustyp_idx
-    on lots (orgid, status, typ);
+    on toremovelots (orgid, status, typ);
 
 create index lots_statuscattyp_idx
-    on lots (status, symtyp);
+    on toremovelots (status, symtyp);
 
 create table buys
 (
@@ -365,7 +365,7 @@ create table items
             references orgs,
     lotid  integer
         constraint items_lotid_fk
-            references lots,
+            references toremovelots,
     rank   smallint,
     unit   varchar(4),
     unitip varchar(10) default 0 not null,
@@ -555,7 +555,7 @@ create table lotinvs
 (
     lotid   integer not null
         constraint lotavs_lotid_fk
-            references lots,
+            references toremovelots,
     hubid   integer not null
         constraint lotavs_hubid_fk
             references orgs,
@@ -609,13 +609,13 @@ create table codes
 )
     inherits (entities);
 
-alter table tags
+alter table codes
     owner to postgres;
 
-alter sequence jobs_id_seq owned by tags.id;
+alter sequence tags_id_seq owned by codes.id;
 
 create index jobs_upperid_idx
-    on tags (orgid);
+    on codes (orgid);
 
 create table peers
 (
@@ -656,7 +656,7 @@ create table lotops
             references orgs,
     lotid  integer
         constraint lotops_lotid_fk
-            references lots,
+            references toremovelots,
     hubid  integer
         constraint lotops_hubid_fk
             references orgs,
@@ -743,7 +743,7 @@ SELECT o.typ,
        o.m2 IS NOT NULL   AS m2,
        o.m3 IS NOT NULL   AS m3,
        o.m4 IS NOT NULL   AS m4
-FROM lots o;
+FROM toremovelots o;
 
 alter table lots_vw
     owner to postgres;
@@ -809,8 +809,8 @@ SELECT o.typ,
        o.status,
        o.id,
        o.orgid,
-       o.lotid,
-       o.rank,
+       o.srcid,
+       o.unitx,
        o.unit,
        o.unitip,
        o.price,

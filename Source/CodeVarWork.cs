@@ -6,7 +6,7 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class TagVarWork : WebWork
+public abstract class CodeVarWork : WebWork
 {
     public virtual async Task @default(WebContext wc)
     {
@@ -14,8 +14,8 @@ public abstract class TagVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Tag.Empty).T(" FROM tags WHERE id = @1 AND parentid = @2");
-        var o = await dc.QueryTopAsync<Tag>(p => p.Set(id).Set(org.id));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM tags WHERE id = @1 AND parentid = @2");
+        var o = await dc.QueryTopAsync<Code>(p => p.Set(id).Set(org.id));
 
         wc.GivePane(200, h =>
         {
@@ -27,7 +27,7 @@ public abstract class TagVarWork : WebWork
             h.LI_().FIELD("身份证号", o.nstart)._LI();
             h.LI_().FIELD("民生卡号", o.nend)._LI();
 
-            h.LI_().FIELD("状态", o.status, Tag.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD("状态", o.status, Code.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "生效", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
@@ -37,7 +37,7 @@ public abstract class TagVarWork : WebWork
     }
 }
 
-public class PublyTagVarWork : TagVarWork
+public class PublyCodeVarWork : CodeVarWork
 {
     public override async Task @default(WebContext wc)
     {
@@ -57,7 +57,7 @@ public class PublyTagVarWork : TagVarWork
     }
 }
 
-public class SuplyTagVarWork : TagVarWork
+public class SuplyCodeVarWork : CodeVarWork
 {
     [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(tip: "修改或调整孵化对象", icon: "pencil", status: 1), Tool(ButtonShow)]
@@ -72,21 +72,21 @@ public class SuplyTagVarWork : TagVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Tag.Empty).T(" FROM tags WHERE id = @1");
-            var o = await dc.QueryTopAsync<Tag>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Code.Empty).T(" FROM tags WHERE id = @1");
+            var o = await dc.QueryTopAsync<Code>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
                 // h.LI_().TEXT("身份证号", nameof(o.nstart), o.nstart, min: 18, max: 18)._LI();
-                h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Tag.Typs, filter: (k, _) => k <= 2, required: true)._LI();
+                h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
                 // h.LI_().TEXT("民生卡号", nameof(o.nend), o.nend, min: 4, max: 8)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
         }
         else // POST
         {
-            const short msk = Tag.MSK_EDIT;
+            const short msk = Code.MSK_EDIT;
             var m = await wc.ReadObjectAsync(msk, new Test
             {
                 adapted = DateTime.Now,
@@ -134,4 +134,8 @@ public class SuplyTagVarWork : TagVarWork
 
         wc.GivePane(200);
     }
+}
+
+public class AdmlyCodeVarWork : CodeVarWork
+{
 }

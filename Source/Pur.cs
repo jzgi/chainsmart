@@ -58,11 +58,11 @@ public class Pur : Entity, IKeyable<int>
     {
     }
 
-    public Pur(Lot lot, Org rtl, Org sup)
+    public Pur(Item itm, Org rtl, Org sup)
     {
-        typ = lot.typ;
-        name = lot.name;
-        tip = lot.tip;
+        typ = itm.typ;
+        name = itm.name;
+        tip = itm.tip;
 
         rtlid = rtl.id;
         mktid = rtl.MktId;
@@ -70,12 +70,12 @@ public class Pur : Entity, IKeyable<int>
         supid = sup.id;
         ctrid = sup.HubId;
 
-        lotid = lot.id;
-        unit = lot.unit;
-        unitip = lot.unitip;
-        unitx = lot.unitx;
-        price = lot.price;
-        off = lot.off;
+        lotid = itm.id;
+        unit = itm.unit;
+        unitip = itm.unitip;
+        unitx = itm.unitx;
+        price = itm.price;
+        off = itm.off;
     }
 
     public override void Read(ISource s, short msk = 0xff)
