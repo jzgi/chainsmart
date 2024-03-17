@@ -99,7 +99,7 @@ public class AdmlyUserVarWork : UserVarWork
     }
 }
 
-public class AdmlyAccessVarWork : UserVarWork
+public class AdmlyMbrVarWork : UserVarWork
 {
     [MgtAuthorize(-1, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]

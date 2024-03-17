@@ -16,9 +16,9 @@ public class AdmlyWork : MgtWork
     {
         // basic 
 
-        CreateWork<AdmlyRegWork>("reg", header: "常规");
+        CreateWork<AdmlyStdWork>("std", header: "常规");
 
-        CreateWork<AdmlyStdWork>("std");
+        CreateWork<AdmlyRegWork>("reg");
 
         CreateWork<AdmlyMbrWork>("mbr");
 

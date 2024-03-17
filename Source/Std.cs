@@ -9,6 +9,8 @@ public class Std : Entity, IKeyable<short>, IFolderable
 {
     public static readonly Std Empty = new();
 
+    public const int SUB_CAT = 1, SUB_ENV = 2, SUB_TAG = 3, SUB_SYM = 4, SUB_CER = 5;
+
     public static readonly Map<short, string> Styles = new()
     {
         { 0, "默认" }
@@ -41,6 +43,16 @@ public class Std : Entity, IKeyable<short>, IFolderable
     public short Style => style;
 
     public override string ToString() => name;
+
+    public static string DbTableOf(int sub) => sub switch
+    {
+        SUB_CAT => "cats", SUB_ENV => "envs", SUB_TAG => "tags", SUB_SYM => "syms", _ => "cers"
+    };
+
+    public static string TitleOf(int sub) => sub switch
+    {
+        SUB_CAT => "品类", SUB_ENV => "环境", SUB_TAG => "溯源", SUB_SYM => "标符", _ => "认证"
+    };
 }
 
 /// <summary>
@@ -68,5 +80,12 @@ public class Tag : Std
 /// A standard product modification symbol.
 /// </summary>
 public class Sym : Std
+{
+}
+
+/// <summary>
+/// A standard certification program that a user can attend..
+/// </summary>
+public class Cer : Std
 {
 }

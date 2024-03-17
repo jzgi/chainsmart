@@ -13,9 +13,15 @@ public class WwwService : MainService
     {
         CreateVarWork<PublyVarWork>();
 
-        CreateWork<PublyCodeWork>("tag");
+        CreateWork<PublyCodeWork>("code");
 
-        // CreateWork<PublySymWork>("sym");
+        CreateWork<PublyCatWork>("cat");
+
+        CreateWork<PublyEnvWork>("env");
+
+        CreateWork<PublyTagWork>("tag");
+
+        CreateWork<PublySymWork>("sym");
 
         CreateWork<PublyOrgWork>("org");
 

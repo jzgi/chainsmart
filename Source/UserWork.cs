@@ -46,7 +46,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
 }
 
 [Ui("人员权限")]
-public class AdmlyMbrWork : UserWork<AdmlyAccessVarWork>
+public class AdmlyMbrWork : UserWork<AdmlyMbrVarWork>
 {
     [Ui("人员权限"), Tool(Anchor)]
     public async Task @default(WebContext wc)

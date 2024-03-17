@@ -155,6 +155,8 @@ public class RtllyVarWork : MgtVarWork
         CreateWork<MktlyPurWork>("mpur");
 
         CreateWork<MktlyTestWork>("mtest");
+
+        CreateWork<MktlyCerWork>("mcer");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
