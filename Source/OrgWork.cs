@@ -25,15 +25,17 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
 
             if (o.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
+                h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", circle: true, css: "uk-width-1-6");
             }
             else
-                h.PIC("/void.webp", css: "uk-width-1-5");
+            {
+                h.PIC("/void.webp", circle: true, css: "uk-width-1-6");
+            }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
+            h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q2(o.Cover, o.tip, css: "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link")._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -45,7 +47,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 {
 }
 
-[Ui("入驻机构")]
+[Ui("成员机构")]
 public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
 {
     [Ui("市场", status: 1), Tool(Anchor)]
@@ -144,14 +146,14 @@ public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
     }
 }
 
-[Ui("入驻供应源")]
+[Ui("成员供应源")]
 public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
 {
     [Ui("供应商", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSup, sorter: (x, y) => x.regid - y.regid).GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => !x.IsVoid && x.IsSup, sorter: (a, b) => a.status - b.status).GetSegment(30 * page, 30);
 
         wc.GivePage(200, h =>
         {
@@ -162,7 +164,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
                 return;
             }
             MainGrid(h, arr, prin, true);
-            h.PAGINATION(arr.Count == 20);
+            h.PAGINATION(arr.Count == 30);
         }, false, 6);
     }
 
@@ -170,7 +172,7 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
     public void src(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsSrc, sorter: (k, v) => v.id - k.id).GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => !x.IsVoid && x.IsSrc, sorter: (a, b) => a.status - b.status).GetSegment(30 * page, 30);
 
         wc.GivePage(200, h =>
         {
@@ -181,27 +183,60 @@ public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
                 return;
             }
             MainGrid(h, arr, prin, true);
-            h.PAGINATION(arr.Count == 20);
+            h.PAGINATION(arr.Count == 30);
         }, false, 6);
     }
 
-    [Ui(icon: "cloud-download", status: 4), Tool(Anchor)]
-    public void down(WebContext wc, int page)
+    [Ui(icon: "trash", status: 4), Tool(Anchor)]
+    public void @void(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id).GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsVoid, sorter: (a, b) => b.oked.CompareTo(a.oked)).GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR(subscript: 4);
             if (arr == null)
             {
-                h.ALERT("尚无下线供应源");
+                h.ALERT("尚无已作废的供应源");
                 return;
             }
             MainGrid(h, arr, prin, true);
             h.PAGINATION(arr.Count == 20);
         }, false, 6);
+    }
+
+    [Ui(tip: "查询", icon: "search", status: 8), Tool(AnchorPrompt)]
+    public void search(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+        var regs = Grab<short, Reg>();
+        var prin = (User)wc.Principal;
+
+        bool inner = wc.Query[nameof(inner)];
+        short regid = 0;
+        if (inner)
+        {
+            wc.GivePane(200, h => h.FORM_().RADIOSET(nameof(regid), regid, regs, filter: (k, v) => v.IsSector)._FORM());
+        }
+        else // OUTER
+        {
+            regid = wc.Query[nameof(regid)];
+            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.AsRtl);
+
+            wc.GivePage(200, h =>
+            {
+                h.TOOLBAR(subscript: regid);
+
+                if (arr == null)
+                {
+                    h.ALERT("该版块尚无主体");
+                    return;
+                }
+
+                // MainGrid(h, arr, prin);
+            }, false, 6);
+        }
     }
 
 

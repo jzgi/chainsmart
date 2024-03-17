@@ -14,7 +14,7 @@ namespace ChainSmart;
 public class PublyVarWork : ItemWork<PubItemVarWork>
 {
     /// <summary>
-    /// The home for a retail biz.
+    /// The home for a retail.
     /// </summary>
     public async Task @default(WebContext wc)
     {
@@ -36,7 +36,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.PIC_("/org/", org.id, "/pic");
             }
             else
+            {
                 h.PIC_("/void-m.webp");
+            }
 
             h.ATEL(org.tel, "uk-overlay uk-position-bottom-right");
 
@@ -71,11 +73,11 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-5");
                 if (o.icon)
                 {
-                    h.IMG("/item/", o.id, "/icon");
+                    h.PIC("/item/", o.id, "/icon");
                 }
                 else
                 {
-                    h.IMG("/void.webp");
+                    h.PIC("/void.webp");
                 }
                 h._A();
 
@@ -311,33 +313,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h._PIC();
                 h._LI();
 
-                h.LI_("uk-section uk-padding-remove");
-                h.DIV_(" uk-tile uk-tile-primary");
-                h.H3("统一派送区域");
-                var specs = org.specs;
-                for (int i = 0; i < specs?.Count; i++)
-                {
-                    var spec = specs.EntryAt(i);
-                    var v = spec.Value;
-                    if (v.IsObject)
-                    {
-                        h.DL_();
-                        h.DT(spec.Key);
-
-                        h.DD_();
-                        var sub = (JObj)v;
-                        for (int k = 0; k < sub.Count; k++)
-                        {
-                            if (k > 0) h.T('，');
-                            h.T(sub.KeyAt(k));
-                        }
-                        h._DD();
-                        h._DL();
-                    }
-                }
-                h._DIV();
-                h._LI();
-
                 h._SLIDERUL();
             }
 
@@ -359,10 +334,12 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
                     if (m.icon)
                     {
-                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5");
+                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5", circle: true);
                     }
                     else
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                    {
+                        h.PIC("/void.webp", css: "uk-width-1-5", circle: true);
+                    }
 
                     h.ASIDE_();
                     h.HEADER_().H4(m.Name).SPAN(m.IsLink ? string.Empty : open ? "营业" : "休息", css: "uk-badge uk-badge-success")._HEADER();

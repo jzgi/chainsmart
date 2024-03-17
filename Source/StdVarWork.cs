@@ -130,10 +130,3 @@ public class AdmlyStdVarWork : StdVarWork
     }
 }
 
-
-public class MktlyProgVarWork : StdVarWork
-{
-    public async Task @default(WebContext wc, int sub)
-    {
-    }
-}

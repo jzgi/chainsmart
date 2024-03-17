@@ -15,12 +15,12 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Test> arr)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Test> arr)
     {
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-5");
+            h.PIC("/void.webp", css: "uk-width-1-6");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);

@@ -150,3 +150,10 @@ public class RtllyVipVarWork : UserVarWork
         wc.Give(204); // no content
     }
 }
+
+public class MktlyCerVarWork : UserVarWork
+{
+    public async Task @default(WebContext wc, int sub)
+    {
+    }
+}

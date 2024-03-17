@@ -47,11 +47,14 @@ public class User : Entity, IKeyable<int>
     internal int supid;
     internal short suply;
     internal int rtlid;
+
     internal short rtlly;
+
     // internal int srcid;
     // internal short srcly;
     internal int[] vip;
     internal DateTime agreed;
+    internal int orgid;
     internal bool icon;
 
     public override void Read(ISource s, short msk = 0xff)
@@ -80,6 +83,7 @@ public class User : Entity, IKeyable<int>
             s.Get(nameof(rtlly), ref rtlly);
             s.Get(nameof(vip), ref vip);
             s.Get(nameof(agreed), ref agreed);
+            s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(icon), ref icon);
         }
     }
@@ -106,13 +110,14 @@ public class User : Entity, IKeyable<int>
             s.Put(nameof(rtlly), rtlly);
             s.Put(nameof(vip), vip);
             s.Put(nameof(agreed), agreed);
+            s.Put(nameof(orgid), orgid);
             s.Put(nameof(icon), icon);
         }
     }
 
     public int Key => id;
 
-    public bool IsPro => typ >= 1;
+    public bool IsCertified => typ >= 1;
 
     public bool HasAdmly => admly > 0;
 

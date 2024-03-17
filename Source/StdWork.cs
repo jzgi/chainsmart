@@ -88,7 +88,7 @@ public class PublySymWork : StdWork<PublySymVarWork>
     }
 }
 
-[Ui("标准项")]
+[Ui("标准")]
 public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
@@ -230,15 +230,5 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
             wc.GivePane(200); // close dialog
         }
-    }
-}
-
-[Ui("认证")]
-public class MktlyCerWork : StdWork<MktlyProgVarWork>
-{
-    [Ui(status: 1), Tool(Anchor)]
-    public void @default(WebContext wc)
-    {
-        
     }
 }

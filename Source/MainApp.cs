@@ -90,7 +90,7 @@ public class MainApp : Application
 
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Std.Empty).T(" FROM regs ORDER BY typ, id");
+                dc.Sql("SELECT ").collst(Reg.Empty).T(" FROM regs ORDER BY typ, id");
                 return dc.Query<short, Reg>();
             },
             60 * 60 * 12

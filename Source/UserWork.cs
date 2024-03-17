@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -15,7 +16,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<User> lst, bool? rtl)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<User> lst, bool? rtl)
     {
         h.MAINGRID(lst, o =>
         {
@@ -23,10 +24,12 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
 
             if (o.icon)
             {
-                h.PIC_("uk-width-1-5").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                h.PIC_("uk-width-1-6").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
             }
             else
-                h.PIC("/void.webp", css: "uk-width-1-5");
+            {
+                h.PIC("/void.webp", css: "uk-width-1-6");
+            }
 
             h.ASIDE_();
 
@@ -48,7 +51,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
 [Ui("人员权限")]
 public class AdmlyMbrWork : UserWork<AdmlyMbrVarWork>
 {
-    [Ui("人员权限"), Tool(Anchor)]
+    [Ui, Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -379,7 +382,6 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
                     h.ALERT("没有找到");
                     return;
                 }
-
                 MainGrid(h, arr, true);
             }, false, 30);
         }
@@ -437,6 +439,113 @@ public class RtllyVipWork : UserWork<RtllyVipVarWork>
 
             using var dc = NewDbContext();
             await dc.ExecuteAsync("UPDATE users SET vip = array_append(vip, @1) WHERE id = @2", p => p.Set(org.id).Set(id));
+
+            wc.GivePane(200); // ok
+        }
+    }
+}
+
+[Ui("认证")]
+public class MktlyCerWork : UserWork<MktlyCerVarWork>
+{
+    [Ui(status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE orgid = @1 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+            if (arr == null)
+            {
+                h.ALERT("尚无认证用户");
+                return;
+            }
+            MainGrid(h, arr, null);
+        }, false, 12);
+    }
+
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
+    public async Task add(WebContext wc, int cmd)
+    {
+        var org = wc[-1].As<Org>();
+        var cers = Grab<short, Cer>();
+        var prin = (User)wc.Principal;
+        short typ;
+
+        if (wc.IsGet)
+        {
+            string tel = wc.Query[nameof(tel)];
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_();
+
+                h.FIELDSUL_("添加用户认证");
+                h.LI_().TEXT("手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                h._FIELDSUL();
+
+                if (cmd == 1) // search user
+                {
+                    using var dc = NewDbContext();
+                    dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
+                    var o = dc.QueryTop<User>(p => p.Set(tel));
+
+                    if (o == null)
+                    {
+                        h.ALERT("该手机号没有注册！");
+                        return;
+                    }
+                    h.FIELDSUL_();
+
+                    h.HIDDEN(nameof(o.id), o.id);
+                    h.HIDDEN(nameof(o.tel), o.tel);
+
+                    h.LI_().FIELD("用户名", o.name)._LI();
+                    var yes = true;
+                    if (o.orgid > 0)
+                    {
+                        var exOrg = GrabTwin<int, Org>(o.orgid);
+                        if (exOrg != null)
+                        {
+                            h.LI_().FIELD2("现有认证", exOrg.name, cers[o.typ])._LI();
+                            if (exOrg.id != org.id)
+                            {
+                                h.LI_("uk-flex-center").SPAN("必须先撤销现有认证", css: "uk-text-danger")._LI();
+                                yes = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        h.LI_().FIELD("现有认证", "无")._LI();
+                    }
+
+                    if (yes)
+                    {
+                        h.LI_().SELECT("授予认证", nameof(o.typ), o.typ, cers, required: true)._LI();
+                    }
+                    h._FIELDSUL();
+                    h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2, disabled: !yes)._BOTTOMBAR();
+                }
+                h._FORM();
+            });
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+
+            int id = f[nameof(id)];
+            typ = f[nameof(typ)];
+
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE users SET orgid = @1, typ = @2, oked = @3, oker = @4 WHERE id = @5");
+            await dc.ExecuteAsync(p => p.Set(org.id).Set(typ).Set(DateTime.Now).Set(prin.name).Set(id));
 
             wc.GivePane(200); // ok
         }

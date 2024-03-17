@@ -1945,7 +1945,8 @@ a.uk-button-primary.uk-active {
 .uk-button-secondary:focus,
 .uk-button-secondary:active,
 .uk-button-secondary.uk-active {
-    background-color: #ededed;
+    color: #f59604;
+    border: 1px solid #f59604;
 }
 
 /*
@@ -3988,7 +3989,7 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-tall .uk-modal-title {
-    color: #ff3b30;
+    color: #7daa1d;
     font-weight: 400;
     font-size: 1rem;
 }
@@ -4032,10 +4033,9 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #333;
-    font-weight: 400;
+    color: #7daa1d;
+    font-weight: 600;
     font-size: 1rem;
-    font-weight: bold;
 }
 
 .uk-modal-xclose {
