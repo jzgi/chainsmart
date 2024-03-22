@@ -48,7 +48,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 }
 
 [Ui("成员机构")]
-public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
+public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 {
     [Ui("市场", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -147,7 +147,7 @@ public class AdmlyEstWork : OrgWork<AdmlyOrgVarWork>
 }
 
 [Ui("成员供应源")]
-public class AdmlySupWork : OrgWork<AdmlyOrgVarWork>
+public class AdmlySupWork : OrgWork<AdmlySupVarWork>
 {
     [Ui("供应商", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
@@ -485,7 +485,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 }
 
 [MgtAuthorize(Org.TYP_SRC)]
-[Ui("产销关联")]
+[Ui("关联")]
 public class SuplyTieWork : OrgWork<SuplyTieVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -519,7 +519,7 @@ public class SuplyTieWork : OrgWork<SuplyTieVarWork>
     }
 
     [MgtAuthorize(Org.TYP_SRC, User.ROL_MGT)]
-    [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
+    [Ui("添加", "添加销售渠道", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
         var org = wc[-1].As<Org>();
@@ -531,9 +531,7 @@ public class SuplyTieWork : OrgWork<SuplyTieVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_();
-
-                h.FIELDSUL_("添加产销关联");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
                 h.LI_().TEXT("联系电话", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
 

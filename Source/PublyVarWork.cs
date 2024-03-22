@@ -104,7 +104,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.Q(o.tip, "uk-width-expand");
 
                 // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.step},{o.max},{o.stock},{o.min});\">"); // pricing portion
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.lotid},{o.max},{o.stock},{o.min});\">"); // pricing portion
                 h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\">")._SPAN();
                 h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ");
                 if (o.stock > 0)

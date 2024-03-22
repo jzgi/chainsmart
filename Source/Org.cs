@@ -16,19 +16,19 @@ public class Org : Entity, ITwin<int>
         TYP_ADM = 0b10000000; // admin
 
     public const short
-        _BIZ = 0b000001, // biz
-        _BCK = 0b000010, // backing
+        TYP_BIZ_ = 0b000001, // biz
+        TYP_BCK_ = 0b000010, // backing
         TYP_RTL_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_SHP = TYP_RTL_ | _BIZ, // shop
-        TYP_RTL = TYP_RTL_ | _BIZ | _BCK, // retailer
+        TYP_SHP = TYP_RTL_ | TYP_BIZ_, // shop
+        TYP_RTL = TYP_RTL_ | TYP_BIZ_ | TYP_BCK_, // retailer
         TYP_MKT = TYP_EST_ | TYP_RTL, // market
         //
-        TYP_SUP = TYP_SUP_ | _BIZ, // supplier
-        TYP_SRC = TYP_SUP_ | _BCK, // source
-        TYP_SRCSUP = TYP_SUP_ | _BIZ | _BCK, // supplier
+        TYP_SUP = TYP_SUP_ | TYP_BIZ_, // supplier
+        TYP_SRC = TYP_SUP_ | TYP_BCK_, // source
+        TYP_SRCSUP = TYP_SUP_ | TYP_BIZ_ | TYP_BCK_, // supplier
         TYP_HUB = TYP_EST_ | TYP_SUP; // hub
 
     public static readonly Map<short, string> Typs = new()
@@ -229,7 +229,9 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public bool AsUpr => (typ & TYP_EST_) == TYP_EST_;
+    public bool AsBiz => (typ & TYP_BIZ_) == TYP_BIZ_;
+
+    public bool AsEst => (typ & TYP_EST_) == TYP_EST_;
 
     public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
 
@@ -254,6 +256,8 @@ public class Org : Entity, ITwin<int>
     public bool HasXy => IsMkt || AsSup || IsHub;
 
     public bool IsTopOrg => parentid == 0;
+
+    public bool IsChildOrg => parentid > 0;
 
     public bool IsLink => addr?.IndexOf('/') >= 0;
 

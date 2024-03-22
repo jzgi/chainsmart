@@ -20,7 +20,7 @@ public abstract class MgtVarWork : WebWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(org.name);
-            if (org.AsUpr)
+            if (org.AsEst)
             {
                 h.H4(org.Cover);
             }
@@ -132,7 +132,7 @@ public class RtllyVarWork : MgtVarWork
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
 
-        CreateWork<RtllyVipWork>("rvip");
+        CreateWork<RtllyFlowWork>("rflow");
 
         CreateWork<RtllyBuyWork>("rbuy");
 
@@ -141,6 +141,8 @@ public class RtllyVarWork : MgtVarWork
         CreateWork<RtllyBuyApWork>("rbuyap");
 
         CreateWork<RtllyBuyLdgWork>("rbuyldg");
+
+        CreateWork<RtllyVipWork>("rvip");
 
         CreateWork<RtllyPurWork>("rpur");
 
@@ -171,7 +173,7 @@ public class RtllyVarWork : MgtVarWork
             h.SPAN(org.name);
             h._NAV();
 
-            if (org.AsUpr)
+            if (org.AsEst)
             {
                 h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
                 h.QRCODE(MainApp.WwwUrl + "/" + org.id + "/", css: "uk-width-small");
@@ -254,17 +256,17 @@ public class SuplyVarWork : MgtVarWork
 
         // sup
 
-        CreateWork<SuplyLotWork>("slot", header: "供应源");
+        CreateWork<SuplyItemWork>("sitem", header: "供应源");
 
-        CreateWork<SuplyItemWork>("sitem");
+        CreateWork<SuplyFlowWork>("sflow", header: "供应源");
+
+        CreateWork<SuplyCodeWork>("scode");
 
         CreateWork<SuplyPurWork>("spur");
 
         CreateWork<SuplyPurApWork>("spurap");
 
         CreateWork<SuplyPurLdgWork>("spurldg");
-
-        CreateWork<SuplyCodeWork>("stag");
 
         CreateWork<SuplyTieWork>("stie");
 
@@ -274,7 +276,9 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<HublyPurLdgWork>("hpurldg");
 
-        CreateWork<HublyLotWork>("hflow");
+        CreateWork<HublyLotWork>("hlot");
+
+        CreateWork<HublyFlowWork>("hjob");
 
         CreateWork<HublyTestWork>("htest");
     }

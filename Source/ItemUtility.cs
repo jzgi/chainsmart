@@ -78,7 +78,7 @@ public static class ItemUtility
         //     h.LI_().FIELD2("批次溯源码", $"{o.steo:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
         // }
 
-        var offset = tracenum - itm.step;
+        var offset = tracenum - itm.lotid;
         if (offset > 0)
         {
             h.LI_().LABEL("本溯源码").SPAN($"{tracenum:0000 0000}", css: "uk-static uk-text-danger")._LI();

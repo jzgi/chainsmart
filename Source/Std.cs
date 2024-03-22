@@ -51,7 +51,7 @@ public class Std : Entity, IKeyable<short>, IFolderable
 
     public static string TitleOf(int sub) => sub switch
     {
-        SUB_CAT => "品类", SUB_ENV => "环境", SUB_TAG => "溯源", SUB_SYM => "标符", _ => "认证"
+        SUB_CAT => "品类", SUB_ENV => "环境", SUB_TAG => "溯源", SUB_SYM => "标志", _ => "认证"
     };
 }
 

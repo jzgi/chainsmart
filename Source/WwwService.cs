@@ -13,7 +13,7 @@ public class WwwService : MainService
     {
         CreateVarWork<PublyVarWork>();
 
-        CreateWork<PublyCodeWork>("code");
+        CreateWork<PublyFlowWork>("flow");
 
         CreateWork<PublyCatWork>("cat");
 

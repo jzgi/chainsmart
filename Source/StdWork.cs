@@ -154,7 +154,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
         }, false, 15);
     }
 
-    [Ui("标符", status: 8), Tool(Anchor)]
+    [Ui("标志", status: 8), Tool(Anchor)]
     public void sym(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -167,11 +167,11 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无定义标符");
+                h.ALERT("尚无定义标志");
                 return;
             }
 
-            MainGrid(h, arr, 4, "标符");
+            MainGrid(h, arr, 4, "标志");
         }, false, 15);
     }
 

@@ -40,7 +40,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
 }
 
 [MgtAuthorize(Org.TYP_SHP)]
-[Ui("ＰＯＳ")]
+[Ui("场售")]
 public class RtllyPosWork : PosWork<RtllyPosVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
@@ -71,9 +71,9 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
 
                 h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.srcid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitip).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
                 h.T(o.name);
-                if (o.step > 1)
+                if (o.lotid > 1)
                 {
-                    h.T(o.step).T(o.unit);
+                    h.T(o.lotid).T(o.unit);
                 }
                 h.T('（').T(o.stock).SP().T(o.unit).T('）');
 
@@ -137,7 +137,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无业务记录");
+                h.ALERT("尚无今日场售记录");
                 return;
             }
             MainTable(h, arr);

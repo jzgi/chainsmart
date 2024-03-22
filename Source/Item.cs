@@ -32,6 +32,7 @@ public class Item : Entity, IKeyable<int>
     internal int orgid;
 
     internal int srcid;
+    internal int lotid;
     internal short cattyp;
     internal string unit;
     internal string unitip;
@@ -39,14 +40,10 @@ public class Item : Entity, IKeyable<int>
     internal decimal price;
     internal decimal off;
     internal bool promo;
-    internal short step;
     internal short min;
     internal short max;
-
     internal short stock;
     internal string link;
-    internal int nstart;
-    internal int nend;
 
     internal bool icon;
     internal bool pic;
@@ -79,7 +76,7 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
-            s.Get(nameof(step), ref step);
+            s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
         }
@@ -88,8 +85,6 @@ public class Item : Entity, IKeyable<int>
         {
             s.Get(nameof(stock), ref stock);
             s.Get(nameof(link), ref link);
-            s.Get(nameof(nstart), ref nstart);
-            s.Get(nameof(nend), ref nend);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -123,7 +118,7 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);
-            s.Put(nameof(step), step);
+            s.Put(nameof(lotid), lotid);
             s.Put(nameof(min), min);
             s.Put(nameof(max), max);
         }
@@ -132,8 +127,6 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(stock), stock);
             s.Put(nameof(link), link);
-            s.Put(nameof(nstart), nstart);
-            s.Put(nameof(nend), nend);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);

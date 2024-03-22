@@ -3,22 +3,25 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A lot operation flow to particular hub.
+/// A flow of goods.
 /// </summary>
-public class LotOp : Entity, IKeyable<int>
+public class Flow : Entity, IKeyable<int>
 {
-    public static readonly LotOp Empty = new();
+    public static readonly Flow Empty = new();
+
+    public const short
+        TYP_ADD = 1,
+        TYP_TAK = 2,
+        TYP_WST = 4,
+        TYP_LOS = 6;
+
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "进仓 ＋" },
-        { 2, "出仓 －" },
-        { 3, "盘盈 ＋" },
-        { 4, "盘亏 －" },
-        { 5, "增益 ＋" },
-        { 6, "损耗 －" },
-        { 7, "冲加 ＋" },
-        { 8, "冲减 －" },
+        { TYP_ADD, "补仓 ＋" },
+        { TYP_TAK, "提出 －" },
+        { TYP_WST, "损耗 －" },
+        { TYP_LOS, "盘亏 －" },
     };
 
 
@@ -35,9 +38,9 @@ public class LotOp : Entity, IKeyable<int>
 
     internal int orgid;
 
-    internal int srcid;
-
     internal int itemid;
+
+    internal int srcid;
 
     internal int hubid;
 
@@ -60,8 +63,8 @@ public class LotOp : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(itemid), ref itemid);
+            s.Get(nameof(srcid), ref srcid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
@@ -86,8 +89,8 @@ public class LotOp : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(srcid), srcid);
             s.Put(nameof(itemid), itemid);
+            s.Put(nameof(srcid), srcid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {

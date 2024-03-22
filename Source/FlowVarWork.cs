@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChainFX.Web;
+using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public abstract class CodeVarWork : WebWork
+public abstract class FlowVarWork : WebWork
 {
     public virtual async Task @default(WebContext wc)
     {
@@ -37,37 +38,69 @@ public abstract class CodeVarWork : WebWork
     }
 }
 
-public class SuplyCodeVarWork : CodeVarWork
+public class PublyFlowVarWork : FlowVarWork
 {
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
-    [Ui(tip: "修改或调整孵化对象", icon: "pencil", status: 1), Tool(ButtonShow)]
+    public override async Task @default(WebContext wc)
+    {
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT id FROM lots_vw WHERE nend >= @1 AND nstart <= @1 ORDER BY nend ASC LIMIT 1");
+        if (await dc.QueryTopAsync(p => p.Set(id)))
+        {
+            dc.Let(out int lotid);
+            wc.GiveRedirect("/lot/" + lotid + "/");
+        }
+        else
+        {
+            wc.GivePage(304, h => h.ALERT("此溯源码没有绑定产品"));
+        }
+    }
+}
+
+
+public class RtllyFlowVarWork : FlowVarWork
+{
+    [MgtAuthorize(0, User.ROL_OPN)]
+    [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
+    public async Task edit(WebContext wc)
+    {
+    }
+}
+
+public class SuplyFlowVarWork : FlowVarWork
+{
+    [MgtAuthorize(0, User.ROL_OPN)]
+    [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task edit(WebContext wc)
     {
         int id = wc[0];
-        var regs = Grab<short, Reg>();
         var org = wc[-2].As<Org>();
-        var orgs = GrabTwinArray<int, Org>(org.id);
         var prin = (User)wc.Principal;
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Code.Empty).T(" FROM tags WHERE id = @1");
-            var o = await dc.QueryTopAsync<Code>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM lotops WHERE id = @1");
+            var o = await dc.QueryTopAsync<Flow>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                // h.LI_().TEXT("身份证号", nameof(o.nstart), o.nstart, min: 18, max: 18)._LI();
-                h.LI_().SELECT("民生卡类型", nameof(o.typ), o.typ, Code.Typs, filter: (k, _) => k <= 2, required: true)._LI();
-                // h.LI_().TEXT("民生卡号", nameof(o.nend), o.nend, min: 4, max: 8)._LI();
+
+                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Flow.Typs)._LI();
+                h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
+                // h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
+                h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
+                // h.LI_().SELECT("级别", nameof(o.rank), o.rank, Lotop.Ranks)._LI();
+
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
             });
         }
         else // POST
         {
-            const short msk = Code.MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, new Test
+            const short msk = MSK_EDIT;
+            var m = await wc.ReadObjectAsync(msk, new Flow
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -75,7 +108,7 @@ public class SuplyCodeVarWork : CodeVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE tags ")._SET_(Test.Empty, msk).T(" WHERE id = @1 AND parentid = @2");
+            dc.Sql("UPDATE lotops ")._SET_(Flow.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -86,8 +119,9 @@ public class SuplyCodeVarWork : CodeVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
-    [Ui("发布", "公示该检测记录", status: 1 | 2), Tool(ButtonConfirm)]
+
+    [MgtAuthorize(0, User.ROL_MGT)]
+    [Ui("发布", "安排发布", status: 1 | 2 | 4), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -95,27 +129,15 @@ public class SuplyCodeVarWork : CodeVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE tags SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
-        await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        dc.Sql("UPDATE lotops SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Flow.Empty);
+        var o = await dc.QueryTopAsync<Flow>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
-        wc.GivePane(200);
-    }
-
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
-    [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
-    public async Task unok(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE tags SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+        // org.EventPack.AddMsg(o);
 
         wc.GivePane(200);
     }
 }
 
-public class AdmlyCodeVarWork : CodeVarWork
+public class HublyFlowVarWork : FlowVarWork
 {
 }

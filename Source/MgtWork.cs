@@ -30,7 +30,7 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyUserWork>("user");
 
-        CreateWork<AdmlyCodeWork>("tag");
+        CreateWork<AdmlyCodeWork>("code");
 
         // fin
 
