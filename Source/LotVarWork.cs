@@ -19,8 +19,8 @@ public abstract class LotVarWork : WebWork
         const short msk = 255 | MSK_AUX;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty, msk).T(" FROM lotops WHERE id = @1 AND orgid = @2");
-        var o = await dc.QueryTopAsync<Flow>(p => p.Set(id).Set(org.id), msk);
+        dc.Sql("SELECT ").collst(Bat.Empty, msk).T(" FROM lotops WHERE id = @1 AND orgid = @2");
+        var o = await dc.QueryTopAsync<Bat>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
         {
@@ -29,7 +29,7 @@ public abstract class LotVarWork : WebWork
             h.LI_().FIELD("消息标题", o.name)._LI();
             // h.LI_().FIELD("内容", o.content)._LI();
             h.LI_().FIELD("注解", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
-            h.LI_().FIELD("状态", o.status, Flow.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD("状态", o.status, Bat.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
             h._UL();
@@ -52,14 +52,14 @@ public class SuplyLotVarWork : LotVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM lotops WHERE id = @1");
-            var o = await dc.QueryTopAsync<Flow>(p => p.Set(id));
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE id = @1");
+            var o = await dc.QueryTopAsync<Bat>(p => p.Set(id));
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Flow.Typs)._LI();
+                h.LI_().SELECT("消息类型", nameof(o.typ), o.typ, Bat.Typs)._LI();
                 h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
                 // h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
@@ -71,7 +71,7 @@ public class SuplyLotVarWork : LotVarWork
         else // POST
         {
             const short msk = MSK_EDIT;
-            var m = await wc.ReadObjectAsync(msk, new Flow
+            var m = await wc.ReadObjectAsync(msk, new Bat
             {
                 adapted = DateTime.Now,
                 adapter = prin.name,
@@ -79,7 +79,7 @@ public class SuplyLotVarWork : LotVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lotops ")._SET_(Flow.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE lotops ")._SET_(Bat.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
@@ -100,8 +100,8 @@ public class SuplyLotVarWork : LotVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE lotops SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Flow.Empty);
-        var o = await dc.QueryTopAsync<Flow>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+        dc.Sql("UPDATE lotops SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Bat.Empty);
+        var o = await dc.QueryTopAsync<Bat>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         // org.EventPack.AddMsg(o);
 

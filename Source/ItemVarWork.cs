@@ -28,7 +28,7 @@ public class ItemVarWork : WebWork
             h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
-            h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.lotid, o.unit)._LI();
+            h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.unitx, o.unit)._LI();
             h.LI_().FIELD("VIP立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
             h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
@@ -79,6 +79,10 @@ public class ItemVarWork : WebWork
 
 public class PubItemVarWork : ItemVarWork
 {
+    static readonly string
+        SrcUrl = MainApp.WwwUrl + "/org/",
+        LotUrl = MainApp.WwwUrl + "/lot/";
+
     public override async Task @default(WebContext wc)
     {
         int itemid = wc[0];
@@ -123,7 +127,83 @@ public class PubItemVarWork : ItemVarWork
             {
                 var src = itm?.srcid > 0 ? GrabTwin<int, Org>(itm.srcid) : null;
 
-                h.ShowLot(o, src, false, false);
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H2("产品信息", "uk-card-header");
+                h.SECTION_("uk-card-body");
+                if (itm.pic)
+                {
+                    h.PIC(LotUrl, itm.id, "/pic", css: "uk-width-1-1");
+                }
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", itm.name)._LI();
+
+                h.LI_().FIELD("单位", itm.unit).FIELD("附注", itm.unitip, itm.unitip)._LI();
+                h.LI_().FIELD2("整件", itm.unitx, itm.unit)._LI();
+                h.LI_().FIELD("单价", itm.price, true).FIELD("优惠立减", itm.off, true)._LI();
+                h.LI_().FIELD("起订件数", itm.min).FIELD("限订件数", itm.max)._LI();
+
+                h._UL();
+
+                if (src != null)
+                {
+                    h.UL_("uk-list uk-list-divider");
+                    h.LI_().FIELD("产源设施", src.name)._LI();
+                    h.LI_().FIELD(string.Empty, src.tip)._LI();
+                    // h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
+                    h._UL();
+
+                    if (src.tip != null)
+                    {
+                        h.ALERT_().T(src.tip)._ALERT();
+                    }
+                    if (src.pic)
+                    {
+                        h.PIC(SrcUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m1)
+                    {
+                        h.PIC(SrcUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m2)
+                    {
+                        h.PIC(SrcUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m3)
+                    {
+                        h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m4)
+                    {
+                        h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                }
+                h._SECTION();
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H2("批次检验", "uk-card-header");
+                h.SECTION_("uk-card-body");
+
+                if (itm.m1)
+                {
+                    h.PIC(LotUrl, itm.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (itm.m2)
+                {
+                    h.PIC(LotUrl, itm.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (itm.m3)
+                {
+                    h.PIC(LotUrl, itm.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (itm.m4)
+                {
+                    h.PIC(LotUrl, itm.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                }
+
+                h._SECTION();
+                h._ARTICLE();
             }
         }, true, 900);
     }
@@ -166,7 +246,7 @@ public class RtllyItemVarWork : ItemVarWork
                 h.LI_().TEXT(o.IsImported ? "供应产品名" : "商品名", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.lotid), o.lotid, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
@@ -227,7 +307,7 @@ public class RtllyItemVarWork : ItemVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("操作", nameof(optyp), optyp, Flow.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, Bat.Typs, required: true)._LI();
                 h.LI_().NUMBER("数量", nameof(qty), qty, min: 1)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(stock))._FORM();
             });
@@ -503,14 +583,14 @@ public class SuplyItemVarWork : ItemVarWork
         {
             using var dc = NewDbContext();
             await dc.QueryTopAsync("SELECT ops FROM lots_vw WHERE id = @1", p => p.Set(id));
-            dc.Let(out Flow[] ops);
+            dc.Let(out Bat[] ops);
 
             var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsHub, sorter: (x, y) => y.id - x.id);
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("货架操作");
-                h.LI_().SELECT("操作", nameof(optyp), optyp, Flow.Typs, required: true)._LI();
+                h.LI_().SELECT("操作", nameof(optyp), optyp, Bat.Typs, required: true)._LI();
                 h.LI_().NUMBER("件数", nameof(qtyx), qtyx, min: 1)._LI();
                 h.LI_().SELECT("云仓", nameof(hubid), hubid, arr)._LI();
                 h._FIELDSUL();

@@ -30,9 +30,9 @@ public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
-            if (o.lotid > 1)
+            if (o.unitx > 1)
             {
-                h.SP().SMALL_().T(o.lotid).T(o.unit).T("为整")._SMALL();
+                h.SP().SMALL_().T(o.unitx).T(o.unit).T("为整")._SMALL();
             }
 
             h.SPAN(Statuses[o.status], "uk-badge");
@@ -137,7 +137,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             created = DateTime.Now,
             creator = prin.name,
             unit = "斤",
-            lotid = 1,
+            unitx = 1,
             min = 1,
             max = MAX
         };
@@ -150,7 +150,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.lotid), o.lotid, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
@@ -185,7 +185,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             typ = Item.TYP_RTL,
             created = DateTime.Now,
             creator = prin.name,
-            lotid = 1,
+            unitx = 1,
             min = 1,
             max = MAX
         };
@@ -202,7 +202,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().SELECT("供应产品名", nameof(o.srcid), o.srcid, lots, required: true)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.lotid), o.lotid, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
                 h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 

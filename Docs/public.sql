@@ -541,9 +541,9 @@ create table public.flows
 )
     inherits (public.entities);
 
-comment on table public.flows is 'goods flow operations';
+comment on table public.bats is 'goods flow operations';
 
-alter table public.flows
+alter table public.bats
     owner to postgres;
 
 create table public.syms

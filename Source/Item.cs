@@ -32,7 +32,6 @@ public class Item : Entity, IKeyable<int>
     internal int orgid;
 
     internal int srcid;
-    internal int lotid;
     internal short cattyp;
     internal string unit;
     internal string unitip;
@@ -76,7 +75,6 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
-            s.Get(nameof(lotid), ref lotid);
             s.Get(nameof(min), ref min);
             s.Get(nameof(max), ref max);
         }
@@ -118,7 +116,6 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);
-            s.Put(nameof(lotid), lotid);
             s.Put(nameof(min), min);
             s.Put(nameof(max), max);
         }

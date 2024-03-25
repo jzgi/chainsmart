@@ -9,14 +9,14 @@ using static ChainFX.Entity;
 
 namespace ChainSmart;
 
-public abstract class FlowWork<V> : WebWork where V : WebWork, new()
+public abstract class BatWork<V> : WebWork where V : WebWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Flow> arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Bat> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -39,69 +39,56 @@ public abstract class FlowWork<V> : WebWork where V : WebWork, new()
 }
 
 /// <summary>
-/// To search for traceability tags.
+/// To search for traceability.
 /// </summary>
-public class PublyFlowWork : FlowWork<PublyFlowVarWork>
+/// <code>/move-n/xxx</code>
+public class PublyBatWork : BatWork<PublyBatVarWork>
 {
-    public async Task @default(WebContext wc, int num)
+    public async Task @default(WebContext wc, int code)
     {
         var tagtyp = (short)wc[0].Adscript;
 
         using var dc = NewDbContext();
-        if (!await dc.QueryTopAsync("SELECT itemid, orgid, srcid, hubid FROM flows WHERE tagtyp = @1 AND nend >= @2 AND nstart <= @2 ORDER BY typ, nend ASC LIMIT 1", p => p.Set(tagtyp).Set(num)))
-        {
-            wc.GivePage(300, h => h.ALERT("此溯源码没有绑定产品"));
-            return;
-        }
-
-        dc.Let(out int itemid);
-        dc.Let(out int orgid);
-        dc.Let(out int srcid);
-        dc.Let(out int hubid);
-
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
-        var itm = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
-
-        if (itm == null)
-        {
-            wc.GivePage(200, h => { h.ALERT("无效的溯源产品批次"); });
-            return;
-        }
-
-        Org src = null;
-        if (itm.srcid > 0)
-        {
-            src = GrabTwin<int, Org>(itm.srcid);
-        }
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE tagtyp = @1 AND nend >= @2 AND nstart <= @2 ORDER BY typ, nend ASC LIMIT 1");
+        var o = await dc.QueryTopAsync<Bat>(p => p.Set(tagtyp).Set(code));
 
         wc.GivePage(200, h =>
         {
-            h.TOPBARXL_();
+            if (o == null)
+            {
+                h.ALERT("无效的溯源码");
+                return;
+            }
 
-            h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(itm.name, css: "h1-lot")._HEADER();
-            if (itm.icon)
-            {
-                h.PIC("/lot/", itm.id, "/icon", circle: true, css: "uk-width-small");
-            }
-            else
-            {
-                h.PIC("/void.webp", circle: true, css: "uk-width-small");
-            }
+            h.TOPBARXL_();
+            h.HEADER_("uk-width-expand uk-padding-small-left").H1(o.name, css: "h1")._HEADER();
+            h.PIC("/item/", o.itemid, "/icon", circle: true, css: "uk-width-small");
             h._TOPBARXL();
 
-            h.ShowLot(itm, src, false, true, num);
+            h.UL_("uk-list uk-list-divider");
+            h.LI_().T("简介语").T(o.tip)._LI();
 
-            h.FOOTER_("uk-col uk-flex-middle uk-padding-large");
-            h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
-            h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
-            h._FOOTER();
+
+            var org = GrabTwin<int, Org>(o.orgid);
+            h.LI_().T("商户").T(org.name)._LI();
+
+
+            var src = GrabTwin<int, Org>(o.srcid);
+            h.LI_().T("产源").T(src.name)._LI();
+
+            if (o.hubid > 0)
+            {
+                var hub = GrabTwin<int, Org>(o.hubid);
+                h.LI_().T("品控云仓").T(hub.name)._LI();
+            }
+            h._UL();
         }, true, 3600, title: "中惠农通产品溯源信息");
     }
 }
 
 [MgtAuthorize(Org.TYP_RTL_)]
 [Ui("货管")]
-public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
+public class RtllyBatWork : BatWork<RtllyBatVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -109,8 +96,8 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM moves WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -139,10 +126,10 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
             srcs = GrabTwinArray<int, Org>(0, filter: x => org.ties.Contains(x.id));
         }
 
-        var o = new Flow
+        var o = new Bat
         {
             orgid = org.id,
-            typ = Flow.TYP_ADD,
+            typ = Bat.TYP_ADD,
             created = DateTime.Now,
             creator = prin.name,
         };
@@ -158,7 +145,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Flow.Typs, filter: (k, v) => k == 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k == 1)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
                 h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
@@ -175,7 +162,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO flows ").colset(Flow.Empty, msk)._VALUES_(Flow.Empty, msk);
+            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -189,7 +176,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var o = new Flow
+        var o = new Bat
         {
             orgid = org.id,
             created = DateTime.Now,
@@ -207,7 +194,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Flow.Typs, filter: (k, v) => k > 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k > 1)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
 
@@ -222,7 +209,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO flows ").colset(Flow.Empty, msk)._VALUES_(Flow.Empty, msk);
+            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -232,7 +219,7 @@ public class RtllyFlowWork : FlowWork<RtllyFlowVarWork>
 
 [MgtAuthorize(Org.TYP_SUP_)]
 [Ui("货管")]
-public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
+public class SuplyBatWork : BatWork<SuplyBatVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -240,8 +227,8 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM flows WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM moves WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -270,10 +257,10 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
         }
         var hubs = GrabTwinArray<int, Org>(0, filter: x => x.IsHub);
 
-        var o = new Flow
+        var o = new Bat
         {
             orgid = org.id,
-            typ = Flow.TYP_ADD,
+            typ = Bat.TYP_ADD,
             created = DateTime.Now,
             creator = prin.name,
         };
@@ -288,7 +275,7 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Flow.Typs, filter: (k, v) => k == 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k == 1)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
                 h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs)._LI();
                 h.LI_().SELECT("品控云仓", nameof(o.hubid), o.hubid, hubs)._LI();
@@ -306,7 +293,7 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO flows ").colset(Flow.Empty, msk)._VALUES_(Flow.Empty, msk);
+            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -321,7 +308,7 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
         var prin = (User)wc.Principal;
         var hubs = GrabTwinArray<int, Org>(0, filter: x => x.IsHub);
 
-        var o = new Flow
+        var o = new Bat
         {
             orgid = org.id,
             created = DateTime.Now,
@@ -338,7 +325,7 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Flow.Typs, filter: (k, v) => k > 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k > 1)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
                 h.LI_().SELECT("品控云仓", nameof(o.hubid), o.hubid, hubs)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
@@ -355,7 +342,7 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO flows ").colset(Flow.Empty, msk)._VALUES_(Flow.Empty, msk);
+            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -365,6 +352,6 @@ public class SuplyFlowWork : FlowWork<SuplyFlowVarWork>
 
 [MgtAuthorize(Org.TYP_HUB)]
 [Ui("货流单")]
-public class HublyFlowWork : FlowWork<HublyFlowVarWork>
+public class HublyBatWork : BatWork<HublyBatVarWork>
 {
 }

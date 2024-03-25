@@ -3,15 +3,15 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A flow of goods.
+/// A batch move of goods.
 /// </summary>
-public class Flow : Entity, IKeyable<int>
+public class Bat : Entity, IKeyable<int>
 {
-    public static readonly Flow Empty = new();
+    public static readonly Bat Empty = new();
 
     public const short
         TYP_ADD = 1,
-        TYP_TAK = 2,
+        TYP_DEC = 2,
         TYP_WST = 4,
         TYP_LOS = 6;
 
@@ -19,7 +19,7 @@ public class Flow : Entity, IKeyable<int>
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_ADD, "补仓 ＋" },
-        { TYP_TAK, "提出 －" },
+        { TYP_DEC, "扣数 －" },
         { TYP_WST, "损耗 －" },
         { TYP_LOS, "盘亏 －" },
     };

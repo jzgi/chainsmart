@@ -71,9 +71,9 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
 
                 h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.srcid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitip).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
                 h.T(o.name);
-                if (o.lotid > 1)
+                if (o.unitx > 1)
                 {
-                    h.T(o.lotid).T(o.unit);
+                    h.T(o.unitx).T(o.unit);
                 }
                 h.T('（').T(o.stock).SP().T(o.unit).T('）');
 

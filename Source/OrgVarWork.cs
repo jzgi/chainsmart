@@ -114,8 +114,8 @@ public abstract class OrgVarWork : WebWork
                         case nameof(Org.m3):
                             m.m3 = true;
                             break;
-                        case nameof(Org.scene):
-                            m.scene = true;
+                        case nameof(Org.m4):
+                            m.m4 = true;
                             break;
                     }
                 }

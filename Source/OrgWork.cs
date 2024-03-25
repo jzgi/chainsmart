@@ -493,28 +493,24 @@ public class SuplyTieWork : OrgWork<SuplyTieVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        List<Org> lst = null;
+
+        Org[] arr = null;
         if (org.ties != null)
         {
-            lst = new List<Org>();
-            foreach (var id in org.ties)
-            {
-                var o = GrabTwin<int, Org>(id);
-                lst.Add(o);
-            }
+            arr = GrabTwinArray<int, Org>(0, filter: x => org.ties.Contains(x.id));
         }
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
 
-            if (lst == null)
+            if (arr == null)
             {
-                h.ALERT("尚无上线的主体");
+                h.ALERT("尚无关联的销售主体");
                 return;
             }
 
-            MainGrid(h, lst, prin, false);
+            MainGrid(h, arr, prin, false);
         }, false, 6);
     }
 

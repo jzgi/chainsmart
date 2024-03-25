@@ -26,7 +26,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN(Flow.Statuses[o.status], "uk-badge");
+            h.SPAN(Bat.Statuses[o.status], "uk-badge");
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
@@ -36,7 +36,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
         });
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Flow> arr)
+    protected static void MainGrid(HtmlBuilder h, IList<Bat> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -46,7 +46,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN(Flow.Statuses[o.status], "uk-badge");
+            h.SPAN(Bat.Statuses[o.status], "uk-badge");
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
@@ -92,8 +92,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM jobs WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM jobs WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -117,7 +117,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var o = new Flow
+        var o = new Bat
         {
             // orgid = org.id,
             created = DateTime.Now,
@@ -129,7 +129,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Flow.Typs)._LI();
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Bat.Typs)._LI();
                 h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
                 // h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
@@ -146,7 +146,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO lotops ").colset(Flow.Empty, msk)._VALUES_(Flow.Empty, msk);
+            dc.Sql("INSERT INTO lotops ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -164,8 +164,8 @@ public class HublyLotWork : LotWork<HublyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM lotops WHERE hubid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE hubid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -189,8 +189,8 @@ public class HublyLotWork : LotWork<HublyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Flow.Empty).T(" FROM lotops WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Flow>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {

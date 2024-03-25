@@ -103,8 +103,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
                 h.Q(o.tip, "uk-width-expand");
 
-                // FOOTER: price and qty select & detail
-                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.lotid},{o.max},{o.stock},{o.min});\">"); // pricing portion
+                // price and qty select & detail
+                //
+                h.T($"<footer cookie= \"vip\" onfix=\"fillPriceAndQtySelect(this,event,'{o.unit}',{o.price},{o.off},{o.unitx},{o.max},{o.stock},{o.min});\">"); // pricing portion
                 h.SPAN_("uk-width-2-5").T("<output class=\"rmb fprice\">")._SPAN();
                 h.SELECT_(o.id, onchange: $"buyRecalc(this);", css: "uk-width-1-4 qtyselect ");
                 if (o.stock > 0)
@@ -132,24 +133,20 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
             h.BOTTOMBAR_(large: true);
 
-            h.SECTION_(css: "uk-col");
-
-            h.SPAN_("uk-flex uk-width-1-1");
-            h.T("<output class=\"uk-label uk-padding-small\" name=\"name\" cookie=\"name\"></output>");
-            h.T("<output class=\"uk-label uk-padding-small\" name=\"tel\" cookie=\"tel\"></output>");
-            h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
-            h._SPAN();
-
-            string com;
-
-            h.SPAN_("uk-flex uk-width-1-1");
-            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '区栋／单元': '备注'; buyRecalc();", css: "uk-width-medium");
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-            h._SPAN();
-
+            h.SECTION_(css: "uk-col uk-flex-middle uk-width-small");
+            h.T("<output class=\"uk-label\" name=\"name\" cookie=\"name\"></output>");
+            h.T("<output class=\"uk-label uk-text-small\" name=\"tel\" cookie=\"tel\"></output>");
             h._SECTION();
 
-            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-medium uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.SECTION_(css: "uk-col uk-width-expand uk-height-1-1");
+            string com;
+            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '地址': '备注'; buyRecalc();", css: "uk-width-expand");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h._SECTION();
+
+            // h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
+
+            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._BOTTOMBAR();
 
@@ -302,9 +299,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.SLIDERUL_();
 
                 h.LI_("uk-section uk-padding-remove");
-                if (org.scene)
+                if (org.m4)
                 {
-                    h.PIC_("/org/", org.id, "/scene");
+                    h.PIC_("/org/", org.id, "/m-4");
                 }
                 else
                 {

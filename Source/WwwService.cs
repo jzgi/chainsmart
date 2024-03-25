@@ -13,8 +13,6 @@ public class WwwService : MainService
     {
         CreateVarWork<PublyVarWork>();
 
-        CreateWork<PublyFlowWork>("flow");
-
         CreateWork<PublyCatWork>("cat");
 
         CreateWork<PublyEnvWork>("env");
@@ -26,6 +24,8 @@ public class WwwService : MainService
         CreateWork<PublyOrgWork>("org");
 
         CreateWork<PublyItemWork>("item");
+
+        CreateWork<PublyBatWork>("bat");
 
         CreateWork<MyWork>("my");
     }

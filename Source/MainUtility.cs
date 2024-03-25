@@ -79,24 +79,13 @@ public static class MainUtility
 
         for (int i = 0; i < specs?.Count; i++)
         {
-            var spec = specs.EntryAt(i);
-            var v = spec.Value;
-            if (v.IsObject)
+            var (key, val) = specs.GetAt(i);
+            if (val.IsNumber)
             {
-                h.OPTGROUP_(spec.Key);
-
-                var sub = (JObj)v;
-                for (int k = 0; k < sub.Count; k++)
-                {
-                    var e = sub.EntryAt(k);
-                    h.OPTION(e.Key, e.Value);
-                }
-
-                h._OPTGROUP();
+                var d = (decimal)val;
+                h.OPTION_(key).T(key).SP().SP().T('＋').T(d).T('元')._OPTION();
             }
         }
-
-        h.OPTION(string.Empty, "非派送区（须自提）", selected: true);
 
         h._SELECT();
 
