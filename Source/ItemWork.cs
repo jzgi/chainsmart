@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX.Web;
 using static ChainFX.Entity;
@@ -16,7 +16,7 @@ public abstract class ItemWork<V> : WebWork where V : ItemVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, Item[] arr)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Item> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -92,7 +92,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已下线的商品");
+                h.ALERT("尚无下线商品");
                 return;
             }
 
@@ -114,7 +114,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已作废的商品");
+                h.ALERT("尚无作废商品");
                 return;
             }
 
@@ -123,7 +123,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
     }
 
     [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
-    [Ui("创建", tip: "创建新商品", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", tip: "新建商品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -147,11 +147,12 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, filter: (x, _) => x <= 2)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠额", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
+                h.LI_().NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ").CHECKBOX("全员优惠", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
@@ -170,86 +171,6 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
 
             wc.GivePane(200); // close dialog
         }
-    }
-
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
-    [Ui("导入", "从采购的商品里导入", icon: "plus", status: 2), Tool(ButtonOpen)]
-    public async Task imp(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-
-        const short MAX = 100;
-        var o = new Item
-        {
-            typ = Item.TYP_RTL,
-            created = DateTime.Now,
-            creator = prin.name,
-            unitx = 1,
-            min = 1,
-            max = MAX
-        };
-
-        if (wc.IsGet)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT DISTINCT lotid, concat(name, ' ￥', (price - off)::decimal ), id FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC LIMIT 50");
-            await dc.QueryAsync(p => p.Set(org.id));
-            var lots = dc.ToIntMap();
-
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_(wc.Action.Tip);
-
-                h.LI_().SELECT("供应产品名", nameof(o.srcid), o.srcid, lots, required: true)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("为整", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
-                h.LI_().NUMBER("VIP立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("全民立减", nameof(o.promo), o.promo)._LI();
-                h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
-
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(imp))._FORM();
-            });
-        }
-        else // POST
-        {
-            const short msk = MSK_BORN | MSK_EDIT;
-            // populate 
-            await wc.ReadObjectAsync(msk, o);
-
-            using var dc = NewDbContext(IsolationLevel.ReadCommitted);
-
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM lots_vw WHERE id = @1");
-            var lot = await dc.QueryTopAsync<Item>(p => p.Set(o.srcid));
-            // init by lot
-            {
-                o.name = lot.name;
-                o.tip = lot.tip;
-                o.unit = lot.unit;
-                o.unitip = lot.unitip;
-            }
-
-            // insert
-            dc.Sql("INSERT INTO items ").colset(Item.Empty, msk)._VALUES_(Item.Empty, msk).T(" RETURNING id");
-            var itemid = (int)await dc.ScalarAsync(p => o.Write(p, msk));
-
-            dc.Sql("UPDATE items SET (icon, pic) = (SELECT icon, pic FROM lots WHERE id = @1) WHERE id = @2");
-            await dc.ExecuteAsync(p => p.Set(o.srcid).Set(itemid));
-
-            wc.GivePane(200); // close dialog
-        }
-    }
-
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
-    [Ui("清空", "永久删除已作废的数据项", status: 4), Tool(ButtonConfirm)]
-    public async Task empty(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-
-        dc.Sql("DELETE FROM items WHERE orgid = @1 AND status = 0");
-        await dc.ExecuteAsync(p => p.Set(org.id));
-
-        wc.GivePane(200); // close dialog
     }
 }
 
@@ -272,16 +193,16 @@ public class SuplyItemWork : ItemWork<SuplyItemVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无上线产品");
+                h.ALERT("尚无上线商品");
                 return;
             }
 
             MainGrid(h, arr);
-        }, false, 12);
+        }, false);
     }
 
     [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
-    public async Task off(WebContext wc)
+    public async Task down(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
@@ -295,12 +216,12 @@ public class SuplyItemWork : ItemWork<SuplyItemVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无下线商品");
+                h.ALERT("尚无下线商品");
                 return;
             }
 
             MainGrid(h, arr);
-        }, false, 12);
+        }, false);
     }
 
     [Ui(tip: "已作废", icon: "trash", status: 4), Tool(Anchor)]
@@ -318,16 +239,16 @@ public class SuplyItemWork : ItemWork<SuplyItemVarWork>
 
             if (arr == null)
             {
-                h.ALERT("暂无作废商品");
+                h.ALERT("尚无作废商品");
                 return;
             }
 
             MainGrid(h, arr);
-        }, false, 12);
+        }, false);
     }
 
     [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
-    [Ui("创建", "新建新的产品资料", icon: "plus", status: 2), Tool(ButtonOpen)]
+    [Ui("新建", "新建商品信息", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();

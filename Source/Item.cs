@@ -11,22 +11,16 @@ public class Item : Entity, IKeyable<int>
 
     public const short
         TYP_RTL = 1,
-        TYP_SUP = 2;
+        TYP_SVC = 2,
+        TYP_SUP = 4;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_RTL, "市场" },
+        { TYP_RTL, "产品" },
+        { TYP_SVC, "服务" },
         { TYP_SUP, "供应" },
     };
 
-
-    public static readonly Map<short, string> Ranks = new()
-    {
-        { 0, null },
-        { 1, "普标" },
-        { 2, "高标" },
-        { 4, "顶级" },
-    };
 
     internal int id;
     internal int orgid;

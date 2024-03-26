@@ -71,7 +71,6 @@ public class Org : Entity, ITwin<int>
     internal double y;
     internal string tel;
     internal bool trust;
-    internal string descr;
     internal string bankacct;
     internal string bankacctname;
     internal JObj specs;
@@ -83,6 +82,7 @@ public class Org : Entity, ITwin<int>
     internal short cattyp;
     internal short symtyp;
     internal short tagtyp;
+    internal short envtyp;
     internal int[] ties; // ties to other orgs
 
 
@@ -120,7 +120,6 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(y), ref y);
                 s.Get(nameof(tel), ref tel);
                 s.Get(nameof(trust), ref trust);
-                s.Get(nameof(descr), ref descr);
                 s.Get(nameof(specs), ref specs);
                 s.Get(nameof(bankacctname), ref bankacctname);
                 s.Get(nameof(bankacct), ref bankacct);
@@ -135,6 +134,7 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(cattyp), ref cattyp);
                 s.Get(nameof(symtyp), ref symtyp);
                 s.Get(nameof(tagtyp), ref tagtyp);
+                s.Get(nameof(envtyp), ref envtyp);
                 s.Get(nameof(ties), ref ties);
                 s.Get(nameof(icon), ref icon);
                 s.Get(nameof(pic), ref pic);
@@ -177,7 +177,6 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(y), y);
                 s.Put(nameof(trust), trust);
                 s.Put(nameof(tel), tel);
-                s.Put(nameof(descr), descr);
                 s.Put(nameof(specs), specs);
                 s.Put(nameof(bankacctname), bankacctname);
                 s.Put(nameof(bankacct), bankacct);
@@ -192,6 +191,7 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(cattyp), cattyp);
                 s.Put(nameof(symtyp), symtyp);
                 s.Put(nameof(tagtyp), tagtyp);
+                s.Put(nameof(envtyp), envtyp);
                 s.Put(nameof(ties), ties);
                 s.Put(nameof(icon), icon);
                 s.Put(nameof(pic), pic);

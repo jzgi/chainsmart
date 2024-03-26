@@ -96,7 +96,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 }
                 if (o.cattyp > 0)
                 {
-                    h.MARK(Item.Ranks[o.cattyp]);
                 }
                 h._SPAN();
                 h._HEADER();

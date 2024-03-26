@@ -45,33 +45,6 @@ public abstract class MgtVarWork : WebWork
     }
 
 
-    [Ui("检测", "本单位的评测记录"), Tool(ButtonShow)]
-    public async Task test(WebContext wc)
-    {
-        var org = wc[0].As<Org>();
-        var prin = (User)wc.Principal;
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Test.Empty).T(" FROM tests WHERE parentid = @1 AND orgid = @2 AND status > 0 ORDER BY id DESC");
-        var arr = await dc.QueryAsync<Test>(p => p.Set(org.id));
-
-        wc.GivePane(200, h =>
-        {
-            if (arr == null)
-            {
-                h.ALERT("尚无检测记录");
-                return;
-            }
-            //
-            h.LIST(arr, o =>
-            {
-                h.H3(o.name);
-                h.P(o.tip);
-            });
-        });
-    }
-
-
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -132,7 +105,7 @@ public class RtllyVarWork : MgtVarWork
 
         CreateWork<RtllyItemWork>("ritem", header: "商户");
 
-        CreateWork<RtllyBatWork>("rflow");
+        CreateWork<RtllyBatWork>("rbat");
 
         CreateWork<RtllyBuyWork>("rbuy");
 

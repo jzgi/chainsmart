@@ -790,7 +790,10 @@ function dialog(trig, mode, pick, title) {
 
     var div = '<div id="dialog" class="' + modalc + trigc + '" uk-modal>';
     div += '<section class="uk-modal-dialog uk-margin-auto-vertical' + annimc + '">';
-    if (mode == PROMPT || mode == SHOW || mode == OPEN || mode == CROP) {
+    if (mode == SHOW || mode == CROP) {
+        div += '<button class="uk-modal-close-outside uk-close" type="button" uk-icon="close" onclick="closeUp(true);"></button>';
+    } 
+    else if (mode == PROMPT || mode == OPEN) {
         div += '<header class="uk-modal-header"><span class="uk-modal-title">' + title + '</span><button class="uk-modal-xclose" type="button" uk-icon=\"close\" onclick="closeUp(true);"></button></header>';
     }
     div += '<main class="uk-modal-body uk-padding-remove"><iframe id="modalbody" src="' + src + '" style="width: 100%; height: 100%; border: 0"></iframe></main>';

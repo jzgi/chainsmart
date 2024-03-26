@@ -47,7 +47,7 @@ public abstract class OrgVarWork : WebWork
                 {
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                     if (m.AsEst) h.LI_().FIELD("参数定义", m.specs)._LI();
-                    if (m.IsSrc) h.LI_().FIELD("说明", m.descr)._LI();
+                    if (m.IsSrc) h.LI_().FIELD("说明", m.envtyp)._LI();
                 }
                 if (m.AsBiz)
                 {
@@ -619,7 +619,6 @@ public class MktlyOrgVarWork : OrgVarWork
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-                    h.LI_().TEXTAREA("说明", nameof(m.descr), m.descr, max: 100)._LI();
                     h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
                     h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
 

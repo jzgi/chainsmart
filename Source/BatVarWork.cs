@@ -203,7 +203,7 @@ public class SuplyBatVarWork : BatVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE id = @1");
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE id = @1");
             var o = await dc.QueryTopAsync<Bat>(p => p.Set(id));
 
             wc.GivePane(200, h =>
@@ -230,7 +230,7 @@ public class SuplyBatVarWork : BatVarWork
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE lotops ")._SET_(Bat.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
+            dc.Sql("UPDATE bats ")._SET_(Bat.Empty, msk).T(" WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);

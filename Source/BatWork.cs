@@ -96,7 +96,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM moves WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
         var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -162,7 +162,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -209,7 +209,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -227,7 +227,7 @@ public class SuplyBatWork : BatWork<SuplyBatVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM moves WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
         var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -293,7 +293,7 @@ public class SuplyBatWork : BatWork<SuplyBatVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
@@ -342,7 +342,7 @@ public class SuplyBatWork : BatWork<SuplyBatVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO moves ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog
