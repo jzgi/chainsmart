@@ -10,16 +10,20 @@ public class Bat : Entity, IKeyable<int>
     public static readonly Bat Empty = new();
 
     public const short
-        TYP_ADD = 1,
-        TYP_DEC = 2,
-        TYP_WST = 4,
+        TYP_INC = 1,
+        TYP_PUR = 2,
+        TYP_SRC = 3,
+        TYP_DEC = 4,
+        TYP_WST = 5,
         TYP_LOS = 6;
 
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_ADD, "补仓 ＋" },
-        { TYP_DEC, "扣数 －" },
+        { TYP_INC, "直增 ＋" },
+        { TYP_PUR, "采购 ＋" },
+        { TYP_SRC, "产源 ＋" },
+        { TYP_DEC, "直减 －" },
         { TYP_WST, "损耗 －" },
         { TYP_LOS, "盘亏 －" },
     };
@@ -50,7 +54,6 @@ public class Bat : Entity, IKeyable<int>
 
     internal int nend;
 
-    // must have an icon
 
     public override void Read(ISource s, short msk = 0xff)
     {

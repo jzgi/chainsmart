@@ -4,11 +4,11 @@ alter sequence purs_id_seq owner to postgres;
 
 create sequence tags_id_seq;
 
-alter sequence tags_id_seq owner to postgres;
+alter sequence codes_id_seq owner to postgres;
 
 create sequence lotops_id_seq;
 
-alter sequence lotops_id_seq owner to postgres;
+alter sequence bats_id_seq owner to postgres;
 
 create sequence lots_id_seq;
 
@@ -182,8 +182,8 @@ create unique index users_tel_idx
     on users (tel);
 
 create index users_rtlid_idx
-    on users (rtlid)
-    where (rtlid > 0);
+    on users (mktid)
+    where (mktid > 0);
 
 create index users_supid_idx
     on users (supid)
@@ -247,7 +247,7 @@ create index purs_mktidstatustyp_idx
     where ((status = 2) OR (status = 4));
 
 create index purs_rtlidstatustyp_idx
-    on purs (rtlid, status, typ)
+    on purs (orgid, status, typ)
     tablespace sup;
 
 create index purs_hubidstatustypmktid_idx
@@ -298,11 +298,11 @@ alter table buys
     owner to postgres;
 
 create index buys_rtlidstatustyp_idx
-    on buys (rtlid asc, status asc, typ asc, oked desc)
+    on buys (orgid asc, status asc, typ asc, oked desc)
     tablespace rtl;
 
 create index buys_gen_idx
-    on buys (status asc, oked desc, rtlid asc, typ asc) tablespace rtl
+    on buys (status asc, oked desc, orgid asc, typ asc) tablespace rtl
     where ((status = 4) AND (typ = 1));
 
 create index buys_uidstatus_idx
@@ -550,7 +550,7 @@ create table codes
 alter table codes
     owner to postgres;
 
-alter sequence tags_id_seq owned by codes.id;
+alter sequence codes_id_seq owned by codes.id;
 
 create table peers
 (
@@ -587,7 +587,7 @@ comment on table bats is 'goods flow operations';
 alter table bats
     owner to postgres;
 
-alter sequence lotops_id_seq owned by bats.id;
+alter sequence bats_id_seq owned by bats.id;
 
 create table syms
 (
@@ -685,8 +685,8 @@ SELECT o.typ,
        o.admly,
        o.supid,
        o.suply,
-       o.rtlid,
-       o.rtlly,
+       o.mktid,
+       o.mktly,
        o.vip,
        o.agreed,
        o.orgid,

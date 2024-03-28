@@ -66,14 +66,14 @@ public class MyBuyVarWork : BuyVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING rtlid, pay");
+        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND uid = @4 AND status = 2 RETURNING orgid, pay");
         if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(prin.id)))
         {
-            dc.Let(out int rtlid);
+            dc.Let(out int orgid);
             dc.Let(out decimal pay);
 
-            var rtl = GrabTwin<int, Org>(rtlid);
-            rtl.NoticePack.Put(OrgNoticePack.BUY_OKED, 1, pay);
+            var org = GrabTwin<int, Org>(orgid);
+            org.NoticePack.Put(OrgNoticePack.BUY_OKED, 1, pay);
         }
 
         wc.Give(200);
@@ -82,7 +82,7 @@ public class MyBuyVarWork : BuyVarWork
 
 [Ui("订单操作")]
 [Help("显示订单明细，并且提供各阶段下的订单处理操作")]
-public class RtllyBuyVarWork : BuyVarWork
+public class ShplyBuyVarWork : BuyVarWork
 {
     [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
     public async Task ret(WebContext wc)
@@ -91,7 +91,7 @@ public class RtllyBuyVarWork : BuyVarWork
         var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND rtlid = @2 AND (status = 2 OR status = 4)");
+        dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND orgid = @2 AND (status = 2 OR status = 4)");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(200);
@@ -103,7 +103,7 @@ public class RtllyBuyVarWork : BuyVarWork
             "注意：唯有派发了的订单才能结算返款"
         )
     ]
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_LOG)]
     [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -112,7 +112,7 @@ public class RtllyBuyVarWork : BuyVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND rtlid = @4 AND status = 1 RETURNING uim, pay");
+        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND orgid = @4 AND status = 1 RETURNING uim, pay");
         if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
         {
             dc.Let(out string uim);
@@ -133,7 +133,7 @@ public class RtllyBuyVarWork : BuyVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT FROM buys WHERE id = @1 AND rtlid = @2");
+            dc.Sql("SELECT FROM buys WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
         }
         else
@@ -146,7 +146,7 @@ public class RtllyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
     [Ui("撤销", "撤销该单并全款退回消费者", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -157,7 +157,7 @@ public class RtllyBuyVarWork : BuyVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND rtlid = @4 AND status = 1 RETURNING uim, topay, refund");
+            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND orgid = @4 AND status = 1 RETURNING uim, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);

@@ -115,7 +115,7 @@ public class MainApp : Application
             {
                 using (var dc = NewDbContext())
                 {
-                    dc.Sql("SELECT first(id), count(id) FROM buys WHERE status = 1 AND adapted < @1 GROUP BY rtlid");
+                    dc.Sql("SELECT first(id), count(id) FROM buys WHERE status = 1 AND adapted < @1 GROUP BY orgid");
                     await dc.QueryAsync(p => p.Set(now));
                     while (dc.Next())
                     {

@@ -16,7 +16,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
         CreateVarWork<V>(state: State);
     }
 
-    protected static void MainGrid(HtmlBuilder h, IEnumerable<User> lst, bool? rtl)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<User> lst, bool? mktly)
     {
         h.MAINGRID(lst, o =>
         {
@@ -34,7 +34,7 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
             h.ASIDE_();
 
             h.HEADER_().H4(o.name);
-            var role = rtl.HasValue ? rtl.Value ? User.Roles[o.rtlly] : User.Roles[o.suply] : User.Roles[o.admly];
+            var role = mktly.HasValue ? mktly.Value ? User.Roles[o.mktly] : User.Roles[o.suply] : User.Roles[o.admly];
             h.SPAN(role, "uk-badge");
 
             h._HEADER();
@@ -215,7 +215,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(IsRetail ? "rtlid" : "supid").T(" = @1 AND ").T(IsRetail ? "rtlly" : "suply").T(" > 0");
+        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE ").T(IsRetail ? "mktid" : "supid").T(" = @1 AND ").T(IsRetail ? "mktly" : "suply").T(" > 0");
         var arr = await dc.QueryAsync<User>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -238,7 +238,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
     {
         var org = wc[-1].As<Org>();
 
-        var rtl = (bool)State;
+        var mktly = (bool)State;
         string password = null;
 
         short orgly = 0;
@@ -274,10 +274,10 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
                     var yes = true;
                     if (o.supid > 0)
                     {
-                        var exOrg = GrabTwin<int, Org>(rtl ? o.rtlid : o.supid);
+                        var exOrg = GrabTwin<int, Org>(mktly ? o.mktid : o.supid);
                         if (exOrg != null)
                         {
-                            h.LI_().FIELD2("现有权限", exOrg.name, User.Roles[rtl ? o.rtlly : o.suply])._LI();
+                            h.LI_().FIELD2("现有权限", exOrg.name, User.Roles[mktly ? o.mktly : o.suply])._LI();
                             if (exOrg.id != org.id)
                             {
                                 h.LI_("uk-flex-center").SPAN("必须先撤销现有权限", css: "uk-text-danger")._LI();
@@ -313,7 +313,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
             string credential = string.IsNullOrEmpty(password) ? null : MainUtility.ComputeCredential(tel, password);
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET ").T(rtl ? "rtlid" : "supid").T(" = @1, ").T(rtl ? "rtlly" : "suply").T(" = @2, credential = @3 WHERE id = @4");
+            dc.Sql("UPDATE users SET ").T(mktly ? "mktid" : "supid").T(" = @1, ").T(mktly ? "mktly" : "suply").T(" = @2, credential = @3 WHERE id = @4");
             await dc.ExecuteAsync(p => p.Set(org.id).Set(orgly).Set(credential).Set(id));
 
             wc.GivePane(200); // ok
@@ -323,7 +323,7 @@ public class OrglyMbrWork : UserWork<OrglyMbrVarWork>
 
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("大客户")]
-public class RtllyVipWork : UserWork<RtllyVipVarWork>
+public class ShplyVipWork : UserWork<ShplyVipVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)

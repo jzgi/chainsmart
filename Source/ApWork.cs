@@ -265,7 +265,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
 
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("网售结款")]
-public class RtllyBuyApWork : ApWork<OrglyApVarWork>
+public class ShplyBuyApWork : ApWork<OrglyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)

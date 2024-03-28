@@ -216,14 +216,14 @@ public class PubItemVarWork : ItemVarWork
     }
 }
 
-public class RtllyItemVarWork : ItemVarWork
+public class ShplyItemVarWork : ItemVarWork
 {
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
     {
         int itemid = wc[0];
-        var rtl = wc[-2].As<Org>();
+        var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
         const short MAX = 100;
@@ -264,28 +264,28 @@ public class RtllyItemVarWork : ItemVarWork
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
-                p.Set(itemid).Set(rtl.id);
+                p.Set(itemid).Set(org.id);
             });
 
             wc.GivePane(200); // close dialog
         }
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -300,7 +300,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: STU_OKED), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -314,7 +314,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "确认删除或者作废", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -329,7 +329,7 @@ public class RtllyItemVarWork : ItemVarWork
         wc.Give(204);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
     [Ui(tip: "恢复此项删除的商品", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
@@ -357,7 +357,7 @@ public class SuplyItemVarWork : ItemVarWork
     public async Task upd(WebContext wc)
     {
         int itemid = wc[0];
-        var rtl = wc[-2].As<Org>();
+        var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
         const short MAX = 100;
@@ -398,7 +398,7 @@ public class SuplyItemVarWork : ItemVarWork
             await dc.ExecuteAsync(p =>
             {
                 m.Write(p, msk);
-                p.Set(itemid).Set(rtl.id);
+                p.Set(itemid).Set(org.id);
             });
 
             wc.GivePane(200); // close dialog

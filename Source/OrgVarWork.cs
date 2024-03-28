@@ -37,11 +37,11 @@ public abstract class OrgVarWork : WebWork
 
                 if (m.regid > 0)
                 {
-                    h.FIELD(m.AsRtl ? "版块" : "区域", regs[m.regid]);
+                    h.FIELD(m.AsMkt ? "版块" : "区域", regs[m.regid]);
                     h.FIELD("联系电话", m.tel);
                 }
                 h._LI();
-                h.LI_().FIELD(m.AsRtl ? "编号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
+                h.LI_().FIELD(m.AsMkt ? "编号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
 
                 if (m.AsEst || m.IsSrc)
                 {
@@ -365,7 +365,7 @@ public class AdmlyEstVarWork : OrgVarWork
 
         await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL_);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 
@@ -586,7 +586,7 @@ public class AdmlySupVarWork : OrgVarWork
 
         await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL_);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 

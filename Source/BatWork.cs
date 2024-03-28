@@ -86,9 +86,9 @@ public class PublyBatWork : BatWork<PublyBatVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_)]
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("货管")]
-public class RtllyBatWork : BatWork<RtllyBatVarWork>
+public class ShplyBatWork : BatWork<ShplyBatVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -114,12 +114,17 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_RTL, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_STL, User.ROL_OPN)]
     [Ui("补仓", "新建补仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task add(WebContext wc)
+    public async Task add(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
+        if (typ == 0)
+        {
+            typ = 1;
+        }
+        
         Org[] srcs = null;
         if (org.ties != null)
         {
@@ -129,7 +134,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
         var o = new Bat
         {
             orgid = org.id,
-            typ = Bat.TYP_ADD,
+            typ = (short)typ,
             created = DateTime.Now,
             creator = prin.name,
         };
@@ -145,9 +150,12 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k == 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k <= 3, onchange: "return goto('add-' + this.value, event);")._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
-                h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs)._LI();
+                if (typ > 1)
+                {
+                    h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs)._LI();
+                }
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
 
@@ -169,7 +177,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
         }
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui("减仓", "新建减仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task cut(WebContext wc)
     {
@@ -194,7 +202,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k > 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k >= 4)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
 
@@ -219,7 +227,7 @@ public class RtllyBatWork : BatWork<RtllyBatVarWork>
 
 [MgtAuthorize(Org.TYP_SUP_)]
 [Ui("货管")]
-public class SuplyBatWork : BatWork<SuplyBatVarWork>
+public class SupSrclyBatWork : BatWork<SupSrclyBatVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -260,7 +268,7 @@ public class SuplyBatWork : BatWork<SuplyBatVarWork>
         var o = new Bat
         {
             orgid = org.id,
-            typ = Bat.TYP_ADD,
+            typ = Bat.TYP_INC,
             created = DateTime.Now,
             creator = prin.name,
         };

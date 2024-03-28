@@ -13,9 +13,9 @@ public class MgtService : MainService
     {
         CreateWork<AdmlyWork>("admly"); // for admin
 
-        CreateWork<RtllyWork>("rtlly"); // for markets and retail
+        CreateWork<MktlyWork>("mktly"); // for markets and shops
 
-        CreateWork<SuplyWork>("suply"); // for centers and supply
+        CreateWork<SuplyWork>("suply"); // for hubs, supplies and sources
     }
 
     public void @default(WebContext wc)

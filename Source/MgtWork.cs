@@ -89,14 +89,14 @@ public class AdmlyWork : MgtWork
 
 [UserAuthenticate]
 [Ui("市场操作")]
-public class RtllyWork : MgtWork
+public class MktlyWork : MgtWork
 {
     protected override void OnCreate()
     {
         // id of either current user or the specified
-        CreateVarWork<RtllyVarWork>((prin, key) =>
+        CreateVarWork<MktlyVarWork>((prin, key) =>
             {
-                var orgid = key?.ToInt() ?? ((User)prin).rtlid;
+                var orgid = key?.ToInt() ?? ((User)prin).mktid;
                 return GrabTwin<int, Org>(orgid);
             }
         );

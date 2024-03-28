@@ -10,13 +10,13 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_RTL = 1,
+        TYP_PRD = 1,
         TYP_SVC = 2,
         TYP_SUP = 4;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_RTL, "产品" },
+        { TYP_PRD, "产品" },
         { TYP_SVC, "服务" },
         { TYP_SUP, "供应" },
     };

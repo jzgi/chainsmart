@@ -17,7 +17,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool rtlly)
+    protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool mktly)
     {
         h.MAINGRID(lst, o =>
         {
@@ -35,7 +35,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q2(o.Cover, o.tip, css: "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((rtlly ? "/rtlly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((mktly ? "/mktly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -111,11 +111,12 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("新建市场");
-                h.LI_().TEXT("商户名", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
+                h.FORM_().FIELDSUL_(cmd == 1 ? "新建市场" : "新建品控云仓");
+
+                h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().TEXT("涵盖市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
+                h.LI_().TEXT("地域覆盖", nameof(o.cover), o.cover, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
@@ -127,6 +128,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
                 h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
+                
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }
@@ -137,7 +139,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 
             await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
             });
 
@@ -222,7 +224,7 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.AsRtl);
+            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.AsMkt);
 
             wc.GivePage(200, h =>
             {
@@ -318,7 +320,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/rtlly/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
+            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -414,7 +416,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         else // OUTER
         {
             regid = wc.Query[nameof(regid)];
-            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.AsRtl);
+            var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.regid == regid && x.AsMkt);
 
             wc.GivePage(200, h =>
             {
@@ -440,7 +442,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
         var regs = Grab<short, Reg>();
         var o = new Org
         {
-            typ = Org.TYP_RTL_,
+            typ = Org.TYP_MKT_,
             created = DateTime.Now,
             creator = prin.name,
             parentid = org.id,
@@ -485,7 +487,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
 [MgtAuthorize(Org.TYP_SRC)]
 [Ui("关联")]
-public class SuplyTieWork : OrgWork<SuplyTieVarWork>
+public class SrclyTieWork : OrgWork<SuplyTieVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)

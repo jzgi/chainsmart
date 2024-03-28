@@ -41,7 +41,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
 
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("场售")]
-public class RtllyPosWork : PosWork<RtllyPosVarWork>
+public class ShplyPosWork : PosWork<ShplyPosVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -129,7 +129,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ >= 2 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND typ >= 2 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -171,7 +171,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
             day = wc.Query[nameof(day)];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ > 1 AND created BETWEEN @2 AND @3");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ > 1 AND created BETWEEN @2 AND @3");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(today.AddDays(-day - 1)).Set(today.AddDays(-day)));
 
             wc.GivePage(200, h =>
@@ -193,7 +193,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND typ > 1 AND status = 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ > 1 AND status = 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -211,7 +211,7 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
 
     public async Task buy(WebContext wc, int payTyp)
     {
-        var rtl = wc[-1].As<Org>();
+        var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
         var frm = await wc.ReadAsync<Form>();
@@ -239,9 +239,9 @@ public class RtllyPosWork : PosWork<RtllyPosVarWork>
         var m = new Buy()
         {
             typ = (short)payTyp,
-            rtlid = rtl.id,
-            name = rtl.name,
-            mktid = rtl.MktId,
+            orgid = org.id,
+            name = org.name,
+            mktid = org.MktId,
             created = now,
             creator = prin.name,
             items = lst.ToArray(),

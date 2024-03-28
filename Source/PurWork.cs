@@ -18,16 +18,16 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL)]
+[MgtAuthorize(Org.TYP_STL)]
 [Ui("采购")]
-public class RtllyPurWork : PurWork<RtllyPurVarWork>
+public class StalyPurWork : PurWork<StalyPurVarWork>
 {
     protected override void OnCreate()
     {
         base.OnCreate();
 
         // add sub work for purchase creation
-        CreateWork<RtllyPurLotVarWork>("lot");
+        CreateWork<StalyPurLotVarWork>("lot");
     }
 
 
@@ -37,7 +37,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-            h.PIC(MainApp.WwwUrl, "/lot/", o.lotid, "/icon", css: "uk-width-1-5");
+            h.PIC(MainApp.WwwUrl, "/lot/", o.itemid, "/icon", css: "uk-width-1-5");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -47,7 +47,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
             }
 
             h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Pur.Statuses[o.status])._SPAN()._HEADER();
-            h.Q_("uk-width-expand").T(o.ctrid)._Q();
+            h.Q_("uk-width-expand").T(o.srcid)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -61,7 +61,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE orgid = @1 AND status = 1 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -84,7 +84,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 2 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE orgid = @1 AND status = 2 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -106,7 +106,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE orgid = @1 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -129,7 +129,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE rtlid = @1 AND status = 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE orgid = @1 AND status = 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Pur>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -149,7 +149,7 @@ public class RtllyPurWork : PurWork<RtllyPurVarWork>
 
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui("云仓便捷", "新建云仓便捷采购", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
@@ -206,7 +206,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
 
-            h.PIC(MainApp.WwwUrl, "/lot/", o.lotid, "/icon", css: "uk-width-1-5");
+            h.PIC(MainApp.WwwUrl, "/lot/", o.itemid, "/icon", css: "uk-width-1-5");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -215,10 +215,10 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
                 h.SP().SMALL_().T(o.unitx).T(o.unit).T("件")._SMALL();
             }
 
-            var rtl = GrabTwin<int, Org>(o.rtlid);
+            var sta = GrabTwin<int, Org>(o.orgid);
 
             h.SPAN_("uk-badge").T(o.created, time: 0)._SPAN().SP().PICK(o.Key)._HEADER();
-            h.Q_("uk-width-expand").T(rtl.name)._Q();
+            h.Q_("uk-width-expand").T(sta.name)._Q();
             h.FOOTER_().SPAN_("uk-width-1-3").CNY(o.RealPrice)._SPAN().SPAN_("uk-width-1-3").T(o.QtyX).SP().T("件").SP().T(o.qty).SP().T(o.unit)._SPAN().SPAN_("uk-margin-auto-left").CNY(o.Total)._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -383,7 +383,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = 1 GROUP BY rtlid");
+        dc.Sql("SELECT orgid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 2 AND typ = 1 GROUP BY orgid");
         await dc.QueryAsync(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -395,14 +395,14 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 
             while (dc.Next())
             {
-                dc.Let(out int rtlid);
+                dc.Let(out int orgid);
                 dc.Let(out decimal qtyx);
 
-                var rtl = GrabTwin<int, Org>(rtlid);
+                var sta = GrabTwin<int, Org>(orgid);
 
                 h.TR_();
-                h.TD(rtl.name);
-                h.TD_().ADIALOG_(rtlid, "/rtl", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
+                h.TD(sta.name);
+                h.TD_().ADIALOG_(orgid, "/sta", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
                 h._TR();
             }
             h._TABLE();
@@ -480,7 +480,7 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
             var dt = today.AddDays(days);
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT rtlid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND typ = 1 AND (oked >= @2 AND oked < @3) GROUP BY rtlid");
+            dc.Sql("SELECT orgid, sum(qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND typ = 1 AND (oked >= @2 AND oked < @3) GROUP BY orgid");
             await dc.QueryAsync(p => p.Set(org.id).Set(dt).Set(dt.AddDays(1)));
 
             wc.GivePage(200, h =>
@@ -492,14 +492,14 @@ public class MktlyPurWork : PurWork<MktlyPurVarWork>
 
                 while (dc.Next())
                 {
-                    dc.Let(out int rtlid);
+                    dc.Let(out int orgid);
                     dc.Let(out int qtyx);
 
-                    var rtl = GrabTwin<int, Org>(rtlid);
+                    var rtl = GrabTwin<int, Org>(orgid);
 
                     h.TR_();
                     h.TD(rtl.name);
-                    h.TD_().ADIALOG_(rtlid, "/rtl", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
+                    h.TD_().ADIALOG_(orgid, "/sta", mode: MOD_SHOW, false, css: "uk-link uk-button-link uk-flex-right").T(qtyx)._A()._TD();
                     h._TR();
                 }
                 h._TABLE();

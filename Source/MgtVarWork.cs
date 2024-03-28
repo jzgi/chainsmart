@@ -24,7 +24,7 @@ public abstract class MgtVarWork : WebWork
             {
                 h.H4(org.Cover);
             }
-            h.H5(prin.name);
+            h.P(prin.name);
             h._HEADER();
 
             if (org.icon)
@@ -33,7 +33,7 @@ public abstract class MgtVarWork : WebWork
             }
             else
             {
-                h.PIC(org.AsRtl ? "/rtl.webp" : org.IsHub ? "/ctr.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(org.AsMkt ? "/mkt.webp" : org.IsHub ? "/hub.webp" : "/sup.webp", circle: true, css: "uk-width-small");
             }
 
             h._TOPBARXL();
@@ -92,9 +92,9 @@ public abstract class MgtVarWork : WebWork
     }
 }
 
-[MgtAuthorize(Org.TYP_RTL_)]
+[MgtAuthorize(Org.TYP_MKT_)]
 [Ui("市场操作")]
-public class RtllyVarWork : MgtVarWork
+public class MktlyVarWork : MgtVarWork
 {
     protected override void OnCreate()
     {
@@ -103,25 +103,25 @@ public class RtllyVarWork : MgtVarWork
         CreateWork<OrglyMbrWork>("mbr", state: true, header: "常规"); // true = retail
 
 
-        CreateWork<RtllyItemWork>("ritem", header: "商户");
+        CreateWork<ShplyItemWork>("sitem", header: "商户");
 
-        CreateWork<RtllyBatWork>("rbat");
+        CreateWork<ShplyBatWork>("sbat");
 
-        CreateWork<RtllyBuyWork>("rbuy");
+        CreateWork<ShplyBuyWork>("sbuy");
 
-        CreateWork<RtllyPosWork>("rpos");
+        CreateWork<ShplyPosWork>("spos");
 
-        CreateWork<RtllyBuyApWork>("rbuyap");
+        CreateWork<ShplyBuyApWork>("sbuyap");
 
-        CreateWork<RtllyBuyLdgWork>("rbuyldg");
+        CreateWork<ShplyBuyLdgWork>("sbuyldg");
 
-        CreateWork<RtllyVipWork>("rvip");
+        CreateWork<ShplyVipWork>("svip");
 
-        CreateWork<RtllyPurWork>("rpur");
+        CreateWork<StalyPurWork>("spur");
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mrtl", state: Org.TYP_RTL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("msta", state: Org.TYP_STL, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 
@@ -231,17 +231,17 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyItemWork>("sitem", header: "供应源");
 
-        CreateWork<SuplyBatWork>("sflow", header: "供应源");
-
-        CreateWork<SuplyCodeWork>("scode");
-
         CreateWork<SuplyPurWork>("spur");
 
         CreateWork<SuplyPurApWork>("spurap");
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SuplyTieWork>("stie");
+        CreateWork<SupSrclyBatWork>("sbat", header: "供应源");
+
+        CreateWork<SrclyCodeWork>("scode");
+
+        CreateWork<SrclyTieWork>("stie");
 
         // hub
 

@@ -32,7 +32,7 @@ public class Buy : Entity, IKeyable<long>
 
 
     internal int id;
-    internal int rtlid;
+    internal int orgid;
     internal int mktid;
     internal int uid;
     internal string uname;
@@ -52,13 +52,13 @@ public class Buy : Entity, IKeyable<long>
     {
     }
 
-    public Buy(User prin, Org rtl, BuyLn[] arr)
+    public Buy(User prin, Org shp, BuyLn[] arr)
     {
         typ = TYP_ORDR;
-        name = rtl.name;
-        tip = rtl.No;
-        rtlid = rtl.id;
-        mktid = rtl.MktId;
+        name = shp.name;
+        tip = shp.No;
+        orgid = shp.id;
+        mktid = shp.MktId;
         items = arr;
         uid = prin.id;
         uname = prin.name;
@@ -77,7 +77,7 @@ public class Buy : Entity, IKeyable<long>
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(rtlid), ref rtlid);
+            s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(mktid), ref mktid);
             s.Get(nameof(uid), ref uid);
             s.Get(nameof(uname), ref uname);
@@ -110,7 +110,7 @@ public class Buy : Entity, IKeyable<long>
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(rtlid), rtlid);
+            s.Put(nameof(orgid), orgid);
             s.Put(nameof(mktid), mktid);
 
             if (uid > 0) s.Put(nameof(uid), uid);

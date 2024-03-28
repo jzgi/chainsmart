@@ -6,9 +6,9 @@ using static ChainFX.Web.Modal;
 
 namespace ChainSmart;
 
-public class RtllyPosVarWork : BuyVarWork
+public class ShplyPosVarWork : BuyVarWork
 {
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "确认撤销该笔记录？", icon: "trash", status: 4), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -17,7 +17,7 @@ public class RtllyPosVarWork : BuyVarWork
         var prin = (User)wc.Principal;
 
         using var dc = Storage.NewDbContext();
-        dc.Sql("UPDATE buys SET refund = pay, status = 0, oked = @1, oker = @2 WHERE id = @3 AND rtlid = @4 AND status = 4");
+        dc.Sql("UPDATE buys SET refund = pay, status = 0, oked = @1, oker = @2 WHERE id = @3 AND mktid = @4 AND status = 4");
         await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
         wc.Give(204);

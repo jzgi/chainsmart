@@ -82,9 +82,9 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[MgtAuthorize(0)]
+[MgtAuthorize(Org.TYP_SHP)]
 [Ui("销售汇总")]
-public class RtllyBuyLdgWork : LdgWork<RtllyBuyLdgVarWork>
+public class ShplyBuyLdgWork : LdgWork<ShplyBuyLdgVarWork>
 {
     [Ui("按商品", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)

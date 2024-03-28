@@ -17,7 +17,7 @@ public static class WeChatUtility
 {
     static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
 
-    static readonly WebConnect RtlPayApi, SupPayApi;
+    static readonly WebConnect MktPayApi, SupPayApi;
 
     static readonly Map<int, WebConnect> PayConnects = new();
 
@@ -29,7 +29,7 @@ public static class WeChatUtility
 
     public static readonly string
         supmchid,
-        rtlmchid,
+        mktmchid,
         noncestr;
 
     public static readonly string key;
@@ -48,7 +48,7 @@ public static class WeChatUtility
         s.Get(nameof(appid), ref appid);
         s.Get(nameof(appsecret), ref appsecret);
         s.Get(nameof(supmchid), ref supmchid);
-        s.Get(nameof(rtlmchid), ref rtlmchid);
+        s.Get(nameof(mktmchid), ref mktmchid);
         s.Get(nameof(noncestr), ref noncestr);
         s.Get(nameof(key), ref key);
 
@@ -61,7 +61,7 @@ public static class WeChatUtility
         try
         {
             SupPayApi = new WebConnect("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
-            RtlPayApi = new WebConnect("https://api.mch.weixin.qq.com", "rtl_apiclient_cert.p12", rtlmchid);
+            MktPayApi = new WebConnect("https://api.mch.weixin.qq.com", "mkt_apiclient_cert.p12", mktmchid);
         }
         catch (Exception e)
         {
@@ -216,8 +216,8 @@ public static class WeChatUtility
 
     public static async Task<(string, string)> PostUnifiedOrderAsync(bool sup, string trade_no, decimal amount, string openid, string ip, string notifyurl, string descr)
     {
-        var mchid = sup ? supmchid : rtlmchid;
-        var PayApi = sup ? SupPayApi : RtlPayApi;
+        var mchid = sup ? supmchid : mktmchid;
+        var PayApi = sup ? SupPayApi : MktPayApi;
 
         var x = new XElem("xml")
         {
@@ -248,7 +248,7 @@ public static class WeChatUtility
 
     public static bool OnNotified(bool sup, XElem xe, out string out_trade_no, out decimal total)
     {
-        var mchid = sup ? supmchid : rtlmchid;
+        var mchid = sup ? supmchid : mktmchid;
 
         total = 0;
         out_trade_no = null;
@@ -282,8 +282,8 @@ public static class WeChatUtility
 
     public static async Task<decimal> PostOrderQueryAsync(bool sup, string orderno)
     {
-        var mchid = sup ? supmchid : rtlmchid;
-        var PayApi = sup ? SupPayApi : RtlPayApi;
+        var mchid = sup ? supmchid : mktmchid;
+        var PayApi = sup ? SupPayApi : MktPayApi;
 
         var x = new XElem("xml")
         {
@@ -316,8 +316,8 @@ public static class WeChatUtility
 
     public static async Task<string> PostRefundAsync(bool sup, string out_trade_no, decimal total, decimal refund, string refoundno, string descr = null)
     {
-        var mchid = sup ? supmchid : rtlmchid;
-        var PayApi = sup ? SupPayApi : RtlPayApi;
+        var mchid = sup ? supmchid : mktmchid;
+        var PayApi = sup ? SupPayApi : MktPayApi;
 
         // must be in ascii order
         var x = new XElem("xml")
@@ -360,8 +360,8 @@ public static class WeChatUtility
 
     public static async Task<string> PostRefundQueryAsync(bool sup, long orderid)
     {
-        var mchid = sup ? supmchid : rtlmchid;
-        var PayApi = sup ? SupPayApi : RtlPayApi;
+        var mchid = sup ? supmchid : mktmchid;
+        var PayApi = sup ? SupPayApi : MktPayApi;
 
         var x = new XElem("xml")
         {

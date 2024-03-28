@@ -15,7 +15,7 @@ public class AdmlyBuyLdgVarWork : LdgVarWork
 {
 }
 
-public class RtllyBuyLdgVarWork : LdgVarWork
+public class ShplyBuyLdgVarWork : LdgVarWork
 {
     [Ui("￥", "微信领款"), Tool(Modal.ButtonOpen)]
     public async Task rcv(WebContext wc, int dt)

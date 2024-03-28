@@ -114,7 +114,7 @@ public class HublyLotVarWork : LotVarWork
 }
 
 
-public class RtllyPurLotVarWork : LotVarWork
+public class StalyPurLotVarWork : LotVarWork
 {
     //
     // NOTE: this page is made publicly cacheable, though under variable path
@@ -189,7 +189,7 @@ public class RtllyPurLotVarWork : LotVarWork
 
     public async Task pur(WebContext wc, int cmd)
     {
-        var rtl = wc[-3].As<Org>();
+        var org = wc[-3].As<Org>();
         int lotid = wc[0];
 
         var prin = (User)wc.Principal;
@@ -208,7 +208,7 @@ public class RtllyPurLotVarWork : LotVarWork
             var sup = GrabTwin<int, Org>(lot.orgid);
             var fee = BankUtility.supfee;
 
-            var o = new Pur(lot, rtl, sup)
+            var o = new Pur(lot, org, sup)
             {
                 created = DateTime.Now,
                 creator = prin.name,
@@ -220,7 +220,7 @@ public class RtllyPurLotVarWork : LotVarWork
 
             // check and try to use an existing record
             int purid = 0;
-            if (await dc.QueryTopAsync("SELECT id FROM purs WHERE rtlid = @1 AND status = -1 LIMIT 1", p => p.Set(rtl.id)))
+            if (await dc.QueryTopAsync("SELECT id FROM purs WHERE orgid = @1 AND status = -1 LIMIT 1", p => p.Set(org.id)))
             {
                 dc.Let(out purid);
             }

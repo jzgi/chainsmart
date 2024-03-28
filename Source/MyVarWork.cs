@@ -112,11 +112,11 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 any++;
             }
 
-            if (o.rtlly > 0 && o.rtlid > 0)
+            if (o.mktly > 0 && o.mktid > 0)
             {
-                var org = GrabTwin<int, Org>(o.rtlid);
+                var org = GrabTwin<int, Org>(o.mktid);
 
-                h.LI_().T(org.name).SPAN(User.Roles[o.rtlly], "uk-margin-auto-left")._LI();
+                h.LI_().T(org.name).SPAN(User.Roles[o.mktly], "uk-margin-auto-left")._LI();
                 any++;
             }
 

@@ -20,7 +20,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("网售")]
 [Help("对所收的网售订单进行处理")]
-public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
+public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IList<Buy> lst, bool pick = false)
     {
@@ -78,7 +78,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 1 AND typ = 1 ORDER BY created DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status = 1 AND typ = 1 ORDER BY created DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -101,7 +101,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 2 AND typ = 1 ORDER BY adapted DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status = 2 AND typ = 1 ORDER BY adapted DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -125,7 +125,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status >= 4 AND typ = 1 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status >= 4 AND typ = 1 ORDER BY oked DESC LIMIT 20 OFFSET 20 * @2");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
@@ -151,7 +151,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE rtlid = @1 AND status = 0 AND typ = 1 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status = 0 AND typ = 1 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -203,7 +203,7 @@ public class RtllyBuyWork : BuyWork<RtllyBuyVarWork>
             print = f[nameof(print)];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE rtlid = @3 AND id ")._IN_(key).T(" AND status = 1");
+            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE orgid = @3 AND id ")._IN_(key).T(" AND status = 1");
             await dc.ExecuteAsync(p =>
             {
                 p.Set(DateTime.Now).Set(prin.name).Set(org.id);
@@ -298,7 +298,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY rtlid");
+        dc.Sql("SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY orgid");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;

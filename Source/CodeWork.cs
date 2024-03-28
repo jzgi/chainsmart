@@ -40,7 +40,7 @@ public abstract class CodeWork<V> : WebWork where V : WebWork, new()
 
 [MgtAuthorize(Org.TYP_SRC)]
 [Ui("溯源码")]
-public class SuplyCodeWork : CodeWork<SuplyCodeVarWork>
+public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)

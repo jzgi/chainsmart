@@ -14,7 +14,7 @@ public static class BankUtility
 {
     public static decimal
         supfee,
-        rtlfee;
+        mktfee;
 
     static readonly string
         bankprov,
@@ -23,19 +23,19 @@ public static class BankUtility
 
     static readonly string
         supbankacct,
-        rtlbankacct,
+        mktbankacct,
         bankacctname;
 
     static BankUtility()
     {
         supfee = Application.CustomConfig[nameof(supfee)];
-        rtlfee = Application.CustomConfig[nameof(rtlfee)];
+        mktfee = Application.CustomConfig[nameof(mktfee)];
 
         bankprov = Application.CustomConfig[nameof(bankprov)];
         bankcity = Application.CustomConfig[nameof(bankcity)];
         bankreg = Application.CustomConfig[nameof(bankreg)];
         supbankacct = Application.CustomConfig[nameof(supbankacct)];
-        rtlbankacct = Application.CustomConfig[nameof(rtlbankacct)];
+        mktbankacct = Application.CustomConfig[nameof(mktbankacct)];
         bankacctname = Application.CustomConfig[nameof(bankacctname)];
     }
 
@@ -119,7 +119,7 @@ public static class BankUtility
                 row.CreateCell(3, CellType.String).SetCellValue(org.id.ToString());
                 row.CreateCell(4, CellType.String).SetCellValue("工行");
 
-                row.CreateCell(5, CellType.String).SetCellValue(sup ? supbankacct : rtlbankacct);
+                row.CreateCell(5, CellType.String).SetCellValue(sup ? supbankacct : mktbankacct);
                 row.CreateCell(6, CellType.String).SetCellValue(bankacctname);
 
                 row.CreateCell(7, CellType.String).SetCellValue("工行");

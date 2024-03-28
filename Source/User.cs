@@ -46,12 +46,8 @@ public class User : Entity, IKeyable<int>
     internal short admly;
     internal int supid;
     internal short suply;
-    internal int rtlid;
-
-    internal short rtlly;
-
-    // internal int srcid;
-    // internal short srcly;
+    internal int mktid;
+    internal short mktly;
     internal int[] vip;
     internal DateTime agreed;
     internal int orgid;
@@ -79,8 +75,8 @@ public class User : Entity, IKeyable<int>
             s.Get(nameof(admly), ref admly);
             s.Get(nameof(supid), ref supid);
             s.Get(nameof(suply), ref suply);
-            s.Get(nameof(rtlid), ref rtlid);
-            s.Get(nameof(rtlly), ref rtlly);
+            s.Get(nameof(mktid), ref mktid);
+            s.Get(nameof(mktly), ref mktly);
             s.Get(nameof(vip), ref vip);
             s.Get(nameof(agreed), ref agreed);
             s.Get(nameof(orgid), ref orgid);
@@ -106,8 +102,8 @@ public class User : Entity, IKeyable<int>
             s.Put(nameof(admly), admly);
             s.Put(nameof(supid), supid);
             s.Put(nameof(suply), suply);
-            s.Put(nameof(rtlid), rtlid);
-            s.Put(nameof(rtlly), rtlly);
+            s.Put(nameof(mktid), mktid);
+            s.Put(nameof(mktly), mktly);
             s.Put(nameof(vip), vip);
             s.Put(nameof(agreed), agreed);
             s.Put(nameof(orgid), orgid);
@@ -140,7 +136,7 @@ public class User : Entity, IKeyable<int>
     public override short ToState()
     {
         short v = 0;
-        if (supid > 0 || rtlid > 0)
+        if (supid > 0 || mktid > 0)
         {
             if (credential != null)
             {
@@ -154,5 +150,5 @@ public class User : Entity, IKeyable<int>
         return v;
     }
 
-    public bool IsStationOp => admly > 0 || supid > 0 || rtlid > 0;
+    public bool IsStationOp => admly > 0 || supid > 0 || mktid > 0;
 }

@@ -38,15 +38,15 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
             return false;
         }
 
-        if ((atyp & Org.TYP_RTL_) == Org.TYP_RTL_) // check retail
+        if ((atyp & Org.TYP_MKT_) == Org.TYP_MKT_) // check retail
         {
-            if ((prin.rtlly & role) == role)
+            if ((prin.mktly & role) == role)
             {
-                if (prin.rtlid == org.id)
+                if (prin.mktid == org.id)
                 {
                     return true;
                 }
-                if (prin.rtlid == org.parentid && org.trust) // parent org
+                if (prin.mktid == org.parentid && org.trust) // parent org
                 {
                     super = true;
                     return true;

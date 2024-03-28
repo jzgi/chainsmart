@@ -18,27 +18,27 @@ public class Org : Entity, ITwin<int>
     public const short
         TYP_BIZ_ = 0b000001, // biz
         TYP_BCK_ = 0b000010, // backing
-        TYP_RTL_ = 0b000100, // retail
+        TYP_MKT_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_SHP = TYP_RTL_ | TYP_BIZ_, // shop
-        TYP_RTL = TYP_RTL_ | TYP_BIZ_ | TYP_BCK_, // retailer
-        TYP_MKT = TYP_EST_ | TYP_RTL, // market
+        TYP_SHP = TYP_MKT_ | TYP_BIZ_, // shop
+        TYP_STL = TYP_MKT_ | TYP_BIZ_ | TYP_BCK_, // stall
+        TYP_MKT = TYP_EST_ | TYP_STL, // market
         //
         TYP_SUP = TYP_SUP_ | TYP_BIZ_, // supplier
         TYP_SRC = TYP_SUP_ | TYP_BCK_, // source
-        TYP_SRCSUP = TYP_SUP_ | TYP_BIZ_ | TYP_BCK_, // supplier
+        TYP_SUPSRC = TYP_SUP_ | TYP_BIZ_ | TYP_BCK_, // supply & source
         TYP_HUB = TYP_EST_ | TYP_SUP; // hub
 
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_SHP, "门店" },
-        { TYP_RTL, "商户" },
+        { TYP_STL, "商户" },
         { TYP_MKT, "市场" },
         { TYP_SRC, "产源" },
         { TYP_SUP, "供应" },
-        { TYP_SRCSUP, "产供" },
+        { TYP_SUPSRC, "产供" },
         { TYP_HUB, "云仓" },
     };
 
@@ -57,7 +57,7 @@ public class Org : Entity, ITwin<int>
     // id
     internal int id;
 
-    // parent id, if rtl or sup
+    // parent id, if mkt or sup
     internal int parentid;
 
     // connected hub warehouse id, if market or retail 
@@ -233,11 +233,11 @@ public class Org : Entity, ITwin<int>
 
     public bool AsEst => (typ & TYP_EST_) == TYP_EST_;
 
-    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
+    public bool AsMkt => (typ & TYP_MKT_) == TYP_MKT_;
 
     public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
 
-    public int MktId => IsMkt ? id : AsRtl ? parentid : 0;
+    public int MktId => IsMkt ? id : AsMkt ? parentid : 0;
 
     public int HubId => IsHub ? id : AsSup ? parentid : 0;
 
@@ -278,7 +278,7 @@ public class Org : Entity, ITwin<int>
         }
     }
 
-    public string No => AsRtl ? addr : null;
+    public string No => AsMkt ? addr : null;
 
     public string Cover => cover;
 

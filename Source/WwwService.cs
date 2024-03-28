@@ -112,9 +112,9 @@ public class WwwService : MainService
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
 
-            if (await dc.QueryTopAsync("SELECT rtlid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
+            if (await dc.QueryTopAsync("SELECT orgid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
             {
-                dc.Let(out int rtlid);
+                dc.Let(out int orgid);
                 dc.Let(out decimal topay);
 
                 if (topay == cash) // verify that the ammount is correct
@@ -123,13 +123,13 @@ public class WwwService : MainService
                     await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
 
                     // put a notice
-                    var rtl = GrabTwin<int, Org>(rtlid);
-                    var mkt = GrabTwin<int, Org>(rtl.MktId);
+                    var shp = GrabTwin<int, Org>(orgid);
+                    var mkt = GrabTwin<int, Org>(shp.MktId);
 
                     // notice and event
                     //
-                    rtl.NoticePack.Put(OrgNoticePack.BUY_CREATED, 1, cash);
-                    mkt.EventPack.AddNew(rtl.name);
+                    shp.NoticePack.Put(OrgNoticePack.BUY_CREATED, 1, cash);
+                    mkt.EventPack.AddNew(shp.name);
                 }
                 else // the pay differs from the order
                 {

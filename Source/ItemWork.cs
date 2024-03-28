@@ -53,7 +53,7 @@ public class PublyItemWork : ItemWork<PubItemVarWork>
 
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("商品")]
-public class RtllyItemWork : ItemWork<RtllyItemVarWork>
+public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
@@ -122,7 +122,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         }, false, 4);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
     [Ui("新建", tip: "新建商品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -132,7 +132,7 @@ public class RtllyItemWork : ItemWork<RtllyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_RTL,
+            typ = Item.TYP_PRD,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,

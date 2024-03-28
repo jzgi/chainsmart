@@ -181,7 +181,7 @@ public class PublyBatVarWork : BatVarWork
     }
 }
 
-public class RtllyBatVarWork : BatVarWork
+public class ShplyBatVarWork : BatVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
@@ -190,7 +190,7 @@ public class RtllyBatVarWork : BatVarWork
     }
 }
 
-public class SuplyBatVarWork : BatVarWork
+public class SupSrclyBatVarWork : BatVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]

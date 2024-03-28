@@ -31,7 +31,7 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
         {
             h.ADIALOG_(o.Key, "/-", sub, MOD_OPEN, false, tip: title, css: "uk-card-body uk-flex");
 
-            h.PIC("/void.webp", css: "uk-width-1-5");
+            h.PIC("/void.webp", css: "uk-width-1-6");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();

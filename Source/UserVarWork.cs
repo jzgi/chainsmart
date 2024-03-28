@@ -127,16 +127,16 @@ public class OrglyMbrVarWork : UserVarWork
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE users SET ").T(IsShop ? "rtlid" : "supid").T(" = NULL, ").T(IsShop ? "rtlly" : "suply").T(" = 0 WHERE id = @1 AND ").T(IsShop ? "rtlid" : "supid").T(" = @2");
+        dc.Sql("UPDATE users SET ").T(IsShop ? "mktid" : "supid").T(" = NULL, ").T(IsShop ? "mktly" : "suply").T(" = 0 WHERE id = @1 AND ").T(IsShop ? "mktid" : "supid").T(" = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(204); // no content
     }
 }
 
-public class RtllyVipVarWork : UserVarWork
+public class ShplyVipVarWork : UserVarWork
 {
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

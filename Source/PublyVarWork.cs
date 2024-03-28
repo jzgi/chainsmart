@@ -47,7 +47,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
                 return;
             }
-            if (org.AsRtl && !org.IsOpen(DateTime.Now.TimeOfDay))
+            if (org.AsMkt && !org.IsOpen(DateTime.Now.TimeOfDay))
             {
                 h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
             }
@@ -200,7 +200,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 creator = prin.name,
                 ucom = com,
                 uaddr = addr,
-                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.rtlfee,
+                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.mktfee,
                 status = -1, // before confirmation of payment
             };
             m.InitTopay();

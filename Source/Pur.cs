@@ -32,13 +32,13 @@ public class Pur : Entity, IKeyable<int>
 
     internal int id;
 
-    internal int rtlid; // retail
+    internal int orgid; // retail
     internal int mktid; // market
     internal int hubid; // hub warehouse
     internal int supid; // supply
-    internal int ctrid; // info center
+    internal int srcid; // source
 
-    internal int lotid;
+    internal int itemid;
 
     internal string unit;
     internal string unitip;
@@ -58,19 +58,19 @@ public class Pur : Entity, IKeyable<int>
     {
     }
 
-    public Pur(Item itm, Org rtl, Org sup)
+    public Pur(Item itm, Org sta, Org sup)
     {
         typ = itm.typ;
         name = itm.name;
         tip = itm.tip;
 
-        rtlid = rtl.id;
-        mktid = rtl.MktId;
-        hubid = rtl.hubid;
+        orgid = sta.id;
+        mktid = sta.MktId;
+        hubid = sta.hubid;
         supid = sup.id;
-        ctrid = sup.HubId;
+        srcid = sup.HubId;
 
-        lotid = itm.id;
+        itemid = itm.id;
         unit = itm.unit;
         unitip = itm.unitip;
         unitx = itm.unitx;
@@ -89,12 +89,12 @@ public class Pur : Entity, IKeyable<int>
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Get(nameof(rtlid), ref rtlid);
+            s.Get(nameof(orgid), ref orgid);
             s.Get(nameof(mktid), ref mktid);
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(supid), ref supid);
-            s.Get(nameof(ctrid), ref ctrid);
-            s.Get(nameof(lotid), ref lotid);
+            s.Get(nameof(srcid), ref srcid);
+            s.Get(nameof(itemid), ref itemid);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
@@ -125,12 +125,12 @@ public class Pur : Entity, IKeyable<int>
 
         if ((msk & MSK_BORN) == MSK_BORN)
         {
-            s.Put(nameof(rtlid), rtlid);
+            s.Put(nameof(orgid), orgid);
             s.Put(nameof(mktid), mktid);
             s.Put(nameof(hubid), hubid);
             s.Put(nameof(supid), supid);
-            s.Put(nameof(ctrid), ctrid);
-            s.Put(nameof(lotid), lotid);
+            s.Put(nameof(srcid), srcid);
+            s.Put(nameof(itemid), itemid);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);

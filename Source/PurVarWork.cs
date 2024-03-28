@@ -19,13 +19,13 @@ public abstract class PurVarWork : WebWork
         dc.Sql("SELECT ").collst(Pur.Empty).T(" FROM purs WHERE id = @1");
         var o = await dc.QueryTopAsync<Pur>(p => p.Set(id));
 
-        var rtl = GrabTwin<int, Org>(o.rtlid);
+        var org = GrabTwin<int, Org>(o.orgid);
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
             h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
-            h.LI_().LABEL("买方").SPAN_("uk-static").T(rtl.name).SP().ATEL(rtl.tel)._SPAN()._LI();
+            h.LI_().LABEL("买方").SPAN_("uk-static").T(org.name).SP().ATEL(org.tel)._SPAN()._LI();
             h.LI_().FIELD("产品名", o.name)._LI();
             h.LI_().FIELD("基本单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD2("整件", o.unitx, o.unit).FIELD("运费", o.fee, money: true)._LI();
@@ -42,7 +42,7 @@ public abstract class PurVarWork : WebWork
     }
 }
 
-public class RtllyPurVarWork : PurVarWork
+public class StalyPurVarWork : PurVarWork
 {
 }
 
@@ -60,13 +60,13 @@ public class SuplyPurVarWork : PurVarWork
         try
         {
             // set status and decrease the stock
-            dc.Sql("UPDATE purs SET status = 2, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status = 1 RETURNING hubid, lotid, qty, rtlid, topay");
+            dc.Sql("UPDATE purs SET status = 2, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status = 1 RETURNING hubid, lotid, qty, orgid, topay");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int hubid);
                 dc.Let(out int lotid);
                 dc.Let(out int qty);
-                dc.Let(out int rtlid);
+                dc.Let(out int orgid);
                 dc.Let(out decimal topay);
 
                 // adjust stock
@@ -74,8 +74,8 @@ public class SuplyPurVarWork : PurVarWork
                 await dc.ExecuteAsync(p => p.Set(qty).Set(lotid).Set(hubid));
 
                 // put a notice to the shop
-                var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.NoticePack.Put(OrgNoticePack.PUR_OKED, 1, topay);
+                var sta = GrabTwin<int, Org>(orgid);
+                sta.NoticePack.Put(OrgNoticePack.PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -99,7 +99,7 @@ public class SuplyPurVarWork : PurVarWork
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT pay FROM purs WHERE id = @1 AND rtlid = @2");
+            dc.Sql("SELECT pay FROM purs WHERE id = @1 AND orgid = @2");
             await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
             dc.Let(out decimal pay);
 
@@ -118,10 +118,10 @@ public class SuplyPurVarWork : PurVarWork
             using var dc = NewDbContext(IsolationLevel.ReadCommitted);
             try
             {
-                dc.Sql("UPDATE purs SET refund = @1, refunder = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 4 RETURNING rtlid, pay");
+                dc.Sql("UPDATE purs SET refund = @1, refunder = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 4 RETURNING orgid, pay");
                 if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
                 {
-                    dc.Let(out int rtlid);
+                    dc.Let(out int orgid);
                     dc.Let(out decimal pay);
 
                     // remote call to refund
@@ -134,8 +134,8 @@ public class SuplyPurVarWork : PurVarWork
                     }
 
                     // put a notice to the shop
-                    var rtl = GrabTwin<int, Org>(rtlid);
-                    rtl.NoticePack.Put(OrgNoticePack.PUR_REFUND, 1, refund);
+                    var sta = GrabTwin<int, Org>(orgid);
+                    sta.NoticePack.Put(OrgNoticePack.PUR_REFUND, 1, refund);
                 }
             }
             catch (Exception)
@@ -160,13 +160,13 @@ public class SuplyPurVarWork : PurVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE purs SET status = 0, ret = qty, refund = pay, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 2 RETURNING lotid, hubid, qty, rtlid, topay, refund");
+            dc.Sql("UPDATE purs SET status = 0, ret = qty, refund = pay, adapted = @1, adapter = @2 WHERE id = @3 AND supid = @4 AND status BETWEEN 1 AND 2 RETURNING lotid, hubid, qty, orgid, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out int lotid);
                 dc.Let(out int hubid);
                 dc.Let(out int qty);
-                dc.Let(out int rtlid);
+                dc.Let(out int orgid);
                 dc.Let(out decimal topay);
                 dc.Let(out decimal refund);
 
@@ -184,8 +184,8 @@ public class SuplyPurVarWork : PurVarWork
                 }
 
                 // put a notice to the shop
-                var rtl = GrabTwin<int, Org>(rtlid);
-                rtl.NoticePack.Put(OrgNoticePack.PUR_VOID, 1, refund);
+                var sta = GrabTwin<int, Org>(orgid);
+                sta.NoticePack.Put(OrgNoticePack.PUR_VOID, 1, refund);
             }
         }
         catch (Exception)
@@ -292,10 +292,10 @@ public class CtrlyPurVarWork : PurVarWork
             h.TABLE_();
             foreach (var o in arr)
             {
-                var rtl = GrabTwin<int, Org>(o.rtlid);
+                var org = GrabTwin<int, Org>(o.orgid);
 
                 h.TR_();
-                h.TD(rtl.name);
+                h.TD(org.name);
                 h.TD2(o.QtyX, "件", css: "uk-text-right");
                 // h.TD_().NUMBER(null, nameof(o.ret), o.ret)._TD();
 
@@ -331,17 +331,17 @@ public class CtrlyPurVarWork : PurVarWork
 public class MktlyPurVarWork : PurVarWork
 {
     [Ui("代收货", icon: "download"), Tool(ButtonPickConfirm)]
-    public async Task rtl(WebContext wc)
+    public async Task sta(WebContext wc)
     {
-        int rtlid = wc[0];
+        int orgid = wc[0];
         var prin = (User)wc.Principal;
         var org = wc[-2].As<Org>();
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT id, name, unitx, unit, (qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND rtlid = @2");
-            await dc.QueryAsync(p => p.Set(org.id).Set(rtlid));
+            dc.Sql("SELECT id, name, unitx, unit, (qty / unitx) FROM purs WHERE mktid = @1 AND status = 4 AND orgid = @2");
+            await dc.QueryAsync(p => p.Set(org.id).Set(orgid));
 
             wc.GivePane(200, h =>
             {
@@ -372,8 +372,8 @@ public class MktlyPurVarWork : PurVarWork
             int[] key = (await wc.ReadAsync<Form>())[nameof(key)];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE purs SET status = 8, ended = @1, ender = @2 WHERE mktid = @3 AND status = 4 AND rtlid = @4 AND id")._IN_(key);
-            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(rtlid).SetForIn(key));
+            dc.Sql("UPDATE purs SET status = 8, ended = @1, ender = @2 WHERE mktid = @3 AND status = 4 AND orgid = @4 AND id")._IN_(key);
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(org.id).Set(orgid).SetForIn(key));
 
             wc.Give(204);
         }
