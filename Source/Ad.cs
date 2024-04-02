@@ -3,31 +3,21 @@
 namespace ChainSmart;
 
 /// <summary>
-/// A lot operation flow to particular hub.
+/// An advertizing record. 
 /// </summary>
-public class Lot : Entity, IKeyable<int>
+public class Ad : Entity, IKeyable<int>
 {
-    public static readonly Lot Empty = new();
+    public static readonly Code Empty = new();
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "进仓 ＋" },
-        { 2, "出仓 －" },
-        { 3, "盘盈 ＋" },
-        { 4, "盘亏 －" },
-        { 5, "增益 ＋" },
-        { 6, "损耗 －" },
-        { 7, "冲加 ＋" },
-        { 8, "冲减 －" },
-    };
-
-
-    public new static readonly Map<short, string> Statuses = new()
-    {
-        { STU_VOID, "作废" },
-        { STU_CREATED, "新建" },
-        { STU_ADAPTED, "调整" },
-        { STU_OKED, "发布" },
+        { 1, "特金" },
+        { 2, "普金" },
+        { 3, "特塑" },
+        { 4, "普塑" },
+        { 5, "特贴" },
+        { 6, "普贴" },
+        { 7, "RFID" },
     };
 
 
@@ -35,15 +25,9 @@ public class Lot : Entity, IKeyable<int>
 
     internal int orgid;
 
-    internal int itemid;
+    internal bool icon;
 
-    internal int hubid;
-
-    internal int stock;
-
-    internal short zone;
-
-    // must have an icon
+    internal bool pic;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -56,16 +40,17 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
-            s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(hubid), ref hubid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(zone), ref zone);
+            s.Get(nameof(typ), ref typ);
+            s.Get(nameof(name), ref name);
+            s.Get(nameof(tip), ref tip);
         }
         if ((msk & MSK_LATER) == MSK_LATER)
         {
-            s.Get(nameof(stock), ref stock);
+            s.Get(nameof(icon), ref icon);
+            s.Get(nameof(pic), ref pic);
         }
     }
 
@@ -80,16 +65,17 @@ public class Lot : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
-            s.Put(nameof(itemid), itemid);
-            s.Put(nameof(hubid), hubid);
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(zone), zone);
+            s.Put(nameof(typ), typ);
+            s.Put(nameof(name), name);
+            s.Put(nameof(tip), tip);
         }
         if ((msk & MSK_LATER) == MSK_LATER)
         {
-            s.Put(nameof(stock), stock);
+            s.Put(nameof(icon), icon);
+            s.Put(nameof(pic), pic);
         }
     }
 

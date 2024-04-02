@@ -310,7 +310,7 @@ create index buys_uidstatus_idx
     tablespace rtl;
 
 create index buys_mktidstatustypucomoked_idx
-    on buys (mktid asc, status asc, typ asc, ucom asc, oked desc) tablespace rtl
+    on buys (mktid asc, status asc, typ asc, uarea asc, oked desc) tablespace rtl
     where ((typ = 1) AND (adapter IS NOT NULL));
 
 create table items
@@ -767,7 +767,7 @@ SELECT o.typ,
        o.openat,
        o.closeat,
        o.rank,
-       o.style,
+       o.mode,
        o.cattyp,
        o.symtyp,
        o.tagtyp,

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
+using NPOI.HSSF.Record;
 using static ChainFX.Web.Modal;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.ToolAttribute;
@@ -16,13 +17,14 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
     }
 
 
-    protected static void Show<M>(HtmlBuilder h, Map<short, M> map) where M : Std
+    protected static void Show<M>(HtmlBuilder h, Map<short, M> map, Map<short, string> styles = null) where M : Std
     {
         h.LIST(map, ety =>
         {
             var o = ety.Value;
-            h.T(o.name);
-        });
+            h.SPAN(o.typ,css:"uk-width-tiny").SP();
+            h.SPAN(o.name).SP().SUB(o.tip).SP().SPAN(styles?[o.style], css: "uk-margin-auto-left");
+        }, ul: "uk-list-divider");
     }
 
     protected static void MainGrid(HtmlBuilder h, Std[] arr, int sub, string title)
@@ -73,7 +75,7 @@ public class PublyTagWork : StdWork<PublyTagVarWork>
     {
         var map = Grab<short, Tag>();
 
-        wc.GivePane(200, h => { Show(h, map); }, false, 15);
+        wc.GivePane(200, h => { Show(h, map, Tag.Styles); }, false, 15);
     }
 }
 

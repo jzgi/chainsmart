@@ -7,19 +7,11 @@ public class User : Entity, IKeyable<int>
 {
     public static readonly User Empty = new();
 
-    // pro types
-    public static readonly Map<short, string> Typs = new()
-    {
-        { 0, null },
-        { 1, "市场运营师" },
-        { 2, "健康管理师" },
-    };
-
     public const short
         ROL_VST = 0b000001, // visit
         ROL_OPN = 0b000011, // operation
-        ROL_LOG = 0b000101, // logistic
-        ROL_OPN_LOG = ROL_OPN | ROL_LOG,
+        ROL_DLV = 0b000101, // delivery
+        ROL_OPN_LOG = ROL_OPN | ROL_DLV,
         ROL_FIN = 0b001001, // finance
         ROL_OPN_FIN = ROL_OPN | ROL_FIN,
         ROL_MGT = 0b111111; // management
@@ -28,8 +20,8 @@ public class User : Entity, IKeyable<int>
     {
         { ROL_VST, "访客" },
         { ROL_OPN, "业务" },
-        { ROL_LOG, "物流" },
-        { ROL_OPN_LOG, "业务＋物流" },
+        { ROL_DLV, "输送" },
+        { ROL_OPN_LOG, "业务＋输送" },
         { ROL_FIN, "财务" },
         { ROL_OPN_FIN, "业务＋财务" },
         { ROL_MGT, "管理" },

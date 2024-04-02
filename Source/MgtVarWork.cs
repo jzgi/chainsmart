@@ -132,6 +132,8 @@ public class MktlyVarWork : MgtVarWork
         CreateWork<MktlyTestWork>("mtest");
 
         CreateWork<MktlyCerWork>("mcer");
+
+        CreateWork<MktlyAdWork>("mad");
     }
 
     [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]

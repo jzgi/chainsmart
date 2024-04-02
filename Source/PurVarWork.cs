@@ -48,7 +48,7 @@ public class StalyPurVarWork : PurVarWork
 
 public class SuplyPurVarWork : PurVarWork
 {
-    [MgtAuthorize(Org.TYP_SUP_, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_SUP_, User.ROL_DLV)]
     [Ui("发货", "确认开始发货", icon: "arrow-right", status: 2), Tool(ButtonConfirm)]
     public async Task adapt(WebContext wc)
     {

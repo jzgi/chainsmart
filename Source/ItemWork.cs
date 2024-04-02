@@ -132,7 +132,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         const short MAX = 100;
         var o = new Item
         {
-            typ = Item.TYP_PRD,
+            typ = Item.TYP_MKT,
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,

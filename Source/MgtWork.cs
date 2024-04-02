@@ -32,6 +32,8 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyCodeWork>("code");
 
+        CreateWork<AdmlyAdWork>("ad");
+
         // fin
 
         CreateWork<AdmlyBuyApWork>("buyap", header: "财务");

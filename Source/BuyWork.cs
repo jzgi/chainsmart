@@ -63,7 +63,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
                 h.T(it.name).SP().T(it.qty).T(it.unit);
             }
             h._Q();
-            h.FOOTER_().SPAN(string.IsNullOrEmpty(o.ucom) ? "非派送区" : o.ucom, "uk-width-expand").SPAN(o.utel, "uk-width-1-3 uk-output").SPAN_("uk-width-1-3 uk-flex-right").CNY(o.pay)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN(string.IsNullOrEmpty(o.uarea) ? "非派送区" : o.uarea, "uk-width-expand").SPAN(o.utel, "uk-width-1-3 uk-output").SPAN_("uk-width-1-3 uk-flex-right").CNY(o.pay)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -435,7 +435,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                     h._LI();
 
                     h.LI_();
-                    h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
+                    h.SPAN_("uk-width-expand").SMALL_().T(o.uarea).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
                         h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();

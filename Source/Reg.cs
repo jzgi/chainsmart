@@ -21,16 +21,11 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         { TYP_PROVINCE, "省份" },
     };
 
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 0, "默认" },
-    };
-
     internal short id;
 
     internal short idx;
 
-    internal short style;
+    internal short mode;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -42,7 +37,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Get(nameof(idx), ref idx);
-        s.Get(nameof(style), ref style);
+        s.Get(nameof(mode), ref mode);
     }
 
     public override void Write(ISink s, short msk = 0xff)
@@ -55,14 +50,14 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Put(nameof(idx), idx);
-        s.Put(nameof(style), style);
+        s.Put(nameof(mode), mode);
     }
 
     public short Key => id;
 
     public short Idx => idx;
 
-    public short Style => style;
+    public short Style => mode;
 
     public bool IsSector => typ == TYP_SECTOR;
 

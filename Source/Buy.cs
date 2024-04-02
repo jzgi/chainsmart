@@ -10,15 +10,15 @@ public class Buy : Entity, IKeyable<long>
     public static readonly Buy Empty = new();
 
     public const short
-        TYP_ORDR = 1,
+        TYP_ORDER = 1,
         TYP_CASH = 2,
-        TYP_OTHR = 3;
+        TYP_OTHER = 3;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_ORDR, "网售" },
+        { TYP_ORDER, "网售" },
         { TYP_CASH, "现金" },
-        { TYP_OTHR, "其他" },
+        { TYP_OTHER, "其他" },
     };
 
     public new static readonly Map<short, string> Statuses = new()
@@ -37,7 +37,7 @@ public class Buy : Entity, IKeyable<long>
     internal int uid;
     internal string uname;
     internal string utel;
-    internal string ucom; // community
+    internal string uarea; // delivery area
     internal string uaddr; // address
     internal string uim;
     internal BuyLn[] items; // item lines
@@ -47,6 +47,8 @@ public class Buy : Entity, IKeyable<long>
     internal decimal ret;
     internal decimal refund;
     internal string refunder;
+    internal short plan;
+    internal short due;
 
     public Buy()
     {
@@ -54,7 +56,7 @@ public class Buy : Entity, IKeyable<long>
 
     public Buy(User prin, Org shp, BuyLn[] arr)
     {
-        typ = TYP_ORDR;
+        typ = TYP_ORDER;
         name = shp.name;
         tip = shp.No;
         orgid = shp.id;
@@ -82,7 +84,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(uid), ref uid);
             s.Get(nameof(uname), ref uname);
             s.Get(nameof(utel), ref utel);
-            s.Get(nameof(ucom), ref ucom);
+            s.Get(nameof(uarea), ref uarea);
             s.Get(nameof(uaddr), ref uaddr);
             s.Get(nameof(uim), ref uim);
             s.Get(nameof(items), ref items);
@@ -96,6 +98,8 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
             s.Get(nameof(refunder), ref refunder);
+            s.Get(nameof(plan), ref plan);
+            s.Get(nameof(due), ref due);
         }
     }
 
@@ -118,7 +122,7 @@ public class Buy : Entity, IKeyable<long>
 
             s.Put(nameof(uname), uname);
             s.Put(nameof(utel), utel);
-            s.Put(nameof(ucom), ucom);
+            s.Put(nameof(uarea), uarea);
             s.Put(nameof(uaddr), uaddr);
             s.Put(nameof(uim), uim);
             s.Put(nameof(items), items);
@@ -132,6 +136,8 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
             s.Put(nameof(refunder), refunder);
+            s.Put(nameof(plan), plan);
+            s.Put(nameof(due), due);
         }
     }
 
@@ -156,7 +162,7 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public bool IsFromNet => typ == TYP_ORDR;
+    public bool IsFromNet => typ == TYP_ORDER;
 
     public bool IsOnPos => typ == TYP_CASH;
 

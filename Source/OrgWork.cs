@@ -111,7 +111,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(cmd == 1 ? "新建市场" : "新建品控云仓");
+                h.FORM_().FIELDSUL_(o.IsMkt ? "新建市场" : "新建品控云仓");
 
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
@@ -120,15 +120,15 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
-                if (cmd == 1)
+                if (o.IsMkt)
                 {
                     var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                    h.LI_().SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
+                    h.LI_().SELECT("业务模式", nameof(o.mode), o.mode, Org.Modes, (k, _) => k >= Org.MOD_CTR, required: true).SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
                 }
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
+                h.LI_().TEXT("收款账名", nameof(o.bankacctname), o.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
-                
+
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }
@@ -189,26 +189,7 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
         }, false, 6);
     }
 
-    [Ui(icon: "trash", status: 4), Tool(Anchor)]
-    public void @void(WebContext wc, int page)
-    {
-        var prin = (User)wc.Principal;
-        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsVoid, sorter: (a, b) => b.oked.CompareTo(a.oked)).GetSegment(20 * page, 20);
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: 4);
-            if (arr == null)
-            {
-                h.ALERT("尚无已作废的供应源");
-                return;
-            }
-            MainGrid(h, arr, prin, true);
-            h.PAGINATION(arr.Count == 20);
-        }, false, 6);
-    }
-
-    [Ui(tip: "查询", icon: "search", status: 8), Tool(AnchorPrompt)]
+    [Ui(tip: "查询", icon: "search", status: 4), Tool(AnchorPrompt)]
     public void search(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -241,8 +222,26 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
         }
     }
 
+    [Ui(icon: "trash", status: 8), Tool(Anchor)]
+    public void @void(WebContext wc, int page)
+    {
+        var prin = (User)wc.Principal;
+        var arr = GrabTwinArray<int, Org>(0, filter: x => x.IsVoid, sorter: (a, b) => b.oked.CompareTo(a.oked)).GetSegment(20 * page, 20);
 
-    [Ui("新建", icon: "plus", status: 3), Tool(ButtonOpen)]
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 8);
+            if (arr == null)
+            {
+                h.ALERT("尚无已作废供应源");
+                return;
+            }
+            MainGrid(h, arr, prin, true);
+            h.PAGINATION(arr.Count == 20);
+        }, false, 6);
+    }
+
+    [Ui("新建", icon: "plus", status: 1 | 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int cmd)
     {
         var prin = (User)wc.Principal;
@@ -276,8 +275,18 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 if (o.IsSup)
                 {
+                    h.LI_().TEXT("收款账名", nameof(o.bankacctname), o.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
                     h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20, required: true)._LI();
+                }
+                if (o.IsSrc)
+                {
+                    var cats = Grab<short, Cat>();
+                    var envs = Grab<short, Env>();
+                    var syms = Grab<short, Sym>();
+                    var tags = Grab<short, Tag>();
+
+                    h.LI_().SELECT("品类", nameof(o.cattyp), o.cattyp, cats).SELECT("环境", nameof(o.envtyp), o.envtyp, envs)._LI();
+                    h.LI_().SELECT("标志", nameof(o.symtyp), o.symtyp, syms).SELECT("溯源", nameof(o.tagtyp), o.tagtyp, tags)._LI();
                 }
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();

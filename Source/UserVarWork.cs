@@ -11,6 +11,7 @@ public abstract class UserVarWork : WebWork
     public async Task @default(WebContext wc)
     {
         int uid = wc[0];
+        var cers = Grab<short, Cer>();
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(User.Empty).T(" FROM users_vw WHERE id = @1");
@@ -21,7 +22,7 @@ public abstract class UserVarWork : WebWork
             h.UL_("uk-list uk-list-divider");
 
             h.LI_().FIELD("用户名", o.name)._LI();
-            h.LI_().FIELD("专业", User.Typs[o.typ])._LI();
+            h.LI_().FIELD("专业", cers[o.typ])._LI();
             h.LI_().FIELD("电话", o.tel)._LI();
             h.LI_().FIELD("平台权限", User.Roles[o.admly])._LI();
             h.LI_().FIELD("机构权限", User.Roles[o.suply])._LI();
@@ -45,6 +46,8 @@ public class AdmlyUserVarWork : UserVarWork
         int id = wc[0];
         if (wc.IsGet)
         {
+            var cers = Grab<short, Cer>();
+
             using var dc = NewDbContext();
             await dc.QueryTopAsync("SELECT typ FROM users WHERE id = @1", p => p.Set(id));
             dc.Let(out typ);
@@ -52,7 +55,7 @@ public class AdmlyUserVarWork : UserVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_("设置专业类型");
-                h.LI_().SELECT("专业类型", nameof(typ), typ, User.Typs, required: true)._LI();
+                h.LI_().SELECT("专业类型", nameof(typ), typ, cers, required: true)._LI();
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(msg))._FORM();
             });
         }

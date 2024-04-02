@@ -27,7 +27,7 @@ public abstract class BuyVarWork : WebWork
             if (o.IsFromNet)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
-                h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.ucom).T('-').T(o.uaddr)._SPAN()._LI();
+                h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr)._SPAN()._LI();
             }
             h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
             if (!string.IsNullOrEmpty(o.tip))
@@ -103,7 +103,7 @@ public class ShplyBuyVarWork : BuyVarWork
             "注意：唯有派发了的订单才能结算返款"
         )
     ]
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_MKT_, User.ROL_DLV)]
     [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -334,7 +334,7 @@ public class MktlyBuyVarWork : BuyVarWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_LOG)]
+    [MgtAuthorize(Org.TYP_MKT, User.ROL_DLV)]
     [Ui("派发", "统一派发？"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {

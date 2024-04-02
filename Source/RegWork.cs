@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -10,7 +11,7 @@ namespace ChainSmart;
 
 public abstract class RegWork : WebWork
 {
-    protected static void MainGrid(HtmlBuilder h, Reg[] arr)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Reg> arr)
     {
         h.MAINGRID(arr, o =>
         {
@@ -79,7 +80,7 @@ public class AdmlyRegWork : RegWork
             h.TOOLBAR(subscript: Reg.TYP_PROVINCE);
 
             MainGrid(h, arr);
-        }, false, 12);
+        }, false);
     }
 
     [Ui("新建", "新建区域", icon: "plus", status: 7), Tool(ButtonOpen)]
@@ -96,12 +97,20 @@ public class AdmlyRegWork : RegWork
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("区域属性");
-                h.LI_().NUMBER("区域编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
+                h.FORM_().FIELDSUL_(typ switch
+                {
+                    Reg.TYP_SECTOR => "新建版块", Reg.TYP_CITY => "新建地市", _ => "新建省份"
+                });
+
+                h.LI_().NUMBER("编号", nameof(o.id), o.id, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().SELECT("风格", nameof(o.style), o.style, Reg.Styles)._LI();
+                if (o.IsSector)
+                {
+                    h.LI_().SELECT("市场模式", nameof(o.mode), o.mode, Org.Modes)._LI();
+                }
+
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();
             });
         }
@@ -110,6 +119,7 @@ public class AdmlyRegWork : RegWork
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
 
             o = await wc.ReadObjectAsync(msk, instance: o);
+
             using var dc = NewDbContext();
             dc.Sql("INSERT INTO regs ").colset(Reg.Empty, msk)._VALUES_(Item.Empty, msk);
             await dc.ExecuteAsync(p => o.Write(p, msk));

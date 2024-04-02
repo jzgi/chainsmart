@@ -29,7 +29,8 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             h.P_().T(prin.created, time: 0).SP().T("注册");
             if (prin.typ > 0)
             {
-                h.T('，').T(User.Typs[prin.typ]);
+                var cers = Grab<short, Cer>();
+                h.T('，').T(cers[prin.typ]?.ToString());
             }
             h._P();
             h._HEADER();
@@ -75,7 +76,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                     h._UL();
 
                     h.FOOTER_("uk-card-footer");
-                    h.SPAN_("uk-width-expand").SMALL_().T(o.ucom).T(o.uaddr)._SMALL()._SPAN();
+                    h.SPAN_("uk-width-expand").SMALL_().T(o.uarea).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
                         h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();

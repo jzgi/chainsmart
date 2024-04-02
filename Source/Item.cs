@@ -10,14 +10,12 @@ public class Item : Entity, IKeyable<int>
     public static readonly Item Empty = new();
 
     public const short
-        TYP_PRD = 1,
-        TYP_SVC = 2,
+        TYP_MKT = 1,
         TYP_SUP = 4;
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_PRD, "产品" },
-        { TYP_SVC, "服务" },
+        { TYP_MKT, "市场" },
         { TYP_SUP, "供应" },
     };
 
@@ -30,6 +28,7 @@ public class Item : Entity, IKeyable<int>
     internal string unit;
     internal string unitip;
     internal short unitx;
+    internal short plan;
     internal decimal price;
     internal decimal off;
     internal bool promo;
@@ -66,6 +65,7 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
+            s.Get(nameof(plan), ref plan);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
@@ -107,6 +107,7 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);
+            s.Put(nameof(plan), plan);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);

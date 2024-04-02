@@ -198,7 +198,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             {
                 created = DateTime.Now,
                 creator = prin.name,
-                ucom = com,
+                uarea = com,
                 uaddr = addr,
                 fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.mktfee,
                 status = -1, // before confirmation of payment

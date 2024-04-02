@@ -31,28 +31,35 @@ public abstract class OrgVarWork : WebWork
                 }
                 if (m.AsEst)
                 {
-                    h.LI_().FIELD("涵盖市场名", m.cover)._LI();
+                    h.LI_().FIELD("地域覆盖", m.cover)._LI();
                 }
-                h.LI_();
-
+                h.LI_().FIELD("联系电话", m.tel);
                 if (m.regid > 0)
                 {
                     h.FIELD(m.AsMkt ? "版块" : "区域", regs[m.regid]);
-                    h.FIELD("联系电话", m.tel);
                 }
                 h._LI();
-                h.LI_().FIELD(m.AsMkt ? "编号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
+                h.LI_().FIELD(m.AsMkt ? "商号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
 
                 if (m.AsEst || m.IsSrc)
                 {
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                     if (m.AsEst) h.LI_().FIELD("参数定义", m.specs)._LI();
-                    if (m.IsSrc) h.LI_().FIELD("说明", m.envtyp)._LI();
                 }
                 if (m.AsBiz)
                 {
+                    h.LI_().FIELD("收款账名", m.bankacctname)._LI();
                     h.LI_().FIELD("收款账号", m.bankacct)._LI();
-                    h.LI_().FIELD("收款账号名", m.bankacctname)._LI();
+                }
+                if (m.IsSrc)
+                {
+                    var cats = Grab<short, Cat>();
+                    var envs = Grab<short, Env>();
+                    var syms = Grab<short, Sym>();
+                    var tags = Grab<short, Tag>();
+
+                    h.LI_().FIELD("品类", m.cattyp, cats).FIELD("环境", m.envtyp, envs)._LI();
+                    h.LI_().FIELD("标志", m.symtyp, syms).FIELD("溯源", m.tagtyp, tags)._LI();
                 }
                 h.LI_().FIELD("托管", m.trust)._LI();
                 h.LI_().FIELD("状态", m.status, Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
@@ -156,8 +163,8 @@ public class PublyOrgVarWork : OrgVarWork
 public class AdmlyEstVarWork : OrgVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task edit(WebContext wc, int cmd)
+    [Ui(tip: "修改成员机构", icon: "pencil", status: 3), Tool(ButtonShow)]
+    public async Task upd(WebContext wc, int cmd)
     {
         int id = wc[0];
         var prin = (User)wc.Principal;
@@ -165,44 +172,31 @@ public class AdmlyEstVarWork : OrgVarWork
 
         var m = GrabTwin<int, Org>(id);
 
-        var t = cmd switch
-        {
-            1 => Org.TYP_MKT,
-            2 => Org.TYP_HUB,
-            _ => Org.TYP_SUP_
-        };
-
         if (wc.IsGet)
         {
-            var ctrs = GrabTwinArray<int, Org>(0, x => x.AsSup);
-
             wc.GivePane(200, h =>
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMkt ? "调整市场机构" : "调整供应机构");
+                    h.FORM_().FIELDSUL_(m.IsMkt ? "修改市场" : "修改品控云仓");
 
-                    if (t == Org.TYP_SUP_)
-                    {
-                        h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => Org.IsNormalSup(k), required: true)._LI();
-                    }
-
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().TEXT("涵盖市场名", nameof(m.cover), m.cover, max: 12, required: true)._LI();
+                    h.LI_().TEXT("地域覆盖", nameof(m.cover), m.cover, max: 12, required: true)._LI();
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (cmd == 1)
+                    if (m.IsMkt)
                     {
-                        h.LI_().SELECT("关联云仓", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
+                        var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
+                        h.LI_().SELECT("业务模式", nameof(m.mode), m.mode, Org.Modes, (k, _) => k >= Org.MOD_CTR, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();
+                    h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
+                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
                 }
             });
         }
@@ -243,17 +237,10 @@ public class AdmlyEstVarWork : OrgVarWork
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
-    }
-
-    [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "全景", icon: "camera", status: 3), Tool(ButtonCrop, size: 2)]
-    public async Task scene(WebContext wc)
-    {
-        await doimg(wc, nameof(scene), false, 6);
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
@@ -372,58 +359,51 @@ public class AdmlyEstVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 }
-
 
 public class AdmlySupVarWork : OrgVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task edit(WebContext wc, int cmd)
+    public async Task upd(WebContext wc, int cmd)
     {
         int id = wc[0];
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
-
         var m = GrabTwin<int, Org>(id);
-
-        var t = cmd switch
-        {
-            1 => Org.TYP_MKT,
-            2 => Org.TYP_HUB,
-            _ => Org.TYP_SUP_
-        };
 
         if (wc.IsGet)
         {
-            var ctrs = GrabTwinArray<int, Org>(0, x => x.AsSup);
-
             wc.GivePane(200, h =>
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMkt ? "调整市场机构" : "调整供应机构");
+                    h.FORM_().FIELDSUL_("修改供应源");
 
-                    if (t == Org.TYP_SUP_)
-                    {
-                        h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, v) => Org.IsNormalSup(k), required: true)._LI();
-                    }
-
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
+                    h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, _) => Org.IsNonEstSupTyp(k), required: true)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().TEXT("涵盖市场名", nameof(m.cover), m.cover, max: 12, required: true)._LI();
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (cmd == 1)
-                    {
-                        h.LI_().SELECT("关联云仓", nameof(m.hubid), m.hubid, ctrs, required: true)._LI();
-                    }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();
+                    if (m.IsSup)
+                    {
+                        h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
+                        h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                    }
+                    if (m.IsSrc)
+                    {
+                        var cats = Grab<short, Cat>();
+                        var envs = Grab<short, Env>();
+                        var syms = Grab<short, Sym>();
+                        var tags = Grab<short, Tag>();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                        h.LI_().SELECT("品类", nameof(m.cattyp), m.cattyp, cats).SELECT("环境", nameof(m.envtyp), m.envtyp, envs)._LI();
+                        h.LI_().SELECT("标志", nameof(m.symtyp), m.symtyp, syms).SELECT("溯源", nameof(m.tagtyp), m.tagtyp, tags)._LI();
+                    }
+
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
                 }
             });
         }
@@ -464,21 +444,14 @@ public class AdmlySupVarWork : OrgVarWork
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
+    [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 4)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, "m" + sub, false, 6);
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "全景", icon: "camera", status: 3), Tool(ButtonCrop, size: 2)]
-    public async Task scene(WebContext wc)
-    {
-        await doimg(wc, nameof(scene), false, 6);
-    }
-
-    [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui("授权"), Tool(ButtonShow)]
+    [Ui(tip: "设置管理员", icon: "user"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
         if (wc.IsGet)
@@ -486,9 +459,11 @@ public class AdmlySupVarWork : OrgVarWork
             string tel = wc.Query[nameof(tel)];
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("授予管理权限");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
+
                 h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
+
                 if (cmd == 1) // search user
                 {
                     using var dc = NewDbContext();
@@ -593,8 +568,6 @@ public class AdmlySupVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 }
-
-
 
 public class MktlyOrgVarWork : OrgVarWork
 {

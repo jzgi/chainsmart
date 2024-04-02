@@ -54,6 +54,24 @@ public class Org : Entity, ITwin<int>
     };
 
 
+    public const short
+        MOD_SLF = 0b000001, // self 
+        MOD_DLV = 0b000010, // delivery 
+        MOD_SVC = 0b000100, // service 
+        MOD_CTR = 0b001000 | MOD_DLV, // center
+        MOD_CPX = 0b010000 | MOD_DLV; // complex 
+
+
+    public static readonly Map<short, string> Modes = new()
+    {
+        { MOD_SLF, "自理模式" },
+        { MOD_DLV, "延伸派送模式" },
+        { MOD_SVC, "延伸服务模式" },
+        { MOD_CTR, "邻里中心模式" },
+        { MOD_CPX, "农贸综合体模式" },
+    };
+
+
     // id
     internal int id;
 
@@ -78,7 +96,7 @@ public class Org : Entity, ITwin<int>
     internal TimeSpan openat;
     internal TimeSpan closeat;
     internal short rank; // credit level
-    internal short style;
+    internal short mode;
     internal short cattyp;
     internal short symtyp;
     internal short tagtyp;
@@ -112,6 +130,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Get(nameof(mode), ref mode);
+                s.Get(nameof(rank), ref rank);
                 s.Get(nameof(cover), ref cover);
                 s.Get(nameof(legal), ref legal);
                 s.Get(nameof(regid), ref regid);
@@ -129,8 +149,6 @@ public class Org : Entity, ITwin<int>
             {
                 s.Get(nameof(openat), ref openat);
                 s.Get(nameof(closeat), ref closeat);
-                s.Get(nameof(rank), ref rank);
-                s.Get(nameof(style), ref style);
                 s.Get(nameof(cattyp), ref cattyp);
                 s.Get(nameof(symtyp), ref symtyp);
                 s.Get(nameof(tagtyp), ref tagtyp);
@@ -168,6 +186,8 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
+                s.Put(nameof(mode), mode);
+                s.Put(nameof(rank), rank);
                 s.Put(nameof(cover), cover);
                 s.Put(nameof(legal), legal);
                 if (regid > 0) s.Put(nameof(regid), regid);
@@ -186,8 +206,6 @@ public class Org : Entity, ITwin<int>
             {
                 s.Put(nameof(openat), openat);
                 s.Put(nameof(closeat), closeat);
-                s.Put(nameof(rank), rank);
-                s.Put(nameof(style), style);
                 s.Put(nameof(cattyp), cattyp);
                 s.Put(nameof(symtyp), symtyp);
                 s.Put(nameof(tagtyp), tagtyp);
@@ -324,5 +342,5 @@ public class Org : Entity, ITwin<int>
     }
 
 
-    public static bool IsNormalSup(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_HUB;
+    public static bool IsNonEstSupTyp(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_HUB;
 }
