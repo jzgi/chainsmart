@@ -244,7 +244,7 @@ public class AdmlyEstVarWork : OrgVarWork
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui("授权"), Tool(ButtonShow)]
+    [Ui(tip: "设置管理员", icon: "user"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
         if (wc.IsGet)
@@ -252,7 +252,7 @@ public class AdmlyEstVarWork : OrgVarWork
             string tel = wc.Query[nameof(tel)];
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("授予管理权限");
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
                 h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
                 if (cmd == 1) // search user

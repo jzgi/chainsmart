@@ -16,21 +16,24 @@ public class ItemVarWork : WebWork
         var org = wc[-2].As<Org>();
 
         const short msk = 255 | MSK_AUX;
+
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty, msk).T(" FROM items_vw WHERE id = @1 AND orgid = @2");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(id).Set(org.id), msk);
 
         wc.GivePane(200, h =>
         {
+            var cats = Grab<short, Cat>();
+
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("商品名", o.name).FIELD("类型", o.typ, Item.Typs)._LI();
+            h.LI_().FIELD("名称", o.name).FIELD("品类", o.cattyp, cats)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
-            h.LI_().FIELD("单价", o.price, money: true).FIELD2("整售", o.unitx, o.unit)._LI();
-            h.LI_().FIELD("VIP立减", o.off, money: true).FIELD("全民立减", o.promo)._LI();
+            h.LI_().FIELD("单价", o.price, money: true).FIELD("含次数", o.cardinal)._LI();
+            h.LI_().FIELD("大客户优惠", o.off, money: true).FIELD("无差别优惠", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
-            h.LI_().FIELD2("货架", o.stock, o.unit)._LI();
+            h.LI_().FIELD2("整售量", o.unitx, o.unit).FIELD2("库存", o.stock, o.unit)._LI();
 
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "上线", o.oker, o.oked, sep: "<br>")._LI();
@@ -236,15 +239,17 @@ public class ShplyItemVarWork : ItemVarWork
 
             wc.GivePane(200, h =>
             {
+                var cats = Grab<short, Cat>();
+
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, filter: (x, _) => x <= 2)._LI();
-                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("类型", nameof(o.cattyp), o.cattyp, cats)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠额", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ").CHECKBOX("全员优惠", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
+                h.LI_().NUMBER("优惠额", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("无差别优惠", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
+                h.LI_().NUMBER("整售量", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
             });

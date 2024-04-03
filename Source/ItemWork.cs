@@ -136,6 +136,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
+            cardinal = 1,
             unit = "斤",
             unitx = 1,
             min = 1,
@@ -145,15 +146,17 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         {
             wc.GivePane(200, h =>
             {
+                var cats = Grab<short, Cat>();
+
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Item.Typs, filter: (x, _) => x <= 2)._LI();
-                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("品类", nameof(o.cattyp), o.cattyp, cats)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
-                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M).NUMBER("优惠额", nameof(o.off), o.off, min: 0.00M, max: 999.99M)._LI();
-                h.LI_().NUMBER("整售", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ").CHECKBOX("全员优惠", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
+                h.LI_().NUMBER("大客户优惠", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("无差别优惠", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
+                h.LI_().NUMBER("整售量", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });

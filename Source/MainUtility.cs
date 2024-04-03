@@ -161,14 +161,12 @@ public static class MainUtility
 
     public static HtmlBuilder ATEL(this HtmlBuilder h, string tel = null, string css = null)
     {
-        h.T("<a class=\"uk-icon-link uk-circle");
+        h.T("<a uk-icon=\"icon: receiver; ratio: 2\" class=\"uk-icon-link");
         if (css != null)
         {
             h.T(' ');
             h.T(css);
         }
-        h.T("<span>联系商户</span><span uk-icon=\"receiver\">");
-
         h.T("\" href=\"tel:").T(tel).T("\"></a>");
         return h;
     }

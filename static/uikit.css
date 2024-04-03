@@ -1330,9 +1330,9 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-bottom-bar.uk-large {
-    height: 4rem;
-    min-height: 4rem;
-    background-color: #fafafa;
+    height: 4.375rem;
+    min-height: 4.375rem;
+    background-color: #ddd;
 }
 
 .uk-bottom-placeholder.uk-large {
@@ -4033,8 +4033,8 @@ ul.uk-nav-sub {
 }
 
 .uk-modal-title {
-    color: #7daa1d;
-    font-weight: 600;
+    color: #000;
+    font-weight: 500;
     font-size: 1.125rem;
 }
 

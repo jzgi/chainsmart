@@ -14,7 +14,7 @@ namespace ChainSmart;
 public class PublyVarWork : ItemWork<PubItemVarWork>
 {
     /// <summary>
-    /// The home for a retail.
+    /// The home for a shop.
     /// </summary>
     public async Task @default(WebContext wc)
     {
@@ -31,27 +31,28 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (org.pic)
+            if (!org.IsMkt)
             {
-                h.PIC_("/org/", org.id, "/pic");
-            }
-            else
-            {
-                h.PIC_("/void-m.webp");
-            }
+                if (org.pic)
+                {
+                    h.PIC_("/org/", org.id, "/pic");
+                }
+                else
+                {
+                    h.PIC_("/void-m.webp");
+                }
 
-            h.ATEL(org.tel, "uk-overlay uk-position-bottom-right");
-
-            if (!org.IsOked)
-            {
-                h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
-                return;
+                if (!org.IsOked)
+                {
+                    h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                    return;
+                }
+                if (org.AsMkt && !org.IsOpen(DateTime.Now.TimeOfDay))
+                {
+                    h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                }
+                h._PIC();
             }
-            if (org.AsMkt && !org.IsOpen(DateTime.Now.TimeOfDay))
-            {
-                h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
-            }
-            h._PIC();
 
             if (arr == null)
             {
@@ -137,10 +138,10 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             h.T("<output class=\"uk-label uk-text-small\" name=\"tel\" cookie=\"tel\"></output>");
             h._SECTION();
 
-            h.SECTION_(css: "uk-col uk-width-expand uk-height-1-1");
+            h.SECTION_(css: "uk-col");
             string com;
-            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '地址': '备注'; buyRecalc();", css: "uk-width-expand");
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\" placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '地址': '备注'; buyRecalc();");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\"style=\"margin-top: 2px\"  placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._SECTION();
 
             // h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
@@ -259,9 +260,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
     }
 
     /// <summary>
-    /// The list of shops by sector
+    /// The home of the market by sector
     /// </summary>
-    public void lst(WebContext wc, int sector)
+    public void h(WebContext wc, int sector)
     {
         int orgid = wc[0];
         var regs = Grab<short, Reg>();
@@ -281,7 +282,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(nameof(lst), sector, regs, (_, v) => v.IsSector);
+            h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSector);
 
             if (arr == null)
             {
@@ -295,21 +296,19 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
             if (sector == 0)
             {
-                h.SLIDERUL_();
-
-                h.LI_("uk-section uk-padding-remove");
                 if (org.m4)
                 {
-                    h.PIC_("/org/", org.id, "/m-4");
+                    h.PIC_("/org/", org.id, "/pic");
                 }
                 else
                 {
                     h.PIC_("/void.webp");
                 }
+                if (org.tip != null)
+                {
+                    h.ALERT(org.tip, icon: "home", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                }
                 h._PIC();
-                h._LI();
-
-                h._SLIDERUL();
             }
 
             h.MAIN_(grid: true);

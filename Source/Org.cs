@@ -290,7 +290,7 @@ public class Org : Entity, ITwin<int>
             if (title == null)
             {
                 var no = No;
-                Interlocked.CompareExchange(ref title, string.IsNullOrEmpty(no) ? name : name + '（' + no + '）', null);
+                Interlocked.CompareExchange(ref title, string.IsNullOrEmpty(tel) ? name : name + "&nbsp;<a class=\"uk-icon-button uk-light uk-circle\" href=\"tel:" + tel + "\">☏</a>", null);
             }
             return title;
         }

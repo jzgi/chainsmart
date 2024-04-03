@@ -38,7 +38,7 @@ public class WwwService : MainService
     {
         var regs = Grab<short, Reg>();
 
-        var mkts = GrabTwinArray<int, Org>(0, x => x.IsMkt);
+        var mkts = GrabTwinArray<int, Org>(0, x => x.IsMkt && x.IsOked);
 
         wc.GivePage(200, h =>
         {
@@ -62,7 +62,7 @@ public class WwwService : MainService
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/lst\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this);'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/h\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this);'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
                 h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
@@ -84,7 +84,7 @@ public class WwwService : MainService
             h._ARTICLE();
 
             string tel = Application.CustomConfig[nameof(tel)];
-            h.BOTTOMBAR_("uk-col uk-flex-center uk-flex-middle");
+            h.BOTTOMBAR_(large: true, css: "uk-col uk-flex-center uk-flex-middle");
             h.SPAN2("☎", tel, css: "uk-label").A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
         }, true, 720, title: Application.Nodal.name + "市场", onload: "fixAll();");
