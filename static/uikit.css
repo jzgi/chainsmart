@@ -1330,13 +1330,13 @@ button.uk-icon:not(:disabled) {
 }
 
 .uk-bottom-bar.uk-large {
-    height: 4.375rem;
-    min-height: 4.375rem;
+    height: 4.75rem;
+    min-height: 4.75rem;
     background-color: #ddd;
 }
 
 .uk-bottom-placeholder.uk-large {
-    height: 4rem;
+    height: 4.75rem;
     width: 100%;
 }
 
@@ -1388,10 +1388,6 @@ form legend {
 
 .uk-select {
     text-transform: none;
-}
-
-select.uk-border-rounded {
-    background-color: #ededed !important;
 }
 
 .uk-select optgroup {

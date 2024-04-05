@@ -138,13 +138,22 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             h.T("<output class=\"uk-label uk-text-small\" name=\"tel\" cookie=\"tel\"></output>");
             h._SECTION();
 
-            h.SECTION_(css: "uk-col");
-            string com;
-            h.SELECT_SPEC(nameof(com), mkt.specs, onchange: "this.form.addr.placeholder = (this.value) ? '地址': '备注'; buyRecalc();");
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input\"style=\"margin-top: 2px\"  placeholder=\"备注\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
-            h._SECTION();
+            h.SECTION_(css: "uk-col uk-height-1-1 uk-flex-evenly");
+            if (org.IsCoverMode)
+            {
+                h.DIV_("uk-flex uk-width-1-1");
+                string area;
+                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '收货地址': '小区／楼栋'; buyRecalc();", css: "uk-width-1-2 uk-border-rounded");
+                h.H6_("uk-width-expand uk-flex-center").T("服务费&nbsp;<output name=\"fee\">0.00</output>")._H6();
 
-            // h.T("<output hidden class=\"uk-h6 uk-margin-auto-left uk-padding-small\" name=\"fee\" title=\"").T(BankUtility.rtlfee).T("\">派送到楼下 +").T(BankUtility.rtlfee).T("</output>");
+                var (min, rate, max) = org.IsSvcMode ? BankUtility.mktsvcfee : BankUtility.mktdlvfee;
+                h.HIDDEN(nameof(min), min);
+                h.HIDDEN(nameof(rate), rate);
+                h.HIDDEN(nameof(max), max);
+                h._DIV();
+            }
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverMode ? "收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
@@ -161,7 +170,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
         var prin = (User)wc.Principal;
 
         var f = await wc.ReadAsync<Form>();
-        string com = f[nameof(com)];
+        string area = f[nameof(area)];
         string addr = f[nameof(addr)];
 
         // lines of detail
@@ -199,9 +208,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             {
                 created = DateTime.Now,
                 creator = prin.name,
-                uarea = com,
+                uarea = area,
                 uaddr = addr,
-                fee = string.IsNullOrEmpty(com) ? 0.00M : BankUtility.mktfee,
+                fee = 0.00M,
                 status = -1, // before confirmation of payment
             };
             m.InitTopay();
@@ -282,7 +291,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSector);
+            h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.mode));
 
             if (arr == null)
             {

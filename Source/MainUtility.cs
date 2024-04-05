@@ -79,11 +79,24 @@ public static class MainUtility
 
         for (int i = 0; i < specs?.Count; i++)
         {
-            var (key, val) = specs.GetAt(i);
-            if (val.IsNumber)
+            var spec = specs.EntryAt(i);
+            var v = spec.Value;
+            if (v.IsObject)
             {
-                var d = (decimal)val;
-                h.OPTION_(key).T(key).SP().SP().T('＋').T(d).T('元')._OPTION();
+                h.OPTGROUP_(spec.Key);
+
+                var sub = (JObj)v;
+                for (int k = 0; k < sub.Count; k++)
+                {
+                    var e = sub.EntryAt(k);
+                    h.OPTION(e.Key, e.Value);
+                }
+
+                h._OPTGROUP();
+            }
+            else
+            {
+                h.OPTION(spec.Key, spec.Value);
             }
         }
 

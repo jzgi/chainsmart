@@ -61,9 +61,12 @@ public class Reg : Entity, IKeyable<short>, IFolderable
 
     public bool IsSector => typ == TYP_SECTOR;
 
+    public bool IsSectorWith(short m) => typ == TYP_SECTOR && m > 0 && (mode & m) == m;
+
     public bool IsCity => typ == TYP_CITY;
 
     public bool IsProvince => typ == TYP_PROVINCE;
+
 
     public override string ToString() => name;
 }

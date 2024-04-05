@@ -55,18 +55,18 @@ public class Org : Entity, ITwin<int>
 
 
     public const short
-        MOD_SLF = 0b000001, // self 
-        MOD_DLV = 0b000010, // delivery 
-        MOD_SVC = 0b000100, // service 
-        MOD_CTR = 0b001000 | MOD_DLV, // center
-        MOD_CPX = 0b010000 | MOD_DLV; // complex 
+        MOD_SLF = 0, // self 
+        MOD_DLV = 1, // order delivery 
+        MOD_SVC = 2, // service 
+        MOD_CTR = 4 | MOD_DLV, // center
+        MOD_CPX = 8 | MOD_DLV; // complex 
 
 
     public static readonly Map<short, string> Modes = new()
     {
         { MOD_SLF, "自理模式" },
-        { MOD_DLV, "延伸派送模式" },
-        { MOD_SVC, "延伸服务模式" },
+        { MOD_DLV, "统派送模式" },
+        { MOD_SVC, "统服务模式" },
         { MOD_CTR, "邻里中心模式" },
         { MOD_CPX, "农贸综合体模式" },
     };
@@ -96,7 +96,10 @@ public class Org : Entity, ITwin<int>
     internal TimeSpan openat;
     internal TimeSpan closeat;
     internal short rank; // credit level
+
     internal short mode;
+
+    // internal short style; 
     internal short cattyp;
     internal short symtyp;
     internal short tagtyp;
@@ -295,6 +298,14 @@ public class Org : Entity, ITwin<int>
             return title;
         }
     }
+
+    public bool IsSlfMode => (mode & MOD_SLF) == MOD_SLF;
+
+    public bool IsDlvMode => (mode & MOD_DLV) == MOD_DLV;
+
+    public bool IsSvcMode => (mode & MOD_SVC) == MOD_SVC;
+
+    public bool IsCoverMode => IsDlvMode || IsSvcMode;
 
     public string No => AsMkt ? addr : null;
 

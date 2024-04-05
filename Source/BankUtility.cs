@@ -13,8 +13,11 @@ namespace ChainSmart;
 public static class BankUtility
 {
     public static decimal
-        supfee,
-        mktfee;
+        supfee;
+
+    public static (decimal min, decimal rate, decimal max)
+        mktdlvfee,
+        mktsvcfee;
 
     static readonly string
         bankprov,
@@ -29,7 +32,12 @@ public static class BankUtility
     static BankUtility()
     {
         supfee = Application.CustomConfig[nameof(supfee)];
-        mktfee = Application.CustomConfig[nameof(mktfee)];
+
+        var dlv = (JArr)Application.CustomConfig[nameof(mktdlvfee)];
+        mktdlvfee = (dlv[0], dlv[1], dlv[2]);
+
+        var svc = (JArr)Application.CustomConfig[nameof(mktsvcfee)];
+        mktsvcfee = (svc[0], svc[1], svc[2]);
 
         bankprov = Application.CustomConfig[nameof(bankprov)];
         bankcity = Application.CustomConfig[nameof(bankcity)];
