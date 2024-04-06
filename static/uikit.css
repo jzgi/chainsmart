@@ -287,10 +287,9 @@ h4,
 
 h5,
 .uk-h5 {
-    font-size: 0.825rem;
-    font-weight: bold;
+    font-size: 0.85rem;
     margin: 0;
-    color: #000;
+    color: red;
 }
 
 h6,

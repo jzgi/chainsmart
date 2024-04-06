@@ -10,7 +10,7 @@ using NPOI.SS.UserModel;
 
 namespace ChainSmart;
 
-public static class BankUtility
+public static class FinanceUtility
 {
     public static decimal
         supfee;
@@ -29,7 +29,7 @@ public static class BankUtility
         mktbankacct,
         bankacctname;
 
-    static BankUtility()
+    static FinanceUtility()
     {
         supfee = Application.CustomConfig[nameof(supfee)];
 
@@ -45,6 +45,61 @@ public static class BankUtility
         supbankacct = Application.CustomConfig[nameof(supbankacct)];
         mktbankacct = Application.CustomConfig[nameof(mktbankacct)];
         bankacctname = Application.CustomConfig[nameof(bankacctname)];
+    }
+
+
+    public static (decimal topay, decimal fee) GetTopayAndFee(IEnumerable<BuyLn> lns, Org org, string area)
+    {
+        // calculate the sum
+        //
+        var sum = 0.00M;
+        if (lns != null)
+        {
+            foreach (var ln in lns)
+            {
+                sum += ln.SubTotal;
+            }
+        }
+
+        // calculate the fee
+        //
+        var fee = 0.0M;
+        if (org.IsSvcMode || org.IsDlvMode)
+        {
+            var (min, rate, max) = org.IsSvcMode ? mktsvcfee : mktdlvfee;
+
+            fee = Math.Max(min, Math.Min(sum * rate, max));
+            fee -= fee % 0.5M;
+
+            // adjust
+            var specs = org.specs;
+            for (int i = 0; i < specs?.Count; i++)
+            {
+                var spec = specs.EntryAt(i);
+                var v = spec.Value;
+                if (v.IsObject)
+                {
+                    var sub = (JObj)v;
+                    for (int k = 0; k < sub.Count; k++)
+                    {
+                        var e = sub.EntryAt(k);
+                        if (e.Key == area && e.Value.IsNumber)
+                        {
+                            fee += (int)e.Value;
+                        }
+                    }
+                }
+                else
+                {
+                    if (spec.Key == area && spec.Value.IsNumber)
+                    {
+                        fee += (int)spec.Value;
+                    }
+                }
+            }
+        }
+
+        return (sum + fee, fee);
     }
 
     static readonly Map<int, string> ColDefs = new()

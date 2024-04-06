@@ -89,14 +89,20 @@ public static class MainUtility
                 for (int k = 0; k < sub.Count; k++)
                 {
                     var e = sub.EntryAt(k);
-                    h.OPTION(e.Key, e.Value);
+                    if (e.Value.IsNumber)
+                    {
+                        h.OPTION(e.Key, e.Key, title: e.Value);
+                    }
                 }
 
                 h._OPTGROUP();
             }
             else
             {
-                h.OPTION(spec.Key, spec.Value);
+                if (spec.Value.IsNumber)
+                {
+                    h.OPTION(spec.Key, spec.Key, title: spec.Value);
+                }
             }
         }
 

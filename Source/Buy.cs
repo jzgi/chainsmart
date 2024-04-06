@@ -1,4 +1,6 @@
-﻿using ChainFX;
+﻿using System;
+using ChainFX;
+using static ChainSmart.FinanceUtility;
 
 namespace ChainSmart;
 
@@ -40,7 +42,7 @@ public class Buy : Entity, IKeyable<long>
     internal string uarea; // delivery area
     internal string uaddr; // address
     internal string uim;
-    internal BuyLn[] items; // item lines
+    internal BuyLn[] lns; // lines
     internal decimal fee;
     internal decimal topay;
     internal decimal pay;
@@ -61,7 +63,7 @@ public class Buy : Entity, IKeyable<long>
         tip = shp.No;
         orgid = shp.id;
         mktid = shp.MktId;
-        items = arr;
+        lns = arr;
         uid = prin.id;
         uname = prin.name;
         utel = prin.tel;
@@ -87,7 +89,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(uarea), ref uarea);
             s.Get(nameof(uaddr), ref uaddr);
             s.Get(nameof(uim), ref uim);
-            s.Get(nameof(items), ref items);
+            s.Get(nameof(lns), ref lns);
             s.Get(nameof(fee), ref fee);
             s.Get(nameof(topay), ref topay);
         }
@@ -125,7 +127,7 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(uarea), uarea);
             s.Put(nameof(uaddr), uaddr);
             s.Put(nameof(uim), uim);
-            s.Put(nameof(items), items);
+            s.Put(nameof(lns), lns);
             s.Put(nameof(fee), fee);
             s.Put(nameof(topay), topay);
         }
@@ -144,9 +146,9 @@ public class Buy : Entity, IKeyable<long>
     public void InitTopay()
     {
         var sum = fee;
-        if (items != null)
+        if (lns != null)
         {
-            foreach (var ln in items)
+            foreach (var ln in lns)
             {
                 sum += ln.SubTotal;
             }
@@ -155,6 +157,59 @@ public class Buy : Entity, IKeyable<long>
         // set the topay field
         topay = sum;
     }
+
+
+    public void SetupFeeAndTopay(Org org, string area)
+    {
+        var sum = 0.00M;
+        if (lns != null)
+        {
+            foreach (var ln in lns)
+            {
+                sum += ln.SubTotal;
+            }
+        }
+
+        // compute fee
+        //
+        if (!org.IsSlfMode)
+        {
+            var (min, rate, max) = org.IsSvcMode ? mktsvcfee : mktdlvfee;
+            var feev = Math.Max(min + sum * rate, max);
+            feev -= feev % 0.5M;
+
+            // adjust
+            var specs = org.specs;
+            for (int i = 0; i < specs?.Count; i++)
+            {
+                var spec = specs.EntryAt(i);
+                var v = spec.Value;
+                if (v.IsObject)
+                {
+                    var sub = (JObj)v;
+                    for (int k = 0; k < sub.Count; k++)
+                    {
+                        var e = sub.EntryAt(k);
+                        if (e.Key == area && e.Value.IsNumber)
+                        {
+                            feev += (int)e.Value;
+                        }
+                    }
+                }
+                else
+                {
+                    if (spec.Key == area && spec.Value.IsNumber)
+                    {
+                        feev += (int)spec.Value;
+                    }
+                }
+            }
+            fee = feev;
+        }
+
+        topay = sum + fee;
+    }
+
 
     public long Key => id;
 

@@ -40,7 +40,7 @@ public abstract class BuyVarWork : WebWork
 
             // buy items
 
-            h.TABLE(o.items, d =>
+            h.TABLE(o.lns, d =>
             {
                 h.TD_().T(d.name);
                 if (d.unitip != null)
@@ -270,7 +270,7 @@ public class MktlyBuyVarWork : BuyVarWork
                 h._H4();
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-                foreach (var it in o.items)
+                foreach (var it in o.lns)
                 {
                     h.LI_();
 
@@ -312,7 +312,7 @@ public class MktlyBuyVarWork : BuyVarWork
                 h._H4();
                 h.SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-                foreach (var it in o.items)
+                foreach (var it in o.lns)
                 {
                     h.LI_();
 

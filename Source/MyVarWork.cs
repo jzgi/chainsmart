@@ -56,7 +56,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                 {
                     h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
                     h.UL_("uk-card-body uk-list-divider");
-                    foreach (var it in o.items)
+                    foreach (var it in o.lns)
                     {
                         h.LI_("uk-flex");
 

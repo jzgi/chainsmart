@@ -153,7 +153,7 @@ public class StalyPurLotVarWork : LotVarWork
 
             // bottom bar
             //
-            var fee = BankUtility.supfee;
+            var fee = FinanceUtility.supfee;
 
             var realprice = o.RealPrice;
             int qtyx = 1;
@@ -206,7 +206,7 @@ public class StalyPurLotVarWork : LotVarWork
 
             var qty = qtyx * lot.unitx;
             var sup = GrabTwin<int, Org>(lot.orgid);
-            var fee = BankUtility.supfee;
+            var fee = FinanceUtility.supfee;
 
             var o = new Pur(lot, org, sup)
             {

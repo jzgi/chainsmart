@@ -76,7 +76,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
 //
 function buyRecalc(trig) {
 
-    if (trig) { // triggered from qty selection
+    if (trig) { // triggered by qty selection
 
         let footer = trig.parentElement;
         let ofprice = footer.querySelector('.fprice');
@@ -95,20 +95,11 @@ function buyRecalc(trig) {
         }
     }
 
-    // sum up topay
     let frm = trig ? trig.form : document.forms[0];
-
     if (!frm) return;
 
-    let fee = 0.00;
-    if (frm.com) {
-        frm.fee.hidden = frm.com.value;
-        if (frm.com.value) {
-            fee = parseFloat(frm.fee.title);
-        }
-    }
-
-    let sum = fee; // add fee if community is selected
+    // sum up line items
+    let sum = 0.00; // add fee if community is selected
     let lst = frm.querySelectorAll('.subtotal');
     for (let i = 0; i < lst.length; i++) {
         let v = lst[i].value;
@@ -116,7 +107,27 @@ function buyRecalc(trig) {
             sum += parseFloat(v);
         }
     }
+
+    let fee = 0.00;
+    if (frm.fee) {
+        let ofee = frm.fee; // the fee output
+        let min = parseFloat(ofee.getAttribute('min'));
+        let rate = parseFloat(ofee.getAttribute('rate'));
+        let max = parseFloat(ofee.getAttribute('max'));
+        fee = Math.max(min, Math.min(sum * rate, max));
+        fee = parseFloat((fee - fee % 0.5).toFixed(1)); // cut to 0.5
+    }
+    if (frm.area) { // add to the fee
+        var opt = frm.area.selectedOptions[0];
+        if (opt.title) {
+            var add = parseFloat(opt.title);
+            fee += add;
+        }
+    }
+    frm.fee.value = fee.toFixed(1);
+
     if (frm.topay) {
+        sum += fee;
         frm.topay.value = sum.toFixed(2);
     }
 }

@@ -143,16 +143,12 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             {
                 h.DIV_("uk-flex uk-width-1-1");
                 string area;
-                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '收货地址': '小区／楼栋'; buyRecalc();", css: "uk-width-1-2 uk-border-rounded");
-                h.H6_("uk-width-expand uk-flex-center").T("服务费&nbsp;<output name=\"fee\">0.00</output>")._H6();
-
-                var (min, rate, max) = org.IsSvcMode ? BankUtility.mktsvcfee : BankUtility.mktdlvfee;
-                h.HIDDEN(nameof(min), min);
-                h.HIDDEN(nameof(rate), rate);
-                h.HIDDEN(nameof(max), max);
+                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '完整收货地址': '街道或小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
+                var (min, rate, max) = org.IsSvcMode ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
+                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsSvcMode ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();
             }
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverMode ? "收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverMode ? "完整收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -173,7 +169,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
         string area = f[nameof(area)];
         string addr = f[nameof(addr)];
 
-        // lines of detail
+        // buy lines
         var lst = new List<BuyLn>();
         for (int i = 0; i < f.Count; i++)
         {
@@ -195,25 +191,26 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND id ")._IN_(lst);
             var map = await dc.QueryAsync<int, Item>(p => p.Set(orgid).SetForIn(lst));
 
-            foreach (var bi in lst)
+            foreach (var ln in lst)
             {
-                var item = map[bi.itemid];
+                var item = map[ln.itemid];
                 if (item != null)
                 {
-                    bi.Init(item, vip: prin.IsVipFor(orgid) || item.promo);
+                    ln.Init(item, vip: prin.IsVipFor(orgid) || item.promo);
                 }
             }
 
+            var (topay, fee) = FinanceUtility.GetTopayAndFee(lst, org, area);
             var m = new Buy(prin, org, lst.ToArray())
             {
                 created = DateTime.Now,
                 creator = prin.name,
                 uarea = area,
                 uaddr = addr,
-                fee = 0.00M,
+                fee = fee,
+                topay = topay,
                 status = -1, // before confirmation of payment
             };
-            m.InitTopay();
 
             // check and try to use an existing record
             int buyid = 0;
@@ -222,6 +219,8 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 dc.Let(out buyid);
             }
 
+            Application.Inf("buyid " + buyid);
+            
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
             if (buyid == 0)
             {
@@ -238,8 +237,11 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 });
             }
             dc.Let(out buyid);
-            dc.Let(out decimal topay);
+            dc.Let(out topay);
 
+            Application.Inf("topay " + topay);
+
+            
             // // call WeChatPay to prepare order there
             string trade_no = Buy.GetOutTradeNo(buyid, topay);
             var (prepay_id, _) = await WeChatUtility.PostUnifiedOrderAsync(sup: false,

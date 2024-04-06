@@ -29,7 +29,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
             // the first detail
-            var items = o.items;
+            var items = o.lns;
 
             if (items == null || items.Length == 0)
             {
@@ -56,9 +56,9 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
             }
             h._SPAN()._HEADER();
             h.Q_("uk-width-expand");
-            for (int i = 0; i < o.items?.Length; i++)
+            for (int i = 0; i < o.lns?.Length; i++)
             {
-                var it = o.items[i];
+                var it = o.lns[i];
                 if (i > 0) h.T('；');
                 h.T(it.name).SP().T(it.qty).T(it.unit);
             }
@@ -226,7 +226,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.UL_("uk-card-body uk-list uk-list-divider");
             h.LI_().H4(o.utel).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-            foreach (var it in o.items)
+            foreach (var it in o.lns)
             {
                 h.LI_();
 
@@ -415,7 +415,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                     h.UL_("uk-card-body uk-list uk-list-divider");
                     h.LI_().H4(o.name).SPAN_("uk-badge").T(o.oked, date: 2, time: 2).SP().T(Buy.Statuses[o.status])._SPAN()._LI();
 
-                    foreach (var it in o.items)
+                    foreach (var it in o.lns)
                     {
                         h.LI_();
 

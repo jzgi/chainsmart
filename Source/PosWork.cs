@@ -23,13 +23,13 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
         {
             h.TD_("uk-width-tiny").T(o.created, 0, 2)._TD();
             h.TD_().ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name);
-            for (var i = 0; i < o.items.Length; i++)
+            for (var i = 0; i < o.lns.Length; i++)
             {
                 if (i > 0)
                 {
                     h.SP();
                 }
-                var v = o.items[i];
+                var v = o.lns[i];
                 h.IMG(MainApp.WwwUrl + "/item/", v.itemid, "/icon", css: "uk-width-micro");
             }
             h._A()._TD();
@@ -244,7 +244,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
             mktid = org.MktId,
             created = now,
             creator = prin.name,
-            items = lst.ToArray(),
+            lns = lst.ToArray(),
             status = STU_OKED,
             oked = now,
             oker = prin.name,
