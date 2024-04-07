@@ -1,12 +1,6 @@
 
-
-/**
- * 
- * @param data
- * @param sup supply or retail
- * @constructor
- */
-const WCPay = function (data, sup) {
+// sup supply or mkt
+var WCPay = function (data, sup) {
     WeixinJSBridge.invoke(
         'getBrandWCPayRequest',
         data,
@@ -28,7 +22,7 @@ const WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, max, stock) {
 
     const url = window.location.href;
     let endp = url.lastIndexOf('/', url.length - 1);
@@ -63,7 +57,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, step, max, stock) {
         max = stock;
     }
     let sel_qtyselect = trig.querySelector('.qtyselect');
-    for (let i = step; i <= max; i += step * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
+    for (let i = unitx; i <= max; i += unitx * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
         let opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' ' + unit;
@@ -110,21 +104,28 @@ function buyRecalc(trig) {
 
     let fee = 0.00;
     if (frm.fee) {
+        
         let ofee = frm.fee; // the fee output
         let min = parseFloat(ofee.getAttribute('min'));
         let rate = parseFloat(ofee.getAttribute('rate'));
         let max = parseFloat(ofee.getAttribute('max'));
         fee = Math.max(min, Math.min(sum * rate, max));
         fee = parseFloat((fee - fee % 0.5).toFixed(1)); // cut to 0.5
-    }
-    if (frm.area) { // add to the fee
-        var opt = frm.area.selectedOptions[0];
-        if (opt.title) {
-            var add = parseFloat(opt.title);
-            fee += add;
+
+        // adjust
+        if (frm.area) { 
+            let opts = frm.area.selectedOptions;
+            if (opts.length > 0) {
+                var opt = opts[0];
+                if (opt.title) {
+                    var add = parseFloat(opt.title);
+                    fee += add;
+                }
+            }
         }
+
+        frm.fee.value = fee.toFixed(1);
     }
-    frm.fee.value = fee.toFixed(1);
 
     if (frm.topay) {
         sum += fee;
@@ -284,17 +285,25 @@ function $pos(trig) {
 
 function $buy(trig) {
 
-    let topay = parseFloat(trig.querySelector('output').value);
-    if (topay <= 0) {
+    let method = 'post';
+    let action = trig.formAction || trig.name;
+    let frm = trig.form;
+    // validate form before submit
+    if (!frm || !frm.reportValidity()) return false;
+
+    // select any
+    let any = false; 
+    let lst = frm.querySelectorAll('.qtyselect');
+    for (let i = 0; i < lst.length; i++) {
+        if (lst[i].value) {
+            any = true;
+            break;
+        }
+    }
+    if (!any) {
         alert('请先选择商品及件数');
         return;
     }
-
-    let method = 'post';
-    let action = trig.formAction || trig.name;
-    let form = trig.form;
-    // validate form before submit
-    if (!form || !form.reportValidity()) return false;
 
     // get prepare id
     const xhr = new XMLHttpRequest();
@@ -334,7 +343,6 @@ function $pur(trig) {
 }
 
 
-/* shorthand method */
 const $ = function (selectors, doc) {
     if (!doc) {
         doc = document;
@@ -342,7 +350,6 @@ const $ = function (selectors, doc) {
     return doc.querySelector(selectors);
 };
 
-/* shorthand method */
 const $$ = function (selectors, doc) {
     if (!doc) {
         doc = document;
@@ -403,9 +410,7 @@ function forWebview() {
     });
 }
 
-/**
- * HTML Content Fixing
- */
+// HTML Content Fixing
 function fixAll() {
 
     // parse all cookies
@@ -468,12 +473,6 @@ function fixAll() {
     }
 }
 
-/***
- * 
- * @param form
- * @param notEmpty
- * @returns {null|string}
- */
 function serialize(form, notEmpty) {
     if (!form || form.nodeName !== "FORM") {
         return null;
@@ -540,108 +539,6 @@ function serialize(form, notEmpty) {
     return q.length === 0 ? null : q.join("&");
 }
 
-function jsonize(form, stringify) {
-    if (!form || form.nodeName !== "FORM") {
-        return null;
-    }
-    let i,
-        j,
-        q = {};
-    for (i = form.elements.length - 1; i >= 0; i = i - 1) {
-        if (form.elements[i].name === "") {
-            continue;
-        }
-        switch (form.elements[i].nodeName) {
-            case 'INPUT':
-                switch (form.elements[i].type) {
-                    case 'text':
-                    case 'password':
-                    case 'color':
-                    case 'date':
-                    case 'datetime-local':
-                    case 'email':
-                    case 'search':
-                    case 'tel':
-                    case 'time':
-                    case 'url':
-                    case 'week':
-                        var n = form.elements[i].name;
-                        var v = form.elements[i].value;
-                        q[n] = v;
-                        break;
-                    case 'hidden':
-                        var n = form.elements[i].name;
-                        var v = form.elements[i].value;
-
-                        if (v && v.length >= 2 && v.startsWith('{') && v.endsWith('}')) {
-                            v = JSON.parse(v);
-                        }
-
-                        var ev = q[n];
-                        if (!ev) {
-                            ev = q[n] = v;
-                        } else if (!Array.isArray(ev)) {
-                            ev = q[n] = Array.of(ev);
-                            ev.push(v);
-                        } else {
-                            ev.push(v);
-                        }
-                        break;
-                    case 'month':
-                    case 'number':
-                    case 'range':
-                        var n = form.elements[i].name;
-                        var v = form.elements[i].value;
-                        q[n] = value.contains('.') ? parseFloat(v) : parseInt(v);
-                        break;
-                    case 'checkbox':
-                    case 'radio':
-                        if (form.elements[i].checked) {
-                            var n = form.elements[i].name;
-                            var v = form.elements[i].value;
-                            q[n] = v;
-                        }
-                        break;
-                    case 'file':
-                        break;
-                }
-                break;
-            case 'TEXTAREA':
-                var n = form.elements[i].name;
-                var v = form.elements[i].value;
-                q[n] = v;
-                break;
-            case 'SELECT':
-                if (notEmpty && form.elements[i].value === '')
-                    break;
-
-                switch (form.elements[i].type) {
-                    case 'select-one':
-                        var n = form.elements[i].name;
-                        var v = form.elements[i].value;
-                        q[n] = v;
-                        break;
-                    case 'select-multiple':
-                        var n = form.elements[i].name;
-                        var arr = [];
-                        for (j = form.elements[i].options.length - 1; j >= 0; j = j - 1) {
-                            if (form.elements[i].options[j].selected) {
-                                var v = form.elements[i].options[j].value;
-                                arr.push(v);
-                            }
-                        }
-                        q.n = arr;
-                        break;
-                }
-                break;
-        }
-    }
-
-    if (stringify) {
-        return JSON.stringify(q);
-    }
-    return q;
-}
 
 function askSend(trig, tip, pick) {
 

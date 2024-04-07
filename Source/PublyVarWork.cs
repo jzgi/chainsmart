@@ -219,8 +219,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 dc.Let(out buyid);
             }
 
-            Application.Inf("buyid " + buyid);
-            
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
             if (buyid == 0)
             {
@@ -239,12 +237,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             dc.Let(out buyid);
             dc.Let(out topay);
 
-            Application.Inf("topay " + topay);
-
-            
             // // call WeChatPay to prepare order there
             string trade_no = Buy.GetOutTradeNo(buyid, topay);
-            var (prepay_id, _) = await WeChatUtility.PostUnifiedOrderAsync(sup: false,
+            var (prepay_id, err_code) = await WeChatUtility.PostUnifiedOrderAsync(sup: false,
                 trade_no,
                 topay,
                 prin.im, // the payer
@@ -252,6 +247,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 MainApp.WwwUrl + "/" + nameof(WwwService.onpay),
                 m.ToString()
             );
+
             if (prepay_id != null)
             {
                 wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
@@ -259,6 +255,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             else
             {
                 dc.Rollback();
+                Application.Err("err_code " + err_code);
                 wc.Give(500);
             }
         }
