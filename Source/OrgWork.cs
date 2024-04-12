@@ -17,7 +17,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
         CreateVarWork<V>();
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin, bool mktly)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Org> lst, User prin, bool mktly)
     {
         h.MAINGRID(lst, o =>
         {
@@ -33,8 +33,8 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
-            h.Q2(o.Cover, o.tip, css: "uk-width-expand");
+            h.HEADER_().H4(o.CoverName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
+            h.Q(o.tip, css: "uk-width-expand");
             h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((mktly ? "/mktly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
             h._ASIDE();
 
@@ -116,7 +116,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().TEXT("地域覆盖", nameof(o.cover), o.cover, max: 12, required: true)._LI();
+                h.LI_().TEXT("市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
@@ -313,7 +313,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 {
     private short OrgTyp => (short)State;
 
-    static void MainGrid(HtmlBuilder h, IList<Org> lst, User prin)
+    static void MainGrid(HtmlBuilder h, IEnumerable<Org> lst, User prin)
     {
         h.MAINGRID(lst, o =>
         {
@@ -324,7 +324,9 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
                 h.PIC(MainApp.WwwUrl, "/org/", o.id, "/icon", css: "uk-width-1-5");
             }
             else
+            {
                 h.PIC("/void.webp", css: "uk-width-1-5");
+            }
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
@@ -341,8 +343,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status == 4, sorter: (x, y) => x.addr.CompareWith(y.addr))
+            .GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -350,7 +352,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无上线的主体");
+                h.ALERT("尚无上线的商户");
                 return;
             }
 
@@ -365,8 +367,8 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
-        var array = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr));
-        var arr = array.GetSegment(20 * page, 20);
+        var arr = GrabTwinArray<int, Org>(org.id, filter: x => x.typ == OrgTyp && x.status is 1 or 2, sorter: (x, y) => x.addr.CompareWith(y.addr))
+            .GetSegment(20 * page, 20);
 
         wc.GivePage(200, h =>
         {
@@ -374,7 +376,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无下线的主体");
+                h.ALERT("尚无下线的商户");
                 return;
             }
 
@@ -398,7 +400,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
             if (arr.Count == 0)
             {
-                h.ALERT("尚无禁用的主体");
+                h.ALERT("尚无禁用的商户");
                 return;
             }
 
@@ -433,7 +435,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                 if (arr == null)
                 {
-                    h.ALERT("该版块尚无主体");
+                    h.ALERT("该版块尚无商户");
                     return;
                 }
 
@@ -444,49 +446,50 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
     [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui("新建", icon: "plus", status: 2), Tool(ButtonOpen)]
-    public async Task @new(WebContext wc, int regid)
+    public async Task @new(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
         var regs = Grab<short, Reg>();
         var o = new Org
         {
-            typ = Org.TYP_MKT_,
+            typ = OrgTyp,
             created = DateTime.Now,
             creator = prin.name,
             parentid = org.id,
             hubid = org.hubid,
-            regid = (short)regid,
+            trust = true,
             status = Entity.STU_CREATED
         };
 
         if (wc.IsGet)
         {
-            o.Read(wc.Query, 0);
+            // o.Read(wc.Query, 0);
             wc.GivePane(200, h =>
             {
-                h.FORM_("uk-card uk-card-primary").FIELDSUL_("新建成员商户");
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsStl ? "新建成员商户" : "新建成员门店");
 
-                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSector, @readonly: regid > 0, required: true).TEXT("编号或场址", nameof(o.addr), o.addr, max: 12)._LI();
-                h.LI_().TEXT("主体名", nameof(o.name), o.name, max: 12, required: true)._LI();
+                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
+                h.LI_().SELECT("输送模式", nameof(o.mode), o.mode,  Org.Modes, filter: (k, _) => k <= Org.MOD_SVC, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
-                h.LI_().TEXT("收款账号名", nameof(o.bankacctname), o.bankacctname, max: 20)._LI();
+                h.LI_().TEXT("收款户名", nameof(o.bankacctname), o.bankacctname, max: 20)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }
         else // POST
         {
-            const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
-            await wc.ReadObjectAsync(Msk, instance: o);
+            const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
+            await wc.ReadObjectAsync(msk, instance: o);
 
             await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
             {
-                dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
-                return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
+                dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
+                return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));
             });
 
             wc.GivePane(201); // created

@@ -364,7 +364,7 @@ public class AdmlySupVarWork : OrgVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "调整机构信息", icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task upd(WebContext wc, int cmd)
+    public async Task upd(WebContext wc)
     {
         int id = wc[0];
         var prin = (User)wc.Principal;
@@ -389,8 +389,8 @@ public class AdmlySupVarWork : OrgVarWork
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     if (m.IsSup)
                     {
-                        h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
-                        h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
+                        h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20)._LI();
+                        h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                     }
                     if (m.IsSrc)
                     {
@@ -409,7 +409,7 @@ public class AdmlySupVarWork : OrgVarWork
         }
         else // POST
         {
-            const short Msk = MSK_EDIT;
+            var Msk = m.IsSrc ? (short)(MSK_EDIT | MSK_LATE) : MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: m);
             lock (m)
             {
@@ -573,9 +573,10 @@ public class MktlyOrgVarWork : OrgVarWork
 {
     [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
-    public async Task edit(WebContext wc)
+    public async Task upd(WebContext wc)
     {
         int id = wc[0];
+        var org = wc[-2].As<Org>();
         var regs = Grab<short, Reg>();
         var m = GrabTwin<int, Org>(id);
 
@@ -585,17 +586,18 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsHomeOrg ? "服务型商户" : "产品型商户");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsStl ? "修改成员商户" : "修改成员门店");
 
-                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编号或场址", nameof(m.addr), m.addr, max: 12)._LI();
-                    h.LI_().TEXT("商户名", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
+                    h.LI_().SELECT("输送模式", nameof(m.mode), m.mode, Org.Modes, filter: (k, _) => k <= Org.MOD_SVC, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
-                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
-                    h.LI_().TEXT("收款账号名", nameof(m.bankacctname), m.bankacctname, max: 20, required: true)._LI();
+                    h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
+                    h.LI_().TEXT("收款户名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();
 
-                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                    h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
                 }
             });
         }

@@ -20,7 +20,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
 
 [MgtAuthorize(Org.TYP_STL)]
 [Ui("采购")]
-public class StalyPurWork : PurWork<StalyPurVarWork>
+public class StllyPurWork : PurWork<StllyPurVarWork>
 {
     protected override void OnCreate()
     {

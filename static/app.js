@@ -436,6 +436,8 @@ function fixAll() {
             // fixing of value
             let scpt = e.getAttribute("onfix");
             let val = cookies[name];
+            if (!val) continue;
+            
             if (scpt) { // raise onfix event
                 let evt = new CustomEvent('fix', {detail: val});
                 e.addEventListener('fix', new Function(scpt));
@@ -978,7 +980,7 @@ function cropUpd(el, siz, url, close) {
     // get blob of cropped image
     croppie.result(
         {
-            type: 'blob', size: {width: cropWid, height: cropHei}, format: 'jpeg', quality: 0.9
+            type: 'blob', size: {width: cropWid, height: cropHei}, format: 'webp', quality: 0.9
         }
     ).then(function (blob) {
 
@@ -992,7 +994,7 @@ function cropUpd(el, siz, url, close) {
 
         // build form data
         var dat = new FormData();
-        dat.append('img', blob, 'img.jpeg');
+        dat.append('img', blob, 'img.webp');
         // post
         var xhr = new XMLHttpRequest();
         xhr.open('POST', url, false);
@@ -1094,8 +1096,8 @@ function btnSubmit(el, chk) {
                 {
                     type: 'base64',
                     size: 'viewport',
-                    format: 'jpeg',
-                    quality: 1
+                    format: 'webp',
+                    quality: 0.9
                 }
             ).then(function (base64) {
                 var inp = $('#img');

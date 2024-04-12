@@ -17,19 +17,21 @@ public abstract class CodeWork<V> : WebWork where V : WebWork, new()
 
     protected static void MainGrid(HtmlBuilder h, IList<Code> arr)
     {
+        var tags = Grab<short, Tag>();
+
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-5");
+            h.PIC("/void.webp", css: "uk-width-1-6");
 
             h.ASIDE_();
-            h.HEADER_().H4(o.name);
+            h.HEADER_().H4_().T(o.name).SP().T(o.num)._H4();
 
-            h.SPAN((Code.Typs[o.typ]), "uk-badge");
+            h.SPAN((Code.Statuses[o.status]), "uk-badge");
             h._HEADER();
 
-            h.Q(o.nstart, "uk-width-expand");
-            // h.FOOTER_().SPAN(o.nend).SPAN_("uk-margin-auto-left").T(o.bal)._SPAN()._FOOTER();
+            h.Q(o.tip, "uk-width-expand");
+            h.FOOTER_().SPAN(o.nstart).SP().SPAN(o.nend)._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -37,10 +39,9 @@ public abstract class CodeWork<V> : WebWork where V : WebWork, new()
     }
 }
 
-
 [MgtAuthorize(Org.TYP_SRC)]
-[Ui("溯源码")]
-public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
+[Ui("溯源码申请")]
+public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -48,8 +49,8 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE orgid = @1 ORDER BY created DESC LIMIT 20 OFFSET @1 * 20");
-        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page * 20));
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE orgid = @1 ORDER BY created DESC LIMIT 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -64,7 +65,7 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
         }, false, 12);
     }
 
-    [Ui("申请", tip: "新建溯源码申请", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("新建", tip: "新建溯源码申请", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
         var prin = (User)wc.Principal;
@@ -74,7 +75,6 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
 
         var o = new Code
         {
-            name = org.name,
             typ = org.tagtyp,
             created = DateTime.Now,
             creator = prin.name,
@@ -87,10 +87,12 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, tags)._LI();
-                h.LI_().NUMBER("申请数量", nameof(o.num), o.num, @readonly: true)._LI();
-                h._FIELDSUL();
-                h.BOTTOMBAR_().BUTTON("确认", nameof(@new), 2)._BOTTOMBAR();
+
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, tags, filter: (k, _) => k == o.typ, required: true)._LI();
+                h.LI_().NUMBER("申请数量", nameof(o.num), o.num)._LI();
+                h.LI_().TEXTAREA("附注", nameof(o.tip), o.tip, max: 30)._LI();
+
+                h._FIELDSUL().BOTTOMBAR_().BUTTON("确认", nameof(@new), 2)._BOTTOMBAR();
                 h._FORM();
             });
         }
@@ -98,6 +100,9 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
         {
             var f = await wc.ReadAsync<Form>();
             o.Read(f);
+
+            var tag = tags[o.typ];
+            o.name = tag.name + Tag.Styles[tag.style];
 
             using var dc = NewDbContext();
             dc.Sql("INSERT INTO codes ").colset(Code.Empty)._VALUES_(o);
@@ -109,14 +114,14 @@ public class SrclyCodeWork : CodeWork<SuplyCodeVarWork>
 }
 
 [MgtAuthorize(0, User.ROL_OPN)]
-[Ui("溯源码发放")]
+[Ui("溯源码")]
 public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
 {
     [Ui("溯源码申请", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 1 LIMIT 20 OFFSET @1 * 20");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1 * 20");
         var arr = await dc.QueryAsync<Code>(p => p.Set(page));
 
         wc.GivePage(200, h =>
@@ -124,7 +129,7 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
             h.TOOLBAR(subscript: 1);
             if (arr == null)
             {
-                h.ALERT("尚无申请");
+                h.ALERT("尚无产源提交的申请");
                 return;
             }
             MainGrid(h, arr);

@@ -9,15 +9,12 @@ public class Code : Entity, IKeyable<int>
 {
     public static readonly Code Empty = new();
 
-    public static readonly Map<short, string> Typs = new()
+    public new static readonly Map<short, string> Statuses = new()
     {
-        { 1, "特金" },
-        { 2, "普金" },
-        { 3, "特塑" },
-        { 4, "普塑" },
-        { 5, "特贴" },
-        { 6, "普贴" },
-        { 7, "RFID" },
+        { STU_VOID, "作废" },
+        { STU_CREATED, "新建" },
+        { STU_ADAPTED, "提交" },
+        { STU_OKED, "发放" },
     };
 
 
@@ -26,7 +23,6 @@ public class Code : Entity, IKeyable<int>
     internal int num;
     internal int nstart;
     internal int nend;
-    internal int cnt;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -42,14 +38,12 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(typ), ref typ);
             s.Get(nameof(num), ref num);
         }
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
-            s.Get(nameof(cnt), ref cnt);
         }
     }
 
@@ -67,14 +61,12 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(typ), typ);
             s.Put(nameof(num), num);
         }
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
-            s.Put(nameof(cnt), cnt);
         }
     }
 

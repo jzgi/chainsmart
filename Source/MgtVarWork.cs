@@ -117,11 +117,11 @@ public class MktlyVarWork : MgtVarWork
 
         CreateWork<ShplyVipWork>("svip");
 
-        CreateWork<StalyPurWork>("spur");
+        CreateWork<StllyPurWork>("spur");
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("msta", state: Org.TYP_STL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mstl", state: Org.TYP_STL, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 

@@ -148,21 +148,24 @@ public class Org : Entity, ITwin<int>
                 s.Get(nameof(bankacct), ref bankacct);
             }
 
-            if ((msk & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Get(nameof(openat), ref openat);
-                s.Get(nameof(closeat), ref closeat);
                 s.Get(nameof(cattyp), ref cattyp);
                 s.Get(nameof(symtyp), ref symtyp);
                 s.Get(nameof(tagtyp), ref tagtyp);
                 s.Get(nameof(envtyp), ref envtyp);
-                s.Get(nameof(ties), ref ties);
-                s.Get(nameof(icon), ref icon);
-                s.Get(nameof(pic), ref pic);
-                s.Get(nameof(m1), ref m1);
-                s.Get(nameof(m2), ref m2);
-                s.Get(nameof(m3), ref m3);
-                s.Get(nameof(m4), ref m4);
+                if ((msk & MSK_LATER) == MSK_LATER)
+                {
+                    s.Get(nameof(openat), ref openat);
+                    s.Get(nameof(closeat), ref closeat);
+                    s.Get(nameof(ties), ref ties);
+                    s.Get(nameof(icon), ref icon);
+                    s.Get(nameof(pic), ref pic);
+                    s.Get(nameof(m1), ref m1);
+                    s.Get(nameof(m2), ref m2);
+                    s.Get(nameof(m3), ref m3);
+                    s.Get(nameof(m4), ref m4);
+                }
             }
         }
     }
@@ -193,8 +196,8 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(rank), rank);
                 s.Put(nameof(cover), cover);
                 s.Put(nameof(legal), legal);
-                if (regid > 0) s.Put(nameof(regid), regid);
-                else s.PutNull(nameof(regid));
+                if (regid <= 0 && !IsShp) s.PutNull(nameof(regid));
+                else s.Put(nameof(regid), regid);
                 s.Put(nameof(addr), addr);
                 s.Put(nameof(x), x);
                 s.Put(nameof(y), y);
@@ -205,21 +208,24 @@ public class Org : Entity, ITwin<int>
                 s.Put(nameof(bankacct), bankacct);
             }
 
-            if ((msk & MSK_LATER) == MSK_LATER)
+            if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Put(nameof(openat), openat);
-                s.Put(nameof(closeat), closeat);
                 s.Put(nameof(cattyp), cattyp);
                 s.Put(nameof(symtyp), symtyp);
                 s.Put(nameof(tagtyp), tagtyp);
                 s.Put(nameof(envtyp), envtyp);
-                s.Put(nameof(ties), ties);
-                s.Put(nameof(icon), icon);
-                s.Put(nameof(pic), pic);
-                s.Put(nameof(m1), m1);
-                s.Put(nameof(m2), m2);
-                s.Put(nameof(m3), m3);
-                s.Put(nameof(m4), m4);
+                if ((msk & MSK_LATER) == MSK_LATER)
+                {
+                    s.Put(nameof(openat), openat);
+                    s.Put(nameof(closeat), closeat);
+                    s.Put(nameof(ties), ties);
+                    s.Put(nameof(icon), icon);
+                    s.Put(nameof(pic), pic);
+                    s.Put(nameof(m1), m1);
+                    s.Put(nameof(m2), m2);
+                    s.Put(nameof(m3), m3);
+                    s.Put(nameof(m4), m4);
+                }
             }
         }
     }
@@ -264,6 +270,10 @@ public class Org : Entity, ITwin<int>
 
     public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 
+    public bool IsStl => (typ & TYP_STL) == TYP_STL;
+
+    public bool IsShp => (typ & TYP_SHP) == TYP_SHP;
+
     public bool IsHub => (typ & TYP_HUB) == TYP_HUB;
 
     public bool IsHomeOrg => regid == 0;
@@ -307,9 +317,15 @@ public class Org : Entity, ITwin<int>
 
     public bool IsCoverMode => IsDlvMode || IsSvcMode;
 
+    public bool IsCtrMode => (mode & MOD_CTR) == MOD_CTR;
+
+    public bool IsCpxMode => (mode & MOD_CPX) == MOD_CPX;
+
     public string No => AsMkt ? addr : null;
 
     public string Cover => cover;
+
+    public string CoverName => cover ?? name;
 
     public int ForkKey => parentid;
 

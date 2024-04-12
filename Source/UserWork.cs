@@ -66,7 +66,7 @@ public class AdmlyMbrWork : UserWork<AdmlyMbrVarWork>
         }, false, 12);
     }
 
-    [MgtAuthorize(-1, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {
@@ -80,7 +80,7 @@ public class AdmlyMbrWork : UserWork<AdmlyMbrVarWork>
             {
                 h.FORM_();
 
-                h.FIELDSUL_("授权给指定用户");
+                h.FIELDSUL_("授权给指定用户", css: "uk-list uk-list-divider");
                 h.LI_().TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
 
@@ -89,9 +89,10 @@ public class AdmlyMbrWork : UserWork<AdmlyMbrVarWork>
                     using var dc = NewDbContext();
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                     var o = dc.QueryTop<User>(p => p.Set(tel));
+
                     if (o != null)
                     {
-                        h.FIELDSUL_();
+                        h.FIELDSUL_(css: "uk-list uk-list-divider");
                         h.HIDDEN(nameof(o.id), o.id);
                         h.LI_().FIELD("用户姓名", o.name)._LI();
                         if (o.supid > 0)

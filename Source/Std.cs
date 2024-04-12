@@ -74,13 +74,15 @@ public class Env : Std
 /// </summary>
 public class Tag : Std
 {
-    public static readonly Map<short, string> Styles = new()
+    public new static readonly Map<short, string> Styles = new()
     {
         { 1, "硬牌" },
         { 2, "软牌" },
         { 3, "贴标" },
         { 4, "芯片" },
     };
+
+    public string ToLabel() => name + Styles[style];
 }
 
 /// <summary>

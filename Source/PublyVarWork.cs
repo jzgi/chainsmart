@@ -290,7 +290,10 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.mode));
+            if (org.IsCpxMode)
+            {
+                h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.mode));
+            }
 
             if (arr == null)
             {
@@ -304,7 +307,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
             if (sector == 0)
             {
-                if (org.m4)
+                if (org.pic)
                 {
                     h.PIC_("/org/", org.id, "/pic");
                 }

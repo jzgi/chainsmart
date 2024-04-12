@@ -58,11 +58,11 @@ public class WwwService : MainService
 
                     h.ARTICLE_("uk-card uk-card-primary");
                     h.H3(regs[o.regid]?.name, "uk-card-header");
-                    h.UL_("uk-card-body");
+                    h.UL_("uk-card-body uk-list uk-list-divider");
                 }
 
                 h.LI_("uk-flex");
-                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/h\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this);'").T(o.cover).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
+                h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("/h\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this);\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
                 h.SPAN(o.Cover);
                 h.P(o.addr, css: "uk-margin-auto-left");
                 h.ICON("chevron-right");
@@ -85,7 +85,7 @@ public class WwwService : MainService
 
             string tel = Application.CustomConfig[nameof(tel)];
             h.BOTTOMBAR_(large: true, css: "uk-col uk-flex-center uk-flex-middle");
-            h.SPAN_("uk-label").T("监督电话：").T(tel)._SPAN().A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
+            h.SPAN_(css: "uk-label").ICON("receiver").SP().SPAN(tel)._SPAN().A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
         }, true, 720, title: Application.Nodal.name + "市场", onload: "fixAll();");
     }

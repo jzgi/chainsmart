@@ -104,7 +104,7 @@ public class AdmlyUserVarWork : UserVarWork
 
 public class AdmlyMbrVarWork : UserVarWork
 {
-    [MgtAuthorize(-1, User.ROL_MGT)]
+    [MgtAuthorize(0, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {

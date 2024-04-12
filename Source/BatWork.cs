@@ -18,6 +18,9 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
 
     protected static void MainGrid(HtmlBuilder h, IList<Bat> arr)
     {
+        var tags = Grab<short, Tag>();
+
+
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
@@ -26,7 +29,7 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN((Code.Typs[o.typ]), "uk-badge");
+            h.SPAN((Bat.Typs[o.typ]), "uk-badge");
             h._HEADER();
 
             h.Q(o.nstart, "uk-width-expand");
@@ -124,7 +127,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
         {
             typ = 1;
         }
-        
+
         Org[] srcs = null;
         if (org.ties != null)
         {
