@@ -25,13 +25,13 @@ public abstract class OrgVarWork : WebWork
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("名称", m.name)._LI();
                 h.LI_().FIELD("简介语", m.tip)._LI();
-                if (m.AsBiz)
+                if (m.AsFrt)
                 {
                     h.LI_().FIELD("工商登记名", m.legal)._LI();
                 }
                 if (m.AsEst)
                 {
-                    h.LI_().FIELD("地域覆盖", m.cover)._LI();
+                    h.LI_().FIELD("总体名", m.whole)._LI();
                 }
                 h.LI_().FIELD("联系电话", m.tel);
                 if (m.regid > 0)
@@ -46,7 +46,7 @@ public abstract class OrgVarWork : WebWork
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
                     if (m.AsEst) h.LI_().FIELD("参数定义", m.specs)._LI();
                 }
-                if (m.AsBiz)
+                if (m.AsFrt)
                 {
                     h.LI_().FIELD("收款账名", m.bankacctname)._LI();
                     h.LI_().FIELD("收款账号", m.bankacct)._LI();
@@ -58,8 +58,8 @@ public abstract class OrgVarWork : WebWork
                     var syms = Grab<short, Sym>();
                     var tags = Grab<short, Tag>();
 
-                    h.LI_().FIELD("品类", m.cattyp, cats).FIELD("环境", m.envtyp, envs)._LI();
-                    h.LI_().FIELD("标志", m.symtyp, syms).FIELD("溯源", m.tagtyp, tags)._LI();
+                    h.LI_().FIELD("品类", m.cat, cats).FIELD("环境", m.env, envs)._LI();
+                    h.LI_().FIELD("标志", m.sym, syms).FIELD("溯源", m.tag, tags)._LI();
                 }
                 h.LI_().FIELD("托管", m.trust)._LI();
                 h.LI_().FIELD("状态", m.status, Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
@@ -183,14 +183,14 @@ public class AdmlyEstVarWork : OrgVarWork
                     h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
-                    h.LI_().TEXT("地域覆盖", nameof(m.cover), m.cover, max: 12, required: true)._LI();
+                    h.LI_().TEXT("总体名", nameof(m.whole), m.whole, max: 12, required: true)._LI();
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
                     if (m.IsMkt)
                     {
                         var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                        h.LI_().SELECT("业务模式", nameof(m.mode), m.mode, Org.Modes, (k, _) => k >= Org.MOD_CTR, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
+                        h.LI_().SELECT("业务模式", nameof(m.style), m.style, Org.Styles, (k, _) => k >= Org.STY_STN, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
@@ -312,7 +312,7 @@ public class AdmlyEstVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
@@ -334,7 +334,7 @@ public class AdmlyEstVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -350,7 +350,7 @@ public class AdmlyEstVarWork : OrgVarWork
         int id = wc[0];
         var m = GrabTwin<int, Org>(id);
 
-        await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -399,8 +399,8 @@ public class AdmlySupVarWork : OrgVarWork
                         var syms = Grab<short, Sym>();
                         var tags = Grab<short, Tag>();
 
-                        h.LI_().SELECT("品类", nameof(m.cattyp), m.cattyp, cats).SELECT("环境", nameof(m.envtyp), m.envtyp, envs)._LI();
-                        h.LI_().SELECT("标志", nameof(m.symtyp), m.symtyp, syms).SELECT("溯源", nameof(m.tagtyp), m.tagtyp, tags)._LI();
+                        h.LI_().SELECT("品类", nameof(m.cat), m.cat, cats).SELECT("环境", nameof(m.env), m.env, envs)._LI();
+                        h.LI_().SELECT("标志", nameof(m.sym), m.sym, syms).SELECT("溯源", nameof(m.tag), m.tag, tags)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
@@ -521,7 +521,7 @@ public class AdmlySupVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id)) == 1;
@@ -543,7 +543,7 @@ public class AdmlySupVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1");
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -559,7 +559,7 @@ public class AdmlySupVarWork : OrgVarWork
         int id = wc[0];
         var m = GrabTwin<int, Org>(id);
 
-        await GetTwinCache<OrgTwinCache, int, Org>().RemoveAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
             dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
@@ -586,11 +586,11 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsStl ? "修改成员商户" : "修改成员门店");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsMch ? "修改成员商户" : "修改成员门店");
 
-                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
+                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().SELECT("输送模式", nameof(m.mode), m.mode, Org.Modes, filter: (k, _) => k <= Org.MOD_SVC, required: true)._LI();
+                    h.LI_().SELECT("输送模式", nameof(m.style), m.style, Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
@@ -606,7 +606,7 @@ public class MktlyOrgVarWork : OrgVarWork
             const short Msk = MSK_EDIT;
             await wc.ReadObjectAsync(Msk, instance: m);
 
-            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async dc =>
+            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async dc =>
             {
                 dc.Sql("UPDATE orgs_vw")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
                 return await dc.ExecuteAsync(p =>
@@ -658,7 +658,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = now;
             m.oker = prin.name;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -682,7 +682,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oked = default;
             m.oker = null;
         }
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 1, oked = NULL, oker = NULL WHERE id = @1 AND parentid = @2");
             return await dc.ExecuteAsync(p => p.Set(id).Set(org.id)) == 1;
@@ -709,7 +709,7 @@ public class MktlyOrgVarWork : OrgVarWork
             m.oker = prin.name;
         }
 
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 0, oked = @1, oker = @2 WHERE id = @3 AND parentid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;
@@ -728,7 +728,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
         var now = DateTime.Now;
         var m = GrabTwin<int, Org>(id);
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m, async (dc) =>
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m, async (dc) =>
         {
             dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL, adapted = @1, adapter = @2 WHERE id = @3 AND parentid = @4 AND status BETWEEN 1 AND 2");
             return await dc.ExecuteAsync(p => p.Set(now).Set(prin.name).Set(id).Set(org.id)) == 1;

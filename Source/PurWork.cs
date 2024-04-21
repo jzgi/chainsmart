@@ -18,9 +18,9 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_STL)]
+[MgtAuthorize(Org.TYP_MCH)]
 [Ui("采购")]
-public class StllyPurWork : PurWork<StllyPurVarWork>
+public class MchlyPurWork : PurWork<StllyPurVarWork>
 {
     protected override void OnCreate()
     {
@@ -122,7 +122,7 @@ public class StllyPurWork : PurWork<StllyPurVarWork>
         }, false, 6);
     }
 
-    [OrgSpy(PUR_VOID)]
+    [OrgWatch(PUR_VOID)]
     [Ui(tip: "已撤销", icon: "trash", status: 8), Tool(Anchor)]
     public async Task @void(WebContext wc)
     {
@@ -164,7 +164,7 @@ public class StllyPurWork : PurWork<StllyPurVarWork>
 
         const short Msk = 0xff | Entity.MSK_EXTRA;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cattyp & @2 > 0");
+        dc.Sql("SELECT ").collst(Item.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cat & @2 > 0");
         var arr = await dc.QueryAsync<Item>(p => p.Set(hubid).Set(cat), Msk);
 
         wc.GivePage(200, h =>
@@ -227,7 +227,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
     }
 
 
-    [OrgSpy(PUR_CREATED)]
+    [OrgWatch(PUR_CREATED)]
     [Ui, Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
@@ -272,7 +272,7 @@ public class SuplyPurWork : PurWork<SuplyPurVarWork>
         }, false, 6);
     }
 
-    [OrgSpy(PUR_OKED)]
+    [OrgWatch(PUR_OKED)]
     [Ui(tip: "已收货", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc)
     {
@@ -347,7 +347,7 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
                 var mkt = GrabTwin<int, Org>(mktid);
 
                 h.TR_();
-                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Cover, css: "uk-link uk-button-link").T(mkt.Cover)._A()._TD();
+                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Whole, css: "uk-link uk-button-link").T(mkt.Whole)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (adapted > 0)
                 {

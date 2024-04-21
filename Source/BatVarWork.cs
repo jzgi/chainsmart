@@ -4,6 +4,7 @@ using ChainFX.Web;
 using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
+using static ChainSmart.MainUtility;
 
 namespace ChainSmart;
 
@@ -12,22 +13,31 @@ public abstract class BatVarWork : WebWork
     public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
-        var org = wc[-2].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM tags WHERE id = @1 AND parentid = @2");
-        var o = await dc.QueryTopAsync<Code>(p => p.Set(id).Set(org.id));
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE id = @1");
+        var o = await dc.QueryTopAsync<Bat>(p => p.Set(id));
 
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("用户名", o.name)._LI();
-            h.LI_().FIELD("受检商户", o.name)._LI();
-            h.LI_().FIELD("说明", o.tip)._LI();
-            h.LI_().FIELD("身份证号", o.nstart)._LI();
-            h.LI_().FIELD("民生卡号", o.nend)._LI();
-
+            h.LI_().FIELD(o.typ < Bat.TYP_DEC ? "补仓来由" : "减仓原由", o.typ, Bat.Typs)._LI();
+            h.LI_().FIELD("商品", o.name)._LI();
+            if (o.srcid > 0)
+            {
+                var src = GrabTwin<int, Org>(o.srcid);
+                h.LI_().FIELD("产源", src.name)._LI();
+            }
+            if (o.hubid > 0)
+            {
+                var hub = GrabTwin<int, Org>(o.hubid);
+                h.LI_().FIELD("品控云仓", hub.name)._LI();
+            }
+            h.LI_().FIELD("附加说明", o.tip)._LI();
+            h.LI_().FIELD("溯源标签", o.tag, Grab<short, Tag>())._LI();
+            h.LI_().FIELD("起始号", o.nstart)._LI();
+            h.LI_().FIELD("截止号", o.nend)._LI();
             h.LI_().FIELD("状态", o.status, Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "生效", o.oker, o.oked, sep: "<br>")._LI();
 
@@ -40,9 +50,6 @@ public abstract class BatVarWork : WebWork
 
 public class PublyBatVarWork : BatVarWork
 {
-    static readonly string
-        SrcUrl = MainApp.WwwUrl + "/org/",
-        LotUrl = MainApp.WwwUrl + "/lot/";
 
     public override async Task @default(WebContext wc)
     {
@@ -74,7 +81,7 @@ public class PublyBatVarWork : BatVarWork
                 h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(itm.name, css: "h1-lot")._HEADER();
                 if (itm.icon)
                 {
-                    h.PIC("/lot/", itm.id, "/icon", circle: true, css: "uk-width-small");
+                    h.PIC(ItemUrl, itm.id, "/icon", circle: true, css: "uk-width-small");
                 }
                 else
                 {
@@ -88,7 +95,7 @@ public class PublyBatVarWork : BatVarWork
                 h.SECTION_("uk-card-body");
                 if (itm.pic)
                 {
-                    h.PIC(LotUrl, itm.id, "/pic", css: "uk-width-1-1");
+                    h.PIC(ItemUrl, itm.id, "/pic", css: "uk-width-1-1");
                 }
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("产品名", itm.name)._LI();
@@ -109,23 +116,23 @@ public class PublyBatVarWork : BatVarWork
                     }
                     if (src.pic)
                     {
-                        h.PIC(SrcUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
+                        h.PIC(OrgUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
                     }
                     if (src.m1)
                     {
-                        h.PIC(SrcUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                        h.PIC(OrgUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
                     }
                     if (src.m2)
                     {
-                        h.PIC(SrcUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                        h.PIC(OrgUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
                     }
                     if (src.m3)
                     {
-                        h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                        h.PIC(OrgUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
                     }
                     if (src.m4)
                     {
-                        h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                        h.PIC(OrgUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
                     }
                 }
                 h._SECTION();
@@ -153,19 +160,19 @@ public class PublyBatVarWork : BatVarWork
 
                 if (itm.m1)
                 {
-                    h.PIC(LotUrl, itm.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, itm.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
                 }
                 if (itm.m2)
                 {
-                    h.PIC(LotUrl, itm.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, itm.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
                 }
                 if (itm.m3)
                 {
-                    h.PIC(LotUrl, itm.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, itm.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
                 }
                 if (itm.m4)
                 {
-                    h.PIC(LotUrl, itm.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, itm.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
                 }
 
                 h._SECTION();
@@ -185,16 +192,18 @@ public class ShplyBatVarWork : BatVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
-    public async Task edit(WebContext wc)
+    public async Task upd(WebContext wc)
     {
     }
 }
 
-public class SupSrclyBatVarWork : BatVarWork
+// supplier or source
+//
+public class SuplyBatVarWork : BatVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
-    public async Task edit(WebContext wc)
+    public async Task upd(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
@@ -216,7 +225,7 @@ public class SupSrclyBatVarWork : BatVarWork
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
                 // h.LI_().SELECT("级别", nameof(o.rank), o.rank, Lotop.Ranks)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(edit))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
             });
         }
         else // POST
@@ -242,24 +251,63 @@ public class SupSrclyBatVarWork : BatVarWork
     }
 
 
-    [MgtAuthorize(0, User.ROL_MGT)]
-    [Ui("发布", "安排发布", status: 1 | 2 | 4), Tool(ButtonConfirm)]
-    public async Task ok(WebContext wc)
+    [MgtAuthorize(Org.TYP_SRC, User.ROL_MGT)]
+    [Ui("发货", "安排发布", status: 1), Tool(ButtonConfirm)]
+    public async Task adapt(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE lotops SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Bat.Empty);
-        var o = await dc.QueryTopAsync<Bat>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
-        // org.EventPack.AddMsg(o);
+        short tag = org.tag;
+        int nstart = 0, nend = 0;
 
-        wc.GivePane(200);
+        if (wc.IsGet)
+        {
+            var tags = Grab<short, Tag>();
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_();
+
+                h.LI_().SELECT("溯源标签", nameof(tag), tag, tags)._LI();
+                h.LI_().NUMBER("起始号", nameof(nstart), nstart, min: 1)._LI();
+                h.LI_().NUMBER("截至号", nameof(nend), nend, min: 1)._LI();
+
+                h._FIELDSUL().BUTTON(nameof(adapt), "确认")._FORM();
+            });
+        }
+        else
+        {
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE bats SET status = 2, adapted = @1, adapter = @2 WHERE id = @3 AND orgid = @4 RETURNING ").collst(Bat.Empty);
+            var o = await dc.QueryTopAsync<Bat>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+            // org.EventPack.AddMsg(o);
+
+            wc.GivePane(200);
+        }
     }
 }
 
 public class HublyBatVarWork : BatVarWork
 {
+    [MgtAuthorize(Org.TYP_HUB, User.ROL_OPN)]
+    [Ui("收货", "收货入仓", status: 2), Tool(ButtonConfirm)]
+    public async Task ok(WebContext wc)
+    {
+        int id = wc[0];
+        var hub = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE bats SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND hubidid = @4 RETURNING ").collst(Bat.Empty);
+        var o = await dc.QueryTopAsync<Bat>(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(hub.id));
+
+        // var org = GrabTwin<int, Org>(o.orgid);
+        // hub.EventPack.a.AddMsg(o);
+
+        wc.GivePane(200);
+    }
 }

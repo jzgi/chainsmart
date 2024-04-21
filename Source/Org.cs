@@ -8,7 +8,7 @@ namespace ChainSmart;
 /// <summary>
 /// An organizational unit record.
 /// </summary>
-public class Org : Entity, ITwin<int>
+public class Org : Entity, ITwin<int>, IFolderable
 {
     public static readonly Org Empty = new();
 
@@ -16,29 +16,29 @@ public class Org : Entity, ITwin<int>
         TYP_ADM = 0b10000000; // admin
 
     public const short
-        TYP_BIZ_ = 0b000001, // biz
+        TYP_FRT_ = 0b000001, // front
         TYP_BCK_ = 0b000010, // backing
         TYP_MKT_ = 0b000100, // retail
         TYP_SUP_ = 0b001000, // supply
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_SHP = TYP_MKT_ | TYP_BIZ_, // shop
-        TYP_STL = TYP_MKT_ | TYP_BIZ_ | TYP_BCK_, // stall
-        TYP_MKT = TYP_EST_ | TYP_STL, // market
+        TYP_SHP = TYP_MKT_ | TYP_FRT_, // shop
+        TYP_MCH = TYP_MKT_ | TYP_FRT_ | TYP_BCK_, // merchant
+        TYP_MKT = TYP_EST_ | TYP_MCH, // market
         //
-        TYP_SUP = TYP_SUP_ | TYP_BIZ_, // supplier
+        TYP_SUP = TYP_SUP_ | TYP_FRT_, // supplier
         TYP_SRC = TYP_SUP_ | TYP_BCK_, // source
-        TYP_SUPSRC = TYP_SUP_ | TYP_BIZ_ | TYP_BCK_, // supply & source
+        TYP_PRV = TYP_SUP_ | TYP_FRT_ | TYP_BCK_, // provision
         TYP_HUB = TYP_EST_ | TYP_SUP; // hub
 
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_SHP, "门店" },
-        { TYP_STL, "商户" },
+        { TYP_MCH, "商户" },
         { TYP_MKT, "市场" },
         { TYP_SRC, "产源" },
         { TYP_SUP, "供应" },
-        { TYP_SUPSRC, "产供" },
+        { TYP_PRV, "产供" },
         { TYP_HUB, "云仓" },
     };
 
@@ -55,20 +55,20 @@ public class Org : Entity, ITwin<int>
 
 
     public const short
-        MOD_SLF = 0, // self 
-        MOD_DLV = 1, // order delivery 
-        MOD_SVC = 2, // service 
-        MOD_CTR = 4 | MOD_DLV, // center
-        MOD_CPX = 8 | MOD_DLV; // complex 
+        STY_SLF = 0, // self 
+        STY_DLV = 1, // order delivery 
+        STY_SVC = 2, // service 
+        STY_STN = 4 | STY_DLV, // center
+        STY_CPX = 8 | STY_DLV; // complex 
 
 
-    public static readonly Map<short, string> Modes = new()
+    public static readonly Map<short, string> Styles = new()
     {
-        { MOD_SLF, "自理模式" },
-        { MOD_DLV, "统派送模式" },
-        { MOD_SVC, "统服务模式" },
-        { MOD_CTR, "邻里中心模式" },
-        { MOD_CPX, "农贸综合体模式" },
+        { STY_SLF, "自理模式" },
+        { STY_DLV, "合单派送模式" },
+        { STY_SVC, "合单服务模式" },
+        { STY_STN, "健康邻里驿站模式" },
+        { STY_CPX, "农贸综合体模式" },
     };
 
 
@@ -81,7 +81,7 @@ public class Org : Entity, ITwin<int>
     // connected hub warehouse id, if market or retail 
     internal int hubid;
 
-    internal string cover; // coverage
+    internal string whole;
     internal string legal; // legal name
     internal short regid;
     internal string addr;
@@ -96,14 +96,13 @@ public class Org : Entity, ITwin<int>
     internal TimeSpan openat;
     internal TimeSpan closeat;
     internal short rank; // credit level
-
-    internal short mode;
+    internal short style;
 
     // internal short style; 
-    internal short cattyp;
-    internal short symtyp;
-    internal short tagtyp;
-    internal short envtyp;
+    internal short cat;
+    internal short sym;
+    internal short tag;
+    internal short env;
     internal int[] ties; // ties to other orgs
 
 
@@ -133,9 +132,9 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(mode), ref mode);
+                s.Get(nameof(style), ref style);
                 s.Get(nameof(rank), ref rank);
-                s.Get(nameof(cover), ref cover);
+                s.Get(nameof(whole), ref whole);
                 s.Get(nameof(legal), ref legal);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
@@ -150,10 +149,10 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Get(nameof(cattyp), ref cattyp);
-                s.Get(nameof(symtyp), ref symtyp);
-                s.Get(nameof(tagtyp), ref tagtyp);
-                s.Get(nameof(envtyp), ref envtyp);
+                s.Get(nameof(cat), ref cat);
+                s.Get(nameof(sym), ref sym);
+                s.Get(nameof(tag), ref tag);
+                s.Get(nameof(env), ref env);
                 if ((msk & MSK_LATER) == MSK_LATER)
                 {
                     s.Get(nameof(openat), ref openat);
@@ -192,9 +191,9 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(mode), mode);
+                s.Put(nameof(style), style);
                 s.Put(nameof(rank), rank);
-                s.Put(nameof(cover), cover);
+                s.Put(nameof(whole), whole);
                 s.Put(nameof(legal), legal);
                 if (regid <= 0 && !IsShp) s.PutNull(nameof(regid));
                 else s.Put(nameof(regid), regid);
@@ -210,10 +209,10 @@ public class Org : Entity, ITwin<int>
 
             if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Put(nameof(cattyp), cattyp);
-                s.Put(nameof(symtyp), symtyp);
-                s.Put(nameof(tagtyp), tagtyp);
-                s.Put(nameof(envtyp), envtyp);
+                s.Put(nameof(cat), cat);
+                s.Put(nameof(sym), sym);
+                s.Put(nameof(tag), tag);
+                s.Put(nameof(env), env);
                 if ((msk & MSK_LATER) == MSK_LATER)
                 {
                     s.Put(nameof(openat), openat);
@@ -232,6 +231,10 @@ public class Org : Entity, ITwin<int>
 
 
     public int Key => id;
+
+    public short Idx => rank;
+
+    public short Style => style;
 
     // STATE
     //
@@ -256,7 +259,7 @@ public class Org : Entity, ITwin<int>
 
     public string Tel => tel;
 
-    public bool AsBiz => (typ & TYP_BIZ_) == TYP_BIZ_;
+    public bool AsFrt => (typ & TYP_FRT_) == TYP_FRT_;
 
     public bool AsEst => (typ & TYP_EST_) == TYP_EST_;
 
@@ -270,7 +273,7 @@ public class Org : Entity, ITwin<int>
 
     public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 
-    public bool IsStl => (typ & TYP_STL) == TYP_STL;
+    public bool IsMch => (typ & TYP_MCH) == TYP_MCH;
 
     public bool IsShp => (typ & TYP_SHP) == TYP_SHP;
 
@@ -302,30 +305,29 @@ public class Org : Entity, ITwin<int>
         {
             if (title == null)
             {
-                var no = No;
                 Interlocked.CompareExchange(ref title, string.IsNullOrEmpty(tel) ? name : name + "&nbsp;<a class=\"uk-icon-button uk-light uk-circle\" href=\"tel:" + tel + "\">☏</a>", null);
             }
             return title;
         }
     }
 
-    public bool IsSlfMode => (mode & MOD_SLF) == MOD_SLF;
+    public bool IsSelf => (style & STY_SLF) == STY_SLF;
 
-    public bool IsDlvMode => (mode & MOD_DLV) == MOD_DLV;
+    public bool IsDelivery => (style & STY_DLV) == STY_DLV;
 
-    public bool IsSvcMode => (mode & MOD_SVC) == MOD_SVC;
+    public bool IsService => (style & STY_SVC) == STY_SVC;
 
-    public bool IsCoverMode => IsDlvMode || IsSvcMode;
+    public bool IsCoverage => IsDelivery || IsService;
 
-    public bool IsCtrMode => (mode & MOD_CTR) == MOD_CTR;
+    public bool IsStation => (style & STY_STN) == STY_STN;
 
-    public bool IsCpxMode => (mode & MOD_CPX) == MOD_CPX;
+    public bool IsComplex => (style & STY_CPX) == STY_CPX;
 
     public string No => AsMkt ? addr : null;
 
-    public string Cover => cover;
+    public string Whole => whole;
 
-    public string CoverName => cover ?? name;
+    public string WholeName => whole ?? name;
 
     public int ForkKey => parentid;
 
@@ -338,7 +340,6 @@ public class Org : Entity, ITwin<int>
 
 
     // EVENT 
-
 
     private OrgNoticePack noticep;
 

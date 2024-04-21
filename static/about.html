@@ -50,22 +50,6 @@
                 查询产品溯源信息（预制标签）可以直接手机扫二维码，也可通过手动录入溯源编号
             </p>
         </div>
-        <form class="uk-card-body" method="get">
-            <fieldset class="uk-fieldset uk-width-1-1">
-                <ul class="uk-list uk-list-divider">
-                    <li>
-                        <label class="uk-label">溯源编号</label><input type="number" class="uk-input" name="id" value="0"
-                            min="1" required="">
-                    </li>
-                </ul>
-                <nav class="uk-flex-center">
-                    <button type="button" class="uk-button uk-button-default" formmethod="post"
-                        onclick="if (!form.reportValidity()) return; location.href = ('/tag/' + this.form.id.value); return false; btnSubmit(this);">
-                        查询
-                    </button>
-                </nav>
-            </fieldset>
-        </form>
     </div>
     <div class="uk-bottom-placeholder"></div>
     <footer class="uk-bottom-bar uk-text-small uk-flex-column">

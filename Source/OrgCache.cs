@@ -6,7 +6,7 @@ using ChainFX.Nodal;
 
 namespace ChainSmart;
 
-public class OrgTwinCache : DbTwinCache<int, Org>
+public class OrgCache : DbTwinCache<int, Org>
 {
     public override bool IsAsync => false;
 

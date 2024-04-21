@@ -80,15 +80,15 @@ public class OrgNoticePack : IPack<StringBuilder>
         }
     }
 
-    public int Check(short idx, bool clear = false)
+    public int Peek(short idx, bool clear = false)
     {
         lock (this)
         {
-            var ret = entries[idx].SpyCount;
+            var ret = entries[idx].Total;
 
             if (clear)
             {
-                entries[idx].SpyCount = 0;
+                entries[idx].Total = 0;
             }
             return ret;
         }
@@ -114,27 +114,27 @@ public class OrgNoticePack : IPack<StringBuilder>
 
         internal decimal sum;
 
-        public int SpyCount;
+        public int Total { get; internal set; }
 
         internal bool IsEmpty => typ == 0 || count == 0;
 
         internal bool IsStuffed => typ != 0 && count != 0;
 
-        public Entry(short slot, int num, decimal amt)
+        public Entry(short slot, int num, decimal amount)
         {
             typ = slot;
             count = num;
-            sum = amt;
+            sum = amount;
 
-            SpyCount = num;
+            Total = num;
         }
 
-        internal void AddUp(int num, decimal amt)
+        internal void AddUp(int num, decimal amount)
         {
             count += num;
-            sum += amt;
+            sum += amount;
 
-            SpyCount += num;
+            Total += num;
         }
 
         internal void Reset()

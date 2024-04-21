@@ -25,7 +25,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
 
     internal short idx;
 
-    internal short mode;
+    internal short style;
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -37,7 +37,7 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Get(nameof(idx), ref idx);
-        s.Get(nameof(mode), ref mode);
+        s.Get(nameof(style), ref style);
     }
 
     public override void Write(ISink s, short msk = 0xff)
@@ -50,18 +50,18 @@ public class Reg : Entity, IKeyable<short>, IFolderable
         }
 
         s.Put(nameof(idx), idx);
-        s.Put(nameof(mode), mode);
+        s.Put(nameof(style), style);
     }
 
     public short Key => id;
 
     public short Idx => idx;
 
-    public short Style => mode;
+    public short Style => style;
 
     public bool IsSector => typ == TYP_SECTOR;
 
-    public bool IsSectorWith(short m) => typ == TYP_SECTOR && m > 0 && (mode & m) == m;
+    public bool IsSectorWith(short m) => typ == TYP_SECTOR && m > 0 && (style & m) == m;
 
     public bool IsCity => typ == TYP_CITY;
 

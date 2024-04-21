@@ -5,6 +5,7 @@ using ChainFX.Web;
 using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
+using static ChainSmart.MainUtility;
 
 namespace ChainSmart;
 
@@ -27,7 +28,7 @@ public class ItemVarWork : WebWork
 
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD("名称", o.name).FIELD("品类", o.cattyp, cats)._LI();
+            h.LI_().FIELD("名称", o.name).FIELD("品类", o.cat, cats)._LI();
             h.LI_().FIELD("简介语", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
             h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("单价", o.price, money: true).FIELD("含次数", o.cardinal)._LI();
@@ -81,10 +82,6 @@ public class ItemVarWork : WebWork
 
 public class PubItemVarWork : ItemVarWork
 {
-    static readonly string
-        SrcUrl = MainApp.WwwUrl + "/org/",
-        ItemUrl = MainApp.WwwUrl + "/item/";
-
     public override async Task @default(WebContext wc)
     {
         int itemid = wc[0];
@@ -92,13 +89,6 @@ public class PubItemVarWork : ItemVarWork
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE id = @1");
         var o = await dc.QueryTopAsync<Item>(p => p.Set(itemid));
-
-        Item itm = null;
-        if (o.srcid > 0)
-        {
-            dc.Sql("SELECT ").collst(Item.Empty).T(" FROM lots_vw WHERE id = @1");
-            itm = await dc.QueryTopAsync<Item>(p => p.Set(o.srcid));
-        }
 
         wc.GivePane(200, h =>
         {
@@ -125,79 +115,60 @@ public class PubItemVarWork : ItemVarWork
 
             h._ARTICLE();
 
-            if (o.srcid > 0)
+            var src = o.srcid > 0 ? GrabTwin<int, Org>(o.srcid) : null;
+
+            if (src != null)
             {
-                var src = itm?.srcid > 0 ? GrabTwin<int, Org>(itm.srcid) : null;
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H2("产品信息", "uk-card-header");
-                h.SECTION_("uk-card-body");
-                h.PIC(ItemUrl, itm.id, "/pic", css: "uk-width-1-1");
                 h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产品名", itm.name)._LI();
-
-                h.LI_().FIELD("单位", itm.unit).FIELD("附注", itm.unitip, itm.unitip)._LI();
-                h.LI_().FIELD2("整件", itm.unitx, itm.unit)._LI();
-                h.LI_().FIELD("单价", itm.price, true).FIELD("优惠立减", itm.off, true)._LI();
-                h.LI_().FIELD("起订件数", itm.min).FIELD("限订件数", itm.max)._LI();
-
+                h.LI_().FIELD("产源", src.name)._LI();
+                h.LI_().FIELD(string.Empty, src.tip)._LI();
+                // h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
                 h._UL();
 
-                if (src != null)
+                if (src.tip != null)
                 {
-                    h.UL_("uk-list uk-list-divider");
-                    h.LI_().FIELD("产源设施", src.name)._LI();
-                    h.LI_().FIELD(string.Empty, src.tip)._LI();
-                    // h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
-                    h._UL();
-
-                    if (src.tip != null)
-                    {
-                        h.ALERT_().T(src.tip)._ALERT();
-                    }
-                    if (src.pic)
-                    {
-                        h.PIC(SrcUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
-                    }
-                    if (src.m1)
-                    {
-                        h.PIC(SrcUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
-                    }
-                    if (src.m2)
-                    {
-                        h.PIC(SrcUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
-                    }
-                    if (src.m3)
-                    {
-                        h.PIC(SrcUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
-                    }
-                    if (src.m4)
-                    {
-                        h.PIC(SrcUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
-                    }
+                    h.ALERT_().T(src.tip)._ALERT();
                 }
-                h._SECTION();
-                h._ARTICLE();
+                if (src.pic)
+                {
+                    h.PIC(OrgUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m1)
+                {
+                    h.PIC(OrgUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m2)
+                {
+                    h.PIC(OrgUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m3)
+                {
+                    h.PIC(OrgUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m4)
+                {
+                    h.PIC(OrgUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                }
 
                 h.ARTICLE_("uk-card uk-card-primary");
                 h.H2("批次检验", "uk-card-header");
                 h.SECTION_("uk-card-body");
 
-                if (itm.m1)
+                if (src.m1)
                 {
-                    h.PIC(ItemUrl, itm.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
                 }
-                if (itm.m2)
+                if (src.m2)
                 {
-                    h.PIC(ItemUrl, itm.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
                 }
-                if (itm.m3)
+                if (src.m3)
                 {
-                    h.PIC(ItemUrl, itm.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
                 }
-                if (itm.m4)
+                if (src.m4)
                 {
-                    h.PIC(ItemUrl, itm.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                    h.PIC(ItemUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
                 }
 
                 h._SECTION();
@@ -243,7 +214,7 @@ public class ShplyItemVarWork : ItemVarWork
 
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("类型", nameof(o.cattyp), o.cattyp, cats)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("类型", nameof(o.cat), o.cat, cats)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();

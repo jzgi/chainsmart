@@ -32,7 +32,7 @@ public abstract class ApWork<V> : WebWork where V : ApVarWork, new()
             var org = GrabTwin<int, Org>(o.orgid);
 
             h.TR_();
-            h.TD(level == 2 ? org.cover : org.name);
+            h.TD(level == 2 ? org.whole : org.name);
             h.TD(o.dt, date: 2, time: 0);
             h.TD(o.amt, true, true);
             h.TD_().ADIALOG_(o.orgid, "/", mode: 32, pick: false).T(o.topay)._A()._TD();
@@ -72,7 +72,7 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
                 var xorg = GrabTwin<int, Org>(xorgid);
 
                 h.TR_();
-                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.cover)._A()._TD();
+                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.whole)._A()._TD();
                 h.TD(trans);
                 h.TD(amt, money: true, right: true);
                 h.TD(topay, money: true, right: true)._TD();
@@ -183,7 +183,7 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
                 var xorg = GrabTwin<int, Org>(xorgid);
 
                 h.TR_();
-                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.cover)._A()._TD();
+                h.TD_().A_(xorgid, "/?dt=", till).T(xorg.whole)._A()._TD();
                 h.TD(trans);
                 h.TD(amt, money: true, right: true);
                 h.TD(topay, money: true, right: true)._TD();

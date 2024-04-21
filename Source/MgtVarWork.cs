@@ -12,7 +12,6 @@ public abstract class MgtVarWork : WebWork
     public void @default(WebContext wc)
     {
         var org = wc[0].As<Org>();
-        var prin = (User)wc.Principal;
 
         wc.GivePage(200, h =>
         {
@@ -22,18 +21,17 @@ public abstract class MgtVarWork : WebWork
             h.H1_().T(org.name).SP().SUB_().T(org.id, 5)._SUB()._H1();
             if (org.AsEst)
             {
-                h.H4(org.Cover);
+                h.H2(org.Whole);
             }
-            h.P(prin.name);
             h._HEADER();
 
             if (org.icon)
             {
-                h.PIC(MainApp.WwwUrl, "/org/", org.id, "/icon", circle: true, css: "uk-width-small");
+                h.PIC(MainUtility.OrgUrl, org.id, "/icon", circle: true, css: "uk-width-small");
             }
             else
             {
-                h.PIC(org.AsMkt ? "/mkt.webp" : org.IsHub ? "/hub.webp" : "/sup.webp", circle: true, css: "uk-width-small");
+                h.PIC(MainApp.WwwUrl, org.AsEst ? "/est.webp" : "/sup.webp", circle: true, css: "uk-width-small");
             }
 
             h._TOPBARXL();
@@ -52,7 +50,7 @@ public abstract class MgtVarWork : WebWork
         var prin = (User)wc.Principal;
 
         var now = DateTime.Now;
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m,
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 4, oked = @1, oker = @2 WHERE id = @3");
@@ -74,7 +72,7 @@ public abstract class MgtVarWork : WebWork
     {
         var org = wc[0].As<Org>();
 
-        await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(org,
+        await GetTwinCache<OrgCache, int, Org>().UpdateAsync(org,
             async (dc) =>
             {
                 dc.Sql("UPDATE orgs SET status = 2, oked = NULL, oker = NULL WHERE id = @1");
@@ -117,11 +115,11 @@ public class MktlyVarWork : MgtVarWork
 
         CreateWork<ShplyVipWork>("svip");
 
-        CreateWork<StllyPurWork>("spur");
+        CreateWork<MchlyPurWork>("mpur");
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mstl", state: Org.TYP_STL, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mstl", state: Org.TYP_MCH, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 
@@ -152,7 +150,7 @@ public class MktlyVarWork : MgtVarWork
             {
                 h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
                 h.QRCODE(MainApp.WwwUrl + "/" + org.id + "/", css: "uk-width-small");
-                h.SPAN(org.Cover);
+                h.SPAN(org.Whole);
                 h._NAV();
             }
         }, false, 720);
@@ -185,7 +183,7 @@ public class MktlyVarWork : MgtVarWork
                 m.oker = null;
             }
 
-            await GetTwinCache<OrgTwinCache, int, Org>().UpdateAsync(m,
+            await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
                 async (dc) =>
                 {
                     return await dc.ExecuteAsync(

@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using NPOI.HSSF.Record;
 using static ChainFX.Web.Modal;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.ToolAttribute;
@@ -16,24 +16,23 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
         CreateVarWork<V>();
     }
 
-
     protected static void Show<M>(HtmlBuilder h, Map<short, M> map, Map<short, string> styles = null) where M : Std
     {
         h.LIST(map, ety =>
         {
             var o = ety.Value;
-            h.SPAN(o.typ,css:"uk-width-tiny").SP();
+            h.SPAN(o.typ, css: "uk-width-tiny").SP();
             h.SPAN(o.name).SP().SUB(o.tip).SP().SPAN(styles?[o.style], css: "uk-margin-auto-left");
         }, ul: "uk-list-divider");
     }
 
-    protected static void MainGrid(HtmlBuilder h, Std[] arr, int sub, string title)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Std> arr, int sub, string title)
     {
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/-", sub, MOD_OPEN, false, tip: title, css: "uk-card-body uk-flex");
 
-            h.PIC("/void.webp", css: "uk-width-1-6");
+            h.PIC("/void.webp", circle: true, css: "uk-width-1-6");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
@@ -53,7 +52,7 @@ public class PublyCatWork : StdWork<PublyCatVarWork>
     {
         var map = Grab<short, Cat>();
 
-        wc.GivePane(200, h => { Show(h, map); }, false, 15);
+        wc.GivePane(200, h => Show(h, map), true, 3600 * 6);
     }
 }
 
@@ -64,7 +63,7 @@ public class PublyEnvWork : StdWork<PublyEnvVarWork>
     {
         var map = Grab<short, Env>();
 
-        wc.GivePane(200, h => { Show(h, map); }, false, 15);
+        wc.GivePane(200, h => Show(h, map), true, 3600 * 6);
     }
 }
 
@@ -75,7 +74,7 @@ public class PublyTagWork : StdWork<PublyTagVarWork>
     {
         var map = Grab<short, Tag>();
 
-        wc.GivePane(200, h => { Show(h, map, Tag.Styles); }, false, 15);
+        wc.GivePane(200, h => Show(h, map), true, 3600 * 6);
     }
 }
 
@@ -86,7 +85,7 @@ public class PublySymWork : StdWork<PublySymVarWork>
     {
         var map = Grab<short, Sym>();
 
-        wc.GivePane(200, h => { Show(h, map); }, false, 15);
+        wc.GivePane(200, h => Show(h, map), true, 3600 * 6);
     }
 }
 
@@ -178,7 +177,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
     }
 
     [Ui("认证", status: 16), Tool(Anchor)]
-    public void prog(WebContext wc)
+    public void cer(WebContext wc)
     {
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Std.Empty).T(" FROM cers ORDER BY typ, status DESC");
@@ -202,22 +201,27 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
     public async Task @new(WebContext wc, int sub)
     {
         var prin = (User)wc.Principal;
+        var descr = Std.Descrs[(short)sub];
+
         var o = new Std
         {
             typ = (short)sub,
             created = DateTime.Now,
             creator = prin.name,
         };
+
         if (wc.IsGet)
         {
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(Std.TitleOf(sub) + "属性");
+                h.FORM_().FIELDSUL_(descr.Title + "属性");
+
                 h.LI_().NUMBER("编号", nameof(o.typ), o.typ, min: 1, max: 99, required: true)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().SELECT("风格", nameof(o.style), o.style, Std.Styles)._LI();
+                h.LI_().SELECT("风格", nameof(o.style), o.style, descr.Styles)._LI();
+
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: sub)._FORM();
             });
         }
@@ -226,8 +230,9 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
 
             o = await wc.ReadObjectAsync(msk, instance: o);
+
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO ").T(Std.DbTableOf(sub)).T(" ").colset(Std.Empty, msk)._VALUES_(Std.Empty, msk);
+            dc.Sql("INSERT INTO ").T(descr.DbTable).T(" ").colset(Std.Empty, msk)._VALUES_(Std.Empty, msk);
             await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // close dialog

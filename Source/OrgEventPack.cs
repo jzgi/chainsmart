@@ -10,21 +10,19 @@ namespace ChainSmart;
 /// </summary>
 public class OrgEventPack : IPack<JsonBuilder>
 {
-    readonly List<string> news = new(16);
+    readonly List<string> newlst = new(16);
 
-    readonly List<Buy> buys = new(16);
-
-    private DateTime since = DateTime.Now;
+    readonly List<Buy> buylst = new(16);
 
 
-    public DateTime Since => since;
+    public DateTime Since { get; internal set; } = DateTime.Now;
 
 
     public void AddNew(string v)
     {
         lock (this)
         {
-            news.Add(v);
+            newlst.Add(v);
         }
     }
 
@@ -32,7 +30,7 @@ public class OrgEventPack : IPack<JsonBuilder>
     {
         lock (this)
         {
-            buys.Add(v);
+            buylst.Add(v);
         }
     }
 
@@ -40,28 +38,30 @@ public class OrgEventPack : IPack<JsonBuilder>
     public void Dump(JsonBuilder bdr, DateTime now)
     {
         bdr.ARR_();
+
         lock (this)
         {
             // bix names 
-            if (news.Count > 0)
+            if (newlst.Count > 0)
             {
                 bdr.OBJ_();
-                bdr.Put(nameof(news), news);
+                bdr.Put(nameof(newlst), newlst);
                 bdr._OBJ();
             }
 
             // buying orders
-            foreach (var o in buys)
+            foreach (var o in buylst)
             {
                 bdr.Put(null, o);
             }
 
             // clear
-            news.Clear();
-            buys.Clear();
+            newlst.Clear();
+            buylst.Clear();
 
-            since = now;
+            Since = now;
         }
+
         bdr._ARR();
     }
 }

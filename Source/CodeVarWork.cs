@@ -78,7 +78,7 @@ public class SrclyCodeVarWork : CodeVarWork
                 creator = prin.name,
             });
             var tag = tags[o.typ];
-            o.name = tag.ToLabel();
+            o.name = tag.ToString();
 
             // update
             using var dc = NewDbContext();

@@ -96,7 +96,7 @@ public class MainApp : Application
             60 * 60 * 12
         );
 
-        MakeCache<OrgTwinCache>("org").Period = 360;
+        MakeCache<OrgCache>("org").Period = 360;
     }
 
     static async void Cycle(object state)

@@ -24,7 +24,7 @@ public class Item : Entity, IKeyable<int>
     internal int orgid;
 
     internal int srcid;
-    internal short cattyp;
+    internal short cat;
     internal string unit;
     internal string unitip;
     internal short unitx;
@@ -61,7 +61,7 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Get(nameof(srcid), ref srcid);
-            s.Get(nameof(cattyp), ref cattyp);
+            s.Get(nameof(cat), ref cat);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
@@ -103,7 +103,7 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
             s.Put(nameof(srcid), srcid);
-            s.Put(nameof(cattyp), cattyp);
+            s.Put(nameof(cat), cat);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);

@@ -75,7 +75,7 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
 
         var o = new Code
         {
-            typ = org.tagtyp,
+            typ = org.tag,
             created = DateTime.Now,
             creator = prin.name,
             orgid = org.id,

@@ -33,7 +33,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.CoverName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
+            h.HEADER_().H4(o.WholeName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, css: "uk-width-expand");
             h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((mktly ? "/mktly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
             h._ASIDE();
@@ -116,14 +116,14 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
-                h.LI_().TEXT("市场名", nameof(o.cover), o.cover, max: 12, required: true)._LI();
+                h.LI_().TEXT("总体名", nameof(o.whole), o.whole, max: 12, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
                 if (o.IsMkt)
                 {
                     var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                    h.LI_().SELECT("业务模式", nameof(o.mode), o.mode, Org.Modes, (k, _) => k >= Org.MOD_CTR, required: true).SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
+                    h.LI_().SELECT("业务模式", nameof(o.style), o.style, Org.Styles, (k, _) => k >= Org.STY_STN, required: true).SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
                 }
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账名", nameof(o.bankacctname), o.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
@@ -137,7 +137,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
             const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(Msk, o);
 
-            await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
@@ -285,8 +285,8 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
                     var syms = Grab<short, Sym>();
                     var tags = Grab<short, Tag>();
 
-                    h.LI_().SELECT("品类", nameof(o.cattyp), o.cattyp, cats).SELECT("环境", nameof(o.envtyp), o.envtyp, envs)._LI();
-                    h.LI_().SELECT("标志", nameof(o.symtyp), o.symtyp, syms).SELECT("溯源", nameof(o.tagtyp), o.tagtyp, tags)._LI();
+                    h.LI_().SELECT("品类", nameof(o.cat), o.cat, cats).SELECT("环境", nameof(o.env), o.env, envs)._LI();
+                    h.LI_().SELECT("标志", nameof(o.sym), o.sym, syms).SELECT("溯源", nameof(o.tag), o.tag, tags)._LI();
                 }
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
@@ -297,7 +297,7 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
             const short Msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(Msk, o);
 
-            await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs_vw ").colset(Org.Empty, Msk)._VALUES_(Org.Empty, Msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, Msk));
@@ -467,11 +467,11 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             // o.Read(wc.Query, 0);
             wc.GivePane(200, h =>
             {
-                h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsStl ? "新建成员商户" : "新建成员门店");
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsMch ? "新建成员商户" : "新建成员门店");
 
-                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
+                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().SELECT("输送模式", nameof(o.mode), o.mode,  Org.Modes, filter: (k, _) => k <= Org.MOD_SVC, required: true)._LI();
+                h.LI_().SELECT("输送模式", nameof(o.style), o.style,  Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
@@ -486,7 +486,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             const short msk = Entity.MSK_BORN | Entity.MSK_EDIT;
             await wc.ReadObjectAsync(msk, instance: o);
 
-            await GetTwinCache<OrgTwinCache, int, Org>().CreateAsync(async dc =>
+            await GetTwinCache<OrgCache, int, Org>().CreateAsync(async dc =>
             {
                 dc.Sql("INSERT INTO orgs ").colset(Org.Empty, msk)._VALUES_(Org.Empty, msk).T(" RETURNING ").collst(Org.Empty);
                 return await dc.QueryTopAsync<Org>(p => o.Write(p, msk));

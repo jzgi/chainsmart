@@ -150,7 +150,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("品类", nameof(o.cattyp), o.cattyp, cats)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12).SELECT("品类", nameof(o.cat), o.cat, cats)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
@@ -281,7 +281,7 @@ public class SuplyItemWork : ItemWork<SuplyItemVarWork>
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12)._LI();
-                h.LI_().SELECT("品类", nameof(o.cattyp), o.cattyp, cats, required: true)._LI();
+                h.LI_().SELECT("品类", nameof(o.cat), o.cat, cats, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs, required: false)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("单位附注", nameof(o.unitip), o.unitip, max: 8)._LI();

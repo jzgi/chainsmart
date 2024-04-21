@@ -11,8 +11,8 @@ public class Bat : Entity, IKeyable<int>
 
     public const short
         TYP_INC = 1,
-        TYP_PUR = 2,
-        TYP_SRC = 3,
+        TYP_SRC = 2,
+        TYP_PUR = 3,
         TYP_DEC = 4,
         TYP_WST = 5,
         TYP_LOS = 6;
@@ -20,9 +20,9 @@ public class Bat : Entity, IKeyable<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_INC, "直增 ＋" },
-        { TYP_PUR, "采购 ＋" },
+        { TYP_INC, "加数 ＋" },
         { TYP_SRC, "产源 ＋" },
+        { TYP_PUR, "采购 ＋" },
         { TYP_DEC, "直减 －" },
         { TYP_WST, "损耗 －" },
         { TYP_LOS, "盘亏 －" },
@@ -50,6 +50,8 @@ public class Bat : Entity, IKeyable<int>
 
     internal int qty;
 
+    internal short tag; // tag type
+
     internal int nstart;
 
     internal int nend;
@@ -74,8 +76,9 @@ public class Bat : Entity, IKeyable<int>
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(qty), ref qty);
         }
-        if ((msk & MSK_LATER) == MSK_LATER)
+        if ((msk & MSK_LATE) == MSK_LATE)
         {
+            s.Get(nameof(tag), ref tag);
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
         }
@@ -97,11 +100,13 @@ public class Bat : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(hubid), hubid);
+            if (hubid > 0) s.Put(nameof(hubid), hubid);
+            else s.PutNull(nameof(hubid));
             s.Put(nameof(qty), qty);
         }
-        if ((msk & MSK_LATER) == MSK_LATER)
+        if ((msk & MSK_LATE) == MSK_LATE)
         {
+            s.Put(nameof(tag), tag);
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
         }

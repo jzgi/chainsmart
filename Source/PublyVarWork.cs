@@ -74,11 +74,11 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-5");
                 if (o.icon)
                 {
-                    h.PIC("/item/", o.id, "/icon");
+                    h.IMG("/item/", o.id, "/icon");
                 }
                 else
                 {
-                    h.PIC("/void.webp");
+                    h.IMG("/void.webp");
                 }
                 h._A();
 
@@ -91,12 +91,19 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
-                if (o.promo)
+                if (o.srcid > 0)
                 {
-                    h.SPAN_().T("原价 ").T(o.price)._SPAN().SP();
-                }
-                if (o.cattyp > 0)
-                {
+                    var src = GrabTwin<int, Org>(o.srcid);
+                    if (src.tag > 0)
+                    {
+                        var tags = Grab<short, Tag>();
+                        h.MARK(tags[src.tag].name);
+                    }
+                    if (src.sym > 0)
+                    {
+                        var syms = Grab<short, Sym>();
+                        h.MARK(syms[src.sym].name);
+                    }
                 }
                 h._SPAN();
                 h._HEADER();
@@ -139,16 +146,16 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             h._SECTION();
 
             h.SECTION_(css: "uk-col uk-height-1-1 uk-flex-evenly");
-            if (org.IsCoverMode)
+            if (org.IsCoverage)
             {
                 h.DIV_("uk-flex uk-width-1-1");
                 string area;
                 h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '完整收货地址': '街道或小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
-                var (min, rate, max) = org.IsSvcMode ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
-                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsSvcMode ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+                var (min, rate, max) = org.IsService ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
+                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsService ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();
             }
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverMode ? "完整收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverage ? "完整收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
@@ -290,9 +297,9 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (org.IsCpxMode)
+            if (org.IsComplex)
             {
-                h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.mode));
+                h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.style));
             }
 
             if (arr == null)
@@ -358,6 +365,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 h._ARTICLE();
             }
             h._MAIN();
-        }, true, 720, org.Cover);
+        }, true, 720, org.Whole);
     }
 }

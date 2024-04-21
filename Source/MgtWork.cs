@@ -55,7 +55,6 @@ public class AdmlyWork : MgtWork
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(Application.Nodal.name);
-            h.P(prin.name);
             h._HEADER();
 
             h.PIC("/logo.webp", circle: true, css: "uk-width-small");

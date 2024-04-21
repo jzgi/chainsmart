@@ -9,11 +9,26 @@ public class Std : Entity, IKeyable<short>, IFolderable
 {
     public static readonly Std Empty = new();
 
-    public const int SUB_CAT = 1, SUB_ENV = 2, SUB_TAG = 3, SUB_SYM = 4, SUB_CER = 5;
+    public const short
+        SUB_CAT = 1, SUB_ENV = 2, SUB_TAG = 3, SUB_SYM = 4, SUB_CER = 5;
 
-    public static readonly Map<short, string> Styles = new()
+    public static readonly Map<short, StdDescr> Descrs = new()
     {
-        { 0, "默认" }
+        new StdDescr(
+            SUB_CAT, "品类", "cats", Cat.Styles
+        ),
+        new StdDescr(
+            SUB_ENV, "环境", "envs", Env.Styles
+        ),
+        new StdDescr(
+            SUB_TAG, "溯源", "tags", Tag.Styles
+        ),
+        new StdDescr(
+            SUB_SYM, "标志", "syms", Sym.Styles
+        ),
+        new StdDescr(
+            SUB_CER, "认证", "cers", Cer.Styles
+        ),
     };
 
     internal short idx;
@@ -43,16 +58,35 @@ public class Std : Entity, IKeyable<short>, IFolderable
     public short Style => style;
 
     public override string ToString() => name;
+}
 
-    public static string DbTableOf(int sub) => sub switch
-    {
-        SUB_CAT => "cats", SUB_ENV => "envs", SUB_TAG => "tags", SUB_SYM => "syms", _ => "cers"
-    };
+public class StdDescr : IKeyable<short>
+{
+    readonly short sub;
 
-    public static string TitleOf(int sub) => sub switch
+    readonly string title;
+
+    readonly string dbtable;
+
+    readonly Map<short, string> styles;
+
+    public StdDescr(short sub, string title, string dbtable, Map<short, string> styles)
     {
-        SUB_CAT => "品类", SUB_ENV => "环境", SUB_TAG => "溯源", SUB_SYM => "标志", _ => "认证"
-    };
+        this.sub = sub;
+        this.title = title;
+        this.dbtable = dbtable;
+        this.styles = styles;
+    }
+
+    public short Key => sub;
+
+    public short Sub => sub;
+
+    public string Title => title;
+
+    public string DbTable => dbtable;
+
+    public Map<short, string> Styles => styles;
 }
 
 /// <summary>
@@ -60,6 +94,10 @@ public class Std : Entity, IKeyable<short>, IFolderable
 /// </summary>
 public class Cat : Std
 {
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" }
+    };
 }
 
 /// <summary>
@@ -67,6 +105,10 @@ public class Cat : Std
 /// </summary>
 public class Env : Std
 {
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" }
+    };
 }
 
 /// <summary>
@@ -74,7 +116,7 @@ public class Env : Std
 /// </summary>
 public class Tag : Std
 {
-    public new static readonly Map<short, string> Styles = new()
+    public static readonly Map<short, string> Styles = new()
     {
         { 1, "硬牌" },
         { 2, "软牌" },
@@ -82,7 +124,7 @@ public class Tag : Std
         { 4, "芯片" },
     };
 
-    public string ToLabel() => name + Styles[style];
+    public override string ToString() => name + Styles[style];
 }
 
 /// <summary>
@@ -90,6 +132,10 @@ public class Tag : Std
 /// </summary>
 public class Sym : Std
 {
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" }
+    };
 }
 
 /// <summary>
@@ -97,4 +143,8 @@ public class Sym : Std
 /// </summary>
 public class Cer : Std
 {
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" }
+    };
 }

@@ -71,7 +71,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     }
 
 
-    [OrgSpy(BUY_CREATED)]
+    [OrgWatch(BUY_CREATED)]
     [Ui(tip: "新订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
@@ -118,7 +118,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
         }, false, 6);
     }
 
-    [OrgSpy(BUY_OKED)]
+    [OrgWatch(BUY_OKED)]
     [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
     public async Task after(WebContext wc, int page)
     {
@@ -352,7 +352,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             }
 
             h._MAIN();
-        }, false, 12, title: mkt.Cover, refresh: 60);
+        }, false, 12, title: mkt.Whole, refresh: 60);
     }
 
     [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]

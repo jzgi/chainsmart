@@ -7,6 +7,11 @@ namespace ChainSmart;
 
 public static class MainUtility
 {
+    
+    public static readonly string
+        OrgUrl = MainApp.WwwUrl + "/org/",
+        ItemUrl = MainApp.WwwUrl + "/item/";
+
     /// <summary>
     /// based since 2020
     /// </summary>

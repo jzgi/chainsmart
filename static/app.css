@@ -35,7 +35,7 @@ mark.state-4 {
 .qtyselect {
     vertical-align: middle;
     display: inline-flex;
-    background-color: #ededed;
+    background-color: #f8f8f8;
     color: #333;
     height: auto !important;
     box-sizing: border-box;

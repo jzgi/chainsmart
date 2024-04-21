@@ -74,7 +74,7 @@ public class MktlyAdWork : AdWork<MktlyAdVarWork>
         var o = new Ad
         {
             name = org.name,
-            typ = org.tagtyp,
+            typ = org.tag,
             created = DateTime.Now,
             creator = prin.name,
             orgid = org.id,
