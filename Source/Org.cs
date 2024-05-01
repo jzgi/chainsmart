@@ -45,12 +45,11 @@ public class Org : Entity, ITwin<int>, IFolderable
     public static readonly Map<short, string> Ranks = new()
     {
         { 0, null },
-        { 1, "B" },
-        { 2, "BB" },
-        { 3, "BBB" },
-        { 4, "A" },
-        { 5, "AA" },
-        { 6, "AAA" },
+        { 1, "★" },
+        { 2, "★★" },
+        { 3, "★★★" },
+        { 4, "★★★★" },
+        { 5, "★★★★★" },
     };
 
 
@@ -103,8 +102,6 @@ public class Org : Entity, ITwin<int>, IFolderable
     internal short sym;
     internal short tag;
     internal short env;
-    internal int[] ties; // ties to other orgs
-
 
     internal bool icon;
     internal bool pic;
@@ -157,7 +154,6 @@ public class Org : Entity, ITwin<int>, IFolderable
                 {
                     s.Get(nameof(openat), ref openat);
                     s.Get(nameof(closeat), ref closeat);
-                    s.Get(nameof(ties), ref ties);
                     s.Get(nameof(icon), ref icon);
                     s.Get(nameof(pic), ref pic);
                     s.Get(nameof(m1), ref m1);
@@ -217,7 +213,6 @@ public class Org : Entity, ITwin<int>, IFolderable
                 {
                     s.Put(nameof(openat), openat);
                     s.Put(nameof(closeat), closeat);
-                    s.Put(nameof(ties), ties);
                     s.Put(nameof(icon), icon);
                     s.Put(nameof(pic), pic);
                     s.Put(nameof(m1), m1);
@@ -295,21 +290,10 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsLink => addr?.IndexOf('/') >= 0;
 
+    public bool IsOrdinary => !IsTopOrg && !IsLink;
+
     public string Name => name;
 
-    private string title;
-
-    public string Title
-    {
-        get
-        {
-            if (title == null)
-            {
-                Interlocked.CompareExchange(ref title, string.IsNullOrEmpty(tel) ? name : name + "&nbsp;<a class=\"uk-icon-button uk-light uk-circle\" href=\"tel:" + tel + "\">☏</a>", null);
-            }
-            return title;
-        }
-    }
 
     public bool IsSelf => (style & STY_SLF) == STY_SLF;
 

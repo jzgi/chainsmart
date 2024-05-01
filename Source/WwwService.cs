@@ -84,8 +84,8 @@ public class WwwService : MainService
             h._ARTICLE();
 
             string tel = Application.CustomConfig[nameof(tel)];
-            h.BOTTOMBAR_(large: true, css: "uk-col uk-flex-center uk-flex-middle");
-            h.SPAN_(css: "uk-label").ICON("receiver").SP().SPAN(tel)._SPAN().A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
+            h.BOTTOMBAR_(css: "uk-flex-between uk-padding");
+            h.SPAN_(css: "uk-label uk-padding").ICON("receiver").SP().SPAN(tel)._SPAN().A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
         }, true, 720, title: Application.Nodal.name + "市场", onload: "fixAll();");
     }

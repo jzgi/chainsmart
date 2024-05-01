@@ -24,11 +24,11 @@ public abstract class UserWork<V> : WebWork where V : UserVarWork, new()
 
             if (o.icon)
             {
-                h.PIC_("uk-width-1-6").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
+                h.PIC_("uk-width-tiny").T(MainApp.WwwUrl).T("/user/").T(o.id).T("/icon")._PIC();
             }
             else
             {
-                h.PIC("/void.webp", css: "uk-width-1-6");
+                h.PIC("/void.webp", css: "uk-width-tiny");
             }
 
             h.ASIDE_();

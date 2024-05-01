@@ -9,11 +9,11 @@
 }
 
 .fprice {
-    color: #000;
+    color: #7daa1d;
 }
 
 .fprice.vip {
-    color: #7daa1d;
+    color: #faa05a;
 }
 
 button output {
@@ -51,7 +51,7 @@ mark.state-4 {
 
 .qtyselect.uk-active {
     color: #fff;
-    background-color: #999;
+    background-color: #f9473e;
 }
 output.subtotal {
     flex: 1;
@@ -61,7 +61,7 @@ output.subtotal {
     padding-right: 4px;
     max-width: 100%;
     height: 100%;
-    background-color: #f59604;
+    background-color: #666;
     color: #fff;
 }
 

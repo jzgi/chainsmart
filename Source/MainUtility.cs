@@ -185,7 +185,7 @@ public static class MainUtility
 
     public static HtmlBuilder ATEL(this HtmlBuilder h, string tel = null, string css = null)
     {
-        h.T("<a uk-icon=\"icon: receiver; ratio: 2\" class=\"uk-icon-link");
+        h.T("<a uk-icon=\"receiver\" class=\"uk-icon-button uk-light uk-circle");
         if (css != null)
         {
             h.T(' ');

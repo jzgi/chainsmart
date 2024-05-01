@@ -35,7 +35,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.WholeName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, css: "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR((mktly ? "/mktly/" : "/suply/"), o.Key, "/", icon: "link-external")._SPAN()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_(mktly ? "/mktly/" : "/suply/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link-external")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -329,9 +329,9 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.name).SPAN(Org.Statuses[o.status], "uk-badge")._HEADER();
+            h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().SPAN_("uk-margin-auto-left").BUTTONVAR("/mktly/", o.Key, "/", icon: "link")._SPAN()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_("/mktly/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link-external")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -471,7 +471,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                 h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().SELECT("输送模式", nameof(o.style), o.style,  Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
+                h.LI_().SELECT("输送模式", nameof(o.style), o.style, Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
@@ -493,88 +493,6 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             });
 
             wc.GivePane(201); // created
-        }
-    }
-}
-
-[MgtAuthorize(Org.TYP_SRC)]
-[Ui("关联")]
-public class SrclyTieWork : OrgWork<SuplyTieVarWork>
-{
-    [Ui(status: 1), Tool(Anchor)]
-    public void @default(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-
-        Org[] arr = null;
-        if (org.ties != null)
-        {
-            arr = GrabTwinArray<int, Org>(0, filter: x => org.ties.Contains(x.id));
-        }
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("尚无关联的销售主体");
-                return;
-            }
-
-            MainGrid(h, arr, prin, false);
-        }, false, 6);
-    }
-
-    [MgtAuthorize(Org.TYP_SRC, User.ROL_MGT)]
-    [Ui("添加", "添加销售渠道", icon: "plus"), Tool(ButtonOpen)]
-    public async Task add(WebContext wc, int cmd)
-    {
-        var org = wc[-1].As<Org>();
-        int orgid;
-
-        if (wc.IsGet)
-        {
-            string tel = wc.Query[nameof(tel)];
-
-            wc.GivePane(200, h =>
-            {
-                h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().TEXT("联系电话", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(add), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
-                h._FIELDSUL();
-
-                if (cmd == 1) // search user
-                {
-                    var arr = GrabTwinArray<int, Org>(0, filter: x => x.tel == tel);
-                    h.FIELDSUL_();
-
-                    h.RADIOSET(nameof(orgid), 0, arr);
-
-                    h._FIELDSUL();
-                    h.BOTTOMBAR_().BUTTON("确认", nameof(add), 2)._BOTTOMBAR();
-                }
-                h._FORM();
-            });
-        }
-        else // POST
-        {
-            var f = await wc.ReadAsync<Form>();
-            orgid = f[nameof(orgid)];
-            var other = GrabTwin<int, Org>(orgid);
-            lock (org)
-            {
-                org.ties = org.ties.AddOf(orgid);
-
-                // update the opposite org
-                other.ties = other.ties.AddOf(org.id);
-            }
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs SET ties = @1 WHERE id = @2; UPDATE orgs SET ties = @3 WHERE id = @4");
-            await dc.ExecuteAsync(p => p.Set(org.ties).Set(org.id).Set(other.ties).Set(orgid));
-
-            wc.GivePane(200); // ok
         }
     }
 }

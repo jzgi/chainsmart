@@ -11,7 +11,7 @@ using static ChainFX.Entity;
 namespace ChainSmart;
 
 [UserAuthenticate(OmitDefault = true)]
-public class PublyVarWork : ItemWork<PubItemVarWork>
+public class PublyVarWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>
     /// The home for a shop.
@@ -41,18 +41,27 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 {
                     h.PIC_("/void-m.webp");
                 }
-
-                if (!org.IsOked)
+                if (!string.IsNullOrEmpty(org.tip))
                 {
-                    h.ALERT("商户已下线", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
-                    return;
-                }
-                if (org.AsMkt && !org.IsOpen(DateTime.Now.TimeOfDay))
-                {
-                    h.ALERT("商户已打烊，订单待后处理", icon: "bell", css: "uk-position-bottom uk-overlay uk-alert-primary");
+                    h.ALERT(org.tip, css: "uk-position-bottom uk-overlay uk-alert-primary");
                 }
                 h._PIC();
             }
+
+            // sticky info header belt
+            h.T("<section uk-sticky class=\"uk-card-footer\">");
+            if (!org.IsOked)
+            {
+                h.SPAN_("uk-label-warning").ICON("bell").SP().T("商户已下线")._SPAN();
+                return;
+            }
+            var open = org.IsOpen(DateTime.Now.TimeOfDay);
+            if (org.AsMkt)
+            {
+                h.SPAN_(css: open ? "uk-label-success" : "uk-label-warning").ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
+            }
+            h.SPAN_("uk-margin-auto-left").ATEL(org.tel)._SPAN();
+            h.T("</section>");
 
             if (arr == null)
             {
@@ -163,7 +172,7 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
             h._BOTTOMBAR();
 
             h._FORM();
-        }, true, arr == null ? 720 : 120, title: org.Title, onload: "fixAll(); buyRecalc();");
+        }, true, arr == null ? 720 : 120, title: org.Name, onload: "fixAll(); buyRecalc();");
     }
 
     public async Task buy(WebContext wc)
@@ -322,10 +331,6 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                 {
                     h.PIC_("/void.webp");
                 }
-                if (org.tip != null)
-                {
-                    h.ALERT(org.tip, icon: "home", css: "uk-position-bottom uk-overlay uk-alert-primary");
-                }
                 h._PIC();
             }
 
@@ -342,22 +347,34 @@ public class PublyVarWork : ItemWork<PubItemVarWork>
                     }
                     else
                     {
-                        h.ADIALOG_("/", m.Key, "/", MOD_OPEN, false, tip: m.Title, inactive: !open, "uk-card-body uk-flex");
+                        h.ADIALOG_("/", m.Key, "/", MOD_OPEN, false, tip: m.Name, inactive: !open, "uk-card-body uk-flex");
                     }
 
                     if (m.icon)
                     {
-                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5", circle: true);
+                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5");
                     }
                     else
                     {
-                        h.PIC("/void.webp", css: "uk-width-1-5", circle: true);
+                        h.PIC("/void.webp", css: "uk-width-1-5");
                     }
 
                     h.ASIDE_();
-                    h.HEADER_().H4(m.Name).SPAN(m.IsLink ? string.Empty : open ? "营业" : "休息", css: "uk-badge uk-badge-success")._HEADER();
+                    h.HEADER_().H4(m.Name).SPAN_(css: "uk-badge");
+                    if (m.IsOrdinary && !string.IsNullOrEmpty(m.addr))
+                    {
+                        h.MARK(m.addr);
+                    }
+                    h._SPAN()._HEADER();
+
                     h.Q(m.tip, "uk-width-expand");
-                    h.FOOTER_().SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+
+                    h.FOOTER_().SPAN_("uk-margin-auto-left");
+                    if (m.rank > 0)
+                    {
+                        h.SPAN(Org.Ranks[m.rank], "uk-label");
+                    }
+                    h._SPAN()._FOOTER();
                     h._ASIDE();
 
                     h._A();

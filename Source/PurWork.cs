@@ -70,7 +70,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
             h.TOOLBAR(subscript: hubid_cat);
             if (arr == null)
             {
-                h.ALERT("尚无新采购订单");
+                h.ALERT("尚无新的云仓采购");
                 return;
             }
 
@@ -92,7 +92,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已发货的订单");
+                h.ALERT("尚无已发货的采购");
                 return;
             }
 
@@ -114,7 +114,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无已收货的订单");
+                h.ALERT("尚无已收货的采购");
                 return;
             }
 
@@ -137,7 +137,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已撤销的订单");
+                h.ALERT("尚无已撤销的采购");
                 return;
             }
 
@@ -150,7 +150,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
     [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
-    [Ui("云仓便捷", "新建云仓便捷采购", icon: "plus", status: 1), Tool(ButtonOpen)]
+    [Ui("下单", "云仓便捷采购", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
         var cats = Grab<short, Cat>();
@@ -164,7 +164,7 @@ public class MchlyPurWork : PurWork<StllyPurVarWork>
 
         const short Msk = 0xff | Entity.MSK_EXTRA;
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty, Msk, alias: "o").T(", d.stock FROM lots_vw o, lotinvs d WHERE o.id = d.lotid AND d.hubid = @1 AND o.status = 4 AND typ = 1 AND o.cat & @2 > 0");
+        dc.Sql("SELECT ").collst(Item.Empty, Msk, alias: "o").T(", d.stock FROM items_vw o, lots d WHERE o.id = d.itemid AND d.hubid = @1 AND o.status = 4 AND o.cat & @2 > 0");
         var arr = await dc.QueryAsync<Item>(p => p.Set(hubid).Set(cat), Msk);
 
         wc.GivePage(200, h =>

@@ -10,7 +10,7 @@ var WCPay = function (data, sup) {
                 if (sup) {
                     alert('下单成功！');
                 } else {
-                    alert('下单成功！可查看「我的个人账号」');
+                    alert('下单成功！请看「我的个人账号」');
                 }
                 // close without refresh
                 window.parent.closeUp(false);
@@ -41,12 +41,12 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, max, stock) {
     }
 
     // fill fprice
-    let out_fprice = trig.querySelector('.fprice');
+    let ofprice = trig.querySelector('.fprice');
     if (vip || off > 0) {
-        out_fprice.value = (price - off).toFixed(2);
-        out_fprice.classList.add('vip');
+        ofprice.value = (price - off).toFixed(2);
+        ofprice.classList.add('vip');
     } else {
-        out_fprice.value = price.toFixed(2);
+        ofprice.value = price.toFixed(2);
     }
 
     // fill qty options
@@ -643,7 +643,13 @@ function formRefresh(trig, evt) {
 const
     SCRIPT = 1, CONFIRM = 2, CROP = 4, PROMPT = 8, SHOW = 16, OPEN = 32, ASTACK = 64;
 
-function dialog(trig, mode, pick, title) {
+function dialog(trig, mode, pick, title, event) {
+
+    if (event) {
+        event.preventDefault(); 
+        event.stopPropagation(); 
+    }
+
     var modalc =
         mode == PROMPT ? ' uk-modal-small' :
             mode == OPEN ? ' uk-modal-large' :

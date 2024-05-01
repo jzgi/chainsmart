@@ -21,7 +21,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-6");
+            h.PIC("/void.webp", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -41,7 +41,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-6");
+            h.PIC("/void.webp", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -158,14 +158,14 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 [Ui("库存")]
 public class HublyLotWork : LotWork<HublyLotVarWork>
 {
-    [Ui(status: 1), Tool(Anchor)]
+    [Ui("库存", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE hubid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM lots WHERE hubid = @1 AND status > 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -183,27 +183,4 @@ public class HublyLotWork : LotWork<HublyLotVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已作废", icon: "trash", status: 2), Tool(Anchor)]
-    public async Task @void(WebContext wc, int page)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM lotops WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR();
-
-            if (arr == null)
-            {
-                h.ALERT("尚无已作废的调运操作");
-                return;
-            }
-
-            MainGrid(h, arr);
-            h.PAGINATION(arr?.Length == 20);
-        }, false, 6);
-    }
 }

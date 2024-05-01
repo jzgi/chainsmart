@@ -17,8 +17,8 @@ public abstract class MgtVarWork : WebWork
         {
             h.TOPBARXL_();
 
-            h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1_().T(org.name).SP().SUB_().T(org.id, 5)._SUB()._H1();
+            h.HEADER_("uk-width-expand uk-col uk-padding-small-left");
+            h.H1_().T(org.name)._H1();
             if (org.AsEst)
             {
                 h.H2(org.Whole);
@@ -102,8 +102,6 @@ public class MktlyVarWork : MgtVarWork
 
 
         CreateWork<ShplyItemWork>("sitem", header: "商户");
-
-        CreateWork<ShplyBatWork>("sbat");
 
         CreateWork<ShplyBuyWork>("sbuy");
 
@@ -237,11 +235,9 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SupSrclyBatWork>("sbat", header: "供应源");
+        CreateWork<SrclyBatWork>("sbat", header: "供应源");
 
         CreateWork<SrclyCodeWork>("scode");
-
-        CreateWork<SrclyTieWork>("stie");
 
         // hub
 
@@ -251,7 +247,7 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<HublyLotWork>("hlot");
 
-        CreateWork<HublyBatWork>("hjob");
+        CreateWork<HublyBatWork>("hbat");
 
         CreateWork<HublyTestWork>("htest");
     }

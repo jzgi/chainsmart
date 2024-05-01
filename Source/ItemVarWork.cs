@@ -9,8 +9,11 @@ using static ChainSmart.MainUtility;
 
 namespace ChainSmart;
 
-public class ItemVarWork : WebWork
+public abstract class ItemVarWork : WebWork
 {
+    internal static readonly string[] SubnavActs = { string.Empty, nameof(bat) };
+
+    [Ui("商品信息")]
     public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
@@ -24,6 +27,8 @@ public class ItemVarWork : WebWork
 
         wc.GivePane(200, h =>
         {
+            h.SUBNAV(SubnavActs);
+
             var cats = Grab<short, Cat>();
 
             h.UL_("uk-list uk-list-divider");
@@ -44,6 +49,10 @@ public class ItemVarWork : WebWork
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         }, false, 6);
     }
+
+    [Ui("货管", status: 0x100)]
+    public abstract Task bat(WebContext wc);
+
 
     protected async Task doimg(WebContext wc, string col, bool shared, int maxage)
     {
@@ -80,7 +89,7 @@ public class ItemVarWork : WebWork
     }
 }
 
-public class PubItemVarWork : ItemVarWork
+public class PublyItemVarWork : ItemVarWork
 {
     public override async Task @default(WebContext wc)
     {
@@ -177,6 +186,11 @@ public class PubItemVarWork : ItemVarWork
         }, true, 900);
     }
 
+    public override Task bat(WebContext wc)
+    {
+        throw new NotImplementedException();
+    }
+
     const int MAXAGE = 3600 * 6;
 
     public async Task icon(WebContext wc)
@@ -192,6 +206,41 @@ public class PubItemVarWork : ItemVarWork
 
 public class ShplyItemVarWork : ItemVarWork
 {
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    public override async Task bat(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                h.SUBNAV(SubnavActs);
+
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true, status: 0x100);
+            }, false, 6);
+        }
+    }
+
+
     [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
@@ -324,10 +373,204 @@ public class ShplyItemVarWork : ItemVarWork
 
         wc.Give(204); // no content
     }
+
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [Ui(icon: "plus", status: 0x100), Tool(ButtonShow)]
+    public async Task inc(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            optyp = f[nameof(optyp)];
+            qty = f[nameof(qty)];
+
+            // if (!StockOp.IsAddOp(optyp))
+            // {
+            //     qty = -qty;
+            // }
+
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [Ui("产源到货", icon: "plus", status: 0x100), Tool(ButtonShow)]
+    public async Task src(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            optyp = f[nameof(optyp)];
+            qty = f[nameof(qty)];
+
+            // if (!StockOp.IsAddOp(optyp))
+            // {
+            //     qty = -qty;
+            // }
+
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+    [MgtAuthorize(Org.TYP_MCH, User.ROL_MGT)]
+    [Ui("云仓到货", icon: "plus", status: 0x100), Tool(ButtonShow)]
+    public async Task pur(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            optyp = f[nameof(optyp)];
+            qty = f[nameof(qty)];
+
+            // if (!StockOp.IsAddOp(optyp))
+            // {
+            //     qty = -qty;
+            // }
+
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [Ui(icon: "minus", status: 0x100), Tool(ButtonShow)]
+    public async Task dec(WebContext wc)
+    {
+    }
 }
 
 public class SuplyItemVarWork : ItemVarWork
 {
+    [MgtAuthorize(Org.TYP_SUP, User.ROL_OPN)]
+    public override async Task bat(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                h.SUBNAV(SubnavActs);
+
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true, status: 0x100);
+            }, false, 6);
+        }
+    }
+
+
     [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
     [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
@@ -464,5 +707,115 @@ public class SuplyItemVarWork : ItemVarWork
         }
 
         wc.Give(204); // no content
+    }
+
+
+    [MgtAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [Ui(icon: "plus", status: 0x100), Tool(ButtonShow)]
+    public async Task inc(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            optyp = f[nameof(optyp)];
+            qty = f[nameof(qty)];
+
+            // if (!StockOp.IsAddOp(optyp))
+            // {
+            //     qty = -qty;
+            // }
+
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+    [MgtAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [Ui("产源到货", icon: "plus", status: 0x100), Tool(ButtonShow)]
+    public async Task src(WebContext wc)
+    {
+        int itemid = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short optyp = 0;
+        int qty = 0;
+        string tip = null;
+
+        if (wc.IsGet)
+        {
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE orgid = @1 AND itemid = @2 ORDER BY id DESC LIMIT 10");
+            var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(itemid));
+
+            wc.GivePane(200, h =>
+            {
+                if (arr == null)
+                {
+                    h.ALERT("尚无货管单");
+                    return;
+                }
+
+                h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
+
+                h.TOOLBAR(bottom: true);
+            }, false, 6);
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            optyp = f[nameof(optyp)];
+            qty = f[nameof(qty)];
+
+            // if (!StockOp.IsAddOp(optyp))
+            // {
+            //     qty = -qty;
+            // }
+
+            // update db
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET ops = (CASE WHEN ops[12] IS NULL THEN ops ELSE ops[2:] END) || ROW(@1, @2, (stock + @2), @3, @4, NULL)::stockop, stock = stock + @2 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(qty).Set(optyp).Set(prin.name).Set(itemid).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+
+    [MgtAuthorize(Org.TYP_SUP, User.ROL_MGT)]
+    [Ui(icon: "minus", status: 0x100), Tool(ButtonShow)]
+    public async Task dec(WebContext wc)
+    {
     }
 }

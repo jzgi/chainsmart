@@ -22,8 +22,9 @@ public abstract class BatVarWork : WebWork
         {
             h.UL_("uk-list uk-list-divider");
 
-            h.LI_().FIELD(o.typ < Bat.TYP_DEC ? "补仓来由" : "减仓原由", o.typ, Bat.Typs)._LI();
+            h.LI_().FIELD("操作类型", o.typ, Bat.Typs)._LI();
             h.LI_().FIELD("商品", o.name)._LI();
+            h.LI_().FIELD2("数量", o.qty, o.unit)._LI();
             if (o.srcid > 0)
             {
                 var src = GrabTwin<int, Org>(o.srcid);
@@ -50,7 +51,6 @@ public abstract class BatVarWork : WebWork
 
 public class PublyBatVarWork : BatVarWork
 {
-
     public override async Task @default(WebContext wc)
     {
         int id = wc[0];
@@ -199,7 +199,7 @@ public class ShplyBatVarWork : BatVarWork
 
 // supplier or source
 //
-public class SuplyBatVarWork : BatVarWork
+public class SrclyBatVarWork : BatVarWork
 {
     [MgtAuthorize(0, User.ROL_OPN)]
     [Ui(tip: "修改或调整消息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]

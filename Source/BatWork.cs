@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -20,13 +19,10 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
 
     protected static void MainGrid(HtmlBuilder h, IEnumerable<Bat> arr)
     {
-        var tags = Grab<short, Tag>();
-
-
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC(ItemUrl, o.itemid, "/icon", css: "uk-width-1-6");
+            h.PIC(ItemUrl, o.itemid, "/icon", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -120,13 +116,13 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
 
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
     [Ui("补仓", "新建补仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task add(WebContext wc, int typ)
+    public async Task inc(WebContext wc, int typ)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
         if (typ == 0)
         {
-            typ = 1;
+            wc.Subscript = typ = 1;
         }
 
         var o = new Bat
@@ -154,12 +150,10 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("补仓来由", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k <= Bat.TYP_PUR, onchange: "return goto('add-' + this.value, event);")._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k <= Bat.TYP_PUR, onchange: "return goto('inc-' + this.value, event);")._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, items, required: true)._LI();
                 if (typ == Bat.TYP_SRC)
                 {
-                    var srcs = org.ties == null ? null : GrabTwinArray<int, Org>(0, filter: x => Enumerable.Contains(org.ties, x.id));
-                    h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs, required: true)._LI();
                 }
                 else if (typ == Bat.TYP_PUR)
                 {
@@ -168,7 +162,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(inc))._FORM();
             });
         }
         else // POST
@@ -179,7 +173,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
             await wc.ReadObjectAsync(msk, o);
 
             using var dc = NewDbContext();
-            // retrive name
+            // retrive item name
             o.name = (string)await dc.ScalarAsync("SELECT name FROM items_vw WHERE id = @1", p => p.Set(o.itemid));
             // insert
             dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
@@ -191,7 +185,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
 
     [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
     [Ui("减仓", "新建减仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task cut(WebContext wc)
+    public async Task dec(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -213,12 +207,12 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("减仓原由", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k >= Bat.TYP_DEC)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k >= Bat.TYP_DEC)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, items)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(inc))._FORM();
             });
         }
         else // POST
@@ -239,7 +233,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
 
 [MgtAuthorize(Org.TYP_PRV)]
 [Ui("货管")]
-public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
+public class SrclyBatWork : BatWork<SrclyBatVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
@@ -266,15 +260,11 @@ public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
 
     [MgtAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("补仓", "新建补仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task add(WebContext wc)
+    public async Task inc(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
         Org[] srcs = null;
-        if (org.ties != null)
-        {
-            srcs = GrabTwinArray<int, Org>(0, filter: x => Enumerable.Contains(org.ties, x.id));
-        }
         var hubs = GrabTwinArray<int, Org>(0, filter: x => x.IsHub);
 
         var o = new Bat
@@ -295,14 +285,14 @@ public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k == 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k == 1)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
                 h.LI_().SELECT("产源", nameof(o.srcid), o.srcid, srcs)._LI();
                 h.LI_().SELECT("品控云仓", nameof(o.hubid), o.hubid, hubs)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(inc))._FORM();
             });
         }
         else // POST
@@ -322,7 +312,7 @@ public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
 
     [MgtAuthorize(Org.TYP_SUP, User.ROL_OPN)]
     [Ui("减仓", "新建减仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
-    public async Task cut(WebContext wc)
+    public async Task dec(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -345,13 +335,13 @@ public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, v) => k > 1)._LI();
+                h.LI_().SELECT("操作类型", nameof(o.typ), o.typ, Bat.Typs, filter: (k, _) => k > 1)._LI();
                 h.LI_().SELECT("商品", nameof(o.itemid), o.itemid, map)._LI();
                 h.LI_().SELECT("品控云仓", nameof(o.hubid), o.hubid, hubs)._LI();
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 9999)._LI();
                 h.LI_().TEXTAREA("附加说明", nameof(o.tip), o.tip, max: 40)._LI();
 
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(inc))._FORM();
             });
         }
         else // POST
@@ -371,7 +361,30 @@ public class SupSrclyBatWork : BatWork<SuplyBatVarWork>
 }
 
 [MgtAuthorize(Org.TYP_HUB)]
-[Ui("货流单")]
+[Ui("货管")]
 public class HublyBatWork : BatWork<HublyBatVarWork>
 {
+    [Ui(tip: "按批操作", status: 2), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE hubid = @1 AND status > 2 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+
+            if (arr == null)
+            {
+                h.ALERT("尚无已作废的调运操作");
+                return;
+            }
+
+            MainGrid(h, arr);
+            h.PAGINATION(arr?.Length == 20);
+        }, false, 6);
+    }
 }
