@@ -28,7 +28,6 @@ public class Item : Entity, IKeyable<int>
     internal string unit;
     internal string unitip;
     internal short unitx;
-    internal short cardinal;
     internal decimal price;
     internal decimal off;
     internal bool promo;
@@ -65,7 +64,6 @@ public class Item : Entity, IKeyable<int>
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
-            s.Get(nameof(cardinal), ref cardinal);
             s.Get(nameof(price), ref price);
             s.Get(nameof(off), ref off);
             s.Get(nameof(promo), ref promo);
@@ -107,7 +105,6 @@ public class Item : Entity, IKeyable<int>
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);
-            s.Put(nameof(cardinal), cardinal);
             s.Put(nameof(price), price);
             s.Put(nameof(off), off);
             s.Put(nameof(promo), promo);

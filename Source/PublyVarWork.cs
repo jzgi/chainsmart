@@ -14,7 +14,7 @@ namespace ChainSmart;
 public class PublyVarWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>
-    /// The home for a shop.
+    /// The home for a shop / merchant.
     /// </summary>
     public async Task @default(WebContext wc)
     {
@@ -52,13 +52,13 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             h.T("<section uk-sticky class=\"uk-card-footer\">");
             if (!org.IsOked)
             {
-                h.SPAN_("uk-label-warning").ICON("bell").SP().T("商户已下线")._SPAN();
+                h.SPAN_("uk-label uk-dark").ICON("bell").SP().T("商户已下线")._SPAN();
                 return;
             }
             var open = org.IsOpen(DateTime.Now.TimeOfDay);
             if (org.AsMkt)
             {
-                h.SPAN_(css: open ? "uk-label-success" : "uk-label-warning").ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
+                h.SPAN_(css: "uk-label uk-dark").ICON(open ? "star" : "bell").SP().T(open ? "营业中" : "休息中")._SPAN();
             }
             h.SPAN_("uk-margin-auto-left").ATEL(org.tel)._SPAN();
             h.T("</section>");
@@ -151,7 +151,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
             h.SECTION_(css: "uk-col uk-flex-middle uk-width-small");
             h.T("<output class=\"uk-label\" name=\"name\" cookie=\"name\"></output>");
-            h.T("<output class=\"uk-label uk-text-small\" name=\"tel\" cookie=\"tel\"></output>");
+            h.T("<output class=\"uk-label uk-text-xsmall\" name=\"tel\" cookie=\"tel\"></output>");
             h._SECTION();
 
             h.SECTION_(css: "uk-col uk-height-1-1 uk-flex-evenly");
@@ -159,12 +159,12 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             {
                 h.DIV_("uk-flex uk-width-1-1");
                 string area;
-                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '完整收货地址': '街道或小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
+                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '收货地址': '街道或小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
                 var (min, rate, max) = org.IsService ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
                 h.SPAN_("uk-width-expand uk-flex-center").T(org.IsService ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();
             }
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverage ? "完整收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverage ? "收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();

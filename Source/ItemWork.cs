@@ -59,7 +59,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 [Ui("商品")]
 public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 {
-    [Ui(status: 1), Tool(Anchor)]
+    [Ui("上线商品", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -70,7 +70,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(status: 1);
 
             if (arr == null)
             {
@@ -93,7 +93,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(status: 2);
             if (arr == null)
             {
                 h.ALERT("尚无下线商品");
@@ -115,7 +115,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR();
+            h.TOOLBAR(status: 4);
             if (arr == null)
             {
                 h.ALERT("尚无作废商品");
@@ -126,7 +126,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         }, false, 4);
     }
 
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
     [Ui("新建", tip: "新建商品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -140,7 +140,6 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
             orgid = org.id,
             created = DateTime.Now,
             creator = prin.name,
-            cardinal = 1,
             unit = "斤",
             unitx = 1,
             min = 1,
@@ -178,6 +177,19 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 
             wc.GivePane(200); // close dialog
         }
+    }
+
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [Ui("清空", tip: "清空作废项", icon: "minus-circle", status: 4), Tool(ButtonConfirm)]
+    public async Task empty(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("DELETE FROM items WHERE orgid = @1 AND status = 0");
+        await dc.ExecuteAsync(p => p.Set(org.id));
+
+        wc.Give(200);
     }
 }
 

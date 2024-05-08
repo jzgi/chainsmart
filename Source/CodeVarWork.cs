@@ -2,17 +2,19 @@
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using NPOI.SS.Formula.PTG;
+using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
+using static ChainSmart.MainUtility;
 
 namespace ChainSmart;
 
 public abstract class CodeVarWork : WebWork
 {
-    public async Task @default(WebContext wc)
+    public virtual async Task @default(WebContext wc)
     {
         int id = wc[0];
+        var tags = Grab<short, Tag>();
 
         using var dc = NewDbContext();
         dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1");
@@ -22,21 +24,152 @@ public abstract class CodeVarWork : WebWork
 
         wc.GivePane(200, h =>
         {
+            h.H4("基本", css: "uk-padding");
             h.UL_("uk-list uk-list-divider");
+            h.LI_().FIELD("组号", o.id, digits: 5)._LI();
+            h.LI_().FIELD("名称", o.name).FIELD("类型", o.typ, tags)._LI();
+            h.LI_().FIELD("申请方", org.name).FIELD("申请个数", o.num)._LI();
+            h.LI_().FIELD("备注", string.IsNullOrEmpty(o.tip) ? "无" : o.tip)._LI();
+            h.LI_().FIELD("起始号", o.nstart, digits: 7).FIELD("截止号", o.nend, digits: 7)._LI();
+            h._UL();
 
-            h.LI_().FIELD("名称", o.name)._LI();
-            h.LI_().FIELD("申请方", org.name)._LI();
-            h.LI_().FIELD("申请数量", o.num)._LI();
-            h.LI_().FIELD("附注", o.tip)._LI();
-            h.LI_().FIELD("起始号", o.nstart, digits: 8).FIELD("截止号", o.nend, digits: 8)._LI();
-
+            h.H4("状态", css: "uk-padding");
+            h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("状态", o.status, Code.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("提交", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发放", o.oker, o.oked, sep: "<br>")._LI();
-
             h._UL();
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         }, false, 6);
+    }
+}
+
+public class PublyCodeVarWork : CodeVarWork
+{
+    public override async Task @default(WebContext wc)
+    {
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1");
+        var o = await dc.QueryTopAsync<Code>(p => p.Set(id));
+        if (o == null)
+        {
+            wc.GivePage(200, h => { h.ALERT("无效的补仓单号"); });
+            return;
+        }
+
+        Org src = null;
+
+        wc.GivePage(200, h =>
+            {
+                h.TOPBARXL_();
+
+                h.HEADER_("uk-width-expand uk-col uk-padding-small-left").H1(src.name, css: "h1-lot")._HEADER();
+                if (src.icon)
+                {
+                    // h.PIC(ItemUrl, itm.id, "/icon", circle: true, css: "uk-width-small");
+                }
+                else
+                {
+                    h.PIC("/void.webp", circle: true, css: "uk-width-small");
+                }
+                h._TOPBARXL();
+
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H2("产品信息", "uk-card-header");
+                h.SECTION_("uk-card-body");
+
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("产品名", src.name)._LI();
+
+                h._UL();
+
+                if (src != null)
+                {
+                    h.UL_("uk-list uk-list-divider");
+                    h.LI_().FIELD("产源设施", src.name)._LI();
+                    h.LI_().FIELD(string.Empty, src.tip)._LI();
+                    // h.LI_().FIELD("等级", src.rank, Src.Ranks)._LI();
+                    h._UL();
+
+                    if (src.tip != null)
+                    {
+                        h.ALERT_().T(src.tip)._ALERT();
+                    }
+                    if (src.pic)
+                    {
+                        h.PIC(OrgUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m1)
+                    {
+                        h.PIC(OrgUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m2)
+                    {
+                        h.PIC(OrgUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m3)
+                    {
+                        h.PIC(OrgUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                    if (src.m4)
+                    {
+                        h.PIC(OrgUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                    }
+                }
+                h._SECTION();
+                h._ARTICLE();
+
+                h.ARTICLE_("uk-card uk-card-primary");
+                h.H2("批次检验", "uk-card-header");
+                h.SECTION_("uk-card-body");
+
+                h.UL_("uk-list uk-list-divider");
+                h.LI_().FIELD("批次编号", src.id, digits: 8)._LI();
+                // if (o.steo > 0 && o.nend > 0)
+                // {
+                //     h.LI_().FIELD2("批次溯源码", $"{o.steo:0000 0000}", $"{o.nend:0000 0000}", "－")._LI();
+                // }
+
+
+                // h.LI_().LABEL("本溯源码").SPAN($"{tracenum:0000 0000}", css: "uk-static uk-text-danger")._LI();
+                // if (o.TryGetStockOp(offset, out var v))
+                // {
+                //     h.LI_().LABEL("生效日期").SPAN(v.dt, css: "uk-static uk-text-danger")._LI();
+                // }
+                h._LI();
+                h._UL();
+
+                if (src.m1)
+                {
+                    h.PIC(ItemUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m2)
+                {
+                    h.PIC(ItemUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m3)
+                {
+                    h.PIC(ItemUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+                }
+                if (src.m4)
+                {
+                    h.PIC(ItemUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+                }
+
+                h._SECTION();
+                h._ARTICLE();
+
+
+                h.FOOTER_("uk-col uk-flex-middle uk-padding-large");
+                h.SPAN("金中关（北京）信息技术研究院", css: "uk-padding-small");
+                h.SPAN("江西同其成科技有限公司", css: "uk-padding-small");
+                h._FOOTER();
+            }, true, 3600, title:
+            "中惠农通产品溯源信息");
     }
 }
 
@@ -61,9 +194,8 @@ public class SrclyCodeVarWork : CodeVarWork
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, tags, filter: (k, _) => k == o.typ, required: true)._LI();
                 h.LI_().NUMBER("申请数量", nameof(o.num), o.num)._LI();
-                h.LI_().TEXTAREA("附注", nameof(o.tip), o.tip, max: 30)._LI();
+                h.LI_().TEXTAREA("备注", nameof(o.tip), o.tip, max: 30)._LI();
 
                 h._FIELDSUL().BOTTOMBAR_().BUTTON("确认", nameof(upd))._BOTTOMBAR();
                 h._FORM();
@@ -71,7 +203,7 @@ public class SrclyCodeVarWork : CodeVarWork
         }
         else // POST
         {
-            const short Msk = Code.MSK_EDIT | Code.MSK_TYP;
+            const short Msk = MSK_EDIT;
             var o = await wc.ReadObjectAsync(Msk, new Code
             {
                 created = DateTime.Now,

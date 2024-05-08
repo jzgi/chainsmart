@@ -11,14 +11,7 @@ public class Lot : Entity, IKeyable<int>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { 1, "进仓 ＋" },
-        { 2, "出仓 －" },
-        { 3, "盘盈 ＋" },
-        { 4, "盘亏 －" },
-        { 5, "增益 ＋" },
-        { 6, "损耗 －" },
-        { 7, "冲加 ＋" },
-        { 8, "冲减 －" },
+        { 0, "默认" },
     };
 
 

@@ -25,7 +25,7 @@ public class WwwService : MainService
 
         CreateWork<PublyItemWork>("item");
 
-        CreateWork<PublyBatWork>("bat");
+        CreateWork<PublyCodeWork>("code");
 
         CreateWork<MyWork>("my");
     }

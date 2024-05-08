@@ -10,22 +10,18 @@ public class Bat : Entity, IKeyable<int>
     public static readonly Bat Empty = new();
 
     public const short
-        TYP_INC = 1,
+        TYP_ADD = 1,
         TYP_SRC = 2,
         TYP_PUR = 3,
-        TYP_DEC = 4,
-        TYP_WST = 5,
-        TYP_LOS = 6;
+        TYP_SUB = 4;
 
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_INC, "改数 ＋" },
-        { TYP_SRC, "从产源调货 ＋" },
+        { TYP_ADD, "＋" },
+        { TYP_SRC, "产源到货 ＋" },
         { TYP_PUR, "云仓到货 ＋" },
-        { TYP_DEC, "改数 －" },
-        { TYP_WST, "损耗 －" },
-        { TYP_LOS, "盘亏 －" },
+        { TYP_SUB, "－" },
     };
 
 
@@ -50,14 +46,11 @@ public class Bat : Entity, IKeyable<int>
 
     internal int qty;
 
-    internal string unit;
+    internal int stock;
 
-    internal short tag; // tag type
-
-    internal int nstart;
+    internal int codeid;
 
     internal int nend;
-
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -77,12 +70,11 @@ public class Bat : Entity, IKeyable<int>
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(qty), ref qty);
-            s.Get(nameof(unit), ref unit);
+            s.Get(nameof(stock), ref stock);
         }
         if ((msk & MSK_LATE) == MSK_LATE)
         {
-            s.Get(nameof(tag), ref tag);
-            s.Get(nameof(nstart), ref nstart);
+            s.Get(nameof(codeid), ref codeid);
             s.Get(nameof(nend), ref nend);
         }
     }
@@ -107,12 +99,11 @@ public class Bat : Entity, IKeyable<int>
             if (hubid > 0) s.Put(nameof(hubid), hubid);
             else s.PutNull(nameof(hubid));
             s.Put(nameof(qty), qty);
-            s.Put(nameof(unit), unit);
+            s.Put(nameof(stock), stock);
         }
         if ((msk & MSK_LATE) == MSK_LATE)
         {
-            s.Put(nameof(tag), tag);
-            s.Put(nameof(nstart), nstart);
+            s.Put(nameof(codeid), codeid);
             s.Put(nameof(nend), nend);
         }
     }

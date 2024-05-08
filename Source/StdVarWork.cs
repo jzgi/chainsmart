@@ -87,7 +87,7 @@ public class AdmlyStdVarWork : StdVarWork
             h.LI_().FIELD("名称", o.name)._LI();
             h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("序号", o.idx)._LI();
-            h.LI_().FIELD("风格", o.style, descr.Styles)._LI();
+            h.LI_().FIELD("风格", o.style, Std.Styles)._LI();
             h.LI_().FIELD("状态", o.status, Entity.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 

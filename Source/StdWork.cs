@@ -32,7 +32,7 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
         {
             h.ADIALOG_(o.Key, "/-", sub, MOD_OPEN, false, tip: title, css: "uk-card-body uk-flex");
 
-            h.PIC("/void.webp", circle: true, css: "uk-width-1-6");
+            h.PIC("/void.webp", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
@@ -220,7 +220,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().SELECT("风格", nameof(o.style), o.style, descr.Styles)._LI();
+                h.LI_().SELECT("风格", nameof(o.style), o.style, Std.Styles)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: sub)._FORM();
             });

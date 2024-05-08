@@ -5,7 +5,7 @@ namespace ChainSmart;
 /// <summary>
 /// A standard definitive item..
 /// </summary>
-public class Std : Entity, IKeyable<short>, IFolderable
+public class Std : Entity, IKeyable<short>
 {
     public static readonly Std Empty = new();
 
@@ -15,25 +15,30 @@ public class Std : Entity, IKeyable<short>, IFolderable
     public static readonly Map<short, StdDescr> Descrs = new()
     {
         new StdDescr(
-            SUB_CAT, "品类", "cats", Cat.Styles
+            SUB_CAT, "品类", "cats"
         ),
         new StdDescr(
-            SUB_ENV, "环境", "envs", Env.Styles
+            SUB_ENV, "环境", "envs"
         ),
         new StdDescr(
-            SUB_TAG, "溯源", "tags", Tag.Styles
+            SUB_TAG, "溯源", "tags"
         ),
         new StdDescr(
-            SUB_SYM, "标志", "syms", Sym.Styles
+            SUB_SYM, "标志", "syms"
         ),
         new StdDescr(
-            SUB_CER, "认证", "cers", Cer.Styles
+            SUB_CER, "认证", "cers"
         ),
     };
 
     internal short idx;
 
     internal short style;
+
+    public static readonly Map<short, string> Styles = new()
+    {
+        { 0, "默认" }
+    };
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -68,14 +73,11 @@ public class StdDescr : IKeyable<short>
 
     readonly string dbtable;
 
-    readonly Map<short, string> styles;
-
-    public StdDescr(short sub, string title, string dbtable, Map<short, string> styles)
+    public StdDescr(short sub, string title, string dbtable)
     {
         this.sub = sub;
         this.title = title;
         this.dbtable = dbtable;
-        this.styles = styles;
     }
 
     public short Key => sub;
@@ -85,8 +87,6 @@ public class StdDescr : IKeyable<short>
     public string Title => title;
 
     public string DbTable => dbtable;
-
-    public Map<short, string> Styles => styles;
 }
 
 /// <summary>
@@ -94,10 +94,6 @@ public class StdDescr : IKeyable<short>
 /// </summary>
 public class Cat : Std
 {
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 0, "默认" }
-    };
 }
 
 /// <summary>
@@ -105,10 +101,6 @@ public class Cat : Std
 /// </summary>
 public class Env : Std
 {
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 0, "默认" }
-    };
 }
 
 /// <summary>
@@ -116,15 +108,6 @@ public class Env : Std
 /// </summary>
 public class Tag : Std
 {
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 1, "硬牌" },
-        { 2, "软牌" },
-        { 3, "贴标" },
-        { 4, "芯片" },
-    };
-
-    public override string ToString() => name + Styles[style];
 }
 
 /// <summary>
@@ -132,10 +115,6 @@ public class Tag : Std
 /// </summary>
 public class Sym : Std
 {
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 0, "默认" }
-    };
 }
 
 /// <summary>
@@ -143,8 +122,4 @@ public class Sym : Std
 /// </summary>
 public class Cer : Std
 {
-    public static readonly Map<short, string> Styles = new()
-    {
-        { 0, "默认" }
-    };
 }

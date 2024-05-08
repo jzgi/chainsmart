@@ -50,7 +50,7 @@ public class PublyOrgWork : OrgWork<PublyOrgVarWork>
 [Ui("成员机构")]
 public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 {
-    [Ui("市场", status: 1), Tool(Anchor)]
+    [Ui("市场机构", status: 1), Tool(Anchor)]
     public void @default(WebContext wc, int page)
     {
         var prin = (User)wc.Principal;
@@ -61,7 +61,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
             h.TOOLBAR(subscript: 1);
             if (arr == null)
             {
-                h.ALERT("尚无市场");
+                h.ALERT("尚无市场机构");
                 return;
             }
 
@@ -69,7 +69,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
         }, false, 6);
     }
 
-    [Ui("品控云仓", status: 2), Tool(Anchor)]
+    [Ui("供应机构", status: 2), Tool(Anchor)]
     public void hub(WebContext wc)
     {
         var prin = (User)wc.Principal;
@@ -80,7 +80,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
             h.TOOLBAR(subscript: 2);
             if (arr == null)
             {
-                h.ALERT("尚无品控云仓");
+                h.ALERT("尚无供应机构");
                 return;
             }
 
@@ -111,7 +111,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
 
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_(o.IsMkt ? "新建市场" : "新建品控云仓");
+                h.FORM_().FIELDSUL_(o.IsMkt ? "新建市场机构" : "新建供应机构");
 
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();

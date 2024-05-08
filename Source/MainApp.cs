@@ -29,7 +29,6 @@ public class MainApp : Application
         // db and caches and graphs
 
         MapCompositeDbType<BuyLn>();
-        MapCompositeDbType<Bat>();
 
         SetupCaches();
 

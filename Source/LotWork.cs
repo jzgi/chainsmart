@@ -26,7 +26,7 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.name);
 
-            h.SPAN(Bat.Statuses[o.status], "uk-badge");
+            h.SPAN(Lot.Statuses[o.status], "uk-badge");
             h._HEADER();
 
             h.Q(o.tip, "uk-width-expand");
@@ -36,25 +36,6 @@ public abstract class LotWork<V> : WebWork where V : LotVarWork, new()
         });
     }
 
-    protected static void MainGrid(HtmlBuilder h, IList<Bat> arr)
-    {
-        h.MAINGRID(arr, o =>
-        {
-            h.ADIALOG_(o.Key, "/", MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-tiny");
-
-            h.ASIDE_();
-            h.HEADER_().H4(o.name);
-
-            h.SPAN(Bat.Statuses[o.status], "uk-badge");
-            h._HEADER();
-
-            h.Q(o.tip, "uk-width-expand");
-            h._ASIDE();
-
-            h._A();
-        });
-    }
 }
 
 [MgtAuthorize(Org.TYP_SUP)]
@@ -92,8 +73,8 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM jobs WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
-        var arr = await dc.QueryAsync<Bat>(p => p.Set(org.id).Set(page));
+        dc.Sql("SELECT ").collst(Lot.Empty).T(" FROM jobs WHERE orgid = @1 AND status = 0 ORDER BY oked DESC limit 20 OFFSET @2 * 20");
+        var arr = await dc.QueryAsync<Lot>(p => p.Set(org.id).Set(page));
 
         wc.GivePage(200, h =>
         {
@@ -117,7 +98,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
 
-        var o = new Bat
+        var o = new Lot
         {
             // orgid = org.id,
             created = DateTime.Now,
@@ -129,7 +110,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Bat.Typs)._LI();
+                h.LI_().SELECT("类型", nameof(o.typ), o.typ, Lot.Typs)._LI();
                 h.LI_().TEXT("标题", nameof(o.name), o.name, max: 12)._LI();
                 // h.LI_().TEXTAREA("内容", nameof(o.content), o.content, max: 300)._LI();
                 h.LI_().TEXTAREA("注解", nameof(o.tip), o.tip, max: 40)._LI();
@@ -146,7 +127,7 @@ public class SuplyLotWork : LotWork<SuplyLotVarWork>
 
             // insert
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO lotops ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            dc.Sql("INSERT INTO lotops ").colset(Lot.Empty, msk)._VALUES_(Lot.Empty, msk);
             await dc.ExecuteAsync(p => m.Write(p, msk));
 
             wc.GivePane(200); // close dialog

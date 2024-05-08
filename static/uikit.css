@@ -659,7 +659,7 @@ a.uk-link-reset:hover,
     border-top: 1px solid #f2f2f2;
 }
 
-.uk-pane>.uk-list-divider>li:nth-child(n+2) {
+.uk-pane .uk-list-divider>li:nth-child(n+2) {
     border-top: 1px solid #fff;
 }
 
@@ -1007,9 +1007,9 @@ button.uk-icon:not(:disabled) {
     height: 36px;
     margin: 0 4px;
     border: none;
-    background: inherit;
     vertical-align: middle;
-    color: #333;
+    background-color: rgb(249 71 62 / 0.10);
+    color: #f9473e;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -1022,40 +1022,15 @@ button.uk-icon:not(:disabled) {
     height: 28px;
 }
 
-.uk-icon-button.uk-light {
-    background-color: rgb(249 71 62 / 0.10);
-    color: #f9473e;
-}
-
 .uk-icon-button.uk-danger {
     background-color: #f9473e;
     color: #fff;
 }
 
 .uk-icon-button.uk-danger:hover {
-    background-color: #dd4763;
+    background-color: #f9473e;
     color: #fff;
 }
-
-.uk-icon-button:hover,
-.uk-icon-button:focus {
-    background-color: #f2f2f2;
-    color: #f9473e;
-    outline: none;
-}
-
-.uk-icon-button:active,
-.uk-icon-button.uk-active {
-    background-color: #999;
-    color: #f9473e;
-}
-
-.uk-icon-button:active.uk-light,
-.uk-icon-button.uk-active.uk-light {
-    background-color: #fff;
-    color: #f9473e;
-}
-
 
 .uk-notification {
     /* 1 */
@@ -1337,6 +1312,7 @@ button.uk-icon:not(:disabled) {
 form legend {
     text-transform: uppercase;
     color: #333;
+    width: 100%;
     min-height: 2.5rem;
     display: flex;
     align-items: center;
@@ -2240,7 +2216,6 @@ main.uk-grid {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(255 255 255 / 85%);
 }
 
 
@@ -2676,19 +2651,23 @@ a.uk-inactive {
 }
 
 .uk-label.uk-dark {
+    font-size: 0.875rem;;
     white-space: nowrap;
-    background-color: #000;
+    background-color: #999;
     color: #fff;
     display: flex;
     align-items: center;
+    padding: 4px 8px;
+    border-top-right-radius: 16px;
+    border-bottom-left-radius: 16px;
 }
 
 label.uk-label {
     display: flex;
     color: #7daa1d;
     margin-right: 0.25rem;
-    width: 4.75rem;
-    min-width: 4.75rem;
+    width: 4rem;
+    min-width: 4rem;
     justify-content: flex-end;
     height: 2rem;
 }
@@ -2703,12 +2682,12 @@ label>input[type="checkbox"] {
 }
 
 .uk-label-success {
-    color: #7daa1d;
-    border: 1px solid rgb(125 170 29 / 0.3);
-    background-color: rgb(125 170 29 / 0.1);    
+    font-size: 0.875rem;;
+    color: #fff;
+    background-color: #7daa1d;    
     padding: 4px 8px 4px 4px;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
 }
 
 .uk-label-warning {
@@ -5571,8 +5550,8 @@ ul.uk-nav-sub {
     text-decoration: none;
 }
 
-.uk-text-12px {
-    font-size: 0.75rem;
+.uk-text-xsmall {
+    font-size: x-small;
     font-weight: normal;
 }
 

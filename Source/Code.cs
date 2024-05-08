@@ -24,6 +24,7 @@ public class Code : Entity, IKeyable<int>
     internal int nstart;
     internal int nend;
 
+
     public override void Read(ISource s, short msk = 0xff)
     {
         base.Read(s, msk);
