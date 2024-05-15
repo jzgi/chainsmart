@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
@@ -33,7 +34,12 @@ public abstract class CodeWork<V> : WebWork where V : WebWork, new()
 
             var org = GrabTwin<int, Org>(o.orgid);
 
-            h.FOOTER_().SPAN_().T(o.nstart, digits: 7).T('-').T(o.nend, digits: 7)._SPAN().SPAN(org.name, css: "uk-margin-auto-left")._FOOTER();
+            h.FOOTER_();
+            if (o.nstart > 0 || o.nend > 0)
+            {
+                h.SPAN_().T(o.nstart, digits: 8).T('-').T(o.nend, digits: 8)._SPAN();
+            }
+            h.SPAN(org.name, css: "uk-margin-auto-left")._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -207,17 +213,20 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
     {
         var prin = (User)wc.Principal;
         var org = wc[-1].As<Org>();
-
         var tags = Grab<short, Tag>();
+        var now = DateTime.Now;
+
 
         var o = new Code
         {
             typ = org.tag,
-            name = org.name,
-            created = DateTime.Now,
+            name = tags[org.tag]?.name,
+            created = now,
             creator = prin.name,
+            adapted = now,
+            adapter = prin.name,
             orgid = org.id,
-            status = 1,
+            status = STU_ADAPTED,
         };
 
         if (wc.IsGet)
@@ -226,9 +235,10 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_().SELECT("类型", nameof(o.typ), o.typ, tags, filter: (k, _) => k == o.typ, required: true)._LI();
+                h.LI_().FIELD("码类型", o.typ, tags)._LI();
                 h.LI_().NUMBER("申请数量", nameof(o.num), o.num)._LI();
-                h.LI_().TEXTAREA("附注", nameof(o.tip), o.tip, max: 30)._LI();
+                h.LI_().TEXT("收件地址", nameof(o.addr), o.addr, max: 40)._LI();
+                h.LI_().TEXTAREA("备注", nameof(o.tip), o.tip, max: 30)._LI();
 
                 h._FIELDSUL().BOTTOMBAR_().BUTTON("确认", nameof(@new), 2)._BOTTOMBAR();
                 h._FORM();
@@ -236,13 +246,13 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
         }
         else // POST
         {
-            const short Msk = MSK_BORN | MSK_EDIT;
+            const short msk = MSK_BORN | MSK_EDIT;
 
-            await wc.ReadObjectAsync(Msk, instance: o);
+            await wc.ReadObjectAsync(msk, instance: o);
 
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO codes ").colset(Code.Empty, Msk)._VALUES_(o, Msk);
-            await dc.ExecuteAsync(p => o.Write(p, Msk));
+            dc.Sql("INSERT INTO codes ").colset(Code.Empty, msk)._VALUES_(o, msk);
+            await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // ok
         }
@@ -257,7 +267,7 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1 * 20");
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 1 LIMIT 20 OFFSET @1 * 20");
         var arr = await dc.QueryAsync<Code>(p => p.Set(page));
 
         wc.GivePage(200, h =>
@@ -273,7 +283,27 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已发放", icon: "arrow-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已发放", icon: "mail", status: 2), Tool(Anchor)]
+    public async Task adapted(WebContext wc, int page)
+    {
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE status = 2 LIMIT 20 OFFSET @1 * 20");
+        var arr = await dc.QueryAsync<Code>(p => p.Set(page * 20));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR(subscript: 2);
+            if (arr == null)
+            {
+                h.ALERT("尚无已发放");
+                return;
+            }
+            MainGrid(h, arr);
+            h.PAGINATION(arr.Length == 20);
+        }, false, 12);
+    }
+
+    [Ui(tip: "已用完", icon: "check", status: 2), Tool(Anchor)]
     public async Task oked(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -285,7 +315,7 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
             h.TOOLBAR(subscript: 2);
             if (arr == null)
             {
-                h.ALERT("尚无发放");
+                h.ALERT("尚无已用完");
                 return;
             }
             MainGrid(h, arr);

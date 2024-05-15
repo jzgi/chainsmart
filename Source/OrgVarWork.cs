@@ -10,7 +10,7 @@ namespace ChainSmart;
 
 public abstract class OrgVarWork : WebWork
 {
-    public void @default(WebContext wc)
+    public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var id = org?.id ?? wc[0]; // apply to both implicit and explicit cases
@@ -18,20 +18,27 @@ public abstract class OrgVarWork : WebWork
 
         var m = GrabTwin<int, Org>(id);
 
+        using var dc = NewDbContext();
+
+        dc.Sql("SELECT name FROM users WHERE ").T(m.AsSup ? "supid = @1 AND suply = 63" : "mktid = @1 AND mktly = 63");
+        await dc.QueryAsync(p => p.Set(id));
+        var mgrs = dc.ToStringArray();
+
         wc.GivePane(200, h =>
         {
             lock (m)
             {
+                h.H4("基本", css: "uk-padding");
                 h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("名称", m.name)._LI();
                 h.LI_().FIELD("简介语", m.tip)._LI();
                 if (m.AsFrt)
                 {
-                    h.LI_().FIELD("工商登记名", m.legal)._LI();
+                    h.LI_().FIELD("工商主体", m.legal)._LI();
                 }
                 if (m.AsEst)
                 {
-                    h.LI_().FIELD("总体名", m.whole)._LI();
+                    h.LI_().FIELD("整体名", m.whole)._LI();
                 }
                 h.LI_().FIELD("联系电话", m.tel);
                 if (m.regid > 0)
@@ -39,12 +46,10 @@ public abstract class OrgVarWork : WebWork
                     h.FIELD(m.AsMkt ? "版块" : "区域", regs[m.regid]);
                 }
                 h._LI();
-                h.LI_().FIELD(m.AsMkt ? "商号" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
-
+                h.LI_().FIELD(m.AsMkt ? "排位" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
                 if (m.AsEst || m.IsSrc)
                 {
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
-                    if (m.AsEst) h.LI_().FIELD("参数定义", m.specs)._LI();
                 }
                 if (m.AsFrt)
                 {
@@ -61,7 +66,12 @@ public abstract class OrgVarWork : WebWork
                     h.LI_().FIELD("品类", m.cat, cats).FIELD("环境", m.env, envs)._LI();
                     h.LI_().FIELD("标志", m.sym, syms).FIELD("溯源", m.tag, tags)._LI();
                 }
+                h._UL();
+
+                h.H4("状态", css: "uk-padding");
+                h.UL_("uk-list uk-list-divider");
                 h.LI_().FIELD("托管", m.trust)._LI();
+                h.LI_().FIELD("管理员", mgrs)._LI();
                 h.LI_().FIELD("状态", m.status, Statuses).FIELD2("创建", m.creator, m.created, sep: "<br>")._LI();
                 h.LI_().FIELD2("调整", m.adapter, m.adapted, sep: "<br>").FIELD2(m.IsVoid ? "删除" : "上线", m.oker, m.oked, sep: "<br>")._LI();
 
@@ -247,28 +257,40 @@ public class AdmlyEstVarWork : OrgVarWork
     [Ui(tip: "设置管理员", icon: "user"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
+        int orgid = wc[0];
+        var org = GrabTwin<int, Org>(orgid);
+
         if (wc.IsGet)
         {
             string tel = wc.Query[nameof(tel)];
+
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
+                h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
+
                 if (cmd == 1) // search user
                 {
                     using var dc = NewDbContext();
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                     var o = dc.QueryTop<User>(p => p.Set(tel));
+
                     if (o != null)
                     {
                         h.FIELDSUL_();
                         h.HIDDEN(nameof(o.id), o.id);
                         h.LI_().FIELD("用户名", o.name)._LI();
-                        if (o.supid > 0)
+                        
+                        if (org.AsSup && o.supid > 0)
                         {
-                            var org = GrabTwin<int, Org>(o.supid);
-                            h.LI_().FIELD2("现有权限", org.name, User.Roles[o.suply])._LI();
+                            var sup = GrabTwin<int, Org>(o.supid);
+                            h.LI_().FIELD2("现有权限", sup.name, User.Roles[o.suply])._LI();
+                        }
+                        else if (org.AsMkt && o.mktid > 0)
+                        {
+                            var mkt = GrabTwin<int, Org>(o.mktid);
+                            h.LI_().FIELD2("现有权限", mkt.name, User.Roles[o.mktly])._LI();
                         }
                         else
                         {
@@ -286,14 +308,20 @@ public class AdmlyEstVarWork : OrgVarWork
         }
         else // POST
         {
-            int orgid = wc[0];
             int id = (await wc.ReadAsync<Form>())[nameof(id)];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET orgid = @1, orgly = ").T(User.ROL_MGT).T(" WHERE id = @2");
+            if (org.AsSup)
+            {
+                dc.Sql("UPDATE users SET supid = @1, suply = ").T(User.ROL_MGT).T(" WHERE id = @2");
+            }
+            else
+            {
+                dc.Sql("UPDATE users SET mktid = @1, mktly = ").T(User.ROL_MGT).T(" WHERE id = @2");
+            }
             await dc.ExecuteAsync(p => p.Set(orgid).Set(id));
 
-            wc.GivePane(200); // ok
+            wc.GivePane(200); // send a closing pane
         }
     }
 
@@ -454,21 +482,26 @@ public class AdmlySupVarWork : OrgVarWork
     [Ui(tip: "设置管理员", icon: "user"), Tool(ButtonShow)]
     public async Task mgr(WebContext wc, int cmd)
     {
+        int orgid = wc[0];
+
         if (wc.IsGet)
         {
             string tel = wc.Query[nameof(tel)];
+
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
 
-                h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, css: "uk-button-secondary")._LI();
+                h.LI_("uk-flex").TEXT("手机号码", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true).BUTTON("查找", nameof(mgr), 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 h._FIELDSUL();
 
                 if (cmd == 1) // search user
                 {
                     using var dc = NewDbContext();
+
                     dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE tel = @1");
                     var o = dc.QueryTop<User>(p => p.Set(tel));
+
                     if (o != null)
                     {
                         h.FIELDSUL_();
@@ -495,14 +528,13 @@ public class AdmlySupVarWork : OrgVarWork
         }
         else // POST
         {
-            int orgid = wc[0];
             int id = (await wc.ReadAsync<Form>())[nameof(id)];
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE users SET orgid = @1, orgly = ").T(User.ROL_MGT).T(" WHERE id = @2");
+            dc.Sql("UPDATE users SET supid = @1, suply = ").T(User.ROL_MGT).T(" WHERE id = @2");
             await dc.ExecuteAsync(p => p.Set(orgid).Set(id));
 
-            wc.GivePane(200); // ok
+            wc.GivePane(200); // send a closing pane
         }
     }
 
@@ -744,8 +776,4 @@ public class MktlyOrgVarWork : OrgVarWork
 
         wc.Give(204); // no content
     }
-}
-
-public class SuplyTieVarWork : OrgVarWork
-{
 }

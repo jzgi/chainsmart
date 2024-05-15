@@ -39,7 +39,6 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
     }
 }
 
-
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("货管")]
 public class ShplyBatWork : BatWork<ShplyBatVarWork>
@@ -185,7 +184,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_PRV)]
+[MgtAuthorize(Org.TYP_SUP_)]
 [Ui("货管")]
 public class SrclyBatWork : BatWork<SrclyBatVarWork>
 {

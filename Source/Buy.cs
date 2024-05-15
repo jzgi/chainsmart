@@ -49,7 +49,7 @@ public class Buy : Entity, IKeyable<long>
     internal decimal ret;
     internal decimal refund;
     internal string refunder;
-    internal short cardinal;
+    internal short ship;
     internal short due;
 
     public Buy()
@@ -100,7 +100,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
             s.Get(nameof(refunder), ref refunder);
-            s.Get(nameof(cardinal), ref cardinal);
+            s.Get(nameof(ship), ref ship);
             s.Get(nameof(due), ref due);
         }
     }
@@ -138,7 +138,7 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
             s.Put(nameof(refunder), refunder);
-            s.Put(nameof(cardinal), cardinal);
+            s.Put(nameof(ship), ship);
             s.Put(nameof(due), due);
         }
     }

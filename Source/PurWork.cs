@@ -20,14 +20,14 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
 
 [MgtAuthorize(Org.TYP_MCH)]
 [Ui("采购")]
-public class MchlyPurWork : PurWork<StllyPurVarWork>
+public class MchlyPurWork : PurWork<MchlyPurVarWork>
 {
     protected override void OnCreate()
     {
         base.OnCreate();
 
-        // add sub work for purchase creation
-        CreateWork<StalyPurLotVarWork>("lot");
+        // purchase
+        CreateWork<MchlyPurLotVarWork>("lot");
     }
 
 

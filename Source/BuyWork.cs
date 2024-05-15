@@ -22,7 +22,7 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
 [Help("对所收的网售订单进行处理")]
 public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 {
-    static void MainGrid(HtmlBuilder h, IList<Buy> lst, bool pick = false)
+    static void MainGrid(HtmlBuilder h, IEnumerable<Buy> lst, bool pick = false)
     {
         h.MAINGRID(lst, o =>
         {

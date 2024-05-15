@@ -261,7 +261,7 @@ public class ShplyItemVarWork : ItemVarWork
     }
 
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-    [Ui(tip: "修改商品信息", icon: "pencil", status: 3), Tool(ButtonShow)]
+    [Ui(tip: "修改商品信息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
     {
         int itemid = wc[0];
@@ -315,22 +315,23 @@ public class ShplyItemVarWork : ItemVarWork
         }
     }
 
+
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-    [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
+    [Ui(tip: "图标", icon: "github-alt", status: 1 | 2), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
+    [Ui(tip: "照片", icon: "image", status: 1 | 2), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
-    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 1 | 2), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -476,7 +477,7 @@ public class ShplyItemVarWork : ItemVarWork
             wc.GivePane(200, h =>
             {
                 h.FORM_(css: "uk-list uk-list-divider").FIELDSUL_(wc.Action.Tip);
-                h.LI_().NUMBER("溯源批组", nameof(codeid), codeid, min: 1, max: 99999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                h.LI_().NUMBER("溯源档号", nameof(codeid), codeid, min: 1, max: 99999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
                 if (cmd > 0)
                 {
                     var src = GrabTwin<int, Org>(code.orgid);
@@ -556,7 +557,7 @@ public class ShplyItemVarWork : ItemVarWork
 
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
     [Ui(tip: "简单减数", icon: "minus", status: 8), Tool(ButtonShow)]
-    public async Task subst(WebContext wc)
+    public async Task subtr(WebContext wc)
     {
         int itemid = wc[0];
         var org = wc[-2].As<Org>();

@@ -17,7 +17,7 @@ public abstract class RegWork : WebWork
         {
             h.ADIALOG_(o.Key, "/", MOD_OPEN, false, css: "uk-card-body uk-flex");
 
-            h.PIC("/void.webp", css: "uk-width-1-5");
+            h.PIC("/void.webp", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();

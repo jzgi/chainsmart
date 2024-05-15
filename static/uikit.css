@@ -9,7 +9,7 @@ html {
 body {
     margin: 0;
     font-size: 0.9375rem;
-    background-color: #ededed;
+    background-color: rgb(125 170 29 / 0.2);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -27,7 +27,7 @@ body.uk-light {
 }
 
 body.uk-dark {
-    background-color: #000;
+    background-color: #666;
     color: white;
 }
 
@@ -656,11 +656,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #f2f2f2;
-}
-
-.uk-pane .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #fff;
+    border-top: 1px solid rgb(125 170 29 / 0.4);
 }
 
 /*
@@ -1008,8 +1004,6 @@ button.uk-icon:not(:disabled) {
     margin: 0 4px;
     border: none;
     vertical-align: middle;
-    background-color: rgb(249 71 62 / 0.10);
-    color: #f9473e;
     display: inline-flex;
     justify-content: center;
     align-items: center;
@@ -1017,17 +1011,19 @@ button.uk-icon:not(:disabled) {
     transition-property: color, background-color;
 }
 
+
+
 .uk-card-header .uk-icon-button {
     width: 28px;
     height: 28px;
 }
 
-.uk-icon-button.uk-danger {
-    background-color: #f9473e;
-    color: #fff;
+.uk-icon-button.uk-light {
+    color: #f9473e;
+    background-color: rgb(249 71 62 / 0.1);
 }
 
-.uk-icon-button.uk-danger:hover {
+.uk-icon-button.uk-light:hover {
     background-color: #f9473e;
     color: #fff;
 }
@@ -1887,8 +1883,8 @@ a.uk-button-primary:hover,
 a.uk-button-primary:focus,
 a.uk-button-primary:active,
 a.uk-button-primary.uk-active {
-    background-color: #f2f2f2;
-    color: #000;
+    background-color: rgb(125 170 29 / 0.2);
+    color: #7daa1d;
     border-top: 2px solid #f9473e;
     border-bottom: 2px solid transparent;
 }
@@ -3159,7 +3155,7 @@ ul.uk-nav-sub {
 .uk-subnav {
     display: flex;
     align-items: center;
-    font-weight: bold;
+    font-weight: 600;
     overflow-x: scroll;
     list-style: none;
 }

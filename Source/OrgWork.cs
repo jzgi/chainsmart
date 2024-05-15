@@ -35,7 +35,7 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             h.ASIDE_();
             h.HEADER_().H4(o.WholeName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, css: "uk-width-expand");
-            h.FOOTER_().BUTTONDIALOG_(mktly ? "/mktly/" : "/suply/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link-external")._BUTTON()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_(mktly ? "/mktly/" : "/suply/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("forward")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -331,7 +331,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().BUTTONDIALOG_("/mktly/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link-external")._BUTTON()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_("/mktly/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("forward")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();

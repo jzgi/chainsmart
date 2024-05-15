@@ -48,19 +48,20 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h._PIC();
             }
 
-            // sticky info header belt
+            // sticky info belt
             h.T("<section uk-sticky class=\"uk-card-footer\">");
             if (!org.IsOked)
             {
-                h.SPAN_("uk-label uk-dark").ICON("bell").SP().T("商户已下线")._SPAN();
+                h.SPAN_().ICON("bell").SP().T("商户已下线")._SPAN();
                 return;
             }
             var open = org.IsOpen(DateTime.Now.TimeOfDay);
             if (org.AsMkt)
             {
-                h.SPAN_(css: "uk-label uk-dark").ICON(open ? "star" : "bell").SP().T(open ? "营业中" : "休息中")._SPAN();
+                h.SPAN_().ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
             }
-            h.SPAN_("uk-margin-auto-left").ATEL(org.tel)._SPAN();
+            h.SPAN_("uk-margin-left").ICON("clock").SP().T(org.openat).T(" - ").T(org.closeat)._SPAN();
+            h.SPAN_("uk-margin-auto-left").T("联系商户").SP().ATEL(org.tel, css: "uk-light")._SPAN();
             h.T("</section>");
 
             if (arr == null)
@@ -159,7 +160,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             {
                 h.DIV_("uk-flex uk-width-1-1");
                 string area;
-                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '异地') ? '收货地址': '街道或小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
+                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '外地') ? '收货地址': '街道小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
                 var (min, rate, max) = org.IsService ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
                 h.SPAN_("uk-width-expand uk-flex-center").T(org.IsService ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();

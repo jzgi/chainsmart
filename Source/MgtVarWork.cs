@@ -43,7 +43,7 @@ public abstract class MgtVarWork : WebWork
     }
 
 
-    [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
+    [Ui("上线", "上线投入使用", status: 1 | 2), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
         var m = wc[0].As<Org>();
@@ -132,30 +132,8 @@ public class MktlyVarWork : MgtVarWork
         CreateWork<MktlyAdWork>("mad");
     }
 
-    [Ui(tip: "摊铺直通车", icon: "thumbnails", status: 7), Tool(ButtonShow)]
-    public void qrcode(WebContext wc)
-    {
-        var org = wc[0].As<Org>();
-
-        wc.GivePane(200, h =>
-        {
-            h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
-            h.QRCODE(MainApp.WwwUrl + "/" + org.parentid + "/" + org.id + "/", css: "uk-width-small");
-            h.SPAN(org.name);
-            h._NAV();
-
-            if (org.AsEst)
-            {
-                h.NAV_("uk-col uk-flex-middle uk-margin-large-top");
-                h.QRCODE(MainApp.WwwUrl + "/" + org.id + "/", css: "uk-width-small");
-                h.SPAN(org.Whole);
-                h._NAV();
-            }
-        }, false, 720);
-    }
-
     [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
-    [Ui("设置", "设置基本信息和参数", status: 7), Tool(ButtonShow)]
+    [Ui("设置", "设置基本信息和参数", status: 1 | 2), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         var m = wc[0].As<Org>();
@@ -235,9 +213,9 @@ public class SuplyVarWork : MgtVarWork
 
         CreateWork<SuplyPurLdgWork>("spurldg");
 
-        CreateWork<SrclyBatWork>("sbat", header: "供应源");
+        CreateWork<SrclyCodeWork>("scode", header: "供应源");
 
-        CreateWork<SrclyCodeWork>("scode");
+        CreateWork<SrclyBatWork>("sbat", header: "供应源");
 
         // hub
 
