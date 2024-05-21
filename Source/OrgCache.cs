@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Threading.Tasks;
-using ChainFX;
+﻿using ChainFX;
 using ChainFX.Nodal;
 
 namespace ChainSmart;
@@ -31,34 +28,5 @@ public class OrgCache : DbTwinCache<int, Org>
 
         dc.Sql("SELECT ").collst(Org.Empty).T(" FROM orgs_vw WHERE parentid = @1 ORDER BY regid, id");
         return dc.Query<int, Org>(p => p.Set(forkKey));
-    }
-
-    protected override async Task<int> ForkIoCycleAsync(int forkKey, Map<int, Org> fork)
-    {
-        // use same builder for each and every sent notice
-        var now = DateTime.Now;
-        var nowStr = now.ToString("yyyy-MM-dd HH mm");
-
-        int num = 0;
-        var sb = new StringBuilder();
-        foreach (var ety in fork)
-        {
-            var org = ety.Value;
-            var pack = org.NoticePack;
-            if (pack.HasToPush)
-            {
-                pack.Dump(sb, now);
-
-                // send sms
-                await WeChatUtility.SendNotifSmsAsync(org.Tel, org.Name, nowStr, sb.ToString());
-
-                num++;
-            }
-
-            // reset buffer
-            sb.Clear();
-        }
-
-        return num;
     }
 }

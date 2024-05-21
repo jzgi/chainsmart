@@ -645,7 +645,7 @@ a.uk-link-reset:hover,
 * Nested lists
 */
 .uk-list {
-    margin: 4px;
+    margin: 0;
     list-style: none;
     padding: 0;
 }

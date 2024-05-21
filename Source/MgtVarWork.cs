@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChainFX;
+using ChainFX.Source;
 using ChainFX.Web;
 using static ChainFX.Web.Modal;
 using static ChainFX.Nodal.Storage;
@@ -92,7 +93,7 @@ public abstract class MgtVarWork : WebWork
 
 [MgtAuthorize(Org.TYP_MKT_)]
 [Ui("市场操作")]
-public class MktlyVarWork : MgtVarWork
+public class MktlyVarWork : MgtVarWork, IExternable
 {
     protected override void OnCreate()
     {
@@ -117,7 +118,7 @@ public class MktlyVarWork : MgtVarWork
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mstl", state: Org.TYP_MCH, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mmch", state: Org.TYP_MCH, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 
@@ -173,23 +174,24 @@ public class MktlyVarWork : MgtVarWork
         }
     }
 
-    public void @event(WebContext wc)
+    public void @extern(WebContext wc)
     {
         var org = wc[0].As<Org>();
         var now = DateTime.Now;
 
-        // receive incoming events
+        // receive incoming data
         if (wc.IsPost)
         {
             //
+            wc.Give(200);
         }
+        else // send outgoing data
+        {
+            var bdr = new JsonBuilder(true, 1024 * 32);
+            org.BuySet.Dump(bdr, now);
 
-        // outgoing events
-        //
-        var bdr = new JsonBuilder(true, 1024 * 32);
-        org.EventPack.Dump(bdr, now);
-
-        wc.Give(200, bdr);
+            wc.Give(200, bdr);
+        }
     }
 }
 

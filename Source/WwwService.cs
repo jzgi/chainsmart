@@ -119,17 +119,15 @@ public class WwwService : MainService
 
                 if (topay == cash) // verify that the ammount is correct
                 {
-                    dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1");
-                    await dc.ExecuteAsync(p => p.Set(cash).Set(buyid));
+                    dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1 RETURNING *");
+                    var o = await dc.QueryTopAsync<Buy>(p => p.Set(cash).Set(buyid));
 
-                    // put a notice
+                    // add to watch set and buy set
+                    //
                     var shp = GrabTwin<int, Org>(orgid);
                     var mkt = GrabTwin<int, Org>(shp.MktId);
-
-                    // notice and event
-                    //
-                    shp.NoticePack.Put(OrgNoticePack.BUY_CREATED, 1, cash);
-                    mkt.EventPack.AddNew(shp.name);
+                    shp.WatchSet.Put(OrgWatchAttribute.BUY_CREATED, 1, cash);
+                    (shp.trust ? mkt : shp).BuySet.Add(o);
                 }
                 else // the pay differs from the order
                 {

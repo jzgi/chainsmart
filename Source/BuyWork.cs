@@ -5,7 +5,7 @@ using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
-using static ChainSmart.OrgNoticePack;
+using static ChainSmart.OrgWatchAttribute;
 
 namespace ChainSmart;
 

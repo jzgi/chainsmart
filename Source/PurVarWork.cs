@@ -6,6 +6,7 @@ using ChainFX.Web;
 using static ChainFX.Application;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
+using static ChainSmart.OrgWatchAttribute;
 
 namespace ChainSmart;
 
@@ -75,7 +76,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var sta = GrabTwin<int, Org>(orgid);
-                sta.NoticePack.Put(OrgNoticePack.PUR_OKED, 1, topay);
+                sta.WatchSet.Put(PUR_OKED, 1, topay);
             }
         }
         catch (Exception)
@@ -135,7 +136,7 @@ public class SuplyPurVarWork : PurVarWork
 
                     // put a notice to the shop
                     var sta = GrabTwin<int, Org>(orgid);
-                    sta.NoticePack.Put(OrgNoticePack.PUR_REFUND, 1, refund);
+                    sta.WatchSet.Put(PUR_REFUND, 1, refund);
                 }
             }
             catch (Exception)
@@ -185,7 +186,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // put a notice to the shop
                 var sta = GrabTwin<int, Org>(orgid);
-                sta.NoticePack.Put(OrgNoticePack.PUR_VOID, 1, refund);
+                sta.WatchSet.Put(PUR_VOID, 1, refund);
             }
         }
         catch (Exception)

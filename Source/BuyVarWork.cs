@@ -71,9 +71,6 @@ public class MyBuyVarWork : BuyVarWork
         {
             dc.Let(out int orgid);
             dc.Let(out decimal pay);
-
-            var org = GrabTwin<int, Org>(orgid);
-            org.NoticePack.Put(OrgNoticePack.BUY_OKED, 1, pay);
         }
 
         wc.Give(200);

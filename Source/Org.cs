@@ -2,6 +2,7 @@
 using System.Threading;
 using ChainFX;
 using ChainFX.Nodal;
+using ChainFX.Web;
 
 namespace ChainSmart;
 
@@ -323,33 +324,38 @@ public class Org : Entity, ITwin<int>, IFolderable
     public override string ToString() => name;
 
 
-    // EVENT 
+    //
+    // watch set
 
-    private OrgNoticePack noticep;
+    private WatchSet watchset;
 
-    public OrgNoticePack NoticePack
+    public WatchSet WatchSet
     {
         get
         {
-            if (noticep == null)
+            if (watchset == null)
             {
-                Interlocked.CompareExchange(ref noticep, new OrgNoticePack(), null);
+                Interlocked.CompareExchange(ref watchset, new WatchSet(), null);
             }
-            return noticep;
+            return watchset;
         }
     }
 
-    private OrgEventPack eventp;
 
-    public OrgEventPack EventPack
+    //
+    // buy pack for extern 
+
+    private BuySet buyset;
+
+    public BuySet BuySet
     {
         get
         {
-            if (eventp == null)
+            if (buyset == null)
             {
-                Interlocked.CompareExchange(ref eventp, new OrgEventPack(), null);
+                Interlocked.CompareExchange(ref buyset, new BuySet(), null);
             }
-            return eventp;
+            return buyset;
         }
     }
 

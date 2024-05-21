@@ -57,10 +57,6 @@ public class MgtService : MainService
                     // the order and the lot updates
                     dc.Sql("UPDATE purs SET status = 1, created = @1, pay = @2 WHERE id = @3 AND status = -1; UPDATE lotinvs SET stock = stock - @4 WHERE lotid = @5 AND hubid = @6");
                     await dc.ExecuteAsync(p => p.Set(DateTime.Now).Set(cash).Set(purid).Set(qty).Set(lotid).Set(hubid));
-
-                    // put a notice to the accepter
-                    var sup = GrabTwin<int, Org>(supid);
-                    sup.NoticePack.Put(OrgNoticePack.PUR_CREATED, 1, cash);
                 }
                 else // the pay differs from the order
                 {
