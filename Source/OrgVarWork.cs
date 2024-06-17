@@ -59,12 +59,12 @@ public abstract class OrgVarWork : WebWork
                 if (m.IsSrc)
                 {
                     var cats = Grab<short, Cat>();
-                    var envs = Grab<short, Env>();
-                    var syms = Grab<short, Sym>();
                     var tags = Grab<short, Tag>();
+                    var syms = Grab<short, Sym>();
 
-                    h.LI_().FIELD("品类", m.cat, cats).FIELD("环境", m.env, envs)._LI();
-                    h.LI_().FIELD("标志", m.sym, syms).FIELD("溯源", m.tag, tags)._LI();
+                    h.LI_().FIELD("品类", m.cat, cats)._LI();
+                    h.LI_().FIELD("溯源", m.tag, tags)._LI();
+                    h.LI_().FIELD("标志", m.sym, syms)._LI();
                 }
                 h._UL();
 
@@ -423,11 +423,10 @@ public class AdmlySupVarWork : OrgVarWork
                     if (m.IsSrc)
                     {
                         var cats = Grab<short, Cat>();
-                        var envs = Grab<short, Env>();
                         var syms = Grab<short, Sym>();
                         var tags = Grab<short, Tag>();
 
-                        h.LI_().SELECT("品类", nameof(m.cat), m.cat, cats).SELECT("环境", nameof(m.env), m.env, envs)._LI();
+                        h.LI_().SELECT("品类", nameof(m.cat), m.cat, cats)._LI();
                         h.LI_().SELECT("标志", nameof(m.sym), m.sym, syms).SELECT("溯源", nameof(m.tag), m.tag, tags)._LI();
                     }
 

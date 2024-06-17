@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainSmart.WeChatUtility;
+using static ChainSmart.CloudUtility;
 using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
@@ -15,8 +15,6 @@ public class WwwService : MainService
 
         CreateWork<PublyCatWork>("cat");
 
-        CreateWork<PublyEnvWork>("env");
-
         CreateWork<PublyTagWork>("tag");
 
         CreateWork<PublySymWork>("sym");
@@ -25,7 +23,7 @@ public class WwwService : MainService
 
         CreateWork<PublyItemWork>("item");
 
-        CreateWork<PublyCodeWork>("code");
+        CreateWork<PublyBatWork>("bat");
 
         CreateWork<MyWork>("my");
     }
@@ -44,6 +42,12 @@ public class WwwService : MainService
         {
             bool found = false;
             var last = 0;
+
+            string tel = Application.CustomConfig[nameof(tel)];
+
+            h.TOPBARXL_();
+            h.HEADER_("uk-flex-center").H2_().T("全省市场客服").SP().SP().IMG("/logo.webp", css: "uk-width-micro").SP().A_TEL(tel, tel, css: "uk-button-link")._H2()._HEADER();
+            h._TOPBARXL();
 
             foreach (var o in mkts)
             {
@@ -83,11 +87,10 @@ public class WwwService : MainService
 
             h._ARTICLE();
 
-            string tel = Application.CustomConfig[nameof(tel)];
-            h.BOTTOMBAR_(css: "uk-flex-between uk-padding");
-            h.SPAN_(css: "uk-label uk-padding").ICON("receiver").SP().SPAN(tel)._SPAN().A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
+            h.BOTTOMBAR_(css: "uk-background-muted uk-padding");
+            h.A_(href: "https://beian.miit.gov.cn/", css: "uk-text-small").T("赣ICP备2022006974号-1")._A();
             h._BOTTOMBAR();
-        }, true, 720, title: Application.Nodal.name + "市场", onload: "fixAll();");
+        }, true, 720, title: Application.Nodal.name, onload: "fixAll();");
     }
 
 

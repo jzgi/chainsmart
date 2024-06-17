@@ -39,6 +39,21 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
     }
 }
 
+public class PublyBatWork : CodeWork<PublyBatVarWork>
+{
+    public async Task @default(WebContext wc, int codev)
+    {
+        var tag = (short)wc[0].Adscript;
+
+        // try to seek id of the batch that includes the given code value
+        using var dc = NewDbContext();
+        dc.Sql("SELECT id FROM bats WHERE tag = @1 AND @2 BETWEEN nstart AND nend LIMIT 1");
+        var batid = (int)await dc.ScalarAsync(p => p.Set(tag).Set(codev));
+
+        wc.GiveRedirect("../bat/" + batid + "/");
+    }
+}
+
 [MgtAuthorize(Org.TYP_SHP)]
 [Ui("货管")]
 public class ShplyBatWork : BatWork<ShplyBatVarWork>

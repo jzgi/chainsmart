@@ -130,7 +130,6 @@ public class MktlyVarWork : MgtVarWork, IExternable
 
         CreateWork<MktlyCerWork>("mcer");
 
-        CreateWork<MktlyAdWork>("mad");
     }
 
     [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]

@@ -55,7 +55,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
         if (!WXAUTH.Equals(state)) // if not weixin auth
         {
             // redirect to WeiXin auth
-            WeChatUtility.GiveRedirectWeiXinAuthorize(wc, false);
+            CloudUtility.GiveRedirectWeiXinAuthorize(wc, false);
             return false;
         }
 
@@ -65,7 +65,7 @@ public class UserAuthenticateAttribute : AuthenticateAttribute
             return false;
         }
 
-        (_, openid) = await WeChatUtility.GetAccessorAsync(code);
+        (_, openid) = await CloudUtility.GetAccessorAsync(code);
         if (openid == null)
         {
             return false;

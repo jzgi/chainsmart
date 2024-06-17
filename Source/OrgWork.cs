@@ -281,11 +281,10 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
                 if (o.IsSrc)
                 {
                     var cats = Grab<short, Cat>();
-                    var envs = Grab<short, Env>();
                     var syms = Grab<short, Sym>();
                     var tags = Grab<short, Tag>();
 
-                    h.LI_().SELECT("品类", nameof(o.cat), o.cat, cats).SELECT("环境", nameof(o.env), o.env, envs)._LI();
+                    h.LI_().SELECT("品类", nameof(o.cat), o.cat, cats)._LI();
                     h.LI_().SELECT("标志", nameof(o.sym), o.sym, syms).SELECT("溯源", nameof(o.tag), o.tag, tags)._LI();
                 }
 

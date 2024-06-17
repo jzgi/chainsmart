@@ -173,7 +173,7 @@ public class MchlyPurLotVarWork : LotVarWork
 
             // call WeChatPay to prepare order there
             string trade_no = (purid + "-" + topay).Replace('.', '-');
-            var (prepay_id, err_code) = await WeChatUtility.PostUnifiedOrderAsync(sup: true,
+            var (prepay_id, err_code) = await CloudUtility.PostUnifiedOrderAsync(sup: true,
                 trade_no,
                 topay,
                 prin.im, // the payer
@@ -184,7 +184,7 @@ public class MchlyPurLotVarWork : LotVarWork
 
             if (prepay_id != null)
             {
-                wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
+                wc.Give(200, CloudUtility.BuildPrepayContent(prepay_id));
             }
             else
             {

@@ -13,15 +13,15 @@ namespace ChainSmart;
 /// <summary>
 /// A hub of operation that has its own weixin official acount.
 /// </summary>
-public static class WeChatUtility
+public static class CloudUtility
 {
-    static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
+    static readonly WebConnector OpenApi = new("https://api.weixin.qq.com");
 
-    static readonly WebConnect MktPayApi, SupPayApi;
+    static readonly WebConnector MktPayApi, SupPayApi;
 
-    static readonly Map<int, WebConnect> PayConnects = new();
+    static readonly Map<int, WebConnector> PayConnects = new();
 
-    static readonly WebConnect SmsApi = new("https://sms.tencentcloudapi.com");
+    static readonly WebConnector SmsApi = new("https://sms.tencentcloudapi.com");
 
     public static readonly string
         appid,
@@ -42,7 +42,7 @@ public static class WeChatUtility
         smsnotiftempid;
 
 
-    static WeChatUtility()
+    static CloudUtility()
     {
         var s = Application.CustomConfig;
         s.Get(nameof(appid), ref appid);
@@ -60,8 +60,8 @@ public static class WeChatUtility
 
         try
         {
-            SupPayApi = new WebConnect("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
-            MktPayApi = new WebConnect("https://api.mch.weixin.qq.com", "mkt_apiclient_cert.p12", mktmchid);
+            SupPayApi = new WebConnector("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
+            MktPayApi = new WebConnector("https://api.mch.weixin.qq.com", "mkt_apiclient_cert.p12", mktmchid);
         }
         catch (Exception e)
         {
@@ -69,7 +69,7 @@ public static class WeChatUtility
         }
     }
 
-    public static bool TryGetPayConnect(int orgid, out WebConnect v) => PayConnects.TryGetValue(orgid, out v);
+    public static bool TryGetPayConnect(int orgid, out WebConnector v) => PayConnects.TryGetValue(orgid, out v);
 
 
     static string accessToken;
@@ -257,7 +257,7 @@ public static class WeChatUtility
         string mch_id = xe.Child(nameof(mch_id));
         string nonce_str = xe.Child(nameof(nonce_str));
 
-        if (appid != WeChatUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
+        if (appid != CloudUtility.appid || mch_id != mchid || nonce_str != noncestr) return false;
 
         string result_code = xe.Child(nameof(result_code));
 

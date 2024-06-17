@@ -56,17 +56,6 @@ public class PublyCatWork : StdWork<PublyCatVarWork>
     }
 }
 
-public class PublyEnvWork : StdWork<PublyEnvVarWork>
-{
-    [Ui("品类", status: 1), Tool(Anchor)]
-    public void @default(WebContext wc)
-    {
-        var map = Grab<short, Env>();
-
-        wc.GivePane(200, h => Show(h, map), true, 3600 * 6);
-    }
-}
-
 public class PublyTagWork : StdWork<PublyTagVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
@@ -101,7 +90,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: 1);
+            h.TOOLBAR(subscript: Std.SUB_CAT);
 
             if (arr == null)
             {
@@ -109,32 +98,11 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, 1, "品类");
+            MainGrid(h, arr, Std.SUB_CAT, "品类");
         }, false, 15);
     }
 
-    [Ui("环境", status: 2), Tool(Anchor)]
-    public void env(WebContext wc)
-    {
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM envs ORDER BY typ, status DESC");
-        var arr = dc.Query<Std>();
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(subscript: 2);
-
-            if (arr == null)
-            {
-                h.ALERT("尚无定义环境");
-                return;
-            }
-
-            MainGrid(h, arr, 2, "环境");
-        }, false, 15);
-    }
-
-    [Ui("溯源", status: 4), Tool(Anchor)]
+    [Ui("溯源", status: 2), Tool(Anchor)]
     public void tag(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -143,7 +111,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: 3);
+            h.TOOLBAR(subscript: Std.SUB_TAG);
 
             if (arr == null)
             {
@@ -151,11 +119,11 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, 3, "溯源");
+            MainGrid(h, arr, Std.SUB_TAG, "溯源");
         }, false, 15);
     }
 
-    [Ui("标志", status: 8), Tool(Anchor)]
+    [Ui("标志", status: 4), Tool(Anchor)]
     public void sym(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -164,7 +132,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: 4);
+            h.TOOLBAR(subscript: Std.SUB_SYM);
 
             if (arr == null)
             {
@@ -172,11 +140,11 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, 4, "标志");
+            MainGrid(h, arr, Std.SUB_SYM, "标志");
         }, false, 15);
     }
 
-    [Ui("认证", status: 16), Tool(Anchor)]
+    [Ui("认证", status: 8), Tool(Anchor)]
     public void cer(WebContext wc)
     {
         using var dc = NewDbContext();
@@ -185,7 +153,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: 5);
+            h.TOOLBAR(subscript: Std.SUB_CER);
 
             if (arr == null)
             {
@@ -193,7 +161,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, 5, "认证");
+            MainGrid(h, arr, Std.SUB_CER, "认证");
         }, false, 15);
     }
 

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.Web.Modal;
-using static ChainSmart.WeChatUtility;
+using static ChainSmart.CloudUtility;
 using static ChainFX.Application;
 using static ChainFX.Nodal.Storage;
 

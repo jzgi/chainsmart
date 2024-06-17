@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
-using static ChainSmart.WeChatUtility;
+using static ChainSmart.CloudUtility;
 using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;

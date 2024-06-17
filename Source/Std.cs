@@ -10,15 +10,12 @@ public class Std : Entity, IKeyable<short>
     public static readonly Std Empty = new();
 
     public const short
-        SUB_CAT = 1, SUB_ENV = 2, SUB_TAG = 3, SUB_SYM = 4, SUB_CER = 5;
+        SUB_CAT = 1, SUB_TAG = 2, SUB_SYM = 3, SUB_CER = 4;
 
     public static readonly Map<short, StdDescr> Descrs = new()
     {
         new StdDescr(
             SUB_CAT, "品类", "cats"
-        ),
-        new StdDescr(
-            SUB_ENV, "环境", "envs"
         ),
         new StdDescr(
             SUB_TAG, "溯源", "tags"
@@ -93,13 +90,6 @@ public class StdDescr : IKeyable<short>
 /// A standard product category.
 /// </summary>
 public class Cat : Std
-{
-}
-
-/// <summary>
-/// A standard production environment.
-/// </summary>
-public class Env : Std
 {
 }
 

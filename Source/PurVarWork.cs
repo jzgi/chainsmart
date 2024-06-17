@@ -127,7 +127,7 @@ public class SuplyPurVarWork : PurVarWork
 
                     // remote call to refund
                     var trade_no = Buy.GetOutTradeNo(id, pay);
-                    string err = await WeChatUtility.PostRefundAsync(sup: true, trade_no, pay, refund, trade_no, "返现");
+                    string err = await CloudUtility.PostRefundAsync(sup: true, trade_no, pay, refund, trade_no, "返现");
                     if (err != null) // not success
                     {
                         dc.Rollback();
@@ -177,7 +177,7 @@ public class SuplyPurVarWork : PurVarWork
 
                 // remote call to refund
                 var trade_no = Buy.GetOutTradeNo(id, topay);
-                string err = await WeChatUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no, "撤单");
+                string err = await CloudUtility.PostRefundAsync(sup: true, trade_no, refund, refund, trade_no, "撤单");
                 if (err != null) // not success
                 {
                     dc.Rollback();

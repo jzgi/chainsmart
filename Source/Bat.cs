@@ -50,6 +50,10 @@ public class Bat : Entity, IKeyable<int>
 
     internal int codeid;
 
+    internal short tag;
+
+    internal int nstart;
+
     internal int nend;
 
     public override void Read(ISource s, short msk = 0xff)
@@ -75,6 +79,8 @@ public class Bat : Entity, IKeyable<int>
         if ((msk & MSK_LATE) == MSK_LATE)
         {
             s.Get(nameof(codeid), ref codeid);
+            s.Get(nameof(tag), ref tag);
+            s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
         }
     }
@@ -104,6 +110,8 @@ public class Bat : Entity, IKeyable<int>
         if ((msk & MSK_LATE) == MSK_LATE)
         {
             s.Put(nameof(codeid), codeid);
+            s.Put(nameof(tag), tag);
+            s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
         }
     }

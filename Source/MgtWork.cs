@@ -32,7 +32,6 @@ public class AdmlyWork : MgtWork
 
         CreateWork<AdmlyCodeWork>("code");
 
-        CreateWork<AdmlyAdWork>("ad");
 
         // fin
 
@@ -54,7 +53,7 @@ public class AdmlyWork : MgtWork
             h.TOPBARXL_();
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H1(Application.Nodal.name);
+            h.H2(Application.Nodal.name);
             h._HEADER();
 
             h.PIC("/logo.webp", circle: true, css: "uk-width-small");

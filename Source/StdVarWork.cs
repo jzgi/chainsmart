@@ -35,17 +35,6 @@ public class PublyCatVarWork : StdVarWork
     }
 }
 
-public class PublyEnvVarWork : StdVarWork
-{
-    public void @default(WebContext wc)
-    {
-        short typ = wc[0];
-        var o = Grab<short, Env>()[typ];
-
-        wc.GivePane(200, h => Show(h, o, "/env.webp"), true, 3600 * 6);
-    }
-}
-
 public class PublyTagVarWork : StdVarWork
 {
     public void @default(WebContext wc)

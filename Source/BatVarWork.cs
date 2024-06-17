@@ -4,12 +4,13 @@ using ChainFX.Web;
 using static ChainFX.Entity;
 using static ChainFX.Nodal.Storage;
 using static ChainFX.Web.Modal;
+using static ChainSmart.MainUtility;
 
 namespace ChainSmart;
 
 public abstract class BatVarWork : WebWork
 {
-    public virtual async Task @default(WebContext wc)
+    public async Task @default(WebContext wc)
     {
         int id = wc[0];
 
@@ -46,6 +47,132 @@ public abstract class BatVarWork : WebWork
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         }, false, 6);
+    }
+}
+
+public class PublyBatVarWork : CodeVarWork
+{
+    public override async Task @default(WebContext wc)
+    {
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+
+        dc.Sql("SELECT ").collst(Bat.Empty).T(" FROM bats WHERE id = @1");
+        var bat = await dc.QueryTopAsync<Bat>(p => p.Set(id));
+
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items WHERE id = @1");
+        var item = await dc.QueryTopAsync<Item>(p => p.Set(bat.itemid));
+
+        wc.GivePage(200, h =>
+        {
+            if (bat == null)
+            {
+                h.ALERT("无效的货次号");
+                return;
+            }
+
+            var src = GrabTwin<int, Org>(bat.srcid);
+
+            var tag = Grab<short, Tag>()?[bat.tag];
+
+            h.TOPBARXL_();
+            h.IMG(OrgUrl, src.id, "/icon", circle: true, css: "uk-width-small");
+            h.HEADER_("uk-width-expand uk-padding-left").H2_().T(src.name).T(bat.name)._H2()._HEADER();
+            h._TOPBARXL();
+
+            // batch and item info
+            h.ARTICLE_("uk-card uk-card-primary");
+
+            h.HEADER_("uk-card-header").H3("商品信息")._HEADER();
+            h.IMG(OrgUrl, bat.itemid, "/pic", css: "uk-width-1-1");
+
+            h.UL_("uk-list uk-list-divider");
+            h.LI_().FIELD("商品", item.name)._LI();
+            h.LI_().FIELD(string.Empty, item.tip)._LI();
+            h.LI_().FIELD("货次", bat.oked)._LI();
+            h.LI_().FIELD_("溯源", css: "uk-col").T(tag.name).Q(tag.tip)._FIELD()._LI();
+
+            h._UL();
+
+            if (item.m1)
+            {
+                h.PIC(OrgUrl, item.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (item.m2)
+            {
+                h.PIC(OrgUrl, item.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (item.m3)
+            {
+                h.PIC(OrgUrl, item.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (item.m4)
+            {
+                h.PIC(OrgUrl, item.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+            }
+
+            h._ARTICLE();
+
+            h.ARTICLE_("uk-card uk-card-primary");
+
+            h.HEADER_("uk-card-header").H3("产源信息")._HEADER();
+            h.IMG(OrgUrl, src.id, "/pic", css: "uk-width-1-1");
+
+            h.UL_("uk-card-body uk-list uk-list-divider");
+            h.LI_().FIELD("产源", src.name)._LI();
+            h.LI_().FIELD(string.Empty, src.tip)._LI();
+            h.LI_().FIELD("工商登记", src.legal)._LI();
+            h.LI_().FIELD("地址", src.addr)._LI();
+            h._UL();
+
+            var cat = Grab<short, Cat>()?[src.cat];
+            var sym = Grab<short, Sym>()?[src.sym];
+
+            h.UL_("uk-card-body uk-list uk-list-divider");
+            h.LI_().FIELD_("分类");
+            if (cat == null)
+            {
+                h.T("无");
+            }
+            else
+            {
+                h.T(cat.name).Q(cat.tip, css: "uk-margin-auto-left");
+            }
+            h._FIELD()._LI();
+
+            h.LI_().FIELD_("标志", css: "uk-col");
+            if (sym == null)
+            {
+                h.T("无");
+            }
+            else
+            {
+                h.T(sym.name).BR().Q(sym.tip, css: "uk-margin-auto-left");
+            }
+            h._FIELD()._LI();
+
+            h._UL();
+
+            if (src.m1)
+            {
+                h.PIC(OrgUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (src.m2)
+            {
+                h.PIC(OrgUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (src.m3)
+            {
+                h.PIC(OrgUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
+            }
+            if (src.m4)
+            {
+                h.PIC(OrgUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
+            }
+
+            h._ARTICLE();
+        }, true, 3600, title: "产品溯源信息");
     }
 }
 

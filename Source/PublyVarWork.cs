@@ -256,7 +256,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
             // // call WeChatPay to prepare order there
             string trade_no = Buy.GetOutTradeNo(buyid, topay);
-            var (prepay_id, err_code) = await WeChatUtility.PostUnifiedOrderAsync(sup: false,
+            var (prepay_id, err_code) = await CloudUtility.PostUnifiedOrderAsync(sup: false,
                 trade_no,
                 topay,
                 prin.im, // the payer
@@ -267,7 +267,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
             if (prepay_id != null)
             {
-                wc.Give(200, WeChatUtility.BuildPrepayContent(prepay_id));
+                wc.Give(200, CloudUtility.BuildPrepayContent(prepay_id));
             }
             else
             {

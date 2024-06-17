@@ -95,7 +95,7 @@ public class AdmlyUserVarWork : UserVarWork
             var f = await wc.ReadAsync<Form>();
             text = f[nameof(text)];
 
-            await WeChatUtility.PostSendAsync(im, text);
+            await CloudUtility.PostSendAsync(im, text);
 
             wc.GivePane(200);
         }
