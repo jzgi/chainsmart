@@ -87,7 +87,7 @@ a,
     color: #333;
     text-decoration: none;
     cursor: pointer;
-    padding: 2px 0;
+    padding: 0;
 }
 
 .uk-link {
@@ -148,14 +148,16 @@ mark {
 }
 
 q {
-    font-size: .75rem;
+    font-size: .675rem;
     font-weight: 300;
     margin: 0;
-    padding: 4px 0;
+    padding: 6px 0;
     color: #666;
     overflow: hidden;
-    text-overflow: ellipsis; 
-    white-space: nowrap; 
+    display: -webkit-box;
+    -webkit-box-orient: vertical;  
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
 }
 
 q::before {
@@ -1814,10 +1816,10 @@ select.uk-form-width-small {
 }
 
 .uk-button-default {
-    padding: 6px 16px;
+    padding: 6px 18px;
     margin: 4px;
     font-size: .9375rem;
-    background-color: #666;
+    background-color: #7daa1d;
     color: #fff;
     border-radius: 16px;
     border: 0;
@@ -6371,23 +6373,23 @@ iframe.uk-cover {
     height: 60px;
 }
 
-.uk-height-12px {
+.uk-height-small {
     height: 120px;
 }
 
 .uk-height-medium {
-    height: 280px;
+    height: 240px;
 }
 
 .uk-height-large {
-    height: 480px;
+    height: 320px;
 }
 
 .uk-height-xlarge {
-    height: 640px;
+    height: 480px;
 }
 
-.uk-height-max-12px {
+.uk-height-max-small {
     max-height: 160px;
 }
 

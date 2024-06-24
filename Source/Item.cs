@@ -34,7 +34,7 @@ public class Item : Entity, IKeyable<int>
     internal short min;
     internal short max;
     internal short stock;
-    internal string link;
+    internal string sort;
 
     internal bool icon;
     internal bool pic;
@@ -74,7 +74,7 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(stock), ref stock);
-            s.Get(nameof(link), ref link);
+            s.Get(nameof(sort), ref sort);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -115,7 +115,7 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(stock), stock);
-            s.Put(nameof(link), link);
+            s.Put(nameof(sort), sort);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);

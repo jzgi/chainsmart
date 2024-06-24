@@ -129,7 +129,6 @@ public class MktlyVarWork : MgtVarWork, IExternable
         CreateWork<MktlyTestWork>("mtest");
 
         CreateWork<MktlyCerWork>("mcer");
-
     }
 
     [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
@@ -217,6 +216,9 @@ public class SuplyVarWork : MgtVarWork
         CreateWork<SrclyCodeWork>("scode", header: "供应源");
 
         CreateWork<SrclyBatWork>("sbat", header: "供应源");
+
+        CreateWork<SrclyBuyApWork>("sbuyap");
+
 
         // hub
 

@@ -10,7 +10,7 @@ using static ChainFX.Entity;
 
 namespace ChainSmart;
 
-[UserAuthenticate(OmitDefault = true)]
+// [UserAuthenticate(OmitDefault = true)]
 public class PublyVarWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>
@@ -81,7 +81,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
                 // the cclickable icon
                 //
-                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-5");
+                h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-4");
                 if (o.icon)
                 {
                     h.IMG("/item/", o.id, "/icon");
@@ -284,6 +284,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         }
     }
 
+    
     /// <summary>
     /// The home of the market by sector
     /// </summary>
@@ -307,7 +308,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (org.IsComplex)
+            if (org.IsComplex )
             {
                 h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.style));
             }
@@ -321,19 +322,6 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             // market info
 
             var now = DateTime.Now.TimeOfDay;
-
-            if (sector == 0)
-            {
-                if (org.pic)
-                {
-                    h.PIC_("/org/", org.id, "/pic");
-                }
-                else
-                {
-                    h.PIC_("/void.webp");
-                }
-                h._PIC();
-            }
 
             h.MAIN_(grid: true);
             foreach (var m in arr)
@@ -353,11 +341,11 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
                     if (m.icon)
                     {
-                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-5");
+                        h.PIC("/org/", m.id, "/icon", css: "uk-width-1-4");
                     }
                     else
                     {
-                        h.PIC("/void.webp", css: "uk-width-1-5");
+                        h.PIC("/void.webp", css: "uk-width-1-4");
                     }
 
                     h.ASIDE_();

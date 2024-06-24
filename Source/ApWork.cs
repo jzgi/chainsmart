@@ -320,3 +320,32 @@ public class SuplyPurApWork : ApWork<OrglyApVarWork>
         }, false, 120);
     }
 }
+
+[MgtAuthorize(Org.TYP_SRC)]
+[Ui("销售结款")]
+public class SrclyBuyApWork : ApWork<OrglyApVarWork>
+{
+    [Ui(status: 1), Tool(Anchor)]
+    public async Task @default(WebContext wc, int page)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 AND orgid = @1 ORDER BY dt DESC LIMIT 30 OFFSET @2 * 30");
+        var arr = await dc.QueryAsync<Ap>(p => p.Set(org.id).Set(page));
+
+        wc.GivePage(200, h =>
+        {
+            h.TOOLBAR();
+            if (arr == null)
+            {
+                h.ALERT("尚无结款");
+                return;
+            }
+
+            MainTable(h, arr);
+
+            h.PAGINATION(arr?.Length == 30);
+        }, false, 120);
+    }
+}
