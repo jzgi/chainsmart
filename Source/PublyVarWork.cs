@@ -10,7 +10,7 @@ using static ChainFX.Entity;
 
 namespace ChainSmart;
 
-// [UserAuthenticate(OmitDefault = true)]
+[UserAuthenticate(OmitDefault = true)]
 public class PublyVarWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>

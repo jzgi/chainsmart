@@ -52,11 +52,9 @@ public class AdmlyWork : MgtWork
         {
             h.TOPBARXL_();
 
-            h.HEADER_("uk-width-expand uk-col uk-padding-left");
-            h.H2(Application.Nodal.name);
+            h.HEADER_("uk-padding-small");
+            h.H2_().IMG("/logo.webp", css: "uk-width-micro").SP().T(Application.Nodal.name)._H2();
             h._HEADER();
-
-            h.PIC("/logo.webp", circle: true, css: "uk-width-small");
 
             h._TOPBARXL();
 

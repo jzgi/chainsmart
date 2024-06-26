@@ -65,9 +65,22 @@ public class WwwService : MainService
                     h.ARTICLE_("uk-card uk-card-primary");
                     h.HEADER_("uk-card-header").H3("地图定位").SPAN_("uk-badge").IMG("/logo.jpg", css: "uk-width-micro")._SPAN()._HEADER();
 
+                    h.SECTION_("uk-card-body");
                     h.T("<iframe class=\"uk-card-body uk-height-large\" src=\"http://apis.map.qq.com/uri/v1/marker?marker=coord:").T(mkt.y).T(',').T(mkt.x).T(";title:").T(mkt.whole).T(";addr:").T(mkt.addr).T("\">");
                     h.T("</iframe>");
                     h._SECTION();
+
+                    h._ARTICLE();
+
+                    h.ARTICLE_("uk-card uk-card-primary");
+                    h.HEADER_("uk-card-header").H3("关注公众号").SPAN_("uk-badge").IMG("/logo.jpg", css: "uk-width-micro")._SPAN()._HEADER();
+
+                    h.SECTION_("uk-section uk-card-body uk-background-muted ");
+                    h.DIV_("uk-width-expand uk-col uk-flex-center").SPAN("扫码关注「中惠农通」公众号").SPAN("更多农贸市场，更多农副产品").SPAN("幸福生活从健康餐桌开始！")._DIV();
+                    h.ICON("triangle-right", 2, css: "uk-width-auto");
+                    h.PIC("qrcode.jpg", css: "uk-width-medium");
+                    h._SECTION();
+                    h.FOOTER_("uk-card-footer")._FOOTER();
 
                     h._ARTICLE();
 

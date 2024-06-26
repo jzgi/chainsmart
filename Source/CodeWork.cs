@@ -126,10 +126,10 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
 }
 
 [MgtAuthorize(0, User.ROL_OPN)]
-[Ui("溯源码")]
+[Ui("溯源码发放")]
 public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
 {
-    [Ui("溯源码申请", status: 1), Tool(Anchor)]
+    [Ui("溯源码", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -149,7 +149,7 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已发放", icon: "mail", status: 2), Tool(Anchor)]
+    [Ui(tip: "已发放", icon: "arrow-right", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc, int page)
     {
         using var dc = NewDbContext();
@@ -169,7 +169,7 @@ public class AdmlyCodeWork : CodeWork<AdmlyCodeVarWork>
         }, false, 12);
     }
 
-    [Ui(tip: "已用完", icon: "check", status: 2), Tool(Anchor)]
+    [Ui(tip: "已用完", icon: "ban", status: 2), Tool(Anchor)]
     public async Task oked(WebContext wc, int page)
     {
         using var dc = NewDbContext();
