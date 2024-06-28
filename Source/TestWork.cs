@@ -149,7 +149,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKV)]
 [Ui("检测")]
 public class MktlyTestWork : TestWork<MktlyTestVarWork>
 {
@@ -218,7 +218,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
             h._LI();
             h._UL();
             h._MAIN();
-        }, false, 12, title: mkt.Whole, refresh: 60);
+        }, false, 12, title: mkt.Full, refresh: 60);
     }
 }
 

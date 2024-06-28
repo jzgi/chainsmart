@@ -215,7 +215,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKV)]
 [Ui("网售统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
@@ -352,7 +352,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             }
 
             h._MAIN();
-        }, false, 12, title: mkt.Whole, refresh: 60);
+        }, false, 12, title: mkt.Full, refresh: 60);
     }
 
     [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]

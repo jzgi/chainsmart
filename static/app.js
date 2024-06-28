@@ -867,11 +867,11 @@ function crop(trig, siz, title, subs) {
             break;
         case 2:
             wid = 480;
-            hei = 200;
+            hei = 240;
             break;
         case 3:
             wid = 480;
-            hei = 640;
+            hei = 480;
             break;
     }
     var h = '<div id="dialog" class="uk-modal-tall ' + trigc + '" uk-modal>';
@@ -970,14 +970,14 @@ function bind(el, url, wid, hei) {
     }
     croppie = new Croppie(el, {
         viewport: {
-            width: cropWid / 2,
-            height: cropHei / 2
+            width: cropWid / 1.6,
+            height: cropHei / 1.6
         },
         enforceBoundary: true,
         showZoomer: false
     });
     croppie.bind(url).then(function () {
-        croppie.setZoom(0.5); // itially native size
+        croppie.setZoom(0.625); // itially native size
     });
 
 }

@@ -64,9 +64,9 @@ public static class FinanceUtility
         // calculate the fee
         //
         var fee = 0.0M;
-        if (org.IsService || org.IsDelivery)
+        if (org.IsStyleSvc || org.IsStyleDlv)
         {
-            var (min, rate, max) = org.IsService ? mktsvcfee : mktdlvfee;
+            var (min, rate, max) = org.IsStyleSvc ? mktsvcfee : mktdlvfee;
 
             fee = Math.Max(min, Math.Min(sum * rate, max));
             fee -= fee % 0.5M;

@@ -85,8 +85,6 @@ public class SrclyCodeWork : CodeWork<SrclyCodeVarWork>
 
         var o = new Code
         {
-            typ = org.tag,
-            name = tags[org.tag]?.name,
             created = now,
             creator = prin.name,
             adapted = now,

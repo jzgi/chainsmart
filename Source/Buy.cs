@@ -172,9 +172,9 @@ public class Buy : Entity, IKeyable<long>
 
         // compute fee
         //
-        if (!org.IsSelf)
+        if (!org.IsStyleSlf)
         {
-            var (min, rate, max) = org.IsService ? mktsvcfee : mktdlvfee;
+            var (min, rate, max) = org.IsStyleSvc ? mktsvcfee : mktdlvfee;
             var feev = Math.Max(min + sum * rate, max);
             feev -= feev % 0.5M;
 

@@ -22,7 +22,7 @@ public abstract class MgtVarWork : WebWork
             h.H1_().T(org.name)._H1();
             if (org.AsEst)
             {
-                h.H2(org.Whole);
+                h.H2(org.Full);
             }
             h._HEADER();
 
@@ -91,7 +91,7 @@ public abstract class MgtVarWork : WebWork
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT_)]
+[MgtAuthorize(Org.TYP_RTL_)]
 [Ui("市场操作")]
 public class MktlyVarWork : MgtVarWork, IExternable
 {
@@ -118,7 +118,7 @@ public class MktlyVarWork : MgtVarWork, IExternable
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mmch", state: Org.TYP_MCH, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mmch", state: Org.TYP_SHX, ui: new UiAttribute("成员商户"), header: "机构");
 
         CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
 
@@ -131,7 +131,7 @@ public class MktlyVarWork : MgtVarWork, IExternable
         CreateWork<MktlyCerWork>("mcer");
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_MGT)]
     [Ui("设置", "设置基本信息和参数", status: 1 | 2), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
@@ -193,7 +193,7 @@ public class MktlyVarWork : MgtVarWork, IExternable
     }
 }
 
-[MgtAuthorize(Org.TYP_SUP_)]
+[MgtAuthorize(Org.TYP_WHL_)]
 [Ui("供应操作")]
 public class SuplyVarWork : MgtVarWork
 {

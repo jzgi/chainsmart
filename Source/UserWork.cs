@@ -470,7 +470,7 @@ public class MktlyCerWork : UserWork<MktlyCerVarWork>
         }, false, 12);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui("添加", icon: "plus"), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {

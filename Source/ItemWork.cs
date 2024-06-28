@@ -266,7 +266,7 @@ public class SuplyItemWork : ItemWork<SuplyItemVarWork>
         }, false);
     }
 
-    [MgtAuthorize(Org.TYP_SUP_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_WHL_, User.ROL_OPN)]
     [Ui("新建", "新建商品信息", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {

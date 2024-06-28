@@ -126,20 +126,7 @@ public class PublyBatVarWork : CodeVarWork
             h.LI_().FIELD("地址", src.addr)._LI();
             h._UL();
 
-            var cat = Grab<short, Cat>()?[src.cat];
             var sym = Grab<short, Sym>()?[src.sym];
-
-            h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD_("分类");
-            if (cat == null)
-            {
-                h.T("无");
-            }
-            else
-            {
-                h.T(cat.name).Q(cat.tip, css: "uk-margin-auto-left");
-            }
-            h._FIELD()._LI();
 
             h.LI_().FIELD_("标志", css: "uk-col");
             if (sym == null)
@@ -248,7 +235,6 @@ public class SrclyBatVarWork : BatVarWork
         var prin = (User)wc.Principal;
 
 
-        short tag = org.tag;
         int nstart = 0, nend = 0;
 
         if (wc.IsGet)
@@ -259,7 +245,7 @@ public class SrclyBatVarWork : BatVarWork
             {
                 h.FORM_().FIELDSUL_();
 
-                h.LI_().SELECT("溯源标签", nameof(tag), tag, tags)._LI();
+                // h.LI_().SELECT("溯源标签", nameof(tag), tag, tags)._LI();
                 h.LI_().NUMBER("起始号", nameof(nstart), nstart, min: 1)._LI();
                 h.LI_().NUMBER("截至号", nameof(nend), nend, min: 1)._LI();
 

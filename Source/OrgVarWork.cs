@@ -20,7 +20,7 @@ public abstract class OrgVarWork : WebWork
 
         using var dc = NewDbContext();
 
-        dc.Sql("SELECT name FROM users WHERE ").T(m.AsSup ? "supid = @1 AND suply = 63" : "mktid = @1 AND mktly = 63");
+        dc.Sql("SELECT name FROM users WHERE ").T(m.AsWhl ? "supid = @1 AND suply = 63" : "mktid = @1 AND mktly = 63");
         await dc.QueryAsync(p => p.Set(id));
         var mgrs = dc.ToStringArray();
 
@@ -43,10 +43,10 @@ public abstract class OrgVarWork : WebWork
                 h.LI_().FIELD("联系电话", m.tel);
                 if (m.regid > 0)
                 {
-                    h.FIELD(m.AsMkt ? "版块" : "区域", regs[m.regid]);
+                    h.FIELD(m.AsRtl ? "版块" : "区域", regs[m.regid]);
                 }
                 h._LI();
-                h.LI_().FIELD(m.AsMkt ? "排位" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
+                h.LI_().FIELD(m.AsRtl ? "排位" : m.IsHomeOrg ? "链接" : "地址", m.addr)._LI();
                 if (m.AsEst || m.IsSrc)
                 {
                     h.LI_().FIELD("经度", m.x).FIELD("纬度", m.y)._LI();
@@ -58,12 +58,8 @@ public abstract class OrgVarWork : WebWork
                 }
                 if (m.IsSrc)
                 {
-                    var cats = Grab<short, Cat>();
-                    var tags = Grab<short, Tag>();
                     var syms = Grab<short, Sym>();
 
-                    h.LI_().FIELD("品类", m.cat, cats)._LI();
-                    h.LI_().FIELD("溯源", m.tag, tags)._LI();
                     h.LI_().FIELD("标志", m.sym, syms)._LI();
                 }
                 h._UL();
@@ -78,7 +74,7 @@ public abstract class OrgVarWork : WebWork
                 h._UL();
             }
 
-            h.TOOLBAR(subscript: m.IsMkt ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
+            h.TOOLBAR(subscript: m.IsRtlEst ? 1 : 0, bottom: true, status: m.Status, state: m.ToState());
         }, false, 6);
     }
 
@@ -159,6 +155,11 @@ public class PublyOrgVarWork : OrgVarWork
         await doimg(wc, nameof(pic), true, MAXAGE);
     }
 
+    public async Task img(WebContext wc)
+    {
+        await doimg(wc, nameof(img), true, MAXAGE);
+    }
+
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, true, MAXAGE);
@@ -188,7 +189,7 @@ public class AdmlyEstVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_().FIELDSUL_(m.IsMkt ? "修改市场" : "修改品控云仓");
+                    h.FORM_().FIELDSUL_(m.IsRtlEst ? "修改市场" : "修改品控云仓");
 
                     h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
@@ -197,10 +198,10 @@ public class AdmlyEstVarWork : OrgVarWork
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
-                    if (m.IsMkt)
+                    if (m.IsRtlEst)
                     {
                         var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                        h.LI_().SELECT("业务模式", nameof(m.style), m.style, Org.Styles, (k, _) => k >= Org.STY_STN, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
+                        h.LI_().SELECT("交付方式", nameof(m.style), m.style, Org.Styles, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
@@ -240,10 +241,17 @@ public class AdmlyEstVarWork : OrgVarWork
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
+    [Ui(tip: "场照", icon: "eye", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
+    }
+
+    [MgtAuthorize(0, User.ROL_OPN)]
+    [Ui(tip: "全景", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
+    public async Task img(WebContext wc)
+    {
+        await doimg(wc, nameof(img), false, 6);
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
@@ -281,13 +289,13 @@ public class AdmlyEstVarWork : OrgVarWork
                         h.FIELDSUL_();
                         h.HIDDEN(nameof(o.id), o.id);
                         h.LI_().FIELD("用户名", o.name)._LI();
-                        
-                        if (org.AsSup && o.supid > 0)
+
+                        if (org.AsWhl && o.supid > 0)
                         {
                             var sup = GrabTwin<int, Org>(o.supid);
                             h.LI_().FIELD2("现有权限", sup.name, User.Roles[o.suply])._LI();
                         }
-                        else if (org.AsMkt && o.mktid > 0)
+                        else if (org.AsRtl && o.mktid > 0)
                         {
                             var mkt = GrabTwin<int, Org>(o.mktid);
                             h.LI_().FIELD2("现有权限", mkt.name, User.Roles[o.mktly])._LI();
@@ -311,7 +319,7 @@ public class AdmlyEstVarWork : OrgVarWork
             int id = (await wc.ReadAsync<Form>())[nameof(id)];
 
             using var dc = NewDbContext();
-            if (org.AsSup)
+            if (org.AsWhl)
             {
                 dc.Sql("UPDATE users SET supid = @1, suply = ").T(User.ROL_MGT).T(" WHERE id = @2");
             }
@@ -380,7 +388,7 @@ public class AdmlyEstVarWork : OrgVarWork
 
         await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 
@@ -422,12 +430,9 @@ public class AdmlySupVarWork : OrgVarWork
                     }
                     if (m.IsSrc)
                     {
-                        var cats = Grab<short, Cat>();
                         var syms = Grab<short, Sym>();
-                        var tags = Grab<short, Tag>();
 
-                        h.LI_().SELECT("品类", nameof(m.cat), m.cat, cats)._LI();
-                        h.LI_().SELECT("标志", nameof(m.sym), m.sym, syms).SELECT("溯源", nameof(m.tag), m.tag, tags)._LI();
+                        h.LI_().SELECT("标志", nameof(m.sym), m.sym, syms)._LI();
                     }
 
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
@@ -592,7 +597,7 @@ public class AdmlySupVarWork : OrgVarWork
 
         await GetTwinCache<OrgCache, int, Org>().RemoveAsync(m, async (dc) =>
         {
-            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_MKT_);
+            dc.Sql("DELETE FROM orgs WHERE id = @1 AND typ = ").T(Org.TYP_RTL_);
             return await dc.ExecuteAsync(p => p.Set(id)) == 1;
         });
 
@@ -602,7 +607,7 @@ public class AdmlySupVarWork : OrgVarWork
 
 public class MktlyOrgVarWork : OrgVarWork
 {
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(icon: "pencil", status: 3), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
     {
@@ -617,7 +622,7 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsMch ? "修改成员商户" : "修改成员门店");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsShx ? "修改成员商户" : "修改成员门店");
 
                     h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
@@ -651,28 +656,28 @@ public class MktlyOrgVarWork : OrgVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 3), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 3);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 3), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 3);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(tip: "资料", icon: "album", status: 3), Tool(ButtonCrop, size: 3, subs: 3)]
     public async Task m(WebContext wc, int sub)
     {
         await doimg(wc, nameof(m) + sub, false, 3);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 3), Tool(ButtonConfirm, state: Org.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -698,7 +703,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -722,7 +727,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(205);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(tip: "确定禁用此商户", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -749,7 +754,7 @@ public class MktlyOrgVarWork : OrgVarWork
         wc.Give(204); // no content
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_OPN)]
     [Ui(tip: "确定恢复此商户", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task unvoid(WebContext wc)
     {

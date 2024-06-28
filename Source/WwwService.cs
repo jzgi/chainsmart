@@ -53,11 +53,11 @@ public class WwwService : MainService
                     h.HEADER_("uk-card-header").H3(mkt.whole).SPAN_("uk-badge").IMG("/logo.jpg", css: "uk-width-micro")._SPAN()._HEADER();
 
                     h.SECTION_("uk-card-body");
-                    h.PIC_("/org/", mkt.id, "/pic");
+                    h.PIC_("/org/", mkt.id, "/img");
                     h._PIC();
                     h._SECTION();
 
-                    h.FOOTER_("uk-card-footer").T(mkt.tip)._FOOTER();
+                    h.FOOTER_("uk-card-footer").T(mkt.wholetip)._FOOTER();
                     h._ARTICLE();
 
                     // geolocation map
@@ -91,7 +91,7 @@ public class WwwService : MainService
         }
         else // to show the full market list
         {
-            var mkts = GrabTwinArray<int, Org>(0, x => x.IsMkt && x.IsOked);
+            var mkts = GrabTwinArray<int, Org>(0, x => x.IsRtlEst && x.IsOked);
 
             wc.GivePage(200, h =>
             {
@@ -122,7 +122,7 @@ public class WwwService : MainService
 
                     h.LI_("uk-flex");
                     h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false,'").T(o.whole).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
-                    h.SPAN(o.Whole);
+                    h.SPAN(o.Full);
                     h.P(o.addr, css: "uk-margin-auto-left");
                     h.ICON("chevron-right");
                     h._A();

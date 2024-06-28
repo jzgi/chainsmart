@@ -151,7 +151,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
         }
     }
 
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
     [Ui("减仓", "新建减仓单", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task dec(WebContext wc)
     {
@@ -199,7 +199,7 @@ public class ShplyBatWork : BatWork<ShplyBatVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SUP_)]
+[MgtAuthorize(Org.TYP_WHL_)]
 [Ui("货管")]
 public class SrclyBatWork : BatWork<SrclyBatVarWork>
 {

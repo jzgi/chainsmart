@@ -18,7 +18,7 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_MCH)]
+[MgtAuthorize(Org.TYP_SHX)]
 [Ui("采购")]
 public class MchlyPurWork : PurWork<MchlyPurVarWork>
 {
@@ -149,7 +149,7 @@ public class MchlyPurWork : PurWork<MchlyPurVarWork>
 
     internal static int Comp(int hubid, short cat) => (hubid << 8) | (int)cat;
 
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
     [Ui("下单", "云仓便捷采购", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task @new(WebContext wc, int hubid_cat) // NOTE publicly cacheable
     {
@@ -347,7 +347,7 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
                 var mkt = GrabTwin<int, Org>(mktid);
 
                 h.TR_();
-                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Whole, css: "uk-link uk-button-link").T(mkt.Whole)._A()._TD();
+                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Full, css: "uk-link uk-button-link").T(mkt.Full)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (adapted > 0)
                 {
@@ -373,7 +373,7 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_MKT)]
+[MgtAuthorize(Org.TYP_MKV)]
 [Ui("采购统一收货")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {

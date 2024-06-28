@@ -16,31 +16,35 @@ public class Org : Entity, ITwin<int>, IFolderable
     public const short
         TYP_ADM = 0b10000000; // admin
 
+    // type constants
     public const short
-        TYP_FRT_ = 0b000001, // front
+        TYP_SAL_ = 0b000001, // sale
         TYP_BCK_ = 0b000010, // backing
-        TYP_MKT_ = 0b000100, // retail
-        TYP_SUP_ = 0b001000, // supply
+        TYP_RTL_ = 0b000100, // retail
+        TYP_WHL_ = 0b001000, // wholesale
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_SHP = TYP_MKT_ | TYP_FRT_, // shop
-        TYP_MCH = TYP_MKT_ | TYP_FRT_ | TYP_BCK_, // merchant
-        TYP_MKT = TYP_EST_ | TYP_MCH, // market
+        TYP_SHP = TYP_RTL_ | TYP_SAL_, // shop
+        TYP_SHV = TYP_RTL_ | TYP_BCK_, // shop virtual
+        TYP_SHX = TYP_RTL_ | TYP_SAL_ | TYP_BCK_, // shop + purchase 
+        TYP_MKV = TYP_EST_ | TYP_SHV, // market virtual
+        TYP_MKT = TYP_EST_ | TYP_SHX, // market
         //
-        TYP_SUP = TYP_SUP_ | TYP_FRT_, // supplier
-        TYP_SRC = TYP_SUP_ | TYP_BCK_, // source
-        TYP_PRV = TYP_SUP_ | TYP_FRT_ | TYP_BCK_, // provision
+        TYP_SRC = TYP_WHL_ | TYP_BCK_, // source
+        TYP_SUP = TYP_WHL_ | TYP_SAL_ | TYP_BCK_, // supply
         TYP_HUB = TYP_EST_ | TYP_SUP; // hub
 
+    // type definitions
     public static readonly Map<short, string> Typs = new()
     {
         { TYP_SHP, "门店" },
-        { TYP_MCH, "商户" },
+        { TYP_SHV, "泛商户" },
+        { TYP_SHX, "商户" },
+        { TYP_MKV, "泛市场" },
         { TYP_MKT, "市场" },
         { TYP_SRC, "产源" },
         { TYP_SUP, "供应" },
-        { TYP_PRV, "产供" },
-        { TYP_HUB, "云仓" },
+        { TYP_HUB, "品控云仓" },
     };
 
     public static readonly Map<short, string> Ranks = new()
@@ -54,21 +58,20 @@ public class Org : Entity, ITwin<int>, IFolderable
     };
 
 
+    // style constants
     public const short
-        STY_SLF = 0, // self 
-        STY_DLV = 1, // order delivery 
-        STY_SVC = 2, // service 
-        STY_STN = 4 | STY_DLV, // center
-        STY_CPX = 8 | STY_DLV; // complex 
+        STY_SLF = 0, // self-handling 
+        STY_DLV = 1, // delivery 
+        STY_EXP = 2, // express 
+        STY_SVC = 4; // service 
 
-
+    // style definitions
     public static readonly Map<short, string> Styles = new()
     {
-        { STY_SLF, "自理模式" },
-        { STY_DLV, "合单派送模式" },
+        { STY_SLF, "自理" },
+        { STY_DLV, "合单派送" },
+        { STY_EXP, "合单全国派送" },
         { STY_SVC, "合单服务模式" },
-        { STY_STN, "健康邻里驿站模式" },
-        { STY_CPX, "农贸综合体模式" },
     };
 
 
@@ -81,7 +84,8 @@ public class Org : Entity, ITwin<int>, IFolderable
     // connected hub warehouse id, if market or retail 
     internal int hubid;
 
-    internal string whole;
+    internal string whole; // name as the whole
+    internal string wholetip;
     internal string legal; // legal name
     internal short regid;
     internal string addr;
@@ -98,18 +102,18 @@ public class Org : Entity, ITwin<int>, IFolderable
     internal short rank; // credit level
     internal short style;
 
-    // internal short style; 
-    internal short cat;
     internal short sym;
-    internal short tag;
-    internal short env;
+    // internal short tag;
+    // internal short env;
 
     internal bool icon;
     internal bool pic;
+    internal bool img;
     internal bool m1;
     internal bool m2;
     internal bool m3;
     internal bool m4;
+
 
     public override void Read(ISource s, short msk = 0xff)
     {
@@ -133,6 +137,7 @@ public class Org : Entity, ITwin<int>, IFolderable
                 s.Get(nameof(style), ref style);
                 s.Get(nameof(rank), ref rank);
                 s.Get(nameof(whole), ref whole);
+                s.Get(nameof(wholetip), ref wholetip);
                 s.Get(nameof(legal), ref legal);
                 s.Get(nameof(regid), ref regid);
                 s.Get(nameof(addr), ref addr);
@@ -147,16 +152,14 @@ public class Org : Entity, ITwin<int>, IFolderable
 
             if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Get(nameof(cat), ref cat);
                 s.Get(nameof(sym), ref sym);
-                s.Get(nameof(tag), ref tag);
-                s.Get(nameof(env), ref env);
                 if ((msk & MSK_LATER) == MSK_LATER)
                 {
                     s.Get(nameof(openat), ref openat);
                     s.Get(nameof(closeat), ref closeat);
                     s.Get(nameof(icon), ref icon);
                     s.Get(nameof(pic), ref pic);
+                    s.Get(nameof(img), ref img);
                     s.Get(nameof(m1), ref m1);
                     s.Get(nameof(m2), ref m2);
                     s.Get(nameof(m3), ref m3);
@@ -191,6 +194,7 @@ public class Org : Entity, ITwin<int>, IFolderable
                 s.Put(nameof(style), style);
                 s.Put(nameof(rank), rank);
                 s.Put(nameof(whole), whole);
+                s.Put(nameof(wholetip), wholetip);
                 s.Put(nameof(legal), legal);
                 if (regid <= 0 && !IsShp) s.PutNull(nameof(regid));
                 else s.Put(nameof(regid), regid);
@@ -206,16 +210,14 @@ public class Org : Entity, ITwin<int>, IFolderable
 
             if ((msk & MSK_LATE) == MSK_LATE)
             {
-                s.Put(nameof(cat), cat);
                 s.Put(nameof(sym), sym);
-                s.Put(nameof(tag), tag);
-                s.Put(nameof(env), env);
                 if ((msk & MSK_LATER) == MSK_LATER)
                 {
                     s.Put(nameof(openat), openat);
                     s.Put(nameof(closeat), closeat);
                     s.Put(nameof(icon), icon);
                     s.Put(nameof(pic), pic);
+                    s.Put(nameof(img), img);
                     s.Put(nameof(m1), m1);
                     s.Put(nameof(m2), m2);
                     s.Put(nameof(m3), m3);
@@ -255,23 +257,29 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public string Tel => tel;
 
-    public bool AsFrt => (typ & TYP_FRT_) == TYP_FRT_;
+    public bool AsFrt => (typ & TYP_SAL_) == TYP_SAL_;
 
     public bool AsEst => (typ & TYP_EST_) == TYP_EST_;
 
-    public bool AsMkt => (typ & TYP_MKT_) == TYP_MKT_;
+    public bool AsRtl => (typ & TYP_RTL_) == TYP_RTL_;
 
-    public bool AsSup => (typ & TYP_SUP_) == TYP_SUP_;
+    public bool AsWhl => (typ & TYP_WHL_) == TYP_WHL_;
 
-    public int MktId => IsMkt ? id : AsMkt ? parentid : 0;
+    public int MktId => IsRtlEst ? id : AsRtl ? parentid : 0;
 
-    public int HubId => IsHub ? id : AsSup ? parentid : 0;
+    public int HubId => IsHub ? id : AsWhl ? parentid : 0;
+
+    public bool IsMkv => (typ & TYP_MKV) == TYP_MKV;
 
     public bool IsMkt => (typ & TYP_MKT) == TYP_MKT;
 
-    public bool IsMch => (typ & TYP_MCH) == TYP_MCH;
+    public bool IsRtlEst => (typ & (TYP_RTL_ | TYP_EST_)) == (TYP_RTL_ | TYP_EST_);
 
     public bool IsShp => (typ & TYP_SHP) == TYP_SHP;
+
+    public bool IsShv => (typ & TYP_SHV) == TYP_SHV;
+
+    public bool IsShx => (typ & TYP_SHX) == TYP_SHX;
 
     public bool IsHub => (typ & TYP_HUB) == TYP_HUB;
 
@@ -283,7 +291,7 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool Orderable => bankacct != null && bankacctname != null;
 
-    public bool HasXy => IsMkt || AsSup || IsHub;
+    public bool HasXy => IsRtlEst || AsWhl || IsHub;
 
     public bool IsTopOrg => parentid == 0;
 
@@ -296,25 +304,26 @@ public class Org : Entity, ITwin<int>, IFolderable
     public string Name => name;
 
 
-    public bool IsSelf => (style & STY_SLF) == STY_SLF;
+    public bool IsStyleSlf => (style & STY_SLF) == STY_SLF;
 
-    public bool IsDelivery => (style & STY_DLV) == STY_DLV;
+    public bool IsStyleDlv => (style & STY_DLV) == STY_DLV;
 
-    public bool IsService => (style & STY_SVC) == STY_SVC;
+    public bool IsStyleExp => (style & STY_EXP) == STY_EXP;
 
-    public bool IsCoverage => IsDelivery || IsService;
+    public bool IsStyleSvc => (style & STY_SVC) == STY_SVC;
 
-    public bool IsStation => (style & STY_STN) == STY_STN;
+    public bool IsCoverage => IsStyleDlv || IsStyleSvc;
 
-    public bool IsComplex => (style & STY_CPX) == STY_CPX;
+    public string No => AsRtl ? addr : null;
 
-    public string No => AsMkt ? addr : null;
+    public string Full => whole;
 
-    public string Whole => whole;
-
-    public string WholeName => whole ?? name;
+    public string FullName => whole ?? name;
 
     public int ForkKey => parentid;
+
+
+    public bool IsStatusWorkable => status > 1;
 
     public bool IsOpen(TimeSpan now)
     {
@@ -360,5 +369,5 @@ public class Org : Entity, ITwin<int>, IFolderable
     }
 
 
-    public static bool IsNonEstSupTyp(short t) => (t & TYP_SUP_) == TYP_SUP_ && t != TYP_HUB;
+    public static bool IsNonEstSupTyp(short t) => (t & TYP_WHL_) == TYP_WHL_ && t != TYP_HUB;
 }

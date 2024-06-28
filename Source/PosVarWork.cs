@@ -8,7 +8,7 @@ namespace ChainSmart;
 
 public class ShplyPosVarWork : BuyVarWork
 {
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
     [Ui(tip: "确认撤销该笔记录？", icon: "trash", status: 4), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {

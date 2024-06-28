@@ -38,7 +38,7 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
             return false;
         }
 
-        if ((atyp & Org.TYP_MKT_) == Org.TYP_MKT_) // check retail
+        if ((atyp & Org.TYP_RTL_) == Org.TYP_RTL_) // check retail
         {
             if ((prin.mktly & role) == role)
             {
@@ -58,7 +58,7 @@ public class MgtAuthorizeAttribute : AuthorizeAttribute
                 }
             }
         }
-        else if ((atyp & Org.TYP_SUP_) == Org.TYP_SUP_) // supply
+        else if ((atyp & Org.TYP_WHL_) == Org.TYP_WHL_) // supply
         {
             if ((prin.suply & role) == role)
             {

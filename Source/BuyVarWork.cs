@@ -100,7 +100,7 @@ public class ShplyBuyVarWork : BuyVarWork
             "注意：唯有派发了的订单才能结算返款"
         )
     ]
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_DLV)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_DLV)]
     [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
@@ -143,7 +143,7 @@ public class ShplyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui("撤销", "撤销该单并全款退回消费者", status: 1 | 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
@@ -331,7 +331,7 @@ public class MktlyBuyVarWork : BuyVarWork
         }, false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_MKT, User.ROL_DLV)]
+    [MgtAuthorize(Org.TYP_MKV, User.ROL_DLV)]
     [Ui("派发", "统一派发？"), Tool(ButtonPickConfirm)]
     public async Task ok(WebContext wc, int v2020)
     {

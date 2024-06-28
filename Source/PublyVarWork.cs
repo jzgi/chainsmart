@@ -21,7 +21,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         int orgid = wc[0];
         var org = GrabTwin<int, Org>(orgid);
 
-        var mkt = org.IsMkt ? org : GrabTwin<int, Org>(org.parentid);
+        var mkt = org.IsRtlEst ? org : GrabTwin<int, Org>(org.parentid);
 
         // show availlable item list
         //
@@ -31,22 +31,19 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (!org.IsMkt)
+            if (org.pic)
             {
-                if (org.pic)
-                {
-                    h.PIC_("/org/", org.id, "/pic");
-                }
-                else
-                {
-                    h.PIC_("/void-m.webp");
-                }
-                if (!string.IsNullOrEmpty(org.tip))
-                {
-                    h.ALERT(org.tip, css: "uk-position-bottom uk-overlay uk-alert-primary");
-                }
-                h._PIC();
+                h.PIC_("/org/", org.id, "/pic");
             }
+            else
+            {
+                h.PIC_("/void-m.webp");
+            }
+            if (!string.IsNullOrEmpty(org.tip))
+            {
+                h.ALERT(org.tip, css: "uk-position-bottom uk-overlay uk-alert-primary");
+            }
+            h._PIC();
 
             // sticky info belt
             h.T("<section uk-sticky class=\"uk-card-footer\">");
@@ -56,12 +53,12 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 return;
             }
             var open = org.IsOpen(DateTime.Now.TimeOfDay);
-            if (org.AsMkt)
+            if (org.AsRtl)
             {
                 h.SPAN_().ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
             }
             h.SPAN_("uk-margin-left").ICON("clock").SP().T(org.openat).T(" - ").T(org.closeat)._SPAN();
-            h.SPAN_("uk-margin-auto-left").T("联系商户").SP().ATEL(org.tel, css: "uk-light")._SPAN();
+            h.SPAN_("uk-margin-auto-left").T("本店电话").SP().ATEL(org.tel, css: "uk-light")._SPAN();
             h.T("</section>");
 
             if (arr == null)
@@ -104,11 +101,6 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 if (o.srcid > 0)
                 {
                     var src = GrabTwin<int, Org>(o.srcid);
-                    if (src.tag > 0)
-                    {
-                        var tags = Grab<short, Tag>();
-                        h.MARK(tags[src.tag].name);
-                    }
                     if (src.sym > 0)
                     {
                         var syms = Grab<short, Sym>();
@@ -161,8 +153,8 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.DIV_("uk-flex uk-width-1-1");
                 string area;
                 h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '外地') ? '收货地址': '街道小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
-                var (min, rate, max) = org.IsService ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
-                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsService ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+                var (min, rate, max) = org.IsStyleSvc ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
+                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();
             }
             h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverage ? "收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
@@ -294,7 +286,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         var regs = Grab<short, Reg>();
         var org = GrabTwin<int, Org>(orgid);
 
-        if (!org.IsMkt)
+        if (!org.IsRtlEst)
         {
             wc.GiveMsg(304, "not a market");
             return;
@@ -308,7 +300,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (org.IsComplex )
+            if (org.IsRtlEst )
             {
                 h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.style));
             }
@@ -371,6 +363,6 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h._ARTICLE();
             }
             h._MAIN();
-        }, true, 720, org.Whole);
+        }, true, 720, org.Full);
     }
 }

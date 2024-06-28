@@ -139,7 +139,7 @@ public class OrglyMbrVarWork : UserVarWork
 
 public class ShplyVipVarWork : UserVarWork
 {
-    [MgtAuthorize(Org.TYP_MKT_, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui(tip: "删除VIP身份", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
