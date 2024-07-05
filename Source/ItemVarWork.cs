@@ -430,12 +430,13 @@ public class ShplyItemVarWork : ItemVarWork
             await wc.ReadObjectAsync(instance: o);
 
             // update db
+            const short msk = MSK_BORN | MSK_EDIT;
             using var dc = NewDbContext();
 
             o.name = (string)await dc.ScalarAsync("SELECT name FROM items_vw WHERE id = @1", p => p.Set(itemid));
 
-            dc.Sql("INSERT INTO bats ").colset(Bat.Empty)._VALUES_(Bat.Empty);
-            await dc.ExecuteAsync(p => o.Write(p));
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // close dialog
         }

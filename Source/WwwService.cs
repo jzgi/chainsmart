@@ -43,7 +43,7 @@ public class WwwService : MainService
             var mkt = GrabTwin<int, Org>(mktid);
             bool inner = wc.Query[nameof(inner)]; // whether in an intermediate dialog or a full page
 
-            wc.GivePane(200, h =>
+            wc.GivePage(200, h =>
             {
                 lock (mkt)
                 {
@@ -87,7 +87,7 @@ public class WwwService : MainService
 
                     h.BOTTOMBAR_().A_(mkt.id, "/h", parent: inner, css: "uk-button uk-button-default").T("进入市场")._A()._BOTTOMBAR();
                 }
-            }, true, 720, mkt.whole);
+            }, true, 720, Application.Nodal.name, dark: false);
         }
         else // to show the full market list
         {

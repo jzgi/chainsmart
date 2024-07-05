@@ -3162,6 +3162,7 @@ ul.uk-nav-sub {
     overflow-x: scroll;
     list-style: none;
     -webkit-overflow-scrolling: touch;
+    background-color: #fff;
 }
 
 .uk-subnav::-webkit-scrollbar {
@@ -3185,7 +3186,10 @@ ul.uk-nav-sub {
     color: #333;
     border-top: 4px solid #f9473e;
     background-color: #ededed;
-    border-bottom-right-radius: 24px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-top-right-radius: 8px;
+    border-top-left-radius: 8px;
 }
 
 .uk-subnav a:hover {
