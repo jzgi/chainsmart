@@ -30,7 +30,6 @@ public abstract class BatWork<V> : WebWork where V : WebWork, new()
             h.SPAN((Bat.Typs[o.typ]), "uk-badge");
             h._HEADER();
 
-            h.Q(o.codeid, "uk-width-expand");
             // h.FOOTER_().SPAN(o.nend).SPAN_("uk-margin-auto-left").T(o.bal)._SPAN()._FOOTER();
             h._ASIDE();
 

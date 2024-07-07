@@ -48,8 +48,6 @@ public class Bat : Entity, IKeyable<int>
 
     internal int stock;
 
-    internal int codeid;
-
     internal short tag;
 
     internal int nstart;
@@ -67,21 +65,30 @@ public class Bat : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Get(nameof(orgid), ref orgid);
+            s.Get(nameof(itemid), ref itemid);
         }
+
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(itemid), ref itemid);
-            s.Get(nameof(srcid), ref srcid);
-            s.Get(nameof(hubid), ref hubid);
             s.Get(nameof(qty), ref qty);
-            s.Get(nameof(stock), ref stock);
-        }
-        if ((msk & MSK_LATE) == MSK_LATE)
-        {
-            s.Get(nameof(codeid), ref codeid);
             s.Get(nameof(tag), ref tag);
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
+            s.Get(nameof(srcid), ref srcid);
+        }
+        else if ((msk & MSK_REV) == MSK_REV)
+        {
+            s.Get(nameof(qty), ref qty);
+            s.Get(nameof(tag), ref tag);
+            s.Get(nameof(nstart), ref nstart);
+            s.Get(nameof(nend), ref nend);
+            s.Get(nameof(srcid), ref srcid);
+            s.Get(nameof(hubid), ref hubid);
+        }
+
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
+            s.Get(nameof(stock), ref stock);
         }
     }
 
@@ -96,24 +103,32 @@ public class Bat : Entity, IKeyable<int>
         if ((msk & MSK_BORN) == MSK_BORN)
         {
             s.Put(nameof(orgid), orgid);
+            s.Put(nameof(itemid), itemid);
         }
+
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(itemid), itemid);
-            if (srcid > 0) s.Put(nameof(srcid), srcid);
-            else s.PutNull(nameof(srcid));
-            if (hubid > 0) s.Put(nameof(hubid), hubid);
-            else s.PutNull(nameof(hubid));
             s.Put(nameof(qty), qty);
-            s.Put(nameof(stock), stock);
-        }
-        if ((msk & MSK_LATE) == MSK_LATE)
-        {
-            s.Put(nameof(codeid), codeid);
             s.Put(nameof(tag), tag);
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
+            if (srcid > 0) s.Put(nameof(srcid), srcid); else s.PutNull(nameof(srcid));
         }
+        else if ((msk & MSK_REV) == MSK_REV)
+        {
+            s.Put(nameof(qty), qty);
+            s.Put(nameof(tag), tag);
+            s.Put(nameof(nstart), nstart);
+            s.Put(nameof(nend), nend);
+            if (srcid > 0) s.Put(nameof(srcid), srcid); else s.PutNull(nameof(srcid));
+            if (hubid > 0) s.Put(nameof(hubid), hubid); else s.PutNull(nameof(hubid));
+        }
+        
+        if ((msk & MSK_LATER) == MSK_LATER)
+        {
+            s.Put(nameof(stock), stock);
+        }
+
     }
 
     public int Key => id;

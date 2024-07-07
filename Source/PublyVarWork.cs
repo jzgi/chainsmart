@@ -98,14 +98,10 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
-                if (o.srcid > 0)
+                if (o.sym > 0)
                 {
-                    var src = GrabTwin<int, Org>(o.srcid);
-                    if (src.sym > 0)
-                    {
-                        var syms = Grab<short, Sym>();
-                        h.MARK(syms[src.sym].name);
-                    }
+                    var syms = Grab<short, Sym>();
+                    h.MARK(syms[o.sym].name);
                 }
                 h._SPAN();
                 h._HEADER();
@@ -276,7 +272,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         }
     }
 
-    
+
     /// <summary>
     /// The home of the market by sector
     /// </summary>
@@ -300,7 +296,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
         wc.GivePage(200, h =>
         {
-            if (org.IsRtlEst )
+            if (org.IsRtlEst)
             {
                 h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.style));
             }

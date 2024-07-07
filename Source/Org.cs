@@ -102,10 +102,6 @@ public class Org : Entity, ITwin<int>, IFolderable
     internal short rank; // credit level
     internal short style;
 
-    internal short sym;
-    // internal short tag;
-    // internal short env;
-
     internal bool icon;
     internal bool pic;
     internal bool img;
@@ -150,21 +146,17 @@ public class Org : Entity, ITwin<int>, IFolderable
                 s.Get(nameof(bankacct), ref bankacct);
             }
 
-            if ((msk & MSK_LATE) == MSK_LATE)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Get(nameof(sym), ref sym);
-                if ((msk & MSK_LATER) == MSK_LATER)
-                {
-                    s.Get(nameof(openat), ref openat);
-                    s.Get(nameof(closeat), ref closeat);
-                    s.Get(nameof(icon), ref icon);
-                    s.Get(nameof(pic), ref pic);
-                    s.Get(nameof(img), ref img);
-                    s.Get(nameof(m1), ref m1);
-                    s.Get(nameof(m2), ref m2);
-                    s.Get(nameof(m3), ref m3);
-                    s.Get(nameof(m4), ref m4);
-                }
+                s.Get(nameof(openat), ref openat);
+                s.Get(nameof(closeat), ref closeat);
+                s.Get(nameof(icon), ref icon);
+                s.Get(nameof(pic), ref pic);
+                s.Get(nameof(img), ref img);
+                s.Get(nameof(m1), ref m1);
+                s.Get(nameof(m2), ref m2);
+                s.Get(nameof(m3), ref m3);
+                s.Get(nameof(m4), ref m4);
             }
         }
     }
@@ -208,21 +200,17 @@ public class Org : Entity, ITwin<int>, IFolderable
                 s.Put(nameof(bankacct), bankacct);
             }
 
-            if ((msk & MSK_LATE) == MSK_LATE)
+            if ((msk & MSK_LATER) == MSK_LATER)
             {
-                s.Put(nameof(sym), sym);
-                if ((msk & MSK_LATER) == MSK_LATER)
-                {
-                    s.Put(nameof(openat), openat);
-                    s.Put(nameof(closeat), closeat);
-                    s.Put(nameof(icon), icon);
-                    s.Put(nameof(pic), pic);
-                    s.Put(nameof(img), img);
-                    s.Put(nameof(m1), m1);
-                    s.Put(nameof(m2), m2);
-                    s.Put(nameof(m3), m3);
-                    s.Put(nameof(m4), m4);
-                }
+                s.Put(nameof(openat), openat);
+                s.Put(nameof(closeat), closeat);
+                s.Put(nameof(icon), icon);
+                s.Put(nameof(pic), pic);
+                s.Put(nameof(img), img);
+                s.Put(nameof(m1), m1);
+                s.Put(nameof(m2), m2);
+                s.Put(nameof(m3), m3);
+                s.Put(nameof(m4), m4);
             }
         }
     }

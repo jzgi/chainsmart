@@ -1,4 +1,5 @@
-﻿using ChainFX;
+﻿using System;
+using ChainFX;
 
 namespace ChainSmart;
 
@@ -35,6 +36,9 @@ public class Item : Entity, IKeyable<int>
     internal short max;
     internal short stock;
     internal string sort;
+    internal short sym;
+    internal DateTime symed;
+    internal string symer;
 
     internal bool icon;
     internal bool pic;
@@ -61,6 +65,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Get(nameof(srcid), ref srcid);
             s.Get(nameof(cat), ref cat);
+            s.Get(nameof(sort), ref sort);
             s.Get(nameof(unit), ref unit);
             s.Get(nameof(unitip), ref unitip);
             s.Get(nameof(unitx), ref unitx);
@@ -74,7 +79,9 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(stock), ref stock);
-            s.Get(nameof(sort), ref sort);
+            s.Get(nameof(sym), ref sym);
+            s.Get(nameof(symed), ref symed);
+            s.Get(nameof(symer), ref symer);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -102,6 +109,7 @@ public class Item : Entity, IKeyable<int>
         {
             s.Put(nameof(srcid), srcid);
             s.Put(nameof(cat), cat);
+            s.Put(nameof(sort), sort);
             s.Put(nameof(unit), unit);
             s.Put(nameof(unitip), unitip);
             s.Put(nameof(unitx), unitx);
@@ -115,7 +123,9 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(stock), stock);
-            s.Put(nameof(sort), sort);
+            s.Put(nameof(sym), sym);
+            s.Put(nameof(symed), symed);
+            s.Put(nameof(symer), symer);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);

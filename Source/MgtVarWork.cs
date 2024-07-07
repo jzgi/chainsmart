@@ -22,7 +22,7 @@ public abstract class MgtVarWork : WebWork
             h.H1_().T(org.name)._H1();
             if (org.AsEst)
             {
-                h.H2(org.Full);
+                h.H4(org.Full);
             }
             h._HEADER();
 
@@ -131,8 +131,8 @@ public class MktlyVarWork : MgtVarWork, IExternable
         CreateWork<MktlyCerWork>("mcer");
     }
 
-    [MgtAuthorize(Org.TYP_MKV, User.ROL_MGT)]
-    [Ui("设置", "设置基本信息和参数", status: 1 | 2), Tool(ButtonShow)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
+    [Ui("设置", "设置基本信息和参数", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         var m = wc[0].As<Org>();
@@ -152,11 +152,6 @@ public class MktlyVarWork : MgtVarWork, IExternable
         else
         {
             await wc.ReadObjectAsync(instance: m); // use existing object
-            lock (m)
-            {
-                m.oked = default;
-                m.oker = null;
-            }
 
             await GetTwinCache<OrgCache, int, Org>().UpdateAsync(m,
                 async (dc) =>

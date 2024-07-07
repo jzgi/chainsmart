@@ -8,7 +8,6 @@ namespace ChainSmart;
 
 [MyAuthorize]
 [Ui("我的个人账号")]
-[Help("用户可以查看自己的消费订单，获取平台发放的资源奖励、以及管理个人账号信息")]
 public class MyVarWork : BuyWork<MyBuyVarWork>
 {
     public async Task @default(WebContext wc)

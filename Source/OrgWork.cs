@@ -278,12 +278,6 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
                     h.LI_().TEXT("收款账名", nameof(o.bankacctname), o.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
                     h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19, required: true)._LI();
                 }
-                if (o.IsSrc)
-                {
-                    var syms = Grab<short, Sym>();
-                    h.LI_().SELECT("标志", nameof(o.sym), o.sym, syms)._LI();
-                }
-
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
         }

@@ -121,11 +121,22 @@ public class PublyItemVarWork : ItemVarWork
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();
             }
+            h.LI_().FIELD_("标志", css: "uk-col");
+            if (o.sym > 0)
+            {
+                var sym = Grab<short, Sym>()?[o.sym];
+                h.MARK(sym?.name).Q(sym?.tip);
+            }
+            else
+            {
+                h.T("无");
+            }
+            h._FIELD()._LI();
             h.LI_().FIELD("单位", o.unit).FIELD("附注", o.unitip)._LI();
             h.LI_().FIELD("单价", o.price, money: true);
             if (o.off > 0)
             {
-                h.FIELD("VIP立减", o.off);
+                h.FIELD("大客户减", o.off);
             }
             h._LI();
             h._UL();
@@ -394,6 +405,46 @@ public class ShplyItemVarWork : ItemVarWork
         wc.Give(204); // no content
     }
 
+    [MgtAuthorize(0, User.ROL_OPN)]
+    [Ui("标志", "给商品设标志", status: 1 | 2 | 4), Tool(ButtonShow)]
+    public async Task setsym(WebContext wc)
+    {
+        int id = wc[0];
+        var org = wc[-2].As<Org>();
+        var prin = (User)wc.Principal;
+
+        short sym = 0;
+
+        if (wc.IsGet)
+        {
+            var syms = Grab<short, Sym>();
+
+            using var dc = NewDbContext();
+            await dc.QueryTopAsync("SELECT sym FROM items_vw WHERE id = @1", p => p.Set(id));
+            dc.Let(out sym);
+
+            wc.GivePane(200, h =>
+            {
+                h.FORM_().FIELDSUL_(wc.Action.Tip);
+                h.LI_().SELECT("标志", nameof(sym), sym, syms)._LI();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setsym))._FORM();
+            });
+        }
+        else // POST
+        {
+            var f = await wc.ReadAsync<Form>();
+            sym = f[nameof(sym)];
+
+            // update
+            using var dc = NewDbContext();
+            dc.Sql("UPDATE items SET sym = @1, symed = @2, symer = @3 WHERE id = @4 AND orgid = @5");
+            await dc.ExecuteAsync(p => p.Set(sym).Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+
+            wc.GivePane(200); // close dialog
+        }
+    }
+
+
     [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
     [Ui(tip: "简单加数", icon: "plus", status: 8), Tool(ButtonShow)]
     public async Task add(WebContext wc)
@@ -427,14 +478,12 @@ public class ShplyItemVarWork : ItemVarWork
         }
         else // POST
         {
-            await wc.ReadObjectAsync(instance: o);
+            const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
 
-            // update db
-            const short msk = MSK_BORN | MSK_EDIT;
+            await wc.ReadObjectAsync(msk, instance: o);
+
             using var dc = NewDbContext();
-
             o.name = (string)await dc.ScalarAsync("SELECT name FROM items_vw WHERE id = @1", p => p.Set(itemid));
-
             dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
             await dc.ExecuteAsync(p => o.Write(p, msk));
 
@@ -466,24 +515,29 @@ public class ShplyItemVarWork : ItemVarWork
 
         if (wc.IsGet)
         {
-            int codeid = wc.Query[nameof(codeid)];
+            var tags = Grab<short, Tag>();
 
-            Code code = null;
-            if (cmd > 0)
+            o.tag = wc.Query[nameof(o.tag)];
+            o.qty = wc.Query[nameof(o.qty)];
+            o.nend = wc.Query[nameof(o.nend)];
+
+            Code code;
+
+            if (cmd == 1)
             {
+                o.nstart = o.nend - o.qty + 1;
                 using var dc = NewDbContext();
-                dc.Sql("SELECT ").collst(Code.Empty).T(" FROM codes WHERE id = @1");
-                code = await dc.QueryTopAsync<Code>(p => p.Set(codeid));
+                code = await dc.QueryTopAsync<Code>("SELECT id FROM codes WHERE tag = @1 AND @2 BETWEEN nstart AND nend", p => p.Set(o.tag).Set(o.nstart).Set(o.nend));
             }
             wc.GivePane(200, h =>
             {
                 h.FORM_(css: "uk-list uk-list-divider").FIELDSUL_(wc.Action.Tip);
-                h.LI_().NUMBER("溯源档号", nameof(codeid), codeid, min: 1, max: 99999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
-                if (cmd > 0)
+                h.LI_().SELECT("溯源标签", nameof(o.tag), o.tag, tags).NUMBER("截止溯源号", nameof(o.nend), o.nend, min: 0, max: 99999999)._LI();
+                h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 99999999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+
+                if (cmd == 1)
                 {
-                    var src = GrabTwin<int, Org>(code.orgid);
-                    h.LI_().FIELD("产源", src.name).HIDDEN(nameof(o.srcid), code.orgid)._LI();
-                    h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: code.num)._LI();
+                    h.LI_().FIELD("产源", nameof(code.name), o.name).HIDDEN(nameof(o.srcid), o.orgid)._LI();
                     h.LI_().TEXT("备注", nameof(o.tip), o.tip, max: 20)._LI();
                 }
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add), disabled: cmd == 0)._FORM();
@@ -491,15 +545,16 @@ public class ShplyItemVarWork : ItemVarWork
         }
         else // POST
         {
-            await wc.ReadObjectAsync(instance: o);
+            const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
+
+            await wc.ReadObjectAsync(msk, instance: o);
 
             using var dc = NewDbContext();
 
             o.name = (string)await dc.ScalarAsync("SELECT name FROM items_vw WHERE id = @1", p => p.Set(itemid));
 
-            // update db
-            dc.Sql("INSERT INTO bats ").colset(Bat.Empty)._VALUES_(Bat.Empty);
-            await dc.ExecuteAsync(p => o.Write(p));
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // close dialog
         }

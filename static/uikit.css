@@ -1819,7 +1819,7 @@ select.uk-form-width-small {
     padding: 8px 24px;
     margin: 4px;
     font-size: .9375rem;
-    background-color: #7daa1d;
+    background-color: #333;
     color: #fff;
     border-radius: 16px;
     border: 0;
@@ -1829,8 +1829,8 @@ select.uk-form-width-small {
 .uk-button-default:focus,
 .uk-button-default:active,
 .uk-button-default.uk-active {
-    background-color: #739c1a;
-    color: #fff;
+    background-color: #333;
+    color: #f9473e;
 }
 
 button.uk-button-primary {
@@ -1846,7 +1846,7 @@ button.uk-button-primary {
 }
 
 .uk-bottom-bar button.uk-button-primary {
-    background-color: #666;
+    background-color: #333;
     color: #fff;
     height: 36px;
 }
@@ -1862,7 +1862,7 @@ button.uk-button-primary.uk-active {
 .uk-bottom-bar button.uk-button-primary:focus,
 .uk-bottom-bar button.uk-button-primary:active,
 .uk-bottom-bar button.uk-button-primary.uk-active {
-    background-color: #666;
+    background-color: #333;
     color: #f9473e;
 }
 

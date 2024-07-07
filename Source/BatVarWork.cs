@@ -93,6 +93,19 @@ public class PublyBatVarWork : CodeVarWork
             h.LI_().FIELD("货次", bat.oked)._LI();
             h.LI_().FIELD_("溯源", css: "uk-col").T(tag.name).Q(tag.tip)._FIELD()._LI();
 
+            var sym = Grab<short, Sym>()?[item.sym];
+
+            h.LI_().FIELD_("标志", css: "uk-col");
+            if (sym == null)
+            {
+                h.T("无");
+            }
+            else
+            {
+                h.T(sym.name).BR().Q(sym.tip, css: "uk-margin-auto-left");
+            }
+            h._FIELD()._LI();
+
             h._UL();
 
             if (item.m1)
@@ -124,21 +137,6 @@ public class PublyBatVarWork : CodeVarWork
             h.LI_().FIELD(string.Empty, src.tip)._LI();
             h.LI_().FIELD("工商登记", src.legal)._LI();
             h.LI_().FIELD("地址", src.addr)._LI();
-            h._UL();
-
-            var sym = Grab<short, Sym>()?[src.sym];
-
-            h.LI_().FIELD_("标志", css: "uk-col");
-            if (sym == null)
-            {
-                h.T("无");
-            }
-            else
-            {
-                h.T(sym.name).BR().Q(sym.tip, css: "uk-margin-auto-left");
-            }
-            h._FIELD()._LI();
-
             h._UL();
 
             if (src.m1)

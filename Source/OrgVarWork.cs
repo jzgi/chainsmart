@@ -56,12 +56,6 @@ public abstract class OrgVarWork : WebWork
                     h.LI_().FIELD("收款账名", m.bankacctname)._LI();
                     h.LI_().FIELD("收款账号", m.bankacct)._LI();
                 }
-                if (m.IsSrc)
-                {
-                    var syms = Grab<short, Sym>();
-
-                    h.LI_().FIELD("标志", m.sym, syms)._LI();
-                }
                 h._UL();
 
                 h.H4("状态", css: "uk-padding");
@@ -428,21 +422,14 @@ public class AdmlySupVarWork : OrgVarWork
                         h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20)._LI();
                         h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                     }
-                    if (m.IsSrc)
-                    {
-                        var syms = Grab<short, Sym>();
-
-                        h.LI_().SELECT("标志", nameof(m.sym), m.sym, syms)._LI();
-                    }
-
                     h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
                 }
             });
         }
         else // POST
         {
-            var Msk = m.IsSrc ? (short)(MSK_EDIT | MSK_LATE) : MSK_EDIT;
-            await wc.ReadObjectAsync(Msk, instance: m);
+            const short msk = MSK_EDIT;
+            await wc.ReadObjectAsync(msk, instance: m);
             lock (m)
             {
                 m.adapted = DateTime.Now;
@@ -450,10 +437,10 @@ public class AdmlySupVarWork : OrgVarWork
             }
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
+            dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
             await dc.ExecuteAsync(p =>
             {
-                m.Write(p, Msk);
+                m.Write(p, msk);
                 p.Set(id);
             });
 

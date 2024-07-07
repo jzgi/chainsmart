@@ -78,7 +78,6 @@ public class MyBuyVarWork : BuyVarWork
 }
 
 [Ui("订单操作")]
-[Help("显示订单明细，并且提供各阶段下的订单处理操作")]
 public class ShplyBuyVarWork : BuyVarWork
 {
     [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
@@ -94,12 +93,6 @@ public class ShplyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [Help(
-            "由商户自行安排对收单所涉的产品或服务进行派发，操作之后该单将置为「派发」状态",
-            "除了自行派发以外，也可以选择将产品送至合单区，由市场统一派发",
-            "注意：唯有派发了的订单才能结算返款"
-        )
-    ]
     [MgtAuthorize(Org.TYP_RTL_, User.ROL_DLV)]
     [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
