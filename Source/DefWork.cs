@@ -9,14 +9,14 @@ using static ChainFX.Web.ToolAttribute;
 
 namespace ChainSmart;
 
-public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
+public abstract class DefWork<V> : WebWork where V : DefVarWork, new()
 {
     protected override void OnCreate()
     {
         CreateVarWork<V>();
     }
 
-    protected static void Show<M>(HtmlBuilder h, Map<short, M> map, Map<short, string> styles = null) where M : Std
+    protected static void Show<M>(HtmlBuilder h, Map<short, M> map, Map<short, string> styles = null) where M : Def
     {
         h.LIST(map, ety =>
         {
@@ -26,7 +26,7 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
         }, ul: "uk-list-divider");
     }
 
-    protected static void MainGrid(HtmlBuilder h, IEnumerable<Std> arr, int sub, string title)
+    protected static void MainGrid(HtmlBuilder h, IEnumerable<Def> arr, int sub, string title)
     {
         h.MAINGRID(arr, o =>
         {
@@ -45,7 +45,7 @@ public abstract class StdWork<V> : WebWork where V : StdVarWork, new()
     }
 }
 
-public class PublyCatWork : StdWork<PublyCatVarWork>
+public class PublyCatWork : DefWork<PublyCatVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
@@ -56,7 +56,7 @@ public class PublyCatWork : StdWork<PublyCatVarWork>
     }
 }
 
-public class PublyTagWork : StdWork<PublyTagVarWork>
+public class PublyTagWork : DefWork<PublyTagVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
@@ -67,7 +67,7 @@ public class PublyTagWork : StdWork<PublyTagVarWork>
     }
 }
 
-public class PublySymWork : StdWork<PublySymVarWork>
+public class PublySymWork : DefWork<PublySymVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
@@ -79,18 +79,18 @@ public class PublySymWork : StdWork<PublySymVarWork>
 }
 
 [Ui("标准")]
-public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
+public class AdmlyDefWork : DefWork<AdmlyDefVarWork>
 {
     [Ui("品类", status: 1), Tool(Anchor)]
     public void @default(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM cats ORDER BY typ, status DESC");
-        var arr = dc.Query<Std>();
+        dc.Sql("SELECT ").collst(Def.Empty).T(" FROM cats ORDER BY typ, status DESC");
+        var arr = dc.Query<Def>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Std.SUB_CAT);
+            h.TOOLBAR(subscript: Def.SUB_CAT);
 
             if (arr == null)
             {
@@ -98,7 +98,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, Std.SUB_CAT, "品类");
+            MainGrid(h, arr, Def.SUB_CAT, "品类");
         }, false, 15);
     }
 
@@ -106,12 +106,12 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
     public void tag(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM tags ORDER BY typ, status DESC");
-        var arr = dc.Query<Std>();
+        dc.Sql("SELECT ").collst(Def.Empty).T(" FROM tags ORDER BY typ, status DESC");
+        var arr = dc.Query<Def>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Std.SUB_TAG);
+            h.TOOLBAR(subscript: Def.SUB_TAG);
 
             if (arr == null)
             {
@@ -119,28 +119,28 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, Std.SUB_TAG, "溯源");
+            MainGrid(h, arr, Def.SUB_TAG, "溯源");
         }, false, 15);
     }
 
-    [Ui("标志", status: 4), Tool(Anchor)]
+    [Ui("特誉", status: 4), Tool(Anchor)]
     public void sym(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM syms ORDER BY typ, status DESC");
-        var arr = dc.Query<Std>();
+        dc.Sql("SELECT ").collst(Def.Empty).T(" FROM syms ORDER BY typ, status DESC");
+        var arr = dc.Query<Def>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Std.SUB_SYM);
+            h.TOOLBAR(subscript: Def.SUB_SYM);
 
             if (arr == null)
             {
-                h.ALERT("尚无定义标志");
+                h.ALERT("尚无定义特誉");
                 return;
             }
 
-            MainGrid(h, arr, Std.SUB_SYM, "标志");
+            MainGrid(h, arr, Def.SUB_SYM, "特誉");
         }, false, 15);
     }
 
@@ -148,12 +148,12 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
     public void cer(WebContext wc)
     {
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM cers ORDER BY typ, status DESC");
-        var arr = dc.Query<Std>();
+        dc.Sql("SELECT ").collst(Def.Empty).T(" FROM cers ORDER BY typ, status DESC");
+        var arr = dc.Query<Def>();
 
         wc.GivePage(200, h =>
         {
-            h.TOOLBAR(subscript: Std.SUB_CER);
+            h.TOOLBAR(subscript: Def.SUB_CER);
 
             if (arr == null)
             {
@@ -161,7 +161,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 return;
             }
 
-            MainGrid(h, arr, Std.SUB_CER, "认证");
+            MainGrid(h, arr, Def.SUB_CER, "认证");
         }, false, 15);
     }
 
@@ -169,9 +169,9 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
     public async Task @new(WebContext wc, int sub)
     {
         var prin = (User)wc.Principal;
-        var descr = Std.Descrs[(short)sub];
+        var descr = Def.Descrs[(short)sub];
 
-        var o = new Std
+        var o = new Def
         {
             typ = (short)sub,
             created = DateTime.Now,
@@ -188,7 +188,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 10, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, min: 2, max: 40)._LI();
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
-                h.LI_().SELECT("风格", nameof(o.style), o.style, Std.Styles)._LI();
+                h.LI_().SELECT("风格", nameof(o.style), o.style, Def.Styles)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: sub)._FORM();
             });
@@ -200,7 +200,7 @@ public class AdmlyStdWork : StdWork<AdmlyStdVarWork>
             o = await wc.ReadObjectAsync(msk, instance: o);
 
             using var dc = NewDbContext();
-            dc.Sql("INSERT INTO ").T(descr.DbTable).T(" ").colset(Std.Empty, msk)._VALUES_(Std.Empty, msk);
+            dc.Sql("INSERT INTO ").T(descr.DbTable).T(" ").colset(Def.Empty, msk)._VALUES_(Def.Empty, msk);
             await dc.ExecuteAsync(p => o.Write(p, msk));
 
             wc.GivePane(200); // close dialog

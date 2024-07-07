@@ -111,17 +111,28 @@ public class PublyItemVarWork : ItemVarWork
         {
             if (o.pic)
             {
-                h.IMG("/item/", o.id, "/pic", css: "uk-card-body");
+                h.IMG("/item/", o.id, "/pic");
             }
 
-            h.ARTICLE_("uk-card uk-card-primary");
+            h.ARTICLE_("uk-card uk-card-primary uk-margin-remove");
             h.UL_("uk-card-body uk-list uk-list-divider");
             h.LI_().FIELD("商品名", o.name).FIELD("分类", o.typ, Item.Typs)._LI();
             if (!string.IsNullOrEmpty(o.tip))
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();
             }
-            h.LI_().FIELD_("标志", css: "uk-col");
+            h.LI_().FIELD_("溯源", css: "uk-col");
+            if (o.tag > 0)
+            {
+                var tag = Grab<short, Tag>()?[o.tag];
+                h.MARK(tag?.name).Q(tag?.tip);
+            }
+            else
+            {
+                h.T("无");
+            }
+            h._FIELD()._LI();
+            h.LI_().FIELD_("特誉", css: "uk-col");
             if (o.sym > 0)
             {
                 var sym = Grab<short, Sym>()?[o.sym];
@@ -139,70 +150,21 @@ public class PublyItemVarWork : ItemVarWork
                 h.FIELD("大客户减", o.off);
             }
             h._LI();
+
+            if (o.srcid > 0)
+            {
+                var src = o.srcid > 0 ? GrabTwin<int, Org>(o.srcid) : null;
+                if (src != null)
+                {
+                    h.LI_().FIELD("产源", src.name)._LI();
+                    h.LI_().FIELD(string.Empty, src.tip)._LI();
+                }
+            }
+
             h._UL();
 
             h._ARTICLE();
-
-            var src = o.srcid > 0 ? GrabTwin<int, Org>(o.srcid) : null;
-
-            if (src != null)
-            {
-                h.UL_("uk-list uk-list-divider");
-                h.LI_().FIELD("产源", src.name)._LI();
-                h.LI_().FIELD(string.Empty, src.tip)._LI();
-                h.LI_().FIELD("等级", src.rank, Org.Ranks)._LI();
-                h._UL();
-
-                if (src.tip != null)
-                {
-                    h.ALERT_().T(src.tip)._ALERT();
-                }
-                if (src.pic)
-                {
-                    h.PIC(OrgUrl, src.id, "/pic", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m1)
-                {
-                    h.PIC(OrgUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m2)
-                {
-                    h.PIC(OrgUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m3)
-                {
-                    h.PIC(OrgUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m4)
-                {
-                    h.PIC(OrgUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
-                }
-
-                h.ARTICLE_("uk-card uk-card-primary");
-                h.H2("批次检验", "uk-card-header");
-                h.SECTION_("uk-card-body");
-
-                if (src.m1)
-                {
-                    h.PIC(ItemUrl, src.id, "/m-1", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m2)
-                {
-                    h.PIC(ItemUrl, src.id, "/m-2", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m3)
-                {
-                    h.PIC(ItemUrl, src.id, "/m-3", css: "uk-width-1-1 uk-padding-bottom");
-                }
-                if (src.m4)
-                {
-                    h.PIC(ItemUrl, src.id, "/m-4", css: "uk-width-1-1 uk-padding-bottom");
-                }
-
-                h._SECTION();
-                h._ARTICLE();
-            }
-        }, true, 900);
+        }, true, 900, css: "uk-light");
     }
 
     public override Task bat(WebContext wc)
@@ -406,39 +368,45 @@ public class ShplyItemVarWork : ItemVarWork
     }
 
     [MgtAuthorize(0, User.ROL_OPN)]
-    [Ui("标志", "给商品设标志", status: 1 | 2 | 4), Tool(ButtonShow)]
-    public async Task setsym(WebContext wc)
+    [Ui("标志", "给商品设定标志", status: 1 | 2 | 4), Tool(ButtonShow)]
+    public async Task prove(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
         var prin = (User)wc.Principal;
 
+        short tag = 0;
         short sym = 0;
 
         if (wc.IsGet)
         {
+            var tags = Grab<short, Tag>();
+
             var syms = Grab<short, Sym>();
 
             using var dc = NewDbContext();
-            await dc.QueryTopAsync("SELECT sym FROM items_vw WHERE id = @1", p => p.Set(id));
+            await dc.QueryTopAsync("SELECT tag, sym FROM items_vw WHERE id = @1", p => p.Set(id));
+            dc.Let(out tag);
             dc.Let(out sym);
 
             wc.GivePane(200, h =>
             {
                 h.FORM_().FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("标志", nameof(sym), sym, syms)._LI();
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(setsym))._FORM();
+                h.LI_().SELECT("溯源", nameof(tag), tag, tags)._LI();
+                h.LI_().SELECT("特誉", nameof(sym), sym, syms)._LI();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(prove))._FORM();
             });
         }
         else // POST
         {
             var f = await wc.ReadAsync<Form>();
+            tag = f[nameof(tag)];
             sym = f[nameof(sym)];
 
             // update
             using var dc = NewDbContext();
-            dc.Sql("UPDATE items SET sym = @1, symed = @2, symer = @3 WHERE id = @4 AND orgid = @5");
-            await dc.ExecuteAsync(p => p.Set(sym).Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
+            dc.Sql("UPDATE items SET tag = @1, sym = @2, proved = @3, prover = @4 WHERE id = @5 AND orgid = @6");
+            await dc.ExecuteAsync(p => p.Set(tag).Set(sym).Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id));
 
             wc.GivePane(200); // close dialog
         }

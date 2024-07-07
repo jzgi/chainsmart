@@ -58,7 +58,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.SPAN_().ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
             }
             h.SPAN_("uk-margin-left").ICON("clock").SP().T(org.openat).T(" - ").T(org.closeat)._SPAN();
-            h.SPAN_("uk-margin-auto-left").T("本店电话").SP().ATEL(org.tel, css: "uk-light")._SPAN();
+            h.SPAN_("uk-margin-auto-left").T("电话").SP().ATEL(org.tel, css: "uk-light")._SPAN();
             h.T("</section>");
 
             if (arr == null)
@@ -77,7 +77,6 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.SECTION_("uk-card-body uk-flex");
 
                 // the cclickable icon
-                //
                 h.ADIALOG_(o.Key, "/", MOD_SHOW, false, tip: o.name, css: "uk-width-1-4");
                 if (o.icon)
                 {
@@ -98,6 +97,11 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 }
                 // top right corner span
                 h.SPAN_(css: "uk-badge");
+                if (o.tag > 0)
+                {
+                    var tags = Grab<short, Tag>();
+                    h.MARK(tags[o.tag].name);
+                }
                 if (o.sym > 0)
                 {
                     var syms = Grab<short, Sym>();
@@ -153,7 +157,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.SPAN_("uk-width-expand uk-flex-center").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
                 h._DIV();
             }
-            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"").T(org.IsCoverage ? "收货地址" : "附加说明").T("\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"收货地址\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._SECTION();
 
             h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();

@@ -5,25 +5,25 @@ namespace ChainSmart;
 /// <summary>
 /// A standard definitive item..
 /// </summary>
-public class Std : Entity, IKeyable<short>
+public class Def : Entity, IKeyable<short>
 {
-    public static readonly Std Empty = new();
+    public static readonly Def Empty = new();
 
     public const short
         SUB_CAT = 1, SUB_TAG = 2, SUB_SYM = 3, SUB_CER = 4;
 
-    public static readonly Map<short, StdDescr> Descrs = new()
+    public static readonly Map<short, DefDescr> Descrs = new()
     {
-        new StdDescr(
+        new DefDescr(
             SUB_CAT, "品类", "cats"
         ),
-        new StdDescr(
+        new DefDescr(
             SUB_TAG, "溯源", "tags"
         ),
-        new StdDescr(
+        new DefDescr(
             SUB_SYM, "标志", "syms"
         ),
-        new StdDescr(
+        new DefDescr(
             SUB_CER, "认证", "cers"
         ),
     };
@@ -62,7 +62,7 @@ public class Std : Entity, IKeyable<short>
     public override string ToString() => name;
 }
 
-public class StdDescr : IKeyable<short>
+public class DefDescr : IKeyable<short>
 {
     readonly short sub;
 
@@ -70,7 +70,7 @@ public class StdDescr : IKeyable<short>
 
     readonly string dbtable;
 
-    public StdDescr(short sub, string title, string dbtable)
+    public DefDescr(short sub, string title, string dbtable)
     {
         this.sub = sub;
         this.title = title;
@@ -89,27 +89,27 @@ public class StdDescr : IKeyable<short>
 /// <summary>
 /// A standard product category.
 /// </summary>
-public class Cat : Std
+public class Cat : Def
 {
 }
 
 /// <summary>
 /// A standard tracing tag.
 /// </summary>
-public class Tag : Std
+public class Tag : Def
 {
 }
 
 /// <summary>
 /// A standard product modification symbol.
 /// </summary>
-public class Sym : Std
+public class Sym : Def
 {
 }
 
 /// <summary>
 /// A standard certification program that a user can attend..
 /// </summary>
-public class Cer : Std
+public class Cer : Def
 {
 }

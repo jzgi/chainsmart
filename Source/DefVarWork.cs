@@ -7,9 +7,9 @@ using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
-public abstract class StdVarWork : WebWork
+public abstract class DefVarWork : WebWork
 {
-    protected static void Show<M>(HtmlBuilder h, M o, string icon) where M : Std
+    protected static void Show<M>(HtmlBuilder h, M o, string icon) where M : Def
     {
         h.SECTION_("uk-section");
         h.IMG(icon, css: "uk-width-1-4");
@@ -24,7 +24,7 @@ public abstract class StdVarWork : WebWork
     }
 }
 
-public class PublyCatVarWork : StdVarWork
+public class PublyCatVarWork : DefVarWork
 {
     public void @default(WebContext wc)
     {
@@ -35,7 +35,7 @@ public class PublyCatVarWork : StdVarWork
     }
 }
 
-public class PublyTagVarWork : StdVarWork
+public class PublyTagVarWork : DefVarWork
 {
     public void @default(WebContext wc)
     {
@@ -46,7 +46,7 @@ public class PublyTagVarWork : StdVarWork
     }
 }
 
-public class PublySymVarWork : StdVarWork
+public class PublySymVarWork : DefVarWork
 {
     public void @default(WebContext wc)
     {
@@ -57,16 +57,16 @@ public class PublySymVarWork : StdVarWork
     }
 }
 
-public class AdmlyStdVarWork : StdVarWork
+public class AdmlyDefVarWork : DefVarWork
 {
     public async Task @default(WebContext wc, int sub)
     {
         short typ = wc[0];
-        var descr = Std.Descrs[(short)sub];
+        var descr = Def.Descrs[(short)sub];
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Std.Empty).T(" FROM ").T(descr.DbTable).T(" WHERE typ = @1");
-        var o = await dc.QueryTopAsync<Std>(p => p.Set(typ));
+        dc.Sql("SELECT ").collst(Def.Empty).T(" FROM ").T(descr.DbTable).T(" WHERE typ = @1");
+        var o = await dc.QueryTopAsync<Def>(p => p.Set(typ));
 
         wc.GivePane(200, h =>
         {
@@ -76,7 +76,7 @@ public class AdmlyStdVarWork : StdVarWork
             h.LI_().FIELD("名称", o.name)._LI();
             h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("序号", o.idx)._LI();
-            h.LI_().FIELD("风格", o.style, Std.Styles)._LI();
+            h.LI_().FIELD("风格", o.style, Def.Styles)._LI();
             h.LI_().FIELD("状态", o.status, Entity.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
@@ -90,13 +90,13 @@ public class AdmlyStdVarWork : StdVarWork
     public async Task upd(WebContext wc, int sub)
     {
         short typ = wc[0];
-        var descr = Std.Descrs[(short)sub];
+        var descr = Def.Descrs[(short)sub];
 
         if (wc.IsGet)
         {
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Std.Empty).T(" FROM ").T(descr.DbTable).T(" WHERE typ = @1");
-            var o = await dc.QueryTopAsync<Std>(p => p.Set(typ));
+            dc.Sql("SELECT ").collst(Def.Empty).T(" FROM ").T(descr.DbTable).T(" WHERE typ = @1");
+            var o = await dc.QueryTopAsync<Def>(p => p.Set(typ));
 
             wc.GivePane(200, h =>
             {
@@ -130,7 +130,7 @@ public class AdmlyStdVarWork : StdVarWork
     {
         int typ = wc[0];
         var prin = (User)wc.Principal;
-        var descr = Std.Descrs[(short)sub];
+        var descr = Def.Descrs[(short)sub];
 
         using var dc = NewDbContext();
         dc.Sql("UPDATE ").T(descr.DbTable).T(" SET status = 4, oked = @1, oker = @2 WHERE typ = @3 AND status BETWEEN 1 AND 2");
@@ -144,7 +144,7 @@ public class AdmlyStdVarWork : StdVarWork
     public async Task unok(WebContext wc, int sub)
     {
         short typ = wc[0];
-        var descr = Std.Descrs[(short)sub];
+        var descr = Def.Descrs[(short)sub];
 
         using var dc = NewDbContext();
         dc.Sql("UPDATE ").T(descr.DbTable).T(" SET status = 2, oked = NULL, oker = NULL WHERE typ = @1 AND status = 4")._MEET_(wc);

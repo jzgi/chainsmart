@@ -20,11 +20,11 @@ public class Code : Entity, IKeyable<int>
 
     internal int id;
     internal int orgid;
-    internal int num;
+    internal string tel;
     internal string addr;
+    internal short tag;
     internal int nstart;
     internal int nend;
-    internal string ship;
 
 
     public override void Read(ISource s, short msk = 0xff)
@@ -41,14 +41,11 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Get(nameof(num), ref num);
+            s.Get(nameof(tel), ref tel);
             s.Get(nameof(addr), ref addr);
-        }
-        if ((msk & MSK_LATER) == MSK_LATER)
-        {
+            s.Get(nameof(tag), ref tag);
             s.Get(nameof(nstart), ref nstart);
             s.Get(nameof(nend), ref nend);
-            s.Get(nameof(ship), ref ship);
         }
     }
 
@@ -66,18 +63,17 @@ public class Code : Entity, IKeyable<int>
         }
         if ((msk & MSK_EDIT) == MSK_EDIT)
         {
-            s.Put(nameof(num), num);
+            s.Put(nameof(tel), tel);
             s.Put(nameof(addr), addr);
-        }
-        if ((msk & MSK_LATER) == MSK_LATER)
-        {
+            s.Put(nameof(tag), tag);
             s.Put(nameof(nstart), nstart);
             s.Put(nameof(nend), nend);
-            s.Put(nameof(ship), ship);
         }
     }
 
     public int Key => id;
+
+    public int Num => nend - nstart + 1;
 
     public override string ToString() => name;
 }

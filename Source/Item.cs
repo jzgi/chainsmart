@@ -36,9 +36,10 @@ public class Item : Entity, IKeyable<int>
     internal short max;
     internal short stock;
     internal string sort;
+    internal short tag;
     internal short sym;
-    internal DateTime symed;
-    internal string symer;
+    internal DateTime proved;
+    internal string prover;
 
     internal bool icon;
     internal bool pic;
@@ -79,9 +80,10 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Get(nameof(stock), ref stock);
+            s.Get(nameof(tag), ref tag);
             s.Get(nameof(sym), ref sym);
-            s.Get(nameof(symed), ref symed);
-            s.Get(nameof(symer), ref symer);
+            s.Get(nameof(proved), ref proved);
+            s.Get(nameof(prover), ref prover);
             s.Get(nameof(icon), ref icon);
             s.Get(nameof(pic), ref pic);
             s.Get(nameof(m1), ref m1);
@@ -123,9 +125,10 @@ public class Item : Entity, IKeyable<int>
         if ((msk & MSK_LATER) == MSK_LATER)
         {
             s.Put(nameof(stock), stock);
+            s.Put(nameof(tag), tag);
             s.Put(nameof(sym), sym);
-            s.Put(nameof(symed), symed);
-            s.Put(nameof(symer), symer);
+            s.Put(nameof(proved), proved);
+            s.Put(nameof(prover), prover);
             s.Put(nameof(icon), icon);
             s.Put(nameof(pic), pic);
             s.Put(nameof(m1), m1);

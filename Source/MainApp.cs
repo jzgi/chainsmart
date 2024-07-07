@@ -49,7 +49,7 @@ public class MainApp : Application
     {
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Std.Empty).T(" FROM cats WHERE status > 0 ORDER BY typ");
+                dc.Sql("SELECT ").collst(Def.Empty).T(" FROM cats WHERE status > 0 ORDER BY typ");
                 return dc.Query<short, Cat>();
             },
             60 * 60 * 12
@@ -57,7 +57,7 @@ public class MainApp : Application
 
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Std.Empty).T(" FROM tags WHERE status > 0 ORDER BY typ");
+                dc.Sql("SELECT ").collst(Def.Empty).T(" FROM tags WHERE status > 0 ORDER BY typ");
                 return dc.Query<short, Tag>();
             },
             60 * 60 * 12
@@ -65,7 +65,7 @@ public class MainApp : Application
 
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Std.Empty).T(" FROM syms WHERE status > 0 ORDER BY typ");
+                dc.Sql("SELECT ").collst(Def.Empty).T(" FROM syms WHERE status > 0 ORDER BY typ");
                 return dc.Query<short, Sym>();
             },
             60 * 60 * 12
@@ -73,7 +73,7 @@ public class MainApp : Application
 
         MakeCache(dc =>
             {
-                dc.Sql("SELECT ").collst(Std.Empty).T(" FROM cers WHERE status > 0 ORDER BY typ");
+                dc.Sql("SELECT ").collst(Def.Empty).T(" FROM cers WHERE status > 0 ORDER BY typ");
                 return dc.Query<short, Cer>();
             },
             60 * 60 * 12
