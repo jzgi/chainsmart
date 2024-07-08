@@ -170,21 +170,21 @@ public class WwwService : MainService
             // NOTE: WCPay may send notification more than once
             using var dc = NewDbContext();
 
-            if (await dc.QueryTopAsync("SELECT orgid, topay FROM buys WHERE id = @1 AND status = -1", p => p.Set(buyid)))
+            if (await dc.QueryTopAsync("SELECT orgid, topay FROM buys WHERE id = @1 AND status = 1", p => p.Set(buyid)))
             {
                 dc.Let(out int orgid);
                 dc.Let(out decimal topay);
 
                 if (topay == cash) // verify that the ammount is correct
                 {
-                    dc.Sql("UPDATE buys SET status = 1, pay = @1 WHERE id = @2 AND status = -1 RETURNING *");
-                    var o = await dc.QueryTopAsync<Buy>(p => p.Set(cash).Set(buyid));
+                    dc.Sql("UPDATE buys SET status = 2, pay = @1, adapted = @2 WHERE id = @3 AND status = 1 RETURNING *");
+                    var o = await dc.QueryTopAsync<Buy>(p => p.Set(cash).Set(DateTime.Now).Set(buyid));
 
                     // add to watch set and buy set
                     //
                     var shp = GrabTwin<int, Org>(orgid);
                     var mkt = GrabTwin<int, Org>(shp.MktId);
-                    shp.WatchSet.Put(OrgWatchAttribute.BUY_CREATED, 1, cash);
+                    shp.WatchSet.Put(OrgWatchAttribute.BUY_ADAPTED, 1, cash);
                     (shp.trust ? mkt : shp).BuySet.Add(o);
                 }
                 else // the pay differs from the order

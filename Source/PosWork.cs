@@ -40,7 +40,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
 }
 
 [MgtAuthorize(Org.TYP_SHP)]
-[Ui("零售记账")]
+[Ui("零售终端")]
 public class ShplyPosWork : PosWork<ShplyPosVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]

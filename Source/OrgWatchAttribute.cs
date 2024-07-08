@@ -7,7 +7,7 @@ namespace ChainSmart;
 public class OrgWatchAttribute : WatchAttribute
 {
     public const short
-        BUY_CREATED = 1,
+        BUY_ADAPTED = 1,
         BUY_OKED = 2,
         BUY_VOID = 3,
         BUY_REFUND = 4,
@@ -18,7 +18,7 @@ public class OrgWatchAttribute : WatchAttribute
 
     public static readonly Map<short, string> Typs = new()
     {
-        { BUY_CREATED, "新单" },
+        { BUY_ADAPTED, "新单" },
         { BUY_OKED, "派发" },
         { BUY_VOID, "撤单" },
         { BUY_REFUND, "返现" },

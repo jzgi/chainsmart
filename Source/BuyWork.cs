@@ -28,17 +28,17 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.uname, css: "uk-card-body uk-flex");
 
             // the first detail
-            var items = o.lns;
+            var lns = o.lns;
 
-            if (items == null || items.Length == 0)
+            if (lns == null || lns.Length == 0)
             {
                 h.PIC("/void.webp", css: "uk-width-1-5");
             }
             else
             {
-                var bi = items[0]; // buyitem
-                h.PIC(MainApp.WwwUrl, "/item/", bi.itemid, "/icon",
-                    marker: items.Length > 1 ? "more-vertical" : null,
+                var ln = lns[0]; // buyln
+                h.PIC(MainApp.WwwUrl, "/item/", ln.itemid, "/icon",
+                    marker: lns.Length > 1 ? "more-vertical" : null,
                     css: "uk-width-1-5"
                 );
             }
@@ -70,32 +70,9 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
     }
 
 
-    [OrgWatch(BUY_CREATED)]
-    [Ui(tip: "新订单", status: 1), Tool(Anchor)]
+    [OrgWatch(BUY_ADAPTED)]
+    [Ui("网售新单", tip: "新收订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND status = 1 AND typ = 1 ORDER BY created DESC");
-        var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
-
-        wc.GivePage(200, h =>
-        {
-            h.TOOLBAR(twin: org.id);
-
-            if (arr == null)
-            {
-                h.ALERT("尚无新订单");
-                return;
-            }
-
-            MainGrid(h, arr, pick: true);
-        }, false, 6);
-    }
-
-    [Ui(tip: "已合单", icon: "chevron-double-right", status: 2), Tool(Anchor)]
-    public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
 
@@ -109,17 +86,18 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已合单的订单");
+                h.ALERT("尚无新收订单");
                 return;
             }
 
-            MainGrid(h, arr);
+            MainGrid(h, arr, pick: true);
         }, false, 6);
     }
 
+
     [OrgWatch(BUY_OKED)]
     [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
-    public async Task after(WebContext wc, int page)
+    public async Task oked(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
 
@@ -133,7 +111,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 
             if (arr == null)
             {
-                h.ALERT("尚无已派发的订单");
+                h.ALERT("尚无已派发订单");
                 return;
             }
 
@@ -158,59 +136,12 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
             h.TOOLBAR(twin: org.id);
             if (arr == null)
             {
-                h.ALERT("尚无已撤销的订单");
+                h.ALERT("尚无已撤销订单");
                 return;
             }
 
             MainGrid(h, arr);
         }, false, 6);
-    }
-
-    [Ui("合单", icon: "chevron-double-right", status: 1), Tool(ButtonPickShow)]
-    public async Task adapt(WebContext wc)
-    {
-        var org = wc[-1].As<Org>();
-        var prin = (User)wc.Principal;
-        int[] key;
-        bool print = false;
-
-        if (wc.IsGet)
-        {
-            key = wc.Query[nameof(key)];
-
-            wc.GivePane(200, h =>
-            {
-                h.SECTION_("uk-card uk-card-primary");
-                h.H2("送存到合单区", css: "uk-card-header");
-                h.DIV_("uk-card-body").T("将备好的货贴上派送标签或小票，送存到合单区，等待统一派送")._DIV();
-                h._SECTION();
-
-                h.FORM_("uk-card uk-card-primary uk-margin-top");
-                foreach (var k in key)
-                {
-                    h.HIDDEN(nameof(key), k);
-                }
-                h.DIV_("uk-card-body").CHECKBOX(null, nameof(print), true, tip: "使用共享机打印小票", disabled: !print)._DIV();
-                h.BOTTOM_BUTTON("确认", nameof(adapt), post: true);
-                h._FORM();
-            });
-        }
-        else
-        {
-            var f = await wc.ReadAsync<Form>();
-            key = f[nameof(key)];
-            print = f[nameof(print)];
-
-            using var dc = NewDbContext();
-            dc.Sql("UPDATE buys SET adapted = @1, adapter = @2, status = 2 WHERE orgid = @3 AND id ")._IN_(key).T(" AND status = 1");
-            await dc.ExecuteAsync(p =>
-            {
-                p.Set(DateTime.Now).Set(prin.name).Set(org.id);
-                p.SetForIn(key);
-            });
-
-            wc.GivePane(200);
-        }
     }
 }
 
@@ -253,7 +184,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ucom, count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY ucom");
+        dc.Sql("SELECT uarea, count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 2 GROUP BY uarea");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         wc.GivePage(200, h =>
@@ -261,24 +192,17 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             h.TOOLBAR();
 
             h.TABLE_();
-            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny").TH("合单", css: "uk-width-tiny")._THEAD();
+            h.THEAD_().TH("社区").TH("收单", css: "uk-width-tiny")._THEAD();
 
             while (dc.Next())
             {
-                dc.Let(out string ucom);
-                dc.Let(out int created);
+                dc.Let(out string uarea);
                 dc.Let(out int adapted);
 
-                string ucomlabel = string.IsNullOrEmpty(ucom) ? "非派送区" : ucom;
+                string ucomlabel = string.IsNullOrEmpty(uarea) ? "非派送区" : uarea;
 
                 h.TR_();
-                h.TD_().ADIALOG_(string.IsNullOrEmpty(ucom) ? "_" : ucom, "/com", mode: ToolAttribute.MOD_OPEN, false, tip: ucomlabel, css: "uk-link uk-button-link").T(ucomlabel)._A()._TD();
-                h.TD_(css: "uk-text-center");
-                if (created > 0)
-                {
-                    h.T(created);
-                }
-                h._TD();
+                h.TD_().ADIALOG_(string.IsNullOrEmpty(uarea) ? "_" : uarea, "/area", mode: ToolAttribute.MOD_OPEN, false, tip: ucomlabel, css: "uk-link uk-button-link").T(ucomlabel)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (adapted > 0)
                 {
@@ -297,7 +221,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         var mkt = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT first(name), count(CASE WHEN status = 1 THEN 1 END), count(CASE WHEN status = 2 THEN 2 END) FROM buys WHERE mktid = @1 AND typ = 1 AND (status = 1 OR status = 2) GROUP BY orgid");
+        dc.Sql("SELECT first(name), count(id) FROM buys WHERE mktid = @1 AND typ = 1 AND status = 2 GROUP BY orgid");
         await dc.QueryAsync(p => p.Set(mkt.id));
 
         const int PAGESIZ = 5;
@@ -312,7 +236,6 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             while (dc.Next())
             {
                 dc.Let(out string name);
-                dc.Let(out int created);
                 dc.Let(out int adapted);
 
                 if (num % PAGESIZ == 0)
@@ -331,7 +254,6 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                 //
                 h.TR_();
                 h.TD_().T(name)._TD();
-                h.TD(created, right: null);
                 h.TD(adapted, right: null);
                 h._TR();
 

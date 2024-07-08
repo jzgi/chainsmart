@@ -52,7 +52,7 @@ ALTER TABLE buyldgs_typ SET TABLESPACE rtl;
 ALTER INDEX buys_pk SET TABLESPACE rtl;
 ALTER INDEX buys_gen_idx SET TABLESPACE rtl;
 ALTER INDEX buys_mktidstatustypucomoked_idx SET TABLESPACE rtl;
-ALTER INDEX buys_rtlidstatustyp_idx SET TABLESPACE rtl;
+ALTER INDEX buys_orgidstatustyp_idx SET TABLESPACE rtl;
 ALTER INDEX buys_uidstatus_idx SET TABLESPACE rtl;
 
 ALTER INDEX buyaps_pk SET TABLESPACE rtl;

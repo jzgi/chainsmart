@@ -52,7 +52,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.SPAN_().ICON("bell").SP().T("商户已下线")._SPAN();
                 return;
             }
-            var open = org.IsOpen(DateTime.Now.TimeOfDay);
+            var open = org.Openable(DateTime.Now.TimeOfDay);
             if (org.AsRtl)
             {
                 h.SPAN_().ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
@@ -136,7 +136,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             //
             // payment area
             //
-            if (!org.Orderable) return;
+            if (!org.Payable) return;
 
             var topay = 0.00M;
 
@@ -147,7 +147,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             // upper line
             h.DIV_("uk-flex uk-width-1-1");
             string area;
-            h.SELECT_SPEC(nameof(area), mkt.specs, remote: org.IsStylePst, onchange: "this.form.addr.placeholder = (this.value == '') ? '收货地址': '小区／楼栋门牌'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
+            h.SELECT_SPEC(nameof(area), mkt.specs, remote: org.IsStylePst, onchange: "this.form.addr.placeholder = (this.value == '') ? '省／市／详细地址': '小区／楼栋门牌'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
             var (min, rate, max) = org.IsStyleSvc ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
             h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"收货地址\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._DIV();
@@ -158,7 +158,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             h.T("<output class=\"uk-label\" name=\"tel\" cookie=\"tel\"></output>");
             if (org.IsStyleDlv)
             {
-                h.SPAN_("uk-width-expand uk-flex-right").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+                h.SPAN_("uk-width-expand uk-flex-right uk-text-danger").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
             }
             h._DIV();
 
@@ -222,12 +222,12 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 uaddr = addr,
                 fee = fee,
                 topay = topay,
-                status = -1, // before confirmation of payment
+                status = STU_CREATED,
             };
 
             // check and try to use an existing record
             int buyid = 0;
-            if (await dc.QueryTopAsync("SELECT id FROM buys WHERE uid = @1 AND status = -1 AND typ = 1 LIMIT 1", p => p.Set(prin.id)))
+            if (await dc.QueryTopAsync("SELECT id FROM buys WHERE uid = @1 AND status = 1 AND typ = 1 LIMIT 1", p => p.Set(prin.id)))
             {
                 dc.Let(out buyid);
             }
@@ -325,7 +325,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.ARTICLE_("uk-card uk-card-default");
                 lock (m)
                 {
-                    var open = m.IsOpen(now);
+                    var open = m.Openable(now);
                     if (m.IsLink)
                     {
                         h.A_(m.addr, css: "uk-card-body uk-flex");

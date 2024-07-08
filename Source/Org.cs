@@ -277,8 +277,6 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsSup => (typ & TYP_SUP) == TYP_SUP;
 
-    public bool Orderable => bankacct != null && bankacctname != null;
-
     public bool HasXy => IsRtlEst || AsWhl || IsHub;
 
     public bool IsTopOrg => parentid == 0;
@@ -309,9 +307,11 @@ public class Org : Entity, ITwin<int>, IFolderable
     public int ForkKey => parentid;
 
 
-    public bool IsStatusWorkable => status > 1;
+    public bool Payable => !string.IsNullOrEmpty(bankacct) && !string.IsNullOrEmpty(bankacctname);
 
-    public bool IsOpen(TimeSpan now)
+    public bool Workable => status > 1;
+
+    public bool Openable(TimeSpan now)
     {
         return IsOked && now > openat && now < closeat;
     }
