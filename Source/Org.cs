@@ -58,20 +58,20 @@ public class Org : Entity, ITwin<int>, IFolderable
     };
 
 
-    // style constants
+    // delivery style constants
     public const short
         STY_SLF = 0, // self-handling 
-        STY_DLV = 1, // delivery 
-        STY_EXP = 2, // express 
-        STY_SVC = 4; // service 
+        STY_BAS = 1, // basic 
+        STY_PST = 3, // postal
+        STY_SVC = 5; // service 
 
     // style definitions
     public static readonly Map<short, string> Styles = new()
     {
         { STY_SLF, "自理" },
-        { STY_DLV, "合单派送" },
-        { STY_EXP, "合单全国派送" },
-        { STY_SVC, "合单服务模式" },
+        { STY_BAS, "合单派送" },
+        { STY_PST, "合单全国派送" },
+        { STY_SVC, "合单服务" },
     };
 
 
@@ -294,13 +294,11 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsStyleSlf => (style & STY_SLF) == STY_SLF;
 
-    public bool IsStyleDlv => (style & STY_DLV) == STY_DLV;
+    public bool IsStyleDlv => (style & STY_BAS) == STY_BAS;
 
-    public bool IsStyleExp => (style & STY_EXP) == STY_EXP;
+    public bool IsStylePst => (style & STY_PST) == STY_PST;
 
     public bool IsStyleSvc => (style & STY_SVC) == STY_SVC;
-
-    public bool IsCoverage => IsStyleDlv || IsStyleSvc;
 
     public string No => AsRtl ? addr : null;
 

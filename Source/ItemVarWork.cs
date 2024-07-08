@@ -480,7 +480,6 @@ public class ShplyItemVarWork : ItemVarWork
             status = STU_OKED,
         };
 
-
         if (wc.IsGet)
         {
             var tags = Grab<short, Tag>();
@@ -489,24 +488,34 @@ public class ShplyItemVarWork : ItemVarWork
             o.qty = wc.Query[nameof(o.qty)];
             o.nend = wc.Query[nameof(o.nend)];
 
-            Code code;
+            string name = null;
 
             if (cmd == 1)
             {
-                o.nstart = o.nend - o.qty + 1;
                 using var dc = NewDbContext();
-                code = await dc.QueryTopAsync<Code>("SELECT id FROM codes WHERE tag = @1 AND @2 BETWEEN nstart AND nend", p => p.Set(o.tag).Set(o.nstart).Set(o.nend));
+
+                o.nstart = o.nend - o.qty + 1;
+                await dc.QueryTopAsync("SELECT name FROM codes WHERE tag = @1 AND @2 BETWEEN nstart AND nend", p => p.Set(o.tag).Set(o.nstart).Set(o.nend));
+                dc.Let(out name);
             }
             wc.GivePane(200, h =>
             {
                 h.FORM_(css: "uk-list uk-list-divider").FIELDSUL_(wc.Action.Tip);
-                h.LI_().SELECT("溯源标签", nameof(o.tag), o.tag, tags).NUMBER("截止溯源号", nameof(o.nend), o.nend, min: 0, max: 99999999)._LI();
-                h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 99999999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
+                h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 0, max: 999999)._LI();
+                h.LI_().SELECT("溯源标志", nameof(o.tag), o.tag, tags, required: true)._LI();
+                h.LI_().NUMBER("截止号", nameof(o.nend), o.nend, min: 0, max: 99999999).BUTTON("查找", nameof(addsrc), subscript: 1, post: false, onclick: "formRefresh(this,event);", css: "uk-button-secondary")._LI();
 
                 if (cmd == 1)
                 {
-                    h.LI_().FIELD("产源", nameof(code.name), o.name).HIDDEN(nameof(o.srcid), o.orgid)._LI();
-                    h.LI_().TEXT("备注", nameof(o.tip), o.tip, max: 20)._LI();
+                    if (name != null)
+                    {
+                        h.LI_().TEXT("产源", nameof(name), name, @readonly: true).HIDDEN(nameof(o.srcid), o.orgid)._LI();
+                        h.LI_().TEXT("备注", nameof(o.tip), o.tip, max: 20)._LI();
+                    }
+                    else
+                    {
+                        h.LI_().FIELD(string.Empty, "没有发放，请确认标志类型以及号码范围")._LI();
+                    }
                 }
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add), disabled: cmd == 0)._FORM();
             }, false, 6);
@@ -516,6 +525,7 @@ public class ShplyItemVarWork : ItemVarWork
             const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
 
             await wc.ReadObjectAsync(msk, instance: o);
+            o.nstart = o.nend - o.qty + 1;
 
             using var dc = NewDbContext();
 
@@ -555,8 +565,6 @@ public class ShplyItemVarWork : ItemVarWork
                 }
 
                 h.TABLE(arr, o => { h.TD(o.name).TD(Bat.Typs[o.typ]); });
-
-                h.TOOLBAR(bottom: true);
             }, false, 6);
         }
         else // POST
@@ -607,20 +615,21 @@ public class ShplyItemVarWork : ItemVarWork
                 h.FORM_(css: "uk-list uk-list-divider").FIELDSUL_(wc.Action.Tip);
                 h.LI_().NUMBER("数量", nameof(o.qty), o.qty, min: 1, max: 99999)._LI();
                 h.LI_().TEXT("备注", nameof(o.tip), o.tip, max: 20)._LI();
-                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(add))._FORM();
+                h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(subtr))._FORM();
             }, false, 6);
         }
         else // POST
         {
-            await wc.ReadObjectAsync(instance: o);
+            const short msk = MSK_BORN | MSK_EDIT | MSK_STATUS;
+            await wc.ReadObjectAsync(msk, instance: o);
 
             // update db
             using var dc = NewDbContext();
 
             o.name = (string)await dc.ScalarAsync("SELECT name FROM items_vw WHERE id = @1", p => p.Set(itemid));
 
-            dc.Sql("INSERT INTO bats ").colset(Bat.Empty)._VALUES_(Bat.Empty);
-            await dc.ExecuteAsync(p => { o.Write(p); });
+            dc.Sql("INSERT INTO bats ").colset(Bat.Empty, msk)._VALUES_(Bat.Empty, msk);
+            await dc.ExecuteAsync(p => { o.Write(p, msk); });
 
             wc.GivePane(200); // close dialog
         }

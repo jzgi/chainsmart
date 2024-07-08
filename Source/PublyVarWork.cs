@@ -142,25 +142,29 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
 
             h.BOTTOMBAR_(large: true);
 
-            h.SECTION_(css: "uk-col uk-flex-middle uk-width-small");
-            h.T("<output class=\"uk-label\" name=\"name\" cookie=\"name\"></output>");
-            h.T("<output class=\"uk-label uk-text-xsmall\" name=\"tel\" cookie=\"tel\"></output>");
-            h._SECTION();
+            h.SECTION_("uk-col uk-flex-evenly uk-width-expand");
 
-            h.SECTION_(css: "uk-col uk-height-1-1 uk-flex-evenly");
-            if (org.IsCoverage)
-            {
-                h.DIV_("uk-flex uk-width-1-1");
-                string area;
-                h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '外地') ? '收货地址': '街道小区／楼栋门号'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
-                var (min, rate, max) = org.IsStyleSvc ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
-                h.SPAN_("uk-width-expand uk-flex-center").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
-                h._DIV();
-            }
+            // upper line
+            h.DIV_("uk-flex uk-width-1-1");
+            string area;
+            h.SELECT_SPEC(nameof(area), mkt.specs, remote: org.IsStylePst, onchange: "this.form.addr.placeholder = (this.value == '') ? '收货地址': '小区／楼栋门牌'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
+            var (min, rate, max) = org.IsStyleSvc ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
             h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"收货地址\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
+            h._DIV();
+
+            // lower line
+            h.DIV_("uk-flex uk-width-1-1 uk-input uk-padding");
+            h.T("<output class=\"uk-label\" name=\"name\" cookie=\"name\"></output>").SP();
+            h.T("<output class=\"uk-label\" name=\"tel\" cookie=\"tel\"></output>");
+            if (org.IsStyleDlv)
+            {
+                h.SPAN_("uk-width-expand uk-flex-right").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+            }
+            h._DIV();
+
             h._SECTION();
 
-            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-small uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-1-4 uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._BOTTOMBAR();
 
@@ -302,7 +306,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         {
             if (org.IsRtlEst)
             {
-                h.NAVBAR(nameof(this.h), sector, regs, (_, v) => v.IsSectorWith(org.style));
+                h.NAVBAR(nameof(this.h), sector, regs, filter: (_, x) => x.IsSector);
             }
 
             if (arr == null)
