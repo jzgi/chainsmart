@@ -95,7 +95,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 
 
     [OrgWatch(BUY_OKED)]
-    [Ui(tip: "已派发", icon: "arrow-right", status: 4), Tool(Anchor)]
+    [Ui(tip: "已派发", icon: "forward", status: 4), Tool(Anchor)]
     public async Task oked(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();

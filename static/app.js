@@ -22,17 +22,17 @@ var WCPay = function (data, sup) {
     );
 };
 
-function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, max, stock) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, min, max, stock) {
 
-    const url = window.location.href;
-    let endp = url.lastIndexOf('/', url.length - 1);
-    let startp = url.lastIndexOf('/', endp - 1);
-    let n = parseInt(url.substring(startp + 1, endp));
-    let vip = false; // whether vip for current contet
+    var url = window.location.href;
+    var endp = url.lastIndexOf('/', url.length - 1);
+    var startp = url.lastIndexOf('/', endp - 1);
+    var n = parseInt(url.substring(startp + 1, endp));
+    var vip = false; // whether vip for current contet
     if (evt.detail) {
         // to-path matched
-        let lst = evt.detail.split('+');
-        for (let i = 0; i < lst.length; i++) {
+        var lst = evt.detail.split('+');
+        for (var i = 0; i < lst.length; i++) {
             if (n === parseInt(lst[i])) {
                 vip = true;
                 break;
@@ -41,7 +41,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, max, stock) {
     }
 
     // fill fprice
-    let ofprice = trig.querySelector('.fprice');
+    var ofprice = trig.querySelector('.fprice');
     if (vip || off > 0) {
         ofprice.value = (price - off).toFixed(2);
         ofprice.classList.add('vip');
@@ -53,15 +53,18 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, max, stock) {
     //
     if (stock <= 0) return;
 
+    if (min < 1) {
+        min = 1;
+    }
     if (stock < max) {
         max = stock;
     }
-    let sel_qtyselect = trig.querySelector('.qtyselect');
-    for (let i = unitx; i <= max; i += unitx * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
-        let opt = document.createElement("option");
+    var sel_qtyselect = trig.querySelector('.qtyselect');
+    for (var i = min; i <= max; i += unitx * (i >= 100 ? 5 : i >= 50 ? 2 : 1)) {
+        var opt = document.createElement("option");
         opt.value = i;
         opt.text = i + ' ' + unit;
-        sel_qtyselect.add(opt);
+        sel_qtyselect.appendChild(opt);
     }
 
 }
@@ -72,10 +75,10 @@ function buyRecalc(trig) {
 
     if (trig) { // triggered by qty selection
 
-        let footer = trig.parentElement;
-        let ofprice = footer.querySelector('.fprice');
-        let osubtotal = footer.querySelector('.subtotal');
-        let fprice = parseFloat(ofprice.value);
+        var footer = trig.parentElement;
+        var ofprice = footer.querySelector('.fprice');
+        var osubtotal = footer.querySelector('.subtotal');
+        var fprice = parseFloat(ofprice.value);
 
         osubtotal.value = (trig.value * fprice).toFixed(2);
 
@@ -89,26 +92,26 @@ function buyRecalc(trig) {
         }
     }
 
-    let frm = trig ? trig.form : document.forms[0];
+    var frm = trig ? trig.form : document.forms[0];
     if (!frm) return;
 
     // sum up line items
-    let sum = 0.00; // add fee if area is selected
-    let lst = frm.querySelectorAll('.subtotal');
-    for (let i = 0; i < lst.length; i++) {
-        let v = lst[i].value;
+    var sum = 0.00; // add fee if area is selected
+    var lst = frm.querySelectorAll('.subtotal');
+    for (var i = 0; i < lst.length; i++) {
+        var v = lst[i].value;
         if (v > 0) {
             sum += parseFloat(v);
         }
     }
 
-    let fee = 0.00;
+    var fee = 0.00;
     if (frm.fee) {
         
-        let ofee = frm.fee; // the fee output
-        let min = parseFloat(ofee.getAttribute('min'));
-        let rate = parseFloat(ofee.getAttribute('rate'));
-        let max = parseFloat(ofee.getAttribute('max'));
+        var ofee = frm.fee; // the fee output
+        var min = parseFloat(ofee.getAttribute('min'));
+        var rate = parseFloat(ofee.getAttribute('rate'));
+        var max = parseFloat(ofee.getAttribute('max'));
         
         fee = Math.max(min, Math.min(sum * rate, max));
         fee = parseFloat((fee - fee % 0.5).toFixed(1)); // cut to 0.5
@@ -118,7 +121,7 @@ function buyRecalc(trig) {
 
             frm.addr.placeholder = (frm.area.value == '外地') ? '省市／详细地址': '小区／楼栋门牌';
 
-            let opts = frm.area.selectedOptions;
+            var opts = frm.area.selectedOptions;
             if (opts.length > 0) {
                 var opt = opts[0];
                 if (opt.title) {
@@ -138,17 +141,17 @@ function buyRecalc(trig) {
 }
 
 function posItemChange(trig) {
-    let form = trig.form;
+    var form = trig.form;
 
-    let v = trig.selectedOptions[0];
-    let id = v.value;
-    let unit = v.getAttribute('unit');
-    let unitw = parseFloat(v.getAttribute('unitw'));
-    let price = parseFloat(v.getAttribute('price'));
-    let avail = parseFloat(v.getAttribute('avail'));
+    var v = trig.selectedOptions[0];
+    var id = v.value;
+    var unit = v.getAttribute('unit');
+    var unitw = parseFloat(v.getAttribute('unitw'));
+    var price = parseFloat(v.getAttribute('price'));
+    var avail = parseFloat(v.getAttribute('avail'));
 
     // check local-storage price for selected ware
-    let local_price = window.localStorage.getItem('pos-price-' + id);
+    var local_price = window.localStorage.getItem('pos-price-' + id);
     if (local_price) {
         price = parseFloat(local_price);
     }
@@ -164,10 +167,10 @@ function posItemChange(trig) {
 // recalculate as subtotal
 function posRecalc(trig) {
 
-    const form = trig.form;
-    let subtotal = form.subtotal;
-    let price = form.price;
-    let qty = form.qty;
+    var form = trig.form;
+    var subtotal = form.subtotal;
+    var price = form.price;
+    var qty = form.qty;
     subtotal.value = (qty.value * price.value).toFixed(2);
 }
 
@@ -175,12 +178,12 @@ function posRecalc(trig) {
 // round 1 = floor, 2 = ceil
 function posResum(form, round) {
 
-    let lst = form.querySelectorAll('.subtotal');
-    let sum = 0;
-    for (let i = 0; i < lst.length; i++) {
+    var lst = form.querySelectorAll('.subtotal');
+    var sum = 0;
+    for (var i = 0; i < lst.length; i++) {
         sum += parseFloat(lst[i].innerHTML);
     }
-    let pay = form['pay'];
+    var pay = form['pay'];
 
     // round if applicable
     if (round === 1) {
@@ -194,25 +197,25 @@ function posResum(form, round) {
 
 function posAdd(trig) {
 
-    const form = trig.form;
+    var form = trig.form;
 
     if (!form || !form.reportValidity()) return;
 
-    let itemid = form['itemid'].value;
-    let opt = form['itemid'].selectedOptions[0];
-    let lotid = parseInt(opt.getAttribute('lotid'));
-    let name = opt.getAttribute('name');
-    let unit = opt.getAttribute('unit');
-    let unitw = opt.getAttribute('unitw');
-    let price = parseFloat(form.price.value);
-    let qty = parseFloat(form.qty.value);
+    var itemid = form['itemid'].value;
+    var opt = form['itemid'].selectedOptions[0];
+    var lotid = parseInt(opt.getAttribute('lotid'));
+    var name = opt.getAttribute('name');
+    var unit = opt.getAttribute('unit');
+    var unitw = opt.getAttribute('unitw');
+    var price = parseFloat(form.price.value);
+    var qty = parseFloat(form.qty.value);
 
-    let subtotal = parseFloat(form.subtotal.value);
+    var subtotal = parseFloat(form.subtotal.value);
 
     // target ul element
-    let tbody = document.getElementById('items');
-    let tr = document.createElement("tr");
-    let html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
+    var tbody = document.getElementById('items');
+    var tr = document.createElement("tr");
+    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
     html += '<td>' + name + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);
@@ -225,8 +228,8 @@ function posAdd(trig) {
 }
 
 function posRemove(el) {
-    let tr = ancestorOf(el, 'tr');
-    let form = ancestorOf(el, 'form');
+    var tr = ancestorOf(el, 'tr');
+    var form = ancestorOf(el, 'form');
     tr.remove();
     // resum pay
     posResum(form);
@@ -234,16 +237,16 @@ function posRemove(el) {
 
 function $smsvcode(trig) {
 
-    let method = trig.formMethod;
-    let action = trig.formAction || trig.name;
-    let form = trig.form;
+    var method = trig.formMethod;
+    var action = trig.formAction || trig.name;
+    var form = trig.form;
     // validate form before submit
     if (!form || !form.reportValidity()) return false;
 
     trig.disabled = true;
 
     // get prepare id
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         form.vcode.required = true; // set voce as required
     };
@@ -256,20 +259,20 @@ function $smsvcode(trig) {
 
 function $pos(trig) {
 
-    let method = 'post';
-    let action = trig.formAction || trig.name;
+    var method = 'post';
+    var action = trig.formAction || trig.name;
     // validate form before submit
     if (!trig.form || !trig.form.reportValidity()) return false;
 
     trig.disabled = true;
 
     // get prepare id
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState === 4) {
             trig.disabled = false; // re-enable the button
             if (this.status >= 200 && this.status < 205) {
-                let tbody = document.getElementById('items');
+                var tbody = document.getElementById('items');
                 tbody.innerHTML = ''; // clear the table of lines
                 alert('成功');
                 trig.form.reset(); // reset the form
@@ -289,16 +292,16 @@ function $pos(trig) {
 
 function $buy(trig) {
 
-    let method = 'post';
-    let action = trig.formAction || trig.name;
-    let frm = trig.form;
+    var method = 'post';
+    var action = trig.formAction || trig.name;
+    var frm = trig.form;
     // validate form before submit
     if (!frm || !frm.reportValidity()) return false;
 
     // select any
-    let any = false; 
-    let lst = frm.querySelectorAll('.qtyselect');
-    for (let i = 0; i < lst.length; i++) {
+    var any = false; 
+    var lst = frm.querySelectorAll('.qtyselect');
+    for (var i = 0; i < lst.length; i++) {
         if (lst[i].value) {
             any = true;
             break;
@@ -310,9 +313,9 @@ function $buy(trig) {
     }
 
     // get prepare id
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
-        let data = JSON.parse(this.responseText);
+        var data = JSON.parse(this.responseText);
         window.top.WCPay(data, false); // call top windows's weixin pay bridge
     };
     xhr.open(method, action, false);
@@ -324,16 +327,16 @@ function $buy(trig) {
 
 function $pur(trig) {
 
-    let method = 'post';
-    let action = trig.formAction || trig.name;
+    var method = 'post';
+    var action = trig.formAction || trig.name;
     // validate form before submit
     if (!trig.form || !trig.form.reportValidity()) return false;
 
     // get prepare id
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
     xhr.onload = function (e) {
         if (this.responseText) {
-            let data = JSON.parse(this.responseText);
+            var data = JSON.parse(this.responseText);
             window.top.WCPay(data, true); // call top windows's weixin pay bridge
         } else {
             alert('服务器端无返回数据');
@@ -347,14 +350,14 @@ function $pur(trig) {
 }
 
 
-const $ = function (selectors, doc) {
+var $ = function (selectors, doc) {
     if (!doc) {
         doc = document;
     }
     return doc.querySelector(selectors);
 };
 
-const $$ = function (selectors, doc) {
+var $$ = function (selectors, doc) {
     if (!doc) {
         doc = document;
     }
@@ -369,19 +372,19 @@ function ancestorOf(el, name) {
 }
 
 function childOf(el, name) {
-    for (let i = 0; i < el.children.length; i++) {
-        let child = el.children[i];
+    for (var i = 0; i < el.children.length; i++) {
+        var child = el.children[i];
         if (child.classList.contains(name) || child.tagName.toLowerCase() === name) return child;
     }
     return null;
 }
 
 function subscriptUri(uri, num) {
-    let a = uri.split('?');
-    let p = a[0].length - 1;
-    let dash;
+    var a = uri.split('?');
+    var p = a[0].length - 1;
+    var dash;
     while (p > 0) {
-        let c = a[0].charAt(p);
+        var c = a[0].charAt(p);
         if (c === '/') {
             dash = -1;
             break;
@@ -393,13 +396,13 @@ function subscriptUri(uri, num) {
         p--;
     }
     if (dash === -1) {
-        let ret = a[0] + '-' + num;
+        var ret = a[0] + '-' + num;
         if (a.length > 1) {
             ret += '?' + a[1];
         }
         return ret;
     } else {
-        let ret = a[0].substring(0, dash) + '-' + num;
+        var ret = a[0].substring(0, dash) + '-' + num;
         if (a.length > 1) {
             ret += '?' + a[1];
         }
@@ -418,32 +421,32 @@ function forWebview() {
 function fixAll() {
 
     // parse all cookies
-    let cookies = {};
+    var cookies = {};
     if (document.cookie && document.cookie !== '') {
-        let split = document.cookie.split(';');
-        for (let i = 0; i < split.length; i++) {
-            let name_value = split[i].split('=');
+        var split = document.cookie.split(';');
+        for (var i = 0; i < split.length; i++) {
+            var name_value = split[i].split('=');
             name_value[0] = name_value[0].replace(/^ /, '');
             cookies[name_value[0]] = decodeURIComponent(name_value[1]);
         }
     }
 
     // traverse
-    let elst = document.querySelectorAll("[cookie]");
-    for (let e of elst) {
-        let name = e.getAttribute('cookie');
+    var elst = document.querySelectorAll("[cookie]");
+    for (var e of elst) {
+        var name = e.getAttribute('cookie');
         if (name) {
             // handler of onchange
             e.addEventListener('change', (event) => {
                 document.cookie = name + '=' + encodeURIComponent(e.value) + ';max-age=31104000';
             });
             // fixing of value
-            let scpt = e.getAttribute("onfix");
-            let val = cookies[name];
+            var scpt = e.getAttribute("onfix");
+            var val = cookies[name];
             if (!val) continue;
             
             if (scpt) { // raise onfix event
-                let evt = new CustomEvent('fix', {detail: val});
+                var evt = new CustomEvent('fix', {detail: val});
                 e.addEventListener('fix', new Function(scpt));
                 e.dispatchEvent(evt);
             } else { // simple assignment
@@ -453,14 +456,14 @@ function fixAll() {
     }
 
     elst = document.querySelectorAll("[local]");
-    for (let e of elst) {
-        let name = e.getAttribute('local');
+    for (var e of elst) {
+        var name = e.getAttribute('local');
         if (name) {
             // fixing of value
-            let scpt = e.getAttribute("onfix");
-            let val = window.localStorage.getItem(name);
+            var scpt = e.getAttribute("onfix");
+            var val = window.localStorage.getItem(name);
             if (scpt) { // raise onfix event
-                let evt = new CustomEvent('fix', {detail: val});
+                var evt = new CustomEvent('fix', {detail: val});
                 e.addEventListener('fix', new Function(scpt));
                 e.dispatchEvent(evt);
             } else { // simple assignment
@@ -470,7 +473,7 @@ function fixAll() {
 
         // handler of onchange
         e.addEventListener('change', (event) => {
-            let trig = event.target;
+            var trig = event.target;
             name = trig.getAttribute('local'); // get the name on the fly
             if (name) {
                 window.localStorage.setItem(name, trig.value);
@@ -483,7 +486,7 @@ function serialize(form, notEmpty) {
     if (!form || form.nodeName !== "FORM") {
         return null;
     }
-    let i,
+    var i,
         j,
         q = [];
     for (i = form.elements.length - 1; i >= 0; i = i - 1) {
@@ -644,7 +647,7 @@ function formRefresh(trig, evt) {
 // trig - a button, input_button or anchor element
 
 // modes
-const
+var
     SCRIPT = 1, CONFIRM = 2, CROP = 4, PROMPT = 8, SHOW = 16, OPEN = 32, ASTACK = 64;
 
 function dialog(trig, mode, pick, title, event) {
