@@ -207,8 +207,8 @@ public class AdmlyEstVarWork : OrgVarWork
         }
         else // POST
         {
-            const short Msk = MSK_EDIT;
-            await wc.ReadObjectAsync(Msk, instance: m);
+            const short msk = MSK_EDIT;
+            await wc.ReadObjectAsync(msk, instance: m);
             lock (m)
             {
                 m.adapted = DateTime.Now;
@@ -216,10 +216,10 @@ public class AdmlyEstVarWork : OrgVarWork
             }
 
             using var dc = NewDbContext();
-            dc.Sql("UPDATE orgs")._SET_(Org.Empty, Msk).T(" WHERE id = @1");
+            dc.Sql("UPDATE orgs")._SET_(Org.Empty, msk).T(" WHERE id = @1");
             await dc.ExecuteAsync(p =>
             {
-                m.Write(p, Msk);
+                m.Write(p, msk);
                 p.Set(id);
             });
 
@@ -613,7 +613,7 @@ public class MktlyOrgVarWork : OrgVarWork
 
                     h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().SELECT("输送模式", nameof(m.style), m.style, Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
+                    h.LI_().SELECT("输送方式", nameof(m.style), m.style, Org.Styles, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();

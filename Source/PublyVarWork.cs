@@ -147,8 +147,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             // upper line
             h.DIV_("uk-flex uk-width-1-1");
             string area;
-            h.SELECT_SPEC(nameof(area), mkt.specs, remote: org.IsStylePst, onchange: "this.form.addr.placeholder = (this.value == '') ? '省／市／详细地址': '小区／楼栋门牌'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
-            var (min, rate, max) = org.IsStyleSvc ? FinanceUtility.mktsvcfee : FinanceUtility.mktdlvfee;
+            h.SELECT_SPEC(nameof(area), mkt.specs, onchange: "this.form.addr.placeholder = (this.value == '') ? '省市／详细地址': '小区／楼栋门牌'; buyRecalc();", css: "uk-width-1-3 uk-border-rounded");
             h.T("<input type=\"text\" name=\"addr\" class=\"uk-input uk-border-rounded\" placeholder=\"收货地址\" maxlength=\"30\" minlength=\"4\" local=\"addr\" required>");
             h._DIV();
 
@@ -158,7 +157,8 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             h.T("<output class=\"uk-label\" name=\"tel\" cookie=\"tel\"></output>");
             if (org.IsStyleDlv)
             {
-                h.SPAN_("uk-width-expand uk-flex-right uk-text-danger").T(org.IsStyleSvc ? "服务费" : "派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+                var (min, rate, max) = FinanceUtility.mktdlvfee;
+                h.SPAN_("uk-width-expand uk-flex-right uk-text-danger").T("派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
             }
             h._DIV();
 

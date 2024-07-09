@@ -118,11 +118,9 @@ public class AdmlyMbrVarWork : UserVarWork
     }
 }
 
-public class OrglyMbrVarWork : UserVarWork
+public class ShplyMbrVarWork : UserVarWork
 {
-    bool IsShop => (bool)Parent.State;
-
-    [MgtAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -130,7 +128,24 @@ public class OrglyMbrVarWork : UserVarWork
         int id = wc[0];
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE users SET ").T(IsShop ? "mktid" : "supid").T(" = NULL, ").T(IsShop ? "mktly" : "suply").T(" = 0 WHERE id = @1 AND ").T(IsShop ? "mktid" : "supid").T(" = @2");
+        dc.Sql("UPDATE users SET mktid = NULL, mktly = 0 WHERE id = @1 AND mktid = @2");
+        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
+
+        wc.Give(204); // no content
+    }
+}
+
+public class SuplyMbrVarWork : UserVarWork
+{
+    [MgtAuthorize(Org.TYP_WHL_, User.ROL_MGT)]
+    [Ui(tip: "删除此人员权限", icon: "trash"), Tool(ButtonConfirm)]
+    public async Task rm(WebContext wc)
+    {
+        var org = wc[-2].As<Org>();
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE users SET supid = NULL, suply = 0 WHERE id = @1 AND supid = @2");
         await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(204); // no content

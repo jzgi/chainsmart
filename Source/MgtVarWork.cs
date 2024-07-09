@@ -99,7 +99,7 @@ public class MktlyVarWork : MgtVarWork, IExternable
     {
         // org
 
-        CreateWork<OrglyMbrWork>("mbr", state: true, header: "常规"); // true = retail
+        CreateWork<ShplyMbrWork>("mbr", header: "常规");
 
 
         CreateWork<ShplyItemWork>("sitem", header: "商户");
@@ -196,7 +196,7 @@ public class SuplyVarWork : MgtVarWork
     {
         // org
 
-        CreateWork<OrglyMbrWork>("mbr", state: false, header: "常规"); // false = supply
+        CreateWork<SuplyMbrWork>("mbr", header: "常规");
 
         // sup
 

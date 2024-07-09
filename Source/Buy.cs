@@ -170,9 +170,9 @@ public class Buy : Entity, IKeyable<long>
 
         // compute fee
         //
-        if (!org.IsStyleSlf)
+        if (org.IsStyleDlv)
         {
-            var (min, rate, max) = org.IsStyleSvc ? mktsvcfee : mktdlvfee;
+            var (min, rate, max) = mktdlvfee;
             var feev = Math.Max(min + sum * rate, max);
             feev -= feev % 0.5M;
 
@@ -215,7 +215,7 @@ public class Buy : Entity, IKeyable<long>
     // STATE
     //
 
-    public bool IsFromNet => typ == TYP_ONL;
+    public bool IsOnline => typ == TYP_ONL;
 
     public bool IsOnPos => typ == TYP_POS;
 

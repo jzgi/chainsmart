@@ -16,8 +16,7 @@ public static class FinanceUtility
         supfee;
 
     public static (decimal min, decimal rate, decimal max)
-        mktdlvfee,
-        mktsvcfee;
+        mktdlvfee;
 
     static readonly string
         bankprov,
@@ -33,11 +32,8 @@ public static class FinanceUtility
     {
         supfee = Application.CustomConfig[nameof(supfee)];
 
-        var dlv = (JArr)Application.CustomConfig[nameof(mktdlvfee)];
-        mktdlvfee = (dlv[0], dlv[1], dlv[2]);
-
-        var svc = (JArr)Application.CustomConfig[nameof(mktsvcfee)];
-        mktsvcfee = (svc[0], svc[1], svc[2]);
+        var fee = (JArr)Application.CustomConfig[nameof(mktdlvfee)];
+        mktdlvfee = (fee[0], fee[1], fee[2]);
 
         bankprov = Application.CustomConfig[nameof(bankprov)];
         bankcity = Application.CustomConfig[nameof(bankcity)];
@@ -64,9 +60,9 @@ public static class FinanceUtility
         // calculate the fee
         //
         var fee = 0.0M;
-        if (org.IsStyleSvc || org.IsStyleDlv)
+        if (org.IsStyleDlv)
         {
-            var (min, rate, max) = org.IsStyleSvc ? mktsvcfee : mktdlvfee;
+            var (min, rate, max) = mktdlvfee;
 
             fee = Math.Max(min, Math.Min(sum * rate, max));
             fee -= fee % 0.5M;

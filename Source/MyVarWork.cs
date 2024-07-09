@@ -15,7 +15,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status > -1 ORDER BY id DESC LIMIT 20");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status >= 2 ORDER BY id DESC LIMIT 20");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id));
 
         wc.GivePage(200, h =>
@@ -24,12 +24,12 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
 
             h.HEADER_("uk-width-expand uk-col uk-padding-left");
             h.H1(prin.name);
-            h.H4_().T(prin.tel)._H4();
-            h.P_().T(prin.created, time: 0).SP().T("注册");
+            h.H4(prin.tel);
+            h.P_().T("注册").SP().T(prin.created, time: 0);
             if (prin.typ > 0)
             {
                 var cers = Grab<short, Cer>();
-                h.T('，').T(cers[prin.typ]?.ToString());
+                h.SP().MARK(cers[prin.typ]?.ToString());
             }
             h._P();
             h._HEADER();
@@ -53,8 +53,8 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             {
                 h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.created, time: 0).SP().T(Buy.Statuses[o.status])._SPAN()._HEADER();
-                    h.UL_("uk-card-body uk-list-divider");
+                    h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.adapted, time: 0).SP().MARK(Buy.Statuses[o.status])._SPAN()._HEADER();
+                    h.UL_("uk-card-body uk-list-small uk-list-divider");
                     foreach (var it in o.lns)
                     {
                         h.LI_("uk-flex");
@@ -78,7 +78,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                     h.SPAN_("uk-width-expand").SMALL_().T(o.uarea).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
-                        h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
+                        h.SMALL_().T("服务费 +").T(o.fee)._SMALL();
                     }
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
                     h._FOOTER();
@@ -89,76 +89,12 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         }, false, 12);
     }
 
-    [Ui("身份", "刷新我的身份权限", status: 7), Tool(ButtonShow)]
-    public async Task access(WebContext wc)
-    {
-        int uid = wc[0];
-
-        using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
-        var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
-
-        wc.GivePane(200, h =>
-        {
-            h.ARTICLE_("uk-card uk-card-primary");
-            h.H2("我的身份和权限", css: "uk-card-header");
-            h.UL_("uk-card-body uk-list uk-list-divider");
-
-            var any = 0;
-
-            if (o.admly > 0)
-            {
-                h.LI_().T(Application.Nodal.name).SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
-                any++;
-            }
-
-            if (o.mktly > 0 && o.mktid > 0)
-            {
-                var org = GrabTwin<int, Org>(o.mktid);
-
-                h.LI_().T(org.name).SPAN(User.Roles[o.mktly], "uk-margin-auto-left")._LI();
-                any++;
-            }
-
-            if (o.suply > 0 && o.supid > 0)
-            {
-                var org = GrabTwin<int, Org>(o.supid);
-
-                h.LI_().T(org.name).SPAN(User.Roles[o.suply], "uk-margin-auto-left")._LI();
-                any++;
-            }
-
-            var vip = o.vip;
-            for (var i = 0; i < vip?.Length; i++)
-            {
-                var orgid = vip[i];
-
-                var org = GrabTwin<int, Org>(orgid);
-                if (org != null)
-                {
-                    h.LI_().T(org.name).SPAN("VIP", "uk-margin-auto-left")._LI();
-                    any++;
-                }
-            }
-
-            if (any == 0)
-            {
-                h.LI_().T(Application.Nodal.name).SPAN("普通消费者", "uk-margin-auto-left")._LI();
-            }
-
-            h._UL();
-            h._ARTICLE();
-        }, false, 12);
-
-        // resend token cookie
-        wc.SetTokenCookies(o);
-    }
-
-
-    [Ui("设置", "设置我的账号信息", status: 7), Tool(ButtonShow)]
+    [Ui("设置", "我的账号信息显示及设置", status: 7), Tool(ButtonShow)]
     public async Task setg(WebContext wc)
     {
         const string PASSWORD_MASK = "t#0^0z4R4pX7";
+
+        int uid = wc[0];
 
         string name;
         string tel;
@@ -166,24 +102,77 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         var prin = (User)wc.Principal;
         if (wc.IsGet)
         {
-            name = prin.name;
-            tel = prin.tel;
-            password = string.IsNullOrEmpty(prin.credential) ? null : PASSWORD_MASK;
+            using var dc = NewDbContext();
+            dc.Sql("SELECT ").collst(User.Empty).T(" FROM users WHERE id = @1");
+            var o = await dc.QueryTopAsync<User>(p => p.Set(uid));
+
             wc.GivePane(200, h =>
             {
-                h.FORM_("uk-card uk-card-primary");
-                h.H2("我的账号信息设置", css: "uk-card-header");
-                h.FIELDSUL_(css: "uk-card-body");
+                h.FORM_().FIELDSUL_("身份权限");
+
+                var any = 0;
+
+                if (o.admly > 0)
+                {
+                    h.LI_().SPAN(Application.Nodal.name, css: "uk-label").SPAN(User.Roles[o.admly], "uk-margin-auto-left")._LI();
+                    any++;
+                }
+
+                if (o.mktly > 0 && o.mktid > 0)
+                {
+                    var org = GrabTwin<int, Org>(o.mktid);
+
+                    h.LI_().SPAN(org.name, css: "uk-label").SPAN(User.Roles[o.mktly], "uk-margin-auto-left")._LI();
+                    any++;
+                }
+
+                if (o.suply > 0 && o.supid > 0)
+                {
+                    var org = GrabTwin<int, Org>(o.supid);
+
+                    h.LI_().SPAN(org.name, css: "uk-label").SPAN(User.Roles[o.suply], "uk-margin-auto-left")._LI();
+                    any++;
+                }
+
+                var vip = o.vip;
+                for (var i = 0; i < vip?.Length; i++)
+                {
+                    var orgid = vip[i];
+
+                    var org = GrabTwin<int, Org>(orgid);
+                    if (org != null)
+                    {
+                        h.LI_().SPAN(org.name, css: "uk-label").SPAN("大客户", "uk-margin-auto-left")._LI();
+                        any++;
+                    }
+                }
+
+                if (any == 0)
+                {
+                    h.LI_().SPAN(Application.Nodal.name, css: "uk-label").SPAN("普通消费者", "uk-margin-auto-left")._LI();
+                }
+
+                h._FIELDSUL()._FORM();
+
+                // info
+                //
+
+                name = prin.name;
+                tel = prin.tel;
+                password = string.IsNullOrEmpty(prin.credential) ? null : PASSWORD_MASK;
+
+                h.FORM_().FIELDSUL_("账号信息");
                 h.LI_().TEXT("姓名", nameof(name), name, max: 12, min: 2, required: true, @readonly: prin.IsStationOp)._LI();
                 h.LI_().TEXT("登录手机号", nameof(tel), tel, pattern: "[0-9]+", max: 11, min: 11, required: true, @readonly: true);
                 if (prin.IsStationOp)
                 {
                     h.LI_().PASSWORD("终端密码", nameof(password), password, max: 12, min: 3)._LI();
                 }
-                h._FIELDSUL();
-                h.BOTTOM_BUTTON("确定", nameof(setg));
-                h._FORM();
-            });
+                h._FIELDSUL().BOTTOM_BUTTON("确定", nameof(setg))._FORM();
+            }, false, 12);
+
+            // resend token cookie
+            wc.SetTokenCookies(o);
         }
         else // POST
         {

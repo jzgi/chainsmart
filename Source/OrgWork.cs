@@ -460,7 +460,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
 
                 h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().SELECT("输送模式", nameof(o.style), o.style, Org.Styles, filter: (k, _) => k <= Org.STY_SVC, required: true)._LI();
+                h.LI_().SELECT("输送方式", nameof(o.style), o.style, Org.Styles, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();

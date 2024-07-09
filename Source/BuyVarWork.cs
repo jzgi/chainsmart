@@ -23,8 +23,8 @@ public abstract class BuyVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 10).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
-            if (o.IsFromNet)
+            h.LI_().LABEL("订单编号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
+            if (o.IsOnline)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr)._SPAN()._LI();
@@ -35,7 +35,7 @@ public abstract class BuyVarWork : WebWork
                 h.LI_().FIELD("支付", o.tip)._LI();
             }
             h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2(o.IsVoid ? "撤销" : "合单", o.adapter, o.adapted, sep: "<br>").FIELD2("派发", o.oker, o.oked, sep: "<br>")._LI();
+            h.LI_().FIELD2("支付", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "撤销" : "派发", o.oker, o.oked, sep: "<br>")._LI();
             h._UL();
 
             // buy items
@@ -80,21 +80,8 @@ public class MyBuyVarWork : BuyVarWork
 [Ui("订单操作")]
 public class ShplyBuyVarWork : BuyVarWork
 {
-    [Ui(tip: "回退到收单状态", icon: "reply", status: 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
-    public async Task ret(WebContext wc)
-    {
-        int id = wc[0];
-        var org = wc[-2].As<Org>();
-
-        using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND orgid = @2 AND (status = 2 OR status = 4)");
-        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-
-        wc.Give(200);
-    }
-
     [MgtAuthorize(Org.TYP_RTL_, User.ROL_DLV)]
-    [Ui("派发", "商户自行安排派发", status: 1), Tool(ButtonConfirm)]
+    [Ui("派发", "给买家派发商品", icon: "forward", status: 2), Tool(ButtonConfirm)]
     public async Task ok(WebContext wc)
     {
         int id = wc[0];
@@ -102,42 +89,33 @@ public class ShplyBuyVarWork : BuyVarWork
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("UPDATE buys SET oked = @1, oker = @2, status = 4 WHERE id = @3 AND orgid = @4 AND status = 1 RETURNING uim, pay");
+        dc.Sql("UPDATE buys SET status = 4, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 AND status = 2 RETURNING uim, pay");
         if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
         {
             dc.Let(out string uim);
             dc.Let(out decimal pay);
 
-            await PostSendAsync(uim, $"商家自行派送，请留意收货（{org.name}，单号{id:D8}，￥{pay}）");
+            await PostSendAsync(uim, $"商品开始派发，请留意收货（{org.name}，单号{id:D8}，￥{pay}）");
         }
 
         wc.Give(200);
     }
 
-    [Ui("返现", tip: "退返指定数量的支付款", status: 1 | 2 | 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
-    public async Task refund(WebContext wc)
+    [Ui("回退", tip: "回退到收单状态", icon: "reply", status: 4), Tool(ButtonConfirm, state: Buy.STA_REVERSABLE)]
+    public async Task unok(WebContext wc)
     {
         int id = wc[0];
         var org = wc[-2].As<Org>();
 
-        if (wc.IsGet)
-        {
-            using var dc = NewDbContext();
-            dc.Sql("SELECT FROM buys WHERE id = @1 AND orgid = @2");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-        }
-        else
-        {
-            using var dc = NewDbContext();
-            // dc.Sql("UPDATE buys SET adapted = NULL, adapter = NULL, oked = NULL, oker = NULL, status = 1 WHERE id = @1 AND rtlid = @2 AND (status = 2 OR status = 4)");
-            await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
-        }
+        using var dc = NewDbContext();
+        dc.Sql("UPDATE buys SET status = 2, oked = NULL, oker = NULL WHERE id = @1 AND orgid = @2 AND status = 4");
+        await dc.ExecuteAsync(p => p.Set(id).Set(org.id));
 
         wc.Give(200);
     }
 
     [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
-    [Ui("撤销", "撤销该单并全款退回消费者", status: 1 | 2), Tool(ButtonConfirm)]
+    [Ui("撤销", "撤销该单并全款退回消费者", status: 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];
@@ -147,7 +125,7 @@ public class ShplyBuyVarWork : BuyVarWork
         using var dc = NewDbContext(IsolationLevel.ReadCommitted);
         try
         {
-            dc.Sql("UPDATE buys SET refund = pay, status = 0, adapted = @1, adapter = @2 WHERE id = @3 AND orgid = @4 AND status = 1 RETURNING uim, topay, refund");
+            dc.Sql("UPDATE buys SET refund = pay, status = 0, oked = @1, oker = @2 WHERE id = @3 AND orgid = @4 AND status = 2 RETURNING uim, topay, refund");
             if (await dc.QueryTopAsync(p => p.Set(DateTime.Now).Set(prin.name).Set(id).Set(org.id)))
             {
                 dc.Let(out string uim);

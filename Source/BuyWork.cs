@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -44,14 +43,14 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.uname).SPAN_("uk-badge").T(o.created, time: 0).SP();
+            h.HEADER_().H4(o.uname).SP().SUB(o.utel).SPAN_("uk-badge").T(o.adapted, time: 0).SP();
             if (pick)
             {
                 h.PICK(o.Key);
             }
             else
             {
-                h.T(Buy.Statuses[o.status]);
+                h.MARK(Buy.Statuses[o.status]);
             }
             h._SPAN()._HEADER();
             h.Q_("uk-width-expand");
@@ -62,7 +61,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
                 h.T(it.name).SP().T(it.qty).T(it.unit);
             }
             h._Q();
-            h.FOOTER_().SPAN(string.IsNullOrEmpty(o.uarea) ? "非派送区" : o.uarea, "uk-width-expand").SPAN(o.utel, "uk-width-1-3 uk-output").SPAN_("uk-width-1-3 uk-flex-right").CNY(o.pay)._SPAN()._FOOTER();
+            h.FOOTER_().SPAN(o.uarea, "uk-width-expand").SPAN_("uk-width-1-3 uk-flex-right").CNY(o.pay)._SPAN()._FOOTER();
             h._ASIDE();
 
             h._A();

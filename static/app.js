@@ -10,7 +10,7 @@ var WCPay = function (data, sup) {
                 if (sup) {
                     alert('下单成功！');
                 } else {
-                    alert('下单成功！请看「我的个人账号」');
+                    alert('下单成功！请查「个人账号」');
                 }
                 // close without refresh
                 window.parent.closeUp(false);
@@ -93,7 +93,7 @@ function buyRecalc(trig) {
     if (!frm) return;
 
     // sum up line items
-    let sum = 0.00; // add fee if community is selected
+    let sum = 0.00; // add fee if area is selected
     let lst = frm.querySelectorAll('.subtotal');
     for (let i = 0; i < lst.length; i++) {
         let v = lst[i].value;
@@ -109,11 +109,15 @@ function buyRecalc(trig) {
         let min = parseFloat(ofee.getAttribute('min'));
         let rate = parseFloat(ofee.getAttribute('rate'));
         let max = parseFloat(ofee.getAttribute('max'));
+        
         fee = Math.max(min, Math.min(sum * rate, max));
         fee = parseFloat((fee - fee % 0.5).toFixed(1)); // cut to 0.5
 
         // adjust
         if (frm.area) { 
+
+            frm.addr.placeholder = (frm.area.value == '外地') ? '省市／详细地址': '小区／楼栋门牌';
+
             let opts = frm.area.selectedOptions;
             if (opts.length > 0) {
                 var opt = opts[0];
@@ -301,7 +305,7 @@ function $buy(trig) {
         }
     }
     if (!any) {
-        alert('请先选择商品及件数');
+        alert('请先选择商品');
         return;
     }
 

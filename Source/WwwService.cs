@@ -177,7 +177,7 @@ public class WwwService : MainService
 
                 if (topay == cash) // verify that the ammount is correct
                 {
-                    dc.Sql("UPDATE buys SET status = 2, pay = @1, adapted = @2 WHERE id = @3 AND status = 1 RETURNING *");
+                    dc.Sql("UPDATE buys SET status = 2, pay = @1, adapted = @2, adapter = uname WHERE id = @3 AND status = 1 RETURNING *");
                     var o = await dc.QueryTopAsync<Buy>(p => p.Set(cash).Set(DateTime.Now).Set(buyid));
 
                     // add to watch set and buy set

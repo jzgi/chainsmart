@@ -77,9 +77,7 @@ public static class MainUtility
         return h;
     }
 
-    public const string Remote = "外地";
-
-    public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, bool remote = false, string onchange = null, string css = null)
+    public static HtmlBuilder SELECT_SPEC(this HtmlBuilder h, string name, JObj specs, string onchange = null, string css = null)
     {
         h.SELECT_(name, local: name, onchange: onchange, required: true, css: css);
 
@@ -110,11 +108,6 @@ public static class MainUtility
                     h.OPTION(spec.Key, spec.Key, title: spec.Value);
                 }
             }
-        }
-
-        if (remote)
-        {
-            h.OPTION(string.Empty, Remote);
         }
 
         h._SELECT();
