@@ -495,8 +495,9 @@ public class ShplyItemVarWork : ItemVarWork
                 using var dc = NewDbContext();
 
                 o.nstart = o.nend - o.qty + 1;
-                await dc.QueryTopAsync("SELECT name FROM codes WHERE tag = @1 AND @2 BETWEEN nstart AND nend", p => p.Set(o.tag).Set(o.nstart).Set(o.nend));
+                await dc.QueryTopAsync("SELECT name, orgid FROM codes WHERE tag = @1 AND @2 BETWEEN nstart AND nend", p => p.Set(o.tag).Set(o.nstart).Set(o.nend));
                 dc.Let(out name);
+                dc.Let(out o.srcid);
             }
             wc.GivePane(200, h =>
             {
@@ -509,7 +510,7 @@ public class ShplyItemVarWork : ItemVarWork
                 {
                     if (name != null)
                     {
-                        h.LI_().TEXT("产源", nameof(name), name, @readonly: true).HIDDEN(nameof(o.srcid), o.orgid)._LI();
+                        h.LI_().TEXT("产源", nameof(name), name, @readonly: true).HIDDEN(nameof(o.srcid), o.srcid)._LI();
                         h.LI_().TEXT("备注", nameof(o.tip), o.tip, max: 20)._LI();
                     }
                     else

@@ -411,11 +411,16 @@ function subscriptUri(uri, num) {
 }
 
 
-function forWebview() {
+function watchWebview(f) {
     window.chrome.webview.addEventListener('message', function (evt) {
-        alert(evt.data);
+        f(evt.data);
     });
 }
+
+function toWebview(str) {
+    window.chrome.webview.postMessage(str);
+}
+
 
 // HTML Content Fixing
 function fixAll() {
@@ -443,8 +448,7 @@ function fixAll() {
             // fixing of value
             var scpt = e.getAttribute("onfix");
             var val = cookies[name];
-            if (!val) continue;
-            
+
             if (scpt) { // raise onfix event
                 var evt = new CustomEvent('fix', {detail: val});
                 e.addEventListener('fix', new Function(scpt));

@@ -238,7 +238,7 @@ public static class MainUtility
     }
 
 
-    public static void SetTokenCookies(this WebContext wc, User o, int maxage = 3600 * 12)
+    public static void SetTokenCookies(this WebContext wc, User o, int maxage = 3600 * 72)
     {
         // get root domain name for cookies
         var host = wc.Header("Host");
@@ -262,9 +262,9 @@ public static class MainUtility
         var tokenStr = WebUtility.BuildSetCookie(nameof(token), token, maxage: maxage, domain: root, httponly: true);
 
         // cookie for vip, o means none
-        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), domain: root);
-        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), domain: root);
-        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), domain: root);
+        var vipStr = WebUtility.BuildSetCookie(nameof(o.vip), TextUtility.ToString(o.vip), maxage: maxage, domain: root);
+        var nameStr = WebUtility.BuildSetCookie(nameof(o.name), (o.name), maxage: maxage, domain: root);
+        var telStr = WebUtility.BuildSetCookie(nameof(o.tel), (o.tel), maxage: maxage, domain: root);
 
         // multiple cookie
         wc.SetHeader("Set-Cookie", tokenStr, vipStr, nameStr, telStr);

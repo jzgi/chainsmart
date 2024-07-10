@@ -175,7 +175,7 @@ public class MktlyVarWork : MgtVarWork, IExternable
         // receive incoming data
         if (wc.IsPost)
         {
-            //
+            // handle incoming
             wc.Give(200);
         }
         else // send outgoing data

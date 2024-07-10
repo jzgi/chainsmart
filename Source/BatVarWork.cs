@@ -77,7 +77,7 @@ public class PublyBatVarWork : CodeVarWork
             var tag = Grab<short, Tag>()?[bat.tag];
 
             h.TOPBARXL_();
-            h.IMG(OrgUrl, src.id, "/icon", circle: true, css: "uk-width-small");
+            h.IMG(OrgUrl, src.id, "/icon", circle: true, css: "uk-width-tiny");
             h.HEADER_("uk-width-expand uk-padding-left").H2_().T(src.name).T(bat.name)._H2()._HEADER();
             h._TOPBARXL();
 
@@ -85,24 +85,24 @@ public class PublyBatVarWork : CodeVarWork
             h.ARTICLE_("uk-card uk-card-primary");
 
             h.HEADER_("uk-card-header").H3("商品信息")._HEADER();
-            h.IMG(OrgUrl, bat.itemid, "/pic", css: "uk-width-1-1");
+            h.IMG(ItemUrl, bat.itemid, "/pic", css: "uk-width-1-1");
 
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("商品", item.name)._LI();
             h.LI_().FIELD(string.Empty, item.tip)._LI();
-            h.LI_().FIELD("货次", bat.oked)._LI();
-            h.LI_().FIELD_("溯源", css: "uk-col").T(tag.name).Q(tag.tip)._FIELD()._LI();
+            h.LI_().FIELD_("货次").T(bat.created, time: 1)._FIELD()._LI();
+            h.LI_().FIELD_("溯源", css: "uk-col").MARK(tag.name).Q(tag.tip)._FIELD()._LI();
 
             var sym = Grab<short, Sym>()?[item.sym];
 
-            h.LI_().FIELD_("标志", css: "uk-col");
+            h.LI_().FIELD_("特誉", css: "uk-col");
             if (sym == null)
             {
                 h.T("无");
             }
             else
             {
-                h.T(sym.name).BR().Q(sym.tip, css: "uk-margin-auto-left");
+                h.MARK(sym.name).Q(sym.tip);
             }
             h._FIELD()._LI();
 
