@@ -13,23 +13,11 @@
 }
 
 .fprice.vip {
-    color: #faa05a;
+    color: #f9473e;
 }
 
 button output {
     font-size: 1.125rem;
-}
-
-mark.state-1 {
-    background-color: #007aff;
-}
-
-mark.state-2 {
-    background-color: #7daa1d;
-}
-
-mark.state-4 {
-    background-color: #f59604;
 }
 
 .qtyselect {

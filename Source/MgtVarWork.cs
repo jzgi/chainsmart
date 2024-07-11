@@ -18,7 +18,7 @@ public abstract class MgtVarWork : WebWork
         if (this is MktlyVarWork)
         {
             var mkt = GrabTwin<int, Org>(org.MktId);
-            title = mkt.whole + " - " + org.name;
+            title = mkt.whole + "-" + org.name;
         }
 
         wc.GivePage(200, h =>

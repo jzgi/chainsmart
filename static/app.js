@@ -42,7 +42,7 @@ var ToWebview = function (v) {
 }
 
 
-function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, min, max, stock) {
+function fillPriceAndQtySelect(trig, evt, unit, price, off, promo, unitx, min, max, stock) {
 
     var url = window.location.href;
     var endp = url.lastIndexOf('/', url.length - 1);
@@ -62,7 +62,7 @@ function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, min, max, sto
 
     // fill fprice
     var ofprice = trig.querySelector('.fprice');
-    if (vip || off > 0) {
+    if (vip || promo) {
         ofprice.value = (price - off).toFixed(2);
         ofprice.classList.add('vip');
     } else {
