@@ -46,7 +46,7 @@ public abstract class ItemVarWork : WebWork
             h.LI_().FIELD("单价", o.price, money: true)._LI();
             h.LI_().FIELD("大客户减", o.off, money: true).FIELD("全减", o.promo)._LI();
             h.LI_().FIELD2("起订量", o.min, o.unit).FIELD2("限订量", o.max, o.unit)._LI();
-            h.LI_().FIELD2("剩余", o.stock, o.unit)._LI();
+            h.LI_().FIELD2("库存", o.stock, o.unit)._LI();
             h._UL();
 
             h.H4("状态", css: "uk-padding");
@@ -114,9 +114,11 @@ public class PublyItemVarWork : ItemVarWork
                 h.IMG("/item/", o.id, "/pic");
             }
 
+            var cats = Grab<short, Cat>();
+
             h.ARTICLE_("uk-card uk-card-primary uk-margin-remove");
             h.UL_("uk-card-body uk-list uk-list-divider");
-            h.LI_().FIELD("商品名", o.name).FIELD("分类", o.typ, Item.Typs)._LI();
+            h.LI_().FIELD("商品名", o.name).FIELD("分类", o.cat, cats)._LI();
             if (!string.IsNullOrEmpty(o.tip))
             {
                 h.LI_().FIELD("简介语", o.tip)._LI();

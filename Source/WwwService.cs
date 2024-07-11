@@ -122,7 +122,7 @@ public class WwwService : MainService
 
                     h.LI_("uk-flex");
                     h.T("<a class=\"uk-width-expand uk-link\" href=\"").T(o.id).T("\" id=\"").T(o.id).T("\" onclick=\"markAndGo('mktid', this); return dialog(this,16,false,'").T(o.whole).T("');\" cookie=\"mktid\" onfix=\"setActive(event, this)\">");
-                    h.SPAN(o.Full);
+                    h.SPAN(o.Whole);
                     h.P(o.addr, css: "uk-margin-auto-left");
                     h.ICON("chevron-right");
                     h._A();

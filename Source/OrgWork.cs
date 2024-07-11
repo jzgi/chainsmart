@@ -33,9 +33,9 @@ public abstract class OrgWork<V> : WebWork where V : OrgVarWork, new()
             }
 
             h.ASIDE_();
-            h.HEADER_().H4(o.FullName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
+            h.HEADER_().H4(o.WholeName).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, css: "uk-width-expand");
-            h.FOOTER_().BUTTONDIALOG_(mktly ? "/mktly/" : "/suply/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("forward")._BUTTON()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_(mktly ? "/mktly/" : "/suply/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -123,7 +123,7 @@ public class AdmlyEstWork : OrgWork<AdmlyEstVarWork>
                 if (o.IsRtlEst)
                 {
                     var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                    h.LI_().SELECT("交付方式", nameof(o.style), o.style, Org.Styles, required: true).SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
+                    h.LI_().SELECT("模式", nameof(o.mode), o.mode, Org.Modes, required: true).SELECT("关联云仓", nameof(o.hubid), o.hubid, hubs, required: true)._LI();
                 }
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账名", nameof(o.bankacctname), o.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
@@ -268,7 +268,7 @@ public class AdmlySupWork : OrgWork<AdmlySupVarWork>
 
                 h.LI_().TEXT("名称", nameof(o.name), o.name, min: 2, max: 12, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                h.LI_().TEXT("工商名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().SELECT("地市", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                 h.LI_().TEXT("地址", nameof(o.addr), o.addr, max: 30)._LI();
                 h.LI_().NUMBER("经度", nameof(o.x), o.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(o.y), o.y, min: -90.000, max: 90.000)._LI();
@@ -320,7 +320,7 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             h.ASIDE_();
             h.HEADER_().H4(o.name).SPAN(Entity.Statuses[o.status], "uk-badge")._HEADER();
             h.Q(o.tip, "uk-width-expand");
-            h.FOOTER_().BUTTONDIALOG_("/mktly/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("forward")._BUTTON()._FOOTER();
+            h.FOOTER_().BUTTONDIALOG_("/mktly/", o.Key, "/", mode: MOD_ASTACK, false, css: "uk-button-link uk-margin-auto-left").ICON("link")._BUTTON()._FOOTER();
             h._ASIDE();
 
             h._A();
@@ -458,9 +458,9 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             {
                 h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsShx ? "新建成员商户" : "新建成员门店");
 
-                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
+                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
                 h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().SELECT("输送方式", nameof(o.style), o.style, Org.Styles, required: true)._LI();
+                h.LI_().SELECT("输送方式", nameof(o.mode), o.mode, Org.Modes, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();

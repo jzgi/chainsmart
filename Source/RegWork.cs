@@ -108,7 +108,7 @@ public class AdmlyRegWork : RegWork
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                 if (o.IsSector)
                 {
-                    h.LI_().SELECT("市场模式", nameof(o.style), o.style, Org.Styles)._LI();
+                    h.LI_().SELECT("市场模式", nameof(o.style), o.style, Org.Modes)._LI();
                 }
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new), subscript: typ)._FORM();

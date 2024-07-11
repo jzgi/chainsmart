@@ -347,7 +347,7 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
                 var mkt = GrabTwin<int, Org>(mktid);
 
                 h.TR_();
-                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Full, css: "uk-link uk-button-link").T(mkt.Full)._A()._TD();
+                h.TD_().ADIALOG_(mktid, "/mkt", mode: MOD_OPEN, false, tip: mkt.Whole, css: "uk-link uk-button-link").T(mkt.Whole)._A()._TD();
                 h.TD_(css: "uk-text-center");
                 if (adapted > 0)
                 {

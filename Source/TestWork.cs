@@ -218,7 +218,7 @@ public class MktlyTestWork : TestWork<MktlyTestVarWork>
             h._LI();
             h._UL();
             h._MAIN();
-        }, false, 12, title: mkt.Full, refresh: 60);
+        }, false, 12, title: mkt.Whole, refresh: 60);
     }
 }
 

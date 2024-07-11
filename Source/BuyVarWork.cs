@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using ChainFX;
 using ChainFX.Web;
@@ -23,17 +24,13 @@ public abstract class BuyVarWork : WebWork
         wc.GivePane(200, h =>
         {
             h.UL_("uk-list uk-list-divider");
-            h.LI_().LABEL("订单编号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
+            h.LI_().LABEL("订单号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
             if (o.IsOnline)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr)._SPAN()._LI();
             }
             h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
-            if (!string.IsNullOrEmpty(o.tip))
-            {
-                h.LI_().FIELD("支付", o.tip)._LI();
-            }
             h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("支付", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "撤销" : "派发", o.oker, o.oked, sep: "<br>")._LI();
             h._UL();
@@ -114,8 +111,24 @@ public class ShplyBuyVarWork : BuyVarWork
         wc.Give(200);
     }
 
-    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
-    [Ui("撤销", "撤销该单并全款退回消费者", status: 2), Tool(ButtonConfirm)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [Ui("打印", "打印小票", icon: "print", status: 2 | 4), Tool(ButtonScript)]
+    public async Task @out(WebContext wc)
+    {
+        int id = wc[0];
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE id = @1");
+        var o = await dc.QueryTopAsync<Buy>(p => p.Set(id));
+
+        var cnt = new JsonBuilder(true, 1024 * 4) { };
+        cnt.Put(null, o);
+
+        wc.Give(200, cnt, shared: false, 12);
+    }
+
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_OPN)]
+    [Ui("撤销", "撤销该单并全款退回消费者", icon: "trash", status: 2), Tool(ButtonConfirm)]
     public async Task @void(WebContext wc)
     {
         int id = wc[0];

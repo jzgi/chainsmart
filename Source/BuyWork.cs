@@ -70,7 +70,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 
 
     [OrgWatch(BUY_ADAPTED)]
-    [Ui("网售新单", tip: "新收订单", status: 1), Tool(Anchor)]
+    [Ui("网售收单", tip: "新收订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -272,7 +272,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
             }
 
             h._MAIN();
-        }, false, 12, title: mkt.Full, refresh: 60);
+        }, false, 12, title: mkt.Whole, refresh: 60);
     }
 
     [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]

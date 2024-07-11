@@ -14,6 +14,13 @@ public abstract class MgtVarWork : WebWork
     {
         var org = wc[0].As<Org>();
 
+        string title = org.name;
+        if (this is MktlyVarWork)
+        {
+            var mkt = GrabTwin<int, Org>(org.MktId);
+            title = mkt.whole + " - " + org.name;
+        }
+
         wc.GivePage(200, h =>
         {
             h.TOPBARXL_();
@@ -22,7 +29,7 @@ public abstract class MgtVarWork : WebWork
             h.H1_().T(org.name)._H1();
             if (org.AsEst)
             {
-                h.H4(org.Full);
+                h.H4(org.Whole);
             }
             h._HEADER();
 
@@ -40,7 +47,7 @@ public abstract class MgtVarWork : WebWork
             h.WORKBOARD(accessTyp: org.typ, twinSpy: org.id);
 
             h.TOOLBAR(bottom: true, status: org.Status, state: org.ToState());
-        }, false, 30, title: org.name, onload: "forWebview();");
+        }, false, 30, title: title);
     }
 
 

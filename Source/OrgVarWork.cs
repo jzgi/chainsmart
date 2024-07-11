@@ -195,7 +195,7 @@ public class AdmlyEstVarWork : OrgVarWork
                     if (m.IsRtlEst)
                     {
                         var hubs = GrabTwinArray<int, Org>(0, x => x.IsHub);
-                        h.LI_().SELECT("交付方式", nameof(m.style), m.style, Org.Styles, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
+                        h.LI_().SELECT("交付方式", nameof(m.mode), m.mode, Org.Modes, required: true).SELECT("关联云仓", nameof(m.hubid), m.hubid, hubs, required: true)._LI();
                     }
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账名", nameof(m.bankacctname), m.bankacctname, tip: "工商银行账户名称", max: 20, required: true)._LI();
@@ -412,7 +412,7 @@ public class AdmlySupVarWork : OrgVarWork
                     h.LI_().SELECT("类型", nameof(m.typ), m.typ, Org.Typs, filter: (k, _) => Org.IsNonEstSupTyp(k), required: true)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, min: 2, max: 12, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().TEXT("工商名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().SELECT("地市", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsCity, required: true)._LI();
                     h.LI_().TEXT("地址", nameof(m.addr), m.addr, max: 30)._LI();
                     h.LI_().NUMBER("经度", nameof(m.x), m.x, min: 0.000, max: 180.000).NUMBER("纬度", nameof(m.y), m.y, min: -90.000, max: 90.000)._LI();
@@ -611,11 +611,11 @@ public class MktlyOrgVarWork : OrgVarWork
                 {
                     h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsShx ? "修改成员商户" : "修改成员门店");
 
-                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.style), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
+                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
                     h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().SELECT("输送方式", nameof(m.style), m.style, Org.Styles, required: true)._LI();
+                    h.LI_().SELECT("模式", nameof(m.mode), m.mode, Org.Modes, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
-                    h.LI_().TEXT("工商登记名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().TEXT("工商名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                     h.LI_().TEXT("收款户名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();

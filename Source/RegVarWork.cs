@@ -29,7 +29,7 @@ public class AdmlyRegVarWork : RegVarWork
             h.LI_().FIELD("名称", o.name)._LI();
             h.LI_().FIELD("简介语", o.tip)._LI();
             h.LI_().FIELD("序号", o.idx)._LI();
-            h.LI_().FIELD("市场模式", o.style, Org.Styles)._LI();
+            h.LI_().FIELD("市场模式", o.style, Org.Modes)._LI();
             h.LI_().FIELD("状态", o.status, Entity.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
             h.LI_().FIELD2("调整", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "作废" : "发布", o.oker, o.oked, sep: "<br>")._LI();
 
@@ -59,7 +59,7 @@ public class AdmlyRegVarWork : RegVarWork
                 h.LI_().NUMBER("排序", nameof(o.idx), o.idx, min: 1, max: 99)._LI();
                 if (o.IsSector)
                 {
-                    h.LI_().SELECT("市场模式", nameof(o.style), o.style, Org.Styles)._LI();
+                    h.LI_().SELECT("市场模式", nameof(o.style), o.style, Org.Modes)._LI();
                 }
 
                 h._FIELDSUL()._FORM();

@@ -60,14 +60,14 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     // delivery style constants
     public const short
-        STY_SLF = 0, // self-handling 
-        STY_DLV = 1;
+        MOD_SLFDLV = 0, // self-handling 
+        MOD_MIXDLV = 1;
 
     // style definitions
-    public static readonly Map<short, string> Styles = new()
+    public static readonly Map<short, string> Modes = new()
     {
-        { STY_SLF, "自理" },
-        { STY_DLV, "合单派送" },
+        { MOD_SLFDLV, "自理派发" },
+        { MOD_MIXDLV, "合单统一派发" },
     };
 
 
@@ -96,7 +96,7 @@ public class Org : Entity, ITwin<int>, IFolderable
     internal TimeSpan openat;
     internal TimeSpan closeat;
     internal short rank; // credit level
-    internal short style;
+    internal short mode;
 
     internal bool icon;
     internal bool pic;
@@ -126,7 +126,7 @@ public class Org : Entity, ITwin<int>, IFolderable
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Get(nameof(style), ref style);
+                s.Get(nameof(mode), ref mode);
                 s.Get(nameof(rank), ref rank);
                 s.Get(nameof(whole), ref whole);
                 s.Get(nameof(wholetip), ref wholetip);
@@ -179,7 +179,7 @@ public class Org : Entity, ITwin<int>, IFolderable
 
             if ((msk & MSK_EDIT) == MSK_EDIT)
             {
-                s.Put(nameof(style), style);
+                s.Put(nameof(mode), mode);
                 s.Put(nameof(rank), rank);
                 s.Put(nameof(whole), whole);
                 s.Put(nameof(wholetip), wholetip);
@@ -216,7 +216,7 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public short Idx => rank;
 
-    public short Style => style;
+    public short Style => mode;
 
     // STATE
     //
@@ -286,15 +286,15 @@ public class Org : Entity, ITwin<int>, IFolderable
     public string Name => name;
 
 
-    public bool IsStyleSlf => (style & STY_SLF) == STY_SLF;
+    public bool IsStyleSlf => (mode & MOD_SLFDLV) == MOD_SLFDLV;
 
-    public bool IsStyleDlv => (style & STY_DLV) == STY_DLV;
+    public bool IsStyleDlv => (mode & MOD_MIXDLV) == MOD_MIXDLV;
 
-    public string No => AsRtl ? addr : null;
+    public string No => IsMkt ? null : addr;
 
-    public string Full => whole;
+    public string Whole => whole;
 
-    public string FullName => whole ?? name;
+    public string WholeName => whole ?? name;
 
     public int ForkKey => parentid;
 

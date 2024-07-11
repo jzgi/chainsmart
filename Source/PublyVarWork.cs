@@ -10,7 +10,7 @@ using static ChainFX.Entity;
 
 namespace ChainSmart;
 
-[UserAuthenticate(OmitDefault = true)]
+[UserAuthenticate]
 public class PublyVarWork : ItemWork<PublyItemVarWork>
 {
     /// <summary>
@@ -367,6 +367,6 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h._ARTICLE();
             }
             h._MAIN();
-        }, true, 720, org.Full);
+        }, true, 720, org.Whole);
     }
 }

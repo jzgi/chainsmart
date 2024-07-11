@@ -22,6 +22,26 @@ var WCPay = function (data, sup) {
     );
 };
 
+var FromWebview = function(func) {
+    window.chrome.webview.addEventListener('message', function (evt) {
+        func(evt.data);
+    });
+}
+
+var ToWebview = function (v) {
+    var str;
+    if (typeof v === 'object') {
+        str = JSON.stringify(v);
+    } else if (typeof v == 'string') {
+        str = v;
+    } else {
+        return;
+    }
+
+    window.chrome.webview.postMessage(str);
+}
+
+
 function fillPriceAndQtySelect(trig, evt, unit, price, off, unitx, min, max, stock) {
 
     var url = window.location.href;
@@ -235,6 +255,24 @@ function posRemove(el) {
     posResum(form);
 }
 
+
+function $out(trig) {
+
+    var xhr = new XMLHttpRequest();
+    var url = "out";
+    xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var jo = JSON.parse(this.responseText);
+          
+            window.top.ToWebview(jo);
+        }
+    };
+    xhr.open("GET", url, true);
+    xhr.send();
+
+    return false;
+}
+
 function $smsvcode(trig) {
 
     var method = trig.formMethod;
@@ -411,15 +449,6 @@ function subscriptUri(uri, num) {
 }
 
 
-function watchWebview(f) {
-    window.chrome.webview.addEventListener('message', function (evt) {
-        f(evt.data);
-    });
-}
-
-function toWebview(str) {
-    window.chrome.webview.postMessage(str);
-}
 
 
 // HTML Content Fixing

@@ -41,14 +41,13 @@ public class Buy : Entity, IKeyable<long>
     internal string uaddr; // address
     internal string uim;
     internal BuyLn[] lns; // lines
+    internal short mode;
     internal decimal fee;
     internal decimal topay;
     internal decimal pay;
     internal decimal ret;
     internal decimal refund;
     internal string refunder;
-    internal short ship;
-    internal short due;
 
     public Buy()
     {
@@ -60,6 +59,7 @@ public class Buy : Entity, IKeyable<long>
         name = shp.name;
         tip = shp.No;
         orgid = shp.id;
+        mode = shp.mode;
         mktid = shp.MktId;
         lns = arr;
         uid = prin.id;
@@ -88,6 +88,7 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(uaddr), ref uaddr);
             s.Get(nameof(uim), ref uim);
             s.Get(nameof(lns), ref lns);
+            s.Get(nameof(mode), ref mode);
             s.Get(nameof(fee), ref fee);
             s.Get(nameof(topay), ref topay);
         }
@@ -98,8 +99,6 @@ public class Buy : Entity, IKeyable<long>
             s.Get(nameof(ret), ref ret);
             s.Get(nameof(refund), ref refund);
             s.Get(nameof(refunder), ref refunder);
-            s.Get(nameof(ship), ref ship);
-            s.Get(nameof(due), ref due);
         }
     }
 
@@ -126,6 +125,7 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(uaddr), uaddr);
             s.Put(nameof(uim), uim);
             s.Put(nameof(lns), lns);
+            s.Put(nameof(mode), mode);
             s.Put(nameof(fee), fee);
             s.Put(nameof(topay), topay);
         }
@@ -136,8 +136,6 @@ public class Buy : Entity, IKeyable<long>
             s.Put(nameof(ret), ret);
             s.Put(nameof(refund), refund);
             s.Put(nameof(refunder), refunder);
-            s.Put(nameof(ship), ship);
-            s.Put(nameof(due), due);
         }
     }
 
