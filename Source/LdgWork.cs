@@ -82,7 +82,7 @@ public class AdmlyPurLdgWork : LdgWork<AdmlyPurLdgVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
+[MgtAuthorize(Org.TYP_SHL)]
 [Ui("销售汇总")]
 public class ShplyBuyLdgWork : LdgWork<ShplyBuyLdgVarWork>
 {

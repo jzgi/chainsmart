@@ -47,7 +47,7 @@ public abstract class MgtVarWork : WebWork
             h.WORKBOARD(accessTyp: org.typ, twinSpy: org.id);
 
             h.TOOLBAR(bottom: true, status: org.Status, state: org.ToState());
-        }, false, 30, title: title);
+        }, false, 30, title: title, onload: " fromWebview();");
     }
 
 
@@ -121,13 +121,13 @@ public class MktlyVarWork : MgtVarWork, IExternable
 
         CreateWork<ShplyVipWork>("svip");
 
-        CreateWork<MchlyPurWork>("mpur");
+        CreateWork<ShplyPurWork>("spur");
 
         // mkt
 
-        CreateWork<MktlyOrgWork>("mmch", state: Org.TYP_SHX, ui: new UiAttribute("成员商户"), header: "机构");
+        CreateWork<MktlyOrgWork>("mmch", state: Org.TYP_SHP, ui: new UiAttribute("成员商户"), header: "机构");
 
-        CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHP, ui: new UiAttribute("成员门店"));
+        CreateWork<MktlyOrgWork>("mshp", state: Org.TYP_SHL, ui: new UiAttribute("成员门店"));
 
         CreateWork<MktlyBuyWork>("mbuy");
 

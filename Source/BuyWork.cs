@@ -16,8 +16,8 @@ public abstract class BuyWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
-[Ui("网售")]
+[MgtAuthorize(Org.TYP_SHL)]
+[Ui("网销")]
 public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 {
     static void MainGrid(HtmlBuilder h, IEnumerable<Buy> lst, bool pick = false)
@@ -70,7 +70,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 
 
     [OrgWatch(BUY_ADAPTED)]
-    [Ui("网售收单", tip: "新收订单", status: 1), Tool(Anchor)]
+    [Ui("网销收单", tip: "新收订单", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -145,7 +145,7 @@ public class ShplyBuyWork : BuyWork<ShplyBuyVarWork>
 }
 
 [MgtAuthorize(Org.TYP_MKV)]
-[Ui("网售统一派发")]
+[Ui("网销统一派发")]
 public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
 {
     internal void MainGrid(HtmlBuilder h, IList<Buy> arr)
@@ -177,7 +177,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         });
     }
 
-    [Ui("网售统一派发", status: 1), Tool(Anchor)]
+    [Ui("网销统一派发", status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var mkt = wc[-1].As<Org>();
@@ -275,7 +275,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
         }, false, 12, title: mkt.Whole, refresh: 60);
     }
 
-    [Ui(tip: "已统一派送", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]
+    [Ui(tip: "已统一派发", icon: "arrow-right", status: 4), Tool(AnchorPrompt)]
     public async Task oked(WebContext wc, int page)
     {
         var org = wc[-1].As<Org>();
@@ -358,7 +358,7 @@ public class MktlyBuyWork : BuyWork<MktlyBuyVarWork>
                     h.SPAN_("uk-width-expand").SMALL_().T(o.uarea).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
-                        h.SMALL_().T("派送到楼下 +").T(o.fee)._SMALL();
+                        h.SMALL_().T("运费 +").T(o.fee)._SMALL();
                     }
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
                     h._LI();

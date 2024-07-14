@@ -55,7 +55,7 @@ public class PublyItemWork : ItemWork<PublyItemVarWork>
 {
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
+[MgtAuthorize(Org.TYP_SHL)]
 [Ui("商品")]
 public class ShplyItemWork : ItemWork<ShplyItemVarWork>
 {
@@ -126,7 +126,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         }, false, 4);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_MGT)]
     [Ui("新建", tip: "新建商品", icon: "plus", status: 2), Tool(ButtonOpen)]
     public async Task @new(WebContext wc)
     {
@@ -179,7 +179,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         }
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_MGT)]
     [Ui("清空", tip: "清空作废项", icon: "minus-circle", status: 4), Tool(ButtonConfirm)]
     public async Task empty(WebContext wc)
     {

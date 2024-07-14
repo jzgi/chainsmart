@@ -9,8 +9,6 @@ public class BuyLn : IData, IKeyable<int>
 {
     public int itemid;
 
-    public int lotid;
-
     public string name;
 
     public string unit; // basic unit
@@ -42,18 +40,16 @@ public class BuyLn : IData, IKeyable<int>
     {
         this.itemid = itemid;
 
-        lotid = int.Parse(comp[0]);
-        name = comp[1];
-        unit = comp[2];
-        unitip = comp[3];
-        price = decimal.Parse(comp[4]);
-        qty = decimal.Parse(comp[5]);
+        name = comp[0];
+        unit = comp[1];
+        unitip = comp[2];
+        price = decimal.Parse(comp[3]);
+        qty = decimal.Parse(comp[4]);
     }
 
     public void Read(ISource s, short msk = 0xff)
     {
         s.Get(nameof(itemid), ref itemid);
-        s.Get(nameof(lotid), ref lotid);
         s.Get(nameof(name), ref name);
         s.Get(nameof(unit), ref unit);
         s.Get(nameof(unitip), ref unitip);
@@ -65,7 +61,6 @@ public class BuyLn : IData, IKeyable<int>
     public void Write(ISink s, short msk = 0xff)
     {
         s.Put(nameof(itemid), itemid);
-        s.Put(nameof(lotid), lotid);
         s.Put(nameof(name), name);
         s.Put(nameof(unit), unit);
         s.Put(nameof(unitip), unitip);
@@ -83,7 +78,6 @@ public class BuyLn : IData, IKeyable<int>
     internal void Init(Item m, bool vip)
     {
         name = m.name;
-        lotid = m.srcid;
         unit = m.unit;
         unitip = m.unitip;
         price = m.price;

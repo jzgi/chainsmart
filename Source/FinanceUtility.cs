@@ -44,7 +44,7 @@ public static class FinanceUtility
     }
 
 
-    public static (decimal topay, decimal fee) GetTopayAndFee(IEnumerable<BuyLn> lns, Org org, string area)
+    public static (decimal topay, decimal fee) GetTopayAndFee(IEnumerable<BuyLn> lns, Org org, Org mkt, string area)
     {
         // calculate the sum
         //
@@ -60,7 +60,7 @@ public static class FinanceUtility
         // calculate the fee
         //
         var fee = 0.0M;
-        if (org.IsStyleDlv)
+        if (org.IsModeUni) // unified
         {
             var (min, rate, max) = mktdlvfee;
 
@@ -68,10 +68,10 @@ public static class FinanceUtility
             fee -= fee % 0.5M;
 
             // adjust
-            var specs = org.specs;
-            for (int i = 0; i < specs?.Count; i++)
+            var mktspecs = mkt.specs;
+            for (int i = 0; i < mktspecs?.Count; i++)
             {
-                var spec = specs.EntryAt(i);
+                var spec = mktspecs.EntryAt(i);
                 var v = spec.Value;
                 if (v.IsObject)
                 {

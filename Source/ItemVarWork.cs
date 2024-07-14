@@ -189,7 +189,7 @@ public class PublyItemVarWork : ItemVarWork
 
 public class ShplyItemVarWork : ItemVarWork
 {
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     public override async Task bat(WebContext wc)
     {
         int itemid = wc[0];
@@ -235,7 +235,7 @@ public class ShplyItemVarWork : ItemVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "修改商品信息", icon: "pencil", status: 1 | 2 | 4), Tool(ButtonShow)]
     public async Task upd(WebContext wc)
     {
@@ -291,21 +291,21 @@ public class ShplyItemVarWork : ItemVarWork
     }
 
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "图标", icon: "github-alt", status: 1 | 2), Tool(ButtonCrop)]
     public async Task icon(WebContext wc)
     {
         await doimg(wc, nameof(icon), false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "照片", icon: "image", status: 1 | 2), Tool(ButtonCrop, size: 2)]
     public async Task pic(WebContext wc)
     {
         await doimg(wc, nameof(pic), false, 6);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui("上线", "上线投入使用", status: 1 | 2), Tool(ButtonConfirm, state: Item.STA_OKABLE)]
     public async Task ok(WebContext wc)
     {
@@ -320,7 +320,7 @@ public class ShplyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui("下线", "下线停用或调整", status: 4), Tool(ButtonConfirm)]
     public async Task unok(WebContext wc)
     {
@@ -334,7 +334,7 @@ public class ShplyItemVarWork : ItemVarWork
         wc.GivePane(200);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "确认作废该商品", icon: "trash", status: 3), Tool(ButtonConfirm)]
     public async Task rm(WebContext wc)
     {
@@ -349,7 +349,7 @@ public class ShplyItemVarWork : ItemVarWork
         wc.Give(204);
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "恢复此项删除的商品", icon: "reply", status: 0), Tool(ButtonConfirm)]
     public async Task restore(WebContext wc)
     {
@@ -415,7 +415,7 @@ public class ShplyItemVarWork : ItemVarWork
     }
 
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "简单加数", icon: "plus", status: 8), Tool(ButtonShow)]
     public async Task add(WebContext wc)
     {
@@ -461,7 +461,7 @@ public class ShplyItemVarWork : ItemVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui("产源到货", tip: "产源到货加数", icon: "plus", status: 8), Tool(ButtonShow)]
     public async Task addsrc(WebContext wc, int cmd)
     {
@@ -541,7 +541,7 @@ public class ShplyItemVarWork : ItemVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_SHX, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
     [Ui("云仓到货", tip: "云仓到货加数", icon: "plus", status: 8), Tool(ButtonShow)]
     public async Task addpur(WebContext wc)
     {
@@ -590,7 +590,7 @@ public class ShplyItemVarWork : ItemVarWork
         }
     }
 
-    [MgtAuthorize(Org.TYP_SHP, User.ROL_OPN)]
+    [MgtAuthorize(Org.TYP_SHL, User.ROL_OPN)]
     [Ui(tip: "简单减数", icon: "minus", status: 8), Tool(ButtonShow)]
     public async Task subtr(WebContext wc)
     {

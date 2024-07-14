@@ -18,9 +18,9 @@ public abstract class PurWork<V> : WebWork where V : PurVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_SHX)]
-[Ui("采购")]
-public class MchlyPurWork : PurWork<MchlyPurVarWork>
+[MgtAuthorize(Org.TYP_SHP)]
+[Ui("进货")]
+public class ShplyPurWork : PurWork<ShplyPurVarWork>
 {
     protected override void OnCreate()
     {
@@ -78,7 +78,7 @@ public class MchlyPurWork : PurWork<MchlyPurVarWork>
         }, false, 6);
     }
 
-    [Ui(tip: "已发货", icon: "arrow-right", status: 2), Tool(Anchor)]
+    [Ui(tip: "已发货", icon: "forward", status: 2), Tool(Anchor)]
     public async Task adapted(WebContext wc)
     {
         var org = wc[-1].As<Org>();
@@ -374,10 +374,10 @@ public class HublyPurWork : PurWork<CtrlyPurVarWork>
 }
 
 [MgtAuthorize(Org.TYP_MKV)]
-[Ui("采购统一收货")]
+[Ui("进货统一签收")]
 public class MktlyPurWork : PurWork<MktlyPurVarWork>
 {
-    [Ui("采购统一收货", status: 1), Tool(Anchor)]
+    [Ui(status: 1), Tool(Anchor)]
     public async Task @default(WebContext wc)
     {
         var org = wc[-1].As<Org>();

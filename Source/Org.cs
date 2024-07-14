@@ -24,11 +24,11 @@ public class Org : Entity, ITwin<int>, IFolderable
         TYP_WHL_ = 0b001000, // wholesale
         TYP_EST_ = 0b010000, // establishment
         //
-        TYP_SHP = TYP_RTL_ | TYP_SAL_, // shop
-        TYP_SHV = TYP_RTL_ | TYP_BCK_, // shop virtual
-        TYP_SHX = TYP_RTL_ | TYP_SAL_ | TYP_BCK_, // shop + purchase 
+        TYP_SHL = TYP_RTL_ | TYP_SAL_, // shoplet
+        TYP_SHV = TYP_RTL_ | TYP_BCK_, // shop virtual 
+        TYP_SHP = TYP_RTL_ | TYP_SAL_ | TYP_BCK_, // shop 
         TYP_MKV = TYP_EST_ | TYP_SHV, // market virtual
-        TYP_MKT = TYP_EST_ | TYP_SHX, // market
+        TYP_MKT = TYP_EST_ | TYP_SHP, // market
         //
         TYP_SRC = TYP_WHL_ | TYP_BCK_, // source
         TYP_SUP = TYP_WHL_ | TYP_SAL_ | TYP_BCK_, // supply
@@ -37,9 +37,9 @@ public class Org : Entity, ITwin<int>, IFolderable
     // type definitions
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_SHP, "门店" },
+        { TYP_SHL, "门店" },
         { TYP_SHV, "泛商户" },
-        { TYP_SHX, "商户" },
+        { TYP_SHP, "商户" },
         { TYP_MKV, "泛市场" },
         { TYP_MKT, "市场" },
         { TYP_SRC, "产源" },
@@ -60,14 +60,14 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     // delivery style constants
     public const short
-        MOD_SLFDLV = 0, // self-handling 
-        MOD_MIXDLV = 1;
+        MOD_SLFDLV = 0, // self-delivery 
+        MOD_UNIDLV = 1; // unified delivery
 
     // style definitions
     public static readonly Map<short, string> Modes = new()
     {
-        { MOD_SLFDLV, "自理派发" },
-        { MOD_MIXDLV, "合单统一派发" },
+        { MOD_SLFDLV, "自行派发" },
+        { MOD_UNIDLV, "统一派发" },
     };
 
 
@@ -259,11 +259,11 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsRtlEst => (typ & (TYP_RTL_ | TYP_EST_)) == (TYP_RTL_ | TYP_EST_);
 
-    public bool IsShp => (typ & TYP_SHP) == TYP_SHP;
+    public bool IsShp => (typ & TYP_SHL) == TYP_SHL;
 
     public bool IsShv => (typ & TYP_SHV) == TYP_SHV;
 
-    public bool IsShx => (typ & TYP_SHX) == TYP_SHX;
+    public bool IsShx => (typ & TYP_SHP) == TYP_SHP;
 
     public bool IsHub => (typ & TYP_HUB) == TYP_HUB;
 
@@ -288,7 +288,7 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsStyleSlf => (mode & MOD_SLFDLV) == MOD_SLFDLV;
 
-    public bool IsStyleDlv => (mode & MOD_MIXDLV) == MOD_MIXDLV;
+    public bool IsModeUni => (mode & MOD_UNIDLV) == MOD_UNIDLV;
 
     public string No => IsMkt ? null : addr;
 

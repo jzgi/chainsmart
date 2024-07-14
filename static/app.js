@@ -22,9 +22,45 @@ var WCPay = function (data, sup) {
     );
 };
 
-var FromWebview = function(func) {
+function fromWebview() {
     window.chrome.webview.addEventListener('message', function (evt) {
-        func(evt.data);
+        var dat = evt.data;
+
+        if (dat.$ == 'SCALE') {
+            var ifr = $('#modalbody');
+            if (ifr) {
+                var form = ifr.contentDocument.getElementById('posinpform');
+                var ounit = form.unit;
+                var unit = ounit.value;
+                var iqty = form.qty;
+
+                if (dat.a > 0) {
+                    ounit.classList.add('uk-active');
+                    if (unit == '斤' || unit == '公斤' || unit == '两') {
+                        iqty.classList.add('uk-active');
+                        if (unit == '斤') {
+                            iqty.value = (dat.a / 500).toFixed(1);
+                        } 
+                        else if (unit == '公斤') {
+                            iqty.value = (dat.a / 1000).toFixed(1);
+                        } 
+                        else if (unit == '两') {
+                            iqty.value = (dat.a / 50).toFixed(1);
+                        } 
+                        // fire oninput
+                        iqty.dispatchEvent(new InputEvent('input'))
+                    }
+                } 
+                else {
+                    iqty.classList.remove('uk-active');
+                    ounit.classList.remove('uk-active');
+                    iqty.value = dat.a.toFixed(1);
+                }
+
+                // fire oninput
+                iqty.dispatchEvent(new InputEvent('input'))
+            }
+        }
     });
 }
 
@@ -166,7 +202,7 @@ function posItemChange(trig) {
     var v = trig.selectedOptions[0];
     var id = v.value;
     var unit = v.getAttribute('unit');
-    var unitw = parseFloat(v.getAttribute('unitw'));
+    var unitip = v.getAttribute('unitip');
     var price = parseFloat(v.getAttribute('price'));
     var avail = parseFloat(v.getAttribute('avail'));
 
@@ -223,10 +259,9 @@ function posAdd(trig) {
 
     var itemid = form['itemid'].value;
     var opt = form['itemid'].selectedOptions[0];
-    var lotid = parseInt(opt.getAttribute('lotid'));
     var name = opt.getAttribute('name');
     var unit = opt.getAttribute('unit');
-    var unitw = opt.getAttribute('unitw');
+    var unitip = opt.getAttribute('unitip');
     var price = parseFloat(form.price.value);
     var qty = parseFloat(form.qty.value);
 
@@ -235,7 +270,7 @@ function posAdd(trig) {
     // target ul element
     var tbody = document.getElementById('items');
     var tr = document.createElement("tr");
-    var html = '<input type="hidden" name="' + itemid + '" value="' + lotid + '-' + name + '-' + unit + '-' + unitw + '-' + price + '-' + qty + '">';
+    var html = '<input type="hidden" name="' + itemid + '" value="' + name + '-' + unit + '-' + unitip + '-' + price + '-' + qty + '">';
     html += '<td>' + name + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
     tr.innerHTML = html;
     tbody.appendChild(tr);

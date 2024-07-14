@@ -39,7 +39,7 @@ public abstract class PosWork<V> : WebWork where V : BuyVarWork, new()
     }
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
+[MgtAuthorize(Org.TYP_SHL)]
 [Ui("零售终端")]
 public class ShplyPosWork : PosWork<ShplyPosVarWork>
 {
@@ -62,14 +62,14 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
             //
             // form input
 
-            h.FORM_("uk-card uk-card-primary").FIELDSUL_();
+            h.FORM_("uk-card uk-card-primary", id: "posinpform").FIELDSUL_();
             h.LI_().SELECT_(nameof(itemid), onchange: "posItemChange(this);", empty: string.Empty, required: false);
 
             for (var i = 0; i < arr?.Length; i++)
             {
                 var o = arr[i];
 
-                h.T("<option value=\"").T(o.id).T("\" lotid=\"").T(o.srcid).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitw=\"").T(o.unitip).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
+                h.T("<option value=\"").T(o.id).T("\" name=\"").T(o.name).T("\" unit=\"").T(o.unit).T("\" unitip=\"").T(o.unitip).T("\" price=\"").T(o.price).T("\" stock=\"").T(o.stock).T("\">");
                 h.T(o.name);
                 if (o.unitx > 1)
                 {
@@ -111,13 +111,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
             h.T("<a class=\"uk-icon-button\" uk-icon=\"arrow-right\" onclick=\"posResum(ancestorOf(this, 'form'), 2);\"></a>");
             h._NAV();
 
-            h.BOTTOMBAR_();
-            for (short i = 1; i < Buy.Typs.Count; i++)
-            {
-                var e = Buy.Typs.EntryAt(i);
-                h.BUTTON_(nameof(buy), subscript: e.Key, onclick: "return $pos(this);", css: "uk-button-default").T(e.Value)._BUTTON();
-            }
-            h._BOTTOMBAR();
+            h.BOTTOMBAR_().BUTTON("确认", nameof(buy), onclick: "return $pos(this);", css: "uk-button-default")._BOTTOMBAR();
 
             h._FORM();
         }, false, 60, onload: "fixAll();");

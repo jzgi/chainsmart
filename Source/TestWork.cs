@@ -20,7 +20,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
         h.MAINGRID(arr, o =>
         {
             h.ADIALOG_(o.Key, "/", ToolAttribute.MOD_OPEN, false, tip: o.name, css: "uk-card-body uk-flex");
-            h.PIC("/void.webp", css: "uk-width-1-6");
+            h.PIC("/void.webp", css: "uk-width-tiny");
 
             h.ASIDE_();
             h.HEADER_().H4(o.name);
@@ -29,8 +29,7 @@ public abstract class TestWork<V> : WebWork where V : TestVarWork, new()
             h._HEADER();
 
             var org = GrabTwin<int, Org>(o.orgid);
-            h.Q(org.name, "uk-width-expand");
-            h.FOOTER_().SPAN2(o.tip, o.val).SPAN_("uk-margin-auto-left")._SPAN()._FOOTER();
+            h.Q_("uk-width-expand").T(org.name).T('，').SPAN2(o.tip, o.val)._Q();
             h._ASIDE();
 
             h._A();

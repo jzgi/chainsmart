@@ -17,7 +17,7 @@ public class Buy : Entity, IKeyable<long>
 
     public static readonly Map<short, string> Typs = new()
     {
-        { TYP_ONL, "网售" },
+        { TYP_ONL, "网销" },
         { TYP_POS, "终端" },
     };
 
@@ -168,7 +168,7 @@ public class Buy : Entity, IKeyable<long>
 
         // compute fee
         //
-        if (org.IsStyleDlv)
+        if (org.IsModeUni)
         {
             var (min, rate, max) = mktdlvfee;
             var feev = Math.Max(min + sum * rate, max);

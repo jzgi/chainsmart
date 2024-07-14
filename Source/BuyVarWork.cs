@@ -23,20 +23,15 @@ public abstract class BuyVarWork : WebWork
 
         wc.GivePane(200, h =>
         {
+            h.H4("基本", css: "uk-padding");
             h.UL_("uk-list uk-list-divider");
-            h.LI_().LABEL("订单号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
+            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
             if (o.IsOnline)
             {
                 h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
                 h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr)._SPAN()._LI();
             }
-            h.LI_().FIELD("金额", o.topay, true).FIELD("派送费", o.fee, true)._LI();
-            h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
-            h.LI_().FIELD2("支付", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "撤销" : "派发", o.oker, o.oked, sep: "<br>")._LI();
-            h._UL();
-
-            // buy items
-
+            h.LI_().LABEL("明细");
             h.TABLE(o.lns, d =>
             {
                 h.TD_().T(d.name);
@@ -47,8 +42,18 @@ public abstract class BuyVarWork : WebWork
                 h._TD();
                 h.TD_(css: "uk-text-right").CNY(d.RealPrice)._TD();
                 h.TD2(d.qty, d.unit, css: "uk-text-right");
-                h.TD(d.SubTotal, true, true);
             });
+            h._LI();
+            h.LI_().FIELD("运费", o.fee, true).FIELD("总额", o.topay, true)._LI();
+            h.LI_().FIELD("模式", o.mode, Org.Modes)._LI();
+            h._UL();
+
+            h.H4("状态", css: "uk-padding");
+            h.UL_("uk-list uk-list-divider");
+            h.LI_().FIELD("状态", o.status, Buy.Statuses).FIELD2("创建", o.creator, o.created, sep: "<br>")._LI();
+            h.LI_().FIELD2("支付", o.adapter, o.adapted, sep: "<br>").FIELD2(o.IsVoid ? "撤销" : "派发", o.oker, o.oked, sep: "<br>")._LI();
+            h._UL();
+
 
             h.TOOLBAR(bottom: true, status: o.Status, state: o.ToState());
         });

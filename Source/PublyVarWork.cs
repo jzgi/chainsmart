@@ -155,16 +155,16 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
             h.DIV_("uk-flex uk-width-1-1 uk-input uk-padding");
             h.T("<output class=\"uk-label\" name=\"name\" cookie=\"name\"></output>").SP();
             h.T("<output class=\"uk-label\" name=\"tel\" cookie=\"tel\"></output>");
-            if (org.IsStyleDlv)
+            if (org.IsModeUni)
             {
                 var (min, rate, max) = FinanceUtility.mktdlvfee;
-                h.SPAN_("uk-width-expand uk-flex-right uk-text-danger").T("派送费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
+                h.SPAN_("uk-width-expand uk-flex-right uk-text-danger").T("运费").SP().T("<output name=\"fee\" min=\"").T(min).T("\" rate=\"").T(rate).T("\" max=").T(max).T("\">0.00</output>")._SPAN();
             }
             h._DIV();
 
             h._SECTION();
 
-            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-1-4 uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
+            h.BUTTON_(nameof(buy), css: "uk-button-danger uk-width-1-5 uk-height-1-1", onclick: "return $buy(this);").CNYOUTPUT(nameof(topay), topay)._BUTTON();
 
             h._BOTTOMBAR();
 
@@ -213,7 +213,9 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 }
             }
 
-            var (topay, fee) = FinanceUtility.GetTopayAndFee(lst, org, area);
+            var mkt = GrabTwin<int, Org>(org.MktId);
+            
+            var (topay, fee) = FinanceUtility.GetTopayAndFee(lst, org, mkt, area);
             var m = new Buy(prin, org, lst.ToArray())
             {
                 created = DateTime.Now,

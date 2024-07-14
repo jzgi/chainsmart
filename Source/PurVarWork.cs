@@ -43,7 +43,7 @@ public abstract class PurVarWork : WebWork
     }
 }
 
-public class MchlyPurVarWork : PurVarWork
+public class ShplyPurVarWork : PurVarWork
 {
 }
 

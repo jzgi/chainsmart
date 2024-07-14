@@ -1430,6 +1430,13 @@ select,
     background-color: #f8f8f8;
 }
 
+input.uk-active,
+output.uk-active,
+select.uk-active,
+textarea.uk-active {
+    color: #f9473e;
+}
+
 .uk-static {
     box-sizing: border-box;
     max-width: 100%;

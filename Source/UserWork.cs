@@ -431,7 +431,7 @@ public class SuplyMbrWork : UserWork<SuplyMbrVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
+[MgtAuthorize(Org.TYP_SHL)]
 [Ui("大客户")]
 public class ShplyVipWork : UserWork<ShplyVipVarWork>
 {
@@ -497,7 +497,7 @@ public class ShplyVipWork : UserWork<ShplyVipVarWork>
         }
     }
 
-    [MgtAuthorize(0, User.ROL_MGT)]
+    [MgtAuthorize(Org.TYP_RTL_, User.ROL_MGT)]
     [Ui("添加", icon: "plus", status: 1), Tool(ButtonOpen)]
     public async Task add(WebContext wc, int cmd)
     {

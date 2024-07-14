@@ -263,8 +263,8 @@ public class AdmlyPurApWork : ApWork<AdmlyPurApVarWork>
     }
 }
 
-[MgtAuthorize(Org.TYP_SHP)]
-[Ui("网售结款")]
+[MgtAuthorize(Org.TYP_SHL)]
+[Ui("网销结款")]
 public class ShplyBuyApWork : ApWork<OrglyApVarWork>
 {
     [Ui(status: 1), Tool(Anchor)]
