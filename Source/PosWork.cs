@@ -101,7 +101,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
 
             h.TABLE_();
             h.T("<thead>").TH("商品", css: "uk-width-1-2 uk-text-left").TH("单价", css: "uk-text-right").TH("数量", css: "uk-text-right").TH("小计", css: "uk-text-right").T("<th class=\"uk-width-micro\"></th></thead>");
-            h.T("<tbody id=\"items\">"); // line items
+            h.T("<tbody id=\"lns\">"); // buy lines
             h.T("</tbody>");
             h._TABLE();
 
@@ -123,7 +123,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE mktid = @1 AND typ >= 2 AND status = 4 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ = 2 AND status = 4 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -131,7 +131,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
             h.TOOLBAR();
             if (arr == null)
             {
-                h.ALERT("尚无今日场售记录");
+                h.ALERT("尚无今日零售记录");
                 return;
             }
             MainTable(h, arr);
@@ -165,7 +165,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
             day = wc.Query[nameof(day)];
 
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ > 1 AND created BETWEEN @2 AND @3");
+            dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ = 2 AND created BETWEEN @2 AND @3");
             var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id).Set(today.AddDays(-day - 1)).Set(today.AddDays(-day)));
 
             wc.GivePage(200, h =>
@@ -187,7 +187,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
         var org = wc[-1].As<Org>();
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ > 1 AND status = 0 ORDER BY id DESC");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE orgid = @1 AND typ = 2 AND status = 0 ORDER BY id DESC");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -203,7 +203,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
     }
 
 
-    public async Task buy(WebContext wc, int payTyp)
+    public async Task buy(WebContext wc)
     {
         var org = wc[-1].As<Org>();
         var prin = (User)wc.Principal;
@@ -232,7 +232,7 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
         var now = DateTime.Now;
         var m = new Buy()
         {
-            typ = (short)payTyp,
+            typ = Buy.TYP_POS,
             orgid = org.id,
             name = org.name,
             mktid = org.MktId,
@@ -252,15 +252,18 @@ public class ShplyPosWork : PosWork<ShplyPosVarWork>
         {
             using var dc = NewDbContext();
 
-            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk);
-            await dc.ExecuteAsync(p => m.Write(p, msk));
+            dc.Sql("INSERT INTO buys ").colset(Buy.Empty, msk)._VALUES_(Buy.Empty, msk).T(" RETURNING *");
+            var o = await dc.QueryTopAsync<Buy>(p => m.Write(p, msk));
+
+            var cnt = new JsonBuilder(true, 1024 * 4) { };
+            cnt.Put(null, o);
+
+            wc.Give(201, cnt); // created
         }
         catch (Exception e)
         {
             wc.Give(500); // data error, maybe a check violdate
             return;
         }
-
-        wc.Give(201); // created
     }
 }

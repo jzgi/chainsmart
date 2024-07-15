@@ -268,7 +268,7 @@ function posAdd(trig) {
     var subtotal = parseFloat(form.subtotal.value);
 
     // target ul element
-    var tbody = document.getElementById('items');
+    var tbody = document.getElementById('lns'); // lines
     var tr = document.createElement("tr");
     var html = '<input type="hidden" name="' + itemid + '" value="' + name + '-' + unit + '-' + unitip + '-' + price + '-' + qty + '">';
     html += '<td>' + name + '</td><td class="uk-text-right">' + price.toFixed(2) + '</td><td class="uk-text-right">' + qty + '</td><td class="subtotal uk-text-right">' + subtotal.toFixed(2) + '</td><td><a uk-icon="close" onclick="posRemove(this);"></a></td>';
@@ -343,13 +343,23 @@ function $pos(trig) {
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
         if (this.readyState === 4) {
+
             trig.disabled = false; // re-enable the button
+
             if (this.status >= 200 && this.status < 205) {
-                var tbody = document.getElementById('items');
-                tbody.innerHTML = ''; // clear the table of lines
-                alert('成功');
+
+                // clear and reset
+                var tbody = document.getElementById('lns');
+                tbody.innerHTML = ''; // clear the lines
                 trig.form.reset(); // reset the form
-            } else if (this.status >= 500) {
+
+                if (window.top.ToWebview) {
+                    // print
+                    var jo = JSON.parse(this.responseText);
+                    window.top.ToWebview(jo);
+                }
+            } 
+            else if (this.status >= 500) {
                 alert('错误，请确认库存');
             }
         }
