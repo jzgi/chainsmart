@@ -456,13 +456,13 @@ public class MktlyOrgWork : OrgWork<MktlyOrgVarWork>
             // o.Read(wc.Query, 0);
             wc.GivePane(200, h =>
             {
-                h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsShx ? "新建成员商户" : "新建成员门店");
+                h.FORM_("uk-card uk-card-primary").FIELDSUL_(o.IsShp ? "新建成员商户" : "新建成员门店");
 
-                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
-                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 12, required: true)._LI();
-                h.LI_().SELECT("输送方式", nameof(o.mode), o.mode, Org.Modes, required: true)._LI();
+                h.LI_().SELECT("版块", nameof(o.regid), o.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编址", nameof(o.addr), o.addr, max: 12)._LI();
+                h.LI_().TEXT("名称", nameof(o.name), o.name, max: 15, required: true)._LI();
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
-                h.LI_().TEXT("工商登记名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                h.LI_().TEXT("工商名", nameof(o.legal), o.legal, max: 20, required: true)._LI();
+                h.LI_().SELECT("模式", nameof(o.mode), o.mode, Org.Modes, required: true)._LI();
                 h.LI_().TEXT("联系电话", nameof(o.tel), o.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(o.trust), true, o.trust)._LI();
                 h.LI_().TEXT("收款账号", nameof(o.bankacct), o.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                 h.LI_().TEXT("收款户名", nameof(o.bankacctname), o.bankacctname, max: 20)._LI();

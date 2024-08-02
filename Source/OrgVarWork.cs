@@ -609,13 +609,13 @@ public class MktlyOrgVarWork : OrgVarWork
             {
                 lock (m)
                 {
-                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsShx ? "修改成员商户" : "修改成员门店");
+                    h.FORM_("uk-card uk-card-primary").FIELDSUL_(m.IsShp ? "修改成员商户" : "修改成员门店");
 
-                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSectorWith(org.mode), required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
-                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 12, required: true)._LI();
-                    h.LI_().SELECT("模式", nameof(m.mode), m.mode, Org.Modes, required: true)._LI();
+                    h.LI_().SELECT("版块", nameof(m.regid), m.regid, regs, filter: (_, v) => v.IsSector, required: true).TEXT("编址", nameof(m.addr), m.addr, max: 12)._LI();
+                    h.LI_().TEXT("名称", nameof(m.name), m.name, max: 15, required: true)._LI();
                     h.LI_().TEXTAREA("简介语", nameof(m.tip), m.tip, max: 40)._LI();
                     h.LI_().TEXT("工商名", nameof(m.legal), m.legal, max: 20, required: true)._LI();
+                    h.LI_().SELECT("模式", nameof(m.mode), m.mode, Org.Modes, required: true)._LI();
                     h.LI_().TEXT("联系电话", nameof(m.tel), m.tel, pattern: "[0-9]+", max: 11, min: 11, required: true).CHECKBOX("托管", nameof(m.trust), true, m.trust)._LI();
                     h.LI_().TEXT("收款账号", nameof(m.bankacct), m.bankacct, pattern: "[0-9]+", min: 19, max: 19)._LI();
                     h.LI_().TEXT("收款户名", nameof(m.bankacctname), m.bankacctname, max: 20)._LI();

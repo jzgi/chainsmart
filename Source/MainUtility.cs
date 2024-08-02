@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChainFX;
 using ChainFX.Web;
 using static ChainFX.CryptoUtility;
@@ -152,6 +153,24 @@ public static class MainUtility
         return h;
     }
 
+    public static HtmlBuilder SLIDESHOW<E>(this HtmlBuilder h, IEnumerable<E> coll, Action<E> item, Predicate<E> filter = null)
+    {
+        h.T("<div class=\"uk-position-relative uk-visible-toggle uk-light\" tabindex=\"-1\" uk-slideshow=\"min-height: 100%; max-height: 100%; animation: push\">");
+        h.T("<div class=\"uk-slideshow-items\">");
+
+        foreach (var o in coll)
+        {
+            if (filter != null && filter(o))
+            {
+                item(o);
+            }
+        }
+
+        h.T("</div>");
+        h.T("</div>");
+        return h;
+    }
+
     public static HtmlBuilder RECEIVER(this HtmlBuilder h, string tel)
     {
         h.T("<a class=\"uk-icon-button uk-light\" href=\"tel:").T(tel).T("\" uk-icon=\"icon: receiver\"></a>");
@@ -170,27 +189,41 @@ public static class MainUtility
         return h;
     }
 
-    public static HtmlBuilder A_TEL(this HtmlBuilder h, string name, string tel, string css = null)
+    public static HtmlBuilder ATEL(this HtmlBuilder h, string tel, string label = null, string css = null)
     {
         h.T("<a ");
+        if (label == null)
+        {
+            h.T(" uk-icon=\"receiver\" class=\"uk-icon-button uk-circle");
+        }
         if (css != null)
         {
-            h.T(" class=\"").T(css).T("\" ");
+            if (label != null)
+            {
+                h.T(" class=\"");
+            }
+            h.T(' ');
+            h.T(css);
         }
 
-        h.T("href=\"tel:").T(tel).T("\">").T(name).T("</a>");
+        h.T("\" href=\"tel:").T(tel).T("\">");
+        if (label != null)
+        {
+            h.T(label);
+        }
+        h.T("</a>");
         return h;
     }
 
-    public static HtmlBuilder ATEL(this HtmlBuilder h, string tel = null, string css = null)
+    public static HtmlBuilder AVID(this HtmlBuilder h, string tel = null, string css = null)
     {
-        h.T("<a uk-icon=\"receiver\" class=\"uk-icon-button uk-circle");
+        h.T("<a uk-icon=\"video-camera\" class=\"uk-icon-button uk-circle uk-light");
         if (css != null)
         {
             h.T(' ');
             h.T(css);
         }
-        h.T("\" href=\"tel:").T(tel).T("\"></a>");
+        h.T("\" href=\"javascript:void(0)\"></a>");
         return h;
     }
 

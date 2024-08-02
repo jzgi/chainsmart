@@ -264,6 +264,7 @@ public class ShplyItemVarWork : ItemVarWork
                 h.LI_().NUMBER("优惠额", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("无差别优惠", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
                 h.LI_().NUMBER("整售量", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().SELECT("排序", nameof(o.sort), o.sort, Item.Sorts, required: true)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(upd))._FORM();
             });

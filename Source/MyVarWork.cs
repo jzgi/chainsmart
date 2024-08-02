@@ -15,7 +15,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
         var prin = (User)wc.Principal;
 
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status >= 2 ORDER BY id DESC LIMIT 20");
+        dc.Sql("SELECT ").collst(Buy.Empty).T(" FROM buys WHERE uid = @1 AND status <> 1 ORDER BY id DESC LIMIT 20");
         var arr = await dc.QueryAsync<Buy>(p => p.Set(prin.id));
 
         wc.GivePage(200, h =>
@@ -53,23 +53,23 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
             {
                 h.MAINGRID(arr, o =>
                 {
-                    h.HEADER_("uk-card-header").H4(o.name).SPAN_("uk-badge").T(o.adapted, time: 0).SP().MARK(Buy.Statuses[o.status])._SPAN()._HEADER();
+                    h.HEADER_("uk-card-header").H4_().T(o.id, 10).SP().T(o.name)._H4().SPAN_("uk-badge").T(o.adapted, time: 0).SP().MARK(Buy.Statuses[o.status])._SPAN()._HEADER();
                     h.UL_("uk-card-body uk-list-small uk-list-divider");
-                    foreach (var it in o.lns)
+                    foreach (var ln in o.lns)
                     {
                         h.LI_("uk-flex");
 
-                        h.SPAN_("uk-width-expand").T(it.name);
-                        if (it.unitip != null)
+                        h.SPAN_("uk-width-expand").T(ln.name);
+                        if (ln.unitip != null)
                         {
-                            h.SP().SMALL_().T(it.unitip).T(it.unit)._SMALL();
+                            h.SP().SMALL_().T(ln.unitip).T(ln.unit)._SMALL();
                         }
                         // h.SP().CNY(it.RealPrice);
                         h._SPAN();
 
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.RealPrice)._SPAN();
-                        h.SPAN_("uk-width-1-6 uk-flex-right").T(it.qty).SP().T(it.unit)._SPAN();
-                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(it.SubTotal)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(ln.RealPrice)._SPAN();
+                        h.SPAN_("uk-width-1-6 uk-flex-right").T(ln.qty).SP().T(ln.unit)._SPAN();
+                        h.SPAN_("uk-width-1-5 uk-flex-right").CNY(ln.SubTotal)._SPAN();
                         h._LI();
                     }
                     h._UL();
@@ -78,7 +78,7 @@ public class MyVarWork : BuyWork<MyBuyVarWork>
                     h.SPAN_("uk-width-expand").SMALL_().T(o.uarea).T(o.uaddr)._SMALL()._SPAN();
                     if (o.fee > 0)
                     {
-                        h.SMALL_().T("服务费 +").T(o.fee)._SMALL();
+                        h.SMALL_().T("运费 +").T(o.fee)._SMALL();
                     }
                     h.SPAN_("uk-width-1-5 uk-flex-right").CNY(o.topay)._SPAN();
                     h._FOOTER();

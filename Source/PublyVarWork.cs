@@ -26,7 +26,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
         // show availlable item list
         //
         using var dc = NewDbContext();
-        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY promo, oked DESC");
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY sort, promo");
         var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
 
         wc.GivePage(200, h =>
@@ -58,7 +58,7 @@ public class PublyVarWork : ItemWork<PublyItemVarWork>
                 h.SPAN_().ICON("bell").SP().T(open ? "营业中" : "休息中")._SPAN();
             }
             h.SPAN_("uk-margin-left").ICON("clock").SP().T(org.openat).T(" - ").T(org.closeat)._SPAN();
-            h.SPAN_("uk-margin-auto-left").T("电话").SP().ATEL(org.tel, css: "uk-light")._SPAN();
+            h.SPAN_("uk-margin-auto-left").T("通话").SP().AVID().ATEL(org.tel, css: "uk-light")._SPAN();
             h.T("</section>");
 
             if (arr == null)

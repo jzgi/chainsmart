@@ -34,9 +34,9 @@ function fromWebview() {
                 var unit = ounit.value;
                 var iqty = form.qty;
 
-                if (dat.a > 0) {
+                if (dat.a != 0) {
                     ounit.classList.add('uk-active');
-                    if (unit == '斤' || unit == '公斤' || unit == '两') {
+                    if (unit == '斤' || unit == '公斤' || unit == '两' || unit == '克') {
                         iqty.classList.add('uk-active');
                         if (unit == '斤') {
                             iqty.value = (dat.a / 500).toFixed(1);
@@ -46,6 +46,9 @@ function fromWebview() {
                         } 
                         else if (unit == '两') {
                             iqty.value = (dat.a / 50).toFixed(1);
+                        } 
+                        else if (unit == '克') {
+                            iqty.value = (dat.a / 1).toFixed(1);
                         } 
                         // fire oninput
                         iqty.dispatchEvent(new InputEvent('input'))
@@ -176,6 +179,7 @@ function buyRecalc(trig) {
         if (frm.area) { 
 
             frm.addr.placeholder = (frm.area.value == '外地') ? '省市／详细地址': '小区／楼栋门牌';
+            frm.addr.maxLength = (frm.area.value == '外地') ? 30: 15;
 
             var opts = frm.area.selectedOptions;
             if (opts.length > 0) {

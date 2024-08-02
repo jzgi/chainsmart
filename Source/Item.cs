@@ -20,6 +20,13 @@ public class Item : Entity, IKeyable<int>
         { TYP_SUP, "供应" },
     };
 
+    public static readonly Map<short, string> Sorts = new()
+    {
+        { 2, "置顶" },
+        { 1, "优先" },
+        { 0, "普通" },
+    };
+
 
     internal int id;
     internal int orgid;
@@ -35,7 +42,7 @@ public class Item : Entity, IKeyable<int>
     internal short min;
     internal short max;
     internal short stock;
-    internal string sort;
+    internal short sort;
     internal short tag;
     internal short sym;
     internal DateTime proved;

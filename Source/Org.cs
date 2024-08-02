@@ -184,7 +184,7 @@ public class Org : Entity, ITwin<int>, IFolderable
                 s.Put(nameof(whole), whole);
                 s.Put(nameof(wholetip), wholetip);
                 s.Put(nameof(legal), legal);
-                if (regid <= 0 && !IsShp) s.PutNull(nameof(regid));
+                if (regid <= 0 && !IsShplet) s.PutNull(nameof(regid));
                 else s.Put(nameof(regid), regid);
                 s.Put(nameof(addr), addr);
                 s.Put(nameof(x), x);
@@ -259,11 +259,11 @@ public class Org : Entity, ITwin<int>, IFolderable
 
     public bool IsRtlEst => (typ & (TYP_RTL_ | TYP_EST_)) == (TYP_RTL_ | TYP_EST_);
 
-    public bool IsShp => (typ & TYP_SHL) == TYP_SHL;
+    public bool IsShplet => (typ & TYP_SHL) == TYP_SHL;
 
-    public bool IsShv => (typ & TYP_SHV) == TYP_SHV;
+    public bool IsShpVtl => (typ & TYP_SHV) == TYP_SHV;
 
-    public bool IsShx => (typ & TYP_SHP) == TYP_SHP;
+    public bool IsShp => (typ & TYP_SHP) == TYP_SHP;
 
     public bool IsHub => (typ & TYP_HUB) == TYP_HUB;
 

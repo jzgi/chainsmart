@@ -79,7 +79,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
     [Ui(tip: "已下线", icon: "cloud-download", status: 2), Tool(Anchor)]
@@ -101,7 +101,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
     [Ui(tip: "已作废", icon: "trash", status: 4), Tool(Anchor)]
@@ -123,7 +123,7 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
             }
 
             MainGrid(h, arr);
-        }, false, 4);
+        }, false, 6);
     }
 
     [MgtAuthorize(Org.TYP_SHL, User.ROL_MGT)]
@@ -157,9 +157,10 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
                 h.LI_().TEXTAREA("简介语", nameof(o.tip), o.tip, max: 40)._LI();
                 h.LI_().SELECT("单位", nameof(o.unit), o.unit, Unit.Typs).TEXT("附注", nameof(o.unitip), o.unitip, max: 6)._LI();
                 h.LI_().NUMBER("单价", nameof(o.price), o.price, min: 0.01M, max: 99999.99M)._LI();
-                h.LI_().NUMBER("大客户优惠", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("无差别优惠", nameof(o.promo), o.promo)._LI();
+                h.LI_().NUMBER("大客户立减", nameof(o.off), o.off, min: 0.00M, max: 999.99M).CHECKBOX("无差别立减", nameof(o.promo), o.promo)._LI();
                 h.LI_().NUMBER("起订量", nameof(o.min), o.min, min: 1, max: o.stock).NUMBER("限订量", nameof(o.max), o.max, min: MAX)._LI();
                 h.LI_().NUMBER("整售量", nameof(o.unitx), o.unitx, min: 1, money: false, onchange: $"this.form.min.value = this.value; this.form.max.value = this.value * {MAX}; ")._LI();
+                h.LI_().SELECT("排序", nameof(o.sort), o.sort, Item.Sorts, required: true)._LI();
 
                 h._FIELDSUL().BOTTOM_BUTTON("确认", nameof(@new))._FORM();
             });
@@ -190,6 +191,45 @@ public class ShplyItemWork : ItemWork<ShplyItemVarWork>
         await dc.ExecuteAsync(p => p.Set(org.id));
 
         wc.Give(200);
+    }
+
+    public async Task show(WebContext wc)
+    {
+        var org = wc[-1].As<Org>();
+
+        using var dc = NewDbContext();
+        dc.Sql("SELECT ").collst(Item.Empty).T(" FROM items_vw WHERE orgid = @1 AND status = 4 ORDER BY oked DESC");
+        var arr = await dc.QueryAsync<Item>(p => p.Set(org.id));
+
+        wc.GivePage(200, h =>
+        {
+            if (arr == null)
+            {
+                h.ALERT("尚无作废商品");
+                return;
+            }
+
+            h.T("<div class=\"uk-position-relative uk-visible-toggle uk-light\" tabindex=\"-1\" uk-slideshow=\"auutoplay: true; animation: push\">");
+            h.T("<div class=\"uk-slideshow-items\">");
+
+            foreach (var o in arr)
+            {
+                h.T("<div uk-cover>");
+                h.T("<img src=\"").T(MainUtility.ItemUrl).T(o.id).T("/pic").T("\" alt=\"\">");
+                h.DIV_("uk-position-bottom uk-position-medium uk-text-center uk-light");
+                h.H3(o.name, "uk-margin-remove");
+                h.P(o.tip);
+                h._DIV();
+                h._DIV();
+            }
+
+            h.T("</div>");
+
+            h.T("<a class=\"uk-position-center-left uk-position-small uk-hidden-hover\" href uk-slidenav-previous uk-slideshow-item=\"previous\"></a>");
+            h.T("<a class=\"uk-position-center-right uk-position-small uk-hidden-hover\" href uk-slidenav-next uk-slideshow-item=\"next\"></a>");
+
+            h.T("</div>");
+        }, false, 720);
     }
 }
 

@@ -101,7 +101,7 @@ public class WwwService : MainService
                 string tel = Application.CustomConfig[nameof(tel)];
 
                 h.TOPBAR_();
-                h.HEADER_("uk-flex-center").H2_().T("全省热线&nbsp;").A_TEL(tel, tel, css: "uk-button-link")._H2()._HEADER();
+                h.HEADER_("uk-flex-center").H2_().T("全省热线&nbsp;").ATEL(tel, tel, css: "uk-button-link")._H2()._HEADER();
                 h._TOPBAR();
 
                 foreach (var o in mkts)

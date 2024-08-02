@@ -77,7 +77,7 @@ public class PublyBatVarWork : CodeVarWork
             var tag = Grab<short, Tag>()?[bat.tag];
 
             h.TOPBARXL_();
-            h.IMG(OrgUrl, src.id, "/icon", circle: true, css: "uk-width-tiny");
+            h.IMG(OrgUrl, item.id, "/icon", circle: true, css: "uk-width-tiny");
             h.HEADER_("uk-width-expand uk-padding-left").H2_().T(src.name).T(bat.name)._H2()._HEADER();
             h._TOPBARXL();
 
@@ -90,7 +90,7 @@ public class PublyBatVarWork : CodeVarWork
             h.UL_("uk-list uk-list-divider");
             h.LI_().FIELD("商品", item.name)._LI();
             h.LI_().FIELD(string.Empty, item.tip)._LI();
-            h.LI_().FIELD_("货次").T(bat.created, time: 1)._FIELD()._LI();
+            h.LI_().FIELD_("货次").T(bat.created, time: 2)._FIELD()._LI();
             h.LI_().FIELD_("溯源", css: "uk-col").MARK(tag.name).Q(tag.tip)._FIELD()._LI();
 
             var sym = Grab<short, Sym>()?[item.sym];

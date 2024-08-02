@@ -612,7 +612,7 @@ a.uk-link-reset:hover,
     display: inline-block;
     width: 100px;
     max-width: 100%;
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid rgb(125 170 29 / 0.3);
     vertical-align: top;
 }
 
@@ -658,7 +658,7 @@ a.uk-link-reset:hover,
 }
 
 .uk-list-divider>li:nth-child(n+2) {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid rgb(125 170 29 / 0.3);
 }
 
 .uk-list-small {
@@ -759,7 +759,7 @@ a.uk-link-reset:hover,
 .uk-description-list-divider>dt:nth-child(n+2) {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #f8f8f8;
+    border-top: 1px solid rgb(125 170 29 / 0.3);
 }
 
 .uk-table {
@@ -810,7 +810,7 @@ a.uk-link-reset:hover,
 
 .uk-table-divider>tr:not(:first-child),
 .uk-table-divider>tbody>tr:not(:first-child) {
-    border-top: 1px solid #f2f2f2;
+    border-top: 1px solid rgb(125 170 29 / 0.3);
 }
 
 .uk-table-middle,
@@ -1265,6 +1265,7 @@ button.uk-icon:not(:disabled) {
     height: 6rem;
     min-height: 6rem;
     padding: 4px;
+    background-color: #ededed;
 }
 
 
@@ -3320,7 +3321,7 @@ ul.uk-nav-sub {
 }
 
 .uk-pagination>.uk-disabled {
-    color: #fbd9a6;
+    color: rgb(249 71 62 / 0.2);
 }
 
 .uk-pagination>.uk-active>* {

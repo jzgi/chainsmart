@@ -25,11 +25,11 @@ public abstract class BuyVarWork : WebWork
         {
             h.H4("基本", css: "uk-padding");
             h.UL_("uk-list uk-list-divider");
-            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 1).T('）')._SPAN()._LI();
+            h.LI_().LABEL("单号").SPAN_("uk-static").T(o.id, digits: 8).T('（').T(o.created, time: 2).T('）')._SPAN()._LI();
             if (o.IsOnline)
             {
-                h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().A_TEL(o.utel, o.utel)._SPAN()._LI();
-                h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr)._SPAN()._LI();
+                h.LI_().LABEL("买家").SPAN_("uk-static").T(o.uname).SP().ATEL(o.utel, o.utel).AICON($"javascript: navigator.clipboard.writeText('{o.uname} {o.utel} {o.uaddr}');", "copy",css:"uk-margin-auto-left")._SPAN()._LI();
+                h.LI_().LABEL(string.Empty).SPAN_("uk-static").T(o.uarea).T('-').T(o.uaddr).SP()._SPAN()._LI();
             }
             h.LI_().LABEL("明细");
             h.TABLE(o.lns, d =>
@@ -206,7 +206,7 @@ public class MktlyBuyVarWork : BuyVarWork
                 dc.Let(out int adapted);
 
                 h.TR_();
-                h.TD_().PICK(utel).SP().SPAN_().A_TEL(utel, utel).SP().T(uaddr)._SPAN()._TD();
+                h.TD_().PICK(utel).SP().SPAN_().ATEL(utel, utel).SP().T(uaddr)._SPAN()._TD();
                 h.TD_();
                 if (created > 0)
                 {
