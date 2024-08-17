@@ -185,7 +185,7 @@ public class WwwService : MainService
                     var shp = GrabTwin<int, Org>(orgid);
                     var mkt = GrabTwin<int, Org>(shp.MktId);
                     shp.WatchSet.Put(OrgWatchAttribute.BUY_ADAPTED, 1, cash);
-                    (shp.IsStyleSlf ? shp : mkt).BuySet.Add(o);
+                    (shp.IsStyleSlf ? shp : mkt).EventLot.Add(o);
                 }
                 else // the pay differs from the order
                 {

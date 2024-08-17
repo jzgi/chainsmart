@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using ChainFX;
 using ChainFX.Nodal;
+using ChainFx.Web;
 using ChainFX.Web;
 
 namespace ChainSmart;
@@ -330,21 +332,21 @@ public class Org : Entity, ITwin<int>, IFolderable
 
 
     //
-    // buy pack for extern 
+    private EventLot eventlot;
 
-    private BuySet buyset;
-
-    public BuySet BuySet
+    public EventLot EventLot
     {
         get
         {
-            if (buyset == null)
+            if (eventlot == null)
             {
-                Interlocked.CompareExchange(ref buyset, new BuySet(), null);
+                Interlocked.CompareExchange(ref eventlot, new EventLot(), null);
             }
-            return buyset;
+            return eventlot;
         }
     }
+
+    public IPAddress ExternalIpAddress { get; set; }
 
 
     public static bool IsNonEstSupTyp(short t) => (t & TYP_WHL_) == TYP_WHL_ && t != TYP_HUB;

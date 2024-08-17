@@ -50,16 +50,20 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     {
         using var dc = NewDbContext();
 
-        var till = await dc.ScalarAsync("SELECT max(till) FROM buygens") as DateTime?;
+        DateTime till = default;
+        if (await dc.QueryTopAsync("SELECT max(till) FROM buygens"))
+        {
+            dc.Let(out till);
+        }
 
         dc.Sql("SELECT xorgid, sum(trans), sum(amt), first(rate), sum(topay) FROM buyaps WHERE level = 1 AND dt = @1 GROUP BY xorgid");
-        await dc.QueryAsync(p => p.Set(till ?? default(DateTime)));
+        await dc.QueryAsync(p => p.Set(till));
 
         wc.GivePage(200, h =>
         {
             h.TOOLBAR();
 
-            h.TABLE_();
+            h.TABLE_().CAPTION_().T(till, time: 0)._CAPTION();
             h.THEAD_().TH("机构").TH("笔数", "uk-text-right").TH("总营业额", "uk-text-right").TH("总应付额", "uk-text-right")._THEAD();
             while (dc.Next())
             {
@@ -85,35 +89,58 @@ public class AdmlyBuyApWork : ApWork<AdmlyBuyApVarWork>
     [Ui(tip: "历史", icon: "history", status: 2), Tool(AnchorPrompt)]
     public async Task past(WebContext wc, int page)
     {
-        var topOrgs = Grab<int, Org>();
         bool inner = wc.Query[nameof(inner)];
-        int prv = 0;
+
+        DateTime till = DateTime.Today;
+
         if (inner)
         {
+            using var dc = NewDbContext();
+            await dc.QueryAsync("SELECT till FROM buygens ORDER BY till DESC LIMIT 14");
             wc.GivePane(200, h =>
             {
-                h.FORM_().FIELDSUL_("按供应版块");
-                // h.LI_().SELECT("版块", nameof(prv), prv, topOrgs, filter: (k, v) => v.EqZone, required: true);
+                h.FORM_().FIELDSUL_("选择结算日");
+                while (dc.Next())
+                {
+                    dc.Let(out till);
+                    h.LI_().RADIO(nameof(till), till)._LI();
+                }
                 h._FIELDSUL()._FORM();
             });
         }
         else
         {
+            till = wc.Query[nameof(till)];
+
             using var dc = NewDbContext();
-            dc.Sql("SELECT ").collst(Ap.Empty).T(" FROM buyaps WHERE level = 1 ORDER BY dt LIMIT 40 OFFSET @1 * 40");
-            var arr = await dc.QueryAsync<Ap>();
+            dc.Sql("SELECT xorgid, sum(trans), sum(amt), first(rate), sum(topay) FROM buyaps WHERE level = 1 AND dt = @1 GROUP BY xorgid");
+            await dc.QueryAsync(p => p.Set(till));
 
             wc.GivePage(200, h =>
             {
                 h.TOOLBAR();
-                if (arr == null)
+
+                h.TABLE_().CAPTION_().T(till, time: 0)._CAPTION();
+                h.THEAD_().TH("机构").TH("笔数", "uk-text-right").TH("总营业额", "uk-text-right").TH("总应付额", "uk-text-right")._THEAD();
+                while (dc.Next())
                 {
-                    h.ALERT("尚无结算");
-                    return;
+                    dc.Let(out int xorgid);
+                    dc.Let(out int trans);
+                    dc.Let(out decimal amt);
+                    dc.Let(out short rate);
+                    dc.Let(out decimal topay);
+
+                    var xorg = GrabTwin<int, Org>(xorgid);
+
+                    h.TR_();
+                    h.TD_().A_(xorgid, "/?dt=", till).T(xorg.whole)._A()._TD();
+                    h.TD(trans);
+                    h.TD(amt, money: true, right: true);
+                    h.TD(topay, money: true, right: true)._TD();
+                    h._TR();
                 }
-                MainTable(h, arr, 2);
-                h.PAGINATION(arr.Length == 40);
-            }, false, 12);
+                h._TABLE();
+            }, false, 120);
         }
     }
 

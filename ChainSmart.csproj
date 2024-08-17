@@ -22,6 +22,7 @@
       <None Remove="rtl_apiclient_cert.p12" />
       <None Remove="sup_apiclient_cert.p12" />
       <None Remove=".gitignore" />
+      <None Remove="mkt_apiclient_cert.p12" />
     </ItemGroup>
 
     <ItemGroup>

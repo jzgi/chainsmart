@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ChainFX;
-using ChainFX.Source;
 using ChainFX.Web;
 using static ChainFX.Web.Modal;
 using static ChainFX.Nodal.Storage;
 
 namespace ChainSmart;
 
-public abstract class MgtVarWork : WebWork
+public abstract class MgtVarWork : WebWork, IPollable
 {
     public void @default(WebContext wc)
     {
@@ -96,11 +95,40 @@ public abstract class MgtVarWork : WebWork
 
         wc.Give(200);
     }
+
+    public void @event(WebContext wc)
+    {
+        var org = wc[0].As<Org>();
+        var now = DateTime.Now;
+        
+        // header
+        var external = wc.Header("External");
+        
+
+        // receive incoming events
+        if (wc.IsPost)
+        {
+            // handle incoming
+            wc.Give(200);
+        }
+        else // send outgoing commands
+        {
+            var bdr = new JsonBuilder(true, 1024 * 32);
+            org.EventLot.Dump(bdr, now);
+
+            wc.Give(200, bdr);
+        }
+    }
+
+    public void call(string deviceKey, string action)
+    {
+        throw new NotImplementedException();
+    }
 }
 
 [MgtAuthorize(Org.TYP_RTL_)]
 [Ui("市场操作")]
-public class MktlyVarWork : MgtVarWork, IExternable
+public class MktlyVarWork : MgtVarWork
 {
     protected override void OnCreate()
     {
@@ -171,26 +199,6 @@ public class MktlyVarWork : MgtVarWork, IExternable
             );
 
             wc.GivePane(200);
-        }
-    }
-
-    public void @extern(WebContext wc)
-    {
-        var org = wc[0].As<Org>();
-        var now = DateTime.Now;
-
-        // receive incoming data
-        if (wc.IsPost)
-        {
-            // handle incoming
-            wc.Give(200);
-        }
-        else // send outgoing data
-        {
-            var bdr = new JsonBuilder(true, 1024 * 32);
-            org.BuySet.Dump(bdr, now);
-
-            wc.Give(200, bdr);
         }
     }
 }

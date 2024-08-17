@@ -3,7 +3,7 @@
     {
       "type": "view",
       "name": "逛市场",
-      "url": "http://www.zhnt-x.com/"
+      "url": "https://www.zhnt-x.com/"
     },
     {
       "name": "我的",
@@ -11,22 +11,22 @@
         {
           "type": "view",
           "name": "关于「中惠农通」",
-          "url": "http://www.zhnt-x.com/about.html"
+          "url": "https://www.zhnt-x.com/about.html"
         },
         {
           "type": "view",
           "name": "供应操作　　　　　🔒",
-          "url": "http://mgt.zhnt-x.com/suply//"
+          "url": "https://mgt.zhnt-x.com/suply//"
         },
         {
           "type": "view",
           "name": "市场操作　　　　　🔒",
-          "url": "http://mgt.zhnt-x.com/mktly//"
+          "url": "https://mgt.zhnt-x.com/mktly//"
         },
         {
           "type": "view",
-          "name": "我的个人账号",
-          "url": "http://www.zhnt-x.com/my//"
+          "name": "个人账号／订单",
+          "url": "https://www.zhnt-x.com/my//"
         }
       ]
     }

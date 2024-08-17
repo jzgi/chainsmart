@@ -15,13 +15,13 @@ namespace ChainSmart;
 /// </summary>
 public static class CloudUtility
 {
-    static readonly WebConnector OpenApi = new("https://api.weixin.qq.com");
+    static readonly WebConnect OpenApi = new("https://api.weixin.qq.com");
 
-    static readonly WebConnector MktPayApi, SupPayApi;
+    static readonly WebConnect MktPayApi, SupPayApi;
 
-    static readonly Map<int, WebConnector> PayConnects = new();
+    static readonly Map<int, WebConnect> PayConnects = new();
 
-    static readonly WebConnector SmsApi = new("https://sms.tencentcloudapi.com");
+    static readonly WebConnect SmsApi = new("https://sms.tencentcloudapi.com");
 
     public static readonly string
         appid,
@@ -60,8 +60,8 @@ public static class CloudUtility
 
         try
         {
-            SupPayApi = new WebConnector("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
-            MktPayApi = new WebConnector("https://api.mch.weixin.qq.com", "mkt_apiclient_cert.p12", mktmchid);
+            SupPayApi = new WebConnect("https://api.mch.weixin.qq.com", "sup_apiclient_cert.p12", supmchid);
+            MktPayApi = new WebConnect("https://api.mch.weixin.qq.com", "mkt_apiclient_cert.p12", mktmchid);
         }
         catch (Exception e)
         {
@@ -69,7 +69,7 @@ public static class CloudUtility
         }
     }
 
-    public static bool TryGetPayConnect(int orgid, out WebConnector v) => PayConnects.TryGetValue(orgid, out v);
+    public static bool TryGetPayConnect(int orgid, out WebConnect v) => PayConnects.TryGetValue(orgid, out v);
 
 
     static string accessToken;

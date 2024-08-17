@@ -215,7 +215,7 @@ public static class MainUtility
         return h;
     }
 
-    public static HtmlBuilder AVID(this HtmlBuilder h, string tel = null, string css = null)
+    public static HtmlBuilder AVCALL(this HtmlBuilder h, string css = null)
     {
         h.T("<a uk-icon=\"video-camera\" class=\"uk-icon-button uk-circle uk-light");
         if (css != null)
@@ -223,7 +223,7 @@ public static class MainUtility
             h.T(' ');
             h.T(css);
         }
-        h.T("\" href=\"javascript:void(0)\"></a>");
+        h.T("\" href=\"javascript:vcall()\"></a>");
         return h;
     }
 
